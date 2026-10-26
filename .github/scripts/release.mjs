@@ -21,7 +21,11 @@
  *   node .github/scripts/release.mjs stamp
  *       Writes packages/cli/build-info.json (what `protoboard --version
  *       --json` and `doctor` report for a packaged build): the commit is
- *       GITHUB_SHA, else git's HEAD.
+ *       GITHUB_SHA, else git's HEAD. `"release": true` only on a tag build
+ *       (GITHUB_REF is refs/tags/v<the version>): a manual run of the
+ *       workflow, or a laptop, stamps a development build. The npm packages
+ *       carry it, and so does the extension's stack (build-stack.ts takes
+ *       it in place of its own stamp, scripts/build-version.mjs).
  *
  * The published packages are the root package.json's workspaces under
  * packages/ whose name starts with @protoboardai/. The VS Code extension
@@ -141,9 +145,11 @@ function stamp() {
       commit = null;
     }
   }
-  const stamp = { schema: "protoboard.build-info/v1", version: v, commit, dirty: false, branch: null, builtAt: new Date().toISOString() };
+  // a release only when the workflow runs for the tag of this version (a manual run has refs/heads/…)
+  const release = process.env.GITHUB_REF === `refs/tags/v${v}`;
+  const stamp = { schema: "protoboard.build-info/v1", version: v, commit, dirty: false, branch: null, builtAt: new Date().toISOString(), ...(release ? { release: true } : {}) };
   writeFileSync(join(ROOT, "packages/cli/build-info.json"), JSON.stringify(stamp, null, 2) + "\n");
-  return `packages/cli/build-info.json: ${v} from ${commit ?? "an unknown commit"}`;
+  return `packages/cli/build-info.json: ${v} from ${commit ?? "an unknown commit"}, ${release ? "a release" : "a development build (not a release tag)"}`;
 }
 
 const [cmd, value] = process.argv.slice(2);

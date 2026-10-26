@@ -117,8 +117,29 @@ npmjs at the version core pins) and everything they depend on, as one
    CLI package gets the same stamp as `build-info.json`, and the unpacked
    copy's `protoboard-stack.json` keeps it, so `protoboard doctor` and
    `protoboard --version --json` can name the build an issue was seen on
-   (`packages/core/src/build-info.ts`). A carried stack is never a release:
-   only a build a registry installed at a published version is.
+   (`packages/core/src/build-info.ts`).
+
+   **Release or development build** (PB-1062). A build is a release when
+   the release workflow made it from a release tag: `.github/scripts/release.mjs
+   stamp` writes `"release": true` into the stamp only when `GITHUB_REF` is
+   `refs/tags/v<version>`, and the vsix job runs it too, so the npm packages
+   (however they are installed, `npm i -g` included) and the stack the
+   Marketplace extension carries say "release". A build a registry installed
+   at a published version is one as well. Every other build is a
+   development build, and has a version of its own
+   (`scripts/build-version.mjs`): `<next patch>-dev.<commits since the
+   tag>.g<short sha>`, such as `0.2.1-dev.7.g1a2b3c4` (or `<version>-dev.…`
+   while a version without a tag is being prepared). The extension, the
+   carried stack and its folder (`<home>/stack/0.2.1-dev.7.g1a2b3c4`) and
+   `protoboard --version` all carry it, stamped at build time; the committed
+   `package.json` files keep the release version. So a dev `.vsix` unpacks
+   beside a release's copy and never replaces it. The stack's own range check
+   (`satisfies` in `packages/core/src/stack.ts`) judges a `-dev` version by
+   the release it leads to, so `0.2.1-dev.7.g1a2b3c4` serves projects that pin
+   `^0.2.0`; releases and published prereleases (`-rc.1`) are judged as
+   before, and a project a dev build creates is given `^0.2.0`, never the dev
+   version. npm's own semver does not do this: an `npm install` in a project
+   linked to a dev build fetches a release in its place.
 
 Measured for 0.1.3:
 

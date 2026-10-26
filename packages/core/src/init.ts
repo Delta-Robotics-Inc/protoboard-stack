@@ -19,12 +19,13 @@ import { addParts, type AddResult } from "./parts.js";
 import type { Project } from "./project.js";
 import type { ProtoboardConfig } from "./types.js";
 import { projectRelative } from "./paths.js";
+import { stackRangeFor } from "./stack.js";
 
 const constName = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_|_$/g, "") || "SYSTEM";
 
 /** This package's manifest: new projects depend on the stack version that created them. */
 const CORE_PKG = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string; dependencies?: Record<string, string>; protoboard?: { toolchain?: { uhd?: string; typescript?: string } } };
-const STACK_RANGE = `^${CORE_PKG.version}`;
+const STACK_RANGE = stackRangeFor(CORE_PKG.version);
 /**
  * The UHD and TypeScript versions new projects pin exactly (PB-910): library
  * parts ship .uhd.ts source that declares the UHD range it needs (like a

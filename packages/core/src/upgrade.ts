@@ -13,11 +13,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { TOOLCHAIN } from "./init.js";
+import { stackRangeFor } from "./stack.js";
 
 const CORE_PKG = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string };
 
 /** The range a project of this stack asks for: what `init` writes. */
-export const STACK_RANGE = `^${CORE_PKG.version}`;
+export const STACK_RANGE = stackRangeFor(CORE_PKG.version);
 
 const FIELDS = ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"] as const;
 type Field = (typeof FIELDS)[number];

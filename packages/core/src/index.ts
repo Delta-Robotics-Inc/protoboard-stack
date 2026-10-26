@@ -395,6 +395,8 @@ export {
   readLinkRecord,
   readStack,
   satisfies as versionSatisfies,
+  stackRangeFor,
+  isDevVersion,
   shellCommand,
   stackCli,
   stackDir,

@@ -31,7 +31,8 @@ import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, r
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { BUILD_INFO, gitStamp } from "@protoboardai/core/build-info";
+import { BUILD_INFO, gitStamp, type BuildStamp } from "@protoboardai/core/build-info";
+import { buildVersion } from "../../../scripts/build-version.mjs";
 // npm as this Node with npm-cli.js: no npm.cmd, which Node does not start without a shell on Windows (PB-1047)
 import { npmCommand } from "../../../scripts/npm-cli.mjs";
 import { entriesOf, pack } from "../src/pbar.js";
@@ -106,10 +107,24 @@ for (const [dir, built] of [
 }
 const packages: Record<string, string> = {};
 const tarballs: Record<string, string> = {};
+// the version the carried stack is (scripts/build-version.mjs, PB-1062): a release build (the release workflow on a
+// tag, whose `release.mjs stamp` wrote packages/cli/build-info.json) keeps the committed version and that stamp;
+// any other build is a development build with a prerelease version (0.2.1-dev.7.g1a2b3c4), written into the carried
+// packages' manifests, so it never takes a release's folder in <home>/stack. The committed package.json files are
+// not changed.
+const bv = buildVersion(repo);
 // where this build comes from (`protoboard --version --json`, doctor): the commit of this checkout and whether it had
-// changes; a carried stack is never a release (build-info.ts)
-const build = gitStamp(repo, (JSON.parse(readFileSync(join(repo, "packages", "cli", "package.json"), "utf8")) as { version: string }).version);
-say(`build: ${build.commit ? `${build.commit.slice(0, 12)}${build.dirty ? " with uncommitted changes" : ""}${build.branch ? ` on ${build.branch}` : ""}` : "not a git checkout: commit unknown"}`);
+// changes, and for a release build the release stamp (build-info.ts)
+const build: BuildStamp = bv.stamp ?? gitStamp(repo, bv.version);
+say(`build: ${bv.release ? `release ${bv.version}` : `development build ${bv.version}`}, ${build.commit ? `${build.commit.slice(0, 12)}${build.dirty ? " with uncommitted changes" : ""}${build.branch ? ` on ${build.branch}` : ""}` : "not a git checkout: commit unknown"}`);
+/** This repository's packages take the build's version, and so do their ranges for each other. */
+const OURS = "@protoboardai/";
+const stampVersion = (pkg: { name: string; version: string; dependencies?: Record<string, string>; peerDependencies?: Record<string, string>; optionalDependencies?: Record<string, string> }) => {
+  if (!pkg.name.startsWith(OURS) || bv.version === pkg.version) return;
+  if (pkg.version !== bv.base) throw new Error(`${pkg.name} is ${pkg.version} and the stack is ${bv.base}: the stack's packages share one version`);
+  pkg.version = bv.version;
+  for (const deps of [pkg.dependencies, pkg.peerDependencies, pkg.optionalDependencies]) for (const n of Object.keys(deps ?? {})) if (n.startsWith(OURS)) deps![n] = bv.version;
+};
 /** Pack a package folder without running its scripts (nothing is built into a checkout), with the carried manifest. */
 function packDir(dir: string) {
   const tmp = join(stage, "pack");
@@ -118,8 +133,9 @@ function packDir(dir: string) {
   const [info] = JSON.parse(run(npm, ["pack", "--ignore-scripts", "--json", "--pack-destination", tmp], dir)) as { filename: string }[];
   run(tar, ["-xzf", join(tmp, info.filename.replace("/", "-").replace("@", "")), "-C", tmp], tmp);
   const pkgFile = join(tmp, "package", "package.json");
-  const pkg = JSON.parse(readFileSync(pkgFile, "utf8")) as { name: string; version: string; dependencies?: Record<string, string>; scripts?: unknown; publishConfig?: unknown; private?: boolean };
+  const pkg = JSON.parse(readFileSync(pkgFile, "utf8")) as { name: string; version: string; dependencies?: Record<string, string>; peerDependencies?: Record<string, string>; optionalDependencies?: Record<string, string>; scripts?: unknown; publishConfig?: unknown; private?: boolean };
   for (const dep of NOT_CARRIED[pkg.name] ?? []) delete pkg.dependencies?.[dep];
+  stampVersion(pkg);
   delete pkg.scripts;
   delete pkg.publishConfig;
   writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + "\n");
@@ -140,7 +156,7 @@ const uhd = core.protoboard.toolchain.uhd;
   say(`@deltarobotics/uhd@${uhd} from ${NPMJS}`);
 }
 const version = packages["@protoboardai/cli"];
-if (version !== core.version) throw new Error(`@protoboardai/cli is ${version} and @protoboardai/core is ${core.version}: the stack's packages share one version`);
+if (version !== bv.version || packages["@protoboardai/core"] !== bv.version) throw new Error(`@protoboardai/cli is ${version} and @protoboardai/core is ${packages["@protoboardai/core"]}, not ${bv.version}: the stack's packages share one version`);
 
 // ---- 2. one installed tree, as a project that uses every extension would have it
 // (a folder without a template.json is not a template: `_agents` holds what every template's AGENTS.md shares)

@@ -10,6 +10,12 @@
 //   4. `vsce package` into dist/vscode-protoboard.vsix (and dist/vscode-protoboard-<version>.vsix), no dependencies
 //      (everything is bundled), files as .vscodeignore lists them
 //
+// The version (PB-1062, ../../../scripts/build-version.mjs): a release build (the release workflow on a tag, whose
+// `release.mjs stamp` wrote packages/cli/build-info.json) is the committed version. Every other build is a
+// development build, 0.2.1-dev.<commits>.g<sha>: the extension's version, the carried stack's and its folder
+// (~/.protoboard/stack/<version>), so a dev .vsix never takes the place of a release's stack. It is given to esbuild
+// and vsce at build time; the committed package.json files are not changed.
+//
 // --target <vscode-target> (linux-x64, darwin-arm64, win32-x64, …; PB-1047): a platform-specific package, as the
 // release makes one per platform. It carries only that platform's native stack (build-stack.ts --platforms <target>)
 // and passes --target to `vsce package`, into dist/vscode-protoboard-<version>-<target>.vsix (and
@@ -25,13 +31,16 @@ import { copyFileSync, existsSync, readFileSync, renameSync, rmSync } from "node
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildVersion } from "../../../scripts/build-version.mjs";
 import { npmCommand } from "../../../scripts/npm-cli.mjs";
 
 const here = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repo = join(here, "..", "..");
+const bv = buildVersion(repo);
+let version = bv.version;
 const run = (cmd, args, cwd, shell = false) => {
   console.log(`$ ${[cmd, ...args].join(" ")}${cwd === here ? "" : `   (in ${cwd})`}`);
-  execFileSync(cmd, args, { cwd, stdio: "inherit", shell, env: { ...process.env, NODE_ENV: "production" } });
+  execFileSync(cmd, args, { cwd, stdio: "inherit", shell, env: { ...process.env, NODE_ENV: "production", PROTOBOARD_BUILD_VERSION: version } });
 };
 const npm = (args, cwd) => {
   const c = npmCommand(args);
@@ -68,7 +77,16 @@ if (!process.argv.includes("--skip-shell")) npm(["run", "build", "-w", "@protobo
 const kept = join(here, ".stack-kept");
 const reuse = process.argv.includes("--reuse-stack") && existsSync(join(here, "dist", "stack", "stack.json"));
 rmSync(kept, { recursive: true, force: true });
-if (reuse) renameSync(join(here, "dist", "stack"), kept);
+if (reuse) {
+  // a development build keeps the kept stack's version (a commit since only moves the number); a release never reuses
+  const carried = JSON.parse(readFileSync(join(here, "dist", "stack", "stack.json"), "utf8")).version;
+  if (carried !== version) {
+    if (bv.release || !/-dev\./.test(carried) || !carried.startsWith(version.slice(0, version.indexOf("-dev.")))) throw new Error(`--reuse-stack: dist/stack is the stack ${carried} and this build is ${version}: package without --reuse-stack`);
+    version = carried;
+  }
+  renameSync(join(here, "dist", "stack"), kept);
+}
+console.log(`version ${version} (${bv.release ? "a release build: the release workflow's stamp" : `a development build of ${bv.base}`})`);
 rmSync(join(here, "dist"), { recursive: true, force: true });
 run(process.execPath, ["esbuild.mjs", "--production"], here);
 // the third-party packages inside the bundles, with their licences (THIRD_PARTY_LICENSES.md, in the .vsix)
@@ -76,8 +94,6 @@ run(process.execPath, [join(repo, "scripts", "third-party-licenses.mjs"), "exten
 if (reuse) {
   renameSync(kept, join(here, "dist", "stack"));
   const carried = JSON.parse(readFileSync(join(here, "dist", "stack", "stack.json"), "utf8")).version;
-  const core = JSON.parse(readFileSync(join(repo, "packages", "core", "package.json"), "utf8")).version;
-  if (carried !== core) throw new Error(`--reuse-stack: dist/stack is the stack ${carried} and the packages are ${core}: package without --reuse-stack`);
   const platforms = JSON.parse(readFileSync(join(here, "dist", "stack", "stack.json"), "utf8")).platforms;
   if (target && (platforms?.length !== 1 || platforms[0] !== target)) throw new Error(`--reuse-stack: dist/stack carries ${platforms?.join(", ") ?? "unknown platforms"}, not ${target} alone: package --target ${target} without --reuse-stack`);
   console.log(`--reuse-stack: carrying the stack ${carried} built earlier (NOT rebuilt from the packages as they are now)`);
@@ -86,7 +102,9 @@ else {
   const platforms = target ?? option("--platforms");
   run(process.execPath, [binOf(repo, "tsx"), "scripts/build-stack.ts", ...(platforms ? ["--platforms", platforms] : [])], here);
 }
-const { version } = JSON.parse(readFileSync(join(here, "package.json"), "utf8"));
+// the stack build-stack.ts made is this version (it reads the same stamp and commit)
+const stackJson = join(here, "dist", "stack", "stack.json");
+if (existsSync(stackJson) && JSON.parse(readFileSync(stackJson, "utf8")).version !== version) throw new Error(`dist/stack is the stack ${JSON.parse(readFileSync(stackJson, "utf8")).version}, and the extension is ${version}: they share one version`);
 // where the carried stack was built from (build-stack.ts stamps it into stack.json): said here, so a .vsix made from a
 // working tree with changes is never mistaken for a release build
 const carriedBuild = existsSync(join(here, "dist", "stack", "stack.json")) ? JSON.parse(readFileSync(join(here, "dist", "stack", "stack.json"), "utf8")).build : undefined;
@@ -95,8 +113,10 @@ else if (existsSync(join(here, "dist", "stack", "stack.json"))) console.log("the
 // the licence and notice ship in the .vsix (.vscodeignore lists them); vsce runs with --skip-license, so check here
 for (const f of ["LICENSE", "NOTICE"]) if (!existsSync(join(here, f))) throw new Error(`${f} is missing from packages/vscode-protoboard: the .vsix must carry it`);
 const out = join(here, "dist", "vscode-protoboard.vsix");
-run(process.execPath, [binOf(here, "@vscode/vsce"), "package", ...(target ? ["--target", target] : []), "--no-dependencies", "--skip-license", "--allow-missing-repository", "--no-update-package-json", "-o", out], here);
+// a version given to vsce goes into the .vsix's package.json only (--no-update-package-json)
+const own = JSON.parse(readFileSync(join(here, "package.json"), "utf8")).version;
+run(process.execPath, [binOf(here, "@vscode/vsce"), "package", ...(version !== own ? [version] : []), ...(target ? ["--target", target] : []), "--no-dependencies", "--skip-license", "--allow-missing-repository", "--no-update-package-json", "-o", out], here);
 const named = join(here, "dist", `vscode-protoboard-${version}${target ? `-${target}` : ""}.vsix`);
 copyFileSync(out, named);
-console.log(`packaged ${out} (version ${version}${target ? `, for ${target} only` : ""}); not published`);
+console.log(`packaged ${out} (version ${version}${bv.release ? "" : ", a development build"}${target ? `, for ${target} only` : ""}); not published`);
 console.log(`vsix: ${named}`);
