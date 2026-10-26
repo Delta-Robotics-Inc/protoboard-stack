@@ -1,0 +1,1 @@
+Preview images for the Protoboard Stack 0.2.2 UI fixes (branch `mark/ui-0.2.2`: the trust prompt, PB-1065; the Inspector's Artifacts card, PB-1063). Not part of the project and never merged; delete this branch after the PR is merged.
