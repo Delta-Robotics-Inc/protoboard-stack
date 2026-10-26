@@ -24,7 +24,7 @@
  *
  * A project is an example's name or a folder; `protoboard dev` (this
  * checkout's CLI) serves each on its own port. Chrome: $CHROME or
- * /usr/bin/google-chrome.
+ * an installed Chrome, Chromium, Edge or Brave.
  */
 import { spawn, type ChildProcess } from "node:child_process";
 import { createReadStream, existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
@@ -33,8 +33,12 @@ import { createRequire } from "node:module";
 import { basename, extname, isAbsolute, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { findBrowser, noBrowserMessage } from "@protoboardai/core/browser";
 import { devOrigins, viewerPageHtml } from "../../src/viewerPage.js";
 import { tokensFromTheme, webviewPage, type TokenSet } from "./webview-page.js";
+
+// $CHROME, else an installed Chrome, Chromium, Edge or Brave on this OS (core's lookup)
+const chromePath = (): string => findBrowser()?.path ?? (() => { throw new Error(noBrowserMessage()); })();
 
 const PKG = fileURLToPath(new URL("../../", import.meta.url));
 const REPO = resolve(PKG, "..", "..");
@@ -147,7 +151,7 @@ const puppeteer = (() => {
   return require("puppeteer-core");
 })();
 const browser = await puppeteer.launch({
-  executablePath: process.env.CHROME ?? "/usr/bin/google-chrome",
+  executablePath: chromePath(),
   headless: true,
   args: ["--no-sandbox", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--window-size=1600,1000"],
 });

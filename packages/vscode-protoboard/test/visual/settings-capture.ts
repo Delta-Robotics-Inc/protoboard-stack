@@ -13,7 +13,7 @@
  *
  * It also checks what a capture cannot show at a glance: no page scrollbar of
  * the browser's, no text cut off sideways at the narrow width, every button
- * named, and the actions the buttons send. Chrome: $CHROME or /usr/bin/google-chrome.
+ * named, and the actions the buttons send. Chrome: $CHROME or an installed Chrome, Chromium, Edge or Brave.
  */
 import { createReadStream, existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
@@ -21,8 +21,12 @@ import { createRequire } from "node:module";
 import { extname, join, normalize, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { findBrowser, noBrowserMessage } from "@protoboardai/core/browser";
 import type { AgentState } from "@protoboardai/core/agents";
 import { settingsModel } from "../../src/agents.js";
+
+// $CHROME, else an installed Chrome, Chromium, Edge or Brave on this OS (core's lookup)
+const chromePath = (): string => findBrowser()?.path ?? (() => { throw new Error(noBrowserMessage()); })();
 
 const PKG = resolve(fileURLToPath(new URL("../../", import.meta.url)));
 const { values } = parseArgs({ options: { tokens: { type: "string" }, out: { type: "string" }, port: { type: "string" }, themes: { type: "string" } } });
@@ -147,7 +151,7 @@ const puppeteer = (() => {
   }
   return createRequire(import.meta.url)("puppeteer-core");
 })();
-const browser = await puppeteer.launch({ executablePath: process.env.CHROME ?? "/usr/bin/google-chrome", headless: true, args: ["--no-sandbox", "--window-size=1500,1100"] });
+const browser = await puppeteer.launch({ executablePath: chromePath(), headless: true, args: ["--no-sandbox", "--window-size=1500,1100"] });
 const problems: string[] = [];
 const shots: string[] = [];
 const SIZES: [string, number, number][] = [

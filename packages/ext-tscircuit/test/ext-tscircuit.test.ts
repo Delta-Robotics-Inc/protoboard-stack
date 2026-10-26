@@ -41,7 +41,8 @@ import { makeProject } from "./fixture.ts";
 import { stepBodies } from "./step.ts";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
-const TMP = join(HERE, ".tmp");
+// its own folder: nested-boards.test.ts works in .tmp/nested-boards at the same time, in another worker
+const TMP = join(HERE, ".tmp/ext-tscircuit");
 const BOARD = "imu-tile-board";
 const DIR = "src/boards/imu";
 const OUT = `${DIR}/out`;
