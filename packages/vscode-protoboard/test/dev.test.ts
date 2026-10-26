@@ -15,7 +15,8 @@ import { resolveCli, type CliCommand } from "../src/cli.js";
 import { DEV_RECORD, DevMonitor, DevProcess, devArgs, locateDev, parseDevLog, probeDev, readDevRecord, type DevEndpoint, type DevLogLine, type FetchLike } from "../src/dev.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
-const TMP = join(HERE, ".tmp");
+// its own folder: other test files here work in .tmp at the same time, and this one removes TMP when it ends
+const TMP = join(HERE, ".tmp/dev");
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
 const record = (over: Record<string, unknown> = {}) =>

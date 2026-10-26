@@ -3,7 +3,7 @@
 // smart bottle's, tiled three times (183 parts, more than a large field board's 137): its routed result (circuit.json), its
 // schematic and its exported PCB drawings, each copy with its own ids, references and nets, side by side on one
 // board. The fixture is made in .vscode-test/ (ignored) so the example's packages resolve from this checkout.
-// Needs Chrome ($CHROME or /usr/bin/google-chrome) and the extension built (node esbuild.mjs, which test:integration
+// Needs Chrome ($CHROME or an installed Chrome, Chromium, Edge or Brave) and the extension built (node esbuild.mjs, which test:integration
 // runs first). PROTOBOARD_VIEWS_OUT keeps the captures; VIEWS_TILES changes the number of copies.
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";

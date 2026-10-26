@@ -15,7 +15,8 @@ const HERE = fileURLToPath(new URL(".", import.meta.url));
 const QUAD = join(HERE, "../../../examples/quadcopter-5in");
 const WATCH = join(HERE, "../../../examples/wearable-watch");
 const BOTTLE = join(HERE, "../../../examples/smart-bottle");
-const TMP = join(HERE, ".tmp");
+// its own folder: other test files here work in .tmp at the same time, and this one removes TMP when it ends
+const TMP = join(HERE, ".tmp/project");
 let n = 0;
 const tmpProject = (files: Record<string, string>) => {
   const dir = join(TMP, `p${n++}`);

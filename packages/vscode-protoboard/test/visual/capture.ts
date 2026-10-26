@@ -21,7 +21,7 @@
  * The pages get what a webview gets: VS Code's default webview styles, the
  * `--vscode-*` variables on <html>, the body's theme class and theme id, and
  * an `acquireVsCodeApi` stand-in. The viewer tab reads a real `protoboard
- * dev` started here on its own ports. Chrome: $CHROME or /usr/bin/google-chrome.
+ * dev` started here on its own ports. Chrome: $CHROME or an installed Chrome, Chromium, Edge or Brave.
  */
 import { spawn, execFileSync, type ChildProcess } from "node:child_process";
 import { createReadStream, existsSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -30,6 +30,7 @@ import { createRequire } from "node:module";
 import { extname, join, normalize, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { findBrowser, noBrowserMessage } from "@protoboardai/core/browser";
 import { DEFAULT_QUERY, drcModel, findings, pageModel } from "../../src/drc.js";
 import { appHtml } from "../../src/appPage.js";
 import { interfaceCard, libraryPartCard, linkHarnessDefs, moduleCard, linkCard, partCard } from "../../src/inspector.js";
@@ -41,6 +42,9 @@ import { buildTree, nodeMap, walk } from "../../src/tree.js";
 import { devOrigins, viewerPageHtml } from "../../src/viewerPage.js";
 import { cadSource, cadViewerHtml } from "../../src/cadFiles.js";
 import { webviewPage, type TokenSet } from "./webview-page.js";
+
+// $CHROME, else an installed Chrome, Chromium, Edge or Brave on this OS (core's lookup)
+const chromePath = (): string => findBrowser()?.path ?? (() => { throw new Error(noBrowserMessage()); })();
 
 const PKG = fileURLToPath(new URL("../../", import.meta.url));
 const REPO = resolve(PKG, "..", "..");
@@ -162,7 +166,7 @@ const puppeteer = (() => {
   return require("puppeteer-core");
 })();
 const browser = await puppeteer.launch({
-  executablePath: process.env.CHROME ?? "/usr/bin/google-chrome",
+  executablePath: chromePath(),
   headless: true,
   args: ["--no-sandbox", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--disable-gpu-rasterization", "--window-size=1600,1000"],
 });

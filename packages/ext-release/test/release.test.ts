@@ -38,7 +38,8 @@ import type { Unit } from "../lib/types.ts";
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const PROVIDERS = join(HERE, "../../core/test/fixtures/providers");
 const CLI = join(HERE, "../../cli/bin/protoboard.mjs");
-const TMP = join(HERE, ".tmp");
+// its own folder: other test files here work in .tmp at the same time, and this one removes TMP when it ends
+const TMP = join(HERE, ".tmp/release");
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
 const PARTS = `const power = (id: string, role: string, pin: number) => ({ id, name: id.toUpperCase(), domain: "electrical", exposed: true, pin, protocols: [{ type: "power", roles: [role] }] });

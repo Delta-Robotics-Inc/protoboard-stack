@@ -15,6 +15,7 @@
     "./library-client": "./src/library-client.ts",
     "./views": "./src/view-ids.ts",
     "./cdp": "./src/cdp.ts",
+    "./browser": "./src/browser.ts",
     "./account": "./src/account.ts",
     "./access": "./src/access.ts",
     "./stack": "./src/stack.ts",
