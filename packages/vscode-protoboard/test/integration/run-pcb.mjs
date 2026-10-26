@@ -4,6 +4,8 @@
 // VSCODE_TEST_VERSION picks the VS Code (default: stable); PROTOBOARD_TEST_LOGS keeps its logs, as run.mjs does.
 import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
+// VS Code puts its IPC socket in the profile; macOS caps a socket path at 104 bytes and its tmpdir() (/var/folders/…) is long
+const profileBase = process.platform === "darwin" ? "/tmp" : tmpdir();
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runTests } from "@vscode/test-electron";
@@ -11,7 +13,7 @@ import { trustProjects } from "./trust-fixture.mjs";
 
 const pkg = fileURLToPath(new URL("../..", import.meta.url));
 const workspace = join(pkg, "..", "..", "examples", "wearable-watch");
-const profile = mkdtempSync(join(tmpdir(), "vscode-protoboard-pcb-"));
+const profile = mkdtempSync(join(profileBase, "vscode-protoboard-pcb-"));
 const headless = process.platform === "linux" && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY ? ["--ozone-platform=headless", "--disable-gpu"] : [];
 try {
   // the workspace's project is trusted, as a person answers the extension's question once (PB-1048)

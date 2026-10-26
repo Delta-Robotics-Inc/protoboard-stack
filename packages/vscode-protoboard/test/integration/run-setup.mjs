@@ -11,6 +11,8 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+// VS Code puts its IPC socket in the profile; macOS caps a socket path at 104 bytes and its tmpdir() (/var/folders/…) is long
+const profileBase = process.platform === "darwin" ? "/tmp" : tmpdir();
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runTests } from "@vscode/test-electron";
@@ -18,7 +20,7 @@ import { trustProjects } from "./trust-fixture.mjs";
 
 const pkg = fileURLToPath(new URL("../..", import.meta.url));
 const repo = join(pkg, "..", "..");
-const profile = realpathSync(mkdtempSync(join(tmpdir(), "vscode-protoboard-setup-")));
+const profile = realpathSync(mkdtempSync(join(profileBase, "vscode-protoboard-setup-")));
 const workspace = join(profile, "work", "cloned");
 const home = join(profile, "protoboard-home");
 const config = join(profile, "config");
