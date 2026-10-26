@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/cli",
-  "version": "0.2.0",
-  "description": "protoboard command-line interface",
+  "version": "0.2.1",
+  "description": "The protoboard command: create, check, build and release hardware projects.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -38,5 +38,19 @@
     "meow": "^14.1.0",
     "tsx": "^4.23.8",
     "zod": "3.25.76"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "cli",
+    "electronics",
+    "pcb",
+    "robotics",
+    "agents",
+    "mcp"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-docs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Technical documents (datasheet, assembly guide) for a project's system: every value a query into the UHD model, figures rendered from the CAD artifacts, stand-in test data watermarked until measured data replaces it, and a verifier.",
   "compatibility": {
     "protoboard": "^0.2.0",
@@ -24,13 +24,19 @@
     {
       "id": "chrome",
       "purpose": "A Chromium-family browser (Google Chrome, Chromium, Microsoft Edge or Brave), run headless: the datasheet and the assembly guide are laid out, their figures drawn and the PDFs printed with it",
-      "probe": ["protoboard:browser"],
+      "probe": [
+        "protoboard:browser"
+      ],
       "install": "install Google Chrome, Chromium, Microsoft Edge or Brave (found where each platform installs them), or set CHROME to a browser's executable"
     },
     {
       "id": "poppler",
       "purpose": "poppler-utils: pdfinfo, pdffonts (document checks) and pdftoppm (review page images)",
-      "probe": ["sh", "-c", "exec pdfinfo -v 2>&1"],
+      "probe": [
+        "sh",
+        "-c",
+        "exec pdfinfo -v 2>&1"
+      ],
       "install": "apt install poppler-utils (brew install poppler)"
     }
   ],
@@ -40,7 +46,9 @@
       "summary": "Build the datasheet and assembly guide (HTML, PDF, bound values) for the project's root system from its model, CAD artifacts and docs/docspec.ts; stand-in test data is refreshed, measured data kept",
       "entry": "./ops/docs.ts#techDocs",
       "effect": "export",
-      "requires": ["chrome"],
+      "requires": [
+        "chrome"
+      ],
       "inputs": {
         "only": {
           "description": "datasheet or assembly (default: both)"
@@ -60,7 +68,10 @@
       "summary": "Verify the built documents against the live model: values, units, placeholders, stand-in marks, images, layout, typography, BOM, assembly coverage; fails on any error",
       "entry": "./ops/docs.ts#techDocsVerify",
       "effect": "export",
-      "requires": ["chrome", "poppler"],
+      "requires": [
+        "chrome",
+        "poppler"
+      ],
       "inputs": {
         "only": {
           "description": "datasheet or assembly (default: both)"

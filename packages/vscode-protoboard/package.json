@@ -1,8 +1,8 @@
 {
   "name": "vscode-protoboard",
   "displayName": "Protoboard",
-  "description": "Protoboard Stack in VS Code: the viewer as editor tabs (diagram, 3D and the module's domain views), a hierarchy in each viewer tab, the Protoboard Inspector following the focused tab, the DRC panel and Problems, the Library, Project Parts and Cloud views, the BOM editor, a CAD viewer for STEP and GLB, and Protoboard Dark and Light colour themes",
-  "version": "0.2.0",
+  "description": "Design hardware with your AI agent: a live system diagram, 3D assembly and design checks for Protoboard projects.",
+  "version": "0.2.1",
   "private": true,
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -18,7 +18,9 @@
     "vscode": "^1.106.0"
   },
   "categories": [
-    "Other",
+    "Visualization",
+    "AI",
+    "Linters",
     "Themes"
   ],
   "main": "./dist/extension.cjs",
@@ -1179,5 +1181,25 @@
     "esbuild": "^0.28.2",
     "occt-import-js": "^0.0.23",
     "three": "^0.180.0"
+  },
+  "keywords": [
+    "hardware",
+    "electronics",
+    "pcb",
+    "robotics",
+    "embedded",
+    "cad",
+    "mcp",
+    "agents",
+    "uhd",
+    "kicad"
+  ],
+  "galleryBanner": {
+    "color": "#16181d",
+    "theme": "dark"
+  },
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

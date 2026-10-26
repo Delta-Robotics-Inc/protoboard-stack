@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-zephyr",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "firmware provider: Zephyr board definitions for nRF52840 modules (devicetree with pinctrl, buses, devices, buttons, display; Kconfig), every setting citing the UHD facts it comes from.",
   "compatibility": {
     "protoboard": "^0.2.0",
@@ -20,20 +20,48 @@
       "summary": "Zephyr 4.2 board definition (board.yml, Kconfig, defconfig, devicetree, pinctrl) and a Kconfig fragment for an nRF52840 board",
       "native": "zephyr",
       "operations": {
-        "generate": { "entry": "./ops/firmware.ts#generate", "summary": "Read the board into a firmware map, apply the rules, write the board definition and firmware.conf under zephyr/ with the line index" },
-        "export": { "entry": "./ops/firmware.ts#exportOutputs", "summary": "Copy the generated files to out/config/ and write out/firmware.manifest.json (refuses files edited since generate)" },
-        "extract": { "entry": "./ops/firmware.ts#extract", "summary": "Artifact references and the pins the devicetree names" },
-        "check": { "entry": "./ops/firmware.ts#check", "summary": "Pin table, single use, bus functions, I2C addresses, strapping, wake sources, devicetree structure, and drift between the files and the board" }
+        "generate": {
+          "entry": "./ops/firmware.ts#generate",
+          "summary": "Read the board into a firmware map, apply the rules, write the board definition and firmware.conf under zephyr/ with the line index"
+        },
+        "export": {
+          "entry": "./ops/firmware.ts#exportOutputs",
+          "summary": "Copy the generated files to out/config/ and write out/firmware.manifest.json (refuses files edited since generate)"
+        },
+        "extract": {
+          "entry": "./ops/firmware.ts#extract",
+          "summary": "Artifact references and the pins the devicetree names"
+        },
+        "check": {
+          "entry": "./ops/firmware.ts#check",
+          "summary": "Pin table, single use, bus functions, I2C addresses, strapping, wake sources, devicetree structure, and drift between the files and the board"
+        }
       },
       "constraints": {
-        "controller": { "description": "instance path of the controller, when the board has more than one microcontroller" },
-        "board_name": { "description": "Zephyr board name (default: the module id with _ for -)" },
-        "vendor": { "description": "board vendor folder and compatible prefix (default protoboard)" },
-        "console": { "description": "UART bus id or UART device instance for zephyr,console" },
-        "i2c_frequency_hz": { "description": "I2C bus clock: 100000 or 400000 (default: the fastest every device allows)" },
-        "uart_baud": { "description": "{ <instance>: baud } for UART devices that state no baud_rate" },
-        "wake": { "description": "[<button or device instance | net>] inputs that wake the chip from System OFF (written as zephyr,user wakeup-gpios)" },
-        "properties": { "description": "{ <instance>: { <devicetree property>: value } } for what a driver binding requires and the model does not state" }
+        "controller": {
+          "description": "instance path of the controller, when the board has more than one microcontroller"
+        },
+        "board_name": {
+          "description": "Zephyr board name (default: the module id with _ for -)"
+        },
+        "vendor": {
+          "description": "board vendor folder and compatible prefix (default protoboard)"
+        },
+        "console": {
+          "description": "UART bus id or UART device instance for zephyr,console"
+        },
+        "i2c_frequency_hz": {
+          "description": "I2C bus clock: 100000 or 400000 (default: the fastest every device allows)"
+        },
+        "uart_baud": {
+          "description": "{ <instance>: baud } for UART devices that state no baud_rate"
+        },
+        "wake": {
+          "description": "[<button or device instance | net>] inputs that wake the chip from System OFF (written as zephyr,user wakeup-gpios)"
+        },
+        "properties": {
+          "description": "{ <instance>: { <devicetree property>: value } } for what a driver binding requires and the model does not state"
+        }
       }
     }
   ]

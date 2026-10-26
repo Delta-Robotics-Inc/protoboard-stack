@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-parts",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Purchased parts as datasheet-honest UHD definitions: research and cite the sources, author the ModuleDef, verify it automatically and by an independent audit, record the verification. Works on a project's parts (parts/local, parts/evidence) and on the cloud part library (library/parts).",
   "compatibility": {
     "protoboard": "^0.2.0",

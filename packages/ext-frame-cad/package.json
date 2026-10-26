@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-frame-cad",
-  "version": "0.2.0",
-  "description": "Protoboard extension: custom structure (plate) CAD generated from a module's UHD interfaces and nominal fastener CAD, with build123d; frame checks, re-binding, and the generators' artifact layout",
+  "version": "0.2.1",
+  "description": "Protoboard extension: frames and mounting plates generated from your design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -40,5 +40,16 @@
     "@protoboardai/ext-release": {
       "optional": true
     }
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "cad",
+    "frame",
+    "build123d"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }
