@@ -141,9 +141,14 @@ jobs:
           n=0
           while read -r dir; do
             n=$((n + 1))
-            file="$(cd "$dir" && npm pack --json --pack-destination "$RUNNER_TEMP/npm" | node -e 'console.log(JSON.parse(require("fs").readFileSync(0, "utf8"))[0].filename)')"
+            # each package packs into an empty folder: a prepack build (the web viewer's vite) prints to stdout,
+            # so the tarball's name is read from the folder, not from npm's output
+            one="$RUNNER_TEMP/npm-one"
+            rm -rf "$one" && mkdir -p "$one"
+            (cd "$dir" && npm pack --pack-destination "$one" >&2)
+            file="$(ls "$one")"
             # the order to publish in: a numbered name keeps it
-            mv "$RUNNER_TEMP/npm/$file" "$RUNNER_TEMP/npm/$(printf '%02d' "$n")-$file"
+            mv "$one/$file" "$RUNNER_TEMP/npm/$(printf '%02d' "$n")-$file"
           done < <(node .github/scripts/release.mjs packages --repository "$GITHUB_REPOSITORY")
           ls -l "$RUNNER_TEMP/npm"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
