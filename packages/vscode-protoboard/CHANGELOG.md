@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- A new Marketplace page, with screenshots and a short getting-started guide.
+
 ## 0.2.0
 
 The first public release.

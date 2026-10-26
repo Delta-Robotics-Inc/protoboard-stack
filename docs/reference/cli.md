@@ -127,7 +127,7 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 
 ```text
 
-  protoboard command-line interface
+  The protoboard command: create, check, build and release hardware projects.
 
   Usage
     $ protoboard <command> [options]

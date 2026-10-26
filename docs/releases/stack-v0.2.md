@@ -1,9 +1,23 @@
-# Protoboard Stack 0.2.0 — release notes
+# Protoboard Stack 0.2 — release notes
 
 0.2.0 is the first public release of Protoboard Stack. The stack, the VS Code
 extension, the cloud client and the viewer are open source under Apache-2.0,
 and local work needs no account. The [0.1 release notes](stack-v0.1.md)
 describe the line before it.
+
+## 0.2.1
+
+The store pages. Nothing in the stack's behaviour changes.
+
+- **VS Code Marketplace:** a new page for the extension, with screenshots, a
+  short feature list, how to get started and the requirements; a changelog;
+  categories and keywords that match what the extension does.
+- **npm:** a plain description for every `@protoboardai` package, a README
+  for the command line (`@protoboardai/cli`) and for the packages that had
+  none.
+
+Every package and the extension move to 0.2.1 together. A 0.2.0 project
+needs no change: it asks for `^0.2.0`, which 0.2.1 satisfies.
 
 ## 0.2.0
 

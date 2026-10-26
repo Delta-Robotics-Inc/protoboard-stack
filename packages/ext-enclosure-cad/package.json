@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-enclosure-cad",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Protoboard extension: printed or machined enclosures generated from your design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

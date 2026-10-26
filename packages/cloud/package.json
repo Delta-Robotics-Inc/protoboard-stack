@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/cloud",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Client for the Protoboard parts library: search, part revisions and verified downloads.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
