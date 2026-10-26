@@ -1,7 +1,7 @@
 # protoboard
 
-The command line for [Protoboard](https://github.com/Delta-Robotics-Inc/protoboard-stack):
-design hardware with your AI agent. **[protoboard.ai](https://protoboard.ai)**
+The command line for [Protoboard](https://protoboard.ai): design hardware
+with your AI agent.
 
 A Protoboard project describes a device as code: its modules, the
 interfaces between them, and the cables that connect them. `protoboard`
@@ -54,6 +54,7 @@ any MCP client) with `protoboard agents setup`, then ask it what to build.
 ## Learn more
 
 - [protoboard.ai](https://protoboard.ai)
+- [Source code](https://github.com/Delta-Robotics-Inc/protoboard-stack)
 - [Installation guide](https://github.com/Delta-Robotics-Inc/protoboard-stack/blob/main/docs/guides/installation.md),
   by operating system and agent
 - [Report an issue](https://github.com/Delta-Robotics-Inc/protoboard-stack/issues)
