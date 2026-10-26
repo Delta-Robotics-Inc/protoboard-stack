@@ -1,0 +1,1161 @@
+{
+  "artifacts": [
+    {
+      "id": "art_learn_guide",
+      "name": "Adafruit VL53L4CD Learn guide (PDF)",
+      "type": "documentation",
+      "url": "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf"
+    },
+    {
+      "id": "art_product_page",
+      "name": "Adafruit product 5396",
+      "type": "documentation",
+      "url": "https://www.adafruit.com/product/5396"
+    },
+    {
+      "id": "art_pcb",
+      "name": "Adafruit-VL53L4CD-PCB (EagleCAD, CC BY-SA 3.0)",
+      "type": "schematic",
+      "url": "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+    },
+    {
+      "id": "art_st_datasheet",
+      "name": "ST VL53L4CD datasheet DS13812 Rev 8",
+      "type": "datasheet",
+      "url": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf"
+    },
+    {
+      "description": "Manufacturer STEP, committed (MIT (Copyright (c) 2016 Adafruit Industries); committed with the licence text).",
+      "filePath": "library/parts/adafruit-5396-vl53l4cd/artifacts/cad/5396-Adafruit-VL53L4CD.step",
+      "format": "step",
+      "id": "cad_vendor_step",
+      "name": "5396-Adafruit-VL53L4CD STEP (manufacturer)",
+      "provenance": {
+        "sourceDigest": "cc5d1703c2866f5ae976983377cd6242deacab597ac12354c698209f2d79880f",
+        "tool": "manufacturer"
+      },
+      "role": "source",
+      "type": "3d_model",
+      "units": "mm",
+      "url": "https://raw.githubusercontent.com/adafruit/Adafruit_CAD_Parts/main/5396%20VL53L4CD%20Sensor/5396%20Adafruit%20VL53L4CD.step"
+    },
+    {
+      "description": "Converted locally from the vendor STEP by library/cad/py/vendor_step.py (gitignored).",
+      "filePath": "library/parts/adafruit-5396-vl53l4cd/artifacts/cad/vendor/5396-Adafruit-VL53L4CD.glb",
+      "format": "glb",
+      "id": "cad_vendor_glb",
+      "name": "5396-Adafruit-VL53L4CD (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adafruit-5396-vl53l4cd/artifacts/cad/adafruit-5396-vl53l4cd-vendor.manifest.json",
+      "format": "json",
+      "id": "cad_vendor_manifest",
+      "name": "5396-Adafruit-VL53L4CD vendor feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/adafruit-5396-vl53l4cd/artifacts/cad/vendor/interfaces/mount.glb",
+      "format": "glb",
+      "id": "cad_vendor_if_mount",
+      "name": "mount geometry (vendor)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adafruit-5396-vl53l4cd/artifacts/cad/vendor/interfaces/stemma_qt_1.glb",
+      "format": "glb",
+      "id": "cad_vendor_if_stemma_qt_1",
+      "name": "stemma_qt_1 geometry (vendor)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adafruit-5396-vl53l4cd/artifacts/cad/vendor/interfaces/stemma_qt_2.glb",
+      "format": "glb",
+      "id": "cad_vendor_if_stemma_qt_2",
+      "name": "stemma_qt_2 geometry (vendor)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "sensor",
+    "sensor.distance",
+    "expansion.breakout"
+  ],
+  "description": "Adafruit breakout (product 5396) for the ST VL53L4CD time-of-flight proximity sensor: 940 nm Class 1 VCSEL, 0-1200 mm with full 18° diagonal FoV (1300 mm typical at 50 % detection on a white target), linear from 1 mm, up to 100 Hz. 3-5 V supply and logic via an LP5907-2.8 regulator and BSS138 I2C level shifter; I2C at 0x29 on a 6-pin header and two STEMMA QT / Qwiic sockets; 2.8 V open-drain interrupt (GPIO) and active-low XSHUT. 25.4 x 17.78 mm board, four Φ2.5 mm holes, 1.8 g.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "current_note": "Sensor figures only (ST Table 14, 2.8 V, 23 °C, AVDD + AVDDVCSEL); the power LED and regulator quiescent current are not stated.",
+        "level_shifter": "BSS138 dual N-MOSFET (Q3) on SDA/SCL, 10K pull-ups both sides (R7)",
+        "regulator": "LP5907-2.8 (U3), VIN to 2.8 V",
+        "sensor_current_mA": {
+          "hw_standby_uA_typ": 5,
+          "peak": 40,
+          "ranging_avg_max": 24,
+          "ranging_avg_typ": 22
+        }
+      },
+      "power_domains": [
+        {
+          "id": "vin",
+          "max_current_mA": 40,
+          "name": "VIN (3-5 V)",
+          "nominal_voltage_V": 3.3,
+          "voltage_range_V": [
+            3,
+            5
+          ]
+        },
+        {
+          "id": "vdd_2v8",
+          "name": "2.8 V sensor rail (LP5907-2.8 output, internal)",
+          "nominal_voltage_V": 2.8
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 4.53,
+        "length": 25.4,
+        "width": 17.78
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "board_thickness_mm": 1.6,
+        "cad": "Adafruit_CAD_Parts 5396 STEP (MIT), committed",
+        "corner_radius_mm": 2.54,
+        "mounting_holes": "4x Φ2.5 mm plated, 20.32 x 12.7 mm rectangle",
+        "product_page_dimensions_mm": [
+          25.5,
+          17.7,
+          4.6
+        ],
+        "sensor_position": "VL53L4CD at the board centre on the top face, facing +Z"
+      },
+      "weight_g": 1.8
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "note": "Sensor ambient operating range (ST Table 10); Adafruit gives no board-level rating."
+      },
+      "operating_temperature_C": [
+        -30,
+        85
+      ]
+    }
+  ],
+  "id": "adafruit-5396-vl53l4cd",
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "header",
+            "signature": {
+              "area_mm2": 29.594,
+              "centroid": [
+                12.7,
+                2.54,
+                0.785
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_1",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                2.352,
+                8.89,
+                3.078
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_2",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                23.048,
+                8.89,
+                3.078
+              ]
+            }
+          }
+        ]
+      },
+      "id": "vin",
+      "name": "VIN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            5
+          ],
+          "unit": "V",
+          "value": 3.3
+        }
+      ],
+      "pin": "VIN",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VIN — \"This is the power pin. To power the board, give it the same power as the logic level of your microcontroller - e.g. for a 3V microcontroller like a Feather M4, use 3V, or for a 5V microcontroller like Arduino, use 5V.\" Feeds the LP5907-2.8 regulator (2.8 V sensor rail) and the I2C pull-ups; also V+ on both STEMMA QT sockets.",
+            "source": [
+              "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header_2.54mm",
+            "note": "Header pin 1 (VIN); 1x6 0.1 in through-hole pads, header not soldered on (Eagle JP2).",
+            "pinout": [
+              "VIN",
+              "GND",
+              "SCL",
+              "SDA",
+              "GPIO",
+              "XSHUT"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "connector_type": "jst_sh_4",
+            "gender": "receptacle",
+            "note": "Two STEMMA QT / Qwiic JST-SH-4 sockets (one on each short edge), wired in parallel with the header's VIN, GND, SDA and SCL (pad 1 GND, 2 V+, 3 SDA, 4 SCL: Eagle STEMMA_I2C _QT device). Black or tan housings, same function (product page).",
+            "pinout": [
+              "GND",
+              "V+",
+              "SDA",
+              "SCL"
+            ],
+            "positions": 4
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "header",
+            "signature": {
+              "area_mm2": 29.594,
+              "centroid": [
+                12.7,
+                2.54,
+                0.785
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_1",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                2.352,
+                8.89,
+                3.078
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_2",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                23.048,
+                8.89,
+                3.078
+              ]
+            }
+          }
+        ]
+      },
+      "id": "gnd",
+      "name": "GND",
+      "pin": "GND",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GND — \"common ground for power and logic.\" Also GND on both STEMMA QT sockets.",
+            "source": [
+              "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header_2.54mm",
+            "note": "Header pin 2 (GND); 1x6 0.1 in through-hole pads, header not soldered on (Eagle JP2).",
+            "pinout": [
+              "VIN",
+              "GND",
+              "SCL",
+              "SDA",
+              "GPIO",
+              "XSHUT"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "connector_type": "jst_sh_4",
+            "gender": "receptacle",
+            "note": "Two STEMMA QT / Qwiic JST-SH-4 sockets (one on each short edge), wired in parallel with the header's VIN, GND, SDA and SCL (pad 1 GND, 2 V+, 3 SDA, 4 SCL: Eagle STEMMA_I2C _QT device). Black or tan housings, same function (product page).",
+            "pinout": [
+              "GND",
+              "V+",
+              "SDA",
+              "SCL"
+            ],
+            "positions": 4
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_sda"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "header",
+            "signature": {
+              "area_mm2": 29.594,
+              "centroid": [
+                12.7,
+                2.54,
+                0.785
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_1",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                2.352,
+                8.89,
+                3.078
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_2",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                23.048,
+                8.89,
+                3.078
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c_sda",
+      "name": "SDA",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "SDA",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SDA — \"I2C data pin, connect to your microcontroller I2C data line. There's a 10K pullup on this pin.\" (pull-up to VIN; BSS138 level shifter to the 2.8 V sensor side).",
+            "source": [
+              "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header_2.54mm",
+            "note": "Header pin 4 (SDA); 1x6 0.1 in through-hole pads, header not soldered on (Eagle JP2).",
+            "pinout": [
+              "VIN",
+              "GND",
+              "SCL",
+              "SDA",
+              "GPIO",
+              "XSHUT"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "connector_type": "jst_sh_4",
+            "gender": "receptacle",
+            "note": "Two STEMMA QT / Qwiic JST-SH-4 sockets (one on each short edge), wired in parallel with the header's VIN, GND, SDA and SCL (pad 1 GND, 2 V+, 3 SDA, 4 SCL: Eagle STEMMA_I2C _QT device). Black or tan housings, same function (product page).",
+            "pinout": [
+              "GND",
+              "V+",
+              "SDA",
+              "SCL"
+            ],
+            "positions": 4
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "header",
+            "signature": {
+              "area_mm2": 29.594,
+              "centroid": [
+                12.7,
+                2.54,
+                0.785
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_1",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                2.352,
+                8.89,
+                3.078
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_2",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                23.048,
+                8.89,
+                3.078
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c_scl",
+      "name": "SCL",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "SCL",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SCL — \"I2C clock pin, connect to your microcontroller I2C clock line. There's a 10K pullup on this pin.\" (pull-up to VIN; BSS138 level shifter to the 2.8 V sensor side).",
+            "source": [
+              "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header_2.54mm",
+            "note": "Header pin 3 (SCL); 1x6 0.1 in through-hole pads, header not soldered on (Eagle JP2).",
+            "pinout": [
+              "VIN",
+              "GND",
+              "SCL",
+              "SDA",
+              "GPIO",
+              "XSHUT"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "connector_type": "jst_sh_4",
+            "gender": "receptacle",
+            "note": "Two STEMMA QT / Qwiic JST-SH-4 sockets (one on each short edge), wired in parallel with the header's VIN, GND, SDA and SCL (pad 1 GND, 2 V+, 3 SDA, 4 SCL: Eagle STEMMA_I2C _QT device). Black or tan housings, same function (product page).",
+            "pinout": [
+              "GND",
+              "V+",
+              "SDA",
+              "SCL"
+            ],
+            "positions": 4
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "header",
+            "signature": {
+              "area_mm2": 29.594,
+              "centroid": [
+                12.7,
+                2.54,
+                0.785
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_1",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                2.352,
+                8.89,
+                3.078
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "stemma_qt_2",
+            "signature": {
+              "area_mm2": 163.833,
+              "centroid": [
+                23.048,
+                8.89,
+                3.078
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c",
+      "max_instances": 1,
+      "name": "I2C (VL53L4CD, level shifted)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            100000,
+            1000000
+          ],
+          "unit": "Hz"
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 41
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "i2c_scl",
+            "sda": "i2c_sda"
+          },
+          "id": "i2c_default",
+          "label": "I2C (VL53L4CD, level shifted)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Default 7-bit address 0x29 (Adafruit); ST writes it as 0x52/0x53 (8-bit write/read). The address can be changed in firmware; to put several sensors on one bus, hold the others in XSHUT while re-addressing (ST API). Fast mode 400 kHz and fast mode plus 1 MHz (ST §2.4, Tables 5-6).",
+            "source": [
+              "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+              "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "I2C clock on the breakout",
+            "reason": "1 MHz is the VL53L4CD's own limit (ST). Adafruit states no maximum for the board's BSS138 level shifter with 10K pull-ups, which may not reach 1 MHz on a loaded bus.",
+            "source": [
+              "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+            ],
+            "value": "up to 1 MHz"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "interrupt_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "header",
+            "signature": {
+              "area_mm2": 29.594,
+              "centroid": [
+                12.7,
+                2.54,
+                0.785
+              ]
+            }
+          }
+        ]
+      },
+      "id": "gpio",
+      "name": "GPIO (interrupt out)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 2.8
+        }
+      ],
+      "pin": "GPIO",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO — \"This is the interrupt output pin, it is 2.8V logic level output - it can be read by 3.3V and most 5V logic microcontrollers.\" The sensor's GPIO1 is an open-drain interrupt output (ST Table 4), pulled up to the 2.8 V rail by R2 10K on the board, with no level shifter.",
+            "source": [
+              "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+              "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header_2.54mm",
+            "note": "Header pin 5 (GPIO); 1x6 0.1 in through-hole pads, header not soldered on (Eagle JP2).",
+            "pinout": [
+              "VIN",
+              "GND",
+              "SCL",
+              "SDA",
+              "GPIO",
+              "XSHUT"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "header",
+            "signature": {
+              "area_mm2": 29.594,
+              "centroid": [
+                12.7,
+                2.54,
+                0.785
+              ]
+            }
+          }
+        ]
+      },
+      "id": "xshut",
+      "name": "XSHUT",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "XSHUT",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "XSHUT — \"This is the shutdown pin. It is active low, and is logic-level shifted so you can use 3V or 5V logic.\" On the board it reaches the sensor through a 1N4148 diode (cathode to the pin) with a 10K pull-up to 2.8 V, so the pin only pulls XSHUT low; unconnected, the sensor stays enabled. Low = hardware standby (ST §3.3).",
+            "source": [
+              "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB",
+              "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header_2.54mm",
+            "note": "Header pin 6 (XSHUT); 1x6 0.1 in through-hole pads, header not soldered on (Eagle JP2).",
+            "pinout": [
+              "VIN",
+              "GND",
+              "SCL",
+              "SDA",
+              "GPIO",
+              "XSHUT"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            12.7,
+            8.89,
+            0
+          ],
+          "symmetryDeg": 180,
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "mount",
+            "signature": {
+              "area_mm2": 49.323,
+              "centroid": [
+                12.7,
+                8.89,
+                0.785
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_if_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "mount",
+      "name": "Mounting holes",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 20.32
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 4
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 2.5
+        },
+        {
+          "id": "hole_spacing_y",
+          "unit": "mm",
+          "value": 12.7
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "component"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "Φ2.5 mm plated hole (fastener not named)",
+            "note": "Four Φ2.5 mm plated holes at (2.54, 2.54), (22.86, 2.54), (2.54, 15.24), (22.86, 15.24) mm on the 25.4 x 17.78 mm board (Eagle .brd and Adafruit STEP agree): a 20.32 x 12.7 mm rectangle centred on the sensor.",
+            "shape": "rectangle",
+            "threaded": false
+          },
+          "type": "bolt_pattern"
+        },
+        {
+          "params": {
+            "field": "fastener diameter",
+            "reason": "Adafruit gives the drill (2.5 mm, Eagle MOUNTINGHOLE_2.5_PLATED) but names no fastener; the hole diameter is used as the fastener upper bound (M2 fits; M2.5 is a tight fit).",
+            "source": [
+              "https://github.com/adafruit/Adafruit-VL53L4CD-PCB",
+              "https://raw.githubusercontent.com/adafruit/Adafruit_CAD_Parts/main/5396%20VL53L4CD%20Sensor/5396%20Adafruit%20VL53L4CD.step"
+            ],
+            "value": "2.5 mm"
+          },
+          "type": "assumption"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Adafruit Industries",
+  "name": "Adafruit VL53L4CD Time of Flight Distance Sensor (STEMMA QT)",
+  "part_number": "5396",
+  "tags": [
+    "vl53l4cd",
+    "tof",
+    "time-of-flight",
+    "distance",
+    "proximity",
+    "i2c",
+    "0x29",
+    "stemma-qt",
+    "qwiic",
+    "interrupt",
+    "xshut",
+    "adafruit",
+    "breakout"
+  ],
+  "traits": [
+    {
+      "params": {
+        "emitter": "940 nm VCSEL, Class 1",
+        "fov_deg": 18,
+        "kind": "distance_sensor",
+        "max_ranging_frequency_Hz": 100,
+        "range_mm": "0 to 1200 mm with full FoV; linear from 1 mm; typical max 1200 mm @ 90 % / 1300 mm @ 50 % detection, white 88 % target indoors, 33 ms budget (outdoor overcast 550 / 600 mm)",
+        "sensor": "ST VL53L4CD",
+        "source": [
+          "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+          "https://www.adafruit.com/product/5396"
+        ]
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Temperature is the sensor's (ST Table 10); supply is the board's VIN (Adafruit).",
+        "operating_temperature_C": [
+          -30,
+          85
+        ],
+        "source": [
+          "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+          "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf"
+        ],
+        "supply_voltage_V": [
+          3,
+          5
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "note": "Sensor pins AVDD, SCL, SDA, XSHUT, GPIO1: -0.5 to 3.6 V (ST Table 11). On the breakout, VIN/SDA/SCL/XSHUT are buffered (regulator, level shifter, diode) for 3-5 V; GPIO connects straight to the sensor pin, so do not pull it above 3.6 V. Storage -40 to 125 °C.",
+        "source": [
+          "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+          "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "note": "\"This jumper is located on the back of the board. Cut the trace on this jumper to cut power to the 'on' LED.\"",
+        "source": "https://learn.adafruit.com/adafruit-vl53l4cd-time-of-flight-distance-sensor.pdf",
+        "topic": "LED jumper"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "The 940 nm emitter is Class 1 (ST). Keep the sensor aperture clear; the sensor can work behind a cover window (ST features).",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+        "topic": "laser safety and aperture"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "From 20 Nov 2023 the PCB has the Pinguin silkscreen; boards with the older vector-font silkscreen are otherwise identical, and the STEMMA QT sockets may be black or tan.",
+        "source": "https://www.adafruit.com/product/5396",
+        "topic": "board revision"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "ranging distance",
+        "resolution": "No conflict of substance: 1200 mm is the full-FoV figure at 90 % detection and 1300 mm the typical at 50 % detection (white target, indoors). Both recorded in the performance trait.",
+        "sources": [
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/adafruit-vl53l4cd-breakout/definition.json",
+          "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+          "https://www.adafruit.com/product/5396"
+        ],
+        "values": [
+          "1-1200 mm (ProtoPart)",
+          "0 to 1200 mm full FoV, linear from 1 mm (ST features, §6.2)",
+          "~1 to 1300 mm (Adafruit product title)",
+          "1300 mm typical @ 50 % detection (ST Table 16)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "board dimensions",
+        "resolution": "Product page rounds the 1.0 x 0.7 in board; the board file and STEP are used for geometry.",
+        "sources": [
+          "https://www.adafruit.com/product/5396",
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/adafruit-vl53l4cd-breakout/definition.json",
+          "https://github.com/adafruit/Adafruit-VL53L4CD-PCB",
+          "https://raw.githubusercontent.com/adafruit/Adafruit_CAD_Parts/main/5396%20VL53L4CD%20Sensor/5396%20Adafruit%20VL53L4CD.step"
+        ],
+        "values": [
+          "25.5 x 17.7 x 4.6 mm (product page, ProtoPart)",
+          "25.4 x 17.78 mm board, 4.53 mm over the STEMMA QT sockets (Eagle .brd, STEP)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "sensor supply",
+        "resolution": "ProtoPart quoted the bare sensor's range. On the breakout the sensor rail is the regulator's fixed 2.8 V and is not exposed on a pin; modelled as an internal power domain only.",
+        "sources": [
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/adafruit-vl53l4cd-breakout/definition.json",
+          "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+          "https://github.com/adafruit/Adafruit-VL53L4CD-PCB"
+        ],
+        "values": [
+          "vdd_sensor 2.6-3.5 V (ProtoPart)",
+          "AVDD 2.6-3.5 V (ST Table 12)",
+          "fixed 2.8 V from the LP5907-2.8 (schematic)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "board supply current",
+        "note": "Adafruit states no total current; only the sensor's (ST Table 14) is known. LED and LP5907 quiescent current are not given on the product page or guide."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

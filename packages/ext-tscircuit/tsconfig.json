@@ -1,0 +1,1 @@
+{ "extends": "../../tsconfig.base.json", "include": ["ops", "lib", "test", "evals"], "exclude": ["test/.tmp", "test/fixtures/**/tscircuit"] }

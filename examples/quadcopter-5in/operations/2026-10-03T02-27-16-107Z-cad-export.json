@@ -1,0 +1,69 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "dolphinrc-sh8-fc-esc-cable",
+    "config": "src/harnesses/dolphinrc-sh8-fc-esc-cable/cad.config.ts",
+    "configDigest": "sha256:5aeac23cbf01a132d85b0062b9ec254dae7641b8b4055e9d1a79067f45e57aa4"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:03bd8a6dfd2b5cb78fd8b98cee829a24df4449d2b2882e2a7b1512e5451db0a0",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0"
+    }
+  ],
+  "startedAt": "2026-10-03T02:27:16.107Z",
+  "status": "succeeded",
+  "summary": "stack/sh8_cable: body.glb, body.step and body.manifest.json in src/harnesses/dolphinrc-sh8-fc-esc-cable/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/dolphinrc-sh8-fc-esc-cable/out/body.glb",
+      "digest": "sha256:856caeeeeb8199fb29819ecd4b40ab0b1ce66e0280eff53264745bbee53dd718",
+      "bytes": 307500,
+      "description": "stack/sh8_cable: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/dolphinrc-sh8-fc-esc-cable/out/body.step",
+      "digest": "sha256:5565e62e055333e536f2ebb3fc0285f0dc8b8474e0dac8c2f1f6602dce4fdd52",
+      "bytes": 2693107,
+      "description": "stack/sh8_cable: swept solids"
+    },
+    {
+      "path": "src/harnesses/dolphinrc-sh8-fc-esc-cable/out/body.manifest.json",
+      "digest": "sha256:7925d595314d1c2926e8794eb5bca793cde5898af332df385ac75ea464575504",
+      "bytes": 3773,
+      "description": "stack/sh8_cable: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "dolphinrc-sh8-fc-esc-cable",
+    "path": "stack/sh8_cable",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 50,
+    "route_length_mm": 49.86,
+    "slack_mm": 1.18,
+    "bend_mm": {
+      "target": 4,
+      "minimum": 2.5,
+      "centreline": 3.02,
+      "conductors": 1.2,
+      "at_terminations": 2.6
+    },
+    "clearance_mm": 4.51,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T02:27:21.406Z"
+}

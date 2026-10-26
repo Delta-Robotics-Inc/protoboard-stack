@@ -1,0 +1,796 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "release",
+  "extension": {
+    "id": "@protoboard/ext-release",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "allow-dirty": "false",
+    "check": "false"
+  },
+  "projectDigest": "sha256:123d40575d26b6af7763e509850699a5321120aac50c8ce69633247feb6fcc93",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T07:28:53.514Z",
+  "status": "succeeded",
+  "summary": "release/0.1.0: 2 unit(s), 11 documents (63 pages), 117 files; package 418dce5fad28",
+  "outputs": [
+    {
+      "path": "release/0.1.0/00-overview.pdf",
+      "digest": "sha256:fe8a20e51e450a9789da4aa3596144078240cdbf6222951e665878be9b257094",
+      "bytes": 428754,
+      "description": "overview, order of work, index and traceability"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Bold.ttf",
+      "digest": "sha256:fb8e3bd30f23195495f577c21919a4e56f74a204e8e895bbfc667da86e42b6dd",
+      "bytes": 43468,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Medium.ttf",
+      "digest": "sha256:f2f83fce1c8edbf8bc8e630aff724c80242d919319d1ea4c6ddf4a64c4f014ca",
+      "bytes": 43572,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Regular.ttf",
+      "digest": "sha256:76b65c04b353e2e38f8b0f7fecad2d1820c902d2dde500f161d009a011a3b153",
+      "bytes": 43476,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-SemiBold.ttf",
+      "digest": "sha256:d41ea722f247efb86fce550219927d05afbb3432f59b34890801b719eabed349",
+      "bytes": 43564,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-stack-01-stack.png",
+      "digest": "sha256:394ed3c0ba11b3c79f5edac061c672db2bc2936d85771ccfbfa7debfe158e8fc",
+      "bytes": 353567,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-01-motors.png",
+      "digest": "sha256:f1c813504a86e2701b033536e3f8938ae936c6a4dd4bad4f690202a65481a561",
+      "bytes": 148423,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-02-stack.png",
+      "digest": "sha256:4a98c5113d423994a7491ed30ddf000014c02ccd9ab81035c2cbfd1193e4082b",
+      "bytes": 155595,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-03-motor-wiring.png",
+      "digest": "sha256:f1eade11de75c862e87f9d7984f92e6751dc78b3b3e7ce8db9528b119cb359a4",
+      "bytes": 239968,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-04-power.png",
+      "digest": "sha256:646d999d318aa0c3cc6e13643c42471d37c7dc22f8e1ad70ce2c043fd4aaf964",
+      "bytes": 269805,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-05-air-unit.png",
+      "digest": "sha256:d35ba0362dd9b69f8c0d30a669bc157df3fc61625406b4c86c7f7d3107b8c5fc",
+      "bytes": 161459,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-06-video-wiring.png",
+      "digest": "sha256:8f5d48add218a1e1abc1d291894b65741790784d17c89cf187d32fd25e39278d",
+      "bytes": 293027,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-07-receiver.png",
+      "digest": "sha256:0577f7f0f1c4b58522a9416328e98ca42a18a12ee35e329576e2f6495b04dd6c",
+      "bytes": 373653,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-08-top-plate.png",
+      "digest": "sha256:c0c0f67738c70e5df043ead7f7957e5c10465a06c0496bbc8c3fe9d7ca058cf7",
+      "bytes": 160978,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-09-gnss.png",
+      "digest": "sha256:553ca64f7da47dcf7af945f5161ecfb27310ca3330cfab0c4dfd5056b427044a",
+      "bytes": 166350,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-10-battery.png",
+      "digest": "sha256:33ee3fd2819dec83044509160d8ffa4839e61fe46206a5cf5b5dcf59157362df",
+      "bytes": 166985,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-11-props.png",
+      "digest": "sha256:2da8556c340afbd805c39475861da0d0f1c863a05fae2767ea18c145cd859706",
+      "bytes": 262659,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-dji-o4-3in1-cable.png",
+      "digest": "sha256:9b6a73aaa3cf22f04a75d64751d315cf840ea1e1e3b1840d56949c7fe5ea5492",
+      "bytes": 65070,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-dolphinrc-sh8-fc-esc-cable.png",
+      "digest": "sha256:46a97a437270c82c4c3ea299181f83346dffadbe74d4e1b737f60e8daeda7ed9",
+      "bytes": 108858,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-dolphinrc-xt60-battery-lead.png",
+      "digest": "sha256:13e9d97bf4f9106cba0b1c8282445cd82c48afaee2352a28eb618fc613f1bab4",
+      "bytes": 48685,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-matek-gh6p-gnss-lead.png",
+      "digest": "sha256:c428394e9712d9fc6814606402e1240050a7ae06921211f0d370339bc9e40623",
+      "bytes": 40226,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-meps-phase-leads-m1.png",
+      "digest": "sha256:70009e50934e4e9e20ced1b211c63c7613bed4ada24666a2d133f213081688fd",
+      "bytes": 28669,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-meps-phase-leads-m2.png",
+      "digest": "sha256:8bc33f2b380874c1dad24fe50d7280b05a2e2dd678058a795065935bb0d66d45",
+      "bytes": 21110,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-meps-phase-leads-m3.png",
+      "digest": "sha256:7483f604bc422c8dccbec6af1d60a1bf8fe1cca68502a61ec66582b201a5796a",
+      "bytes": 25021,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-meps-phase-leads-m4.png",
+      "digest": "sha256:9493ef6fe7e2fe3f41696c2c356ed59a052669c7597ccc8d29e81f2aa9ba52df",
+      "bytes": 25226,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-panasonic-eeu-fr1v471-leads.png",
+      "digest": "sha256:9a4e0024e2ba9bafd0dec2386071ec25a90da5a172683cb8b23d5b0e4fc7fd0e",
+      "bytes": 23632,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-quadcopter-5in-frame.png",
+      "digest": "sha256:5400208c2d5e94a6b33f3045c79dc2c02c8f96eb00638eb22c9db54bd93d0a27",
+      "bytes": 86035,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-quadcopter-5in-top-plate.png",
+      "digest": "sha256:26b5a81d4e162727df85e698e9c97b685ef25c97b45551306a67619bcf105184",
+      "bytes": 69178,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-radiomaster-rp1-crsf-wire.png",
+      "digest": "sha256:de3ed75072e5d2273734fe7a286811596487bbfb5e1eee2a10c3d5fcbb3e850a",
+      "bytes": 47090,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-cnhl-black-series-1100mah-6s-100c.png",
+      "digest": "sha256:b042e92100418b647892b181d354fca5db539ed58776ab95200208e1fe043c8d",
+      "bytes": 17883,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-dji-o4-3in1-cable.png",
+      "digest": "sha256:d1a4f3ac8af4210510922cc3ec49b16d2a5c6dbdc5cf5149023d28aa95b401d4",
+      "bytes": 29506,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-dji-o4-air-unit.png",
+      "digest": "sha256:fe48f30bc9609dc98bb0648f9ce6104b8277180309fdf6744a32097c7cda205c",
+      "bytes": 10697,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-dolphinrc-am32-60a-4in1-esc.png",
+      "digest": "sha256:3857f4dcc824d417102b77d2bc391987003f45f6c2b3347c453abc6136339408",
+      "bytes": 18678,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-dolphinrc-f405-v3-flight-controller.png",
+      "digest": "sha256:7ddf24f3b17ccbc5b9e8c3b6ed6230d25099b9b4ecabbb3f74f68749464f8823",
+      "bytes": 18983,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-dolphinrc-sh8-fc-esc-cable.png",
+      "digest": "sha256:c4f4111265f4ac2ffbd4723436c2f8d1ec842746924ecc11ba34e5a35185e00c",
+      "bytes": 44992,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-dolphinrc-xt60-battery-lead.png",
+      "digest": "sha256:062da4fa2146050b9b395659f421581900ab7d1030fae78d4dc314c2a9be9447",
+      "bytes": 23103,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ettinger-005-83-060-m3-nylon-spacer-6mm.png",
+      "digest": "sha256:0f77b13a98102346e814fd13da734116d088a93aa80254365830e4f80c1d9919",
+      "bytes": 9980,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-hqprop-ethix-s5.png",
+      "digest": "sha256:9f23cc308f965fca9ddc8c21baa30ef0f5a4fd949f73b2920150eaea6e8fe921",
+      "bytes": 21360,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-10511-m2-nyloc-nut.png",
+      "digest": "sha256:7b72c068e9ed1be9025718445125ff39972ad35f623eec8f2a7d54cba617def4",
+      "bytes": 10662,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-10511-m3-nyloc-nut.png",
+      "digest": "sha256:c9aa2be8fda99fbcd5bd80211e384638a72a548c5742dcde5f67416d8c2351f3",
+      "bytes": 10601,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-4762-m2x12.png",
+      "digest": "sha256:8cdbc3f8e84a33b82ce6e0221a47692e06b54a5c424be4e78ed14b6ea9e48215",
+      "bytes": 7331,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-4762-m2x18.png",
+      "digest": "sha256:ab3f5c67ae4c8f55bcd326ab9b3abf1eff53fe7cc89beefdc367483d843e8e80",
+      "bytes": 6585,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-4762-m3x30-socket-head-cap-screw.png",
+      "digest": "sha256:f133727e0beeb67cab741f05480badb7ea60fcf599d478b0281cc6424d5083c0",
+      "bytes": 6399,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-4762-m3x8.png",
+      "digest": "sha256:6ef13a54221097d4d8533d028528720742031d2b5312126cf86d0bb2671b9e2d",
+      "bytes": 9118,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-m2-nylon-spacer-3mm.png",
+      "digest": "sha256:107288d6de1fe7bd869f70ced416eb34c655bed644b06ea0681aad73e2c65836",
+      "bytes": 10595,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-m2-nylon-spacer-5mm.png",
+      "digest": "sha256:2e03447166bdbb4f416a8a424bf0ab8e03a6942549d6f4ac85c713994b9a31f8",
+      "bytes": 9335,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-m3-aluminium-standoff-30mm.png",
+      "digest": "sha256:430cf6a611d1c33a8243768b67febf56644815a7def524e2add39407739a9eec",
+      "bytes": 6121,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-matek-gh6p-gnss-lead.png",
+      "digest": "sha256:38aafbec1c8ce34f2183ee70214ed86fd896489af1c1fd6e392449e6cd7f6185",
+      "bytes": 23026,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-meps-neon-2207-v2-1950kv.png",
+      "digest": "sha256:c7afef5b078fa6adb219ce4f6743d6c68ea71682e663e07e2f0a16526f0acdba",
+      "bytes": 24947,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-meps-phase-leads-m1.png",
+      "digest": "sha256:2821a4351c60189350dfa5fd500ca079f20d6a39f3549528b457a0bf83bf84cc",
+      "bytes": 14966,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-meps-phase-leads-m2.png",
+      "digest": "sha256:4104cca5b6d7fd1cb866063b331a7250b861d1db49ba95020850c69712ef846c",
+      "bytes": 18722,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-meps-phase-leads-m3.png",
+      "digest": "sha256:a4db4d59129dbdd882d82d468c74276dff9234dd816d5ec27329bcace6768b71",
+      "bytes": 25849,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-meps-phase-leads-m4.png",
+      "digest": "sha256:19bccb056fb2d38e1fd15b85cb36d903262d398ac4dbc83d092e9d6cea0b66a5",
+      "bytes": 13638,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-motor-screw-m3x8.png",
+      "digest": "sha256:6ef13a54221097d4d8533d028528720742031d2b5312126cf86d0bb2671b9e2d",
+      "bytes": 9118,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-o4-camera-screw-m2x5.png",
+      "digest": "sha256:162b10d14747fb15bebef2157b9b4dbea07e1ac4a9f3a6c9f0afc04c93a8ceab",
+      "bytes": 9282,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-panasonic-eeu-fr1v471-leads.png",
+      "digest": "sha256:7146b0f608a5881ddacf4b879d98ef18d82d6a3d2483581d1c5055f6a2772326",
+      "bytes": 22579,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-panasonic-eeu-fr1v471.png",
+      "digest": "sha256:50f3ec2a5ea02e2de95191dfc2d6be2d82611a619aa20e79d0139f6fd057b262",
+      "bytes": 11687,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-quadcopter-5in-frame.png",
+      "digest": "sha256:26f3a6136335074198f82b656f1222de19e3426a26f808f72bd6b3d90376b8e1",
+      "bytes": 17974,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-quadcopter-5in-top-plate.png",
+      "digest": "sha256:5013275495df223f7afcf986f0eb1c85a0059e856569c778d7334acc3b42bbfa",
+      "bytes": 13011,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-radiomaster-rp1-crsf-wire.png",
+      "digest": "sha256:85f60c6118432c2480e5c8d0e22bbf8a1b09ec59765d51ebcb80d15acddaec6f",
+      "bytes": 19511,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-radiomaster-rp1-v2-elrs-2g4.png",
+      "digest": "sha256:559509917a4b082e6939831f7200f9002c293cbc8b33d724eafbc55e40ee818f",
+      "bytes": 13105,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-stack.png",
+      "digest": "sha256:9eb9cedd0df49c7f732bcbb2c4d2a7fade752be8ea0a936f8964e32a972b6232",
+      "bytes": 196305,
+      "description": "assembled unit, line art from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-system.png",
+      "digest": "sha256:46a958229bc55408db100c12954fec0eab39f770f032b163e1cdc792658dc02e",
+      "bytes": 315530,
+      "description": "assembled unit, line art from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-thumb-stack.png",
+      "digest": "sha256:2fbea340b1507eac71374ddf4c7bcf2bc6b7586e43e9457311936ad84f801c05",
+      "bytes": 26458,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/index.html",
+      "digest": "sha256:1ca873442680e96b5b0d954bcca4c325638855ec8e3103de7ac6341957ce8fb0",
+      "bytes": 270230,
+      "description": "the whole package, by unit and by section"
+    },
+    {
+      "path": "release/0.1.0/system/assembly-guide.pdf",
+      "digest": "sha256:26b8207eedf7536572fbff3406c7e733fb74920a0654193451cbcb16c72ffd8b",
+      "bytes": 1956504,
+      "description": "Assembly guide"
+    },
+    {
+      "path": "release/0.1.0/system/bom.csv",
+      "digest": "sha256:44070d7d8216ebb622a3fee887f6524afbaf1916adc6220abfae422721e677eb",
+      "bytes": 8236,
+      "description": "module breakdown of one build"
+    },
+    {
+      "path": "release/0.1.0/system/bom.pdf",
+      "digest": "sha256:cf1e7b3aef61ffcd16bd47f71fa1f08a55ec078526f27c832c4ee68b2602143f",
+      "bytes": 219522,
+      "description": "Bill of materials"
+    },
+    {
+      "path": "release/0.1.0/system/files/firmware/betaflight-cli.txt",
+      "digest": "sha256:00c26beb0769e0033c319eff0865c41cfc46064b2213aaa43c89ea633eb64fda",
+      "bytes": 2901,
+      "description": "Betaflight CLI configuration"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/dji-o4-3in1-cable/cut-list.csv",
+      "digest": "sha256:fde75259c2ebc1869765cf0d90c7775ea3e38ff9ebb795c19362c01294f35729",
+      "bytes": 527,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/dji-o4-3in1-cable/dji-o4-3in1-cable.glb",
+      "digest": "sha256:ac30477aa70688740fd2afde8df22dcdee3b132a46cf63620bb2b5121894375a",
+      "bytes": 245816,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/dji-o4-3in1-cable/dji-o4-3in1-cable.step",
+      "digest": "sha256:0236982f57765e13709d42562c26d9af7bea0f4d88c3c99f0edc1e952c2c31d5",
+      "bytes": 2245260,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/dolphinrc-xt60-battery-lead/cut-list.csv",
+      "digest": "sha256:34ccebf63212aa01fc7e68e6ab692abbf2daa73e0fe284922f6c823e68c54d94",
+      "bytes": 263,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/dolphinrc-xt60-battery-lead/dolphinrc-xt60-battery-lead.glb",
+      "digest": "sha256:237d072e964c044aecc8841776ebed73cc11feea2e699bfca9d539123d091921",
+      "bytes": 81200,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/dolphinrc-xt60-battery-lead/dolphinrc-xt60-battery-lead.step",
+      "digest": "sha256:a53f79775104468b58a0b3d2fcbf567e2a7d5517be1c57694ca776729fb16b64",
+      "bytes": 617811,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/matek-gh6p-gnss-lead/cut-list.csv",
+      "digest": "sha256:14a8d4d2c12fe577004b5678d5b9517a0b3b9471e9f02c10d6edf6ed50726ed0",
+      "bytes": 495,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/matek-gh6p-gnss-lead/matek-gh6p-gnss-lead.glb",
+      "digest": "sha256:05ac3fc0c7a3f46db0ccb15505f7cff4a7ad5d1f1c92adf558e9603f7fb3019c",
+      "bytes": 510412,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/matek-gh6p-gnss-lead/matek-gh6p-gnss-lead.step",
+      "digest": "sha256:10357b271cdef9fd4dc3a17349bc64f96a30f2da9cabd75d5fa0a149c3b88362",
+      "bytes": 4729767,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m1/cut-list.csv",
+      "digest": "sha256:6759f0f68a2fb868c46e1c1df3798a5d26496ad4261ddee7fcefb31a898007cd",
+      "bytes": 450,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m1/meps-phase-leads-m1.glb",
+      "digest": "sha256:660aeeb0b5bd174af58300a71156f6a7115ef1e7029474c5c16ab1a5d95325bb",
+      "bytes": 206824,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m1/meps-phase-leads-m1.step",
+      "digest": "sha256:cefc57b76c38c4d6501aec075decc89408187eb7fa17fc22af5a75e15feb9276",
+      "bytes": 2357072,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m2/cut-list.csv",
+      "digest": "sha256:6759f0f68a2fb868c46e1c1df3798a5d26496ad4261ddee7fcefb31a898007cd",
+      "bytes": 450,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m2/meps-phase-leads-m2.glb",
+      "digest": "sha256:8ee77c9561e355342a64ab21c7747d86d1b894b17b1825b068c63e68807e8ba3",
+      "bytes": 205368,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m2/meps-phase-leads-m2.step",
+      "digest": "sha256:755485c8d33ad46aee933a1e36e34ed094aa2bb7b90403193fd6b09bd7bebb69",
+      "bytes": 2443497,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m3/cut-list.csv",
+      "digest": "sha256:6759f0f68a2fb868c46e1c1df3798a5d26496ad4261ddee7fcefb31a898007cd",
+      "bytes": 450,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m3/meps-phase-leads-m3.glb",
+      "digest": "sha256:71d98aecdb830dbe958ac640f3771935351b6113b1ac8f9605d5455d02db8c44",
+      "bytes": 205404,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m3/meps-phase-leads-m3.step",
+      "digest": "sha256:321c9e8ebccfa09b774aff52d658ade03b7d5889961251f9beed06da51d69009",
+      "bytes": 2443970,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m4/cut-list.csv",
+      "digest": "sha256:6759f0f68a2fb868c46e1c1df3798a5d26496ad4261ddee7fcefb31a898007cd",
+      "bytes": 450,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m4/meps-phase-leads-m4.glb",
+      "digest": "sha256:31d10eb130e1ba83dd634e163c81bccbdab70f2e35cce60aad365c963681df06",
+      "bytes": 206824,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/meps-phase-leads-m4/meps-phase-leads-m4.step",
+      "digest": "sha256:457f10fbb98b5c11d34405a4f452d4795ae7e2823a348eefabfdfb7321d19f33",
+      "bytes": 2356149,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/panasonic-eeu-fr1v471-leads/cut-list.csv",
+      "digest": "sha256:c251981a5a99ebbee76e9da4ffdb56ff16c8a207e271f879e4b27fc57c5a656e",
+      "bytes": 269,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/panasonic-eeu-fr1v471-leads/panasonic-eeu-fr1v471-leads.glb",
+      "digest": "sha256:8410701095f296c4e7985baea01eda57f1d839467f125f394cfe5d005dad29ab",
+      "bytes": 56668,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/panasonic-eeu-fr1v471-leads/panasonic-eeu-fr1v471-leads.step",
+      "digest": "sha256:3d58edf69ce9b5494cc9f5d8d97132701995b5e4caea14bb06e8a80589384220",
+      "bytes": 131771,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/radiomaster-rp1-crsf-wire/cut-list.csv",
+      "digest": "sha256:332a5cbb842a9fa9392c96569f76d32a76413e4250ed173edc686627169d8299",
+      "bytes": 477,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/radiomaster-rp1-crsf-wire/radiomaster-rp1-crsf-wire.glb",
+      "digest": "sha256:bb871ceb0a2a2327bb656ead439ec0b9492b977a75d7967f014f7d34c7224570",
+      "bytes": 222744,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/radiomaster-rp1-crsf-wire/radiomaster-rp1-crsf-wire.step",
+      "digest": "sha256:52a78be0f684316cfc371bce4cdf5d025c0528ebc3786ae623a75c7163948259",
+      "bytes": 2044119,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/quadcopter-5in-frame/quadcopter-5in-frame.dxf",
+      "digest": "sha256:61743dd701e44f7916232a0e577d67a51bc22c51a0f7b5b990288897e343c0b4",
+      "bytes": 28615,
+      "description": "cutting profile (DXF)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/quadcopter-5in-frame/quadcopter-5in-frame.step",
+      "digest": "sha256:d03fc3f25858f3c3bc04f5356053d9c041a716bbce4631d84e03bc5a44b37cce",
+      "bytes": 802732,
+      "description": "body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/quadcopter-5in-top-plate/quadcopter-5in-top-plate.dxf",
+      "digest": "sha256:67fd22fe5d5bd26f5683e77079e794cb9f1f79723226c76b35d05dfbb291ce7a",
+      "bytes": 18148,
+      "description": "cutting profile (DXF)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/quadcopter-5in-top-plate/quadcopter-5in-top-plate.step",
+      "digest": "sha256:1edc07b694b891b0ae0fac7423a163b8097a79b54ac957e6b5e1114aa5c15362",
+      "bytes": 175975,
+      "description": "body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/model/uhd-bundle.json",
+      "digest": "sha256:04e026b11c6e34c58f90fecccd87ace82803e39219ecda361aa9dc00e595f1b1",
+      "bytes": 751781,
+      "description": "UHD bundle of the released system"
+    },
+    {
+      "path": "release/0.1.0/system/files/test/test-record.csv",
+      "digest": "sha256:8c8d6476c4c87fca3e21575de4980ddc3ff6e091f1e23d1cb9859b8d4afdbb89",
+      "bytes": 11266,
+      "description": "test record to fill in, one row per check"
+    },
+    {
+      "path": "release/0.1.0/system/ordering-list.csv",
+      "digest": "sha256:9c33f2819a3b253e0a14ab4dd0ef596b7d0f57740eb494eb2743e48063608261",
+      "bytes": 9700,
+      "description": "whole-product ordering list"
+    },
+    {
+      "path": "release/0.1.0/system/spec-sheet.pdf",
+      "digest": "sha256:78b4155e4d59c20cf5f75f05eb0b282c16e763b4e94dff7cc399e29939f1c68d",
+      "bytes": 601061,
+      "description": "Spec sheet"
+    },
+    {
+      "path": "release/0.1.0/system/test-plan.pdf",
+      "digest": "sha256:6e0e675d8e25b153a992a75edcf0f850f24e78e103d2016f9e350f417a343e0d",
+      "bytes": 226381,
+      "description": "Test and validation plan"
+    },
+    {
+      "path": "release/0.1.0/system/work-order.pdf",
+      "digest": "sha256:20ec09d17f695b2f761acd7dc773bfba8de4a22455b29674cf6ba107feeabc92",
+      "bytes": 371796,
+      "description": "Work order"
+    },
+    {
+      "path": "release/0.1.0/units/stack/assembly-guide.pdf",
+      "digest": "sha256:3b26690cb866c7828daeca2e46ab8c98975fbcca05d473d68dd1e10e123bc9ec",
+      "bytes": 263686,
+      "description": "Assembly guide"
+    },
+    {
+      "path": "release/0.1.0/units/stack/bom.csv",
+      "digest": "sha256:9f20670c718e0447c10e69bc87933c5496396671f2ac6617ff346d28d1db9f2e",
+      "bytes": 774,
+      "description": "module breakdown of one build"
+    },
+    {
+      "path": "release/0.1.0/units/stack/bom.pdf",
+      "digest": "sha256:cb2202ce89b930562f09a953ab757d29c72bc6e2bc7ff889cf21e7b79288fc7c",
+      "bytes": 28689,
+      "description": "Bill of materials"
+    },
+    {
+      "path": "release/0.1.0/units/stack/files/harnesses/dolphinrc-sh8-fc-esc-cable/cut-list.csv",
+      "digest": "sha256:e101297a681088ea8c92d1b36a0c8f256d760ba88167d5d4460bf17daa33c525",
+      "bytes": 535,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/units/stack/files/harnesses/dolphinrc-sh8-fc-esc-cable/dolphinrc-sh8-fc-esc-cable.glb",
+      "digest": "sha256:856caeeeeb8199fb29819ecd4b40ab0b1ce66e0280eff53264745bbee53dd718",
+      "bytes": 307500,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/units/stack/files/harnesses/dolphinrc-sh8-fc-esc-cable/dolphinrc-sh8-fc-esc-cable.step",
+      "digest": "sha256:5565e62e055333e536f2ebb3fc0285f0dc8b8474e0dac8c2f1f6602dce4fdd52",
+      "bytes": 2693107,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/units/stack/files/test/test-record.csv",
+      "digest": "sha256:6fd3580a98c95b05ad21ba516affaea506c728287127f3e38a367f9d841b946b",
+      "bytes": 1647,
+      "description": "test record to fill in, one row per check"
+    },
+    {
+      "path": "release/0.1.0/units/stack/spec-sheet.pdf",
+      "digest": "sha256:d831737c610893b7ad7c04e567f8cc8836edeb535de7f05ff8c68cdc15a24c06",
+      "bytes": 222697,
+      "description": "Spec sheet"
+    },
+    {
+      "path": "release/0.1.0/units/stack/test-plan.pdf",
+      "digest": "sha256:25c4f8025fe6b5b700c83b4ade157305f81dc39bb7e4b3d475831e4b15e26c81",
+      "bytes": 69211,
+      "description": "Test and validation plan"
+    },
+    {
+      "path": "release/0.1.0/units/stack/work-order.pdf",
+      "digest": "sha256:118cca3d54ebe13d0dabf4e427bffc840de346a7ab0ea81d66b7ab44ba566910",
+      "bytes": 71924,
+      "description": "Work order"
+    },
+    {
+      "path": "release/0.1.0/manifest.json",
+      "digest": "sha256:03219f03201beba2abf61702f7f8a91eaa2f40c4fea857a2fb379f3de6641a5e",
+      "bytes": 71381,
+      "description": "release manifest"
+    }
+  ],
+  "data": {
+    "status": "succeeded",
+    "summary": "release/0.1.0: 2 unit(s), 11 documents (63 pages), 117 files; package 418dce5fad28",
+    "diagnostics": [],
+    "version": "0.1.0",
+    "dir": "release/0.1.0",
+    "units": [
+      {
+        "id": "stack",
+        "folder": "units/stack",
+        "perProduct": 1
+      },
+      {
+        "id": "system",
+        "folder": "system",
+        "perProduct": 1
+      }
+    ],
+    "documents": [
+      {
+        "path": "00-overview.pdf",
+        "pages": 7
+      },
+      {
+        "path": "units/stack/spec-sheet.pdf",
+        "pages": 3
+      },
+      {
+        "path": "units/stack/bom.pdf",
+        "pages": 1
+      },
+      {
+        "path": "units/stack/work-order.pdf",
+        "pages": 3
+      },
+      {
+        "path": "units/stack/assembly-guide.pdf",
+        "pages": 2
+      },
+      {
+        "path": "units/stack/test-plan.pdf",
+        "pages": 3
+      },
+      {
+        "path": "system/spec-sheet.pdf",
+        "pages": 5
+      },
+      {
+        "path": "system/bom.pdf",
+        "pages": 4
+      },
+      {
+        "path": "system/work-order.pdf",
+        "pages": 13
+      },
+      {
+        "path": "system/assembly-guide.pdf",
+        "pages": 14
+      },
+      {
+        "path": "system/test-plan.pdf",
+        "pages": 8
+      }
+    ],
+    "packageDigest": "sha256:418dce5fad28f1375d2e6f3de20b33db7e719f56bcf04ed79947fadfa5037c83",
+    "manifestDigest": "sha256:03219f03201beba2abf61702f7f8a91eaa2f40c4fea857a2fb379f3de6641a5e"
+  },
+  "finishedAt": "2026-10-03T07:29:15.143Z"
+}

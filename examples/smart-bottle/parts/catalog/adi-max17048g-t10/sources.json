@@ -1,0 +1,90 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "Analog Devices (Maxim Integrated) MAX17048/MAX17049 datasheet 19-6171 Rev 7 (11/16), 19 pages",
+    "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:32:00Z",
+    "sha256": "70dc8eef0e012276dcdc58b6dce64af08258304bcf865ceace64e856b8029330",
+    "note": "analog.com does not answer this machine (HTTP/2 INTERNAL_ERROR; the web fetcher timed out). The bytes were read from the Internet Archive capture of this URL (https://web.archive.org/web/20260924161950/https://www.analog.com/media/en/technical-documentation/data-sheets/max17048-max17049.pdf, captured 2026-09-24). They are identical (same sha256) to the SparkFun and LCSC copies below. The ADI product page names Rev. 7 as the most up-to-date revision.",
+    "supports": [
+      "p.1 features: 1 cell (MAX17048), +-7.5 mV/cell, 3 uA hibernate / 23 uA active, VRESET 2.28-3.48 V, alerts (low SOC, 1 % change, under/overvoltage, VRESET), I2C, 8-bit OTP ID; 0.9 x 1.7 mm WLP or 2 x 2 mm 8-pin TDFN",
+      "p.2 absolute maximum: CELL to GND -0.3 to +12 V; all other pins -0.3 to +6 V; SDA, ALRT continuous sink 20 mA; operating -40 to +85 C; storage -55 to +125 C; lead temperature (TDFN) +300 C 10 s; reflow +260 C",
+      "p.2 electrical characteristics (VDD 2.5-4.5 V, TA -20 to +70 C): VDD 2.5/4.5 V; VRST 2.28-3.48 V in 40 mV steps, trimmed 2.85/3.0/3.15 V; data I/O pins (SCL, SDA, ALRT) -0.3 to +5.5 V; IDD0 sleep 0.5/2 uA (TA <= 50 C), hibernate 3/5 uA (comparator disabled), 4 uA (enabled); IDD1 active 23/40 uA; time base +-1/+-3.5 %; ADC period 250 ms active, 45 s hibernate; VERR +-7.5 mV/cell at 3.6 V 25 C, +-20 mV/cell over range; resolution 1.25 mV/cell; measurement range 2.5-5 V on VDD (MAX17048); VIH 1.4 V, VIL 0.5 V (SDA, SCL, QSTRT); VOL 0.4 V at 4 mA (SDA, ALRT); IPD 0.2/0.4 uA; tSLEEP 1.75-2.5 s",
+      "p.3 I2C electrical characteristics: fSCL 0-400 kHz, bus capacitance 400 pF, input capacitance 60 pF; Note 6 shutdown after SCL and SDA < VIL for longer than 2.5 s",
+      "p.6 pin configuration (TDFN top view, pad side down: 1 CTG, 2 CELL, 3 VDD, 4 GND along one edge; 8 SDA, 7 SCL, 6 QSTRT, 5 ALRT along the other) and pin descriptions including EP (TDFN only, connect to GND)",
+      "p.8 battery insertion debounce: OCV ready 17 ms after insertion, SOC 175 ms after that",
+      "p.9-10 quick-start, POR, hibernate (below 5 uA), alert interrupt (ALRT driven low until CONFIG.ALRT cleared), sleep mode (MODE.EnSleep = 1 and bus low for tSLEEP, or CONFIG.SLEEP = 1)",
+      "p.10-14 register summary (VCELL 78.125 uV/cell, SOC 1/256 %, CRATE 0.208 %/hr, CONFIG default 0x971C, ATHD default 4 %), VRESET guidance (2.5 V for captive batteries), CMD 0x5400 reset",
+      "p.15 Figure 14 MAX17048 application circuit (VDD and CELL to the cell, 0.1 uF, CTG and QSTRT to GND) and Table 3 configurations; system must provide pull-ups for ALRT, SDA, SCL",
+      "p.16 I2C bus system: slave-only, 7-bit address 0b0110110 fixed (0x6C write / 0x6D read)",
+      "p.18 ordering information (MAX17048G+T10: -40 to +85 C, 8 TDFN-EP, + = lead-free/RoHS, T = tape and reel) and package information (8 TDFN-EP, package code T822+3, outline 21-0168, land pattern 90-0065)",
+      "p.19 revision history (Rev 7, 11/16)"
+    ]
+  },
+  {
+    "id": "src_datasheet_sparkfun",
+    "title": "MAX17048/MAX17049 datasheet 19-6171 Rev 7 (copy hosted by SparkFun, cited by the project briefs W9/B11)",
+    "url": "https://cdn.sparkfun.com/assets/learn_tutorials/1/4/6/3/MAX17048-MAX17049.pdf",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:28:00Z",
+    "sha256": "70dc8eef0e012276dcdc58b6dce64af08258304bcf865ceace64e856b8029330",
+    "note": "Byte-identical to src_datasheet; listed because the briefs cite it as the fallback copy.",
+    "supports": ["same document as src_datasheet"]
+  },
+  {
+    "id": "src_datasheet_lcsc",
+    "title": "MAX17048G+T10 datasheet linked from the LCSC product page C2682616",
+    "url": "https://datasheet.lcsc.com/datasheet/pdf/6ea2434b9fcbd476e93afe7bcb1f53c0.pdf",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:31:00Z",
+    "sha256": "70dc8eef0e012276dcdc58b6dce64af08258304bcf865ceace64e856b8029330",
+    "note": "Byte-identical to src_datasheet. The product page (https://www.lcsc.com/product-detail/C2682616.html) was saved for the link only; stock and price were not used.",
+    "supports": ["same document as src_datasheet; LCSC part C2682616 is MAX17048G+T10"]
+  },
+  {
+    "id": "src_package_drawing",
+    "title": "Maxim Integrated package outline 21-0168 Rev M: 8L TDFN exposed pad, 2 x 2 x 0.75 mm (2 pages)",
+    "url": "https://www.analog.com/media/en/package-pcb-resources/package/pkg_pdf/tdfn-ep/21-0168.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:32:00Z",
+    "sha256": "01e449022cf1c5e20834fcf2c3587e6a8725e707eed1caa000f095e891be9b0f",
+    "note": "The old URL https://pdfserv.maximintegrated.com/package_dwgs/21-0168.PDF redirects here. Read from the Internet Archive capture of this URL (https://web.archive.org/web/20251011203942/https://www.analog.com/media/en/package-pcb-resources/package/pkg_pdf/tdfn-ep/21-0168.pdf); PDF dated 2017-09-25.",
+    "supports": [
+      "common dimensions: A 0.70/0.75/0.80; D 1.90/2.00/2.10; E 1.90/2.00/2.10; A1 0.00-0.05; L 0.20/0.30/0.40; k 0.25 min; A2 0.20 REF",
+      "variation T822-3: N 8, D2 0.80 +-0.10, E2 1.20 +-0.10, e 0.50 typ, b 0.25 +-0.05, r 0.125, [(N/2)-1] x e 1.50 REF",
+      "top view: pin 1 index area at one corner, leads along the two E-side edges; bottom view: exposed pad E2 along the lead rows, D2 across, C0.25 x 45 deg pin-1 chamfer on the pad",
+      "notes: JEDEC MO229 except D2 and E2; dimensions apply to leaded (-) and Pb-free (+) codes"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "Analog Devices MAX17048 product page",
+    "url": "https://www.analog.com/en/products/max17048.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:33:00Z",
+    "sha256": "6306ceba8bb5ce1a28ae025ae74ed6c2111488ef56809e492d16c40cb2fc3bba",
+    "note": "Read from the Internet Archive capture of 2026-01-24 (https://web.archive.org/web/20260124231128/https://www.analog.com/en/products/max17048.html); the live page did not answer this machine.",
+    "supports": [
+      "Data Sheet (Rev. 7) is 'the most up-to-date revision'",
+      "MAX17048G+T10: PRODUCTION; package listed as LFCSP; PCN 2455A (assembly, Feb 10 2025)",
+      "CAD symbols, footprints and 3D models offered only through Ultra Librarian and SamacSys"
+    ]
+  },
+  {
+    "id": "src_cad_search",
+    "title": "Manufacturer and third-party CAD for MAX17048G+T10 (ADI product page CAD links to Ultra Librarian and SamacSys; SnapEDA part page)",
+    "url": "https://www.snapeda.com/parts/MAX17048G+T10/Maxim%20Integrated/view-part/",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:33:00Z",
+    "sha256": null,
+    "licence": "not stated on the ADI product page; the models sit behind Ultra Librarian, SamacSys and SnapEDA accounts and their own terms, which were not accepted. Not downloaded and not redistributed.",
+    "supports": ["where research looked for manufacturer CAD"]
+  }
+]

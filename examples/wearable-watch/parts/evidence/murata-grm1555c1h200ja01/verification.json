@@ -1,0 +1,21 @@
+{
+  "partId": "murata-grm1555c1h200ja01",
+  "recorded_at": "2026-10-03T08:38:36.110Z",
+  "audit": {
+    "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+    "checked": 8,
+    "confirmed": 8,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": "version added after the first automated check",
+  "assumptions": [
+    "terminal designators",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "mass"
+  ],
+  "vocabulary_gaps": []
+}

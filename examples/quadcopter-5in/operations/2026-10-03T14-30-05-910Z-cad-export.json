@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "dolphinrc-m3-grommet-esc",
+    "config": "parts/local/dolphinrc-m3-grommet-esc/cad.config.ts",
+    "configDigest": "sha256:1f26dc8887061edfd3e0775bb5f99f13d03f82925c05207e8bc8350247f44bc8",
+    "moduleDigest": "sha256:8df943f2f2bb4f53a8dcd0199a37c0b124b9d40e2d0bbfded15263c13d098852"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:fc12584971d5ab4f40f39d01a08ac49c8ca6e12242baf558e466155d62577a2f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:30:05.910Z",
+  "status": "succeeded",
+  "summary": "dolphinrc-m3-grommet-esc: body.step, body.glb, body.manifest.json in parts/local/dolphinrc-m3-grommet-esc/out (169.803 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/dolphinrc-m3-grommet-esc/out/body.step",
+      "digest": "sha256:f5b4b236449e6f161b45cef70019a31165f492040c98c5c1c896af82d9013d1d",
+      "bytes": 10838,
+      "description": "dolphinrc-m3-grommet-esc: nominal body"
+    },
+    {
+      "path": "parts/local/dolphinrc-m3-grommet-esc/out/body.glb",
+      "digest": "sha256:ead92d38bf0d13832f9bc262e79d352d77a896da82278b4f18c6cb1bc61dd938",
+      "bytes": 15572,
+      "description": "dolphinrc-m3-grommet-esc: viewer mesh"
+    },
+    {
+      "path": "parts/local/dolphinrc-m3-grommet-esc/out/body.manifest.json",
+      "digest": "sha256:908857f1fdced175df81605c8630e5c250d4b9bdf9662efaf48f269ff9d51e80",
+      "bytes": 552,
+      "description": "dolphinrc-m3-grommet-esc: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "dolphinrc-m3-grommet-esc",
+    "out": "parts/local/dolphinrc-m3-grommet-esc/out",
+    "volume_mm3": 169.803,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T14:30:11.649Z"
+}

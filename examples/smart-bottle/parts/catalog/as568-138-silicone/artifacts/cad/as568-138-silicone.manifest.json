@@ -1,0 +1,49 @@
+{
+  "artifact": "as568-138-silicone",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "54667872dace03fd0ac3184addc34fc05653478f9fe92f481c4341836b9ebcee",
+  "units": "mm",
+  "volume_mm3": 952.888,
+  "bodies": {
+    "o_ring": 952.888
+  },
+  "features": {
+    "seal_face": {
+      "area_mm2": 363.698,
+      "centroid": [
+        0.0,
+        0.0,
+        0.131
+      ],
+      "faces": 1
+    },
+    "gland_face": {
+      "area_mm2": 363.698,
+      "centroid": [
+        0.0,
+        0.0,
+        2.489
+      ],
+      "faces": 1
+    },
+    "outer_face": {
+      "area_mm2": 378.947,
+      "centroid": [
+        0.0,
+        0.0,
+        1.31
+      ],
+      "faces": 1
+    },
+    "inner_face": {
+      "area_mm2": 348.449,
+      "centroid": [
+        0.0,
+        0.0,
+        1.31
+      ],
+      "faces": 1
+    }
+  }
+}

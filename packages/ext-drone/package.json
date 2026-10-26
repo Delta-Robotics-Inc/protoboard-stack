@@ -1,0 +1,38 @@
+{
+  "name": "@protoboardai/ext-drone",
+  "version": "0.2.0",
+  "description": "Protoboard extension: multirotor flight-controller configuration from UHD",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-drone"
+  },
+  "type": "module",
+  "files": [
+    "protoboard-extension.json",
+    "ops",
+    "lib",
+    "skills",
+    "evals",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0",
+    "@protoboardai/ext-release": "^0.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@protoboardai/ext-release": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "panasonic-eeu-fr1v471-leads",
+    "config": "src/harnesses/panasonic-eeu-fr1v471-leads/cad.config.ts",
+    "configDigest": "sha256:8302e6e86af4fdea3221bfa642629648fb4e2693bc5c653e8e8a8c9c7b409795"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:896dceade0b819df1a8ae682cbbb49b5854609dc2c4ece551843350da8b910f2",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0"
+    }
+  ],
+  "startedAt": "2026-10-03T02:22:29.134Z",
+  "status": "succeeded",
+  "summary": "bulk_cap_leads: ok; routed around the parts and 2 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/panasonic-eeu-fr1v471-leads/harness-cad/route.json",
+      "digest": "sha256:ebe04a6bcad60bb91f4927378627b8dfd4e6f859d60affae00e4ec519268bc17",
+      "bytes": 9915,
+      "description": "bulk_cap_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        313,
+        313,
+        144
+      ],
+      "res_mm": 1,
+      "seconds": 22
+    },
+    "harnesses": [
+      {
+        "id": "panasonic-eeu-fr1v471-leads",
+        "path": "bulk_cap_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.01
+      }
+    ],
+    "context": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.98
+      },
+      {
+        "id": "dji-o4-3in1-cable",
+        "path": "dji_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 3.93
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-03T02:23:42.406Z"
+}

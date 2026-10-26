@@ -1,0 +1,42 @@
+# Weekly updates, grouped so each ecosystem opens one pull request a week:
+# the actions (pinned by commit SHA; Dependabot updates the SHA and the
+# version comment together), the workspace's npm packages and the VS Code
+# extension's own. Dependabot's commits are exempt from the DCO check.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directories: ["/", "/.github/actions/workspace"]
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # linked from the sibling checkouts (../uhd, ../uhd-viewer); their tags are pinned in .github/actions/workspace
+      - dependency-name: "@deltarobotics/*"
+      - dependency-name: "@protoboardai/*"
+      # the tscircuit packages are exact pins that move together (packages/ext-tscircuit/README.md, "Tools and versions")
+      - dependency-name: "@tscircuit/*"
+      - dependency-name: "circuit-json*"
+
+  - package-ecosystem: npm
+    directory: /packages/vscode-protoboard
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      extension-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: "@protoboardai/*"
+      # engines.vscode decides which editors can install the extension: raised on purpose, never by a bot
+      - dependency-name: "@types/vscode"

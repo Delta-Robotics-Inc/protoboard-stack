@@ -1,0 +1,65 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:4cb2860784921e35d2b0e668ae09e28c55a38a7b95d83cacca385fdd452122ae",
+    "moduleDigest": "sha256:b1744f10834176b01b730aa672b08162342f4623b8e7ce4709e3fb51c25808a7"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:85bb04d8e29c3b5e695df6cee740678f69a4e32683d12a55fc67c520e4f606ca",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T11:22:23.756Z",
+  "status": "succeeded",
+  "summary": "49 components (7 fixed, 42 layout), 37 nets → 159 traces, 130 vias in 52.9 s; 1 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/tscircuit/board.gen.tsx",
+      "digest": "sha256:7f68b1076c2d9990ba24dff519ec1b044cd657cbb9cbb41471cd6305a7c6ada3",
+      "bytes": 62988,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/circuit.json",
+      "digest": "sha256:ad773362398bac77d9eb146337954017111689313522786e45d03197da8e37b7",
+      "bytes": 1094216,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/build.json",
+      "digest": "sha256:0ec994ad4cdbe8d000fbc2aabffa3d0a4fc74f6ca2b0e8c0d8b8f1266db3995d",
+      "bytes": 18045,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 49,
+    "nets": 37,
+    "placement": {
+      "fixed": 7,
+      "layout": 42
+    },
+    "traces": 159,
+    "vias": 130,
+    "build_ms": 52874,
+    "errors": [
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_26] and pad pcb_port[.u2 > .OSDO] are too close (clearance: 0.08mm, minimum: 0.1mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T11:23:16.713Z"
+}

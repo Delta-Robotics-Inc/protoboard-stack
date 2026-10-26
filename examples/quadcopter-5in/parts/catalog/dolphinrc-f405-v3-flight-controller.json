@@ -1,0 +1,3943 @@
+{
+  "artifacts": [
+    {
+      "id": "manual",
+      "name": "DolphinRC F405 V3 FPV Stack User Manual V1.0",
+      "type": "datasheet",
+      "url": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+    },
+    {
+      "id": "product",
+      "name": "DolphinRC F405 V3 50A 60A STACK product page",
+      "type": "documentation",
+      "url": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+    },
+    {
+      "id": "review",
+      "name": "DolphinRC F405 V3 stack review (DolphinRC blog)",
+      "type": "documentation",
+      "url": "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+    },
+    {
+      "id": "bf_target",
+      "name": "Betaflight MATEKF405TE target config.h",
+      "type": "firmware",
+      "url": "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+    },
+    {
+      "filePath": "library/cad/py/parts.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "dolphinrc-f405-v3 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/dolphinrc-f405-v3.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "dolphinrc-f405-v3 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/dolphinrc-f405-v3.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "dolphinrc-f405-v3 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/dolphinrc-f405-v3.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "dolphinrc-f405-v3 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/stack_mount.glb",
+      "format": "glb",
+      "id": "cad_if_stack_mount",
+      "interfaceId": "stack_mount",
+      "name": "stack_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/rail_4v5.glb",
+      "format": "glb",
+      "id": "cad_if_rail_4v5",
+      "interfaceId": "rail_4v5",
+      "name": "rail_4v5 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart1_rx.glb",
+      "format": "glb",
+      "id": "cad_if_uart1_rx",
+      "interfaceId": "uart1_rx",
+      "name": "uart1_rx geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart1_tx.glb",
+      "format": "glb",
+      "id": "cad_if_uart1_tx",
+      "interfaceId": "uart1_tx",
+      "name": "uart1_tx geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/gnd.glb",
+      "format": "glb",
+      "id": "cad_if_gnd",
+      "interfaceId": "gnd",
+      "name": "gnd geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/bec_5v.glb",
+      "format": "glb",
+      "id": "cad_if_bec_5v",
+      "interfaceId": "bec_5v",
+      "name": "bec_5v geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/i2c1_sda.glb",
+      "format": "glb",
+      "id": "cad_if_i2c1_sda",
+      "interfaceId": "i2c1_sda",
+      "name": "i2c1_sda geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/i2c1_scl.glb",
+      "format": "glb",
+      "id": "cad_if_i2c1_scl",
+      "interfaceId": "i2c1_scl",
+      "name": "i2c1_scl geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart2_tx.glb",
+      "format": "glb",
+      "id": "cad_if_uart2_tx",
+      "interfaceId": "uart2_tx",
+      "name": "uart2_tx geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart2_rx.glb",
+      "format": "glb",
+      "id": "cad_if_uart2_rx",
+      "interfaceId": "uart2_rx",
+      "name": "uart2_rx geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/esc_socket.glb",
+      "format": "glb",
+      "id": "cad_if_esc_socket",
+      "interfaceId": "esc_socket",
+      "name": "esc_socket geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/rc_socket.glb",
+      "format": "glb",
+      "id": "cad_if_rc_socket",
+      "interfaceId": "rc_socket",
+      "name": "rc_socket geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/cam_socket.glb",
+      "format": "glb",
+      "id": "cad_if_cam_socket",
+      "interfaceId": "cam_socket",
+      "name": "cam_socket geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/dji_socket.glb",
+      "format": "glb",
+      "id": "cad_if_dji_socket",
+      "interfaceId": "dji_socket",
+      "name": "dji_socket geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/vtx_socket.glb",
+      "format": "glb",
+      "id": "cad_if_vtx_socket",
+      "interfaceId": "vtx_socket",
+      "name": "vtx_socket geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/gps_socket.glb",
+      "format": "glb",
+      "id": "cad_if_gps_socket",
+      "interfaceId": "gps_socket",
+      "name": "gps_socket geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "microcontroller.flight_controller",
+    "robotics.drone"
+  ],
+  "description": "STM32F405 flight controller, ICM-42688-P gyro, SPL06-001 baro, AT7456E OSD, 16M blackbox flash, 6 UARTs, 8 DShot motor outputs, 5 V 3 A and 10/12 V 2.5 A BECs, DJI O4 socket, 2-6S input, 30.5 x 30.5 mm. Betaflight target MATEKF405TE.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "power_domains": [
+        {
+          "id": "vbat",
+          "name": "VBAT",
+          "regulation_type": "unregulated",
+          "voltage_range_V": [
+            6,
+            30
+          ]
+        },
+        {
+          "id": "bec_5v",
+          "max_current_mA": 3000,
+          "name": "5V BEC",
+          "nominal_voltage_V": 5,
+          "regulation_type": "regulated"
+        },
+        {
+          "id": "bec_10v",
+          "max_current_mA": 2500,
+          "name": "10V/12V BEC",
+          "regulation_type": "regulated",
+          "voltage_range_V": [
+            10,
+            12
+          ]
+        },
+        {
+          "id": "bec_3v3",
+          "max_current_mA": 500,
+          "name": "3.3V BEC (no exposed pad)",
+          "nominal_voltage_V": 3.3,
+          "regulation_type": "regulated"
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 8,
+        "length": 36,
+        "width": 36
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "mounting": "30.5 x 30.5 mm, Φ4 mm holes",
+        "weight_note": "7.7±0.1 g excluding accessories (manual); product page says 8 g"
+      },
+      "weight_g": 7.7
+    },
+    {
+      "domain": "software",
+      "metadata": {
+        "betaflight_target": "MATEKF405TE",
+        "firmware": [
+          "Betaflight (default)",
+          "INAV",
+          "ArduPilot"
+        ]
+      }
+    }
+  ],
+  "id": "dolphinrc-f405-v3-flight-controller",
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "vbat_in",
+      "name": "VBAT",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            30
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "cell_count",
+          "range": [
+            2,
+            6
+          ],
+          "unit": "dimensionless"
+        }
+      ],
+      "pin": "VBAT",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VBAT pad / BAT pin of the ESC socket — FC supply input, 6~30V (2~6S LiPo); also the VBAT ADC.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -4.6,
+            -16.6,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "gnd",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                -4.6,
+                -16.6,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_gnd",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gnd",
+      "name": "GND",
+      "pin": "GND",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GND / G — ground (several pads and every socket's G pin).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -6.9,
+            -16.6,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "bec_5v",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                -6.9,
+                -16.6,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_bec_5v",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "bec_5v",
+      "name": "5V BEC",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 3
+        }
+      ],
+      "pin": "5V",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "5V — 5V 3A BEC output: 5V pads (edge, beside LEDS, beside SDA), camera socket 5V pin, LED strip 5V.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "bec_10v",
+      "name": "10V/12V BEC",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            10,
+            12
+          ],
+          "unit": "V",
+          "value": 10
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 2.5
+        }
+      ],
+      "pin": "10V",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "10V — high-voltage BEC output (2.5 A) for VTX / DJI air unit: 10V pad, VTX socket 10V, DJI socket 10V.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "high BEC voltage",
+            "resolution": "Project decision (2026-09-26): nominal 10 V per the board silkscreen and wiring diagram, range 10-12 V kept because the manual/product page state 12 V and the selection mechanism is undocumented. Both ends are within the DJI O4 input (3.7-13.2 V); measure the rail on the physical unit.",
+            "sources": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ],
+            "values": [
+              "12V 2.5A (manual spec table)",
+              "12V 2.5A (Or 10V 2.5A) (product page)",
+              "10V (silkscreen, LED label, wiring diagram)",
+              "9V (project brief; no source)"
+            ]
+          },
+          "type": "source_discrepancy"
+        },
+        {
+          "params": {
+            "note": "Manual p5-6: a VTX on/off switch is mapped to the USER2 mode (Betaflight PINIO2); when not triggered the VTX is unpowered. Product page: 'BEC switch to slow down VTX heating'. If unused, set the USER2 channel threshold to the maximum.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            2.3,
+            -16.6,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "rail_4v5",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                2.3,
+                -16.6,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_rail_4v5",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "rail_4v5",
+      "name": "4.5V",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "4.5V",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "4.5V — supply on the receiver (RC) and GPS sockets and two 4.5V pads.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "receiver/GPS supply voltage",
+            "resolution": "modelled as 4.5-5 V; current limit not stated.",
+            "sources": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+            ],
+            "values": [
+              "4.5V (silkscreen)",
+              "5V (wiring diagram wire labels)"
+            ]
+          },
+          "type": "source_discrepancy"
+        },
+        {
+          "params": {
+            "assumption": "Not stated by DolphinRC. The 4.5 V receiver/GPS rail is taken to branch from the 5 V BEC through a diode, as on the Matek F405-TE design this board's Betaflight target (MATEKF405TE) comes from; its loads are budgeted against the 5 V 3 A BEC.",
+            "interfaceId": "bec_5v",
+            "via": "diode (assumed)"
+          },
+          "type": "supplied_from"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m1",
+      "name": "M1",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 1
+        }
+      ],
+      "pin": "M1",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M1 — motor 1 ESC signal output; pad and ESC socket pin.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m2",
+      "name": "M2",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 2
+        }
+      ],
+      "pin": "M2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M2 — motor 2 ESC signal output; pad and ESC socket pin.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m3",
+      "name": "M3",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 3
+        }
+      ],
+      "pin": "M3",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M3 — motor 3 ESC signal output; pad and ESC socket pin.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m4",
+      "name": "M4",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 4
+        }
+      ],
+      "pin": "M4",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M4 — motor 4 ESC signal output; pad and ESC socket pin.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m5",
+      "name": "M5",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 5
+        }
+      ],
+      "pin": "M5",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M5 — motor 5 ESC signal output pad.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m6",
+      "name": "M6",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 6
+        }
+      ],
+      "pin": "M6",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M6 — motor 6 ESC signal output pad.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m7",
+      "name": "M7",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 7
+        }
+      ],
+      "pin": "M7",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M7 — motor 7 ESC signal output pad.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m8",
+      "name": "M8",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 8
+        }
+      ],
+      "pin": "M8",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M8 — motor 8 ESC signal output pad.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "analog_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "cur",
+      "name": "CUR",
+      "pin": "CUR",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "CUR — current-sensor ADC input (pad and ESC socket pin). Betaflight default current meter scale 150.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "esc_port",
+      "max_instances": 1,
+      "name": "ESC connector (8-pin SH)",
+      "profiles": [
+        {
+          "bindings": {
+            "current": "cur",
+            "gnd": "gnd",
+            "motor_1": "m1",
+            "motor_2": "m2",
+            "motor_3": "m3",
+            "motor_4": "m4",
+            "vbat": "vbat_in"
+          },
+          "default_active": true,
+          "id": "esc_port_default",
+          "label": "Connector pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "fc_esc_connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "motor_1",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "motor_2",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "motor_3",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "motor_4",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "vbat",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": false
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": false
+        },
+        {
+          "id": "current",
+          "match": {
+            "protocol": "analog",
+            "role": "input"
+          },
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Connect to the DolphinRC AM32 ESC with the included 50 mm SH 1.0 mm 8-pin cable. VOID pin is unused (no ESC telemetry line).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            17.7,
+            0,
+            -1.45
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "esc_socket",
+            "signature": {
+              "area_mm2": 29,
+              "centroid": [
+                17.7,
+                0,
+                -1.45
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_esc_socket",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "esc_socket",
+      "max_instances": 1,
+      "name": "ESC socket (SH1.0 8-pin)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "vbat_in",
+            "p2": "gnd",
+            "p3": "cur",
+            "p5": "m1",
+            "p6": "m2",
+            "p7": "m3",
+            "p8": "m4"
+          },
+          "default_active": true,
+          "id": "esc_socket_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "BAT",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "GND",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "CUR",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "VOID",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p5",
+          "label": "M1",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p6",
+          "label": "M2",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p7",
+          "label": "M3",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p8",
+          "label": "M4",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_sh_8",
+            "gender": "receptacle",
+            "note": "ESC socket, SH 1.0 mm 8-pin (included 50 mm SH 1.0 mm 8-pin cable). Wire labels BAT GND CUR VOID M1 M2 M3 M4 (manual p4). The same nets are also solder pads VBAT GND M1 M2 M3 M4 and CUR (manual p3). Pin 1 not marked; order from the BAT end.",
+            "pinout": [
+              "BAT",
+              "GND",
+              "CUR",
+              "VOID",
+              "M1",
+              "M2",
+              "M3",
+              "M4"
+            ],
+            "positions": 8
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector pin 1",
+            "reason": "Pin 1 is not marked in any source; order taken from the BAT end so the FC and ESC parts share one pinout (the included cable is 1:1).",
+            "value": "BAT end"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            17.7,
+            -11,
+            -1.45
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "rc_socket",
+            "signature": {
+              "area_mm2": 17.4,
+              "centroid": [
+                17.7,
+                -11,
+                -1.45
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_rc_socket",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "rc_socket",
+      "max_instances": 1,
+      "name": "Receiver socket (SH1.0 4-pin)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "gnd",
+            "p2": "rail_4v5",
+            "p3": "uart6_rx",
+            "p4": "uart6_tx"
+          },
+          "default_active": true,
+          "id": "rc_socket_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "G",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "4.5V",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "RX6",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "TX6",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_sh_4",
+            "gender": "receptacle",
+            "note": "Receiver socket, silkscreen 'G 4.5V RX6 TX6'; wiring diagram labels TX6 RX6 5V GND (receiver TX -> RX6, RX -> TX6). SH 1.0 mm 4-pin cables are included. Pin 1 not marked.",
+            "pinout": [
+              "G",
+              "4.5V",
+              "RX6",
+              "TX6"
+            ],
+            "positions": 4
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector pin 1",
+            "reason": "Pin 1 is not marked in any source; positions follow the silkscreen order printed beside the socket.",
+            "value": "first silkscreen label"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            -1,
+            0,
+            0
+          ],
+          "origin": [
+            -17.7,
+            11,
+            -1.45
+          ],
+          "xAxis": [
+            0,
+            -1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "gps_socket",
+            "signature": {
+              "area_mm2": 17.4,
+              "centroid": [
+                -17.7,
+                11,
+                -1.45
+              ],
+              "normal": [
+                -1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_gps_socket",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gps_socket",
+      "max_instances": 1,
+      "name": "GPS socket (SH1.0 4-pin)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "gnd",
+            "p2": "rail_4v5",
+            "p3": "uart4_rx",
+            "p4": "uart4_tx"
+          },
+          "default_active": true,
+          "id": "gps_socket_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "G",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "4.5V",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "RX4",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "TX4",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_sh_4",
+            "gender": "receptacle",
+            "note": "GPS socket, silkscreen 'G 4.5V RX4 TX4'; wiring diagram labels GND 5V RX4 TX4 (GPS TX -> RX4, GPS RX -> TX4). No I2C on this socket, so a GPS with a compass is wired to pads. Pin 1 not marked (dot beside G).",
+            "pinout": [
+              "G",
+              "4.5V",
+              "RX4",
+              "TX4"
+            ],
+            "positions": 4
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector pin 1",
+            "reason": "Pin 1 is not marked in any source; positions follow the silkscreen order printed beside the socket.",
+            "value": "first silkscreen label"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            -1,
+            0,
+            0
+          ],
+          "origin": [
+            -17.7,
+            -11,
+            -1.45
+          ],
+          "xAxis": [
+            0,
+            -1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "vtx_socket",
+            "signature": {
+              "area_mm2": 17.4,
+              "centroid": [
+                -17.7,
+                -11,
+                -1.45
+              ],
+              "normal": [
+                -1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_vtx_socket",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "vtx_socket",
+      "max_instances": 1,
+      "name": "VTX socket (SH1.0 4-pin)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "gnd",
+            "p2": "bec_10v",
+            "p3": "vtx_video",
+            "p4": "uart5_tx"
+          },
+          "default_active": true,
+          "id": "vtx_socket_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "G",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "10V",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "VTX",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "T5",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_sh_4",
+            "gender": "receptacle",
+            "note": "Analog VTX socket, silkscreen 'G 10V VTX T5'; T5 goes to the VTX IRC pin. Pin 1 not marked (dot beside G).",
+            "pinout": [
+              "G",
+              "10V",
+              "VTX",
+              "T5"
+            ],
+            "positions": 4
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector pin 1",
+            "reason": "Pin 1 is not marked in any source; positions follow the silkscreen order printed beside the socket.",
+            "value": "first silkscreen label"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            -1,
+            0,
+            0
+          ],
+          "origin": [
+            -17.7,
+            0,
+            -1.45
+          ],
+          "xAxis": [
+            0,
+            -1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "dji_socket",
+            "signature": {
+              "area_mm2": 23.2,
+              "centroid": [
+                -17.7,
+                0,
+                -1.45
+              ],
+              "normal": [
+                -1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_dji_socket",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "dji_socket",
+      "max_instances": 1,
+      "name": "DJI socket (6-pin)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "bec_10v",
+            "p2": "gnd",
+            "p3": "uart5_tx",
+            "p4": "uart5_rx",
+            "p5": "gnd",
+            "p6": "sbus"
+          },
+          "default_active": true,
+          "id": "dji_socket_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "10V",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "G",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "T5",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "R5",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p5",
+          "label": "G",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p6",
+          "label": "Sbus",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "dji_6pin",
+            "gender": "receptacle",
+            "note": "DJI O4 Air Unit socket, silkscreen '10V G T5 R5 G Sbus'; the included 150 mm DJI 6-pin cable maps to O4 10V GND RX TX GND SBUS. Connector series/pitch not stated. Pin 1 not marked.",
+            "pinout": [
+              "10V",
+              "G",
+              "T5",
+              "R5",
+              "G",
+              "Sbus"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector pin 1",
+            "reason": "Pin 1 is not marked in any source; positions follow the silkscreen order printed beside the socket.",
+            "value": "first silkscreen label"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            17.7,
+            10.5,
+            -1.45
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "cam_socket",
+            "signature": {
+              "area_mm2": 14.5,
+              "centroid": [
+                17.7,
+                10.5,
+                -1.45
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_cam_socket",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "cam_socket",
+      "max_instances": 1,
+      "name": "Camera socket (3-pin)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "cam_1",
+            "p2": "bec_5v",
+            "p3": "gnd"
+          },
+          "default_active": true,
+          "id": "cam_socket_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "C1",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "5V",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "G",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_sh_3",
+            "gender": "receptacle",
+            "note": "Camera socket, silkscreen 'C1 5V G'; included 150 mm 3-pin analog camera cable. Series not stated beyond the 3-pin cable. Pin 1 not marked.",
+            "pinout": [
+              "C1",
+              "5V",
+              "G"
+            ],
+            "positions": 3
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector pin 1",
+            "reason": "Pin 1 is not marked in any source; positions follow the silkscreen order printed beside the socket.",
+            "value": "first silkscreen label"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            -16.6,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "uart1_rx",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                0,
+                -16.6,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_uart1_rx",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "uart1_rx",
+      "name": "RX1",
+      "pin": "RX1",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "RX1 — UART1 receive pad.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -2.3,
+            -16.6,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "uart1_tx",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                -2.3,
+                -16.6,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_uart1_tx",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "uart1_tx",
+      "name": "TX1",
+      "pin": "TX1",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TX1 — UART1 transmit pad.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart1",
+      "name": "UART1",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "uart1_rx",
+            "tx": "uart1_tx"
+          },
+          "id": "uart1_default",
+          "label": "UART1"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART1: RX1/TX1 pads.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -16.6,
+            -1.27,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "uart2_rx",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                -16.6,
+                -1.27,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_uart2_rx",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "uart2_rx",
+      "name": "RX2",
+      "pin": "RX2",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "RX2 — UART2 receive pad.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -16.6,
+            1.27,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "uart2_tx",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                -16.6,
+                1.27,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_uart2_tx",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "uart2_tx",
+      "name": "TX2",
+      "pin": "TX2",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TX2 — UART2 transmit pad.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart2",
+      "name": "UART2",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "uart2_rx",
+            "tx": "uart2_tx"
+          },
+          "id": "uart2_default",
+          "label": "UART2"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART2: RX2/TX2 pads. The MATEKF405TE target defaults serial RX to UART2 and maps PPM to the UART2 RX pin.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart3_rx",
+      "name": "RX3",
+      "pin": "RX3",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "RX3 — UART3 receive pad ('ppm' is also printed near this pad; not claimed).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart3_tx",
+      "name": "TX3",
+      "pin": "TX3",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TX3 — UART3 transmit pad.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart3",
+      "name": "UART3",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "uart3_rx",
+            "tx": "uart3_tx"
+          },
+          "id": "uart3_default",
+          "label": "UART3"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART3: RX3/TX3 pads.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart4_rx",
+      "name": "RX4",
+      "pin": "RX4",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "RX4 — UART4 receive; pad and GPS socket.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart4_tx",
+      "name": "TX4",
+      "pin": "TX4",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TX4 — UART4 transmit; pad and GPS socket.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart4",
+      "name": "UART4",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "uart4_rx",
+            "tx": "uart4_tx"
+          },
+          "id": "uart4_default",
+          "label": "UART4"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART4: GPS socket 'G 4.5V RX4 TX4' and RX4/TX4 pads; manual wiring diagram shows a GPS here.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart5_rx",
+      "name": "R5",
+      "pin": "R5",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "R5 — UART5 receive, on the DJI socket only.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart5_tx",
+      "name": "TX5",
+      "pin": "TX5",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TX5 / T5 — UART5 transmit: TX5 pad, VTX socket T5 (to VTX IRC), DJI socket T5.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart5",
+      "name": "UART5",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "uart5_rx",
+            "tx": "uart5_tx"
+          },
+          "id": "uart5_default",
+          "label": "UART5"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART5: DJI O4 Air Unit link (DJI socket T5/R5) and analog VTX control (VTX socket T5 -> VTX IRC).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart6_rx",
+      "name": "RX6",
+      "pin": "RX6",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "RX6 — UART6 receive on the receiver socket (wire to receiver TX).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart6_tx",
+      "name": "TX6",
+      "pin": "TX6",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TX6 — UART6 transmit on the receiver socket (wire to receiver RX).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart6",
+      "name": "UART6",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "uart6_rx",
+            "tx": "uart6_tx"
+          },
+          "id": "uart6_default",
+          "label": "UART6"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART6: Receiver socket 'G 4.5V RX6 TX6'; manual wiring diagram shows the RC receiver here.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "sbus"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "sbus",
+      "name": "SBUS",
+      "parameters": [
+        {
+          "id": "baud_rate",
+          "unit": "Hz",
+          "value": 100000
+        }
+      ],
+      "pin": "SBUS",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "sbus"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SBUS — SBUS input pad; also the 'Sbus' pin of the DJI socket (O4 SBUS output).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_sda"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -9.2,
+            -16.6,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "i2c1_sda",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                -9.2,
+                -16.6,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_i2c1_sda",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "i2c1_sda",
+      "name": "SDA",
+      "pin": "SDA",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SDA — I2C data pad.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -11.5,
+            -16.6,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "i2c1_scl",
+            "signature": {
+              "area_mm2": 3.52,
+              "centroid": [
+                -11.5,
+                -16.6,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_i2c1_scl",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "i2c1_scl",
+      "name": "SCL",
+      "pin": "SCL",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SCL — I2C clock pad.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "i2c1",
+      "name": "I2C1",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "unit": "Hz",
+          "value": 400000
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "i2c1_scl",
+            "sda": "i2c1_sda"
+          },
+          "id": "i2c1_default",
+          "label": "I2C1"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "master"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "I2C1 (target I2C1: SCL PB8, SDA PB7); on-board barometer and external magnetometer use I2C1. Default 400 kHz is the builder default, not a source value.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "pwm_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "s1",
+      "name": "S1",
+      "pin": "S1",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "S1 — PWM output pad (product page: 10x PWM outputs, 8x DShot).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "pwm_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "s2",
+      "name": "S2",
+      "pin": "S2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "S2 — PWM output pad (product page: 10x PWM outputs, 8x DShot).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "led_strip"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "leds",
+      "name": "LEDS",
+      "pin": "LEDS",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "LEDS — WS2812 LED strip data output (wired to LED strip 'LED').",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "buzzer"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "bz_pos",
+      "name": "BZ+",
+      "pin": "BZ+",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "BZ+ — buzzer positive; wire to buzzer BZ+.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Buzzer pair; protocol 'custom' (no buzzer vocabulary). Betaflight target sets BEEPER_INVERTED.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "buzzer"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "bz_neg",
+      "name": "BZ-",
+      "pin": "BZ-",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "BZ- — buzzer negative; wire to buzzer BZ-.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Buzzer pair; protocol 'custom' (no buzzer vocabulary). Betaflight target sets BEEPER_INVERTED.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "analog_video"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "cam_1",
+      "name": "C1",
+      "pin": "C1",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "C1 — camera 1 video input (pad and camera socket 'C1 5V G').",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Analog composite video; protocol 'custom' (no video vocabulary, see gaps.json). OSD: AT7456E.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "analog_video"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "cam_2",
+      "name": "C2",
+      "pin": "C2",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "C2 — camera 2 video input pad (switchable dual camera; USER1 mode selects camera 2).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Analog composite video; protocol 'custom' (no video vocabulary, see gaps.json). OSD: AT7456E.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "analog_video"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "vtx_video",
+      "name": "VTX",
+      "pin": "VTX",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VTX — video output to the analog VTX (pad and VTX socket).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Analog composite video; protocol 'custom' (no video vocabulary, see gaps.json). OSD: AT7456E.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "usb",
+      "name": "USB Type-C",
+      "protocols": [
+        {
+          "roles": [
+            "device"
+          ],
+          "type": "usb"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "usb_c",
+            "gender": "receptacle",
+            "note": "USB Interface: Type-C (manual). Configuration and DFU flashing; boot button beside it (review)."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "USB Type-C port for configuration and firmware flashing.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "symmetryDeg": 90,
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "stack_mount",
+            "signature": {
+              "area_mm2": 80.425,
+              "centroid": [
+                0,
+                0,
+                0.8
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_stack_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "stack_mount",
+      "name": "30.5 x 30.5 mm stack mount",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 30.5
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 4
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 3
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "component"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "M3",
+            "note": "Hole: 30.5*30.5mm / Φ4mm (manual). M3*8mm rubber grommets for the FC are included (product page).",
+            "shape": "square",
+            "threaded": false
+          },
+          "type": "bolt_pattern"
+        },
+        {
+          "params": {
+            "description": "Four Φ4 mm corner mounting holes, 30.5 x 30.5 mm pattern.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "DolphinRC (Shenzhen DolphinRC Model Technology Co., Ltd.)",
+  "name": "DolphinRC F405 V3 Flight Controller",
+  "part_number": "DolphinRC F405 V3 (F405 V3 stack, SKU DPDZ00041 option 'F405-FC')",
+  "tags": [
+    "flight-controller",
+    "f405",
+    "stm32f405",
+    "betaflight",
+    "30.5x30.5",
+    "6s",
+    "fpv",
+    "drone",
+    "dji-o4"
+  ],
+  "traits": [
+    {
+      "params": {
+        "adc": [
+          "VBAT",
+          "Current",
+          "RSSI",
+          "Airspeed"
+        ],
+        "barometer": "SPL06-001",
+        "blackbox": "16M flash",
+        "esc_outputs": 8,
+        "firmware_target": "Betaflight MATEKF405TE",
+        "imu": "ICM-42688-P",
+        "kind": "flight_controller",
+        "mcu": "STM32F405RGT6, Cortex-M4 @ 168MHz",
+        "osd": "AT7456E",
+        "pwm_outputs": 10,
+        "source": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+        ],
+        "tvs": "SMBJ24A 26V",
+        "uarts": 6
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Flash Betaflight target MATEKF405TE. With bidirectional DShot (RPM filtering) on this F405, use DShot300 and at most 4K/4K loop time; DShot600 without bidirectional DShot.",
+        "source": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Camera switch: USER1 mode (PINIO1) — untriggered shows camera 1, triggered shows camera 2. VTX power: USER2 mode (PINIO2).",
+        "source": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "6x UARTs plus 1x Softserial_Tx option (INAV/BF).",
+        "source": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "board size",
+        "resolution": "36 x 36 x 8 mm.",
+        "sources": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+        ],
+        "values": [
+          "36*36*8 mm (spec table)",
+          "35.5 x 35.5 mm (size drawing)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "weight",
+        "resolution": "7.7 g (manual).",
+        "sources": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+        ],
+        "values": [
+          "7.7±0.1 g",
+          "8 g"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "barometer driver",
+        "resolution": "Hardware per manual; whether the target build detects the SPL06-001 is not stated.",
+        "sources": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://raw.githubusercontent.com/betaflight/config/master/configs/MTKS/MATEKF405TE/config.h"
+        ],
+        "values": [
+          "SPL06-001 (hardware)",
+          "USE_BARO_DPS310 (MATEKF405TE target)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "4.5V rail supply",
+        "reason": "No source states the 4.5 V rail's current limit or what feeds it; assumed from the MATEKF405TE target design so the GPS load can be budgeted. The data gap on the rail's own limit stays open.",
+        "value": "branch of bec_5v (5 V 3 A) via a diode"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "fields": [
+          "operating temperature",
+          "UART logic level",
+          "4.5V rail current limit",
+          "SBUS pad UART mapping / inversion",
+          "'ppm' label near RX3",
+          "RSSI / airspeed pad location",
+          "connector pin-1 orientation",
+          "DJI socket series and pitch"
+        ],
+        "note": "Not stated by any source."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

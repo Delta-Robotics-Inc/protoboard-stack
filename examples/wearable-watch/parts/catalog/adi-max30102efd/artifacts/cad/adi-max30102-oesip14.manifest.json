@@ -1,0 +1,268 @@
+{
+  "artifact": "adi-max30102-oesip14",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "6ec43a4ce96e9f9528586f764b670439ce3cba634f37f512b5ef772fe89373cc",
+  "units": "mm",
+  "volume_mm3": 28.355,
+  "bodies": {
+    "housing": 24.948,
+    "cover_glass": 1.833,
+    "sensor_window": 1.083,
+    "led_window": 0.431,
+    "pad_1": 0.004,
+    "pad_2": 0.004,
+    "pad_3": 0.004,
+    "pad_4": 0.004,
+    "pad_5": 0.004,
+    "pad_6": 0.004,
+    "pad_7": 0.004,
+    "pad_8": 0.004,
+    "pad_9": 0.004,
+    "pad_10": 0.004,
+    "pad_11": 0.004,
+    "pad_12": 0.004,
+    "pad_13": 0.004,
+    "pad_14": 0.004
+  },
+  "features": {
+    "pin_1": {
+      "area_mm2": 0.21,
+      "centroid": [
+        -1.2,
+        2.4,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.21,
+      "centroid": [
+        -1.2,
+        1.6,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_3": {
+      "area_mm2": 0.21,
+      "centroid": [
+        -1.2,
+        0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_4": {
+      "area_mm2": 0.21,
+      "centroid": [
+        -1.2,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_5": {
+      "area_mm2": 0.21,
+      "centroid": [
+        -1.2,
+        -0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_6": {
+      "area_mm2": 0.21,
+      "centroid": [
+        -1.2,
+        -1.6,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_7": {
+      "area_mm2": 0.21,
+      "centroid": [
+        -1.2,
+        -2.4,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_8": {
+      "area_mm2": 0.21,
+      "centroid": [
+        1.2,
+        -2.4,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_9": {
+      "area_mm2": 0.21,
+      "centroid": [
+        1.2,
+        -1.6,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_10": {
+      "area_mm2": 0.21,
+      "centroid": [
+        1.2,
+        -0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_11": {
+      "area_mm2": 0.21,
+      "centroid": [
+        1.2,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_12": {
+      "area_mm2": 0.21,
+      "centroid": [
+        1.2,
+        0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_13": {
+      "area_mm2": 0.21,
+      "centroid": [
+        1.2,
+        1.6,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_14": {
+      "area_mm2": 0.21,
+      "centroid": [
+        1.2,
+        2.4,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 2.94,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 14,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "sensor_window": {
+      "area_mm2": 5.417,
+      "centroid": [
+        0.0,
+        0.822,
+        1.55
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "led_window": {
+      "area_mm2": 2.155,
+      "centroid": [
+        0.0,
+        -1.64,
+        1.55
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

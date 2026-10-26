@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "dolphinrc-m3-grommet-esc",
+    "config": "parts/local/dolphinrc-m3-grommet-esc/cad.config.ts",
+    "configDigest": "sha256:1f26dc8887061edfd3e0775bb5f99f13d03f82925c05207e8bc8350247f44bc8",
+    "moduleDigest": "sha256:8df943f2f2bb4f53a8dcd0199a37c0b124b9d40e2d0bbfded15263c13d098852"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:3a9633607d9f4b5eb0a035d4992390b5e0ed35f7111c860d7ae7d0c5b52d5855",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:25:48.786Z",
+  "status": "succeeded",
+  "summary": "dolphinrc-m3-grommet-esc: spacer parameters in parts/local/dolphinrc-m3-grommet-esc/frame-cad; run cad:export for the body",
+  "outputs": [
+    {
+      "path": "parts/local/dolphinrc-m3-grommet-esc/frame-cad/params.json",
+      "digest": "sha256:3677a2080c619ac35a104f9a4a290f6165e314257a89b804bb9e2d9651fa485b",
+      "bytes": 274,
+      "description": "dolphinrc-m3-grommet-esc: generator parameters from its sizes"
+    }
+  ],
+  "data": {
+    "module": "dolphinrc-m3-grommet-esc",
+    "kind": "spacer",
+    "native": "parts/local/dolphinrc-m3-grommet-esc/frame-cad",
+    "params": {
+      "schema": "protoboard.hardware-cad.params/v0",
+      "module": "dolphinrc-m3-grommet-esc",
+      "name": "dolphinrc-m3-grommet-esc",
+      "part": {
+        "kind": "spacer",
+        "diameter": 3,
+        "length": 4,
+        "head_diameter": null,
+        "head_height": null,
+        "outer": 8.1
+      }
+    },
+    "generator": "@protoboard/ext-frame-cad/py/hardware_cad.py"
+  },
+  "finishedAt": "2026-10-03T18:25:51.410Z"
+}

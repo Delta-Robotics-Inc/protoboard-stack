@@ -1,0 +1,139 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs-verify",
+  "extension": {
+    "id": "@protoboard/ext-docs",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:58250ed97174ec839c5caaaab7a69c11021376c9eefe00be5bfb2e8cb454a855",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    },
+    {
+      "id": "poppler",
+      "available": true,
+      "detail": "pdfinfo version 24.02.0"
+    }
+  ],
+  "startedAt": "2026-10-03T10:34:25.349Z",
+  "status": "failed",
+  "summary": "5 error(s), 1 warning(s), 10 info",
+  "outputs": [
+    {
+      "path": "docs/.review/verify-report.json",
+      "digest": "sha256:a8e07a771d89be236224979587e3fe901a65839b260498d6f041bbbab2117913",
+      "bytes": 3005,
+      "description": "verification report"
+    }
+  ],
+  "data": {
+    "findings": [
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "values",
+        "severity": "info",
+        "message": "471 bound values re-resolved against the model"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "placeholders",
+        "severity": "error",
+        "message": "visible text contains \"undefined\" near \" MCP73831T-2ACI/OT 1 PURCHASE — audited undefined/undefined A 2 · gaps 3 13 Mura\""
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "images",
+        "severity": "info",
+        "message": "4 images checked"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "layout",
+        "severity": "error",
+        "message": "heading or keep-with-next block stranded at the end of the page (sec)",
+        "page": 10
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "layout",
+        "severity": "error",
+        "message": "table continuation with only 1 row(s)",
+        "page": 21
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "review",
+        "severity": "info",
+        "message": "21 page PNGs in docs/.review/wearable-watch-datasheet/ for the visual checklist"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "bom",
+        "severity": "info",
+        "message": "37 BOM lines match docs/wearable-watch-bom.json"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "values",
+        "severity": "info",
+        "message": "41 bound values re-resolved against the model"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "images",
+        "severity": "info",
+        "message": "88 images checked"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "layout",
+        "severity": "error",
+        "message": "page body overflows (content cut off)",
+        "page": 10
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "layout",
+        "severity": "error",
+        "message": "heading or keep-with-next block stranded at the end of the page (step step-top block keep-next)",
+        "page": 10
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "review",
+        "severity": "info",
+        "message": "23 page PNGs in docs/.review/wearable-watch-assembly-guide/ for the visual checklist"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 12, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "coverage",
+        "severity": "info",
+        "message": "4/4 mates, 0/0 hardware placements, 195/195 wiring links covered; 4 bodies placed by mates"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "coverage",
+        "severity": "warning",
+        "message": "doc spec leaves 1 automatic step(s); order them in docspec.ts"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T10:34:31.742Z"
+}

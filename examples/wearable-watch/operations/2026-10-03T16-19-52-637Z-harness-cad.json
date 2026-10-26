@@ -1,0 +1,135 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "harness-cad",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:f7e3f92356b7c9042fb16d34f43b40f6c92507942a2335917967d835819a5b0e",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T16:19:52.637Z",
+  "status": "succeeded",
+  "summary": "2/2 harness(es) routed and exported; 1 with warnings (battery_leads); 2 problem(s) in the model",
+  "outputs": [
+    {
+      "path": "src/harnesses/watch-battery-leads/harness-cad/route.json",
+      "digest": "sha256:28b8c531ba92351c1cebf0877508758606a88a5779c81582153d8b97fabe2c87",
+      "bytes": 5822,
+      "description": "battery_leads: route (native design)"
+    },
+    {
+      "path": "src/harnesses/watch-lra-leads/harness-cad/route.json",
+      "digest": "sha256:3ebb947e682cc516d1ee37dcc62d3f230b52dbfe95edda3e41da00ea3592c2ab",
+      "bytes": 3853,
+      "description": "lra_leads: route (native design)"
+    },
+    {
+      "path": "src/harnesses/watch-battery-leads/out/body.glb",
+      "digest": "sha256:28e254caf081a6bdd1b5fcf38aa5a7ff7a6a7be4b944203aa0148b9a3280077b",
+      "bytes": 40676,
+      "description": "battery_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/watch-battery-leads/out/body.step",
+      "digest": "sha256:050135d9ace08a0f62550b79c13e2c4d42f1c0134e9ec95debf0f2a0fab06bad",
+      "bytes": 65351,
+      "description": "battery_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/watch-battery-leads/out/body.manifest.json",
+      "digest": "sha256:32feb013dc644e3d404719faa159b09038e720adba4b9cbd9da383f5dbc5fed3",
+      "bytes": 2457,
+      "description": "battery_leads: route manifest (end frames, lengths, bends, clearance)"
+    },
+    {
+      "path": "src/harnesses/watch-lra-leads/out/body.glb",
+      "digest": "sha256:48c2ece1916b878233d1e37848b05dd10d7e8623a8417a0c4c3ef0d87069a4f7",
+      "bytes": 34888,
+      "description": "lra_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/watch-lra-leads/out/body.step",
+      "digest": "sha256:f2fee3cb21ce6b5663e23df7322a87a3dd4507cc4861d73dbba0f05475ef65b0",
+      "bytes": 26715,
+      "description": "lra_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/watch-lra-leads/out/body.manifest.json",
+      "digest": "sha256:1a10f7a91770f516f343b8014905550c1e8a4ed602882414dd675f1d4a98d359",
+      "bytes": 2088,
+      "description": "lra_leads: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "problems": [
+      "board/j3: no GLB body to route around (none declared)",
+      "board/j4: no GLB body to route around (none declared)"
+    ],
+    "map": {
+      "shape": [
+        129,
+        122,
+        118
+      ],
+      "res_mm": 1,
+      "seconds": 1.1
+    },
+    "harnesses": [
+      {
+        "id": "watch-battery-leads",
+        "path": "battery_leads",
+        "status": "warning",
+        "notes": [
+          "slack could not be laid clear: loop (not clear) (-0.15 mm worst clearance, 0.92 mm bend radius)"
+        ],
+        "length_mm": 7.5,
+        "route_length_mm": 7.09,
+        "slack_mm": 2.56,
+        "bend_mm": {
+          "target": 4.4,
+          "minimum": 2.75,
+          "centreline": null,
+          "conductors": 0.91,
+          "at_terminations": 0.65
+        },
+        "clearance_mm": null,
+        "step": "ok",
+        "search_s": 0
+      },
+      {
+        "id": "watch-lra-leads",
+        "path": "lra_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 6,
+        "route_length_mm": 4.67,
+        "slack_mm": null,
+        "bend_mm": {
+          "target": 4,
+          "minimum": 2.5,
+          "centreline": null,
+          "conductors": null,
+          "at_terminations": 0.9
+        },
+        "clearance_mm": null,
+        "step": "ok",
+        "search_s": 0
+      }
+    ],
+    "outputs": {
+      "watch-battery-leads": "src/harnesses/watch-battery-leads",
+      "watch-lra-leads": "src/harnesses/watch-lra-leads"
+    }
+  },
+  "finishedAt": "2026-10-03T16:20:03.327Z"
+}

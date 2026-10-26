@@ -1,0 +1,671 @@
+{
+  "schema": "protoboard.enclosure-cad.job/v0",
+  "module": "bottle-cap-enclosure",
+  "name": "bottle-cap-enclosure",
+  "root": "../../../..",
+  "process": "print",
+  "material": "PETG",
+  "inputsDigest": "sha256:138bd60b4f223ed3155bed586beb3ada169892483c3dbec55375d88d9ff805c2",
+  "design": {
+    "shape": "round",
+    "wall": 4.3,
+    "floor": 4,
+    "lid": 2.5,
+    "clearance": 0.5,
+    "clearance_top": 0.5,
+    "min_wall": 0.8,
+    "cavity": {
+      "centre": [
+        0,
+        0
+      ],
+      "radius": 35.7,
+      "z": [
+        4,
+        20.6
+      ]
+    },
+    "split_z": null,
+    "joint": {
+      "style": "twist",
+      "lip_height": 1.5,
+      "clearance": 0.15
+    },
+    "fasteners": "none",
+    "resolution": 0.25
+  },
+  "contents": [
+    {
+      "key": "board",
+      "label": "Bottle cap board",
+      "glb": "src/boards/bottle-cap/out/board.glb",
+      "digest": "sha256:e7a2c47a23b98333b20647c2daa2173f4895829c929c9aa09e93337950f15b13",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        7.1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "key": "cell",
+      "label": "LP503450 1000 mAh 3.7 V LiPo with PCM",
+      "glb": "parts/local/lipol-lp503450/lipol-lp503450.glb",
+      "digest": "sha256:d917d915efe896a5f2223cf4ce968239737f690ecf77cc6c3a5985aae09b869e",
+      "matrix": [
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        10.3,
+        0,
+        0,
+        0,
+        1
+      ],
+      "skip_nodes": [
+        "battery_out",
+        "charge_in",
+        "lead_neg",
+        "lead_pos",
+        "mount_face"
+      ]
+    },
+    {
+      "key": "battery_leads",
+      "label": "Cell leads",
+      "glb": "src/harnesses/bottle-battery-leads/out/body.glb",
+      "digest": "sha256:47f88c0eb00c0e1ac62c30edac173ddd93f83ac9b6b3a55d855352e67029d1e3",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "key": "probe_cable",
+      "label": "Probe cable",
+      "glb": "src/harnesses/bottle-probe-cable/out/body.glb",
+      "digest": "sha256:708033f7e8229949e2a427f88588a8ff722bb8d0afb35ba302e83745188ecb7b",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "neck",
+      "kind": "thread",
+      "params": {
+        "major_d_mm": 62.06,
+        "root_d_mm": 59.68,
+        "pitch_mm": 4.233,
+        "length_mm": 12,
+        "source": "SPI 63 mm neck finish (T, E, 6 TPI) [B21] as nalgene-32oz-wide-mouth states it",
+        "assumption": "The consumer bottle has the SPI 63 mm finish (nalgene-32oz-wide-mouth assumption traits); measure it before the thread is frozen (OQ-B4). The provider's symmetric trapezoid stands in for Nalgene's semi-buttress profile."
+      }
+    },
+    {
+      "id": "lip_seal",
+      "kind": "seal_gland",
+      "params": {
+        "type": "face",
+        "oring": {
+          "size": "AS568-138",
+          "id_mm": 53.64,
+          "id_tol_mm": 0.43,
+          "w_mm": 2.62,
+          "w_tol_mm": 0.08,
+          "source": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Parker Series 2-XXX O-Ring Sizes (AS 568A)"
+        },
+        "pressure": "internal",
+        "source": "AS568-138 proposed in docs/component-selection.md (O-rings) [B23]",
+        "table": {
+          "depth_mm": [
+            1.88,
+            2.032
+          ],
+          "width_mm": [
+            3.454,
+            3.607
+          ],
+          "squeeze_pct": [
+            20,
+            30
+          ],
+          "source": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Design Chart 4-2"
+        }
+      },
+      "frame": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "mates": [
+        "bottle"
+      ]
+    },
+    {
+      "id": "lid_seal",
+      "kind": "seal_gland",
+      "params": {
+        "type": "radial",
+        "oring": {
+          "size": "AS568-040",
+          "id_mm": 72.75,
+          "id_tol_mm": 0.51,
+          "w_mm": 1.78,
+          "w_tol_mm": 0.08,
+          "source": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Parker Series 2-XXX O-Ring Sizes (AS 568A)"
+        },
+        "at": "joint",
+        "source": "AS568-040 proposed in docs/component-selection.md (O-rings) [B23]; radial gland on the collar under the bayonet lid's skirt (D-B09)",
+        "table": {
+          "depth_mm": [
+            1.27,
+            1.321
+          ],
+          "width_mm": [
+            2.362,
+            2.489
+          ],
+          "squeeze_pct": [
+            22,
+            32
+          ],
+          "clearance_mm": [
+            0.051,
+            0.127
+          ],
+          "source": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Design Chart 4-1"
+        }
+      }
+    },
+    {
+      "id": "probe_seal",
+      "kind": "seal_gland",
+      "params": {
+        "type": "radial",
+        "oring": {
+          "size": "AS568-010",
+          "id_mm": 6.07,
+          "id_tol_mm": 0.13,
+          "w_mm": 1.78,
+          "w_tol_mm": 0.08,
+          "source": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Parker Series 2-XXX O-Ring Sizes (AS 568A)"
+        },
+        "rod_d_mm": 6,
+        "source": "Adafruit 381: stainless tube Ø6 mm [B4]; AS568-010 [B23]",
+        "table": {
+          "depth_mm": [
+            1.27,
+            1.321
+          ],
+          "width_mm": [
+            2.362,
+            2.489
+          ],
+          "squeeze_pct": [
+            22,
+            32
+          ],
+          "clearance_mm": [
+            0.051,
+            0.127
+          ],
+          "source": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Design Chart 4-1"
+        }
+      },
+      "frame": {
+        "origin": [
+          -20.5,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "tof_window",
+      "kind": "window",
+      "params": {
+        "aperture": {
+          "diameter_mm": 8
+        },
+        "cover": {
+          "diameter_mm": 11,
+          "thickness_mm": 1,
+          "material": "clear PMMA or glass, IR-transmissive at 940 nm (OQ-B1)"
+        },
+        "side": "inside",
+        "assumption": "Aperture Ø8 covers the emitter and the receiver (3 mm apart) and the sensor's 18° field of view across the 4 mm floor; cover size and material are open (OQ-B1)."
+      },
+      "served": {
+        "key": "board",
+        "label": "board.tof",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -1.465,
+            -3,
+            5.8
+          ],
+          "normal": [
+            0,
+            0,
+            -1
+          ]
+        }
+      }
+    },
+    {
+      "id": "usb_port",
+      "kind": "window",
+      "params": {
+        "aperture": {
+          "width_mm": 8.44,
+          "height_mm": 2.66
+        },
+        "cover": {
+          "width_mm": 12.75,
+          "height_mm": 6.9,
+          "thickness_mm": 3,
+          "material": "none: a counterbore for the plug's overmold, nothing is fitted"
+        },
+        "side": "outside",
+        "corner_radius_mm": 1.05,
+        "source": "GCT drawing USB4720 rev B: plug opening 8.44 x 2.66 mm, R1.05 ends, panel 1.80 mm (ref), overmold 2.2 mm (ref) in front of the panel when mated; USB Type-C overmold 12.35 x 6.5 mm max (USB Type-C Compliance Document rev 1.2, Figure B-1)",
+        "assumption": "Counterbore 12.75 x 6.9 x 3.0 mm deep (the overmold plus 0.2 mm a side), so the overmold seats 2.8 mm in front of the gasket face, the distance GCT's 1.8 mm panel with its 1.17 mm inside recess and 2.2 mm overmold stand-off give; GCT's inside recess for the gasket (9.14/9.64 x 3.35/3.86 mm) is not modelled."
+      },
+      "served": {
+        "key": "board",
+        "label": "board.usb",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            0,
+            34.2,
+            7.75
+          ],
+          "normal": [
+            0,
+            1,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "button",
+      "kind": "button",
+      "params": {
+        "hole_d_mm": 2.5,
+        "travel_mm": 0.2,
+        "gap_mm": 0.1
+      },
+      "served": {
+        "key": "board",
+        "label": "board.button",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            0,
+            -32.7,
+            9.1
+          ],
+          "normal": [
+            0,
+            -1,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "led1",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led1",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -26.79,
+            11.1,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "led2",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led2",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -26.79,
+            -11.1,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "led3",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led3",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -11.1,
+            -26.79,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "led4",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led4",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            11.1,
+            -26.79,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "led5",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led5",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            26.79,
+            -11.1,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "led6",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led6",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            26.79,
+            11.1,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "led7",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led7",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            11.1,
+            26.79,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "led8",
+      "kind": "light_pipe",
+      "params": {
+        "diameter_mm": 3,
+        "fill": "clear UV-cure resin",
+        "assumption": "Ø3 mm hole over each LED, filled with clear UV-cure resin after printing (light guide and seal; OQ-B7)"
+      },
+      "served": {
+        "key": "board",
+        "label": "board.led8",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -11.1,
+            26.79,
+            8.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "board_mount",
+      "kind": "boss",
+      "params": {
+        "insert": {
+          "name": "ruthex RX-M2x4",
+          "thread": "M2",
+          "outer_d_mm": 3.6,
+          "length_mm": 4,
+          "hole_d_mm": 3.2,
+          "hole_depth_mm": 6,
+          "min_wall_mm": 1.3,
+          "source": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen (dimensions: https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces)",
+          "assumption": "hole 6.0 mm deep: an M2 x 6 screw through the 0.6 mm board reaches 5.4 mm below the boss top, past the 4.0 mm insert"
+        },
+        "holes": [
+          [
+            19.091883,
+            19.091883
+          ],
+          [
+            -19.091883,
+            19.091883
+          ],
+          [
+            -19.091883,
+            -19.091883
+          ],
+          [
+            19.091883,
+            -19.091883
+          ]
+        ]
+      },
+      "frame": {
+        "origin": [
+          0,
+          0,
+          6.8
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          0.7071067811865476,
+          0.7071067811865476,
+          0
+        ]
+      },
+      "mates": [
+        "board"
+      ]
+    },
+    {
+      "id": "lid_joint",
+      "kind": "twist_lid",
+      "params": {
+        "lock": "bayonet",
+        "lugs": 3,
+        "lug_width_mm": 6,
+        "lug_depth_mm": 1,
+        "lug_height_mm": 2,
+        "twist_deg": 30,
+        "key_lug_width_mm": 10,
+        "bore_allowance_mm": 0.1,
+        "assumption": "Two 6 mm lugs and a 10 mm key lug, 1.0 mm deep and 2.0 mm tall, locked by a 30° turn; 0.2 mm radial and 0.15 mm axial clearance at the lugs, and the seal bore drawn 0.1 mm (radial) oversize for a printed PETG fit, so it prints at Parker's 0.089 mm diametral fit. Not from a standard: check the fit on the first print (OQ-B16)."
+      }
+    }
+  ]
+}

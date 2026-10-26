@@ -1,0 +1,110 @@
+{
+ "document": "smart-bottle-assembly-guide.html",
+ "system": "smart-bottle",
+ "project": "smart-bottle",
+ "docId": "UHD-BOTTLE-AG",
+ "generated": "2026-10-24",
+ "values": [
+  {
+   "q": "sys:assembly.mates",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD assembly"
+  },
+  {
+   "q": "derived:mech.hardware_count",
+   "text": "4",
+   "status": "derived",
+   "unit": "count",
+   "formula": "assemble().hardware.length",
+   "inputs": [
+    "sys:assembly.hardware"
+   ]
+  },
+  {
+   "q": "sys:system.description",
+   "text": "Sensor cap for a Nalgene 32 oz Wide Mouth bottle: ESP32-C3 (Wi-Fi + BLE), VL53L4CD time-of-flight water level, Adafruit 381 DS18B20 temperature probe, LP5024 with 8 RGB LEDs, TPS63020 3V3, MCP73831 charger and MAX17048 fuel gauge on a 1000 mAh LP503450 cell, IP67 USB-C, in a printed PETG cap sealed with AS568 O-rings.",
+   "status": "model",
+   "source": "UHD system"
+  },
+  {
+   "q": "sys:checks.diagnostics[id=fastener_torque:summary].details.assumed",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD checks"
+  },
+  {
+   "q": "sys:bom[line=1].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].quantity",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "def:bottle-board-hardware:fastenerStack[0].torque.torqueNm",
+   "f": "u=N·m",
+   "text": "0.15 N·m",
+   "status": "assumption",
+   "unit": "N·m",
+   "note": "assumption trait"
+  }
+ ]
+}

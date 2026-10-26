@@ -1,0 +1,94 @@
+{
+  "artifact": "esslinger-82-2225",
+  "tool": "build123d (representative geometry from datasheet dimensions, parts/local/cadkit/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "6a768ad43dd1c8d24bee7a338f5e27f71e7d2a4c0cc38ced87eff343736766c8",
+  "units": "mm",
+  "volume_mm3": 22.196,
+  "bodies": {
+    "tube": 14.995,
+    "plunger_a": 3.601,
+    "plunger_b": 3.601
+  },
+  "features": {
+    "tip_a": {
+      "area_mm2": 2.011,
+      "centroid": [
+        12.1,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          12.1,
+          0.0,
+          0.0
+        ]
+      ],
+      "diameter_mm": 0.8
+    },
+    "tip_b": {
+      "area_mm2": 2.011,
+      "centroid": [
+        -12.1,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          -12.1,
+          0.0,
+          0.0
+        ]
+      ],
+      "diameter_mm": 0.8
+    },
+    "flange_a": {
+      "area_mm2": 0.628,
+      "centroid": [
+        11.7,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    "flange_b": {
+      "area_mm2": 0.628,
+      "centroid": [
+        -11.7,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        -1.0,
+        0.0,
+        0.0
+      ]
+    },
+    "strap_bar": {
+      "area_mm2": 84.823,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "diameter_mm": 1.5
+    }
+  }
+}

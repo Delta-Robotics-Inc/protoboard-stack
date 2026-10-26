@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "bottle-probe-cable",
+    "config": "src/harnesses/bottle-probe-cable/cad.config.ts",
+    "configDigest": "sha256:55b05940c2dcbf975efc738785e195d010c6cfb69215b7699b29300e7c48a3bf",
+    "moduleDigest": "sha256:b426a92efb0da0cad1608a6311ff2c8263d4a30ac2a45b2517478e021255fa00"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:5f92927418a7693b4f5a23c77ff98bb8ecdcbef4b2cf74c9dc8fb0d0edd947ad",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T12:19:09.461Z",
+  "status": "succeeded",
+  "summary": "probe_cable: body.glb, body.step and body.manifest.json in src/harnesses/bottle-probe-cable/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.glb",
+      "digest": "sha256:f72bc5166500874ae5a7a505e865461f9707ca203618b3c44bcdc0ce0ef94625",
+      "bytes": 76096,
+      "description": "probe_cable: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.step",
+      "digest": "sha256:30f7600f1cf0cd1df109a01ef02c92bacaf1f901c5bfc2204b3b2221fb6c3c5c",
+      "bytes": 652030,
+      "description": "probe_cable: swept solids"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.manifest.json",
+      "digest": "sha256:4e2c76bfcac26b2a29fdbf6c6828c91cddfbb45cd2f1aa5d591648848f53c9cb",
+      "bytes": 2448,
+      "description": "probe_cable: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "bottle-probe-cable",
+    "path": "probe_cable",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 16,
+    "route_length_mm": 14.87,
+    "slack_mm": null,
+    "bend_mm": {
+      "target": 7.76,
+      "minimum": 4.85,
+      "centreline": 34.34,
+      "conductors": 1.44,
+      "at_terminations": 1.49
+    },
+    "clearance_mm": 1.2,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T12:19:15.455Z"
+}

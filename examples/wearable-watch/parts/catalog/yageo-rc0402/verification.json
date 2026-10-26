@@ -1,0 +1,21 @@
+{
+  "partId": "yageo-rc0402",
+  "recorded_at": "2026-10-03T04:29:34.630Z",
+  "audit": {
+    "method": "self-audit by the authoring agent: key facts searched verbatim in the text of the downloaded sources (no independent agent was available in this run; an independent stage-2 audit is still owed)",
+    "checked": 9,
+    "confirmed": 9,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": null,
+  "assumptions": [
+    "terminal designators",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD (none linked from the cited sources; one generated body stands for the series)",
+    "mass (no unit mass in the cited sources)"
+  ],
+  "vocabulary_gaps": []
+}

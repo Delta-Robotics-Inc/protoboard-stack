@@ -1,0 +1,18 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/hardware_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "1e68cc1b366397d6aed015a02efa1cdc911a72ef9d7084e06528fbe11b15e68d",
+  "units": "mm",
+  "volume_mm3": 164.745,
+  "bodies": {
+    "spacer": 164.745
+  },
+  "features": {},
+  "exportedFrom": {
+    "file": "parts/local/dolphinrc-m3-grommet-fc/frame-cad/params.json",
+    "digest": "sha256:502616b4d7f257ce2e4b1eacc79de04abc753645e362e26147b174f7ff8ad75e"
+  }
+}

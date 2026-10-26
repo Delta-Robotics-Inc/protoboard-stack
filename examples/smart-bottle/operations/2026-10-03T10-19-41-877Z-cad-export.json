@@ -1,0 +1,103 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-enclosure-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-enclosure-cad",
+    "module": "bottle-cap-enclosure",
+    "config": "src/enclosures/bottle-cap/cad.config.ts",
+    "configDigest": "sha256:d5745536a5d5f6bbac9c47abf72df15992c8e635a5ac8fdf25dd66e64e2e084b",
+    "moduleDigest": "sha256:b1269639556e767cbf82e71b70df8014344dad5417ddcb1626b39c3dd9fb99dc"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:91ab46333c4ca470d19fad69eb29b0b4e93d0b021f9ef67b5ef67833c3cd9332",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T10:19:41.877Z",
+  "status": "succeeded",
+  "summary": "bottle-cap-enclosure: body STEP/GLB/manifest and STL + 3MF for base, lid, plunger_button in src/enclosures/bottle-cap/out/",
+  "outputs": [
+    {
+      "path": "src/enclosures/bottle-cap/out/body.step",
+      "digest": "sha256:2bf2ede026f24bc819bc7ac5f4b90c1e4f5889c1581c8177f1db7cdf0ac8de3b",
+      "bytes": 2278512,
+      "description": "bottle-cap-enclosure: body.step"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/body.glb",
+      "digest": "sha256:eca163e4214c76b845840c9c2a92abda5d10ca3a5f7c95eec85c6a54c92d5774",
+      "bytes": 1375532,
+      "description": "bottle-cap-enclosure: body.glb"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/body.manifest.json",
+      "digest": "sha256:83920bb06128f30325f45551214fc38512b32b7bfe5b17d646ec14963bc9d223",
+      "bytes": 6665,
+      "description": "bottle-cap-enclosure: body.manifest.json"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/section.svg",
+      "digest": "sha256:c1ac7e6c09c5744786a5ca44db75f685d698f8e5be798bb828129f4bbccf5120",
+      "bytes": 3364,
+      "description": "bottle-cap-enclosure: section through the cavity"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/base.stl",
+      "digest": "sha256:d267f2537761917fd69ef8d21798ffe456b8baaff489e93d8992dad1d15de7f2",
+      "bytes": 1008284,
+      "description": "bottle-cap-enclosure: base for printing (STL)"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/base.3mf",
+      "digest": "sha256:b275cc377af188d25d2feb2456c3e0eab6b9752dcf3cb09b6025a422747b552a",
+      "bytes": 215409,
+      "description": "bottle-cap-enclosure: base for printing (3MF)"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/lid.stl",
+      "digest": "sha256:fa80f4ccb15edca6202b2c130525ba6ce0b2c9ce3876fb3e01dd68db94b9b5a4",
+      "bytes": 534284,
+      "description": "bottle-cap-enclosure: lid for printing (STL)"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/lid.3mf",
+      "digest": "sha256:5dc5747464e44a63c17ca70cb070226950cfe8b6d0071b1d9bf53a918629d395",
+      "bytes": 106375,
+      "description": "bottle-cap-enclosure: lid for printing (3MF)"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/plunger_button.stl",
+      "digest": "sha256:b8593a233d66eba3c0005df1c8a12ff2df771d3ef97493fc1ca06eed633d0d83",
+      "bytes": 74284,
+      "description": "bottle-cap-enclosure: plunger_button for printing (STL)"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/out/plunger_button.3mf",
+      "digest": "sha256:82c05a7b4c97879659ed3efd0be607821de23b9eefd26d1dd1fa9aa871615aa9",
+      "bytes": 15268,
+      "description": "bottle-cap-enclosure: plunger_button for printing (3MF)"
+    }
+  ],
+  "data": {
+    "parts": [
+      "base",
+      "lid",
+      "plunger_button"
+    ],
+    "rebuilt": false
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T10:19:44.190Z"
+}

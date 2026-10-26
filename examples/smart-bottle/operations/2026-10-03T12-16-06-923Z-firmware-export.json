@@ -1,0 +1,46 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "firmware:export",
+  "extension": {
+    "id": "@protoboard/ext-esp-idf",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "firmware",
+    "operation": "export",
+    "provider": "@protoboard/ext-esp-idf",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/firmware.config.ts",
+    "configDigest": "sha256:d0e04ae27ee5be452cdd76655e82f3702dc41de594beb1990d576591ac4acc57",
+    "moduleDigest": "sha256:0e6f26ceb2353f4a6612e1ceda3b2f2bbaab570d9cff1de30b74a2509b0e7afa"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:a2f22e9f0ce41fd42e3a5ca1622e7a3f9b22332afb4efc685c8605c389265cb1",
+  "tools": [],
+  "startedAt": "2026-10-03T12:16:06.923Z",
+  "status": "succeeded",
+  "summary": "2 files in src/boards/bottle-cap/out/config/ and firmware.manifest.json",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/out/config/board_pins.h",
+      "digest": "sha256:0cfeabfd63f34d0ab88128f650e10732eae76c085a4869445d78bec32e58dc6b",
+      "bytes": 2822,
+      "description": "pins and peripherals header"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/config/sdkconfig.defaults",
+      "digest": "sha256:f1ec051cd23e983c6283b34a3423b09c4702948357f321ab7dee2848def9fde0",
+      "bytes": 451,
+      "description": "sdkconfig defaults"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/firmware.manifest.json",
+      "digest": "sha256:d08bd23dc16b43285ff13b6ab6352c0499544bbe9a1d7f8a79cdb4310034ad31",
+      "bytes": 7530,
+      "description": "firmware manifest"
+    }
+  ],
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T12:16:06.945Z"
+}

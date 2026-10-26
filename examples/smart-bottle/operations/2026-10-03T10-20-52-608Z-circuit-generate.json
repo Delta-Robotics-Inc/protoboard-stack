@@ -1,0 +1,68 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/circuit.config.ts",
+    "configDigest": "sha256:5461364ba8714ec934723f8a7cec76483613e14fef52dad9fecb850ed462e66c",
+    "moduleDigest": "sha256:83bba1955f64fe5daa6c2914def8504493be8fadf8ff6f2badfb364cffec8fd1"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ed612c50a7c8d2b8c6f455cc71319d12f2a4793c2354c31ed7f25051ea09b035",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T10:20:52.608Z",
+  "status": "succeeded",
+  "summary": "61 components (14 fixed, 47 layout), 53 nets → 201 traces, 187 vias in 282.4 s; 4 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/tscircuit/board.gen.tsx",
+      "digest": "sha256:4dfca6cdef6c699b1f5500cae94170214b3a781dbd57a903a3ab8a7961cd7df8",
+      "bytes": 71122,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/circuit.json",
+      "digest": "sha256:498e954c8d3bad2c9cbd6fbf41f9185d89fd9128bb8149091e9c977f86c651c6",
+      "bytes": 1158901,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/build.json",
+      "digest": "sha256:e3f5e5ad1b4b64ce9fa16e76f4a5de804d56bf68428a8a584cb0dae6d649c107",
+      "bytes": 22284,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 61,
+    "nets": 53,
+    "placement": {
+      "fixed": 14,
+      "layout": 47
+    },
+    "traces": 201,
+    "vias": 187,
+    "build_ms": 282434,
+    "errors": [
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_47] and pad pcb_port[.j1 > .Dp1] are too close (clearance: 0.008mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_48] and pad pcb_port[.j1 > .CC1] are too close (clearance: 0.058mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_151] and pad pcb_port[.d9 > .I_O1_6] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_via_clearance_error: Vias pcb_via[#pcb_via_137] and pcb_via[#pcb_via_140] from different nets are too close together (gap: 0.091mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T10:25:35.136Z"
+}

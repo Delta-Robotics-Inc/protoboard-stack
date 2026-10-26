@@ -1,0 +1,500 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "Murata reference sheet GRM188R71C104KA01-01 (default instance)",
+      "type": "datasheet",
+      "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf"
+    },
+    {
+      "id": "art_x5r_10v",
+      "name": "Murata reference sheet GRM188R61A106ME69-01A",
+      "type": "datasheet",
+      "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61A106ME69-01A.pdf"
+    },
+    {
+      "id": "art_x5r_25v",
+      "name": "Murata reference sheet GRM188R61E106MA73-01A",
+      "type": "datasheet",
+      "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E106MA73-01A.pdf"
+    },
+    {
+      "id": "art_x5r_25v_1u",
+      "name": "Murata reference sheet GRM188R61E105KA12-01",
+      "type": "datasheet",
+      "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E105KA12-01.pdf"
+    },
+    {
+      "filePath": "library/cad/py/catalog/murata-grm188.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "murata-grm188-1608 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/murata-grm188/artifacts/cad/murata-grm188-1608.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "murata-grm188-1608 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/murata-grm188/artifacts/cad/murata-grm188-1608.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "murata-grm188-1608 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/murata-grm188/artifacts/cad/murata-grm188-1608.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "murata-grm188-1608 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/murata-grm188/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "component.passive.capacitor"
+  ],
+  "description": "Murata GRM series multilayer ceramic chip capacitor, size 1608M (0603), 1.6 x 0.8 x 0.8 mm, class II dielectric X7R (-55 to 125 °C, ±15 %) or X5R (-55 to 85 °C, ±15 %). Parametric: capacitance, tolerance (K ±10 %, M ±20 %), rated voltage (6.3 to 50 V) and dielectric are set per placement with the exact Murata part number; the default instance is 0.1 µF ±10 % 16 V X7R (GRM188R71C104KA01D).",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "default_instance": "0.1 µF ±10 %, DC 16 V, X7R (R7)",
+        "dissipation_factor_max": 0.035,
+        "insulation_resistance": "more than 500 Ω·F (C > 0.047 µF) at rated voltage, room temperature",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (4. Rated value; Specifications and Test Methods 4, 5, 7)",
+        "voltage_proof": "250 % of rated voltage for 1 to 5 s (high dielectric constant type)"
+      }
+    },
+    {
+      "dimensions_mm": {
+        "height": 0.8,
+        "length": 1.6,
+        "width": 0.8
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "mounting_method": "surface_mount (flow or reflow)",
+        "packaging_codes": {
+          "D": "180 mm reel, paper tape W8P4, 4000 pcs",
+          "J": "330 mm reel, paper tape W8P4, 10000 pcs"
+        },
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (3. Type & Dimensions; 5. Package)",
+        "termination_gap_min_mm": 0.5,
+        "termination_length_mm": [
+          0.2,
+          0.5
+        ]
+      },
+      "package": {
+        "code": "1608M (Murata GRM18 size code, T code 8)",
+        "exposed_pad": false,
+        "name": "0603",
+        "pin_count": 2,
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (3. Type & Dimensions: L 1.6 ±0.1, W 0.8 ±0.1, T 0.8 ±0.1, e 0.2 to 0.5, g 0.5 min (mm))"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "note": "Default (X7R) instance. An X5R instance operates from -55 to 85 °C.",
+        "source": [
+          "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (4. Rated value)",
+          "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E105KA12-01.pdf (4. Rated value)"
+        ]
+      },
+      "operating_temperature_C": [
+        -55,
+        125
+      ]
+    }
+  ],
+  "id": "murata-grm188",
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.28,
+              "centroid": [
+                -0.625,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "1",
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Termination 1 (-X end in the model). The part has no polarity and the manufacturer numbers neither end; the designator is this model's.",
+            "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (3. Type & Dimensions; the capacitor has no polarity)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.28,
+              "centroid": [
+                0.625,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "2",
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Termination 2 (+X end in the model). The part has no polarity and the manufacturer numbers neither end; the designator is this model's.",
+            "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (3. Type & Dimensions; the capacitor has no polarity)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 0.56,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "1608M (0603) chip terminations",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "smd_2_terminal",
+            "note": "Two end terminations, each e 0.2 to 0.5 mm long, at least g 0.5 mm apart, on a 1.6 ±0.1 x 0.8 ±0.1 x 0.8 ±0.1 mm chip (default instance; GRM188R61A106ME69 is ±0.15, GRM188R61E106MA73 ±0.2). Flow or reflow soldering. Land pattern: the PCB tool's choice.",
+            "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (3. Type & Dimensions; 4. Rated value)"
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Murata",
+  "name": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+  "part_number": "GRM188R71C104KA01D",
+  "tags": [
+    "murata",
+    "grm",
+    "grm188",
+    "mlcc",
+    "capacitor",
+    "ceramic-capacitor",
+    "x7r",
+    "x5r",
+    "0603",
+    "1608-metric",
+    "smd",
+    "passive",
+    "parametric"
+  ],
+  "traits": [
+    {
+      "params": {
+        "choices": {
+          "dielectric": {
+            "default": "X7R",
+            "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (R7, X7R, -15 to 15 %, -55 to 125 °C); https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61A106ME69-01A.pdf (R6, X5R(EIA), -15 to 15 %, -55 to 85 °C)",
+            "values": [
+              "X5R",
+              "X7R"
+            ]
+          }
+        },
+        "kind": "capacitor",
+        "overridable": [
+          "capacitance",
+          "tolerance",
+          "rated_voltage",
+          "dielectric",
+          "part_number"
+        ],
+        "parameters": [
+          {
+            "id": "capacitance",
+            "name": "Capacitance",
+            "unit": "F",
+            "value": 1e-7
+          },
+          {
+            "id": "tolerance",
+            "name": "Capacitance tolerance (fraction)",
+            "unit": "dimensionless",
+            "value": 0.1
+          },
+          {
+            "id": "rated_voltage",
+            "name": "Rated voltage (DC)",
+            "range": [
+              6.3,
+              50
+            ],
+            "unit": "V",
+            "value": 16
+          }
+        ],
+        "part_number": {
+          "codes": {
+            "dielectric": {
+              "R6": "X5R",
+              "R7": "X7R"
+            },
+            "rated_voltage": {
+              "0J": 6.3,
+              "1A": 10,
+              "1C": 16,
+              "1E": 25,
+              "1H": 50
+            },
+            "tolerance": {
+              "K": 0.1,
+              "M": 0.2
+            }
+          },
+          "decode": "^GRM18(?<thickness>8)(?<dielectric>R6|R7)(?<rated_voltage>0J|1A|1C|1E|1H)(?<value>\\d{3})(?<tolerance>[KM])(?<control>[A-Z0-9]{3})(?<package>[DJ])?$",
+          "default": "GRM188R71C104KA01D",
+          "pattern": null,
+          "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (2. MURATA Part No. System: GRM 18 8 R7 1C 104 K A01 D); codes R6/1A/M from https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61A106ME69-01A.pdf, 1E from https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E106MA73-01A.pdf, 0J from https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R60J106ME15-01A.pdf, 1H from https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71H103KA88-01A.pdf",
+          "value_code": "eia3_pf"
+        },
+        "series": "Murata GRM188 (GRM series, 1608M, T 0.8 mm), X5R / X7R",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (4. Rated value)",
+        "tolerance": 0.1,
+        "tolerances": [
+          {
+            "code": "K",
+            "tolerance": 0.1
+          },
+          {
+            "code": "M",
+            "tolerance": 0.2
+          }
+        ],
+        "unit": "F",
+        "value": 1e-7
+      },
+      "type": "passive"
+    },
+    {
+      "params": {
+        "note": "Default instance (X7R, DC 16 V). The rated voltage is the maximum continuously applied; with AC superimposed, the peak-to-peak or zero-to-peak voltage, whichever is larger, stays within it. An X5R instance operates from -55 to 85 °C.",
+        "source": [
+          "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (4. Rated value; Specifications and Test Methods 1)",
+          "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E105KA12-01.pdf (4. Rated value)"
+        ],
+        "temperature_C": [
+          -55,
+          125
+        ],
+        "voltage_V": 16
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "note": "Class II (X5R, X7R) capacitance falls with applied DC voltage, more steeply as the voltage rises, even below the rated voltage. Check the effective capacitance at the circuit's bias, and do not use these where a tight capacitance tolerance matters.",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E106MA73-01A.pdf (Caution 5, DC voltage and AC voltage characteristic)",
+        "topic": "dc_bias"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Murata's general MLCCs are designed for about 10 years in use; the estimated useful life extends beyond that at 80 % of rated voltage or less and a maximum operating temperature 20 °C or more below the rated maximum.",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E106MA73-01A.pdf (estimated useful life)",
+        "topic": "lifetime"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Set the value per placement: overrides { capacitance: <F>, tolerance: 0.1 | 0.2, rated_voltage: <V>, dielectric: \"X5R\" | \"X7R\", part_number: \"GRM188…\" } on the board's child, naming a Murata part whose reference sheet states those values. Several high-capacitance GRM188 parts have looser dimensions (±0.15 or ±0.2 mm).",
+        "source": [
+          "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (2. MURATA Part No. System)",
+          "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61A106ME69-01A.pdf (Type & Dimension)",
+          "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61E106MA73-01A.pdf (Type & Dimension)"
+        ],
+        "topic": "instance"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "terminal designators",
+        "reason": "Murata numbers neither termination and the capacitor has no polarity; two designators are needed for pin tables and footprints.",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (3. Type & Dimensions)",
+        "value": "pin_1 = the -X termination, pin_2 = the +X termination"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD package dimensions",
+        "reason": "The sheet gives e as a range; the model takes the middle, which leaves a 0.9 mm gap above the 0.5 mm minimum g. One nominal body stands for every GRM188 instance.",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf (3. Type & Dimensions)",
+        "value": "nominal 1.6 x 0.8 x 0.8 mm chip; each termination one block 0.35 mm long (middle of e 0.2 to 0.5) over the full width and height"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "Murata's reference sheets link no 3D model, and no vendor STEP was sought for a series part, whose one body stands for every value. Geometry is generated from the default sheet's dimensions (library/cad/py/catalog/murata-grm188.py).",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "mass",
+        "note": "The reference sheets state no unit mass.",
+        "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf"
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

@@ -1,0 +1,145 @@
+{
+ "document": "wearable-watch-assembly-guide.html",
+ "system": "wearable-watch",
+ "project": "wearable-watch",
+ "docId": "UHD-WATCH-AG",
+ "generated": "2026-10-24",
+ "values": [
+  {
+   "q": "sys:assembly.mates",
+   "text": "7",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD assembly"
+  },
+  {
+   "q": "derived:mech.hardware_count",
+   "text": "8",
+   "status": "derived",
+   "unit": "count",
+   "formula": "assemble().hardware.length",
+   "inputs": [
+    "sys:assembly.hardware"
+   ]
+  },
+  {
+   "q": "sys:system.description",
+   "text": "Reference smartwatch: Raytac MDBT50Q-1MV2 (nRF52840, BLE), 1.28-inch round 240 x 240 display (ER-TFT1.28-1, GC9A01), BMI270 IMU, MAX30102 heart rate, DRV2605L with a VG0832012 LRA, MAX17048 fuel gauge, MCP73831 charger from USB-C, 200 mAh LiPo (LP402030), two side buttons, printed PETG case with 22 mm spring-bar lugs.",
+   "status": "model",
+   "source": "UHD system"
+  },
+  {
+   "q": "sys:checks.diagnostics[id=fastener_torque:summary].details.assumed",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD checks"
+  },
+  {
+   "q": "sys:bom[line=6].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].quantity",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].quantity",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "def:watch-back-cover-screws:fastenerStack[1].torque.torqueNm",
+   "f": "u=N·m",
+   "text": "0.1 N·m",
+   "status": "assumption",
+   "unit": "N·m",
+   "note": "assumption trait"
+  }
+ ]
+}

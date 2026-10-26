@@ -1,0 +1,49 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-drone",
+  "version": "0.2.0",
+  "description": "Multirotor domain pack: flight-controller configuration (Betaflight) generated from the UHD model.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "firmware-config",
+      "summary": "Derive a flight-controller configuration from UHD links and part facts, every line cited, every setting checked against pinned firmware sources",
+      "path": "skills/firmware-config/SKILL.md",
+      "verifiedBy": "firmware-verify"
+    },
+    {
+      "id": "firmware-verify",
+      "summary": "Bench-verify a generated FC configuration on hardware (props off) and record the result as measured test data",
+      "path": "skills/firmware-verify/SKILL.md"
+    }
+  ],
+  "operations": [
+    {
+      "id": "betaflight-cli",
+      "summary": "Generate a Betaflight CLI dump (serial ports, receiver, OSD/VTX, GPS, compass) from the model's links; every line cites its link or part fact",
+      "entry": "./ops/betaflight.ts#betaflightCliOp",
+      "effect": "export",
+      "inputs": {
+        "out": {
+          "description": "output file, project-relative",
+          "default": "firmware/betaflight/cli.txt"
+        }
+      }
+    },
+    {
+      "id": "package:work-order",
+      "summary": "Manufacturing Package: the flight-controller configuration (file and loading steps) in the root unit's work order; refuses a configuration that no longer matches the model",
+      "entry": "./ops/package.ts#workOrder",
+      "effect": "pure"
+    },
+    {
+      "id": "package:test-plan",
+      "summary": "Manufacturing Package: the props-off bench check of the flight controller in the root unit's test plan",
+      "entry": "./ops/package.ts#testPlan",
+      "effect": "pure"
+    }
+  ]
+}

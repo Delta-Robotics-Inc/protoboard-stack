@@ -1,0 +1,92 @@
+[
+ {
+  "id": "src_grm155r71c104ka88",
+  "title": "Murata reference sheet GRM155R71C104KA88-01A (default instance: 1005M, X7R, 0.1 µF, DC 16 V)",
+  "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71C104KA88-01A.pdf",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "530d3a4bf8e67af48379d3d027c23f87d1433a5c59abc51d313dada0d9e4b031",
+  "supports": [
+   "p.1 part number system: ① GRM ② 15 (L x W) ③ 5 (T) ④ R7 temperature characteristics ⑤ 1C rated voltage ⑥ 104 capacitance ⑦ K tolerance ⑧ A88 individual specification (Murata control code) ⑨ D package",
+   "p.1 Type & Dimension 1005M(0402): L 1.0 ±0.05, W 0.5 ±0.05, T 0.5 ±0.05, e 0.15 to 0.35, g 0.3 min (mm)",
+   "p.1 Rated value: R7 = X7R(EIA), -15 to 15 % over -55 to 125 °C, ref 25 °C; DC 16 V; 0.1 µF ±10 %; operating -55 to 125 °C; flow or reflow",
+   "p.1 packages D/W/J/V: 180 mm paper W8P2 10000, W8P1 20000; 330 mm W8P2 50000, W8P1 100000",
+   "p.2 specifications: rated voltage definition (AC superimposed); voltage proof 250 %; IR > 500 Ω·F; capacitance at 1 kHz 1 Vrms; DF ≤ 0.035",
+   "caution 5: capacitance of high dielectric constant types changes with applied DC voltage, more steeply as voltage rises, even below rated voltage"
+  ]
+ },
+ {
+  "id": "src_grm155r60j106me15",
+  "title": "Murata reference sheet GRM155R60J106ME15-01A (X5R, 10 µF, DC 6.3 V)",
+  "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R60J106ME15-01A.pdf",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "137082c8487a3cad91f7caded1ce6eb825156738b23d4c105d7861a178b4b48a",
+  "supports": [
+   "R6 = X5R(EIA), -15 to 15 % over -55 to 85 °C; 0J = DC 6.3 V; 106 = 10 µF; M = ±20 %",
+   "dimensions 1.0 ±0.15 x 0.5 ±0.15 x 0.5 ±0.15 mm; limited application: consumer equipment only"
+  ]
+ },
+ {
+  "id": "src_grm155r61e104ka87",
+  "title": "Murata reference sheet GRM155R61E104KA87-01A (X5R, 0.1 µF, DC 25 V)",
+  "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R61E104KA87-01A.pdf",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "a3e8e9f246d94d4be8bcc6004b54a5abda0dab9c32ab884cf4a3b183ea07c8da",
+  "supports": [
+   "R6 = X5R(EIA), -55 to 85 °C operating; 1E = DC 25 V; 0.1 µF ±10 %; dimensions 1.0 x 0.5 x 0.5 ±0.05 mm"
+  ]
+ },
+ {
+  "id": "src_grm155r71e103ka01",
+  "title": "Murata reference sheet GRM155R71E103KA01-01A (X7R, 10000 pF, DC 25 V)",
+  "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71E103KA01-01A.pdf",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "be98b608577241b027c30a055e8818ba44464319b7e82858a7f3d74ddf566732",
+  "supports": [
+   "R7 = X7R(EIA); 1E = DC 25 V; 103 = 10000 pF ±10 %; -55 to 125 °C"
+  ]
+ },
+ {
+  "id": "src_grm155r71h103ka88",
+  "title": "Murata reference sheet GRM155R71H103KA88-01A (X7R, 10000 pF, DC 50 V)",
+  "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71H103KA88-01A.pdf",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "7f6df06f2f3de797c5a8a1a78e9554288f39d4eb167f0cc86fea91ac178960ab",
+  "supports": [
+   "R7 = X7R(EIA); 1H = DC 50 V; 103 = 10000 pF ±10 %; -55 to 125 °C"
+  ]
+ },
+ {
+  "id": "src_grm155r71h102ka01",
+  "title": "Murata reference sheet GRM155R71H102KA01-01A (X7R, 1000 pF, DC 50 V)",
+  "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71H102KA01-01A.pdf",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "717054f9652ddc576d3361474ebd3983c47361dd82245c1a4ffa9b8c65ff707f",
+  "supports": [
+   "R7 = X7R(EIA); 1H = DC 50 V; 102 = 1000 pF ±10 %"
+  ]
+ },
+ {
+  "id": "src_grm188r61a106me69",
+  "title": "Murata reference sheet GRM188R61A106ME69-01A (X5R, 10 µF, DC 10 V; cited for the 1A voltage code)",
+  "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R61A106ME69-01A.pdf",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "c412f18c940a77d92caebd7afc64e24028e0afa5601a0579ad85af052e4220fa",
+  "supports": [
+   "same part-number system: 1A = DC 10 V; R6 = X5R(EIA)"
+  ]
+ }
+]

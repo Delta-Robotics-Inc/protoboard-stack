@@ -1,0 +1,21 @@
+{
+  "partId": "m3-aluminium-standoff-30mm",
+  "recorded_at": "2026-10-03T18:29:23.660Z",
+  "audit": {
+    "method": "independent stage-2 audit, 2026-10-03: re-fetched every cited source live (curl). Westfield and Ettinger HTML pages differ byte-wise from the pins (pages do on every request) and Ettinger's generated datasheet PDFs differ too, so facts were read from the live text; Westfield's DIN 985 PDF, DJI's O4 manual and MEPS's two images matched their pinned sha256 and were read from those bytes (the images visually). The generated bodies were measured with ext-parts scripts/audit/step_measure.py. Every sourced fact the part states was checked; these small parts state fewer than 12 sourced facts each, so the count includes the gap, assumption and CAD checks.",
+    "independent": true,
+    "auditor": "stage-2 agent of the PB-836 Matek track (p4cQuad worktree; did not author these parts)",
+    "checked": 12,
+    "confirmed": 12,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": null,
+  "assumptions": [
+    "part choice"
+  ],
+  "data_gaps": [
+    "manufacturer CAD (none published; nominal body generated)"
+  ],
+  "vocabulary_gaps": []
+}

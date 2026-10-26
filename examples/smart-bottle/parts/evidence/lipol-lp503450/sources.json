@@ -1,0 +1,128 @@
+[
+  {
+    "id": "src_product",
+    "title": "Polybattery.com (LiPoly Batteries Co., Ltd.) 1000mAh Lipo Lithium Battery 3.7V - Model LP503450 (product page with specification table and photo)",
+    "url": "https://polybattery.com/product/1000mah-lipo-battery-lp503450-3-7-v-lithium-rechargeable-battery-cqc",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:55:00Z",
+    "sha256": "ac2de9c60207aa88d9c62343b14d01a60d5f56653a8b541fff135889f93294ca",
+    "supports": [
+      "identity: '1000mAh Lipo Lithium Battery 3.7V - Model LP503450'; 'We are high-reliability 1000 mAh lipo battery manufacturer in China'; 'CE IEC62133 UN38.3 MSDS'",
+      "LiPo Battery Mechanical Characteristics: Lipo Cell LP503450; Lithium Battery PCM Yes; NTC No; Configuration 1S1P; Battery Weight appr. 20g; Lipo Battery Dimension 5mm*34mm*50mm",
+      "Lithium Battery Electrical Specification: Rated Capacity 1000mAh min, 1010mAh typ.; Nominal Voltage 3.7V; Wat-Hour Rating 3.7Wh; Max. Operating Voltage Range 2.75V to 4.20V; Max. Charge Voltage 4.2V +-50mV; Max. Charge Current 500mA; Discharge Current 1000mA; Discharge Cut Off 2.75V; Internal Impedance <200mOhm; Expected Cycle Life @ (0.5C/0.5C) @ 23+-5 C 500 cycles >= 80%",
+      "options: 'Contact us for a quotation for production quantities, customizations and integration such as custom wire length or with JST/ Molex connectors'; small-volume price USD 10.00 at 10+, 8.00 at 50+, 6.00 at 100+; '2000 in stock'",
+      "no datasheet PDF, drawing or CAD download on the page"
+    ]
+  },
+  {
+    "id": "src_product_photo",
+    "title": "Polybattery.com LP503450 1000mAh product photo (the image on src_product)",
+    "url": "https://polybattery.com/wp-content/uploads/2021/04/1000mah-lipo-battery-lp503450-3.7-v-lithium-rechargeable-battery-cqc.jpg",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:55:00Z",
+    "sha256": "7fb6bafe6a3fdb31658c0484ab132910f3a25baca05609544b67f86fcc8e50ee",
+    "supports": [
+      "cell label: '- LiPo Battery / LP503450 1000mAh / + 3.7V 3.7Wh', with the '-' mark toward one long edge and '+' toward the other",
+      "PCM folded across one short end under yellow kapton tape, inside the cell outline",
+      "two leads, red and black, leaving the PCM end at the corner on the '+' side; ends stripped and tinned; no connector"
+    ]
+  },
+  {
+    "id": "src_product_gps",
+    "title": "Polybattery.com 'LP503450 1000mAh Rechargeable Li-polymer Battery Used for GPS Tracker' (application page with the LP503450 data sheet table)",
+    "url": "https://polybattery.com/lp503450-1000mah-rechargeable-li-polymer-battery-used-for-gps-tracker",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:55:00Z",
+    "sha256": "60c96cb24a603909348eba5bf857e9cadb17e759fefd0f4eb0d662b1823f0edc",
+    "supports": [
+      "'1000mAh 3.7V LP503450 Li-Polymer Battery Data Sheet': the same values as src_product (PCM yes, NTC no, 1S1P, appr. 20 g, 5mm*34mm*50mm, 1000 mAh min / 1010 mAh typ, 3.7 V, 3.7 Wh, 2.75-4.20 V, 4.2 V +-50 mV, 500 mA charge, 1000 mA discharge, 2.75 V cut-off, <200 mOhm, 500 cycles >= 80 %)",
+      "corroborates src_product for the 1000 mAh build"
+    ]
+  },
+  {
+    "id": "src_size_list",
+    "title": "Polybattery.com 'Lithium Polymer Batteries' model list (thickness 0.7-13.0 mm table)",
+    "url": "https://polybattery.com/lithium-polymer-batteries",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:55:00Z",
+    "sha256": "ed521e7194cd5f9d7a3b187869e55abdc30659777d561eeba50d5b85781c1e39",
+    "supports": [
+      "row 'LP503450 850mAh 3.7V 50mm 34mm 5mm' (conflicts with the 1000 mAh rating on src_product; see the source_discrepancy trait)",
+      "row 'LP503455 1000mAh 3.7V 55mm 34mm 5mm'",
+      "company: 'Lipoly Batteries co,. Ltd.'; '20mAh to 10000mAh'; size code naming thickness-width-length"
+    ]
+  },
+  {
+    "id": "src_about",
+    "title": "Polybattery.com About page (LiPoly Batteries Co., Ltd.)",
+    "url": "https://polybattery.com/about",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:55:00Z",
+    "sha256": "830d32fc508562d4120088876b15153750d676fc41dcbacb706447927b877e58",
+    "supports": [
+      "company name: 'LiPoly Batteries Co., Ltd. is an ISO 9001 trusted designer and manufacturer'; footer 'Polymer Battery Co., Ltd'; Shenzhen, China (home page)",
+      "'All of our Lithium Ion Polymer Batteries are equipped with protective circuit (Specific IC used for preventing the battery from short circuit). Also you can add NTC (Adding thermistor) and Custom Connectors (JST, Molex, Hirose)'",
+      "'charing to 60% of its full capacity before shipping'"
+    ]
+  },
+  {
+    "id": "src_ref_lipol_850",
+    "title": "LiPol Battery Co., Ltd. LP503450 850mAh 3.7V with PCM specification and drawing FD_3450_73 (orig. 10.09.2019) - a different maker's cell of the same size code; reference only",
+    "url": "https://www.lipolbattery.com/LiPo-Battery-Datahseet/LiPo_Battery_LP503450_3.7V_850mAh.pdf",
+    "type": "datasheet",
+    "authority": "community",
+    "fetched_at": "2026-10-03T02:55:00Z",
+    "sha256": "89785a5ecf28743bb1094e7d30061bbf6f61bc1f4dfc4414bbb2cce48a648089",
+    "supports": [
+      "NOT evidence for the 1000 mAh polybattery.com cell: a different manufacturer (LiPol Battery Co., Ltd., lipolbattery.com) and a different rating (850 mAh, 425 mA charge, 850 mA discharge, appr. 17 g)",
+      "drawing of the same 5 x 34 x 50 size code: thickness 5.0 +-0.3, width 34 +-0.5, length 50 +-1.0 (to the end of the PCM zone), leads 50 +-3.0 beyond the body end, ends stripped; parts list 50 wire red (+) AWG28 UL1571, 60 wire black (-) AWG28 UL1571, 20 PCM, 30 double-sided tape, 40 kapton",
+      "tab-side view (not to scale): '-' and '+' tab marks, PCM across the short end, both leads leaving next to the '+' side edge",
+      "PCM thresholds of that build: overcharge 4.275 V +-50 mV, overdischarge 2.75 V +-50 mV, overcurrent 2-2.5 A; charge 0 to +45 C, discharge -20 to +60 C",
+      "used only as the basis for labelled assumptions (lead length, gauge, exit position, PCM zone) in the generated CAD and the temperature assumption"
+    ]
+  },
+  {
+    "id": "src_ref_lipol_index",
+    "title": "LiPol Battery 'All Li-Polymer Battery Datasheets for Download' (lists the LP503450 850 mAh datasheet only)",
+    "url": "https://li-polymer-battery.com/li-polymer-battery-datasheets/",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-03T02:55:00Z",
+    "sha256": "e91bb7a6decc60deb4a66e1ee9f02b352bc1ddbc34b31d8fbd6f463105d01631",
+    "supports": [
+      "LiPol Battery Co., Ltd. publishes LP503450 as 850 mAh (LiPo_Battery_LP503450_3.7V_850mAh.pdf); no 1000 mAh LP503450 datasheet from that maker",
+      "where research looked for a datasheet and CAD (data_gap 'manufacturer CAD')"
+    ]
+  },
+  {
+    "id": "src_wire_xinya",
+    "title": "Xinya Wires UL1571 28AWG PVC hook-up wire specification table (third-party wire maker; style data, not the cell maker's wire)",
+    "url": "https://www.xinyawires.com/showroom/28awg-30v-80-degrees-pvc-ul1571-electric-cable-general-purpose-internal-wiring.html",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-03T02:57:00Z",
+    "sha256": "604285aaff367986b5ad0f4bbf9da8392039e7ad62b26d293d8060ae4e07c4ac",
+    "supports": [
+      "UL1571 28 AWG stranded 7/0.127: conductor diameter 0.38 mm, insulation 0.26 mm, O.D. 0.90 mm; solid 1/0.32: 0.32 mm, O.D. 0.70 mm",
+      "used only as the basis for the assumed lead diameters in the generated CAD"
+    ]
+  },
+  {
+    "id": "src_wire_ess",
+    "title": "ES&S Solutions AWG28 wire UL1571 (third-party wire maker; corroboration of the spread)",
+    "url": "https://www.esskabel.de/en/product/awg28-litze-ul1571/",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-03T02:57:00Z",
+    "sha256": "ae01d769d4ccc167f7da4a4eb884009b9d6e65ce1a13f38eb40edf2eb360d029",
+    "supports": [
+      "AWG28 UL1571, outer diameter 0.60 mm (thin wall), 0.08 mm2, PVC, -10 to +80 C, 30 V",
+      "shows the UL1571 28 AWG overall diameter varies by maker (0.60-0.90 mm)"
+    ]
+  }
+]

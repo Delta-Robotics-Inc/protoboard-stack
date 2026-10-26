@@ -1,0 +1,61 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-sourcing",
+  "version": "0.2.0",
+  "description": "Part sourcing: external discovery, datasheet facts with checked quotes, supplier and lifecycle observations as dated evidence (never orders), alternates, and handoff into locally authored UHD parts.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "part-search",
+      "summary": "Find candidate parts for a written requirement: look in the project and catalog first, then manufacturers, distributors and other markets in parallel lanes; record every lane, candidate and near-miss",
+      "path": "skills/part-search/SKILL.md",
+      "verifiedBy": "sourcing-verify"
+    },
+    {
+      "id": "datasheet-extract",
+      "summary": "Get a value out of a datasheet with proof: manufacturer revision on disk, parse once, extract for one ordering code with verbatim quotes and pages, then a deterministic quote check decides what may be cited",
+      "path": "skills/datasheet-extract/SKILL.md",
+      "verifiedBy": "sourcing-verify"
+    },
+    {
+      "id": "supplier-compare",
+      "summary": "Record supplier offers (stock, MOQ, packaging, price breaks) as dated sourcing evidence and compare them at the needed quantity; reads offers, never places or prepares an order",
+      "path": "skills/supplier-compare/SKILL.md",
+      "verifiedBy": "sourcing-verify"
+    },
+    {
+      "id": "lifecycle-alternates",
+      "summary": "Check lifecycle (active, NRND, LTB, EOL, obsolete) at the manufacturer, apply the selection disqualifiers, and name alternates with a form-fit-function comparison; near-misses are kept",
+      "path": "skills/lifecycle-alternates/SKILL.md",
+      "verifiedBy": "sourcing-verify"
+    },
+    {
+      "id": "part-handoff",
+      "summary": "Hand a sourced part to local UHD authoring (project-researched tier): parts/local and parts/evidence layout, which facts become UHD and which stay sourcing evidence, then uhd-part-author and uhd-part-verify",
+      "path": "skills/part-handoff/SKILL.md"
+    },
+    {
+      "id": "sourcing-verify",
+      "summary": "Independent audit of sourcing evidence: re-open offers and lifecycle sources, re-run the quote check, re-test the disqualifiers, and record what was confirmed, wrong or unverifiable",
+      "path": "skills/sourcing-verify/SKILL.md"
+    }
+  ],
+  "tools": [
+    {
+      "id": "pdftotext",
+      "purpose": "Datasheet text layer for the deterministic quote check (datasheet-extract)",
+      "probe": ["pdftotext", "-v"],
+      "install": "poppler-utils (apt install poppler-utils, brew install poppler)"
+    }
+  ],
+  "checks": [
+    {
+      "id": "sourcing",
+      "summary": "Sourcing records are dated and sourced, carry no orders or credentials, and state single-source, low-stock and lifecycle disqualifiers unless a named person accepted the risk",
+      "entry": "./checks/sourcing.ts#sourcing"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "release",
+  "extension": {
+    "id": "@protoboard/ext-release",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "allow-dirty": "false",
+    "check": "false"
+  },
+  "projectDigest": "sha256:58250ed97174ec839c5caaaab7a69c11021376c9eefe00be5bfb2e8cb454a855",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T10:50:53.342Z",
+  "status": "failed",
+  "summary": "release refused: 1 problem(s); first: @protoboard/ext-harness-cad package:test-plan failed for unit system: Cannot read properties of null (reading 'toFixed')",
+  "outputs": [],
+  "data": {
+    "status": "failed",
+    "summary": "release refused: 1 problem(s); first: @protoboard/ext-harness-cad package:test-plan failed for unit system: Cannot read properties of null (reading 'toFixed')",
+    "diagnostics": [
+      {
+        "code": "REL_SECTION_FAILED",
+        "severity": "error",
+        "message": "@protoboard/ext-harness-cad package:test-plan failed for unit system: Cannot read properties of null (reading 'toFixed')"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T10:51:02.310Z"
+}

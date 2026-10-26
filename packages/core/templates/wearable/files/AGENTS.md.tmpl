@@ -1,0 +1,97 @@
+# {{name}}
+
+A Protoboard hardware project, started from the **wearable** template
+(derived from the wearable-watch reference project). The system is described
+in UHD (`@deltarobotics/uhd`); this project holds its sources, parts and CAD.
+
+**Agents, start here.** Read this file, then the **build-a-project** skill
+(`protoboard skills read build-a-project`; Skills, below): it gives the order of work from
+`docs/brief.md` to a release, how far to take the design before asking
+(concept, blocks, parts, definitions verified, schematic and PCB), and the
+skill for each stage. The skills of this project's extensions are listed at
+the end of this file; Skills, below, says how to read one. Before changing anything, and before describing
+the project to anyone, run `protoboard doctor`, `protoboard check` and
+`protoboard inspect`. The UHD reference is in
+`node_modules/@deltarobotics/uhd/docs`, and how to write UHD is the
+**uhd-authoring** skill, `node_modules/@deltarobotics/uhd/skills/uhd-authoring/SKILL.md`.
+
+With Protoboard's MCP server connected (`protoboard-stack`, registered by
+`protoboard agents setup` or the Protoboard settings page in VS Code), the
+commands below are also tools:
+call `project_status` first. The tools and the commands do the same thing.
+
+The starting system is a BLE main board (Raytac MDBT50Q-1MV2 nRF52840 module,
+3.0 V LDO, MCP73831 charger from USB-C, SWD pads) on a 200 mAh LP402030 cell
+soldered to it by the cell's own leads. It checks with no errors and one
+warning (`SRC_SINGLE_SOURCE`: the cell has one supplier, a risk to accept in
+`docs/decisions.md` or to fix); it is not yet a product. Grow it from `docs/brief.md`.
+
+## Layout
+
+- `src/system.uhd.ts` — the top-level module (the root system): instances,
+  links, harness assignments. It lives under `src/`; keep it there
+- `src/boards/main/` — the main board: `main.uhd.ts` (components, nets, the
+  board's edge), `lands.uhd.ts` (its copper pads), `circuit.config.ts` (the
+  PCB: @protoboardai/ext-tscircuit; native design in `tscircuit/`, land patterns
+  for the project's own pads in `tscircuit/footprints.json`, standard outputs
+  in `out/`) and `firmware.config.ts` (Zephyr board files: @protoboardai/ext-zephyr,
+  written to `zephyr/`)
+- `src/enclosures/` — the case (none yet; see its README): @protoboardai/ext-enclosure-cad
+- `src/harnesses/` — wire harnesses; each has a provider directory `<id>/`
+  with its `cad.config.ts` (@protoboardai/ext-harness-cad)
+- Parts, in three tiers:
+  - `parts/catalog/<id>.json` + `parts/catalog/<id>/` — purchased parts from
+    the Protoboard Cloud parts catalog with the files of their revision.
+    Immutable; `parts/origins.json` pins them and `check` verifies them offline.
+  - `parts/local/<id>.uhd.ts` — purchased parts researched in this project:
+    the LP402030 cell (its CAD generated from the drawing by
+    `parts/local/lipol-lp402030/lipol-lp402030.py`); evidence and
+    verification in `parts/evidence/<id>/`
+  - everything in `src/` — designed here
+- `docs/brief.md` (the brief), `docs/product.json` (what the product is: summary, features,
+  functions, requirements with how each is shown; the documents' first page reads it),
+  `docs/decisions.md` (decisions, warnings dispositioned)
+- `release/<version>/` — the Manufacturing Package (`protoboard release`; not committed)
+
+{{agents-common}}
+## Commands
+
+- `protoboard check` — resolve and run all validators (nonzero on errors)
+- `protoboard inspect [board/u1]` — context for the system or one instance
+- `protoboard build` — `.protoboard/build/resolved.json` and the UHD bundle
+- `protoboard run circuit:generate --module main-board`, then
+  `circuit:export` — the board's PCB, Gerbers, BOM and pick-and-place
+  (tscircuit, offline); `check` then runs the board's DRC
+- `protoboard run firmware:generate --module main-board` — the Zephyr
+  board definition, every line citing the board's nets and parts
+- `protoboard parts search <words>` / `parts add <id>[@rev]` — find and
+  vendor catalog parts (needs the parts service: `cloud.url` in protoboard.config.ts, or `PROTOBOARD_CLOUD_URL`;
+  `protoboard login` signs in). Nothing else talks to the service.
+- `protoboard doctor` — extensions, tools, runtimes, skills
+- `protoboard tools install cad` — the Python runtime with build123d that
+  the enclosure and harness providers use
+- `protoboard dev` — the UHD viewer on this project, live
+- `protoboard skills` — the installed skills; `protoboard skills read <name>`
+  prints one; `protoboard skills export --host all` copies them to
+  `.claude/skills/` and lists them in this file.
+  **build-a-project** is the top-level procedure: the order of work from
+  the brief to a release, one level of detail at a time
+- `protoboard extensions add <name>` — add an extension (listed, linked from
+  this machine's Protoboard, its skills exported)
+- `protoboard release --check`, then `protoboard release` — the
+  Manufacturing Package (units: the main board, then final assembly)
+
+Add `--format json` for machine output.
+
+## Rules
+
+- Cite sources for every value; mark assumptions as `assumption` traits.
+- Never edit anything under `parts/catalog/`; derive a local variant with its own id.
+- Never edit generated files (`out/`, `tscircuit/board.gen.tsx`, `zephyr/`);
+  change the model or the config and re-run the operation.
+- Under `.protoboard/` everything is generated except `.protoboard/display.json`,
+  the diagram's layout, which you may write (The diagram's layout, above).
+- Never tell the person to run npm in the project; ask before a project-local
+  install (Protoboard on this machine, above).
+- Never put the parts service's token in a file.
+- A passing `check` validates the model only; it does not establish physical readiness.

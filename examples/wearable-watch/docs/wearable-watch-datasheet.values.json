@@ -1,0 +1,3832 @@
+{
+ "document": "wearable-watch-datasheet.html",
+ "system": "wearable-watch",
+ "project": "wearable-watch",
+ "docId": "UHD-WATCH-DS",
+ "generated": "2026-10-24",
+ "values": [
+  {
+   "q": "def:eastrising-er-tft128-1:traits[type=performance].params.resolution",
+   "text": "240–240",
+   "status": "source",
+   "unit": "count",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf (§2.1-§2.4, §4.4)"
+  },
+  {
+   "q": "def:eastrising-er-tft128-1:traits[type=performance].params.active_area_dia_mm",
+   "f": "u=mm",
+   "text": "32.4 mm",
+   "status": "source",
+   "unit": "mm",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf (§2.1-§2.4, §4.4)"
+  },
+  {
+   "q": "def:lipol-lp402030:interfaces[id=battery_out].parameters[id=capacity].value",
+   "text": "200 mAh",
+   "status": "source",
+   "unit": "mAh",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf"
+  },
+  {
+   "q": "def:watch-cell-pads:interfaces[id=battery_in].parameters[id=current_draw].value",
+   "f": "u=A|d3",
+   "text": "0.177 A",
+   "status": "model",
+   "unit": "A",
+   "source": "model: watch-cell-pads"
+  },
+  {
+   "q": "def:watch-cell-pads:interfaces[id=charge_out].parameters[id=max_current].value",
+   "f": "u=A|d3",
+   "text": "0.092 A",
+   "status": "model",
+   "unit": "A",
+   "source": "model: watch-cell-pads"
+  },
+  {
+   "q": "derived:mass.all_up",
+   "f": "d1",
+   "text": "12.2 g",
+   "status": "assumption",
+   "unit": "g",
+   "formula": "systemMass: ∑ quantity × (weight_g, else CAD volume × material density) over every instance; instances with neither are listed, not guessed",
+   "inputs": [
+    "def:raytac-mdbt50q-1mv2:domains[domain=mechanical].weight_g",
+    "def:gct-usb4105-gf-a:domains[domain=mechanical].weight_g",
+    "def:st-usblc6-2sc6:domains[domain=mechanical].weight_g",
+    "def:epson-fc-135-32k768-12p5:domains[domain=mechanical].weight_g",
+    "def:eastrising-er-tft128-1:domains[domain=mechanical].weight_g",
+    "def:lipol-lp402030:domains[domain=mechanical].weight_g",
+    "def:vybronics-vg0832012:domains[domain=mechanical].weight_g",
+    "def:esslinger-82-2225-spring-bar:domains[domain=mechanical].material.density_g_cm3",
+    "def:iso-7045-m2x6-a2:domains[domain=mechanical].weight_g",
+    "def:ruthex-rx-m2x4:domains[domain=mechanical].material.density_g_cm3"
+   ],
+   "note": "excludes 53 part(s) with no mass: Watch case, Bosch BMI270, ADI MAX30102 pulse oximeter / heart-rate module (OESIP-14), TI DRV2605L haptic driver (VSSOP-10), ADI MAX17048 1-cell fuel gauge (TDFN-8), Microchip MCP73831 Li-ion charger, 4.20 V (SOT-23-5), TI TPS7A0230P 3.0 V 200 mA LDO (SOT-23-5), TI TPS7A0218P 1.8 V 200 mA LDO (SOT-23-5), Alps Alpine SKRTLAE010 side-push TACT switch, Alps Alpine SKRTLAE010 side-push TACT switch, AOS AO3400A 30 V N-channel MOSFET (SOT23), Cell lead solder pads (2), LRA lead solder pads (2), SWD test pads (5), Murata GRM188 MLCC (1608M / 0603, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM188 MLCC (1608M / 0603, X5R / X7R), Murata GRM1555C1H200JA01D 20 pF C0G 50 V 0402, Murata GRM1555C1H200JA01D 20 pF C0G 50 V 0402, Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM188 MLCC (1608M / 0603, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM188 MLCC (1608M / 0603, X5R / X7R), Murata GRM188 MLCC (1608M / 0603, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Murata GRM155 MLCC (1005M / 0402, X5R / X7R), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Yageo RC0402 Chip Resistor (RC_L, 0402), Cell leads, LRA leads, Display lens, 38 × 0.5 mm PMMA, Heart-rate window cover, 4.0 × 8.2 × 0.5 mm PMMA, Display adhesive ring, 0.25 mm, Cell foam pad, 0.25 mm double-sided, LRA adhesive pad, 0.25 mm, ø8 mm, Clear UV-curing adhesive for the window covers; 1.0 g of it is computed from assumed material/geometry"
+  },
+  {
+   "q": "sys:system.description",
+   "text": "Reference smartwatch: Raytac MDBT50Q-1MV2 (nRF52840, BLE), 1.28-inch round 240 x 240 display (ER-TFT1.28-1, GC9A01), BMI270 IMU, MAX30102 heart rate, DRV2605L with a VG0832012 LRA, MAX17048 fuel gauge, MCP73831 charger from USB-C, 200 mAh LiPo (LP402030), two side buttons, printed PETG case with 22 mm spring-bar lugs.",
+   "status": "model",
+   "source": "UHD system"
+  },
+  {
+   "q": "def:watch-case:name",
+   "text": "Watch case",
+   "status": "model",
+   "source": "model: watch-case"
+  },
+  {
+   "q": "def:watch-main-board:name",
+   "text": "Watch main board",
+   "status": "model",
+   "source": "model: watch-main-board"
+  },
+  {
+   "q": "def:lipol-lp402030:name",
+   "text": "LiPol LP402030 200 mAh 3.7 V LiPo with PCM",
+   "status": "source",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf"
+  },
+  {
+   "q": "def:vybronics-vg0832012:name",
+   "text": "Vybronics VG0832012 8 mm Z-axis coin LRA",
+   "status": "source",
+   "source": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf"
+  },
+  {
+   "q": "def:esslinger-82-2225-spring-bar:name",
+   "text": "Esslinger 82.2225 spring bar, 22 mm, ø1.50 mm, double flange",
+   "status": "source",
+   "source": "https://www.esslinger.com/stainless-steel-1-5mm-double-flange-watch-band-spring-bar-assortment-900-pc/"
+  },
+  {
+   "q": "def:watch-display-lens:name",
+   "text": "Display lens, 38 × 0.5 mm PMMA",
+   "status": "model",
+   "source": "model: watch-display-lens"
+  },
+  {
+   "q": "def:watch-hr-cover:name",
+   "text": "Heart-rate window cover, 4.0 × 8.2 × 0.5 mm PMMA",
+   "status": "model",
+   "source": "model: watch-hr-cover"
+  },
+  {
+   "q": "def:watch-display-adhesive-ring:name",
+   "text": "Display adhesive ring, 0.25 mm",
+   "status": "model",
+   "source": "model: watch-display-adhesive-ring"
+  },
+  {
+   "q": "def:watch-cell-foam-pad:name",
+   "text": "Cell foam pad, 0.25 mm double-sided",
+   "status": "model",
+   "source": "model: watch-cell-foam-pad"
+  },
+  {
+   "q": "def:watch-lra-adhesive-pad:name",
+   "text": "LRA adhesive pad, 0.25 mm, ø8 mm",
+   "status": "model",
+   "source": "model: watch-lra-adhesive-pad"
+  },
+  {
+   "q": "def:watch-cover-adhesive:name",
+   "text": "Clear UV-curing adhesive for the window covers",
+   "status": "model",
+   "source": "model: watch-cover-adhesive"
+  },
+  {
+   "q": "def:eastrising-er-tft128-1:name",
+   "text": "EastRising ER-TFT1.28-1 1.28\" round TFT",
+   "status": "source",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf"
+  },
+  {
+   "q": "def:eastrising-er-tft128-1:traits[type=performance].params.technology",
+   "text": "IPS TFT LCD, white LED backlight",
+   "status": "source",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf (§2.1-§2.4, §4.4)"
+  },
+  {
+   "q": "def:eastrising-er-tft128-1:traits[type=performance].params.brightness_cd_m2_typ",
+   "f": "u=cd/m²",
+   "text": "400 cd/m²",
+   "status": "source",
+   "unit": "cd/m²",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf (§2.1-§2.4, §4.4)"
+  },
+  {
+   "q": "def:eastrising-er-tft128-1:traits[type=performance].params.controller",
+   "text": "GC9A01 (GC9A01A)",
+   "status": "source",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf (§2.1-§2.4, §4.4)"
+  },
+  {
+   "q": "def:bosch-bmi270:name",
+   "text": "Bosch BMI270",
+   "status": "source",
+   "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf"
+  },
+  {
+   "q": "def:bosch-bmi270:traits[type=performance].params.accel_ranges_g",
+   "f": "u=g",
+   "text": "2 × 4 × 8 × 16 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Basic description, key features)"
+  },
+  {
+   "q": "def:bosch-bmi270:traits[type=performance].params.gyro_ranges_dps",
+   "f": "u=°/s",
+   "text": "125 × 250 × 500 × 1000 × 2000 °/s",
+   "status": "source",
+   "unit": "°/s",
+   "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Basic description, key features)"
+  },
+  {
+   "q": "def:adi-max30102efd:name",
+   "text": "ADI MAX30102 pulse oximeter / heart-rate module (OESIP-14)",
+   "status": "source",
+   "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf"
+  },
+  {
+   "q": "def:adi-max30102efd:traits[type=performance].params.adc_bits",
+   "f": "u=bit",
+   "text": "18 bit",
+   "status": "source",
+   "unit": "bit",
+   "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.3-4, 9, 18-20 Tables 4-8, p.26)"
+  },
+  {
+   "q": "def:ti-drv2605ldgs:name",
+   "text": "TI DRV2605L haptic driver (VSSOP-10)",
+   "status": "source",
+   "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+  },
+  {
+   "q": "def:lipol-lp402030:interfaces[id=battery_out].parameters[id=voltage].value",
+   "f": "d2",
+   "text": "3.70 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf"
+  },
+  {
+   "q": "def:lipol-lp402030:interfaces[id=battery_out].parameters[id=max_current].value",
+   "text": "0.2 A",
+   "status": "source",
+   "unit": "A",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf"
+  },
+  {
+   "q": "def:lipol-lp402030:domains[domain=mechanical].weight_g",
+   "text": "4 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf (drawing; Mechanical Characteristics)"
+  },
+  {
+   "q": "def:microchip-mcp73831t-2aci-ot:name",
+   "text": "Microchip MCP73831 Li-ion charger, 4.20 V (SOT-23-5)",
+   "status": "source",
+   "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP73831-Family-Data-Sheet-DS20001984H.pdf"
+  },
+  {
+   "q": "def:watch-cell-pads:interfaces[id=charge_out].parameters[id=max_current].value",
+   "f": "u=A|d4",
+   "text": "0.0917 A",
+   "status": "model",
+   "unit": "A",
+   "source": "model: watch-cell-pads"
+  },
+  {
+   "q": "def:adi-max17048g-t10:name",
+   "text": "ADI MAX17048 1-cell fuel gauge (TDFN-8)",
+   "status": "source",
+   "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf"
+  },
+  {
+   "q": "def:watch-case:traits[type=design_envelope].params.max_mm.width",
+   "f": "u=mm",
+   "text": "62 mm",
+   "status": "model",
+   "unit": "mm",
+   "source": "model: watch-case"
+  },
+  {
+   "q": "def:esslinger-82-2225-spring-bar:traits[type=performance].params.fits_lug_width_mm",
+   "f": "u=mm",
+   "text": "22 mm",
+   "status": "source",
+   "unit": "mm",
+   "source": "https://www.esslinger.com/stainless-steel-1-5mm-double-flange-watch-band-spring-bar-assortment-900-pc/"
+  },
+  {
+   "q": "def:watch-case:traits[type=design_envelope].params.max_mm.height",
+   "f": "u=mm",
+   "text": "13.5 mm",
+   "status": "model",
+   "unit": "mm",
+   "source": "model: watch-case"
+  },
+  {
+   "q": "def:watch-main-board:traits[type=design_envelope].params.max_mm.length",
+   "f": "u=mm",
+   "text": "41 mm",
+   "status": "model",
+   "unit": "mm",
+   "source": "model: watch-main-board"
+  },
+  {
+   "q": "def:lipol-lp402030:domains[domain=mechanical].dimensions_mm.height",
+   "f": "u=mm",
+   "text": "4 mm",
+   "status": "source",
+   "unit": "mm",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf (drawing; Mechanical Characteristics)"
+  },
+  {
+   "q": "def:eastrising-er-tft128-1:domains[domain=mechanical].weight_g",
+   "text": "4 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf (§2.2, §3.1)"
+  },
+  {
+   "q": "def:vybronics-vg0832012:domains[domain=mechanical].weight_g",
+   "text": "1 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf (p.5 §4-7, p.9 §6(1), p.10 §7, p.11 §8)"
+  },
+  {
+   "q": "def:iso-7045-m2x6-a2:domains[domain=mechanical].weight_g",
+   "text": "0.19 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://www.accu.co.uk/pozi-pan-head-screws/9242-SPP-M2-6-A2"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:domains[domain=mechanical].weight_g",
+   "text": "0.68 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://www.raytac.com/download/index.php?index_id=43 (§2.1, §4)"
+  },
+  {
+   "q": "def:gct-usb4105-gf-a:domains[domain=mechanical].weight_g",
+   "text": "0.68 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://gct.co/files/drawings/usb4105.pdf; https://www.lcsc.com/product-detail/C3020560.html"
+  },
+  {
+   "q": "derived:mass.module(ruthex-rx-m2x4)",
+   "text": "0.16 g",
+   "status": "assumption",
+   "unit": "g",
+   "formula": "weight_g if stated, else CAD body volume (generator manifest) × domains[mechanical].material.density_g_cm3",
+   "inputs": [
+    "def:ruthex-rx-m2x4:domains[domain=mechanical].material.density_g_cm3"
+   ],
+   "note": "0.02 cm³ × 8.5 g/cm³ (Brass (lead-free, cadmium-free; alloy not stated)); assumption: ruthex names no alloy; 8.5 g/cm³ is within the table's rolled-and-drawn brass range (8.43-8.73) and near 60/40 brass (8.52). The CAD body is the generated nominal shape (19.23 mm³, plain Ø2.0 bore), about 8 % less than the ruthex STEP's 20.95 mm³ with its thread form, so the computed mass (≈ 0.16 g) is about 0.02 g low. Sanity check: ruthex lists a 15 g shipping weight per 70-pack, packaging included, so at most about 0.21 g per insert."
+  },
+  {
+   "q": "derived:mass.module(esslinger-82-2225-spring-bar)",
+   "text": "0.18 g",
+   "status": "assumption",
+   "unit": "g",
+   "formula": "weight_g if stated, else CAD body volume (generator manifest) × domains[mechanical].material.density_g_cm3",
+   "inputs": [
+    "def:esslinger-82-2225-spring-bar:domains[domain=mechanical].material.density_g_cm3"
+   ],
+   "note": "0.02 cm³ × 8 g/cm³ (Stainless steel (grade not stated; 304 / 1.4301 density used)); assumption: Esslinger states only 'stainless steel', so the 304 density is assumed. The CAD body is representative (hollow tube with an assumed 0.2 mm wall, solid plungers, spring omitted), not a measured part; Esslinger states no weight."
+  },
+  {
+   "q": "def:st-usblc6-2sc6:domains[domain=mechanical].weight_g",
+   "text": "0.017 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 3, Table 6)"
+  },
+  {
+   "q": "def:epson-fc-135-32k768-12p5:domains[domain=mechanical].weight_g",
+   "text": "0.011 g",
+   "status": "source",
+   "unit": "g",
+   "source": "https://download.epsondevice.com/td/pdf/app/FC-135_en.pdf ([6], [7], [8], [10])"
+  },
+  {
+   "q": "derived:mass.assumed",
+   "f": "d1",
+   "text": "1.0 g",
+   "status": "assumption",
+   "unit": "g",
+   "formula": "∑ systemMass entries whose material carries an assumption",
+   "inputs": [
+    "def:esslinger-82-2225-spring-bar:domains[domain=mechanical].material.density_g_cm3",
+    "def:ruthex-rx-m2x4:domains[domain=mechanical].material.density_g_cm3"
+   ]
+  },
+  {
+   "q": "inst:case:interfaces[id=display_window].parameters[id=hole_count].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=display_window].parameters[id=hole_spacing].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=display_window].parameters[id=fastener_diameter].value",
+   "f": "u=mm",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=usb_opening].parameters[id=hole_count].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=usb_opening].parameters[id=hole_spacing].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=usb_opening].parameters[id=fastener_diameter].value",
+   "f": "u=mm",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=hr_window].parameters[id=hole_count].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=hr_window].parameters[id=hole_spacing].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=hr_window].parameters[id=fastener_diameter].value",
+   "f": "u=mm",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=lugs_12].parameters[id=hole_count].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=lugs_12].parameters[id=hole_spacing].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=lugs_12].parameters[id=fastener_diameter].value",
+   "f": "u=mm",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=lugs_6].parameters[id=hole_count].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=lugs_6].parameters[id=hole_spacing].value",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "inst:case:interfaces[id=lugs_6].parameters[id=fastener_diameter].value",
+   "f": "u=mm",
+   "text": "—",
+   "status": "gap"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_32].name",
+   "text": "VBUS",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_28].name",
+   "text": "VDD",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_30].name",
+   "text": "VDDH",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_35].name",
+   "text": "D+",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_34].name",
+   "text": "D-",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_24].name",
+   "text": "P0.08",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_48].name",
+   "text": "P0.24",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_49].name",
+   "text": "P0.25",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_46].name",
+   "text": "P0.22",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_45].name",
+   "text": "P0.23",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_42].name",
+   "text": "P0.19",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_22].name",
+   "text": "P0.06",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_43].name",
+   "text": "P0.21",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_17].name",
+   "text": "P0.00/XL1",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_18].name",
+   "text": "P0.01/XL2",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_37].name",
+   "text": "P0.13",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_36].name",
+   "text": "P0.14",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_39].name",
+   "text": "P0.15",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_38].name",
+   "text": "P0.16",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_41].name",
+   "text": "P0.17",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_44].name",
+   "text": "P0.20",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_50].name",
+   "text": "P1.02",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_56].name",
+   "text": "P1.04",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_51].name",
+   "text": "SWDIO",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_53].name",
+   "text": "SWDCLK",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_40].name",
+   "text": "P0.18/nRESET",
+   "status": "source",
+   "source": "https://www.raytac.com/download/index.php?index_id=43"
+  },
+  {
+   "q": "def:watch-lra-pads:interfaces[id=pin_1].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "0.1–1.9 V",
+   "status": "model",
+   "unit": "V",
+   "source": "model: watch-lra-pads"
+  },
+  {
+   "q": "sys:checks.diagnostics[id=supply_budget:board:lra_pos].details.capacityW",
+   "f": "u=W",
+   "text": "0.008 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD checks"
+  },
+  {
+   "q": "sys:checks.diagnostics[id=supply_budget:board:lra_pos].details.loadW",
+   "f": "u=W|s3",
+   "text": "0 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD checks"
+  },
+  {
+   "q": "def:watch-lra-pads:interfaces[id=pin_2].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "0.1–1.9 V",
+   "status": "model",
+   "unit": "V",
+   "source": "model: watch-lra-pads"
+  },
+  {
+   "q": "sys:checks.diagnostics[id=supply_budget:board:lra_neg].details.capacityW",
+   "f": "u=W",
+   "text": "0.008 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD checks"
+  },
+  {
+   "q": "sys:checks.diagnostics[id=supply_budget:board:lra_neg].details.loadW",
+   "f": "u=W|s3",
+   "text": "0 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD checks"
+  },
+  {
+   "q": "def:ti-tps7a0230pdbv:interfaces[id=vout].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.0 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf"
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:u7:vout].details.capacityW",
+   "f": "u=W",
+   "text": "0.6 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:u7:vout].details.loadW",
+   "f": "u=W|s3",
+   "text": "0 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "def:microchip-mcp73831t-2aci-ot:interfaces[id=battery_charge].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "4.2 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP73831-Family-Data-Sheet-DS20001984H.pdf",
+   "note": "The data sheet gives no minimum VBAT: preconditioning applies below 66.5 % of VREG with no floor, so the pin follows the cell from 0 V up to VREG (4.232 V max)."
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:u6:battery_charge].details.capacityW",
+   "f": "u=W",
+   "text": "1.7 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:u6:battery_charge].details.loadW",
+   "f": "u=W|s3",
+   "text": "0.604 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "def:ti-tps7a0218pdbv:interfaces[id=vout].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.8 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf"
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:u8:vout].details.capacityW",
+   "f": "u=W",
+   "text": "0.36 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:u8:vout].details.loadW",
+   "f": "u=W|s3",
+   "text": "0.0022 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "def:watch-cell-pads:interfaces[id=charge_out].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "4.2 V",
+   "status": "model",
+   "unit": "V",
+   "source": "model: watch-cell-pads"
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:j3:charge_out].details.capacityW",
+   "f": "u=W",
+   "text": "0.312 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "sys:boards[path=board].diagnostics[id=supply_budget:j3:charge_out].details.loadW",
+   "f": "u=W|s3",
+   "text": "0.0018 W",
+   "status": "model",
+   "unit": "W",
+   "source": "UHD boards"
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_28].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.0 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://www.raytac.com/download/index.php?index_id=43",
+   "note": "GPIO high level equals VDD (normal voltage mode, 1.7-3.6 V) or REGOUT0 (high voltage mode, 1.8-3.3 V); the parameter states the union so a 3.0 V or 3.3 V rail checks against it (PS §5.3.1.2)."
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_30].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.7–5.5 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://www.raytac.com/download/index.php?index_id=43",
+   "note": "GPIO high level equals VDD (normal voltage mode, 1.7-3.6 V) or REGOUT0 (high voltage mode, 1.8-3.3 V); the parameter states the union so a 3.0 V or 3.3 V rail checks against it (PS §5.3.1.2)."
+  },
+  {
+   "q": "def:raytac-mdbt50q-1mv2:interfaces[id=pin_32].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "5.0 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://www.raytac.com/download/index.php?index_id=43",
+   "note": "GPIO high level equals VDD (normal voltage mode, 1.7-3.6 V) or REGOUT0 (high voltage mode, 1.8-3.3 V); the parameter states the union so a 3.0 V or 3.3 V rail checks against it (PS §5.3.1.2)."
+  },
+  {
+   "q": "def:bosch-bmi270:interfaces[id=pin_5].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.8 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf"
+  },
+  {
+   "q": "def:bosch-bmi270:interfaces[id=pin_8].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.8 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf"
+  },
+  {
+   "q": "def:adi-max30102efd:interfaces[id=pin_9].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.3 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf",
+   "note": "The datasheet states no recommended operating maximum for these pins, only the 6.0 V absolute maximum for all other pins (p.2), and allows pull-ups to an external voltage (p.28). 6.0 V is used as the ceiling for net checks; keep pull-ups well below it (the application circuit uses VDDIO)."
+  },
+  {
+   "q": "def:adi-max30102efd:interfaces[id=pin_10].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.3 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf",
+   "note": "The datasheet states no recommended operating maximum for these pins, only the 6.0 V absolute maximum for all other pins (p.2), and allows pull-ups to an external voltage (p.28). 6.0 V is used as the ceiling for net checks; keep pull-ups well below it (the application circuit uses VDDIO)."
+  },
+  {
+   "q": "def:adi-max30102efd:interfaces[id=pin_11].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.8 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf",
+   "note": "The datasheet states no recommended operating maximum for these pins, only the 6.0 V absolute maximum for all other pins (p.2), and allows pull-ups to an external voltage (p.28). 6.0 V is used as the ceiling for net checks; keep pull-ups well below it (the application circuit uses VDDIO)."
+  },
+  {
+   "q": "def:adi-max30102efd:interfaces[id=core_supply].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.8 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf",
+   "note": "The datasheet states no recommended operating maximum for these pins, only the 6.0 V absolute maximum for all other pins (p.2), and allows pull-ups to an external voltage (p.28). 6.0 V is used as the ceiling for net checks; keep pull-ups well below it (the application circuit uses VDDIO)."
+  },
+  {
+   "q": "def:adi-max30102efd:interfaces[id=led_supply].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.3 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf",
+   "note": "The datasheet states no recommended operating maximum for these pins, only the 6.0 V absolute maximum for all other pins (p.2), and allows pull-ups to an external voltage (p.28). 6.0 V is used as the ceiling for net checks; keep pull-ups well below it (the application circuit uses VDDIO)."
+  },
+  {
+   "q": "def:ti-drv2605ldgs:interfaces[id=pin_6].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "2.0–5.2 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+  },
+  {
+   "q": "def:ti-drv2605ldgs:interfaces[id=pin_10].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "2.0–5.2 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+  },
+  {
+   "q": "def:ti-drv2605ldgs:interfaces[id=supply].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "2.0–5.2 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+  },
+  {
+   "q": "def:adi-max17048g-t10:interfaces[id=pin_3].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "2.5–4.5 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf",
+   "note": "The electrical characteristics give the -0.3 to +5.5 V data I/O range for SCL, SDA and ALRT only; QSTRT has just the -0.3 to +6 V absolute maximum. The data I/O range is used as the conservative operating limit."
+  },
+  {
+   "q": "def:adi-max17048g-t10:interfaces[id=supply].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "2.5–4.5 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf",
+   "note": "The electrical characteristics give the -0.3 to +5.5 V data I/O range for SCL, SDA and ALRT only; QSTRT has just the -0.3 to +6 V absolute maximum. The data I/O range is used as the conservative operating limit."
+  },
+  {
+   "q": "def:microchip-mcp73831t-2aci-ot:interfaces[id=pin_4].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "5.0 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP73831-Family-Data-Sheet-DS20001984H.pdf",
+   "note": "The data sheet gives no minimum VBAT: preconditioning applies below 66.5 % of VREG with no floor, so the pin follows the cell from 0 V up to VREG (4.232 V max)."
+  },
+  {
+   "q": "def:microchip-mcp73831t-2aci-ot:interfaces[id=supply].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "5.0 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP73831-Family-Data-Sheet-DS20001984H.pdf",
+   "note": "The data sheet gives no minimum VBAT: preconditioning applies below 66.5 % of VREG with no floor, so the pin follows the cell from 0 V up to VREG (4.232 V max)."
+  },
+  {
+   "q": "def:ti-tps7a0230pdbv:interfaces[id=pin_1].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.5–6.0 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf"
+  },
+  {
+   "q": "def:ti-tps7a0230pdbv:interfaces[id=vin].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.5–6.0 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf"
+  },
+  {
+   "q": "def:ti-tps7a0218pdbv:interfaces[id=pin_1].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.5–6.0 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf"
+  },
+  {
+   "q": "def:ti-tps7a0218pdbv:interfaces[id=vin].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "1.5–6.0 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf"
+  },
+  {
+   "q": "def:st-usblc6-2sc6:interfaces[id=pin_5].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "5.0 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+   "note": "The datasheet states no recommended operating voltage. Leakage is specified at VRM = 5.25 V, which the Rev 4 change note ties to the USB standard, and VBR is 6 V min; 5.25 V is therefore the highest VBUS the stated figures cover."
+  },
+  {
+   "q": "def:st-usblc6-2sc6:interfaces[id=vbus_clamp].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "5.0 V",
+   "status": "assumption",
+   "unit": "V",
+   "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+   "note": "The datasheet states no recommended operating voltage. Leakage is specified at VRM = 5.25 V, which the Rev 4 change note ties to the USB standard, and VBR is 6 V min; 5.25 V is therefore the highest VBUS the stated figures cover."
+  },
+  {
+   "q": "def:eastrising-er-tft128-1:interfaces[id=pin_4].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "2.8 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf"
+  },
+  {
+   "q": "def:watch-cell-pads:interfaces[id=pin_1].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.7 V",
+   "status": "model",
+   "unit": "V",
+   "source": "model: watch-cell-pads"
+  },
+  {
+   "q": "def:watch-cell-pads:interfaces[id=battery_in].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.7 V",
+   "status": "model",
+   "unit": "V",
+   "source": "model: watch-cell-pads"
+  },
+  {
+   "q": "def:lipol-lp402030:interfaces[id=lead_pos].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "3.7 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf"
+  },
+  {
+   "q": "def:lipol-lp402030:interfaces[id=charge_in].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "4.2 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf"
+  },
+  {
+   "q": "def:vybronics-vg0832012:interfaces[id=lead_pos].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "0.1–1.9 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf"
+  },
+  {
+   "q": "def:vybronics-vg0832012:interfaces[id=lead_neg].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "0.1–1.9 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf"
+  },
+  {
+   "q": "def:vybronics-vg0832012:interfaces[id=drive].parameters[id=voltage].value",
+   "f": "d1",
+   "text": "0.1–1.9 V",
+   "status": "source",
+   "unit": "V",
+   "source": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf"
+  },
+  {
+   "q": "def:wearable-watch:traits[type=performance].params.typical_days",
+   "f": "u=days",
+   "text": "12.1 days",
+   "status": "model",
+   "unit": "days",
+   "source": "model: wearable-watch"
+  },
+  {
+   "q": "def:wearable-watch:traits[type=performance].params.standby_days",
+   "f": "u=days",
+   "text": "119 days",
+   "status": "model",
+   "unit": "days",
+   "source": "model: wearable-watch"
+  },
+  {
+   "q": "def:wearable-watch:traits[type=performance].params.typical_mAh_per_day",
+   "f": "u=mAh/day|d2",
+   "text": "14.03 mAh/day",
+   "status": "model",
+   "unit": "mAh/day",
+   "source": "model: wearable-watch"
+  },
+  {
+   "q": "def:wearable-watch:traits[type=performance].params.sleep_floor_uA",
+   "f": "u=µA",
+   "text": "59.5 µA",
+   "status": "model",
+   "unit": "µA",
+   "source": "model: wearable-watch"
+  },
+  {
+   "q": "def:wearable-watch:traits[type=performance].params.peak_current_mA",
+   "f": "u=mA",
+   "text": "177 mA",
+   "status": "model",
+   "unit": "mA",
+   "source": "model: wearable-watch"
+  },
+  {
+   "q": "def:wearable-watch:traits[type=performance].params.charge_current_max_mA",
+   "f": "u=mA",
+   "text": "91.7 mA",
+   "status": "model",
+   "unit": "mA",
+   "source": "model: wearable-watch"
+  },
+  {
+   "q": "def:wearable-watch:traits[type=performance].params.charge_time_h",
+   "f": "u=h",
+   "text": "2.4 h",
+   "status": "model",
+   "unit": "h",
+   "source": "model: wearable-watch"
+  },
+  {
+   "q": "derived:diagCount(nominal,error)",
+   "text": "0",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=nominal].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(nominal,warning)",
+   "text": "0",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=nominal].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(nominal,info)",
+   "text": "7",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=nominal].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(hr-sensor-on-3v0,error)",
+   "text": "2",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=hr-sensor-on-3v0].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(hr-sensor-on-3v0,warning)",
+   "text": "0",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=hr-sensor-on-3v0].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(hr-sensor-on-3v0,info)",
+   "text": "6",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=hr-sensor-on-3v0].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(display-on-vbat,error)",
+   "text": "3",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=display-on-vbat].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(display-on-vbat,warning)",
+   "text": "0",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=display-on-vbat].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(display-on-vbat,info)",
+   "text": "7",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=display-on-vbat].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(no-i2c-pullups,error)",
+   "text": "0",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=no-i2c-pullups].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(no-i2c-pullups,warning)",
+   "text": "2",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=no-i2c-pullups].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(no-i2c-pullups,info)",
+   "text": "7",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=no-i2c-pullups].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(cell-leads-reversed,error)",
+   "text": "1",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=cell-leads-reversed].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(cell-leads-reversed,warning)",
+   "text": "0",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=cell-leads-reversed].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(cell-leads-reversed,info)",
+   "text": "7",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=cell-leads-reversed].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(ldo-output-to-vbat,error)",
+   "text": "5",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=ldo-output-to-vbat].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(ldo-output-to-vbat,warning)",
+   "text": "0",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=ldo-output-to-vbat].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(ldo-output-to-vbat,info)",
+   "text": "7",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=ldo-output-to-vbat].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(stat-overdrive,error)",
+   "text": "1",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=stat-overdrive].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(stat-overdrive,warning)",
+   "text": "1",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=stat-overdrive].diagnostics"
+   ]
+  },
+  {
+   "q": "derived:diagCount(stat-overdrive,info)",
+   "text": "7",
+   "status": "derived",
+   "unit": "count",
+   "formula": "count of checkSystem(scenario).diagnostics, plus each board below it, with the severity",
+   "inputs": [
+    "sys:scenarios[id=stat-overdrive].diagnostics"
+   ]
+  },
+  {
+   "q": "sys:bom[line=1].line",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=1].name",
+   "text": "ADI MAX17048 1-cell fuel gauge (TDFN-8)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=1].manufacturer",
+   "text": "Analog Devices (Maxim Integrated)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=1].partNumber",
+   "text": "MAX17048G+T10",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=1].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=1].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=1].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=1].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].line",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].name",
+   "text": "ADI MAX30102 pulse oximeter / heart-rate module (OESIP-14)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].manufacturer",
+   "text": "Analog Devices (Maxim Integrated)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].partNumber",
+   "text": "MAX30102EFD+T",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=2].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].line",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].name",
+   "text": "Alps Alpine SKRTLAE010 side-push TACT switch",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].manufacturer",
+   "text": "Alps Alpine",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].partNumber",
+   "text": "SKRTLAE010",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].verification",
+   "text": "not audited",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].assumptions",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=3].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].line",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].name",
+   "text": "AOS AO3400A 30 V N-channel MOSFET (SOT23)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].manufacturer",
+   "text": "Alpha & Omega Semiconductor",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].partNumber",
+   "text": "AO3400A",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].verification",
+   "text": "audited 20/20",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=4].openGaps",
+   "text": "5",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].line",
+   "text": "5",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].name",
+   "text": "Bosch BMI270",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].manufacturer",
+   "text": "Bosch Sensortec",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].partNumber",
+   "text": "BMI270",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].verification",
+   "text": "audited 19/19",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=5].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=6].line",
+   "text": "6",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=6].name",
+   "text": "Cell foam pad, 0.25 mm double-sided",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=6].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=6].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=6].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=6].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=6].openGaps",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].line",
+   "text": "7",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].name",
+   "text": "Clear UV-curing adhesive for the window covers",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=7].openGaps",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].line",
+   "text": "8",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].name",
+   "text": "Display adhesive ring, 0.25 mm",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=8].openGaps",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].line",
+   "text": "9",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].name",
+   "text": "EastRising ER-TFT1.28-1 1.28\" round TFT",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].manufacturer",
+   "text": "EastRising Technology (BuyDisplay)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].partNumber",
+   "text": "ER-TFT1.28-1",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].verification",
+   "text": "audited 19/19",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].assumptions",
+   "text": "6",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=9].openGaps",
+   "text": "6",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].line",
+   "text": "10",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].name",
+   "text": "Epson FC-135 32.768 kHz Crystal, 12.5 pF ±20 ppm",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].manufacturer",
+   "text": "Seiko Epson",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].partNumber",
+   "text": "Q13FC13500004",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].verification",
+   "text": "audited 32/35",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=10].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].line",
+   "text": "11",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].name",
+   "text": "Esslinger 82.2225 spring bar, 22 mm, ø1.50 mm, double flange",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].manufacturer",
+   "text": "Esslinger",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].partNumber",
+   "text": "82.2225",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=11].openGaps",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].line",
+   "text": "12",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].name",
+   "text": "GCT USB4105-GF-A USB-C receptacle (USB 2.0, top mount)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].manufacturer",
+   "text": "GCT",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].partNumber",
+   "text": "USB4105-GF-A",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].verification",
+   "text": "audited 19/19",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=12].openGaps",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].line",
+   "text": "13",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].name",
+   "text": "LiPol LP402030 200 mAh 3.7 V LiPo with PCM",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].manufacturer",
+   "text": "LiPol Battery Co., Ltd.",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].partNumber",
+   "text": "LP402030",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].verification",
+   "text": "audited 14/14",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].assumptions",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=13].openGaps",
+   "text": "6",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].line",
+   "text": "14",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].name",
+   "text": "LRA adhesive pad, 0.25 mm, ø8 mm",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=14].openGaps",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].line",
+   "text": "15",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].name",
+   "text": "M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].manufacturer",
+   "text": "Generic (ISO 7045 / DIN 7985 Z)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].partNumber",
+   "text": "SPP-M2-6-A2",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].quantity",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].verification",
+   "text": "not audited",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=15].openGaps",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].line",
+   "text": "16",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].name",
+   "text": "Microchip MCP73831 Li-ion charger, 4.20 V (SOT-23-5)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].manufacturer",
+   "text": "Microchip Technology",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].partNumber",
+   "text": "MCP73831T-2ACI/OT",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].verification",
+   "text": "audited",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=16].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].line",
+   "text": "17",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].name",
+   "text": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].value",
+   "text": "4.7 μF ±20 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].manufacturer",
+   "text": "Murata",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].partNumber",
+   "text": "GRM155R60J475ME47D",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].verification",
+   "text": "audited 10/10",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=17].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].line",
+   "text": "18",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].name",
+   "text": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].value",
+   "text": "1 μF ±10 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].manufacturer",
+   "text": "Murata",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].partNumber",
+   "text": "GRM155R61A105KE15D",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].quantity",
+   "text": "6",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].verification",
+   "text": "audited 10/10",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=18].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].line",
+   "text": "19",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].name",
+   "text": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].value",
+   "text": "100 nF ±10 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].manufacturer",
+   "text": "Murata",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].partNumber",
+   "text": "GRM155R71C104KA88D",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].quantity",
+   "text": "6",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].verification",
+   "text": "audited 10/10",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=19].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].line",
+   "text": "20",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].name",
+   "text": "Murata GRM1555C1H200JA01D 20 pF C0G 50 V 0402",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].value",
+   "text": "20 pF ±5 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].manufacturer",
+   "text": "Murata",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].partNumber",
+   "text": "GRM1555C1H200JA01D",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].verification",
+   "text": "audited 8/8",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=20].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].line",
+   "text": "21",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].name",
+   "text": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].value",
+   "text": "10 μF ±10 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].manufacturer",
+   "text": "Murata",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].partNumber",
+   "text": "GRM188R61A106KE69D",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].verification",
+   "text": "audited 8/8",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=21].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].line",
+   "text": "22",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].name",
+   "text": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].value",
+   "text": "4.7 μF ±10 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].manufacturer",
+   "text": "Murata",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].partNumber",
+   "text": "GRM188R61A475KE15D",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].quantity",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].verification",
+   "text": "audited 8/8",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=22].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].line",
+   "text": "23",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].name",
+   "text": "Raytac MDBT50Q-1MV2 nRF52840 module (chip antenna)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].manufacturer",
+   "text": "Raytac Corporation",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].partNumber",
+   "text": "MDBT50Q-1MV2",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].verification",
+   "text": "audited 20/20",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].assumptions",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=23].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].line",
+   "text": "24",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].name",
+   "text": "ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].manufacturer",
+   "text": "ruthex",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].partNumber",
+   "text": "GE-M2x04-001",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].quantity",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].verification",
+   "text": "audited 21/21",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=24].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].line",
+   "text": "25",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].name",
+   "text": "ST USBLC6-2SC6 USB ESD Protection (SOT23-6L)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].manufacturer",
+   "text": "STMicroelectronics",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].partNumber",
+   "text": "USBLC6-2SC6",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].verification",
+   "text": "not audited",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=25].openGaps",
+   "text": "5",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].line",
+   "text": "26",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].name",
+   "text": "TI DRV2605L haptic driver (VSSOP-10)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].manufacturer",
+   "text": "Texas Instruments",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].partNumber",
+   "text": "DRV2605LDGSR",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=26].openGaps",
+   "text": "3",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].line",
+   "text": "27",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].name",
+   "text": "TI TPS7A0218P 1.8 V 200 mA LDO (SOT-23-5)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].manufacturer",
+   "text": "Texas Instruments",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].partNumber",
+   "text": "TPS7A0218PDBVR",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].verification",
+   "text": "audited 18/18",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=27].openGaps",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].line",
+   "text": "28",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].name",
+   "text": "TI TPS7A0230P 3.0 V 200 mA LDO (SOT-23-5)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].manufacturer",
+   "text": "Texas Instruments",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].partNumber",
+   "text": "TPS7A0230PDBVR",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].verification",
+   "text": "audited 18/18",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=28].openGaps",
+   "text": "4",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].line",
+   "text": "29",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].name",
+   "text": "Vybronics VG0832012 8 mm Z-axis coin LRA",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].manufacturer",
+   "text": "Vybronics",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].partNumber",
+   "text": "VG0832012",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=29].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].line",
+   "text": "30",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].name",
+   "text": "Watch case",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].assumptions",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=30].openGaps",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].line",
+   "text": "31",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].name",
+   "text": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].value",
+   "text": "100 k ohm ±1 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].manufacturer",
+   "text": "Yageo",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].partNumber",
+   "text": "RC0402FR-07100KL",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=31].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].line",
+   "text": "32",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].name",
+   "text": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].value",
+   "text": "10 k ohm ±1 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].manufacturer",
+   "text": "Yageo",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].partNumber",
+   "text": "RC0402FR-0710KL",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=32].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].line",
+   "text": "33",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].name",
+   "text": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].value",
+   "text": "12 k ohm ±1 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].manufacturer",
+   "text": "Yageo",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].partNumber",
+   "text": "RC0402FR-0712KL",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=33].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].line",
+   "text": "34",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].name",
+   "text": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].value",
+   "text": "22 k ohm ±1 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].manufacturer",
+   "text": "Yageo",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].partNumber",
+   "text": "RC0402FR-0722KL",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=34].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].line",
+   "text": "35",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].name",
+   "text": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].value",
+   "text": "33  ohm ±1 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].manufacturer",
+   "text": "Yageo",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].partNumber",
+   "text": "RC0402FR-0733RL",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=35].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].line",
+   "text": "36",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].name",
+   "text": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].value",
+   "text": "4.7 k ohm ±1 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].manufacturer",
+   "text": "Yageo",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].partNumber",
+   "text": "RC0402FR-074K7L",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=36].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].line",
+   "text": "37",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].name",
+   "text": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].value",
+   "text": "5.1 k ohm ±1 %",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].manufacturer",
+   "text": "Yageo",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].partNumber",
+   "text": "RC0402FR-075K1L",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].quantity",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].verification",
+   "text": "audited 9/9",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=37].openGaps",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].line",
+   "text": "38",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].name",
+   "text": "Display lens, 38 × 0.5 mm PMMA",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].manufacturer",
+   "text": "Laser cut for this project (custom)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=38].openGaps",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].line",
+   "text": "39",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].name",
+   "text": "Heart-rate window cover, 4.0 × 8.2 × 0.5 mm PMMA",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].manufacturer",
+   "text": "Laser cut for this project (custom)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=39].openGaps",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=40].line",
+   "text": "40",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=40].name",
+   "text": "Watch main board",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=40].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=40].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=40].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=40].assumptions",
+   "text": "2",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=40].openGaps",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=41].line",
+   "text": "41",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=41].name",
+   "text": "Cell lead solder pads (2)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=41].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=41].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=41].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=41].assumptions",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=41].openGaps",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].line",
+   "text": "42",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].name",
+   "text": "Cell leads",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].manufacturer",
+   "text": "LiPol Battery Co.",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=42].openGaps",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=43].line",
+   "text": "43",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=43].name",
+   "text": "LRA lead solder pads (2)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=43].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=43].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=43].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=43].assumptions",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=43].openGaps",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].line",
+   "text": "44",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].name",
+   "text": "LRA leads",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].manufacturer",
+   "text": "Vybronics",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].assumptions",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=44].openGaps",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=45].line",
+   "text": "45",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=45].name",
+   "text": "SWD test pads (5)",
+   "status": "model",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=45].manufacturer",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=45].quantity",
+   "text": "1",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=45].verification",
+   "text": "—",
+   "status": "gap",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=45].assumptions",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "sys:bom[line=45].openGaps",
+   "text": "0",
+   "status": "model",
+   "unit": "count",
+   "source": "UHD bom"
+  },
+  {
+   "q": "ver:aos-ao3400a:audit.confirmed",
+   "text": "20",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/aos-ao3400a/verification.json"
+  },
+  {
+   "q": "ver:aos-ao3400a:audit.checked",
+   "text": "20",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/aos-ao3400a/verification.json"
+  },
+  {
+   "q": "ver:bosch-bmi270:audit.confirmed",
+   "text": "19",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/bosch-bmi270/verification.json"
+  },
+  {
+   "q": "ver:bosch-bmi270:audit.checked",
+   "text": "19",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/bosch-bmi270/verification.json"
+  },
+  {
+   "q": "ver:eastrising-er-tft128-1:audit.confirmed",
+   "text": "19",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/eastrising-er-tft128-1/verification.json"
+  },
+  {
+   "q": "ver:eastrising-er-tft128-1:audit.checked",
+   "text": "19",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/eastrising-er-tft128-1/verification.json"
+  },
+  {
+   "q": "ver:epson-fc-135-32k768-12p5:audit.confirmed",
+   "text": "32",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/epson-fc-135-32k768-12p5/verification.json"
+  },
+  {
+   "q": "ver:epson-fc-135-32k768-12p5:audit.checked",
+   "text": "35",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/epson-fc-135-32k768-12p5/verification.json"
+  },
+  {
+   "q": "ver:esslinger-82-2225-spring-bar:audit.confirmed",
+   "text": "9",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/esslinger-82-2225-spring-bar/verification.json"
+  },
+  {
+   "q": "ver:esslinger-82-2225-spring-bar:audit.checked",
+   "text": "9",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/esslinger-82-2225-spring-bar/verification.json"
+  },
+  {
+   "q": "ver:gct-usb4105-gf-a:audit.confirmed",
+   "text": "19",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/gct-usb4105-gf-a/verification.json"
+  },
+  {
+   "q": "ver:gct-usb4105-gf-a:audit.checked",
+   "text": "19",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/gct-usb4105-gf-a/verification.json"
+  },
+  {
+   "q": "ver:lipol-lp402030:audit.confirmed",
+   "text": "14",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/lipol-lp402030/verification.json"
+  },
+  {
+   "q": "ver:lipol-lp402030:audit.checked",
+   "text": "14",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/lipol-lp402030/verification.json"
+  },
+  {
+   "q": "ver:murata-grm155:audit.confirmed",
+   "text": "10",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/murata-grm155/verification.json"
+  },
+  {
+   "q": "ver:murata-grm155:audit.checked",
+   "text": "10",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/murata-grm155/verification.json"
+  },
+  {
+   "q": "ver:murata-grm1555c1h200ja01:audit.confirmed",
+   "text": "8",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/murata-grm1555c1h200ja01/verification.json"
+  },
+  {
+   "q": "ver:murata-grm1555c1h200ja01:audit.checked",
+   "text": "8",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/evidence/murata-grm1555c1h200ja01/verification.json"
+  },
+  {
+   "q": "ver:murata-grm188:audit.confirmed",
+   "text": "8",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/murata-grm188/verification.json"
+  },
+  {
+   "q": "ver:murata-grm188:audit.checked",
+   "text": "8",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/murata-grm188/verification.json"
+  },
+  {
+   "q": "ver:raytac-mdbt50q-1mv2:audit.confirmed",
+   "text": "20",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/raytac-mdbt50q-1mv2/verification.json"
+  },
+  {
+   "q": "ver:raytac-mdbt50q-1mv2:audit.checked",
+   "text": "20",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/raytac-mdbt50q-1mv2/verification.json"
+  },
+  {
+   "q": "ver:ruthex-rx-m2x4:audit.confirmed",
+   "text": "21",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/ruthex-rx-m2x4/verification.json"
+  },
+  {
+   "q": "ver:ruthex-rx-m2x4:audit.checked",
+   "text": "21",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/ruthex-rx-m2x4/verification.json"
+  },
+  {
+   "q": "ver:ti-tps7a0218pdbv:audit.confirmed",
+   "text": "18",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/ti-tps7a0218pdbv/verification.json"
+  },
+  {
+   "q": "ver:ti-tps7a0218pdbv:audit.checked",
+   "text": "18",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/ti-tps7a0218pdbv/verification.json"
+  },
+  {
+   "q": "ver:ti-tps7a0230pdbv:audit.confirmed",
+   "text": "18",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/ti-tps7a0230pdbv/verification.json"
+  },
+  {
+   "q": "ver:ti-tps7a0230pdbv:audit.checked",
+   "text": "18",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/ti-tps7a0230pdbv/verification.json"
+  },
+  {
+   "q": "ver:yageo-rc0402:audit.confirmed",
+   "text": "9",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/yageo-rc0402/verification.json"
+  },
+  {
+   "q": "ver:yageo-rc0402:audit.checked",
+   "text": "9",
+   "status": "model",
+   "unit": "count",
+   "source": "parts/catalog/yageo-rc0402/verification.json"
+  }
+ ]
+}

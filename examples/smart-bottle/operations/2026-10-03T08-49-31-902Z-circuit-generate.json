@@ -1,0 +1,126 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/circuit.config.ts",
+    "configDigest": "sha256:67a1afe9cbf0189ea94ae3e888f30a0732a250514abe090b69d4808d616c9967",
+    "moduleDigest": "sha256:998903896a47667d9cf3d1c2d492ac8f536a3c6a0ac1d7ade2fec4015f2d40c0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:1b69199f507c04d28725d078f1fd1c307516a86a066131daea9b48557c941cb9",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T08:49:31.902Z",
+  "status": "succeeded",
+  "summary": "61 components (14 fixed, 47 layout), 53 nets → 201 traces, 322 vias in 1105.4 s; 62 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/tscircuit/board.gen.tsx",
+      "digest": "sha256:478c06f6e624beda46a788ed5967bf9525e8374a70292ce5560f8cd32b9c7a75",
+      "bytes": 70922,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/circuit.json",
+      "digest": "sha256:21cf145b968db5bbb8e08854c8596f772470806301ee7befeb1d336e9b1885ac",
+      "bytes": 1404704,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/build.json",
+      "digest": "sha256:b4306be6e62c89ac4f704956d93044467ad01eb3b4e49def0a6262378381baf2",
+      "bytes": 22097,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 61,
+    "nets": 53,
+    "placement": {
+      "fixed": 14,
+      "layout": 47
+    },
+    "traces": 201,
+    "vias": 322,
+    "build_ms": 1105432,
+    "errors": [
+      "pcb_trace_error: PCB trace trace[.d7 > port.pin1, .u4 > port.pin1] overlaps with pcb_via \"pcb_via[#pcb_via_301]\" (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.r11 > port.anode, .u4 > port.pin4] is too close to trace[.r11 > port.cathode, .u4 > port.pin3] (gap: 0.095mm)",
+      "pcb_trace_error: PCB trace trace[.r16 > port.anode, .r6 > port.anode] overlaps with trace[.r16 > port.cathode, .u1 > port.pin20] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.r6 > port.cathode, .u2 > port.pin7] overlaps with trace[.r16 > port.cathode, .u1 > port.pin20] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d8 > port.pin4, .u3 > port.pin24] overlaps with trace[.d7 > port.pin4, .u3 > port.pin21] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d8 > port.pin4, .u3 > port.pin24] overlaps with trace[.d6 > port.pin4, .u3 > port.pin18] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d7 > port.pin2, .u3 > port.pin19] overlaps with trace[.d6 > port.pin4, .u3 > port.pin18] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d7 > port.pin2, .u3 > port.pin19] overlaps with pcb_via \"pcb_via[#pcb_via_124]\" (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d7 > port.pin3, .u3 > port.pin20] overlaps with trace[.d6 > port.pin4, .u3 > port.pin18] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d7 > port.pin3, .u3 > port.pin20] overlaps with pcb_via \"pcb_via[#pcb_via_138]\" (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d7 > port.pin4, .u3 > port.pin21] overlaps with trace[.r16 > port.cathode, .u1 > port.pin20] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.d5 > port.pin2, .u3 > port.pin13] is too close to trace[.d4 > port.pin3, .u3 > port.pin11] (gap: 0.091mm)",
+      "pcb_trace_error: PCB trace trace[.d4 > port.pin3, .u3 > port.pin11] is too close to trace[.d4 > port.pin4, .u3 > port.pin12] (gap: 0.007mm)",
+      "pcb_trace_error: PCB trace trace[.d4 > port.pin4, .u3 > port.pin12] is too close to trace[.d4 > port.pin2, .u3 > port.pin10] (gap: 0.093mm)",
+      "pcb_trace_error: PCB trace trace[.d4 > port.pin4, .u3 > port.pin12] overlaps with pcb_smtpad \"pcb_port[.u3 > .OUT10]\" (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.r4 > port.cathode, .u2 > port.pin10] overlaps with trace[.r16 > port.cathode, .u1 > port.pin20] (accidental contact)",
+      "pcb_trace_error: PCB trace trace[.r11 > port.cathode, .u4 > port.pin3] overlaps with pcb_smtpad \"pcb_port[.u4 > .VOUT]\" (accidental contact)",
+      "pcb_pad_trace_clearance_error: Pad pcb_port[.u3 > .OUT18] and trace trace[.d7 > port.pin3, .u3 > port.pin20] are too close (clearance: 0.021mm, minimum: 0.1mm)",
+      "pcb_pad_trace_clearance_error: Pad pcb_port[.c7 > .pin2] and trace trace[.d7 > port.pin4, .u3 > port.pin21] are too close (clearance: 0.076mm, minimum: 0.1mm)",
+      "pcb_pad_trace_clearance_error: Pad pcb_port[.u3 > .OUT9] and trace trace[.d4 > port.pin4, .u3 > port.pin12] are too close (clearance: 0.061mm, minimum: 0.1mm)",
+      "pcb_pad_trace_clearance_error: Pad pcb_port[.u3 > .GND__exposed_thermal_pad_] and trace trace[.d4 > port.pin4, .u3 > port.pin12] are too close (clearance: 0.077mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_101] and trace trace[.d8 > port.pin4, .u3 > port.pin24] are too close (clearance: 0.094mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_107] and trace trace[.d8 > port.pin2, .u3 > port.pin22] are too close (clearance: 0.083mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_107] and trace trace[.d8 > port.pin4, .u3 > port.pin24] are too close (clearance: 0.056mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_115] and trace trace[.c7 > port.neg, .r9 > port.cathode] are too close (clearance: 0.077mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_123] and trace trace[.c7 > port.neg, .r9 > port.cathode] are too close (clearance: 0.047mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_128] and trace trace[.d8 > port.pin4, .u3 > port.pin24] are too close (clearance: 0.069mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_134] and trace trace[.d7 > port.pin2, .u3 > port.pin19] are too close (clearance: 0.085mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_138] and trace trace[.d7 > port.pin4, .u3 > port.pin21] are too close (clearance: 0.08mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_168] and trace trace[.d2 > port.pin2, .u3 > port.pin4] are too close (clearance: 0.093mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_284] and trace trace[.d7 > port.pin1, .u4 > port.pin1] are too close (clearance: 0.049mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_284] and trace trace[.r11 > port.cathode, .u4 > port.pin3] are too close (clearance: 0.071mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_288] and trace trace[.d7 > port.pin1, .u4 > port.pin1] are too close (clearance: 0.048mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_288] and trace trace[.r11 > port.cathode, .u4 > port.pin3] are too close (clearance: 0.071mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_301] and trace trace[.c12 > port.neg, .c8 > port.neg] are too close (clearance: 0.044mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_301] and trace trace[.c8 > port.neg, .tp_gnd > port.pin1] are too close (clearance: 0.055mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_301] and trace trace[.c8 > port.neg, .u1 > port.pin36] are too close (clearance: 0.073mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_65] and pad pcb_port[.d9 > .I_O1_6] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_101] and pad pcb_port[.c6 > .pin1] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_107] and pad pcb_port[.u3 > .OUT21] are too close (clearance: 0.018mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_107] and pad pcb_port[.u3 > .OUT23] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_116] and pad pcb_port[.u3 > .OUT17] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_116] and pad pcb_port[.u3 > .OUT19] are too close (clearance: 0.017mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_124] and pad pcb_port[.u3 > .OUT16] are too close (clearance: 0.011mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_128] and pad pcb_port[.c7 > .pin1] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_134] and pad pcb_port[.u3 > .OUT15] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_138] and pad pcb_port[.u3 > .OUT19] are too close (clearance: 0.082mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_168] and pad pcb_port[.u3 > .OUT5] are too close (clearance: 0.019mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_168] and pad pcb_port[.u3 > .OUT3] are too close (clearance: 0.091mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_188] and pad pcb_port[.r10 > .pin2] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_via_clearance_error: Vias pcb_via[#pcb_via_124] and pcb_via[#pcb_via_128] from different nets are too close together (gap: -0.089mm)",
+      "pcb_via_clearance_error: Vias pcb_via[#pcb_via_168] and pcb_via[#pcb_via_170] from different nets are too close together (gap: -0.016mm)",
+      "pcb_via_clearance_error: Vias pcb_via[#pcb_via_192] and pcb_via[#pcb_via_194] from different nets are too close together (gap: 0.003mm)",
+      "pcb_via_clearance_error: Vias pcb_via[#pcb_via_194] and pcb_via[#pcb_via_200] from different nets are too close together (gap: 0.093mm)",
+      "pcb_via_clearance_error: Vias pcb_via[#pcb_via_263] and pcb_via[#pcb_via_301] from different nets are too close together (gap: -0.088mm)",
+      "pcb_trace_error: Trace too close to board edge (0.230mm < 0.300mm required, margin: 0.15mm)",
+      "pcb_placement_error: Via hole at (3.10mm, 25.95mm) overlaps SMD pad r20.pin1 at (3.40mm, 25.89mm)",
+      "pcb_placement_error: Via hole at (4.07mm, 9.02mm) overlaps SMD pad u3.OUT22 at (3.88mm, 9.00mm)",
+      "pcb_placement_error: Via hole at (3.77mm, 7.38mm) overlaps SMD pad u3.OUT18 at (3.88mm, 7.40mm)",
+      "pcb_placement_error: Via hole at (3.71mm, 6.49mm) overlaps SMD pad u3.OUT16 at (3.88mm, 6.60mm)",
+      "pcb_placement_error: Via hole at (0.09mm, 9.62mm) overlaps SMD pad u3.OUT0 at (0.13mm, 9.40mm)",
+      "pcb_placement_error: Via hole at (15.42mm, -0.88mm) overlaps SMD pad r4.pin2 at (15.01mm, -0.80mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T09:07:57.483Z"
+}

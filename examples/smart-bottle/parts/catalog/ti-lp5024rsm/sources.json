@@ -1,0 +1,75 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "TI LP5018/LP5024 datasheet SLVSEB8C (October 2018, revised July 2024), 59 pages including the package option addendum (8-Nov-2025) and RSM0032B outline",
+    "url": "https://www.ti.com/lit/ds/symlink/lp5024.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:38:00Z",
+    "sha256": "cd8314d93235724a73604873ea6082a5222e4e8bc579c4d1cfbd321691364200",
+    "note": "The bottle brief cites the same URL as [B6].",
+    "supports": [
+      "§1 features: VCC 2.7-5.5 V; EN, SDA, SCL compatible with 1.8, 3.3 and 5 V rails; output max 6 V; 24 constant-current sinks, 25.5 mA (full VCC) / 35 mA (VCC >= 3.3 V); +-7 % device-to-device and channel-to-channel; shutdown 1 uA max; power-save 10 uA typ; 12-bit 29 kHz PWM; 3 programmable banks (R, G, B); 2 address pins (4 devices); broadcast address; auto-increment; 400 kHz I2C; Device Information VQFN (32) 4.00 x 4.00 mm",
+      "§5 Figure 5-2 LP5024 RSM 32-pin VQFN top view (OUT0-7 pins 1-8, OUT8-15 pins 9-16, OUT16-23 pins 17-24, ADDR0 25, ADDR1 26, VCC 27, SDA 28, SCL 29, EN 30, IREF 31, VCAP 32, exposed thermal pad GND) and Table 5-1 pin functions",
+      "§6.1 absolute maximum: EN, IREF, OUTx, SCL, SDA, VCC -0.3 to 6 V; ADDRx -0.3 to VCC + 0.3 V; VCAP -0.3 to 2 V; TJ -40 to 125 C; Tstg -65 to 150 C",
+      "§6.2 ESD: HBM +-4000 V, CDM +-1500 V",
+      "§6.3 recommended: VCC 2.7-5.5 V; OUTx 0-5.5 V; ADDRx, EN, SDA, SCL 0-5.5 V; TA -40 to 85 C",
+      "§6.4 thermal (RSM): RthJA 36.4, RthJC(top) 34.8, RthJB 15.9, psiJT 0.9, psiJB 16, RthJC(bot) 6.3 C/W",
+      "§6.5 electrical characteristics: shutdown 0.2/1 uA; standby 6/10 uA; normal 5/8 mA (10 mA per OUTx); power-save 6/10 uA; VUVR 2.5 V max; VUVF 2 V min; hysteresis 0.2 V; IMAX 25.5 mA (option 0) / 35 mA (VCC >= 3.3 V, option 1); ILIM 35/55/80 and 40/75/120 mA; leakage 0.1/1 uA; IERR +-7 %; VIREF 0.7 V; KIREF 105; fPWM 21/29 kHz; VSAT 0.25/0.35 V and 0.3/0.4 V at 20 mA; VIL 0.4 V, VIH 1.4 V, input current +-1 uA, SDA VOL 0.4 V at 5 mA; TSD 160 C, hysteresis 15 C",
+      "§6.6 timing: fOSC 15 MHz; tPSM 20/30/40 ms; tEN_H 500 us; tEN_L 3 us; fSCL 400 kHz; Cb 10-200 pF",
+      "§7.3.1 every three consecutive outputs share an LEDx_BRIGHTNESS register (OUT0-OUT2 = LED0)",
+      "§7.3.2 Table 7-1 / Figure 7-5 LED bank control: with LEDx_Bank_EN set, the three outputs of an RGB LED follow BANK_A_COLOR, BANK_B_COLOR, BANK_C_COLOR and BANK_BRIGHTNESS; the table and the register map name the banks A/B/C and map no letter to a colour",
+      "§7.3.3 RIREF = KIREF x VIREF / ISET; IREF floating gives near-zero current; IREF to GND gives ILIM",
+      "§7.3.4 power-save after all LEDs off > 30 ms with Power_Save_EN = 1 (default)",
+      "§7.3.5 thermal shutdown 160 C, release 145 C; UVLO",
+      "§7.4 functional modes (shutdown, initialization, standby, normal, power save, thermal shutdown) with ICC figures",
+      "§7.5.1.4 Table 7-2 / 7-3: independent address 0b0101 0 ADDR1 ADDR0 (0x28-0x2B), broadcast 0b0111100 (0x3C)",
+      "§7.6 register map: DEVICE_CONFIG0 Chip_EN (00h, reset 00h); DEVICE_CONFIG1 (01h, reset 3Ch: Log_Scale_EN, Power_Save_EN, Auto_Incr_EN, PWM_Dithering_EN = 1; Max_Current_Option, LED_Global_Off = 0)",
+      "§8.2 typical application: pull-ups 1.8-4.7 kOhm on SDA/SCL; 1 uF VCAP to GND; 1 uF VCC to GND close to the device; up to four devices",
+      "§8.3 supply must not drop below 2.7 V on load transients; §8.4 layout: CVCAP, CVCC, RIREF close; thermal vias under the pad",
+      "§11 package option addendum: LP5024RSMR Active, VQFN (RSM) 32, 3000 large T&R, NIPDAU | NIPDAUAG, MSL Level-2-260C-1 YEAR, -40 to 85 C, marking LP 5024",
+      "RSM0032B package outline 4219108/B 08/2019: body 3.9-4.1 x 3.9-4.1 mm, 1 mm max height, standoff 0.00-0.05, 28X 0.4 pitch, 2X 2.8 row span, terminals 32X 0.15-0.25 wide x 0.25-0.45 long, exposed thermal pad 33 2.8 +-0.05 square, pin 1 index area; note 3 the thermal pad must be soldered to the board"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "TI LP5024 product folder",
+    "url": "https://www.ti.com/product/LP5024",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:38:00Z",
+    "sha256": "929b14a419029c77efed89bac8df083fb0d0aacd61bc6a8dd2bff52f2998dc2f",
+    "note": "HTML snapshot; the sha256 is of the page as fetched and will not reproduce.",
+    "supports": [
+      "parametrics: 24 channels, 35 mA per channel, shutdown 0.2 uA typ, Iq 0.01 mA, -40 to 85 C, VQFN (RSM) 32, 16 mm2 (4 x 4 mm)",
+      "CAD symbols, footprints and 3D models for VQFN (RSM) 32 offered only through Ultra Librarian"
+    ]
+  },
+  {
+    "id": "src_part_details",
+    "title": "TI LP5024RSMR part details",
+    "url": "https://www.ti.com/product/LP5024/part-details/LP5024RSMR",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:38:00Z",
+    "sha256": "fef0a8045c8b9b96e1bd30bcf19ad89819810cd7b482d61bb12a15cce05d1d31",
+    "note": "HTML snapshot; the sha256 is of the page as fetched and will not reproduce. Stock and price were not used.",
+    "supports": [
+      "LP5024RSMR ACTIVE, VQFN (RSM) 32, -40 to 85 C, 3,000 large T&R"
+    ]
+  },
+  {
+    "id": "src_cad_search",
+    "title": "Ultra Librarian for TI: LP5024RSMR (RSM0032B) CAD download page",
+    "url": "https://vendor.ultralibrarian.com/TI/embedded/?gpn=LP5024&package=RSM&pin=32",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:41:00Z",
+    "sha256": null,
+    "licence": "Download requires agreeing to the Ultra Librarian Terms And Conditions (checkbox on the page) and third-party cookies; no licence permitting redistribution is stated. Nothing was downloaded; not redistributed.",
+    "note": "Linked from the TI product folder's 'CAD symbols, footprints & 3D models' section. Recorded as where research looked; the part's geometry is generated from the RSM0032B outline in src_datasheet.",
+    "supports": [
+      "a manufacturer-linked 3D model exists but is not usable here"
+    ]
+  }
+]

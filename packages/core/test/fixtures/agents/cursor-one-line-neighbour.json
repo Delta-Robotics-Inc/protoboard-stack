@@ -1,0 +1,8 @@
+{
+  // servers I use every day
+  "mcpServers": {
+    "other": { "command": "x", "args": [] }, // keep this one short
+    /* the alpha app's server keeps its name */
+    "protoboard": { "url": "https://alpha.example/mcp" },
+  },
+}

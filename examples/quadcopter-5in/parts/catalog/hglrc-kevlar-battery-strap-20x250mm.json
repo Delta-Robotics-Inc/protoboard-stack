@@ -1,0 +1,143 @@
+{
+  "artifacts": [
+    {
+      "id": "product_page",
+      "name": "HGLRC product page",
+      "type": "documentation",
+      "url": "https://www.hglrc.com/products/hglrc-kevlar-battery-strap-15x250mm-20x250mm"
+    },
+    {
+      "id": "product_json",
+      "name": "HGLRC product JSON (variant SKUs)",
+      "type": "documentation",
+      "url": "https://www.hglrc.com/products/hglrc-kevlar-battery-strap-15x250mm-20x250mm.json"
+    }
+  ],
+  "categories": [
+    "mechanical.mounting",
+    "robotics.drone"
+  ],
+  "description": "20 mm x 250 mm aramid-fiber (Kevlar) LiPo strap with high-strength metal buckle, anti-slip adhesive, and reusable hook and loop; 8.3 g, sold singly.",
+  "domains": [
+    {
+      "dimensions_mm": {
+        "length": 250,
+        "width": 20
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "anti_slip": "anti-slip adhesive",
+        "buckle": "metal",
+        "closure": "hook and loop (reusable)",
+        "material": "aramid fiber (Kevlar)",
+        "pack_quantity": 1,
+        "source": [
+          "https://www.hglrc.com/products/hglrc-kevlar-battery-strap-15x250mm-20x250mm",
+          "https://epicfpv.ca/products/hglrc-kevlar-battery-strap-20x250mm"
+        ],
+        "thickness_mm": null
+      },
+      "weight_g": 8.3
+    }
+  ],
+  "id": "hglrc-kevlar-battery-strap-20x250mm",
+  "interfaces": [
+    {
+      "capabilities": [
+        "battery_retention"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "id": "strap_loop",
+      "name": "Battery strap loop (20 x 250 mm, metal buckle, hook and loop)",
+      "parameters": [
+        {
+          "id": "strap_width",
+          "name": "Strap width",
+          "unit": "mm",
+          "value": 20
+        },
+        {
+          "id": "strap_length",
+          "name": "Strap length",
+          "unit": "mm",
+          "value": 250
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Construction per HGLRC: 'Material: Aramid fiber'; 'High-strength metal buckle'; 'Battery strap comes with anti-slip adhesive'; 'The hook and loop are tightly attached to each other and can be used repeatedly'. Pack quantity: sold as a single strap ('8.3g (single)'; EpicFPV 'Package Includes: 1x'). A quad normally uses one strap per pack; order a second as a spare.",
+            "source": [
+              "https://www.hglrc.com/products/hglrc-kevlar-battery-strap-15x250mm-20x250mm",
+              "https://epicfpv.ca/products/hglrc-kevlar-battery-strap-20x250mm"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "Mating feature: the quadcopter-5in-frame battery strap slots in the top plate (frame requirement 'Carry a 75 x 39.5 x 35 mm, 211 g 6S 1100 mAh pack on a top-mounted strap'). The strap passes down through one slot, under the plate, up through the other, and around the pack. Slots must be at least 20 mm long (strap width) — frame slot geometry is not yet defined. No strap protocol exists, so this pairing is not DRC-checked.",
+            "source": [
+              "https://www.hglrc.com/products/hglrc-kevlar-battery-strap-15x250mm-20x250mm"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "Fit check vs cnhl-black-series-1100mah-6s-100c (75 x 39.5 x 35 mm), strap around the 39.5 x 35 mm cross-section plus a 3 mm top plate: loop = 2 x (39.5 + 35) + 2 x 3 = 149 + 6 = 155 mm. 250 - 155 = 95 mm left for the buckle pass-through and hook-and-loop overlap. Worst case with CNHL's +5 mm dimension tolerance on both sides: 2 x (44.5 + 40) + 6 = 175 mm, leaving 75 mm. FITS. Width 20 mm spans about 27% of the 75 mm pack length.",
+            "source": [
+              "https://www.hglrc.com/products/hglrc-kevlar-battery-strap-15x250mm-20x250mm"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "frame top-plate thickness in the fit check",
+            "reason": "quadcopter-5in-frame lists plate thickness as a data gap (no CAD yet); 3 mm is a common 5-inch top-plate thickness. Each extra mm of plate adds 2 mm to the loop, so the loop only reaches the full 250 mm at a ~50 mm plate; allowing for the buckle and hook-and-loop overlap, keep the plate well under ~40 mm.",
+            "value": "3 mm"
+          },
+          "type": "assumption"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "HGLRC",
+  "name": "HGLRC Kevlar battery strap 20x250mm",
+  "part_number": "F.ZD.02.00010",
+  "tags": [
+    "battery strap",
+    "kevlar",
+    "aramid",
+    "lipo",
+    "fpv",
+    "5-inch"
+  ],
+  "traits": [
+    {
+      "params": {
+        "fields": [
+          "strap thickness",
+          "tensile strength / load rating",
+          "buckle dimensions",
+          "anti-slip strip length",
+          "temperature range"
+        ],
+        "note": "Not stated by HGLRC for F.ZD.02.00010; see .research/gaps.json."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

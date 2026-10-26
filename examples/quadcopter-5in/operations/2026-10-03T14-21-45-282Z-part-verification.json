@@ -1,0 +1,49 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "dolphinrc-m3-grommet-fc",
+    "independent": "false"
+  },
+  "projectDigest": "sha256:1ec40319eb1f92ed6a6478aae64a5a96fdf500869bb959df3db558a0a6336a0d",
+  "tools": [],
+  "startedAt": "2026-10-03T14:21:45.282Z",
+  "status": "succeeded",
+  "summary": "dolphinrc-m3-grommet-fc: audit 2/3 (self-audit), 1 assumption(s), 2 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/dolphinrc-m3-grommet-fc/verification.json",
+      "digest": "sha256:0d3895efdf61d671a7aac18b7c084b7520043787ac3319bf8941c3995da068ad",
+      "bytes": 701,
+      "description": "dolphinrc-m3-grommet-fc: verification record"
+    }
+  ],
+  "data": {
+    "partId": "dolphinrc-m3-grommet-fc",
+    "recorded_at": "2026-10-03T14:21:45.305Z",
+    "audit": {
+      "method": "self-audit: each fact re-read from the copies fetched on 2026-10-03 (sha256 in sources.json): the listing's technical summary or the maker's datasheet, product page or image",
+      "independent": false,
+      "auditor": "authoring agent (PB-836 session)",
+      "checked": 3,
+      "confirmed": 2,
+      "wrong": 0,
+      "unsupported": 1
+    },
+    "repairs": null,
+    "assumptions": [
+      "part choice"
+    ],
+    "data_gaps": [
+      "grommet height 4 mm and outer Ø8 mm (only 'M3*8mm' is stated (data_gap))",
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T14:21:45.305Z"
+}

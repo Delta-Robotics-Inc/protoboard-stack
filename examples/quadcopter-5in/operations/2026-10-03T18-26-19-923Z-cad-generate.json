@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "motor-screw-m3x8",
+    "config": "parts/local/motor-screw-m3x8/cad.config.ts",
+    "configDigest": "sha256:86b69a1e3f40be14d99f2234d885d2d5da56740bfb3b6a0c9c6bc39745458fce",
+    "moduleDigest": "sha256:40f20de15bb6910a3e932214b1319d07d2218b3719826bd9b4a09e5813b259a6"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:3a9633607d9f4b5eb0a035d4992390b5e0ed35f7111c860d7ae7d0c5b52d5855",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:26:19.923Z",
+  "status": "succeeded",
+  "summary": "motor-screw-m3x8: screw parameters in parts/local/motor-screw-m3x8/frame-cad; run cad:export for the body",
+  "outputs": [
+    {
+      "path": "parts/local/motor-screw-m3x8/frame-cad/params.json",
+      "digest": "sha256:e6fe9114cdd5d9cda812bea1dba2ca6731741c28ae0c5298b2a43589dc32cff1",
+      "bytes": 254,
+      "description": "motor-screw-m3x8: generator parameters from its sizes"
+    }
+  ],
+  "data": {
+    "module": "motor-screw-m3x8",
+    "kind": "screw",
+    "native": "parts/local/motor-screw-m3x8/frame-cad",
+    "params": {
+      "schema": "protoboard.hardware-cad.params/v0",
+      "module": "motor-screw-m3x8",
+      "name": "motor-screw-m3x8",
+      "part": {
+        "kind": "screw",
+        "diameter": 3,
+        "length": 8,
+        "head_diameter": 5.5,
+        "head_height": 3,
+        "outer": null
+      }
+    },
+    "generator": "@protoboard/ext-frame-cad/py/hardware_cad.py"
+  },
+  "finishedAt": "2026-10-03T18:26:23.574Z"
+}

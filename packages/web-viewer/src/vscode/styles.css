@@ -1,0 +1,43 @@
+/* The VS Code shell's stylesheet: Tailwind 4 utilities over the viewer's token
+ * theme, no Preflight (the viewer's rules set their own base). */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "@deltarobotics/uhd-viewer/tailwind-theme.css";
+@source "./";
+@source "../Logo.tsx";
+@source "../../../views/src";
+
+/* Outside the layers on purpose: VS Code puts its own default webview styles
+ * (body padding, scrollbars) unlayered at the top of the page, and these must win. */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--vscode-editor-background);
+  scrollbar-color: auto;
+}
+#viewer {
+  height: 100vh;
+}
+/* the shell's root fills the tab */
+#viewer > .uhd-root {
+  height: 100%;
+}
+
+/* an editor tab is no place for a link out of VS Code */
+.pb-vscode .react-flow__attribution {
+  display: none;
+}
+
+/* the dev server message's main button: VS Code's own button colours (orange only under a Protoboard theme, which sets them) */
+.pb-vscode .pb-dev-primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-border, transparent);
+}
+.pb-vscode .pb-dev-primary:hover {
+  background: var(--vscode-button-hoverBackground, var(--vscode-button-background));
+}

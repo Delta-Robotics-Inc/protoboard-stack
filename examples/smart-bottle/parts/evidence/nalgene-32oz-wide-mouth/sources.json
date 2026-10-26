@@ -1,0 +1,131 @@
+[
+  {
+    "id": "src_product",
+    "title": "Nalgene 32oz Wide Mouth Bottle (Tritan Renew) product page",
+    "url": "https://nalgene.com/product/32oz-wide-mouth-bottle/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": "44f3cffd819507dcda6bc9f65bde91d8989099135f00620fc84270ff8d24b3f5",
+    "supports": [
+      "Material Tritan Renew; BPA/BPS-free; made in the USA",
+      "Volume 32oz",
+      "Cap Diameter 2.5 inches (63mm)",
+      "Diameter 3.5 inches (89mm)",
+      "Weight 6.25 oz (177.25g)",
+      "Height 8.25 in (21cm)",
+      "Continuous, straight shouldered semi-buttress threads",
+      "Leakproof and dishwasher-safe",
+      "colour SKUs 2020-xx32 for most colours (Clear 2020-3732) in the page's variation data; gray-black is 682021-0333"
+    ],
+    "note": "The variation data also carries WooCommerce shipping dimensions (3.25 x 3.25 x 9.5 in, 0.39 lb); these are packaging attributes and are not used."
+  },
+  {
+    "id": "src_cap",
+    "title": "Nalgene Wide Mouth Cap product page",
+    "url": "https://nalgene.com/product/wide-mouth-cap/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": "1d5eef598a42d369b3fb85b1bb76e645d012154225c95804581c3ec33c5ae1a3",
+    "supports": [
+      "Cap Diameter 2.5 inches (63mm)",
+      "Fits 32 oz Wide Mouth, 48 oz Wide Mouth, ATB, GnG, OTF, OTG",
+      "Cap material LDPE, PP; weight 1.6 oz (45.25 g)",
+      "Continuous, straight shouldered semi-buttress threads",
+      "the stock cap is tethered to the bottle by a leash (\"lid leash\", \"cap leashes\" in the reviews)"
+    ]
+  },
+  {
+    "id": "src_faq",
+    "title": "Nalgene FAQ",
+    "url": "https://nalgene.com/faq/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": "0b7b7e16de8f7757f4fd843103f6adf4bc69ed9d3bc3c3f983c17d8166b0855d",
+    "supports": [
+      "all bottles dishwasher safe, top rack away from the heating element",
+      "freezing: fill only about 2/3 full",
+      "Tritan Renew used for the majority of bottles; #7 plastic"
+    ],
+    "note": "Gives no temperature range for the bottle; src_hot_water does."
+  },
+  {
+    "id": "src_hot_water",
+    "title": "Nalgene: Can You Put Boiling Water in a Nalgene? Here's What You Should Know",
+    "url": "https://nalgene.com/hot-water-in-a-nalgene/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:07:40Z",
+    "sha256": "141da33e9ceaa38dd9c1527a9bd7914864db5ec9f62a6e6b9b52d7b6d65c986a",
+    "supports": [
+      "What Is the Temperature Limit for a Nalgene Bottle? Sustain® Renew bottles: Safe for hot liquids, including boiling water (up to 212°F / 100°C) in everyday use",
+      "a current Nalgene bottle is 'made to handle both freezing and boiling temps without cracking, leaking, or melting'",
+      "'You can pour boiling water into your Nalgene, but you should never try to boil water in it. These bottles aren't manufactured for direct heat or open flames.'",
+      "'After pouring in boiling water, wait a few seconds before screwing on the lid. Steam builds pressure, and tightening the cap too soon can create a seal that's tough to open (or cause leaks later).'",
+      "'Avoid direct flame or stove contact ... Doing so can warp the plastic or damage the bottle.'",
+      "'Sudden temperature swings can stress even heat-resistant plastic.'",
+      "Dishwasher safe, top rack recommended"
+    ],
+    "note": "Blog-style article on nalgene.com (datePublished 2026-07-31, dateModified 2026-08-12), not a datasheet. It names the material both 'Tritan Renew' ('Our Nalgene Tritan Renew Water Bottles') and 'Sustain®' / 'Sustain® Renew' for the same bottles; the product page calls this bottle Tritan Renew, so the 100 °C limit for 'Sustain® Renew bottles' is read as applying to it. No minimum temperature is given beyond 'freezing'. Saved as .research/downloads/hot-water.raw."
+  },
+  {
+    "id": "src_brochure",
+    "title": "Thermo Scientific Nalgene Bottles and Carboys technical brochure (D01705)",
+    "url": "https://assets.thermofisher.com/TFS-Assets/LSG/brochures/D01705.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": "2dc1ac286fd7ad9852adaf2b63033b6eb5510fb4be33eb46e7ca56b52bac4033",
+    "supports": [
+      "closure is one-piece linerless; seal ring moulded inside the closure fits tightly against the bevelled inner edge (chamfer) of the bottle neck",
+      "threads on bottles and closures are continuous, straight-shouldered semi-buttress threads",
+      "Recommended application torques: 63-415 minimum 40 in-lb (46 cm-kg), maximum 56 in-lb (64 cm-kg); threads must be dry"
+    ],
+    "note": "Thermo Fisher's Nalgene laboratory line (Nalge Nunc), not the consumer Nalgene Outdoor bottle; applied to this bottle as an assumption. pdftotext -layout of the PDF reads the torque table cleanly (p. 'Application Notes')."
+  },
+  {
+    "id": "src_closure",
+    "title": "Thermo Scientific Nalgene Narrow-Mouth and Wide-Mouth Bottle Replacement Closures, 712150-0630 (63 mm)",
+    "url": "https://www.thermofisher.com/order/catalog/product/712150-0630",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": "eda77f161cd9b10a803eba1d1ee384871339ac0105ba16f072b18b923da9cfb3",
+    "supports": [
+      "Thread Size (Metric) 63 mm replacement cap, polypropylene",
+      "fits Nalgene narrow-mouth and wide-mouth bottles"
+    ],
+    "note": "Laboratory line; supports (does not prove) that the consumer wide-mouth bottle uses the same 63 mm finish."
+  },
+  {
+    "id": "src_lab_bottle",
+    "title": "Thermo Scientific Nalgene Wide-Mouth HDPE Bottles with Closure, 312104-0032 (1 L, 63 mm)",
+    "url": "https://www.thermofisher.com/order/catalog/product/312104-0032",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": "50f736c2f7902ad33f59ec2cf4e0772a5d7bc07126669d9f5838aba156e47fa0",
+    "supports": [
+      "Closure size 63 mm; Neck Finish 63 mm",
+      "Diameter (Metric) Inner Neck 53 mm",
+      "Diameter 91 mm, height 199 mm (lab bottle, not this part)"
+    ],
+    "note": "A different bottle (HDPE lab bottle) with the same 63 mm finish; its inner neck is used for this part as an assumption."
+  },
+  {
+    "id": "src_spi",
+    "title": "SPI neck finish specifications for standard closures (table)",
+    "url": "https://www.plastcaps.com/spi-neck-finish-specifications-for-standard-closures-2-4.htm",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": "96e5c1b41bea92743c3d7cc72bc604d2bd8d2ca4db0ecf7870b3b7ddf8f16fed",
+    "supports": [
+      "definitions of T, E, H, S, I",
+      "63 mm: T 2.461 max / 2.426 min in; E 2.367 / 2.332 in; 400 H .423 / .393 in; no 410 or 415 H; S .061 / .031 in; I min 1.972 in; 6 threads per inch"
+    ],
+    "note": "A closure maker's reproduction of the SPI standard table (the SPI standard itself was not read). Same values in the copy at https://www.bottles.com.cn/article/spi-neck-finish-specifications-for-standard-closures.html (sha256 ed8c3ace3aff13e8a1ca67a94b5842c99b881c1e6dff512747b34eecb66c2134)."
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "watch-battery-leads",
+    "config": "src/harnesses/watch-battery-leads/cad.config.ts",
+    "configDigest": "sha256:539b23ccc1d3e863d0166001ca4506267d1f690dcb8a33469dc60ef4b021d749",
+    "moduleDigest": "sha256:1866c4f7835639976344580bf97079acc21e76d8704441b9146f10c55aefeaaa"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:5cbca06100af70bf0d5ef38078554983dda2e7e688c0a7ca73f1ed275424a740",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T09:51:04.699Z",
+  "status": "failed",
+  "summary": "watch-battery-leads cannot be routed: battery_leads (watch-battery-leads): 1 routable end(s); the router handles point-to-point cables (2)",
+  "outputs": [],
+  "data": {
+    "problems": [
+      "battery_leads.end_board: board.cell_pads has no geometry frame (link cell_pads)",
+      "battery_leads (watch-battery-leads): 1 routable end(s); the router handles point-to-point cables (2)",
+      "lra_leads.end_board: board.lra_pads has no geometry frame (link lra_pads)",
+      "lra_leads (watch-lra-leads): 1 routable end(s); the router handles point-to-point cables (2)"
+    ]
+  },
+  "finishedAt": "2026-10-03T09:51:07.163Z"
+}

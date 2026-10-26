@@ -1,0 +1,29 @@
+[
+  {
+    "id": "src_supplier",
+    "title": "Westfield Fasteners WF16826: M2 Nyloc Nut Type T (Standard) in A2 Stainless - DIN 985",
+    "url": "https://www.westfieldfasteners.co.uk/Metric-Nuts/Nyloc-Nut-Type-T-Standard-M2-A2-Stainless.html",
+    "type": "documentation",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "2b73faa5fc67ef0464031a22fe7a48f70ff1b91973808edb25f3886cb1d5270d",
+    "supports": [
+      "M2 nyloc nut, Type T, A2 stainless, DIN 985",
+      "no dimensions on the listing"
+    ]
+  },
+  {
+    "id": "src_din985_spec",
+    "title": "Westfield Fasteners product specification: DIN 985 nyloc nuts, low type (Type T), Table 1 dimensions",
+    "url": "https://www.westfieldfasteners.co.uk/Standards/Nut-HexNy-M.pdf",
+    "type": "datasheet",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "e699b99c1f5944f287d33cda9185d7ed06bd47693ce597e0c3ab94abdb05a51a",
+    "supports": [
+      "DIN 985 covers M3 to M48 (no M2 row)",
+      "M5: h max 5, s max 8, dw min 6.9",
+      "M3: h max 4, s max 5.5"
+    ]
+  }
+]

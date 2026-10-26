@@ -1,0 +1,38 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "STMicroelectronics VL53L4CD datasheet DS13812 Rev 8 (July 2024)",
+    "url": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-26T17:03:00Z",
+    "sha256": "0beb3bb5e958f6e463d919c3ac9226e5f3bdfa15fd09b009208a24d791e7707c",
+    "note": "Same bytes as adafruit-5396-vl53l4cd's src_datasheet (fetched from this URL on 2026-09-26); re-read for this part on 2026-10-03, when st.com refused connections. A web search on 2026-10-03 found no revision later than Rev 8.",
+    "supports": [
+      "Features: 0-1200 mm full FoV, linear from 1 mm, 18 deg FoV, 100 Hz, 940 nm Class 1 VCSEL, 4.4 x 2.4 x 1 mm, I2C up to 1 MHz, cover window",
+      "Table 1: Optical LGA12, 2.6-3.5 V, -30 to 85 C, I2C address 0x52",
+      "Figure 2 / Table 2: pinout and pin description (pins 1-12)",
+      "Figure 3 / §1.4: application schematic (100 nF + 4.7 uF on AVDD, pull-ups to IOVDD, XSHUT and GPIO1 10 kOhm), Tables 3-4 pull-up values",
+      "§2.7 power sequence, tBOOT 1.2 ms; §2.9 GPIO1 interrupt handshake",
+      "§3: I2C 0x52/0x53, 16-bit index; Tables 5-6 I2C timing (FM+ 1 MHz, FM 400 kHz)",
+      "Tables 9-10: storage -40 to 125 C, operating -30 to 85 C",
+      "Table 11: absolute maximum -0.5 to 3.6 V; Table 12: AVDD 2.6/2.8/3.5 V, IOVDD 1.6-3.5 V; Table 13: ESD",
+      "Table 14: standby 5/6 uA, ranging 22/24 mA, peak 40 mA; Table 15: digital I/O levels",
+      "Tables 16-18: ranging distance, accuracy, FoV angles; §8 FoI 16 x 16 deg",
+      "Figures 17-21: outline 4.40 x 2.40 x 1.00, substrate 0.31, 12 pads 0.50 square at 0.80 pitch, apertures and exclusion cones; Figure 20 liner",
+      "§9 laser safety; §11 handling: 25 N compressive load, MSL 3, reflow profile",
+      "Table 20: order codes VL53L4CDV0DH/1 (with liner) and VL53L4CDV9DH/1 (without liner)"
+    ]
+  },
+  {
+    "id": "src_ul_cad_page",
+    "title": "Ultra Librarian: STMicroelectronics VL53L4CDV0DH/1 symbol, footprint and 3D STEP model page (terms only; model not downloaded)",
+    "url": "https://app.ultralibrarian.com/details/872f5a58-6c94-11ec-9033-0a34d6323d74/STMicroelectronics/VL53L4CDV0DH-1",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:15:00Z",
+    "sha256": null,
+    "licence": "Ultra Librarian End User Subscription Agreement: a free account is required; you may not \"use CONTENT for publishing or creating a library or libraries for sale or distribution for commercial purposes or enabling third parties to do the same\". Not downloaded, not redistributed.",
+    "supports": ["a STEP model exists only behind an account with library-redistribution restrictions", "status shown as Active (not an ST source)"]
+  }
+]

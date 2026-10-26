@@ -1,0 +1,53 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "panasonic-eeu-fr1v471-leads",
+    "config": "src/harnesses/panasonic-eeu-fr1v471-leads/cad.config.ts",
+    "configDigest": "sha256:8302e6e86af4fdea3221bfa642629648fb4e2693bc5c653e8e8a8c9c7b409795",
+    "moduleDigest": "sha256:24b26258a10098cbdd4f1d69c1ca3fbd472fde9925d6465d382a0284b155d3e3"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:96dff6062190234f5f3c48cfb013c9c157025fa4a3fe40e0714f223e17138f60",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:29:15.690Z",
+  "status": "succeeded",
+  "summary": "bulk_cap_leads: ok; routed in one run with 9 other cable(s) (run harness-cad)",
+  "outputs": [
+    {
+      "path": "src/harnesses/panasonic-eeu-fr1v471-leads/harness-cad/route.json",
+      "digest": "sha256:ebe04a6bcad60bb91f4927378627b8dfd4e6f859d60affae00e4ec519268bc17",
+      "bytes": 9915,
+      "description": "bulk_cap_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "harnesses": [
+      {
+        "id": "panasonic-eeu-fr1v471-leads",
+        "path": "bulk_cap_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.01
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-03T18:29:18.691Z"
+}

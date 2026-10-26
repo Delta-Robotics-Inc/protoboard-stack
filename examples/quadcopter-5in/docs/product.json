@@ -1,0 +1,34 @@
+{
+  "schema": "protoboard.product/v0",
+  "summary": "A 5-inch freestyle FPV quadcopter on 6S power, built from purchased modules on a custom true-X frame, with a digital video link, an ExpressLRS radio link, and GNSS with a compass.",
+  "features": [
+    "True-X 5-inch frame, custom, 225 mm wheelbase, with at least 5 mm of prop clearance",
+    "6S LiPo power: CNHL 1100 mAh 100C pack, DolphinRC F405 V3 + AM32 60A stack, MEPS NEON 2207 V2 1950KV motors, HQProp Ethix S5 props",
+    "ExpressLRS radio link (RadioMaster RP1 V2)",
+    "DJI O4 Air Unit digital video with the flight controller's OSD",
+    "Matek M9N-5883 GNSS and compass",
+    "Purchased modules and an existing flight-control stack: no PCB or flight-algorithm development"
+  ],
+  "functions": [
+    {
+      "id": "F1",
+      "text": "Fly under radio control: the flight controller reads the pilot's sticks over the ExpressLRS link and drives the four motors through the ESC",
+      "by": "RadioMaster RP1 V2, DolphinRC F405 V3, AM32 60A 4-in-1 ESC, MEPS NEON 2207 motors"
+    },
+    {
+      "id": "F2",
+      "text": "Send live digital video to the goggles, with the flight controller's OSD over it",
+      "by": "DJI O4 Air Unit"
+    },
+    {
+      "id": "F3",
+      "text": "Report GNSS position and compass heading to the flight controller",
+      "by": "Matek M9N-5883"
+    },
+    {
+      "id": "F4",
+      "text": "Power everything from one 6S LiPo pack",
+      "by": "CNHL Black Series 1100 mAh 6S, XT60 lead, bulk capacitor"
+    }
+  ]
+}

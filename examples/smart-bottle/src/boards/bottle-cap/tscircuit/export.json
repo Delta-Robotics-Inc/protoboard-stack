@@ -1,0 +1,34 @@
+{
+  "schema": "protoboard.tscircuit-export/v0",
+  "inputs": {
+    "circuit": "sha256:4052eb617730b68de6b0104e45bae45b12321cb2784ba3d9936b3d25c88de45b",
+    "board": "sha256:2b3080c6a07d54f0635dee78d2bd5c67cc2098a93fb78e8d3e74ff8500f9203f",
+    "constraints": "sha256:eed4e8a6b26b20e57e53dc43fc83beb1046df3b6d3162a1252da68a360ea56f0",
+    "models": {
+      "adi-max17048g-t10#cad_step": "sha256:e76ffe574e421dbbceeaf493a2681417b27cec5d1636d887c033379482a67d49",
+      "alps-skrtlae010#cad_step": "sha256:5ecff4bedfb7470e11a551b69cc0cf807f3f06639d6dce65050d6345f58a03d3",
+      "coilcraft-xfl4020-152me#cad_step": "sha256:380c3e36848a27990df4640ba2743649e3aa582f29937afdd8a5f783b71f3ee5",
+      "espressif-esp32-c3-mini-1-h4x#cad_step": "sha256:ceb9160913168ec998e45ab68499e27a24c8c9314d0bd29b84ec048a343de78e",
+      "gct-usb4720-03-a#cad_step": "sha256:5eae241bcbdf9bb9e7788a2090b721bb209ad4c0c9755c9033ac88694f5233af",
+      "kingbright-aptf1616lseezgkqbkc#cad_step": "sha256:e11b15f3adc7983f51a65139453feef8e9e1c59d4a436750ec9962990296a90a",
+      "microchip-mcp73831t-2aci-mc#cad_step": "sha256:a63e3e6b19e656a00701a01d7ecf69d6b0dd5dc7891546d946f63e6b6f3af0d5",
+      "murata-grm155#cad_step": "sha256:e0b1e9f8b04848ae341275b3ddef977e655c0245088d58f21df7404ef0e79330",
+      "murata-grm188#cad_step": "sha256:b18db5461755c31e6bb37768a7c8ba006f955f8ffec6051dd139918326562018",
+      "src/boards/bottle-cap/tscircuit/models/box-1.2x1.2x0.05.step": "box 1.2 x 1.2 x 0.05",
+      "src/boards/bottle-cap/tscircuit/models/box-5.5x2x0.05.step": "box 5.5 x 2 x 0.05",
+      "src/boards/bottle-cap/tscircuit/models/box-7x1.8x0.05.step": "box 7 x 1.8 x 0.05",
+      "st-usblc6-2sc6#cad_step": "sha256:87b6f490470638e83ce498680169c4bb383ff2b48ec112c0d611861fb60b7fe2",
+      "st-vl53l4cdv0dh-1#cad_step": "sha256:6f95b3c9ca25959514fd8c494af2930f261733a9226610741772b5a312619249",
+      "ti-lp5024rsm#cad_step": "sha256:525154b1d42c80f2ea0a4ba4326cee7d5ba33971656976cd64604f2bd2a11929",
+      "ti-tps63020dsjr#cad_step": "sha256:02b747716b9b342d52a9c750c045cb82603e4fa1b1287e6a087d8005bedab918",
+      "yageo-rc0402#cad_step": "sha256:2eae825f92a47818aa3a9895cfd0a06ca08dd24edcebf15237266469952206ec"
+    },
+    "provider": "sha256:d58e504b4fb817c3cfe5d61d74c3b9847d917129e93f7d5b0b1197643df87898",
+    "converters": {
+      "circuit-json-to-gerber": "0.0.111",
+      "circuit-json-to-gltf": "0.0.141",
+      "circuit-json-to-step": "0.0.43",
+      "circuit-to-svg": "0.0.438"
+    }
+  }
+}

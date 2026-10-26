@@ -1,0 +1,50 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/frame_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "89e4e8137273bba87298a324f834d172cb82b892e8322b09e69160df8df2fa95",
+  "units": "mm",
+  "features": {
+    "standoff_mount": {
+      "area_mm2": 80.425,
+      "centroid": [
+        0,
+        0,
+        1
+      ],
+      "faces": 4
+    },
+    "gps_mount": {
+      "area_mm2": 55.292,
+      "centroid": [
+        -52,
+        0,
+        1
+      ],
+      "faces": 4
+    }
+  },
+  "volume_mm3": 13053.781,
+  "bodies": {
+    "plate": 13053.781
+  },
+  "manufacturing": {
+    "dxf": "body.dxf",
+    "layers": [
+      "plate"
+    ],
+    "quantities": {
+      "plate": 1
+    },
+    "notInDxf": [],
+    "thickness_mm": {
+      "plate": 2
+    }
+  },
+  "exportedFrom": {
+    "file": "src/modules/top-plate/frame-cad/params.json",
+    "digest": "sha256:09a436463a2bc742328848aae4218e06a46f629476c8099e16750039440f0fd3"
+  }
+}

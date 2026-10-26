@@ -1,0 +1,137 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "harness-cad",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:3eedf758b0c422516e1854c3eeb79455a0cfc9da36ea79d1f0a8c3ae6ac28b2d",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T10:32:27.438Z",
+  "status": "succeeded",
+  "summary": "2/2 harness(es) routed and exported; 1 with warnings (probe_cable); 3 problem(s) in the model",
+  "outputs": [
+    {
+      "path": "src/harnesses/bottle-probe-cable/harness-cad/route.json",
+      "digest": "sha256:ba988658de91c873845702098c7bbd8f0a17b3c17e087d2cef617765eaa0b54a",
+      "bytes": 22402,
+      "description": "probe_cable: route (native design)"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/harness-cad/route.json",
+      "digest": "sha256:8f39172b63a7e2b0c8bd0ebed56d79e5a4e30ec1baba3c1e984ae195f4412d49",
+      "bytes": 14534,
+      "description": "battery_leads: route (native design)"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.glb",
+      "digest": "sha256:8d596f8e308eeb45d3e574b211ed9cf09fb8f6f16d041a93c877254fa7d664fa",
+      "bytes": 71368,
+      "description": "battery_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.step",
+      "digest": "sha256:8d4568885899e7638a5c8e9d29e2c41de246c287a7fcb761716dd6f6905129b4",
+      "bytes": 199236,
+      "description": "battery_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.manifest.json",
+      "digest": "sha256:917996619576e9efc27a8c114de24d86e60c3280b97fc43a0c7a358240fa12c4",
+      "bytes": 2984,
+      "description": "battery_leads: route manifest (end frames, lengths, bends, clearance)"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.glb",
+      "digest": "sha256:4c36aedb36a0df0a046e2976a986befe4cd28df645fde9d28e709b361895ec11",
+      "bytes": 114020,
+      "description": "probe_cable: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.step",
+      "digest": "sha256:c3dc32fb901746e6e94e18a45bfe5d5cbdd46b6279485dd0632c8dc76d9c1475",
+      "bytes": 2016035,
+      "description": "probe_cable: swept solids"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.manifest.json",
+      "digest": "sha256:59d309555a598b61c9341e9baaab64464a6c24d61661cba2b5bd1e89ae82feec",
+      "bytes": 3292,
+      "description": "probe_cable: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "problems": [
+      "cap: no GLB body to route around (none declared)",
+      "board/jbat: no GLB body to route around (none declared)",
+      "board/jprb: no GLB body to route around (none declared)"
+    ],
+    "map": {
+      "shape": [
+        155,
+        149,
+        294
+      ],
+      "res_mm": 1,
+      "seconds": 5.8
+    },
+    "harnesses": [
+      {
+        "id": "bottle-probe-cable",
+        "path": "probe_cable",
+        "status": "warning",
+        "notes": [
+          "slack could not be laid clear: loop (not clear) (-0.24 mm worst clearance, 1.32 mm bend radius)",
+          "centreline bend radius 1.4 mm is under the 4.8 mm minimum"
+        ],
+        "length_mm": 36,
+        "route_length_mm": 35.39,
+        "slack_mm": 21.11,
+        "bend_mm": {
+          "target": 7.76,
+          "minimum": 4.85,
+          "centreline": 1.38,
+          "conductors": 0.91,
+          "at_terminations": 0.98
+        },
+        "clearance_mm": 1.5,
+        "step": "ok",
+        "search_s": 0.96
+      },
+      {
+        "id": "bottle-battery-leads",
+        "path": "battery_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 26,
+        "route_length_mm": 25.86,
+        "slack_mm": 1.32,
+        "bend_mm": {
+          "target": 4,
+          "minimum": 2.5,
+          "centreline": 2.97,
+          "conductors": 2.41,
+          "at_terminations": 1.02
+        },
+        "clearance_mm": 0.92,
+        "step": "ok",
+        "search_s": 0.8
+      }
+    ],
+    "outputs": {
+      "bottle-battery-leads": "src/harnesses/bottle-battery-leads",
+      "bottle-probe-cable": "src/harnesses/bottle-probe-cable"
+    }
+  },
+  "finishedAt": "2026-10-03T10:32:47.677Z"
+}

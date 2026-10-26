@@ -1,0 +1,13 @@
+{
+  // the servers Copilot's agent mode may start
+  "servers": {
+    /* browser automation */
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@microsoft/mcp-server-playwright"], // pinned later
+    },
+  },
+  "inputs": [
+    { "type": "promptString", "id": "token", "description": "A token", "password": true }
+  ]
+}

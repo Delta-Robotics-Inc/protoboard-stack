@@ -1,0 +1,15 @@
+model = "gpt-5.5"
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+
+[mcp_servers.protoboard]
+command = "/old/place/protoboard-mcp"
+args = []
+
+[mcp_servers.protoboard.env]
+PROTOBOARD_CLOUD_URL = "http://localhost:8787"
+
+[projects."/home/you/work/thing"]
+trust_level = "trusted"

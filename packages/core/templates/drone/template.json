@@ -1,0 +1,21 @@
+{
+  "title": "Drone: multirotor flight stack",
+  "description": "A 6S flight stack to grow into a multirotor: DolphinRC F405 V3 flight controller and AM32 60A 4-in-1 ESC (one purchased stack), CNHL 1100 mAh 6S pack on an XT60 lead, RadioMaster RP1 V2 ELRS receiver on UART2. Frame, motors, props, video and GNSS are yours to add.",
+  "derivedFrom": "examples/quadcopter-5in",
+  "extensions": [
+    "@protoboardai/ext-hardware",
+    "@protoboardai/ext-parts",
+    "@protoboardai/ext-sourcing",
+    "@protoboardai/ext-docs",
+    "@protoboardai/ext-drone",
+    "@protoboardai/ext-frame-cad",
+    "@protoboardai/ext-harness-cad",
+    "@protoboardai/ext-release"
+  ],
+  "catalogParts": [
+    "dolphinrc-f405-v3-flight-controller@3",
+    "dolphinrc-am32-60a-4in1-esc@3",
+    "cnhl-black-series-1100mah-6s-100c@3",
+    "radiomaster-rp1-v2-elrs-2g4@3"
+  ]
+}

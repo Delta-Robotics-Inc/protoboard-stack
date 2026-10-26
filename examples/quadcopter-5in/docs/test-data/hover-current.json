@@ -1,0 +1,130 @@
+{
+  "$schema": "uhd-test-data/1",
+  "status": "standin",
+  "subject": {
+    "system": "quadcopter-5in",
+    "modules": [
+      "meps-neon-2207-v2-1950kv",
+      "cnhl-black-series-1100mah-6s-100c"
+    ]
+  },
+  "id": "hover-current",
+  "title": "Hover current and all-up-weight sensitivity",
+  "conditions": [
+    {
+      "name": "Battery nominal",
+      "value": 22.2,
+      "unit": "V"
+    },
+    {
+      "name": "All-up weight (estimate)",
+      "value": 607,
+      "unit": "g"
+    }
+  ],
+  "provenance": {
+    "method": "Stand-in: hover thrust = AUW / motors; motor power interpolated from the maker's thrust table at that thrust; plus avionics.",
+    "derivedFrom": [
+      "def:meps-neon-2207-v2-1950kv:traits[type=performance].params.thrust_tests[0].rows",
+      "def:meps-neon-2207-v2-1950kv:traits[type=performance].params.thrust_tests[0].propeller",
+      "def:meps-neon-2207-v2-1950kv:traits[type=performance].params.thrust_tests[0].supply_V",
+      "def:cnhl-black-series-1100mah-6s-100c:interfaces[id=battery_out].parameters[id=voltage].value",
+      "def:cnhl-black-series-1100mah-6s-100c:interfaces[id=battery_out].parameters[id=capacity].value",
+      "derived:mass.all_up"
+    ],
+    "assumptions": [
+      "motor figures interpolate linearly between the 10 rows of the maker's table (0 at 0 % throttle); pack current = table electrical power ÷ 22.2 V nominal",
+      "maker's table used the MEPS SZ4942 prop at 25.2 V, not the fitted propeller",
+      "avionics: DJI O4 minimum supply power 10 W, GNSS 50 mA at 5 V, FC + receiver 2.5 W (assumed), BEC efficiency 85 % (assumed)",
+      "all-up weight = 587.2 g from systemMass (derived:mass.all_up, of which 154.4 g is CAD volume × assumed material) + 20 g assumed for the 17 parts with no mass in the model (FC/ESC SH1.0 8-pin cable, Panasonic EEU-FR1V471 470 µF 35 V low-ESR electrolytic capacitor, XT60 battery lead (12 AWG), DJI O4 3-in-1 cable, GNSS lead (GH6P, FC end soldered), Receiver wires (RP1 V2 CRSF wire), Bulk capacitor leads, Motor 2 phase leads (Front-right), Motor 1 phase leads (Rear-right), Motor 3 phase leads (Rear-left), Motor 4 phase leads (Front-left), Flux-cored solder wire, 0.8 mm, No-clean flux (pen or paste), Threadlocker, medium strength (blue), Clear heat-shrink sleeve for the receiver, about 15 mm flat width, Double-sided foam mounting tape, 1 mm, Cable ties, 2.5 mm x 100 mm)"
+    ],
+    "generator": "@protoboardai/ext-docs lib/standins/multirotor.ts",
+    "generatedAt": "2026-10-24"
+  },
+  "columns": [
+    {
+      "id": "auw",
+      "label": "All-up weight",
+      "unit": "g"
+    },
+    {
+      "id": "thrust_motor",
+      "label": "Hover thrust per motor",
+      "unit": "g"
+    },
+    {
+      "id": "current_total",
+      "label": "Hover current",
+      "unit": "A"
+    },
+    {
+      "id": "power_total",
+      "label": "Hover power",
+      "unit": "W"
+    }
+  ],
+  "rows": [
+    [
+      507,
+      127,
+      7.07,
+      157
+    ],
+    [
+      557,
+      139,
+      7.78,
+      173
+    ],
+    [
+      607,
+      152,
+      8.49,
+      189
+    ],
+    [
+      657,
+      164,
+      9.2,
+      204
+    ],
+    [
+      707,
+      177,
+      9.92,
+      220
+    ],
+    [
+      757,
+      189,
+      10.63,
+      236
+    ]
+  ],
+  "summary": [
+    {
+      "id": "auw_g",
+      "label": "All-up weight (estimate)",
+      "value": 607,
+      "unit": "g"
+    },
+    {
+      "id": "hover_current_A",
+      "label": "Hover current",
+      "value": 8.5,
+      "unit": "A"
+    },
+    {
+      "id": "hover_power_W",
+      "label": "Hover power",
+      "value": 189,
+      "unit": "W"
+    },
+    {
+      "id": "avionics_current_A",
+      "label": "Avionics current",
+      "value": 0.68,
+      "unit": "A"
+    }
+  ]
+}

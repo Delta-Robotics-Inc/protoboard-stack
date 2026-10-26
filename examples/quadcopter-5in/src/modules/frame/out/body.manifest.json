@@ -1,0 +1,131 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/frame_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "66b2018873823e7be1ceb2077a5ee9a340e58f15a7aba17ebd433924bbe61468",
+  "units": "mm",
+  "features": {
+    "stack_mount": {
+      "area_mm2": 201.062,
+      "centroid": [
+        0,
+        0,
+        2.5
+      ],
+      "faces": 4
+    },
+    "standoff_mount": {
+      "area_mm2": 201.062,
+      "centroid": [
+        0,
+        0,
+        2.5
+      ],
+      "faces": 4
+    },
+    "vtx_mount": {
+      "area_mm2": 138.23,
+      "centroid": [
+        -45,
+        0,
+        2.5
+      ],
+      "faces": 4
+    },
+    "motor_mount_fl": {
+      "area_mm2": 309.478,
+      "centroid": [
+        79.55,
+        79.55,
+        5.5
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    "motor_mount_fr": {
+      "area_mm2": 309.478,
+      "centroid": [
+        79.55,
+        -79.55,
+        5.5
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    "motor_mount_rl": {
+      "area_mm2": 309.478,
+      "centroid": [
+        -79.55,
+        79.55,
+        5.5
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    "motor_mount_rr": {
+      "area_mm2": 309.478,
+      "centroid": [
+        -79.55,
+        -79.55,
+        5.5
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        1
+      ]
+    },
+    "camera_mount": {
+      "area_mm2": 864.795,
+      "centroid": [
+        50,
+        0,
+        16.018
+      ],
+      "faces": 2
+    }
+  },
+  "volume_mm3": 57154.081,
+  "bodies": {
+    "plate": 54805.535,
+    "pads": 618.957,
+    "clamps": 1729.589
+  },
+  "manufacturing": {
+    "dxf": "body.dxf",
+    "layers": [
+      "plate",
+      "clamp_camera_mount"
+    ],
+    "quantities": {
+      "plate": 1,
+      "clamp_camera_mount": 2
+    },
+    "notInDxf": [
+      "pads: raised mating pads (bond shims, or spot-face a thicker plate)"
+    ],
+    "thickness_mm": {
+      "plate": 5,
+      "clamp_camera_mount": 2
+    }
+  },
+  "exportedFrom": {
+    "file": "src/modules/frame/frame-cad/params.json",
+    "digest": "sha256:7cd9ddcfa86f2e76a5d86e0c41609c61c49da79d5dbeae75870ab2f0df11112d"
+  }
+}

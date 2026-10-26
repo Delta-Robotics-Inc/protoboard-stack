@@ -1,0 +1,133 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "harness-cad",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:3d65f9a2a6251ecc3588e7b4dde594539c526bd75f2fbf9ccc4bc81a27155754",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T12:17:41.531Z",
+  "status": "succeeded",
+  "summary": "2/2 harness(es) routed and exported; 2 problem(s) in the model",
+  "outputs": [
+    {
+      "path": "src/harnesses/bottle-probe-cable/harness-cad/route.json",
+      "digest": "sha256:cee7347b5c870b1c8c571f96e2454511b5827c18107df9c4ecd2be50a91e1a7b",
+      "bytes": 11614,
+      "description": "probe_cable: route (native design)"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/harness-cad/route.json",
+      "digest": "sha256:44c6fd2be970ce879721c3a47b46dd6cfff5e1ba6edc4da2338135b6f9715583",
+      "bytes": 6324,
+      "description": "battery_leads: route (native design)"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.glb",
+      "digest": "sha256:b6c8ade40ed59a1d72b8cae0bb77c3ff219e17d85f4c0d3c6d5cc964bb2e4671",
+      "bytes": 42564,
+      "description": "battery_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.step",
+      "digest": "sha256:74c3334c8566225960bc13e6cde684f7eddbcbef91bf15795bbee3b16c846222",
+      "bytes": 55881,
+      "description": "battery_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.manifest.json",
+      "digest": "sha256:a11802f74c6a812489ed0467ac0c9e0bd0ea3bedbe7b3e7ba326a3001b508e46",
+      "bytes": 2237,
+      "description": "battery_leads: route manifest (end frames, lengths, bends, clearance)"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.glb",
+      "digest": "sha256:f72bc5166500874ae5a7a505e865461f9707ca203618b3c44bcdc0ce0ef94625",
+      "bytes": 76096,
+      "description": "probe_cable: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.step",
+      "digest": "sha256:30f7600f1cf0cd1df109a01ef02c92bacaf1f901c5bfc2204b3b2221fb6c3c5c",
+      "bytes": 652030,
+      "description": "probe_cable: swept solids"
+    },
+    {
+      "path": "src/harnesses/bottle-probe-cable/out/body.manifest.json",
+      "digest": "sha256:4e2c76bfcac26b2a29fdbf6c6828c91cddfbb45cd2f1aa5d591648848f53c9cb",
+      "bytes": 2448,
+      "description": "probe_cable: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "problems": [
+      "board/jbat: no GLB body to route around (none declared)",
+      "board/jprb: no GLB body to route around (none declared)"
+    ],
+    "map": {
+      "shape": [
+        155,
+        149,
+        294
+      ],
+      "res_mm": 1,
+      "seconds": 7.1
+    },
+    "harnesses": [
+      {
+        "id": "bottle-probe-cable",
+        "path": "probe_cable",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 16,
+        "route_length_mm": 14.87,
+        "slack_mm": null,
+        "bend_mm": {
+          "target": 7.76,
+          "minimum": 4.85,
+          "centreline": 34.34,
+          "conductors": 1.44,
+          "at_terminations": 1.49
+        },
+        "clearance_mm": 1.2,
+        "step": "ok",
+        "search_s": 0.08
+      },
+      {
+        "id": "bottle-battery-leads",
+        "path": "battery_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 9,
+        "route_length_mm": 9.67,
+        "slack_mm": null,
+        "bend_mm": {
+          "target": 4,
+          "minimum": 2.5,
+          "centreline": null,
+          "conductors": 2.01,
+          "at_terminations": 1.06
+        },
+        "clearance_mm": 2.41,
+        "step": "ok",
+        "search_s": 0.02
+      }
+    ],
+    "outputs": {
+      "bottle-battery-leads": "src/harnesses/bottle-battery-leads",
+      "bottle-probe-cable": "src/harnesses/bottle-probe-cable"
+    }
+  },
+  "finishedAt": "2026-10-03T12:17:59.901Z"
+}

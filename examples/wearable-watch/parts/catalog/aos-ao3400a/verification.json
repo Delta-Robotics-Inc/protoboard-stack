@@ -1,0 +1,24 @@
+{
+  "partId": "aos-ao3400a",
+  "recorded_at": "2026-10-03T02:10:48.000Z",
+  "audit": {
+    "method": "self-audit by the authoring agent against the downloaded sources, then an independent verifier re-fetched the cited sources (sha256 match) and re-checked the facts; it found three citation issues, fixed in repair 1",
+    "checked": 20,
+    "confirmed": 20,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": "1: added src_datasheet_ao3400 (AOS AO3400 Rev 8) and cited it for the 'AO3400 is a different part' claim; added an operating ambient temperature data_gap trait; noted the C20917 '7nC@10V' vs datasheet Qg 7 nC max at VGS 4.5 V mismatch in src_jlc",
+  "assumptions": [
+    "pin numbers",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "pin numbers",
+    "mass",
+    "operating ambient temperature",
+    "recommended gate drive range"
+  ],
+  "vocabulary_gaps": []
+}

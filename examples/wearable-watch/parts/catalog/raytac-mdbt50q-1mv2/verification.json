@@ -1,0 +1,26 @@
+{
+  "partId": "raytac-mdbt50q-1mv2",
+  "recorded_at": "2026-10-03T01:18:36.818Z",
+  "audit": {
+    "method": "self-audit by the authoring agent against downloaded copies of the cited sources (no independent agent was available in this run; an independent stage-2 audit is still owed)",
+    "checked": 20,
+    "confirmed": 20,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": null,
+  "assumptions": [
+    "GPIO voltage parameter",
+    "CAD pad size and thickness",
+    "CAD shield position"
+  ],
+  "data_gaps": [
+    "manufacturer CAD (redistributable)",
+    "module pad size and pad thickness",
+    "shield position"
+  ],
+  "vocabulary_gaps": [
+    "nRF52840 maps any peripheral (TWIM, SPIM, UARTE, PWM, I2S, PDM, QSPI) to any GPIO through PSEL registers. UHD has no per-instance pin-assignment override, and link derivation lifts only a composite's default profile, so bus composites for these peripherals are not declared on the part (a fixed default profile would be invented). GPIO leaves carry the bus capability tags instead.",
+    "no builders; usb and swd composites are hand-built with the existing 'usb' and 'swd' protocol types."
+  ]
+}

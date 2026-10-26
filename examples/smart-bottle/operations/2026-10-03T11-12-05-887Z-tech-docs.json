@@ -1,0 +1,26 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs",
+  "extension": {
+    "id": "@protoboard/ext-docs",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "pdf": "true",
+    "standins": "true"
+  },
+  "projectDigest": "sha256:12459fbe81ebf0c8044e8028b5684e6db3cff1395b0380e80d4b89f85cdceaf9",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T11:12:05.887Z",
+  "status": "failed",
+  "summary": "Cannot read properties of null (reading 'toFixed')",
+  "outputs": [],
+  "finishedAt": "2026-10-03T11:12:06.075Z"
+}

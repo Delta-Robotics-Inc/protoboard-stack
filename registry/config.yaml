@@ -1,0 +1,56 @@
+# Local Verdaccio registry for the Protoboard Stack (PB-813).
+# Started by registry/start.sh on 127.0.0.1:4873; see docs/guides/local-registry.md.
+#
+# - @protoboardai/* and @deltarobotics/* are served from this registry only: no
+#   uplink, so a name can never be fetched from (or confused with) npmjs.
+# - @protoboard/* (the stack's scope until 2026-10-06, someone else's on npmjs) has no uplink
+#   either and takes no publishes.
+# - Everything else is proxied from npmjs and cached here.
+# - Publishing is open to anyone who can reach the port, which is bound to
+#   127.0.0.1 only. Packages published here never leave this machine:
+#   Verdaccio does not forward publishes to its uplinks.
+
+storage: ./storage
+
+web:
+  title: Protoboard local registry
+
+auth:
+  htpasswd:
+    file: ./storage/htpasswd
+    max_users: -1
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    timeout: 60s
+    maxage: 30m
+
+packages:
+  "@protoboardai/*":
+    access: $all
+    publish: $anonymous $authenticated
+    unpublish: $anonymous $authenticated
+  "@deltarobotics/*":
+    access: $all
+    publish: $anonymous $authenticated
+    unpublish: $anonymous $authenticated
+  # the stack's former scope (PB-941): on npmjs it belongs to someone else, so it is never proxied
+  # (without this rule a request for it would fall to "**" and be answered from npmjs) and nothing
+  # new is published under it; what an older storage still holds can be read and removed
+  "@protoboard/*":
+    access: $all
+    publish: $nobody-may-publish
+    unpublish: $anonymous $authenticated
+  "**":
+    access: $all
+    # third-party packages come from npmjs only; nothing else may be published here
+    publish: $nobody-may-publish
+    proxy: npmjs
+
+server:
+  keepAliveTimeout: 60
+
+max_body_size: 200mb
+
+log: { type: stdout, format: pretty, level: warn }

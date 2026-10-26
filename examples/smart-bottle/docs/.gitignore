@@ -1,0 +1,3 @@
+# build byproducts (@protoboardai/ext-docs)
+.review/
+images/.render-cache.json

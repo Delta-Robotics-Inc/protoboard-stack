@@ -1,0 +1,12 @@
+model = "gpt-5.5"
+
+# Protoboard, added by hand
+[mcp_servers.protoboard]
+# the launcher of an earlier install
+command = "/old/place/protoboard-mcp"
+args = []
+
+# my note about the provider below: keep me
+[model_providers.x]
+name = "x"
+base_url = "https://x.example/v1"

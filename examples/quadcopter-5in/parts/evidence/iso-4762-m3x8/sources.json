@@ -1,0 +1,15 @@
+[
+  {
+    "id": "src_supplier",
+    "title": "Westfield Fasteners WF2344: M3 x 8mm Socket Head Cap Screw in A2 Stainless (listing and technical summary)",
+    "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Stainless-Socket-Cap-Screw-M3x8mm.html",
+    "type": "documentation",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "07892d49a0f5aaea0ac369f1930612e85ad78cb8a00557204f05d976590d9e2a",
+    "supports": [
+      "M3 x 8 mm, A2 stainless, ISO 4762 (DIN 912)",
+      "dk max 5.5, k max 3.0, drive 2.5, b min 18, pitch 0.50"
+    ]
+  }
+]

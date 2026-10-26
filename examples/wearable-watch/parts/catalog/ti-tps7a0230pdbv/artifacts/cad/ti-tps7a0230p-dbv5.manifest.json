@@ -1,0 +1,116 @@
+{
+  "artifact": "ti-tps7a0230p-dbv5",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "57e9c8cfd4120b94d029c1a45454dbca4120214d58371d2e94fb406c3b1722c9",
+  "units": "mm",
+  "volume_mm3": 5.413,
+  "bodies": {
+    "package": 5.098,
+    "lead_1": 0.063,
+    "lead_2": 0.063,
+    "lead_3": 0.063,
+    "lead_4": 0.063,
+    "lead_5": 0.063
+  },
+  "features": {
+    "package_top": {
+      "area_mm2": 4.514,
+      "centroid": [
+        0.011,
+        -0.028,
+        1.175
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "pin_1": {
+      "area_mm2": 0.18,
+      "centroid": [
+        -1.175,
+        0.95,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.18,
+      "centroid": [
+        -1.175,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_3": {
+      "area_mm2": 0.18,
+      "centroid": [
+        -1.175,
+        -0.95,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_4": {
+      "area_mm2": 0.18,
+      "centroid": [
+        1.175,
+        -0.95,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_5": {
+      "area_mm2": 0.18,
+      "centroid": [
+        1.175,
+        0.95,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 0.9,
+      "centroid": [
+        -0.235,
+        0.0,
+        0.0
+      ],
+      "faces": 5,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

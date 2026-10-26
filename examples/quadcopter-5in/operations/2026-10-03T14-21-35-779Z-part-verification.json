@@ -1,0 +1,48 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "iso-4762-m3x8",
+    "independent": "false"
+  },
+  "projectDigest": "sha256:37f1a41fa35dd52e7069124637a5c13abd0dfedca30da470d2b531d2a24ec4ce",
+  "tools": [],
+  "startedAt": "2026-10-03T14:21:35.779Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m3x8: audit 3/3 (self-audit), 1 assumption(s), 1 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/iso-4762-m3x8/verification.json",
+      "digest": "sha256:75e0ff2796f656859cfa3259a0af430dc8b4525f927f3d9996773542bae05a8b",
+      "bytes": 605,
+      "description": "iso-4762-m3x8: verification record"
+    }
+  ],
+  "data": {
+    "partId": "iso-4762-m3x8",
+    "recorded_at": "2026-10-03T14:21:35.803Z",
+    "audit": {
+      "method": "self-audit: each fact re-read from the copies fetched on 2026-10-03 (sha256 in sources.json): the listing's technical summary or the maker's datasheet, product page or image",
+      "independent": false,
+      "auditor": "authoring agent (PB-836 session)",
+      "checked": 3,
+      "confirmed": 3,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": null,
+    "assumptions": [
+      "length"
+    ],
+    "data_gaps": [
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T14:21:35.803Z"
+}

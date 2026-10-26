@@ -1,0 +1,1 @@
+{ "title": "No instruction, no graders", "fixture": { "from": "nowhere" }, "budget": { "turns": 1, "seconds": 1 }, "graders": [{ "kind": "vibes" }], "solution": [] }

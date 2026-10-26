@@ -1,0 +1,17 @@
+Distributor A — Product detail
+URL: https://distributor-a.example/product/123-LDO3300-33SOT-TR-CT
+Read: 2026-09-28
+
+Manufacturer: ACME
+Manufacturer part number: LDO3300-33SOT-TR
+Distributor part number: 123-LDO3300-33SOT-TR-CT
+Description: LDO regulator, 3.3 V fixed, 300 mA, SOT-23-5
+Authorized distributor for ACME: yes (franchised)
+In stock: 4,210
+Minimum order: 1
+Packaging: Cut tape (CT)
+
+Pricing (USD)
+  1      $0.62
+  10     $0.48
+  100    $0.35

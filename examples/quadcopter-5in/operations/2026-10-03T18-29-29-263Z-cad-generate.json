@@ -1,0 +1,53 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "meps-phase-leads-m3",
+    "config": "src/harnesses/meps-phase-leads-m3/cad.config.ts",
+    "configDigest": "sha256:51f25dc8532b785d490473ef3992b09d375dc2dc5504d71c925a82a3554be999",
+    "moduleDigest": "sha256:749631ad55e59c56ce8d54b3cb1e5c38cfd6b3a91da763a3c0349dbe7b9ed42b"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:96dff6062190234f5f3c48cfb013c9c157025fa4a3fe40e0714f223e17138f60",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:29:29.263Z",
+  "status": "succeeded",
+  "summary": "arm_rl_leads: ok; routed in one run with 9 other cable(s) (run harness-cad)",
+  "outputs": [
+    {
+      "path": "src/harnesses/meps-phase-leads-m3/harness-cad/route.json",
+      "digest": "sha256:0f4d9caea5ac87c8e2bff410450cd57cf2ecb8cd7e07a875a331703e2a0fab65",
+      "bytes": 46664,
+      "description": "arm_rl_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "harnesses": [
+      {
+        "id": "meps-phase-leads-m3",
+        "path": "arm_rl_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 1.49
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-03T18:29:31.690Z"
+}

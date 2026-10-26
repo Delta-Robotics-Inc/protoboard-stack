@@ -1,0 +1,559 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "Coilcraft XFL4020 data sheet, Document 745",
+      "type": "datasheet",
+      "url": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf"
+    },
+    {
+      "id": "art_product",
+      "name": "Coilcraft XFL4020-152 product page",
+      "type": "documentation",
+      "url": "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/"
+    },
+    {
+      "id": "art_tps63020",
+      "name": "TI TPS6302x datasheet SLVS916I (recommended inductors)",
+      "type": "datasheet",
+      "url": "https://www.ti.com/lit/ds/symlink/tps63020.pdf"
+    },
+    {
+      "id": "art_cad_kicad",
+      "name": "KiCad XAL4020 envelope model (community, CC-BY-SA-4.0; evidence, not this part's body)",
+      "type": "cad",
+      "url": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/raw/master/Inductor_SMD.3dshapes/L_Coilcraft_XAL4020-XXX.step"
+    },
+    {
+      "filePath": "library/cad/py/catalog/coilcraft-xfl4020-152me.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "coilcraft-xfl4020-152me-4x4 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/coilcraft-xfl4020-152me/artifacts/cad/coilcraft-xfl4020-152me-4x4.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "coilcraft-xfl4020-152me-4x4 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/coilcraft-xfl4020-152me/artifacts/cad/coilcraft-xfl4020-152me-4x4.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "coilcraft-xfl4020-152me-4x4 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/coilcraft-xfl4020-152me/artifacts/cad/coilcraft-xfl4020-152me-4x4.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "coilcraft-xfl4020-152me-4x4 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/coilcraft-xfl4020-152me/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "component.passive.inductor"
+  ],
+  "description": "Coilcraft XFL4020-152ME shielded composite-core power inductor: 1.5 µH ±20 %, DCR 14.40 mΩ typ (15.80 max), Isat 4.1 / 4.4 / 4.6 A at 10 / 20 / 30 % drop, Irms 6.7 A (20 °C rise) / 9.1 A (40 °C rise), SRF 59 MHz, 20 V. 4.0 x 4.0 x 2.10 mm max with two bottom terminals, -40 to +125 °C ambient, AEC-Q200. TI's recommended inductor for the TPS63020 buck-boost.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "conditions": "electrical specifications at 25 °C",
+        "core": "composite, shielded",
+        "dcr_mOhm": {
+          "max": 15.8,
+          "typ": 14.4
+        },
+        "inductance_test": "1 MHz, 0.1 Vrms, 0 Adc",
+        "inductance_tolerance_pct": 20,
+        "inductance_uH": 1.5,
+        "irms_A": {
+          "rise_20C": 6.7,
+          "rise_40C": 9.1
+        },
+        "isat_A": {
+          "drop_10pct": 4.1,
+          "drop_20pct": 4.4,
+          "drop_30pct": 4.6
+        },
+        "operating_voltage_V": 20,
+        "source": [
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 table row XFL4020-152ME_, notes 2-8)",
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/"
+        ],
+        "srf_MHz_typ": 59
+      }
+    },
+    {
+      "dimensions_mm": {
+        "height": 2.1,
+        "length": 4,
+        "width": 4
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "body_mm": "4.0 ±0.3 x 4.0 ±0.3, height 2.10 max (E termination; T and S terminations up to 0.13 more before mounting)",
+        "distributor_package_label": "SMD,4x4mm (LCSC C3033018)",
+        "marking": "dash number (152) and a bar along the start-lead terminal side",
+        "mounting_method": "surface_mount",
+        "msl": "1 (unlimited floor life at <30 °C / 85 % RH)",
+        "packing": "1000 per 7 in reel; 3500 per 13 in reel; 12 mm plastic tape, 0.23 mm thick, 8 mm pocket spacing, 2.3 mm pocket depth",
+        "pitch_note": "pitch_mm is the distance between terminal centres, 1.57 + 0.82 = 2.39 mm, derived from the drawing",
+        "source": [
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1, 745-3)",
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/ (General specification)",
+          "https://jlcsearch.tscircuit.com/components/list.json?search=XFL4020-152"
+        ],
+        "terminal_plating": "tin-silver over copper (E)",
+        "terminals_mm": "0.82 ±0.05 wide x 3.25 typ long, inner gap 1.57 ±0.25, thickness 0.10 typ for -152",
+        "weight_mg": [
+          162,
+          169
+        ]
+      },
+      "package": {
+        "code": "XFL4020 (Coilcraft Document 745-3 outline)",
+        "exposed_pad": false,
+        "name": "XFL4020 4.0 x 4.0 mm SMD",
+        "pin_count": 2,
+        "pitch_mm": 2.39,
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-3 drawing: 4.0 ±0.3 x 4.0 ±0.3, 2.10 max; terminals 0.82 ±0.05 wide, 1.57 ±0.25 apart, 3.25 typ long)"
+      },
+      "weight_g": 0.169
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "ambient_note": "-40 to +125 °C ambient with (40 °C rise) Irms current",
+        "max_part_temperature_C": 165,
+        "reflow": "max three 40 s reflows at +260 °C",
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 specifications)",
+        "storage_component_C": [
+          -55,
+          165
+        ],
+        "storage_tape_and_reel_C": [
+          -55,
+          80
+        ]
+      },
+      "operating_temperature_C": [
+        -40,
+        125
+      ]
+    }
+  ],
+  "id": "coilcraft-xfl4020-152me",
+  "interfaces": [
+    {
+      "capabilities": [
+        "inductor_terminal"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 2.665,
+              "centroid": [
+                -1.195,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "START",
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Start (short) lead terminal, under the top marking bar; connect high dv/dt here for lowest EMI. Bottom terminal 0.82 ±0.05 x 3.25 typ mm.",
+            "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (Document 745-3 drawing and top-view callout)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "inductor_terminal"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 2.665,
+              "centroid": [
+                1.195,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "END",
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Finish terminal of the winding, opposite the marking bar. Bottom terminal 0.82 ±0.05 x 3.25 typ mm, 1.57 ±0.25 mm from terminal 1.",
+            "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (Document 745-3 drawing and top-view callout)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 5.33,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "4.0 x 4.0 mm SMD terminals",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "smd_2_terminal",
+            "note": "Two bottom terminals, each 0.82 ±0.05 (X) x 3.25 typ (Y) mm and 0.10 mm thick (typ, -152), 1.57 ±0.25 mm apart at their inner edges; tin-silver over copper. Body 4.0 ±0.3 x 4.0 ±0.3 x 2.10 max. Max three 40 s reflows at +260 °C, cooled to room temperature between cycles; MSL 1.",
+            "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 specifications; 745-3 drawing)"
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Coilcraft",
+  "name": "Coilcraft XFL4020-152ME 1.5 µH Power Inductor",
+  "part_number": "XFL4020-152ME",
+  "tags": [
+    "coilcraft",
+    "xfl4020",
+    "xfl4020-152me",
+    "xfl4020-152mec",
+    "inductor",
+    "power-inductor",
+    "shielded",
+    "1.5uh",
+    "smd",
+    "aec-q200",
+    "passive"
+  ],
+  "traits": [
+    {
+      "params": {
+        "kind": "inductor",
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 table row XFL4020-152ME_, note 2: 1 MHz, 0.1 Vrms, 0 Adc)",
+        "tolerance": 0.2,
+        "unit": "H",
+        "value": 0.0000015
+      },
+      "type": "passive"
+    },
+    {
+      "params": {
+        "dcr_mOhm": {
+          "max": 15.8,
+          "typ": 14.4
+        },
+        "inductance_uH": 1.5,
+        "irms_A": {
+          "rise_20C": 6.7,
+          "rise_40C": 9.1
+        },
+        "irms_note": "current that causes the stated temperature rise from 25 °C ambient; reference only, not an absolute maximum rating, and dependent on board layout and air flow",
+        "isat_A": {
+          "drop_10pct": 4.1,
+          "drop_20pct": 4.4,
+          "drop_30pct": 4.6
+        },
+        "isat_note": "DC current at 25 °C that causes the stated inductance drop from its zero-current value",
+        "kind": "inductor",
+        "source": [
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 table row XFL4020-152ME_, notes 5, 6)",
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/"
+        ],
+        "srf_MHz_typ": 59,
+        "tolerance_pct": 20
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Ambient -40 to +125 °C with (40 °C rise) Irms current; maximum part temperature +165 °C (ambient + rise). Operating voltage 20 V; Coilcraft notes the capability may be higher for some part numbers.",
+        "source": [
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 specifications, note 7)",
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/"
+        ],
+        "temperature_C": [
+          -40,
+          125
+        ],
+        "voltage_V": 20
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "note": "Coilcraft states no electrical absolute maximum; Irms is reference only.",
+        "part_temperature_C": 165,
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 specifications, note 6)",
+        "storage_tape_and_reel_C": [
+          -55,
+          80
+        ],
+        "storage_temperature_C": [
+          -55,
+          165
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "note": "Connect the high dv/dt node to the start (short) lead terminal, marked by the top bar, for lowest EMI. In a TPS63020 buck-boost both inductor ends switch (L1 pins 8, 9 and L2 pins 6, 7); which end goes on the start lead is a layout choice.",
+        "source": [
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-3 top-view callout)",
+          "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5)"
+        ],
+        "topic": "orientation"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "TI recommends a saturation current 20 % above the peak inductor current from its Equation 2. Check the board's peak current against Isat (4.1 A at 10 % drop) and the converter's switch current limit; Coilcraft's Irms values depend on the land pattern, trace size and air flow and should be verified in the application.",
+        "source": [
+          "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.2.2)",
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 note 6)"
+        ],
+        "topic": "sizing"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Ordering: XFL4020-152MEC is the 7 in machine-ready reel (1000); -152MED the 13 in reel (3500, factory order); B is being replaced by C. Termination T (tin-silver-copper) and S (tin-lead) are special orders. Coilcraft's product page offers XGL4020-152ME_ as a drop-in replacement with lower DCR and higher Isat. LCSC C3033018 is XFL4020-152MEC.",
+        "source": [
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 note 1)",
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/",
+          "https://jlcsearch.tscircuit.com/components/list.json?search=XFL4020-152"
+        ],
+        "topic": "variant"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Max three 40 s reflows at +260 °C with parts cooled to room temperature between cycles; MSL 1. PCB washing tested to MIL-STD-202 Method 215 plus an additional aqueous wash.",
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-1 specifications)",
+        "topic": "assembly"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "saturation current and DCR",
+        "resolution": "Use the manufacturer's current table. TI's 5.1 A matches no -152 column (it is the -102 value at 20 % drop) and probably comes from an older Coilcraft revision.",
+        "sources": [
+          "https://www.ti.com/lit/ds/symlink/tps63020.pdf",
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf",
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/",
+          "https://jlcsearch.tscircuit.com/components/list.json?search=XFL4020-152"
+        ],
+        "values": [
+          "5.1 A saturation, 15 mΩ (TI TPS63020 Table 2)",
+          "Isat 4.1 / 4.4 / 4.6 A at 10 / 20 / 30 % drop; DCR 14.40 typ / 15.80 max mΩ (Coilcraft Document 745-1 revised 03/10/26; product page; LCSC listing 14.4 mΩ, 4.6 A)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "weight",
+        "resolution": "Use the per-part 162-169 mg; weight_g is the 0.169 g maximum.",
+        "sources": [
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf",
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/"
+        ],
+        "values": [
+          "158-169 mg (series data sheet, all values)",
+          "162-169 mg (XFL4020-152 product page)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "terminal designators",
+        "reason": "Coilcraft does not number the terminals. The marking bar identifies the start lead, so it is the natural pin 1; the inductor itself is not polarised.",
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-3 top-view callout)",
+        "value": "pin 1 = start (short) lead terminal under the marking bar; pin 2 = the other terminal"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD package dimensions",
+        "reason": "The drawing dimensions the body, terminal width, gap, length and thickness; it draws but does not dimension the corner radius, the terminal setback (taken as symmetric) and the bar, which are scaled from the drawing so the representative model has single values. The model uses the maximum height so clearance checks are conservative.",
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf (745-3)",
+        "value": "nominal 4.0 x 4.0 body at the 2.10 maximum height; terminals 0.82 x 3.25 x 0.10 below the moulded body, centred in Y and symmetric in X (outer edges 0.395 from the body ends); body corner radius 0.2; marking bar 0.15 x 2.4, 0.5 from the start-lead end, recessed 0.02; pin 1 at -X"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "No redistributable model found. The product page's 3D Model button links a free XFL4020 series STEP on coilcraft.com (no account) and a 3D ContentCentral copy (account); neither states a licence, and coilcraft.com answers scripted requests with a Cloudflare challenge, so the STEP is recorded as a link in terms.json (distribution unknown), not stored. SnapMagic (SnapEDA) and SamacSys list models behind accounts. KiCad's L_Coilcraft_XxL4020 footprint names a model file that kicad-packages3D lacks; its XAL4020 model (a 4.3 x 4.3 x 2.1 mm block, CC-BY-SA-4.0) is kept under artifacts/cad/vendor/ as evidence. Geometry is generated from the data sheet drawing (library/cad/py/catalog/coilcraft-xfl4020-152me.py).",
+        "source": [
+          "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/",
+          "https://www.coilcraft.com/getmedia/9393b6cc-0e44-4d4b-85c1-c610bb73d2d7/XFL4020.STEP",
+          "https://www.snapeda.com/parts/XFL4020-152MEC/Coilcraft/view-part/",
+          "https://gitlab.com/kicad/libraries/kicad-packages3D/-/raw/master/Inductor_SMD.3dshapes/L_Coilcraft_XAL4020-XXX.step",
+          "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "thermal resistance",
+        "note": "Not stated; Coilcraft gives temperature rise as Irms at 20 and 40 °C rise instead.",
+        "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf"
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

@@ -1,0 +1,15 @@
+import { defineCapabilityConfig } from "@protoboardai/core";
+
+// Zephyr 4.2 for the watch main board (@protoboardai/ext-zephyr): the board definition and Kconfig
+// fragment, every line citing the board's nets and parts. Only what the model cannot state is here.
+export default defineCapabilityConfig({
+  provider: "@protoboardai/ext-zephyr",
+  module: "watch-main-board",
+  constraints: {
+    board_name: "wearable_watch",
+    // System OFF wake sources (brief F2, F8): both buttons, and the IMU's wrist-raise interrupt
+    wake: ["sw1", "sw2", "u2"],
+    // the DRV2605L drives the Vybronics VG0832012 LRA (an LRA, not an ERM); its binding requires the mode
+    properties: { u4: { "actuator-mode": "LRA" } },
+  },
+});

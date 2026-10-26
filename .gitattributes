@@ -1,0 +1,6 @@
+# Files are checked out exactly as they are committed, on every system: no
+# line-ending conversion. The parts a project vendors (parts/catalog) and the
+# generated outputs are pinned by digest, and `protoboard check` verifies
+# them offline: a Windows clone that turned LF into CRLF would fail its own
+# checks (.github/workflows/windows.yml sets the same before its checkouts).
+* -text

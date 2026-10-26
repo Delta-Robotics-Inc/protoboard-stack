@@ -1,0 +1,8 @@
+Marketplace C — seller listing
+URL: https://marketplace-c.example/item/88310
+Read: 2026-09-28
+
+Title: LDO3300-33SOT-TR ACME 3.3V LDO SOT23-5 (new original)
+Seller: independent seller (not an ACME distributor)
+Quantity available: 300
+Price: US $0.25 each, any quantity

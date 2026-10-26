@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // browser code, resolved by the shells' bundlers
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
+  },
+  "include": ["src", "test"]
+}

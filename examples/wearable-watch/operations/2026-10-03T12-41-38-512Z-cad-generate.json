@@ -1,0 +1,75 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "watch-lra-leads",
+    "config": "src/harnesses/watch-lra-leads/cad.config.ts",
+    "configDigest": "sha256:f253f769de50a87b89097522074d91dcb776c74f8c646302bc7aac198249c2af",
+    "moduleDigest": "sha256:12f757c4d57fa4c086ba5ffdd93fb7e5a26ec62f013a566a77cf3bc19cf27413"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:a448759534dc35bcbf7ef0400e61d074c8d605e9a1964ce219bd9d3410d6739d",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T12:41:38.512Z",
+  "status": "succeeded",
+  "summary": "lra_leads: ok; routed around the parts and 1 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/watch-lra-leads/harness-cad/route.json",
+      "digest": "sha256:ef67176a1ef386505b93b416eddbc737c2721d765b0b08f15f93b06e0b5e7097",
+      "bytes": 4401,
+      "description": "lra_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        129,
+        122,
+        118
+      ],
+      "res_mm": 1,
+      "seconds": 1.2
+    },
+    "harnesses": [
+      {
+        "id": "watch-lra-leads",
+        "path": "lra_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0
+      }
+    ],
+    "context": [
+      {
+        "id": "watch-battery-leads",
+        "path": "battery_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0
+      }
+    ],
+    "problems": [
+      "board/j3: no GLB body to route around (none declared)",
+      "board/j4: no GLB body to route around (none declared)"
+    ]
+  },
+  "finishedAt": "2026-10-03T12:41:44.820Z"
+}

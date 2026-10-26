@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "iso-10511-m2-nyloc-nut",
+    "config": "parts/local/iso-10511-m2-nyloc-nut/cad.config.ts",
+    "configDigest": "sha256:cc452cb61c2da6cc9f4e2a2af3aa560c3c4503a7a884e63a7626303e3b0aa70c",
+    "moduleDigest": "sha256:38bb643bfd1e29698a69214174f569b384a91901d7dedde923fa6b2ed6e186e8"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4cf82c4b20f0fb7448deee95078d3a145411d08f6b73cbf5b092b88450d6ac98",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:21:03.664Z",
+  "status": "succeeded",
+  "summary": "iso-10511-m2-nyloc-nut: body.step, body.glb, body.manifest.json in parts/local/iso-10511-m2-nyloc-nut/out (30.001 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/iso-10511-m2-nyloc-nut/out/body.step",
+      "digest": "sha256:6a61183362902e4cf5c7e0d5f88b437c9de068e86d13d2b2fcf957a38b0b615b",
+      "bytes": 28566,
+      "description": "iso-10511-m2-nyloc-nut: nominal body"
+    },
+    {
+      "path": "parts/local/iso-10511-m2-nyloc-nut/out/body.glb",
+      "digest": "sha256:da9a4461b87b30663f5375b5448af7ba8a495e8f36221022a0afa31fe27a5d3f",
+      "bytes": 12936,
+      "description": "iso-10511-m2-nyloc-nut: viewer mesh"
+    },
+    {
+      "path": "parts/local/iso-10511-m2-nyloc-nut/out/body.manifest.json",
+      "digest": "sha256:c8d38b7030db597a19eef9103ffef9f4733eafb7bb32b680c4aef154c6f138f6",
+      "bytes": 545,
+      "description": "iso-10511-m2-nyloc-nut: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "iso-10511-m2-nyloc-nut",
+    "out": "parts/local/iso-10511-m2-nyloc-nut/out",
+    "volume_mm3": 30.001,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:21:08.335Z"
+}

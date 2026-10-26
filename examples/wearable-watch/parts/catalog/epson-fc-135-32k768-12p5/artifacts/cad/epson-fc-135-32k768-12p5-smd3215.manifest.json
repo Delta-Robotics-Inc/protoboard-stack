@@ -1,0 +1,72 @@
+{
+  "artifact": "epson-fc-135-32k768-12p5-smd3215",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "27a298bc43b3db849aca7da682d501ea38aea3b7021fb568929c362616c8e77e",
+  "units": "mm",
+  "volume_mm3": 3.608,
+  "bodies": {
+    "ceramic_base": 2.664,
+    "lid": 0.885,
+    "terminal_1": 0.029,
+    "terminal_2": 0.029
+  },
+  "features": {
+    "package_top": {
+      "area_mm2": 2.951,
+      "centroid": [
+        0.0,
+        0.0,
+        0.9
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "pin_1": {
+      "area_mm2": 0.845,
+      "centroid": [
+        -1.175,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.845,
+      "centroid": [
+        1.175,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 1.69,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 2,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

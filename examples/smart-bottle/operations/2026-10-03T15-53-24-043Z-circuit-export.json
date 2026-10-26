@@ -1,0 +1,303 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:export",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "export",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/circuit.config.ts",
+    "configDigest": "sha256:01ce88828f922bb1b04b66ee6cdb93207c13f8dc00fdba6c81d7dd97e3f4c57c",
+    "moduleDigest": "sha256:e2dab74367abe66a567c1e93c2d6e19668be430d55911b5c8168d83fcb65f559"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:05fef29c6f809c2d2ee84d204bc4a4b731e763a45d5b55ab70cd24dcf34c30fc",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T15:53:24.043Z",
+  "status": "succeeded",
+  "summary": "exported 61 components: Gerber + drill, BOM, PnP, GLB/STEP (53 part bodies, 8 package boxes), manifest, netlist, renders",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/espressif-esp32-c3-mini-1-h4x-cad_step.step",
+      "digest": "sha256:6fd40538495a9b34730c38d8434b7a4adf9a8acd514d44eb77988fc8177ce415",
+      "bytes": 1281818,
+      "description": "espressif-esp32-c3-mini-1-h4x#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, pin_9, pin_10, pin_11, pin_12, pin_13, pin_14, pin_15, pin_16, pin_17, pin_18, pin_19, pin_20, pin_21, pin_22, pin_23, pin_24, pin_25, pin_26, pin_27, pin_28, pin_29, pin_30, pin_31, pin_32, pin_33, pin_34, pin_35, pin_36, pin_37, pin_38, pin_39, pin_40, pin_41, pin_42, pin_43, pin_44, pin_45, pin_46, pin_47, pin_48, pin_49, pin_50, pin_51, pin_52, pin_53, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/st-vl53l4cdv0dh-1-cad_step.step",
+      "digest": "sha256:f8ab88f8004c5563bcbbd309fda6c178ed7266a698f310d556b6e9b14251da96",
+      "bytes": 347335,
+      "description": "st-vl53l4cdv0dh-1#cad_step without its interface feature shapes (rx_aperture, tx_aperture, pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, pin_9, pin_10, pin_11, pin_12, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/ti-lp5024rsm-cad_step.step",
+      "digest": "sha256:a0e2b9052f670a988a38cf3c8eaa27a12d6e1cc7fac1d3972a6aed42df3bc8df",
+      "bytes": 811079,
+      "description": "ti-lp5024rsm#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, pin_9, pin_10, pin_11, pin_12, pin_13, pin_14, pin_15, pin_16, pin_17, pin_18, pin_19, pin_20, pin_21, pin_22, pin_23, pin_24, pin_25, pin_26, pin_27, pin_28, pin_29, pin_30, pin_31, pin_32, pin_33, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/ti-tps63020dsjr-cad_step.step",
+      "digest": "sha256:3ff41950d822a2a9fa092cac63518074e251f66149cbad9fa851f04a32a602ba",
+      "bytes": 271250,
+      "description": "ti-tps63020dsjr#cad_step without its interface feature shapes (pcb_mount, thermal_pad)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/coilcraft-xfl4020-152me-cad_step.step",
+      "digest": "sha256:5b22ad245c1216646b612507190cc3db83e5845dba4bf7b81aaa9cf061178598",
+      "bytes": 166912,
+      "description": "coilcraft-xfl4020-152me#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/microchip-mcp73831t-2aci-mc-cad_step.step",
+      "digest": "sha256:d9b4f14ecfdbf0d4c39bf16485de77e837b180d3748e729f41d79980ce21fc94",
+      "bytes": 382788,
+      "description": "microchip-mcp73831t-2aci-mc#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, pcb_mount, thermal_pad)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/adi-max17048g-t10-cad_step.step",
+      "digest": "sha256:6467d4a5f4d8b9abb485d0cfca1119701872d6fbc928e73738534e8622fc5c91",
+      "bytes": 255632,
+      "description": "adi-max17048g-t10#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, ep, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/gct-usb4720-03-a-cad_step.step",
+      "digest": "sha256:e36e0770496d9fa0f71d8487d6d831918c62fcaa26971ae9f378d82c28f99f47",
+      "bytes": 630651,
+      "description": "gct-usb4720-03-a#cad_step without its interface feature shapes (shell, panel_seal, usb_c, ground_tags, pin_a1, pin_b12, pin_a4, pin_b9, pin_b8, pin_a5, pin_b7, pin_a6, pin_a7, pin_b6, pin_a8, pin_b5, pin_b4, pin_a9, pin_b1, pin_a12, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/st-usblc6-2sc6-cad_step.step",
+      "digest": "sha256:02c3aa6bceb5c8b16036e93f7647ac7fa150af7896a2b3ff9f44474a466ad464",
+      "bytes": 268360,
+      "description": "st-usblc6-2sc6#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/alps-skrtlae010-cad_step.step",
+      "digest": "sha256:803a7ffbc12fe41c3807ca6853fdc8fc2adf29b4a19748b4076e1ca1f0bf8713",
+      "bytes": 232199,
+      "description": "alps-skrtlae010#cad_step without its interface feature shapes (pin_1, pin_2, pin_3)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/kingbright-aptf1616lseezgkqbkc-cad_step.step",
+      "digest": "sha256:48ad1c9a66e8eda395d3a08f10ed17b396182b36619adcff288cea2b5dd03ada",
+      "bytes": 198604,
+      "description": "kingbright-aptf1616lseezgkqbkc#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pcb_mount, light_output)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/yageo-rc0402-cad_step.step",
+      "digest": "sha256:9040262c260712babd21ae16f24ae6adb21e959e73aa86212c53198f46443399",
+      "bytes": 84173,
+      "description": "yageo-rc0402#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/murata-grm188-cad_step.step",
+      "digest": "sha256:b86f8be03fa1235862deb249f28e6518c7f6603d515752c6dd66f9d024844d3d",
+      "bytes": 84022,
+      "description": "murata-grm188#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/models/murata-grm155-cad_step.step",
+      "digest": "sha256:a373f6d200e1f9e1c602536024af705d8346bbec8eab11dfcc2247462c15a59a",
+      "bytes": 84126,
+      "description": "murata-grm155#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/F_Cu.gbr",
+      "digest": "sha256:a10f936b71b34cde5d7bcbfa33ef7b840e6c5045842650d15353b0453188def9",
+      "bytes": 72363
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/F_SilkScreen.gbr",
+      "digest": "sha256:36cb929b66c4580201c7a47de157d2ad13b1e6c7d2cf50f7208e120346a5feab",
+      "bytes": 98621
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/F_Mask.gbr",
+      "digest": "sha256:d0f6a1ccc7c6e118048c131ed03cb6cde652c3a1230f779d927aceb6fd65333d",
+      "bytes": 13504
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/F_Paste.gbr",
+      "digest": "sha256:b1174bd8065aaf65bc40518ca34810e1cce703ae4e3d4faff10e7e32091005cd",
+      "bytes": 11188
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/B_Cu.gbr",
+      "digest": "sha256:dbe7067a46a791550c0da2cbb01a0d9380ef050ffbc741500a39e17ea0b94bdf",
+      "bytes": 19202
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/B_SilkScreen.gbr",
+      "digest": "sha256:09a36743d02efc4a9d9bef96985471a5b28d73e27396392e41ba4afe6938b11a",
+      "bytes": 2815
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/B_Mask.gbr",
+      "digest": "sha256:f2c36c32ccbab825a13f5966a59ce035f4749ce355dc770120e66bb8c9461871",
+      "bytes": 2850
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/B_Paste.gbr",
+      "digest": "sha256:e35a92d770ca01923a8fdfb160a8731a2138a94e5f763217e406bc342aa65043",
+      "bytes": 2119
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/Edge_Cuts.gbr",
+      "digest": "sha256:a0a30a4c4617a7b42112ee8610d774d313422aecd4fd4a6c37270b98d79fd8ac",
+      "bytes": 3319
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/In1_Cu.gbr",
+      "digest": "sha256:c1aa584e6feb2484fc442bad1eebc659446ede9eeaf23d97f27db4f581631d1a",
+      "bytes": 18264
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/In2_Cu.gbr",
+      "digest": "sha256:1c142d0ef474d430718b42761a0d61f46c84a032a0991204d803b2291bd75a36",
+      "bytes": 18355
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/drill-L1-L4.drl",
+      "digest": "sha256:0b6a1a9e6575ce572e7433f718ff0ab4863d343b62eeba1590dd617486c16824",
+      "bytes": 3360
+    },
+    {
+      "path": "src/boards/bottle-cap/out/gerber/drill_npth.drl",
+      "digest": "sha256:3c232e2ebd13ce3e664f4e0eb8a8b2bdc34f90f9d340de61cb35e5386b9aff18",
+      "bytes": 424
+    },
+    {
+      "path": "src/boards/bottle-cap/out/bom.csv",
+      "digest": "sha256:cb00f59c0ab4281cab665f65686972ba1b0ae99f6390a61e60c7e96ba11343b2",
+      "bytes": 5469,
+      "description": "bill of materials by UHD instance"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/pnp.csv",
+      "digest": "sha256:4de8d8d04fee51f68bb78fffa5842ac982ad45fc8056914a71a8c69cbd825dca",
+      "bytes": 4077,
+      "description": "pick-and-place by UHD instance"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/board.manifest.json",
+      "digest": "sha256:c3d7f4e2bff6af6c6c5fff2616da1ea876182a96f51cd2562d6d2d6b4e5943ee",
+      "bytes": 35572,
+      "description": "geometry manifest"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/netlist.json",
+      "digest": "sha256:148572bdd48f3a0be31394cc583c372e3b5521eef013c36b4b0a24173e720892",
+      "bytes": 8363,
+      "description": "nets as laid out"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/board.glb",
+      "digest": "sha256:fed17e20c0ec2114ca9c36f7422852e0852c7ccd16f5435024dfe454e0d83915",
+      "bytes": 1088096,
+      "description": "board with component bodies (glTF binary, metres, Y up)"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/board.step",
+      "digest": "sha256:189095790abc760737f60f782d77c58c18d886c1aad74fb4473887421c7b56ef",
+      "bytes": 4563627,
+      "description": "board with component bodies (STEP, mm, board frame)"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/schematic.svg",
+      "digest": "sha256:aa72ff7b917bb9cde0ae5c046be4543c829dc594c305c311212e9e48ff1bc53a",
+      "bytes": 675274,
+      "description": "render"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/pcb-top.svg",
+      "digest": "sha256:8cd27c549cadddf8adfa462c241b942bf4efaf8cff582698823f55b9bc0b3a40",
+      "bytes": 493676,
+      "description": "render"
+    },
+    {
+      "path": "src/boards/bottle-cap/out/pcb-bottom.svg",
+      "digest": "sha256:3df0c33026531152e50360e683ab360bb9a86d118500a596ffe4fbf2e409dd42",
+      "bytes": 171988,
+      "description": "render"
+    }
+  ],
+  "data": {
+    "bodies": {
+      "u1": "part",
+      "u2": "part",
+      "u3": "part",
+      "u4": "part",
+      "l1": "part",
+      "u5": "part",
+      "u6": "part",
+      "j1": "part",
+      "d9": "part",
+      "sw1": "part",
+      "d1": "part",
+      "d2": "part",
+      "d3": "part",
+      "d4": "part",
+      "d5": "part",
+      "d6": "part",
+      "d7": "part",
+      "d8": "part",
+      "jbat": "box",
+      "jprb": "box",
+      "tp_rxd": "box",
+      "tp_txd": "box",
+      "tp_boot": "box",
+      "tp_en": "box",
+      "tp_3v3": "box",
+      "tp_gnd": "box",
+      "r1": "part",
+      "r2": "part",
+      "r3": "part",
+      "r4": "part",
+      "r5": "part",
+      "r6": "part",
+      "r7": "part",
+      "r8": "part",
+      "r9": "part",
+      "r10": "part",
+      "r11": "part",
+      "r12": "part",
+      "r13": "part",
+      "r14": "part",
+      "r15": "part",
+      "r16": "part",
+      "r17": "part",
+      "r18": "part",
+      "r19": "part",
+      "r20": "part",
+      "c1": "part",
+      "c2": "part",
+      "c3": "part",
+      "c4": "part",
+      "c5": "part",
+      "c6": "part",
+      "c7": "part",
+      "c8": "part",
+      "c9": "part",
+      "c10": "part",
+      "c11": "part",
+      "c12": "part",
+      "c13": "part",
+      "c14": "part",
+      "c15": "part"
+    },
+    "notes": []
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T15:53:30.449Z"
+}

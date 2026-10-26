@@ -1,0 +1,2587 @@
+{
+  "id": "ti-lp5024rsm",
+  "name": "TI LP5024 24-channel I2C RGB LED driver (VQFN-32)",
+  "version": "1.0.0",
+  "manufacturer": "Texas Instruments",
+  "part_number": "LP5024RSMR",
+  "description": "Texas Instruments LP5024 24-channel constant-current-sink RGB LED driver in the 32-pin 4 x 4 mm VQFN (RSM): VCC 2.7-5.5 V, 24 outputs up to 25.5 mA each (35 mA with VCC >= 3.3 V) set by one IREF resistor, 12-bit 29 kHz PWM per channel with 8-bit colour per output and 8-bit brightness per RGB group, three colour banks, I2C target up to 400 kHz at 0x28-0x2B (two address pins) plus broadcast 0x3C, 0.2 uA shutdown with EN low and 6 uA automatic power-save.",
+  "tags": [
+    "lp5024",
+    "texas-instruments",
+    "ti",
+    "led-driver",
+    "rgb",
+    "constant-current",
+    "pwm",
+    "i2c",
+    "vqfn-32",
+    "ic"
+  ],
+  "categories": [
+    "component.ic"
+  ],
+  "interfaces": [
+    {
+      "id": "pin_1",
+      "name": "OUT0",
+      "pin": 1,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT0 (O) — Current sink output 0. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_2",
+      "name": "OUT1",
+      "pin": 2,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT1 (O) — Current sink output 1. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_3",
+      "name": "OUT2",
+      "pin": 3,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT2 (O) — Current sink output 2. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_4",
+      "name": "OUT3",
+      "pin": 4,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT3 (O) — Current sink output 3. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_5",
+      "name": "OUT4",
+      "pin": 5,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT4 (O) — Current sink output 4. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_6",
+      "name": "OUT5",
+      "pin": 6,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT5 (O) — Current sink output 5. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_7",
+      "name": "OUT6",
+      "pin": 7,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT6 (O) — Current sink output 6. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_8",
+      "name": "OUT7",
+      "pin": 8,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT7 (O) — Current sink output 7. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_9",
+      "name": "OUT8",
+      "pin": 9,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT8 (O) — Current sink output 8. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_10",
+      "name": "OUT9",
+      "pin": 10,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT9 (O) — Current sink output 9. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_11",
+      "name": "OUT10",
+      "pin": 11,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT10 (O) — Current sink output 10. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_12",
+      "name": "OUT11",
+      "pin": 12,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT11 (O) — Current sink output 11. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_13",
+      "name": "OUT12",
+      "pin": 13,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT12 (O) — Current sink output 12. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_14",
+      "name": "OUT13",
+      "pin": 14,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT13 (O) — Current sink output 13. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_15",
+      "name": "OUT14",
+      "pin": 15,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT14 (O) — Current sink output 14. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_16",
+      "name": "OUT15",
+      "pin": 16,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT15 (O) — Current sink output 15. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_17",
+      "name": "OUT16",
+      "pin": 17,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT16 (O) — Current sink output 16. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_18",
+      "name": "OUT17",
+      "pin": 18,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT17 (O) — Current sink output 17. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_19",
+      "name": "OUT18",
+      "pin": 19,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT18 (O) — Current sink output 18. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_20",
+      "name": "OUT19",
+      "pin": 20,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT19 (O) — Current sink output 19. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_21",
+      "name": "OUT20",
+      "pin": 21,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT20 (O) — Current sink output 20. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_22",
+      "name": "OUT21",
+      "pin": 22,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_a"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT21 (O) — Current sink output 21. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_23",
+      "name": "OUT22",
+      "pin": 23,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_b"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT22 (O) — Current sink output 22. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_24",
+      "name": "OUT23",
+      "pin": 24,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "led_current_sink",
+        "led_bank_c"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "OUT23 (O) — Current sink output 23. If not used, this pin can be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_25",
+      "name": "ADDR0",
+      "pin": 25,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "address_select"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "ADDR0 — I2C slave-address selection pin. This pin must not be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Tie ADDR0 to GND or VCC (Table 7-2). Absolute maximum -0.3 V to VCC + 0.3 V, so it must not be pulled above the LP5024's own VCC.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.1, §7.5.1.4)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_26",
+      "name": "ADDR1",
+      "pin": 26,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "address_select"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "ADDR1 — I2C slave-address selection pin. This pin must not be left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Tie ADDR1 to GND or VCC (Table 7-2). Absolute maximum -0.3 V to VCC + 0.3 V, so it must not be pulled above the LP5024's own VCC.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.1, §7.5.1.4)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_27",
+      "name": "VCC",
+      "pin": 27,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            2.7,
+            5.5
+          ]
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.005
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "VCC (I) — Input power.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_28",
+      "name": "SDA",
+      "pin": 28,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "open_drain"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "SDA (I/O) — I2C bus data line. If not used, this pin must be connected to GND or VCC.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_29",
+      "name": "SCL",
+      "pin": 29,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "i2c_scl"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "SCL (I) — I2C bus clock line. If not used, this pin must be connected to GND or VCC.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_30",
+      "name": "EN",
+      "pin": 30,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "enable"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "EN (I) — Chip enable input pin",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "EN low = SHUTDOWN (0.2 uA typ, 1 uA max); EN high = INITIALIZATION (registers reset) then STANDBY until Chip_EN (DEVICE_CONFIG0 bit 6) is written 1. Wait tEN_H (500 us max) after the first EN rising edge before the first I2C access. VIH >= 1.4 V, VIL <= 0.4 V, -0.3 to 6 V absolute maximum.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.5, §6.6, §7.4)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_31",
+      "name": "IREF",
+      "pin": 31,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "capabilities": [
+        "current_set_resistor"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "IREF — Output current-reference global-setting pin",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Connect RIREF from IREF to GND: RIREF = KIREF x VIREF / ISET, KIREF = 105, VIREF = 0.7 V (e.g. ISET 15 mA -> 4.9 kOhm; 5 mA -> 14.7 kOhm). ISET is the full-scale current of all 24 outputs. IREF floating gives near-zero output current; IREF shorted to GND gives the internal limit ILIM (35-80 mA, or 40-120 mA with Max_Current_Option = 1), so the resistor is required. Place RIREF close to the device.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.5, §7.3.3, §8.2.2, §8.4.1)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_32",
+      "name": "VCAP",
+      "pin": 32,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ldo_bypass_capacitor"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "VCAP — Internal LDO output pin, this pin must be connected to a 1µF capacitor to GND. Place the capacitor as close to the device as possible.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "1 uF from VCAP to GND, as close to the device as possible. VCAP absolute maximum -0.3 to 2 V; do not load it.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.1, §8.2.2, §8.4.1)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_33",
+      "name": "GND (exposed thermal pad)",
+      "pin": 33,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "ground"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ground"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "GND — Exposed thermal pad also serves the ground pin for the device.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1 Pin Functions)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "The thermal pad must be soldered to the board for thermal and mechanical performance; add as many thermal vias under it as possible (plated shut or plugged and capped).",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§8.4.1; RSM0032B notes 3-4)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "i2c",
+      "name": "I2C (target)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "i2c",
+          "roles": [
+            "slave"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "unit": "Hz",
+          "range": [
+            0,
+            400000
+          ]
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 40
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "required": true,
+          "match": {
+            "protocol": "i2c",
+            "role": "data",
+            "capability": "i2c_sda"
+          }
+        },
+        {
+          "id": "scl",
+          "required": true,
+          "match": {
+            "protocol": "i2c",
+            "role": "clock",
+            "capability": "i2c_scl"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "i2c_default",
+          "label": "I2C (target)",
+          "bindings": {
+            "sda": "pin_28",
+            "scl": "pin_29"
+          }
+        }
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Target only. 7-bit address 0b0101 0 ADDR1 ADDR0: 0x28 (ADDR1 = GND, ADDR0 = GND), 0x29 (GND, VCC), 0x2A (VCC, GND), 0x2B (VCC, VCC). Every device also answers the broadcast address 0b0111100 (0x3C) whatever the ADDR pins; broadcast reads are valid only if all devices hold the same value. Up to four devices per bus. Auto-increment (Auto_Incr_EN, default 1) writes or reads consecutive registers in one transfer.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§7.5.1.4 Table 7-2 and Table 7-3, §7.5.1.5, §7.6.2, §8.2)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "fSCL up to 400 kHz, bus capacitance 10-200 pF per line. VIH >= 1.4 V, VIL <= 0.4 V, input current +-1 uA, SDA VOL <= 0.4 V at 5 mA; SDA and SCL 0-5.5 V (6 V absolute maximum) whatever VCC is, so they are compatible with 1.8, 3.3 and 5 V pull-ups. The bus needs pull-ups (1.8-4.7 kOhm typical), normally at the controller.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§1, §6.1, §6.3, §6.5, §6.6, §8.2.2)"
+          }
+        },
+        {
+          "type": "assumption",
+          "params": {
+            "field": "i2c_address",
+            "value": "0x28",
+            "reason": "The address is set by straps (ADDR0/ADDR1 must not float); the part has no default. 0x28 is ADDR1 = ADDR0 = GND, the strap the smart-bottle cap board uses. A board strapping another address needs an instance override, which UHD does not have yet.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§7.5.1.4 Table 7-2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "supply",
+      "name": "Supply (VCC + GND pad)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            2.7,
+            5.5
+          ]
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.005
+        }
+      ],
+      "slots": [
+        {
+          "id": "vcc",
+          "required": true,
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          }
+        },
+        {
+          "id": "gnd",
+          "required": true,
+          "match": {
+            "protocol": "power",
+            "role": "ground",
+            "capability": "ground"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "vcc_pins",
+          "label": "VCC 27, GND pad 33",
+          "default_active": true,
+          "bindings": {
+            "vcc": "pin_27",
+            "gnd": "pin_33"
+          }
+        }
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "VCC 2.7-5.5 V, well regulated: load transients (start-up, fast intensity changes) must not pull it below 2.7 V. 1 uF from VCC to GND close to the device. UVLO: shutdown at VUVF (2 V min, falling), restart at VUVR (2.5 V max, rising), 0.2 V hysteresis; below VUVF the device is held in INITIALIZATION (reset).",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.5, §7.3.5.2, §8.2.2, §8.3)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Supply current: shutdown (EN = 0) 0.2 uA typ / 1 uA max; standby (EN = 1, Chip_EN = 0) 6 / 10 uA; normal mode 5 / 8 mA with 10 mA per output; automatic power-save (Power_Save_EN = 1, the default, and all LEDs off for longer than tPSM 20-40 ms) 6 / 10 uA. Any I2C command returns the device to NORMAL.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.5, §6.6, §7.3.4, §7.4)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rgb_led_0",
+      "name": "RGB LED 0 (OUT0-OUT2, LED0_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_0_pins",
+          "label": "OUT0 / OUT1 / OUT2 (pins 1 / 2 / 3)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_1",
+            "bank_b": "pin_2",
+            "bank_c": "pin_3"
+          }
+        }
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Each RGB LED's cathodes go to three consecutive outputs (OUT3k, OUT3k+1, OUT3k+2), which share the LEDk_BRIGHTNESS register (8-bit, default FFh = 100 %); each output has its own 8-bit OUTx_COLOR register (default 00h). With LEDk_Bank_EN set, the first, second and third outputs follow bank A, B and C colour registers and BANK_BRIGHTNESS instead. Anodes go to the LED supply. §1 describes the three banks as (R, G, B), but §7.3.2 Table 7-1 and the BANK_A/B/C_COLOR registers give no letter-to-colour mapping, so the part assigns none.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§7.3.1, §7.3.2, §7.6 Table 7-4)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rgb_led_1",
+      "name": "RGB LED 1 (OUT3-OUT5, LED1_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_1_pins",
+          "label": "OUT3 / OUT4 / OUT5 (pins 4 / 5 / 6)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_4",
+            "bank_b": "pin_5",
+            "bank_c": "pin_6"
+          }
+        }
+      ],
+      "traits": []
+    },
+    {
+      "id": "rgb_led_2",
+      "name": "RGB LED 2 (OUT6-OUT8, LED2_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_2_pins",
+          "label": "OUT6 / OUT7 / OUT8 (pins 7 / 8 / 9)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_7",
+            "bank_b": "pin_8",
+            "bank_c": "pin_9"
+          }
+        }
+      ],
+      "traits": []
+    },
+    {
+      "id": "rgb_led_3",
+      "name": "RGB LED 3 (OUT9-OUT11, LED3_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_3_pins",
+          "label": "OUT9 / OUT10 / OUT11 (pins 10 / 11 / 12)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_10",
+            "bank_b": "pin_11",
+            "bank_c": "pin_12"
+          }
+        }
+      ],
+      "traits": []
+    },
+    {
+      "id": "rgb_led_4",
+      "name": "RGB LED 4 (OUT12-OUT14, LED4_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_4_pins",
+          "label": "OUT12 / OUT13 / OUT14 (pins 13 / 14 / 15)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_13",
+            "bank_b": "pin_14",
+            "bank_c": "pin_15"
+          }
+        }
+      ],
+      "traits": []
+    },
+    {
+      "id": "rgb_led_5",
+      "name": "RGB LED 5 (OUT15-OUT17, LED5_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_5_pins",
+          "label": "OUT15 / OUT16 / OUT17 (pins 16 / 17 / 18)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_16",
+            "bank_b": "pin_17",
+            "bank_c": "pin_18"
+          }
+        }
+      ],
+      "traits": []
+    },
+    {
+      "id": "rgb_led_6",
+      "name": "RGB LED 6 (OUT18-OUT20, LED6_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_6_pins",
+          "label": "OUT18 / OUT19 / OUT20 (pins 19 / 20 / 21)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_19",
+            "bank_b": "pin_20",
+            "bank_c": "pin_21"
+          }
+        }
+      ],
+      "traits": []
+    },
+    {
+      "id": "rgb_led_7",
+      "name": "RGB LED 7 (OUT21-OUT23, LED7_BRIGHTNESS)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "rgb_led_channels"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            0,
+            5.5
+          ]
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.0255
+        }
+      ],
+      "slots": [
+        {
+          "id": "bank_a",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_a"
+          }
+        },
+        {
+          "id": "bank_b",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_b"
+          }
+        },
+        {
+          "id": "bank_c",
+          "required": true,
+          "match": {
+            "protocol": "custom",
+            "role": "output",
+            "capability": "led_bank_c"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "rgb_led_7_pins",
+          "label": "OUT21 / OUT22 / OUT23 (pins 22 / 23 / 24)",
+          "default_active": true,
+          "bindings": {
+            "bank_a": "pin_22",
+            "bank_b": "pin_23",
+            "bank_c": "pin_24"
+          }
+        }
+      ],
+      "traits": []
+    },
+    {
+      "id": "pcb_mount",
+      "name": "VQFN-32 (RSM) terminals and exposed pad (SMD)",
+      "domain": "mechanical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "mechanical_connection",
+          "roles": [
+            "mounting_point"
+          ]
+        }
+      ],
+      "capabilities": [
+        "surface_mount"
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "32 bottom terminals and the exposed thermal pad are soldered to the board; the package is the mechanical domain's package fact. MSL Level-2, 260 C peak reflow, 1 year floor life.",
+            "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§11 package option addendum; RSM0032B note 3)"
+          }
+        }
+      ]
+    }
+  ],
+  "interfaceGroups": [
+    {
+      "id": "required_pins",
+      "label": "Pins that must be connected: VCC (27), GND pad (33), VCAP (32), IREF (31), ADDR0/ADDR1 (25/26), SDA/SCL (28/29)",
+      "members": [
+        "pin_27",
+        "pin_33",
+        "pin_32",
+        "pin_31",
+        "pin_25",
+        "pin_26",
+        "pin_28",
+        "pin_29"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "domains": [
+    {
+      "domain": "electrical",
+      "power_domains": [
+        {
+          "id": "vcc",
+          "name": "VCC (device supply)",
+          "voltage_range_V": [
+            2.7,
+            5.5
+          ]
+        }
+      ],
+      "metadata": {
+        "supply_current": {
+          "shutdown_uA": [
+            0.2,
+            1
+          ],
+          "standby_uA": [
+            6,
+            10
+          ],
+          "normal_mA": [
+            5,
+            8
+          ],
+          "power_save_uA": [
+            6,
+            10
+          ]
+        },
+        "uvlo_V": {
+          "restart_max": 2.5,
+          "shutdown_min": 2,
+          "hysteresis": 0.2
+        },
+        "output": {
+          "channels": 24,
+          "imax_mA": {
+            "max_current_option_0": 25.5,
+            "max_current_option_1_vcc_ge_3V3": 35
+          },
+          "ilim_mA": {
+            "option_0": [
+              35,
+              55,
+              80
+            ],
+            "option_1": [
+              40,
+              75,
+              120
+            ]
+          },
+          "leakage_uA": [
+            0.1,
+            1
+          ],
+          "current_error_percent": {
+            "device_to_device": 7,
+            "channel_to_channel": 7
+          },
+          "vsat_V_at_20mA": {
+            "option_0": [
+              0.25,
+              0.35
+            ],
+            "option_1": [
+              0.3,
+              0.4
+            ]
+          },
+          "viref_V": 0.7,
+          "kiref": 105
+        },
+        "pwm": {
+          "resolution_bits": 12,
+          "frequency_kHz": [
+            21,
+            29
+          ]
+        },
+        "logic_levels": {
+          "vih_min_V": 1.4,
+          "vil_max_V": 0.4,
+          "input_current_uA": 1,
+          "sda_vol_max_V": 0.4,
+          "sda_vol_condition": "IPULLUP 5 mA"
+        },
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.5, §6.6)"
+      }
+    },
+    {
+      "domain": "mechanical",
+      "dimensions_mm": {
+        "length": 4,
+        "width": 4,
+        "height": 1
+      },
+      "package": {
+        "name": "VQFN-32",
+        "code": "RSM (RSM0032B)",
+        "pin_count": 32,
+        "pitch_mm": 0.4,
+        "exposed_pad": true,
+        "exposed_pad_pin": 33,
+        "exposed_pad_mm": [
+          2.8,
+          2.8
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (Device Information: VQFN (32) 4.00 mm x 4.00 mm; Figure 5-2 \"LP5024 RSM Package 32-Pin VQFN With Exposed Thermal Pad\"; RSM0032B 4219108/B: body 3.9-4.1 x 3.9-4.1, 1 mm max height, 28X 0.4 pitch, terminals 0.15-0.25 x 0.25-0.45, exposed thermal pad 33 2.8 +-0.05 square)",
+        "assumption": "Height 1.0 mm is the drawing's maximum; RSM0032B gives no nominal height (see the assumption trait)."
+      },
+      "metadata": {
+        "body_mm": "3.9-4.1 x 3.9-4.1; 1 mm max height; standoff 0.00-0.05",
+        "terminal_mm": "width 0.15-0.25, length 0.25-0.45",
+        "mounting_method": "surface_mount",
+        "msl": "Level-2-260C-1 YEAR",
+        "lead_finish": "NIPDAU | NIPDAUAG",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§11 package option addendum; RSM0032B)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "operating_temperature_C": [
+        -40,
+        85
+      ],
+      "metadata": {
+        "junction_C": [
+          -40,
+          125
+        ],
+        "storage_C": [
+          -65,
+          150
+        ],
+        "rtheta_ja_C_per_W": 36.4,
+        "rtheta_jc_top_C_per_W": 34.8,
+        "rtheta_jb_C_per_W": 15.9,
+        "psi_jt_C_per_W": 0.9,
+        "psi_jb_C_per_W": 16,
+        "rtheta_jc_bot_C_per_W": 6.3,
+        "thermal_shutdown_C": 160,
+        "thermal_shutdown_release_C": 145,
+        "cooling_method": "PCB heat spreading through the exposed thermal pad and vias",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.1, §6.3, §6.4, §6.5, §7.3.5.1)"
+      }
+    }
+  ],
+  "traits": [
+    {
+      "type": "absolute_maximum",
+      "params": {
+        "en_iref_outx_scl_sda_vcc_V": [
+          -0.3,
+          6
+        ],
+        "addrx_V": "-0.3 to VCC + 0.3",
+        "vcap_V": [
+          -0.3,
+          2
+        ],
+        "power_dissipation": "internally limited",
+        "junction_temperature_C": [
+          -40,
+          125
+        ],
+        "storage_temperature_C": [
+          -65,
+          150
+        ],
+        "esd_hbm_V": 4000,
+        "esd_cdm_V": 1500,
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.1, §6.2)"
+      }
+    },
+    {
+      "type": "operating_conditions",
+      "params": {
+        "vcc_V": [
+          2.7,
+          5.5
+        ],
+        "outx_V": [
+          0,
+          5.5
+        ],
+        "addrx_en_sda_scl_V": [
+          0,
+          5.5
+        ],
+        "ambient_temperature_C": [
+          -40,
+          85
+        ],
+        "source": [
+          "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.3; §11 package option addendum: LP5024RSMR -40 to 85 C)",
+          "https://www.ti.com/product/LP5024/part-details/LP5024RSMR"
+        ]
+      }
+    },
+    {
+      "type": "performance",
+      "params": {
+        "kind": "led_driver",
+        "channels": 24,
+        "rgb_groups": 8,
+        "output_type": "constant-current sink",
+        "output_current_max_mA": "25.5 (VCC 2.7-5.5 V, Max_Current_Option = 0); 35 (VCC >= 3.3 V, Max_Current_Option = 1)",
+        "current_setting": "RIREF = 105 x 0.7 V / ISET, one resistor for all channels",
+        "pwm": "12-bit, 29 kHz typ, per channel; 3-phase PWM shifting; optional dithering",
+        "color_control": "8-bit OUTx_COLOR per output, 8-bit LEDx_BRIGHTNESS per three outputs, banks A/B/C with BANK_BRIGHTNESS",
+        "dimming_curve": "logarithmic (default) or linear (Log_Scale_EN)",
+        "accuracy_percent": "+-7 device-to-device, +-7 channel-to-channel at 10 mA",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§1, §6.5, §7.3, §7.6)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "topic": "firmware",
+        "note": "After EN goes high (and tEN_H), write DEVICE_CONFIG0 (00h) = 0x40 (Chip_EN = 1) to leave STANDBY. DEVICE_CONFIG1 (01h) resets to 3Ch: Log_Scale_EN, Power_Save_EN, Auto_Incr_EN and PWM_Dithering_EN on, Max_Current_Option = 0 (25.5 mA), LED_Global_Off = 0. Writing FFh to RESET (27h) resets all registers. LEDx_BRIGHTNESS resets to FFh and OUTx_COLOR to 00h, so outputs start dark.",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§7.4, §7.6 Table 7-4, §7.6.1, §7.6.2)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "topic": "LED headroom",
+        "note": "Each output needs its LED's forward voltage plus VSAT (0.25 V typ / 0.35 V max at 20 mA, Max_Current_Option = 0; 0.3 / 0.4 V with option 1) from the LED supply; the output voltage must stay within 0-5.5 V. Power dissipated in the device is the sum of output voltage x current, so a high LED supply heats the package (thermal shutdown at 160 C).",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§6.3, §6.5, §8.4.1)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "topic": "variant",
+        "note": "LP5024RSMR: VQFN (RSM) 32, 3000-unit large tape and reel, Active, -40 to 85 C, marking LP 5024. LP5024RSMRG4 is listed separately (NIPDAU finish only). The LP5018 (18 channels) shares this datasheet and pinout except that its RSM pins 19-24 are NC.",
+        "source": [
+          "https://www.ti.com/lit/ds/symlink/lp5024.pdf (§5 Table 5-1, §11 package option addendum)",
+          "https://www.ti.com/product/LP5024/part-details/LP5024RSMR"
+        ]
+      }
+    },
+    {
+      "type": "source_discrepancy",
+      "params": {
+        "field": "supply current by mode",
+        "values": [
+          "§6.5 Electrical Characteristics: normal 5 mA typ / 8 mA max (10 mA per output); standby 6 uA typ / 10 uA max; power-save 6 uA typ / 10 uA max",
+          "§7.4 Device Functional Modes: normal ICC 10 mA typ; standby 10 uA typ; power-save 10 uA typ (power-save 10 uA typ also in §1, §4 and §7.3.4)"
+        ],
+        "sources": [
+          "https://www.ti.com/lit/ds/symlink/lp5024.pdf"
+        ],
+        "resolution": "The electrical characteristics table is the specification and is used for current_draw and the metadata; the §7.4 figures are descriptive."
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "package height (CAD, dimensions)",
+        "value": "1.0 mm",
+        "reason": "RSM0032B gives \"1 MAX\" and no nominal; the maximum is used so a clearance check is conservative.",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf"
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "CAD package dimensions",
+        "value": "body 4.00 x 4.00 x 1.00 mm; terminals 0.20 x 0.35 mm flush with the body edge, centres 1.825 mm from the body centre; exposed pad 2.80 mm square; terminal and pad thickness 0.02 mm below the body; pin-1 dimple 0.40 mm diameter, 0.03 mm deep",
+        "reason": "RSM0032B gives toleranced plan dimensions (midpoints used), no terminal thickness (only the 0.00-0.05 standoff) and no size for the pin 1 index area.",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf"
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "The TI product folder offers CAD symbols, footprints and 3D models for VQFN (RSM) 32 only through Ultra Librarian, whose download needs its terms accepted (and third-party cookies) and states no licence permitting redistribution. Nothing was downloaded. Geometry is generated from RSM0032B (library/cad/py/catalog/ti-lp5024rsm.py).",
+        "source": [
+          "https://www.ti.com/product/LP5024",
+          "https://vendor.ultralibrarian.com/TI/embedded/?gpn=LP5024&package=RSM&pin=32"
+        ]
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "field": "VCAP voltage",
+        "note": "The internal LDO output voltage on VCAP is not stated; only its -0.3 to 2 V absolute maximum.",
+        "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf"
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "field": "mass",
+        "note": "Neither the datasheet nor the product pages state a mass.",
+        "source": [
+          "https://www.ti.com/lit/ds/symlink/lp5024.pdf",
+          "https://www.ti.com/product/LP5024"
+        ]
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "LP5018/LP5024 datasheet SLVSEB8C (incl. RSM0032B outline)",
+      "type": "datasheet",
+      "url": "https://www.ti.com/lit/ds/symlink/lp5024.pdf"
+    },
+    {
+      "id": "art_product",
+      "name": "TI LP5024 product folder",
+      "type": "documentation",
+      "url": "https://www.ti.com/product/LP5024"
+    },
+    {
+      "id": "art_part_details",
+      "name": "TI LP5024RSMR part details",
+      "type": "documentation",
+      "url": "https://www.ti.com/product/LP5024/part-details/LP5024RSMR"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "partId": "murata-grm155",
+  "recorded_at": "2026-10-03T04:29:36.198Z",
+  "audit": {
+    "method": "self-audit by the authoring agent: key facts searched verbatim in the text of the downloaded sources (no independent agent was available in this run; an independent stage-2 audit is still owed)",
+    "checked": 10,
+    "confirmed": 10,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": null,
+  "assumptions": [
+    "terminal designators",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD (none linked from the cited sources; one generated body stands for the series)",
+    "mass (no unit mass in the cited sources)",
+    "series lineup (which capacitance exists at which voltage and dielectric is not in the per-part reference sheets; a placement names its exact MPN)"
+  ],
+  "vocabulary_gaps": []
+}

@@ -1,0 +1,33 @@
+{
+  "name": "smart-bottle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Protoboard reference project: smart water bottle cap (ESP32-C3, ToF level, DS18B20 probe, LED ring) on a Nalgene 32 oz wide-mouth bottle",
+  "type": "module",
+  "scripts": {
+    "check": "protoboard check",
+    "build": "protoboard build",
+    "inspect": "protoboard inspect"
+  },
+  "dependencies": {
+    "@deltarobotics/uhd": "0.3.0",
+    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/ext-docs": "^0.2.0",
+    "@protoboardai/ext-enclosure-cad": "^0.2.0",
+    "@protoboardai/ext-esp-idf": "^0.2.0",
+    "@protoboardai/ext-frame-cad": "^0.2.0",
+    "@protoboardai/ext-hardware": "^0.2.0",
+    "@protoboardai/ext-harness-cad": "^0.2.0",
+    "@protoboardai/ext-parts": "^0.2.0",
+    "@protoboardai/ext-release": "^0.2.0",
+    "@protoboardai/ext-tscircuit": "^0.2.0"
+  },
+  "devDependencies": {
+    "@protoboardai/cli": "^0.2.0",
+    "typescript": "7.0.2"
+  },
+  "overrides": {
+    "circuit-json": "0.0.510",
+    "@tscircuit/pcb-trace-linter": "https://codeload.github.com/tscircuit/pcb-trace-linter/tar.gz/4c035f9d40ffb03ba547a08975b5e64b20371123"
+  }
+}

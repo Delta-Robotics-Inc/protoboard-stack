@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "lipol-lp503450",
+  "manufacturer": "LiPoly Batteries Co., Ltd. (polybattery.com)",
+  "mpn": "LP503450",
+  "need": {
+    "quantity": 1,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "LiPoly Batteries Co., Ltd. (polybattery.com)",
+      "url": "https://polybattery.com/product/1000mah-lipo-battery-lp503450-3-7-v-lithium-rechargeable-battery-cqc",
+      "as_of": "2026-10-03",
+      "stock": 2000,
+      "moq": 10,
+      "price_breaks": [
+        {
+          "quantity": 10,
+          "unit_price": 10.0,
+          "currency": "USD"
+        },
+        {
+          "quantity": 50,
+          "unit_price": 8.0,
+          "currency": "USD"
+        },
+        {
+          "quantity": 100,
+          "unit_price": 6.0,
+          "currency": "USD"
+        }
+      ],
+      "authorized": true,
+      "note": "'Small Volume Pricing (USD $)': 10+ 10.00, 50+ 8.00, 100+ 6.00; '2000 in stock'",
+      "mpn": "LP503450",
+      "via": "web"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": false,
+      "note": "not listed (found through the JLCPCB search, which indexes LCSC codes)"
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; no listing with stock or a real price"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

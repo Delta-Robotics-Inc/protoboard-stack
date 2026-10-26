@@ -1,0 +1,13 @@
+import { defineCapabilityConfig } from "@protoboardai/core";
+
+// Zephyr board definition for the main board (@protoboardai/ext-zephyr): `protoboard run
+// firmware:generate --module main-board` writes the devicetree, pinctrl and Kconfig, every line
+// citing the board's nets and parts. Only what the model cannot state goes here (wake sources,
+// binding properties: see the wearable-watch reference project's firmware.config.ts).
+export default defineCapabilityConfig({
+  provider: "@protoboardai/ext-zephyr",
+  module: "main-board",
+  constraints: {
+    board_name: "{{snake}}",
+  },
+});

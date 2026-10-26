@@ -1,0 +1,72 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "dji-o4-3in1-cable",
+    "config": "src/harnesses/dji-o4-3in1-cable/cad.config.ts",
+    "configDigest": "sha256:46f8ca12c8153e61ede43f322850fb9d39d95740beb5613b9d147221faf032af",
+    "moduleDigest": "sha256:4477c563a6c5ff568961856857de2dcfc2b99a19131fd3fd12d0d8d8f614e1a5"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:89b8212a38dd8538fa8e12019ae9b9c58066449153cc8e3ae83a8ed438877c21",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:25:38.860Z",
+  "status": "succeeded",
+  "summary": "dji_cable: ok; routed around the parts and 1 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/dji-o4-3in1-cable/harness-cad/route.json",
+      "digest": "sha256:d25a391d7fbb3bff222190261fccb8d9fece49082e57b9e112ded90bf3664daa",
+      "bytes": 56493,
+      "description": "dji_cable: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboardai/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        313,
+        313,
+        144
+      ],
+      "res_mm": 1,
+      "seconds": 5.2
+    },
+    "harnesses": [
+      {
+        "id": "dji-o4-3in1-cable",
+        "path": "dji_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 4
+      }
+    ],
+    "context": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.95
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-07T01:25:59.688Z"
+}

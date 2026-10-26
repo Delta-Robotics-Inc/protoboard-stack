@@ -1,0 +1,50 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "lipol-lp402030",
+    "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit (manifests identical)"
+  },
+  "projectDigest": "sha256:c9dac17249dd39b3b83fc9ff8b28b7275e6b71eea4de1ea79c5956e529fa81ef",
+  "tools": [],
+  "startedAt": "2026-10-03T08:24:43.929Z",
+  "status": "succeeded",
+  "summary": "lipol-lp402030: audit none, 3 assumption(s), 6 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/lipol-lp402030/verification.json",
+      "digest": "sha256:d04b1984dc63281797f04294061b1b056a8490ded2d5e363ce608456842b2eb1",
+      "bytes": 1073,
+      "description": "lipol-lp402030: verification record"
+    }
+  ],
+  "data": {
+    "partId": "lipol-lp402030",
+    "recorded_at": "2026-10-03T08:24:43.944Z",
+    "audit": null,
+    "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit (manifests identical)",
+    "assumptions": [
+      "length includes the PCM",
+      "lead side and order",
+      "generated lead geometry"
+    ],
+    "data_gaps": [
+      "manufacturer CAD",
+      "lead position and order on the end face",
+      "lead strip length and conductor size",
+      "PCM zone geometry",
+      "pulse discharge current, swelling allowance, self-discharge",
+      "PCM release values"
+    ],
+    "vocabulary_gaps": [
+      "No battery builder: the + lead is both a discharge output and a charge input. Modelled as one power leaf with roles output and input plus two composites (battery_out PowerOut, charge_in PowerIn) over the same leads.",
+      "No pocket or adhesive-mount builder; mount_face uses mechanical_connection / mounting_point as vybronics-vg0832012 does."
+    ]
+  },
+  "finishedAt": "2026-10-03T08:24:43.944Z"
+}

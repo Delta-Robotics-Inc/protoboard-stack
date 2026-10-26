@@ -1,0 +1,122 @@
+{
+  "schema": "protoboard.eval-scorecard/v0",
+  "runId": "2026-10-03T04-45-01-349Z",
+  "startedAt": "2026-10-03T04:45:01.349Z",
+  "finishedAt": "2026-10-03T04:45:29.457Z",
+  "host": {
+    "id": "claude-code",
+    "version": "2.1.288 (Claude Code)"
+  },
+  "trialsPerCase": 1,
+  "framework": "0.1.0",
+  "environment": {
+    "node": "v24.14.1",
+    "platform": "linux"
+  },
+  "cases": [
+    {
+      "key": "@protoboard/ext-hardware/fix-gnss-uart-swap",
+      "id": "fix-gnss-uart-swap",
+      "extension": "@protoboard/ext-hardware",
+      "title": "Find and fix a GNSS lead soldered with RX and TX swapped",
+      "skills": [
+        "system-compose",
+        "system-review"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 20,
+        "seconds": 600,
+        "usd": 2
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 25023,
+            "turns": 10,
+            "costUsd": 0.2811,
+            "model": "claude-opus-5-5",
+            "answer": "**Fault:** the GNSS lead's UART wires were modelled as soldered RX‑to‑RX and TX‑to‑TX. The lead's RX wire (pin 2) landed on the FC's RX1 pad and its TX wire (pin 3) on TX1, so neither side could hear the other.\n\n**Fix:** in `src/quadcopter.uhd.ts:180` I crossed the two pads in the `gnss_pads` link, so pin 2 (GNSS RX) now goes to `fc:uart1_tx` and pin 3 (GNSS TX) to `fc:uart1_rx`. This matches the lead's own usage note (\"GNSS RX to TX1, GNSS TX to RX1\").\n\n`npx protoboard check` now reports 0 errors. The stale-route warning on the GNSS lead cleared too, and the four remaining warnings are unrelated to this fault (three undistributed vendor CAD files for the M9N, and the motor peak current versus the pack's continuous rating). The fault scenarios all still get caught, including the RX/TX-swap one.\n\nThis only corrects the model. If the re-soldered lead on the actual quad really is RX‑to‑RX, the two wires need swapping on the FC pads before the GPS will work.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s)"
+            },
+            {
+              "id": "pads-restored",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/quadcopter.uhd.ts: text holds"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:3b026e956b48…"
+            },
+            {
+              "id": "fc-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dolphinrc-f405-v3-flight-controller.json sha256:de16d8941f8f…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-gnss-uart-swap/trial-1.jsonl"
+        }
+      ],
+      "fixture": {
+        "ms": 139,
+        "steps": [
+          {
+            "step": "replace in src/quadcopter.uhd.ts",
+            "ms": 1,
+            "ok": true
+          }
+        ],
+        "seeded": [
+          "UHD_LINK_STATE"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 25023,
+      "meanTurns": 10,
+      "costUsd": 0.2811
+    }
+  ],
+  "problems": [],
+  "totals": {
+    "cases": 1,
+    "ran": 1,
+    "skipped": 0,
+    "errors": 0,
+    "trials": 1,
+    "passed": 1,
+    "passRate": 1,
+    "meanScore": 1,
+    "costUsd": 0.2811
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "artifact": "body",
+  "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+  "toolVersion": "0.1.0",
+  "sourceDigest": "9715f73510dd1c5d4d7405b398430de488755cdf6fb1ae0d4e0419aba37d630c",
+  "units": "mm",
+  "coordinates": "assembly root (mm, Z up); glTF export in m, Y up",
+  "harness": "probe_cable",
+  "length_mm": 16,
+  "route_length_mm": 15.87,
+  "conductor_lengths_mm": [
+    21.58,
+    21.14,
+    21.84
+  ],
+  "length_fit": {
+    "route_mm": 15.87,
+    "method": "shortest"
+  },
+  "bundle": {
+    "kind": "twisted",
+    "conductors": 3,
+    "conductor_od_mm": 1.5,
+    "bundle_od_mm": 3.23,
+    "twist_pitch_mm": 30
+  },
+  "bend_radius_mm": {
+    "target": 7.76,
+    "minimum": 4.85,
+    "centreline": 20.5,
+    "conductors": 1.89,
+    "at_terminations": 1.4
+  },
+  "clearance_mm": {
+    "min_conductor_surface": 1.35
+  },
+  "ends": {
+    "end_probe": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "origin": [
+          -20.5,
+          0,
+          11.600000000000001
+        ],
+        "xAxis": [
+          -0.49979650835505757,
+          -0.8661428578682,
+          0
+        ]
+      },
+      "counterpart": "probe.wires",
+      "termination": "integral",
+      "link": "probe_wires"
+    },
+    "end_board": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "origin": [
+          -21.5,
+          11,
+          7.400000000000001
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "counterpart": "board.probe_pads",
+      "termination": "solder",
+      "link": "probe_pads"
+    }
+  },
+  "features": {
+    "end_board": {
+      "area_mm2": 113.504,
+      "centroid": [
+        -21.497,
+        11,
+        8.205
+      ],
+      "faces": 6
+    }
+  },
+  "step": "ok",
+  "route": [
+    [
+      -20.5,
+      0,
+      11.6
+    ],
+    [
+      -20.58,
+      0.9,
+      13.61
+    ],
+    [
+      -20.77,
+      2.98,
+      13.74
+    ],
+    [
+      -20.97,
+      5.15,
+      13.11
+    ],
+    [
+      -21.16,
+      7.24,
+      12.25
+    ],
+    [
+      -21.34,
+      9.23,
+      11.17
+    ],
+    [
+      -21.48,
+      10.75,
+      9.64
+    ],
+    [
+      -21.5,
+      11,
+      7.4
+    ]
+  ],
+  "status": "ok",
+  "notes": [],
+  "exportedFrom": {
+    "file": "src/harnesses/bottle-probe-cable/harness-cad/route.json",
+    "digest": "sha256:dad35ac2d1323cee269247007bfaa8233b4276162a62a4356ec03a553c1c99bc"
+  }
+}

@@ -1,0 +1,1155 @@
+{
+  "schema": "protoboard.enclosure-cad.report/v0",
+  "module": "bottle-cap-enclosure",
+  "name": "bottle-cap-enclosure",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "bb3d7c2f0c0b8e42ac7b21f2bd9ebde0282da72a62d7af4578a5dc8275107889",
+  "inputsDigest": "sha256:138bd60b4f223ed3155bed586beb3ada169892483c3dbec55375d88d9ff805c2",
+  "cavity": {
+    "shape": "round",
+    "min": [
+      -35.7,
+      -35.7,
+      4.0
+    ],
+    "max": [
+      35.7,
+      35.7,
+      20.6
+    ],
+    "centre": [
+      0.0,
+      0.0
+    ],
+    "radius": 35.7,
+    "split_z": 20.6,
+    "side_top": 20.6,
+    "solids": [
+      {
+        "name": "gland boss probe_seal",
+        "part": "base",
+        "origin": [
+          -20.5,
+          0.0,
+          4.425
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "radius": 5.4955,
+        "length": 0.4255
+      },
+      {
+        "name": "boss board_mount",
+        "part": "base",
+        "origin": [
+          19.092,
+          19.092,
+          4.0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "radius": 2.9,
+        "length": 2.8
+      },
+      {
+        "name": "boss board_mount",
+        "part": "base",
+        "origin": [
+          -19.092,
+          19.092,
+          4.0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "radius": 2.9,
+        "length": 2.8
+      },
+      {
+        "name": "boss board_mount",
+        "part": "base",
+        "origin": [
+          -19.092,
+          -19.092,
+          4.0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "radius": 2.9,
+        "length": 2.8
+      },
+      {
+        "name": "boss board_mount",
+        "part": "base",
+        "origin": [
+          19.092,
+          -19.092,
+          4.0
+        ],
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "radius": 2.9,
+        "length": 2.8
+      }
+    ]
+  },
+  "outer": {
+    "min": [
+      -40.0,
+      -40.0,
+      0.0
+    ],
+    "max": [
+      40.0,
+      40.0,
+      23.1
+    ]
+  },
+  "overall": {
+    "min": [
+      -40.0,
+      -40.0,
+      -12.0
+    ],
+    "max": [
+      40.0,
+      40.0,
+      23.1
+    ]
+  },
+  "levels": {
+    "bottom": 0.0,
+    "floor": 4.0,
+    "split": 20.6,
+    "cavity_top": 20.6,
+    "top": 23.1
+  },
+  "parts": {
+    "base": {
+      "volume_mm3": 42201.517,
+      "printed": true
+    },
+    "lid": {
+      "volume_mm3": 15799.596,
+      "printed": true
+    },
+    "plunger_button": {
+      "volume_mm3": 38.023,
+      "printed": true
+    }
+  },
+  "features": {
+    "board_mount": {
+      "kind": "boss",
+      "boss_d_mm": 5.8,
+      "top_z": 6.8,
+      "height_mm": 2.8,
+      "insert": {
+        "name": "ruthex RX-M2x4",
+        "thread": "M2",
+        "outer_d_mm": 3.6,
+        "length_mm": 4,
+        "hole_d_mm": 3.2,
+        "hole_depth_mm": 6,
+        "min_wall_mm": 1.3,
+        "source": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen (dimensions: https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces)",
+        "assumption": "hole 6.0 mm deep: an M2 x 6 screw through the 0.6 mm board reaches 5.4 mm below the boss top, past the 4.0 mm insert"
+      },
+      "holes": [
+        [
+          19.091883,
+          19.091883
+        ],
+        [
+          -19.091883,
+          19.091883
+        ],
+        [
+          -19.091883,
+          -19.091883
+        ],
+        [
+          19.091883,
+          -19.091883
+        ]
+      ],
+      "frame": {
+        "origin": [
+          0.0,
+          0.0,
+          6.8
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          0.707,
+          0.707,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 73.513,
+        "centroid": [
+          0.0,
+          0.0,
+          6.8
+        ],
+        "faces": 4,
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "button": {
+      "kind": "button",
+      "hole_d_mm": 2.5,
+      "shaft_d_mm": 2.2,
+      "plunger": "plunger_button",
+      "tip": [
+        0.0,
+        -32.8,
+        9.1
+      ],
+      "gap_mm": 0.1,
+      "travel_mm": 0.2,
+      "length_mm": 8.2,
+      "recess_mm": 7.3,
+      "wall_mm": 4.3,
+      "margins_mm": {
+        "base": {
+          "above": 10.25,
+          "below": 7.85
+        }
+      },
+      "flange_d_mm": 4.5,
+      "flange_trimmed_by": [
+        "base",
+        "board"
+      ],
+      "flange_overlap_mm": [
+        -0.1,
+        1.0
+      ],
+      "flange_hold_pct": 70.8,
+      "flange_hold_rule": {
+        "overlap_mm": 0.5,
+        "pct": 50.0
+      },
+      "wall_overlap_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      },
+      "frame": {
+        "origin": [
+          0.0,
+          -40.0,
+          9.1
+        ],
+        "normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 33.781,
+        "centroid": [
+          0.0,
+          -37.84,
+          9.1
+        ],
+        "faces": 1
+      }
+    },
+    "led1": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          -26.79,
+          11.1,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          -26.79,
+          11.1,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "led2": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          -26.79,
+          -11.1,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          -26.79,
+          -11.1,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "led3": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          -11.1,
+          -26.79,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          -11.1,
+          -26.79,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "led4": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          11.1,
+          -26.79,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          11.1,
+          -26.79,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "led5": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          26.79,
+          -11.1,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          26.79,
+          -11.1,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "led6": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          26.79,
+          11.1,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          26.79,
+          11.1,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "led7": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          11.1,
+          26.79,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          11.1,
+          26.79,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "led8": {
+      "kind": "light_pipe",
+      "hole_d_mm": 3.2,
+      "recess_mm": 15.0,
+      "wall_mm": 2.5,
+      "margins_mm": {},
+      "frame": {
+        "origin": [
+          -11.1,
+          26.79,
+          23.1
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "lid"
+      ],
+      "signature": {
+        "area_mm2": 25.133,
+        "centroid": [
+          -11.1,
+          26.79,
+          21.85
+        ],
+        "faces": 1
+      }
+    },
+    "lid_joint": {
+      "kind": "twist_lid",
+      "lock": "bayonet",
+      "collar_d_mm": 76.0,
+      "bore_d_mm": 76.289,
+      "outer_d_mm": 80.0,
+      "collar_z_mm": [
+        12.325,
+        20.6
+      ],
+      "skirt_wall_mm": 1.855,
+      "lead_in": "0.35 mm over 1.0 mm on the skirt's bore (about 19\u00b0)",
+      "base_wall_at_lock_mm": 2.3,
+      "printed_bore_d_mm": 76.089,
+      "bore_allowance_mm": 0.1,
+      "seal_fit_mm": 0.089,
+      "radial_clearance_mm": 0.2,
+      "axial_clearance_mm": 0.15,
+      "print": {
+        "base": "upright, its floor on the bed: the collar's lock faces lean 45\u00b0 or steeper outward, so they print without supports",
+        "lid": "upside down, its top on the bed: the skirt stands up, and its slot or thread faces lean 45\u00b0 or steeper, so they print without supports"
+      },
+      "lugs": 3,
+      "lug_angles_deg": [
+        90.0,
+        210.0,
+        330.0
+      ],
+      "lug_width_mm": 6,
+      "lug_widths_mm": [
+        10,
+        6,
+        6
+      ],
+      "keyed": true,
+      "lid_positions": 1,
+      "lug_depth_mm": 1,
+      "lug_height_mm": 3,
+      "twist_deg": 30,
+      "lug_z_mm": [
+        13.425,
+        16.425
+      ],
+      "slot_depth_mm": 1.056,
+      "skirt_behind_slot_mm": 0.8,
+      "close": "push the lid down with each lug in its slot's open end (the wide lug in the wide slot: it goes on one way only), then turn it 30\u00b0 clockwise seen from above until the lugs stop at the slots' ends",
+      "frame": {
+        "origin": [
+          0.0,
+          0.0,
+          20.6
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 113.969,
+        "centroid": [
+          0.0,
+          6.071,
+          15.171
+        ],
+        "faces": 15
+      }
+    },
+    "lid_seal": {
+      "kind": "seal_gland",
+      "type": "radial",
+      "oring": "AS568-040",
+      "w_mm": 1.78,
+      "groove_depth_mm": 1.296,
+      "groove_width_mm": 2.425,
+      "table": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Design Chart 4-1",
+      "at": "joint",
+      "seat_d_mm": 73.498,
+      "bore_d_mm": 76.289,
+      "printed_bore_d_mm": 76.089,
+      "bore_allowance_mm": 0.1,
+      "collar_d_mm": 76.0,
+      "groove_d_mm": 73.498,
+      "groove_z_mm": [
+        17.375,
+        19.801
+      ],
+      "gland_depth_mm": 1.296,
+      "gap_mm": 0.0,
+      "rod_offset_mm": 0.0445,
+      "gap_basis": "the lid skirt's bore is the sealing surface; the collar can sit off centre in it by the radial clearance; the bore is drawn 0.1 mm (radial) over the size it is meant to print at, and the groove's depth is from the printed bore",
+      "stretch_pct": 1.03,
+      "frame": {
+        "origin": [
+          0.0,
+          0.0,
+          18.588
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 1147.597,
+        "centroid": [
+          0.0,
+          0.0,
+          18.588
+        ],
+        "faces": 3
+      }
+    },
+    "lip_seal": {
+      "kind": "seal_gland",
+      "type": "face",
+      "oring": "AS568-138",
+      "w_mm": 2.62,
+      "groove_depth_mm": 1.956,
+      "groove_width_mm": 3.53,
+      "table": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Design Chart 4-2",
+      "gap_basis": "assumed contact: the mating face bears on the gland's face (what presses it, such as a thread's engagement, is not modelled)",
+      "gap_assumed": true,
+      "gland_depth_mm": 1.956,
+      "gap_mm": 0.0,
+      "groove_inner_perimeter_mm": 161.87,
+      "groove_outer_perimeter_mm": 184.05,
+      "oring_inner_perimeter_mm": 168.52,
+      "oring_outer_perimeter_mm": 184.98,
+      "pressure": "internal",
+      "frame": {
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 1247.886,
+        "centroid": [
+          0.0,
+          0.0,
+          1.43
+        ],
+        "faces": 3
+      }
+    },
+    "neck": {
+      "kind": "thread",
+      "major_d_mm": 62.66,
+      "minor_d_mm": 60.28,
+      "pitch_mm": 4.233,
+      "turns": 1.98,
+      "skirt_length_mm": 12,
+      "depth_mm": 1.19,
+      "frame": {
+        "origin": [
+          0.0,
+          0.0,
+          -12.0
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 1413.736,
+        "centroid": [
+          -0.272,
+          0.02,
+          -6.0
+        ],
+        "faces": 5
+      }
+    },
+    "probe_seal": {
+      "kind": "seal_gland",
+      "type": "radial",
+      "oring": "AS568-010",
+      "w_mm": 1.78,
+      "groove_depth_mm": 1.296,
+      "groove_width_mm": 2.425,
+      "table": "Parker O-Ring Handbook ORD 5700A/US (2001), http://robots.engin.umich.edu/uploads/ORD5700.pdf, Design Chart 4-1",
+      "rod_d_mm": 6,
+      "bore_d_mm": 6.089,
+      "groove_d_mm": 8.591,
+      "gland_depth_mm": 1.296,
+      "gap_mm": 0.0,
+      "rod_offset_mm": 0.0445,
+      "gap_basis": "the rod is the sealing surface, off centre by up to the radial clearance",
+      "frame": {
+        "origin": [
+          -20.5,
+          0.0,
+          0.0
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 123.157,
+        "centroid": [
+          -20.5,
+          0.0,
+          2.213
+        ],
+        "faces": 3
+      }
+    },
+    "tof_window": {
+      "kind": "window",
+      "aperture_mm": [
+        8,
+        8
+      ],
+      "pocket_mm": [
+        11.2,
+        11.2
+      ],
+      "pocket_depth_mm": 1,
+      "side": "inside",
+      "ledge_mm": 1.6,
+      "recess_mm": 5.8,
+      "wall_mm": 4,
+      "frame": {
+        "origin": [
+          -1.465,
+          -3.0,
+          0.0
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "xAxis": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 83.441,
+        "centroid": [
+          -1.465,
+          -3.0,
+          3.211
+        ],
+        "faces": 2
+      }
+    },
+    "usb_port": {
+      "kind": "window",
+      "aperture_mm": [
+        8.44,
+        2.66
+      ],
+      "pocket_mm": [
+        12.95,
+        7.1
+      ],
+      "pocket_depth_mm": 3,
+      "side": "outside",
+      "ledge_mm": 2.22,
+      "recess_mm": 5.8,
+      "wall_mm": 4.3,
+      "frame": {
+        "origin": [
+          0.0,
+          40.0,
+          7.75
+        ],
+        "normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "xAxis": [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "parts": [
+        "base"
+      ],
+      "signature": {
+        "area_mm2": 172.75,
+        "centroid": [
+          0.0,
+          37.817,
+          7.75
+        ],
+        "faces": 9
+      }
+    }
+  },
+  "walls": [
+    {
+      "feature": "neck",
+      "what": "skirt wall behind the thread root",
+      "mm": 4.3,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "lid_seal",
+      "what": "base wall behind the collar's O-ring groove",
+      "mm": 1.049,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "probe_seal",
+      "what": "wall around the gland groove",
+      "mm": 1.2,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "tof_window",
+      "what": "ledge holding the cover",
+      "mm": 1.6,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "tof_window",
+      "what": "wall left under the cover pocket",
+      "mm": 3,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "usb_port",
+      "what": "base above the aperture (wall)",
+      "mm": 11.52,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "usb_port",
+      "what": "base below the aperture (wall)",
+      "mm": 6.42,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "usb_port",
+      "what": "base above the cover pocket (wall)",
+      "mm": 9.3,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "usb_port",
+      "what": "base below the cover pocket (wall)",
+      "mm": 4.2,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "usb_port",
+      "what": "ledge holding the cover",
+      "mm": 2.22,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "usb_port",
+      "what": "wall left under the cover pocket",
+      "mm": 1.3,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "button",
+      "what": "base above the plunger bore (wall)",
+      "mm": 10.25,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "button",
+      "what": "base below the plunger bore (wall)",
+      "mm": 7.85,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "board_mount",
+      "what": "boss wall around the insert",
+      "mm": 1.3,
+      "min_mm": 1.3
+    },
+    {
+      "feature": "board_mount",
+      "what": "floor skin under the insert hole",
+      "mm": 0.8,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "lid_joint",
+      "what": "lid skirt behind the bayonet slots",
+      "mm": 0.8,
+      "min_mm": 0.8
+    },
+    {
+      "feature": "lid_joint",
+      "what": "base wall of the collar",
+      "mm": 2.3,
+      "min_mm": 0.8
+    }
+  ],
+  "covers": {},
+  "problems": [],
+  "fit": {
+    "resolution_mm": 0.36,
+    "grid": [
+      235,
+      235,
+      115
+    ],
+    "bodies": [
+      {
+        "key": "board",
+        "label": "Bottle cap board",
+        "min_clearance_mm": 0.541,
+        "at": [
+          3.35,
+          35.0,
+          8.1
+        ],
+        "near": "base (cavity side)",
+        "basis": "exact",
+        "exact_clearance_mm": 0.541,
+        "voxel_clearance_mm": 0.44,
+        "outside_cavity_mm": 0.0,
+        "samples": 5526809,
+        "status": "clear"
+      },
+      {
+        "key": "cell",
+        "label": "LP503450 1000 mAh 3.7 V LiPo with PCM",
+        "min_clearance_mm": 3.5,
+        "at": [
+          -16.47,
+          -20.03,
+          10.3
+        ],
+        "near": "base (boss board_mount)",
+        "basis": "exact",
+        "exact_clearance_mm": 3.5,
+        "voxel_clearance_mm": 3.34,
+        "outside_cavity_mm": 0.0,
+        "samples": 571238,
+        "status": "clear"
+      },
+      {
+        "key": "battery_leads",
+        "label": "Cell leads",
+        "min_clearance_mm": 1.743,
+        "at": [
+          15.83,
+          -30.04,
+          12.76
+        ],
+        "near": "base (cavity side)",
+        "basis": "exact",
+        "exact_clearance_mm": 1.743,
+        "voxel_clearance_mm": 1.6,
+        "outside_cavity_mm": 0.0,
+        "samples": 18652,
+        "status": "clear"
+      },
+      {
+        "key": "probe_cable",
+        "label": "Probe cable",
+        "min_clearance_mm": 2.75,
+        "at": [
+          -24.1,
+          11.0,
+          6.75
+        ],
+        "near": "base (cavity floor)",
+        "basis": "exact",
+        "exact_clearance_mm": 2.75,
+        "voxel_clearance_mm": 2.67,
+        "outside_cavity_mm": 0.0,
+        "samples": 61053,
+        "status": "clear"
+      }
+    ],
+    "walls": {
+      "base": {
+        "min_mm": 1.08,
+        "at": [
+          -36.24,
+          -4.2,
+          18.12
+        ]
+      },
+      "lid": {
+        "min_mm": 1.08,
+        "at": [
+          -39.48,
+          -4.56,
+          14.88
+        ]
+      }
+    },
+    "plungers": [
+      {
+        "key": "plunger_button",
+        "feature": "button",
+        "min_clearance_mm": 0.39,
+        "at": [
+          -0.03,
+          -33.3,
+          8.0
+        ],
+        "near": "board",
+        "basis": "voxel",
+        "resolution_mm": 0.36,
+        "status": "clear",
+        "wall_overlap_mm3": {
+          "base": 0.0,
+          "lid": 0.0
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/hardware_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "b02c9fdd12bfb1823bd3f3129921b301134056718b61129ed35e2efe967b88e7",
+  "units": "mm",
+  "volume_mm3": 632.707,
+  "bodies": {
+    "standoff": 632.707
+  },
+  "features": {},
+  "exportedFrom": {
+    "file": "parts/local/m3-aluminium-standoff-30mm/frame-cad/params.json",
+    "digest": "sha256:6154e557386e16fa90cec8ca14f23d6afe372b65d2e99146775f42fdd86b4c3d"
+  }
+}

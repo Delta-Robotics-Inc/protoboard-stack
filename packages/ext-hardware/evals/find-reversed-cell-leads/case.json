@@ -1,0 +1,78 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Find the cell leads soldered the wrong way round, with the scenario that describes it hidden",
+  "skills": ["system-compose", "system-review", "harness-author"],
+  "tags": ["fault", "system", "hidden-seed", "harder"],
+  "fixture": {
+    "from": "../../../../examples/smart-bottle",
+    "exclude": ["release", "docs"],
+    "steps": [
+      {
+        "note": "the seed is hidden: the scenario that describes it is taken out of src/scenarios.ts, and the datasheets (docs/, which list the scenarios) are not copied, so the agent has to find the fault, not match it to a scenario",
+        "replace": { "file": "src/scenarios.ts", "find": "  {\n    id: \"cell-leads-reversed\",\n    label: \"Cell leads soldered the wrong way round\",\n    description: \"The red lead goes to BAT- and the black lead to BAT+.\",\n    expect: [\"UHD_LINK_STATE\"],\n    system: recompose(SMART_BOTTLE, \"bat_pads\", { p1: \"bat_neg\", p2: \"bat_pos\" }),\n  },\n", "with": "", "count": 1 }
+      },
+      {
+        "note": "the fault of the (removed) cell-leads-reversed scenario, applied to the system itself. With PB-869 merged check reports it as UHD_LINK_STATE on the battery pads, beside the battery leads' route being stale",
+        "replace": { "file": "src/bottle.uhd.ts", "find": "compose: { p1: \"bat_pos\", p2: \"bat_neg\" }", "with": "compose: { p1: \"bat_neg\", p2: \"bat_pos\" }", "count": 1 }
+      }
+    ]
+  },
+  "instruction": "During a rework of the smart bottle's cap, the cell's leads were unsoldered from the cap board and soldered back on, and the system model (src/bottle.uhd.ts) was updated to match the bench. Since then the cap does not power on. Find what is wrong in the system model and fix it so the model describes a cap that works; then say in one or two sentences what the fault was and how you found it. The board, the parts, the harness modules, their routed geometry and the scenarios are correct; do not change them.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *", "npx tsx node_modules/@protoboardai/ext-hardware/skills/*"] },
+  "budget": { "turns": 30, "seconds": 900, "usd": 4 },
+  "graders": [
+    {
+      "id": "fault-fixed-and-named",
+      "kind": "fault",
+      "code": "UHD_LINK_STATE",
+      "subject": "bat",
+      "seeded": ["HARNESS_ROUTE_STALE"],
+      "caught": "(revers|swap|backward|wrong way|polarity|crossed|flipped)",
+      "description": "check reports reversed 2-pin pads (PB-869): the fault is UHD_LINK_STATE on the battery pads, with the battery leads' route stale (subject /bat/, so an unrelated link-state warning elsewhere does not count), and it must be gone. The answer names the reversal"
+    },
+    {
+      "id": "check-clean",
+      "kind": "check",
+      "maxErrors": 0,
+      "ran": ["uhd/checkSystem", "ext:@protoboardai/ext-harness-cad/routes"],
+      "diagnostics": [
+        { "code": "HARNESS_ROUTE_STALE", "subject": "battery", "present": false },
+        { "code": "UHD_LINK_STATE", "subject": "bat", "present": false }
+      ]
+    },
+    {
+      "id": "leads-restored",
+      "kind": "facts",
+      "definition": "smart-bottle",
+      "facts": [
+        { "path": "links[id=bat_pads].b.child", "equals": "board" },
+        { "path": "links[id=bat_pads].b.interfaceId", "equals": "bat_pads" },
+        { "path": "links[id=bat_pads].b.compose.p1", "equals": "bat_pos" },
+        { "path": "links[id=bat_pads].b.compose.p2", "equals": "bat_neg" }
+      ],
+      "description": "the red lead (p1) on BAT+, the black lead (p2) on BAT-, in the link the cell-leads-reversed scenario recomposes"
+    },
+    {
+      "id": "scenarios-hold",
+      "kind": "script",
+      "script": "skills/system-compose/scripts/scenarios.ts",
+      "args": ["--json"],
+      "facts": [
+        { "path": "[id=nominal].ok", "equals": true },
+        { "path": "[id=probe-dq-on-gnd-pad].ok", "equals": true },
+        { "path": "[id=module-on-vbus].ok", "equals": true }
+      ],
+      "description": "the nominal build is clean and the other scenarios are still caught (the exit code is not graded: the cell-leads-reversed scenario is taken out of the fixture)"
+    },
+    { "id": "route-untouched", "kind": "digest", "file": "src/harnesses/bottle-battery-leads/out/body.manifest.json", "changed": false, "description": "regenerating the route would hide the symptom, not fix the fault" },
+    { "id": "board-untouched", "kind": "digest", "file": "src/boards/bottle-cap/bottle-cap.uhd.ts", "changed": false },
+    { "id": "harnesses-untouched", "kind": "digest", "file": "src/harnesses/harnesses.uhd.ts", "changed": false },
+    { "id": "scenarios-untouched", "kind": "digest", "file": "src/scenarios.ts", "changed": false }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "replace": { "file": "src/bottle.uhd.ts", "find": "compose: { p1: \"bat_neg\", p2: \"bat_pos\" }", "with": "compose: { p1: \"bat_pos\", p2: \"bat_neg\" }", "count": 1 } },
+    { "protoboard": ["check"] },
+    { "say": "The cell's leads were reversed on the board's BAT pads: link bat_pads put the red lead (p1) on bat_neg and the black lead (p2) on bat_pos. check reported UHD_LINK_STATE on bat_pads (no compatible protocol/role between cell:lead_pos and board:bat_neg) and that the battery leads' route was generated for different ends; the route was right and the compose was wrong, so I put p1 back on bat_pos and p2 on bat_neg, and the route is current again." }
+  ]
+}

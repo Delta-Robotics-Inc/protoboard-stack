@@ -1,0 +1,105 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "Coilcraft XFL4020 Shielded Power Inductors data sheet, Document 745 (pages 745-1 to 745-3), revised 03/10/26",
+    "url": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:38:00Z",
+    "sha256": "6dca915ac1daa47210f7708a7540221ffef4f34a88a8621c94bd50cdf48647e6",
+    "supports": [
+      "745-1 table row XFL4020-152ME_: 1.5 uH ±20 %; DCR 14.40 typ / 15.80 max mOhm; SRF 59 MHz typ; Isat 4.1 / 4.4 / 4.6 A at 10 / 20 / 30 % drop; Irms 6.7 A (20 C rise) / 9.1 A (40 C rise)",
+      "745-1 notes 1-8: ordering codes (E termination; C, B, D packaging), inductance test 1 MHz 0.1 Vrms 0 Adc, Isat and Irms definitions, voltage note, specifications at 25 C",
+      "745-1 specifications: tin-silver over copper terminations, composite core, weight 158-169 mg (series), operating voltage 20 V, ambient -40 to +125 C with 40 C rise Irms, maximum part temperature +165 C, storage -55 to +165 C (tape -55 to +80 C), three 40 s reflows at +260 C, MSL 1, packaging 1000/7 in and 3500/13 in reels",
+      "745-1 badges: RoHS, halogen free, AEC-Q200 +125 C",
+      "745-2 L vs current curve for 1.5 uH",
+      "745-3 drawing: body 4.0 ±0.3 x 4.0 ±0.3, 2.10 max; terminals 0.82 ±0.05 wide, 1.57 ±0.25 apart, 3.25 typ long; terminal thickness 0.10 typ for -152; marking bar indicates direction of terminals and start (short) lead, connect high dv/dt there for lowest EMI"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "Coilcraft XFL4020-152 product page",
+    "url": "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xfl/xfl4020/xfl4020-152/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:41:00Z",
+    "sha256": null,
+    "supports": [
+      "XFL4020-152MEC specifications (same values as the data sheet row); operating voltage 0-20 V",
+      "weight 162-169 mg for this value",
+      "XGL4020-152ME_ named as a drop-in replacement with lower DCR and higher Isat",
+      "tape and reel table: 1000 per 7 in reel, 3500 per 13 in reel, W 12, P 8, H 2.3, T 0.23"
+    ]
+  },
+  {
+    "id": "src_tps63020",
+    "title": "TI TPS6302x datasheet SLVS916I (rev. October 2019)",
+    "url": "https://www.ti.com/lit/ds/symlink/tps63020.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:40:00Z",
+    "sha256": "d117773bb7370fd79377bc70ce987eec3469ea5979547a09df52fca5f95b2e69",
+    "supports": [
+      "§8.2.2.2 Table 2 recommended inductors: XFL4020-152ME, 1.5 uH, 5.1 A saturation, 15 mOhm, 4 x 4 x 2.1 mm (conflicts with the current Coilcraft table)",
+      "§8.2.2.2: choose saturation current 20 % above the Equation 2 peak inductor current",
+      "§8.2.4 Table 4: L1 1.5 uH 4 x 4 x 2 mm XFL4020-152ML for the VOUT = 3.3 V application curves"
+    ]
+  },
+  {
+    "id": "src_jlc",
+    "title": "JLCPCB/LCSC catalog through jlcsearch (unofficial mirror), query XFL4020-152",
+    "url": "https://jlcsearch.tscircuit.com/components/list.json?search=XFL4020-152",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:39:47Z",
+    "sha256": "f681e24df043f6a7ad2ab9a36ba3fcd6b99579471fa28a78c8e7d6fb439c4f6b",
+    "supports": [
+      "LCSC C3033018 = XFL4020-152MEC, package label 'SMD,4x4mm', 1.5 uH 14.4 mOhm 4.6 A 9.1 A ±20 %; 21140 in stock at fetch time"
+    ]
+  },
+  {
+    "id": "src_cad_partners",
+    "title": "SnapMagic (SnapEDA) XFL4020-152MEC part page listing a 3D model; model not downloaded",
+    "url": "https://www.snapeda.com/parts/XFL4020-152MEC/Coilcraft/view-part/",
+    "type": "cad",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:45:00Z",
+    "sha256": null,
+    "licence": "Not stated on the part page; the download sits behind an account and the site's terms of use (partner-library terms found by search grant a nonexclusive, nontransferable right to use the content in ECAD/MCAD design only). Not downloaded, not redistributed.",
+    "supports": [
+      "a vendor-library 3D model exists for XFL4020-152MEC; not used (no redistributable licence)"
+    ]
+  },
+  {
+    "id": "src_cad_coilcraft",
+    "title": "Coilcraft XFL4020 series STEP, linked from the XFL4020-152 product page (Resources, 3D Model)",
+    "url": "https://www.coilcraft.com/getmedia/9393b6cc-0e44-4d4b-85c1-c610bb73d2d7/XFL4020.STEP",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-04T02:47:38.520Z",
+    "sha256": null,
+    "supports": [
+      "a free manufacturer STEP of the XFL4020 series exists, no account needed",
+      "read in a browser on 2026-10-04: 343282 bytes, product XFL4020, Y-up, point extents 4.3 x 2.1 x 4.3 mm (-0.1 to 2.0 in Y, the terminals below the body)"
+    ],
+    "licence": "No licence on the product page, the model popup or the 3D and 2D Mechanical Models page; Coilcraft's Terms & Conditions are sales terms only. Distribution unknown. Not stored: coilcraft.com answers scripted requests with a Cloudflare challenge (HTTP 403); download it in a browser.",
+    "note": "Added by the stage-2 audit (faC, 2026-10-04); the author's data_gap said no direct STEP link existed."
+  },
+  {
+    "id": "src_cad_kicad",
+    "title": "KiCad packages3D L_Coilcraft_XAL4020-XXX model (community; the XAL4020 sibling series)",
+    "url": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/raw/master/Inductor_SMD.3dshapes/L_Coilcraft_XAL4020-XXX.step",
+    "type": "cad",
+    "authority": "community",
+    "fetched_at": "2026-10-04T02:47:48.158Z",
+    "sha256": "ccccee60d1c700cb295b890024e8da4e4d7507b6b69039c751b6dcc3e91bd3ee",
+    "supports": [
+      "KiCad's footprint L_Coilcraft_XxL4020 (descr cites xfl4020.pdf) names L_Coilcraft_XxL4020.step, which kicad-packages3D does not have",
+      "this XAL4020 model is the closest",
+      "a single 4.3 x 4.3 x 2.1 mm block (step_measure.py), no terminals"
+    ],
+    "local": "artifacts/cad/vendor/L_Coilcraft_XAL4020-XXX.step",
+    "licence": "CC-BY-SA-4.0 with the KiCad libraries exception (file header and LICENSE.md of kicad-packages3D): free use in designs; redistributing the library data requires the same licence and attribution.",
+    "note": "Not a model of this part: kept as evidence under artifacts/cad/vendor/; the bound body is generated from Document 745-3. Added by the stage-2 audit (faC)."
+  }
+]

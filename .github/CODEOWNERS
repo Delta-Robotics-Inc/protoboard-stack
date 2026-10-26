@@ -1,0 +1,6 @@
+# Reviews: every pull request asks the maintainers. Branch protection on main
+# requires a code owner's approval.
+*                       @MarkDannemiller @Kevofehr
+
+# Releases and CI: what publishes to npm, the Marketplace and Open VSX
+/.github/               @MarkDannemiller @Kevofehr

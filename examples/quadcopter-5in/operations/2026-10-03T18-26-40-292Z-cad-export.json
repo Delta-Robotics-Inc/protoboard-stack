@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "iso-4762-m2x12",
+    "config": "parts/local/iso-4762-m2x12/cad.config.ts",
+    "configDigest": "sha256:9f38711475e7a8d83bd9e719cf8e2dee2dc1512a894fc4cdbcd3aeabb51faaa9",
+    "moduleDigest": "sha256:a7ad0a05e1ea7d061d08950cba1bf7f9502e7aebc8f05ee9370cbd3c540a3024"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:7be17e6a7f1cfcfbf16b4e71fd846ec4ef112b7523a3d9fc2419ab9a8ede02a7",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:26:40.292Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m2x12: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m2x12/out (54.18 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/iso-4762-m2x12/out/body.step",
+      "digest": "sha256:0d465f2a2e3443e4901ee53e7b3193a9c30bf82696b86ba2efe9e64bbe32afa7",
+      "bytes": 32526,
+      "description": "iso-4762-m2x12: nominal body"
+    },
+    {
+      "path": "parts/local/iso-4762-m2x12/out/body.glb",
+      "digest": "sha256:4dc49c0b5893c463666c7f204666bcdf51fafb0415de5b97f887477e457453ae",
+      "bytes": 21012,
+      "description": "iso-4762-m2x12: viewer mesh"
+    },
+    {
+      "path": "parts/local/iso-4762-m2x12/out/body.manifest.json",
+      "digest": "sha256:3f9fae14a3c1d70defbca58267edda64902cc2eb231e806478482baca9b60d81",
+      "bytes": 537,
+      "description": "iso-4762-m2x12: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "iso-4762-m2x12",
+    "out": "parts/local/iso-4762-m2x12/out",
+    "volume_mm3": 54.18,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:26:45.639Z"
+}

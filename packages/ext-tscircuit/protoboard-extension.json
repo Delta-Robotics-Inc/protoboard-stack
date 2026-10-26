@@ -1,0 +1,313 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-tscircuit",
+  "version": "0.2.0",
+  "description": "circuit provider: PCBs from UHD board modules with tscircuit, run in-process under Node and offline (generate, export, extract, check).",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "purpose": "tscircuit libraries (@tscircuit/core 0.0.2056 and its converters, exact versions) on Node 22+, run in Protoboard's process; no tsci, no Bun, no account",
+      "probe": [
+        "node",
+        "-e",
+        "require(require.resolve('@protoboardai/ext-tscircuit/lib/probe.cjs', { paths: [process.cwd()] }))"
+      ],
+      "install": "npm install @protoboardai/ext-tscircuit (its package.json pins every tscircuit package)"
+    },
+    {
+      "id": "kicad-cli",
+      "purpose": "KiCad 10's command line: saves the exported KiCad project in KiCad 10's format, and makes a locked board's fabrication outputs (DRC, Gerber, drill, position, STEP, GLB)",
+      "probe": [
+        "node",
+        "-e",
+        "require(require.resolve('@protoboardai/ext-tscircuit/lib/kicad/probe.cjs', { paths: [process.cwd()] }))"
+      ],
+      "install": "install KiCad 10 (kicad.org/download); on Linux the distribution's kicad package, on macOS the KiCad app (its kicad-cli is in KiCad.app/Contents/MacOS; set PROTOBOARD_KICAD_CLI to it)"
+    }
+  ],
+  "skills": [
+    {
+      "id": "circuit-board",
+      "summary": "Design a custom PCB through the circuit capability: the board as a UHD module, circuit.config.ts, circuit:generate/export/extract/check, and what each CIRCUIT_* finding means",
+      "path": "skills/circuit-board/SKILL.md"
+    },
+    {
+      "id": "kicad-layout-review",
+      "summary": "Review and finish a locked board's layout in KiCad 10: what to check, DRC/ERC reports, Update PCB from Schematic keeping placement, and acting on CIRCUIT_KICAD_* findings",
+      "path": "skills/kicad-layout-review/SKILL.md"
+    },
+    {
+      "id": "kicad-cli",
+      "summary": "kicad-cli exports and checks for a KiCad 10 project (DRC, ERC, Gerber, drill, position, STEP/GLB, SVG/PDF, netlist, BOM, upgrade), and the fallback before lock",
+      "path": "skills/kicad-cli/SKILL.md"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "circuit",
+      "summary": "PCBs from UHD boards with tscircuit: generated source, local autorouting, Gerber/BOM/PnP/GLB/STEP/manifest/netlist and SVG renders, DRC and netlist drift",
+      "native": "tscircuit",
+      "operations": {
+        "generate": {
+          "entry": "./ops/circuit.ts#generate",
+          "requires": [
+            "tscircuit-node"
+          ],
+          "summary": "Write tscircuit/board.gen.tsx from the UHD board and circuit.config.ts, then build and route it locally (circuit.json)",
+          "inputs": {
+            "force": {
+              "description": "true: generate a locked board anyway (rebuilds tscircuit's copy; KiCad stays the layout of record)"
+            }
+          }
+        },
+        "export": {
+          "entry": "./ops/circuit.ts#exportOutputs",
+          "requires": [
+            "tscircuit-node"
+          ],
+          "summary": "Write the standard outputs to out/ (rebuilding first if the native source changed); a locked board's come from KiCad (kicad-cli)",
+          "inputs": {
+            "force": {
+              "description": "true: a locked board's export goes on despite KiCad DRC errors"
+            }
+          }
+        },
+        "extract": {
+          "entry": "./ops/circuit.ts#extract",
+          "requires": [
+            "tscircuit-node"
+          ],
+          "summary": "Frames of the board's exports and interfaces, placements and outline, artifact references"
+        },
+        "check": {
+          "entry": "./ops/circuit.ts#check",
+          "requires": [
+            "tscircuit-node"
+          ],
+          "summary": "tscircuit DRC, netlist drift against the UHD board, unrouted nets, outline, keep-outs and fixed placements; on a locked board, the model, the handoff record and the KiCad files compared"
+        },
+        "kicad": {
+          "entry": "./ops/kicad.ts#kicad",
+          "effect": "export",
+          "requires": [
+            "tscircuit-node",
+            "kicad-cli"
+          ],
+          "summary": "A KiCad 10 project of the current build in tscircuit/kicad/ (a preview; tscircuit stays the layout of record)"
+        },
+        "lock": {
+          "entry": "./ops/kicad.ts#lock",
+          "effect": "export",
+          "requires": [
+            "tscircuit-node",
+            "kicad-cli"
+          ],
+          "summary": "Hand the board to KiCad: the KiCad 10 project into <board>/kicad/ with handoff.json; KiCad is then the layout of record (a human decision: agents ask first)",
+          "inputs": {
+            "refresh": {
+              "description": "true on a locked board: re-record the handoff from the model and the KiCad files as they are now, without exporting"
+            }
+          }
+        },
+        "unlock": {
+          "entry": "./ops/kicad.ts#unlock",
+          "effect": "export",
+          "requires": [
+            "tscircuit-node"
+          ],
+          "summary": "Return a locked board to tscircuit: kicad/ moves to kicad-archive/<stamp>/ (a human decision: agents ask first)"
+        }
+      },
+      "constraints": {
+        "layers": {
+          "description": "copper layers: 2 or 4 (default 2)"
+        },
+        "thickness_mm": {
+          "description": "board thickness (default 1.6)"
+        },
+        "outline": {
+          "description": "{ circle: { diameter_mm } } | { rect: { width_mm, height_mm } } | { polygon: [[x, y], …] } (mm, board frame); default: the board's design_envelope"
+        },
+        "mounting_holes": {
+          "description": "[{ id, at: [x, y], diameter_mm }]"
+        },
+        "placements": {
+          "description": "{ <instance>: { at: [x, y], rotation_deg, side } }: positions the enclosure fixes (connectors, buttons, displays, sensor windows)"
+        },
+        "keepouts": {
+          "description": "[{ name, rect: { at, size } | circle: { at, diameter_mm }, layers?, reason?, allow_bodies? }] copper keep-outs (an antenna clearance); allow_bodies names parts whose body may lie over it (the module whose antenna it clears)"
+        },
+        "pours": {
+          "description": "[{ net, layers: (top|bottom|inner1|inner2)[], clearance_mm?, reason? }] copper pours (a ground plane), filled after routing around other nets' copper and outside the keep-outs"
+        },
+        "rules": {
+          "description": "{ trace_width_mm, power_trace_width_mm, via_drill_mm, via_pad_mm, edge_clearance_mm, hole_clearance_mm? }; hole_clearance_mm: least copper-to-hole distance for non-plated holes (check tests round holes as circles)"
+        },
+        "autorouter": {
+          "description": "local tscircuit autorouter preset: auto_local (default) or sequential_trace; cloud routing is refused"
+        },
+        "copper_oz": {
+          "description": "outer copper weight for the fabrication order (default: the fab's standard, 1 oz)"
+        },
+        "finish": {
+          "description": "surface finish for the fabrication order, e.g. ENIG or lead-free HASL (default: ENIG when a part is leadless, else lead-free HASL)"
+        },
+        "solder_mask": {
+          "description": "solder mask colour for the fabrication order (default green)"
+        },
+        "silkscreen": {
+          "description": "silkscreen colour for the fabrication order (default white)"
+        },
+        "assembly": {
+          "description": "fab (default: the fab places from pnp.csv) or hand"
+        },
+        "fab_notes": {
+          "description": "[string] notes the fabrication order gives the fab, numbered (e.g. fill and cap vias in pads, IPC-4761 type VII; a hold before ordering)"
+        },
+        "via_in_pad": {
+          "description": "vias inside SMD pads: avoid (default; check reports any as an error) or fill_and_cap (allowed; the fabrication order asks for filled and capped vias, IPC-4761 type VII)"
+        },
+        "via_touching_pad": {
+          "description": "vias whose ring touches or overlaps an SMD pad without sitting in it: avoid (check reports each as an error) or allow (default)"
+        },
+        "via_under_body": {
+          "description": "vias under a component's body (inside its courtyard): avoid (check reports each as an error) or allow (default)"
+        },
+        "routing": {
+          "description": "on (default: the local autorouter routes every net) or off (placement only: no autorouting; check reports unrouted nets as info)"
+        },
+        "trace_widths": {
+          "description": "{ nets?: { <UHD net id>: mm }, classes?: { signal?, power?, ground?: mm } } trace width per net, else per net class, else the rules' widths; check reports a net routed narrower"
+        }
+      },
+      "artifacts": [
+        {
+          "id": "board_glb",
+          "name": "Board (GLB)",
+          "type": "3d_model",
+          "role": "body",
+          "format": "glb",
+          "units": "m",
+          "path": "{out}/board.glb",
+          "generatedFrom": "board_source"
+        },
+        {
+          "id": "board_step",
+          "name": "Board (STEP)",
+          "type": "3d_model",
+          "role": "body",
+          "format": "step",
+          "units": "mm",
+          "path": "{out}/board.step",
+          "generatedFrom": "board_source"
+        },
+        {
+          "id": "board_manifest",
+          "name": "Board geometry manifest",
+          "type": "cad",
+          "role": "source",
+          "format": "json",
+          "path": "{out}/board.manifest.json",
+          "generatedFrom": "board_glb"
+        },
+        {
+          "id": "board_gerber",
+          "name": "Gerber and drill files",
+          "type": "pcb",
+          "role": "drawing",
+          "format": "gerber",
+          "path": "{out}/gerber",
+          "generatedFrom": "board_source"
+        },
+        {
+          "id": "board_bom",
+          "name": "Bill of materials",
+          "type": "documentation",
+          "format": "csv",
+          "path": "{out}/bom.csv"
+        },
+        {
+          "id": "board_pnp",
+          "name": "Pick-and-place",
+          "type": "pcb",
+          "format": "csv",
+          "path": "{out}/pnp.csv"
+        },
+        {
+          "id": "board_netlist",
+          "name": "Netlist as laid out",
+          "type": "pcb",
+          "format": "json",
+          "path": "{out}/netlist.json"
+        },
+        {
+          "id": "board_schematic",
+          "name": "Schematic",
+          "type": "schematic",
+          "role": "drawing",
+          "format": "svg",
+          "path": "{out}/schematic.svg"
+        },
+        {
+          "id": "board_pcb_top",
+          "name": "PCB, top",
+          "type": "pcb",
+          "role": "drawing",
+          "format": "svg",
+          "path": "{out}/pcb-top.svg"
+        },
+        {
+          "id": "board_pcb_bottom",
+          "name": "PCB, bottom",
+          "type": "pcb",
+          "role": "drawing",
+          "format": "svg",
+          "path": "{out}/pcb-bottom.svg"
+        },
+        {
+          "id": "board_source",
+          "name": "Board design (tscircuit)",
+          "type": "pcb",
+          "role": "source",
+          "format": "tscircuit",
+          "path": "{native}/board.tsx"
+        },
+        {
+          "id": "board_routed",
+          "name": "Routed board (Circuit JSON)",
+          "type": "pcb",
+          "format": "json",
+          "path": "{native}/circuit.json",
+          "generatedFrom": "board_source"
+        },
+        {
+          "id": "board_build",
+          "name": "Build record (tscircuit names and UHD instances)",
+          "type": "pcb",
+          "format": "json",
+          "path": "{native}/build.json"
+        },
+        {
+          "id": "board_kicad",
+          "name": "KiCad project (the layout of record while locked)",
+          "type": "pcb",
+          "role": "source",
+          "format": "kicad",
+          "path": "{dir}/kicad/{module}.kicad_pro"
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "id": "package:work-order",
+      "summary": "Manufacturing Package: each board's fabrication and assembly order (layers, thickness, copper, finish, mask, stack-up, assembly sides, leadless parts, files)",
+      "entry": "./ops/package.ts#workOrder",
+      "effect": "pure"
+    }
+  ]
+}

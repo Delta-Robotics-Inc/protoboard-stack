@@ -1,0 +1,662 @@
+{
+  "id": "adafruit-381-ds18b20-probe",
+  "name": "Adafruit 381 waterproof DS18B20 temperature probe",
+  "version": "1.0.0",
+  "manufacturer": "Adafruit Industries",
+  "part_number": "381 (ADA381)",
+  "description": "Pre-wired, waterproofed DS18B20 1-Wire digital thermometer in a stainless steel tube Ø6 x 30 mm on a 91 cm, Ø4 mm PVC cable, three wires (red VDD 3.0-5.5 V, blue/black GND, yellow/white DQ). -55 to +125 C sensor (keep under 100 C for the PVC cable), +-0.5 C from -10 to +85 C, 9-12 bit, 750 ms max per 12-bit conversion, unique 64-bit ROM code. Supplied with a 4.7 kOhm DQ pull-up resistor. Not IP rated.",
+  "tags": [
+    "temperature",
+    "sensor",
+    "ds18b20",
+    "1-wire",
+    "onewire",
+    "waterproof",
+    "probe",
+    "stainless",
+    "adafruit",
+    "wire-leads"
+  ],
+  "categories": [
+    "sensor.environmental"
+  ],
+  "interfaces": [
+    {
+      "id": "wire_vdd",
+      "name": "VDD wire (red), 3.0-5.5 V",
+      "pin": "VDD",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            3,
+            5.5
+          ]
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.0015
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "functions": [
+              {
+                "name": "VDD"
+              }
+            ],
+            "description": "Probe: 'Red connects to 3-5V'. DS18B20 VDD (TO-92 pin 3): 'Optional VDD. VDD must be grounded for operation in parasite power mode.'",
+            "source": [
+              "https://www.adafruit.com/product/381 (Technical Details)",
+              "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (Pin Description)"
+            ]
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "topic": "supply current",
+            "note": "current_draw is the 1.5 mA active maximum (1 mA typ, VDD = 5 V), drawn during temperature conversions and EEPROM writes: up to 750 ms per 12-bit conversion. Standby is 750 nA typ, 1000 nA max up to +70 C (typically 3 uA at +125 C); keep DQ within 0.3 V of GND or VDD for the lowest standby current.",
+            "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (DC Electrical Characteristics) (IDD, IDDS, Notes 7-9); https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (AC Electrical Characteristics, tCONV)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wire_gnd",
+      "name": "GND wire (blue or black)",
+      "pin": "GND",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "ground"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ground"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "functions": [
+              {
+                "name": "GND"
+              }
+            ],
+            "description": "Probe: three-wire 'Blue/Black connects to ground' (four-wire build: black). DS18B20 GND (TO-92 pin 1): 'Ground'.",
+            "source": [
+              "https://www.adafruit.com/product/381 (Technical Details)",
+              "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (Pin Description)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "wire_dq",
+      "name": "DQ wire (yellow or white), 1-Wire data",
+      "pin": "DQ",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "bidirectional"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "onewire_dq",
+        "open_drain"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            3,
+            5.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "functions": [
+              {
+                "name": "DQ"
+              },
+              {
+                "name": "1-Wire"
+              }
+            ],
+            "description": "Probe: three-wire 'Yellow/White is data' (four-wire build: white). DS18B20 DQ (TO-92 pin 2): 'Data Input/Output. Open-drain 1-Wire interface pin. Also provides power to the device when used in parasite power mode.'",
+            "source": [
+              "https://www.adafruit.com/product/381 (Technical Details)",
+              "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (Pin Description)"
+            ]
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "topic": "1-Wire bus and pull-up",
+            "note": "Open-drain; the bus needs an external pull-up of about 5 kOhm to VPU (3.0 V to VDD), and Adafruit supplies a 4.7 kOhm resistor 'required as a pullup from the DATA to VCC line'. Idle high; holding the bus low for more than 480 us resets every device on it. Levels: VIL max 0.8 V, VIH min 2.2 V (local power) up to the lower of 5.5 V or VDD + 0.3 V; sinks 4.0 mA min at 0.4 V; DQ input current 5 uA typ; 25 pF max. Time slots 60-120 us, reset low 480 us min.",
+            "source": [
+              "https://www.adafruit.com/product/381 (Description)",
+              "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (1-Wire Bus System; DC and AC Electrical Characteristics)"
+            ]
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "topic": "addressing and multidrop",
+            "note": "Each DS18B20 has a unique 64-bit ROM code with family code 28h, so several probes can share one DQ line; the master finds them with Search ROM and addresses them with Match ROM (or Skip ROM with a single device). There is no fixed address to configure.",
+            "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (Overview; 64-Bit Lasered ROM Code; ROM Commands)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wire_ends",
+      "name": "Cable end: 3 stripped wires (VDD red, GND blue/black, DQ yellow/white)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "connector",
+          "roles": [
+            "mate"
+          ]
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "VDD (red)",
+          "required": false,
+          "match": {}
+        },
+        {
+          "id": "p2",
+          "label": "GND (blue or black)",
+          "required": false,
+          "match": {}
+        },
+        {
+          "id": "p3",
+          "label": "DQ (yellow or white)",
+          "required": false,
+          "match": {}
+        }
+      ],
+      "profiles": [
+        {
+          "id": "wire_ends_pinout",
+          "label": "Pinout",
+          "default_active": true,
+          "bindings": {
+            "p1": "wire_vdd",
+            "p2": "wire_gnd",
+            "p3": "wire_dq"
+          }
+        }
+      ],
+      "max_instances": 1,
+      "traits": [
+        {
+          "type": "connector",
+          "params": {
+            "connector_type": "bare_wire_lead",
+            "positions": 3,
+            "pinout": [
+              "VDD (red)",
+              "GND (blue or black)",
+              "DQ (yellow or white)"
+            ],
+            "note": "Three-wire build: 'Red connects to 3-5V, Blue/Black connects to ground and Yellow/White is data' (src_product). The photos show the jacket stripped back and stranded copper ends stripped and untinned, no connector (src_photos). Position order follows Adafruit's listing; there is no pin 1."
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "topic": "four-wire build",
+            "note": "Some probes ship with four wires: 'Red connects to 3-5V, Black connects to ground and White is data. The copper wire is soldered to the wire shielding.' Check the wire count on receipt; on a four-wire probe the bare copper drain wire is the shield (ground it at the board end or leave it unconnected; Adafruit gives no recommendation).",
+            "source": "https://www.adafruit.com/product/381 (Technical Details)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tube",
+      "name": "Stainless tube Ø6 x 30 mm (sensing end, seal surface)",
+      "domain": "mechanical",
+      "exposed": true,
+      "default_active": true,
+      "max_instances": 1,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "peer"
+          ]
+        }
+      ],
+      "capabilities": [
+        "probe_tube",
+        "rod_seal_surface",
+        "immersion"
+      ],
+      "parameters": [
+        {
+          "id": "tube_diameter",
+          "unit": "mm",
+          "value": 6
+        },
+        {
+          "id": "tube_length",
+          "unit": "mm",
+          "value": 30
+        }
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "topic": "sealing and immersion",
+            "note": "Stainless steel tube 6 mm diameter by 30 mm long, waterproofed with heat shrink. Adafruit: 'Not for use in salt water or other corrosive environments. These are not IP rated, and are not guaranteed for long term/high pressure usage.' A rod seal or gland closes on the exposed tube; the heat-shrink sleeve behind it is about the tube diameter or larger, so insert the probe tip first.",
+            "source": [
+              "https://www.adafruit.com/product/381 (Technical Details)",
+              "https://www.adafruit.com/product/381 (Description)"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "cable_exit",
+      "name": "Cable exit (Ø4 mm PVC jacket leaves the heat shrink)",
+      "domain": "mechanical",
+      "exposed": true,
+      "default_active": true,
+      "max_instances": 1,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "peer"
+          ]
+        }
+      ],
+      "capabilities": [
+        "cable_exit"
+      ],
+      "parameters": [
+        {
+          "id": "cable_diameter",
+          "unit": "mm",
+          "value": 4
+        },
+        {
+          "id": "cable_length",
+          "unit": "mm",
+          "value": 910
+        }
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "topic": "cable",
+            "note": "Cable is 36\" / 91 cm long, 4 mm diameter, jacketed in PVC (keep under 100 C). It may be cut to length; the wires inside are re-stripped at the cut. Wire gauge is not stated.",
+            "source": [
+              "https://www.adafruit.com/product/381 (Technical Details)",
+              "https://www.adafruit.com/product/381 (Description)"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "art_product_page",
+      "name": "Adafruit 381 product page",
+      "type": "documentation",
+      "url": "https://www.adafruit.com/product/381"
+    },
+    {
+      "id": "art_datasheet",
+      "name": "DS18B20 datasheet 19-7487 Rev 6 (Maxim/ADI)",
+      "type": "datasheet",
+      "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf"
+    },
+    {
+      "id": "art_datasheet_adafruit",
+      "name": "DS18B20 datasheet copy linked by Adafruit (REV 042208)",
+      "type": "datasheet",
+      "url": "https://cdn-shop.adafruit.com/datasheets/DS18B20.pdf"
+    }
+  ],
+  "domains": [
+    {
+      "domain": "electrical",
+      "power_domains": [
+        {
+          "id": "vdd",
+          "name": "VDD (red wire)",
+          "nominal_voltage_V": 3.3,
+          "voltage_range_V": [
+            3,
+            5.5
+          ],
+          "max_current_mA": 1.5
+        }
+      ],
+      "metadata": {
+        "supply_current": {
+          "standby_nA": {
+            "typ": 750,
+            "max": 1000
+          },
+          "active_mA": {
+            "typ": 1,
+            "max": 1.5
+          },
+          "condition": "standby up to +70 C; active at VDD = 5 V"
+        },
+        "nominal_voltage_note": "3.3 V is the smart-bottle rail; any VDD from 3.0 to 5.5 V is in range",
+        "pullup_supply_V": [
+          3,
+          "VDD"
+        ],
+        "pullup_supplied_ohm": 4700,
+        "source": [
+          "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (DC Electrical Characteristics)",
+          "https://www.adafruit.com/product/381 (Description)"
+        ]
+      }
+    },
+    {
+      "domain": "mechanical",
+      "dimensions_mm": {
+        "length": 940,
+        "width": 6,
+        "height": 6
+      },
+      "package": {
+        "name": "Waterproof probe, stainless tube Ø6 x 30 mm, 3-wire cable",
+        "code": "ADA381",
+        "pin_count": 3,
+        "exposed_pad": false,
+        "source": "https://www.adafruit.com/product/381 (Technical Details)",
+        "assumption": "Adafruit names no package; the name is built from its cable specs. The three terminals are the wire ends, designated VDD, GND and DQ (the wire colours vary by batch)."
+      },
+      "metadata": {
+        "tube": {
+          "material": "stainless steel",
+          "diameter_mm": 6,
+          "length_mm": 30
+        },
+        "cable": {
+          "jacket": "PVC",
+          "diameter_mm": 4,
+          "length_mm": 910,
+          "length_in": 36,
+          "conductors": 3
+        },
+        "sealing": "heat shrink; not IP rated",
+        "dimensions_note": "overall about 940 mm: the 30 mm tube plus the 910 mm cable (whether the 91 cm includes the tube is not stated); width and height are the tube diameter",
+        "shipping_weight_g": 27.2,
+        "shipping_weight_note": "shipping weight from the Adafruit product record, packaging and the resistor included; not the probe's mass",
+        "source": [
+          "https://www.adafruit.com/product/381 (Technical Details)",
+          "https://www.adafruit.com/product/381 (Description)",
+          "https://www.adafruit.com/api/product/381"
+        ]
+      }
+    },
+    {
+      "domain": "thermal",
+      "operating_temperature_C": [
+        -55,
+        100
+      ],
+      "metadata": {
+        "operating_note": "DS18B20 operating range -55 to +125 C; Adafruit: 'While the sensor is good up to 125°C the cable is jacketed in PVC so we suggest keeping it under 100°C.'",
+        "sensor_operating_C": [
+          -55,
+          125
+        ],
+        "storage_C": [
+          -55,
+          125
+        ],
+        "accuracy_C": [
+          {
+            "range_C": [
+              -10,
+              85
+            ],
+            "error_C": 0.5
+          },
+          {
+            "range_C": [
+              -30,
+              100
+            ],
+            "error_C": 1
+          },
+          {
+            "range_C": [
+              -55,
+              125
+            ],
+            "error_C": 2
+          }
+        ],
+        "source": [
+          "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (Absolute Maximum Ratings; DC Electrical Characteristics, tERR)",
+          "https://www.adafruit.com/product/381 (Description; Technical specs)"
+        ]
+      }
+    }
+  ],
+  "traits": [
+    {
+      "type": "performance",
+      "params": {
+        "kind": "temperature_sensor",
+        "sensing": "DS18B20 digital thermometer",
+        "range_C": [
+          -55,
+          125
+        ],
+        "accuracy_C": {
+          "-10 to +85 C": 0.5,
+          "-30 to +100 C": 1,
+          "-55 to +125 C": 2
+        },
+        "accuracy_note": "3-sigma limits (datasheet Note 3)",
+        "resolution_bits": [
+          9,
+          12
+        ],
+        "resolution_C": {
+          "9": 0.5,
+          "10": 0.25,
+          "11": 0.125,
+          "12": 0.0625
+        },
+        "default_resolution_bits": 12,
+        "conversion_time_ms_max": {
+          "9": 93.75,
+          "10": 187.5,
+          "11": 375,
+          "12": 750
+        },
+        "drift_C": 0.2,
+        "drift_note": "1000-hour stress test at +125 C, VDD = 5.5 V (datasheet Note 11)",
+        "alarm": "nonvolatile TH / TL alarm registers, Alarm Search [ECh]",
+        "source": [
+          "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (DC and AC Electrical Characteristics; Operation)",
+          "https://www.adafruit.com/product/381 (Technical Details)"
+        ]
+      }
+    },
+    {
+      "type": "operating_conditions",
+      "params": {
+        "supply_voltage_V": [
+          3,
+          5.5
+        ],
+        "pullup_supply_V": "3.0 V to VDD",
+        "temperature_C": [
+          -55,
+          100
+        ],
+        "temperature_note": "sensor -55 to +125 C; probe kept under 100 C for the PVC cable",
+        "environment": "not IP rated; not for salt water or corrosive environments; not guaranteed for long-term or high-pressure use",
+        "source": [
+          "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (DC Electrical Characteristics)",
+          "https://www.adafruit.com/product/381 (Description; Technical Details)"
+        ]
+      }
+    },
+    {
+      "type": "absolute_maximum",
+      "params": {
+        "voltage_any_pin_V": [
+          -0.5,
+          6
+        ],
+        "operating_temperature_C": [
+          -55,
+          125
+        ],
+        "storage_temperature_C": [
+          -55,
+          125
+        ],
+        "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (Absolute Maximum Ratings)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "topic": "parasite power",
+        "note": "The DS18B20 can run without VDD: tie the red VDD wire to GND and power the device through DQ. The master must then switch a strong pull-up onto DQ within 10 us of a Convert T [44h] or Copy Scratchpad [48h] and hold it for the conversion (up to 750 ms) or 10 ms write, and cannot poll for completion. Parasite power is not recommended above +100 C. With VDD powered (as modelled) the bus stays free during conversions.",
+        "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (Powering the DS18B20; Figures 6, 7)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "topic": "firmware",
+        "note": "Adafruit points to the Dallas Temperature Control Arduino library with the OneWire library. Query time is less than 750 ms at 12 bits; lower resolutions convert faster (93.75 ms at 9 bits). Adafruit tests that the sensors are genuine Maxim DS18B20s (since January 2021).",
+        "source": [
+          "https://www.adafruit.com/product/381 (Description; Technical Details)",
+          "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf (AC Electrical Characteristics)"
+        ]
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "fields": [
+          "probe mass",
+          "wire gauge",
+          "internal DS18B20 package",
+          "heat-shrink and breakout dimensions",
+          "whether the 91 cm includes the tube"
+        ],
+        "note": "Adafruit dimensions only the tube and the cable, and publishes only a shipping weight (27.2 g, with packaging and resistor).",
+        "source": [
+          "https://www.adafruit.com/product/381",
+          "https://www.adafruit.com/api/product/381"
+        ]
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "The Adafruit product page has no CAD link (its Downloads list only the DS18B20 datasheet), and the adafruit/Adafruit_CAD_Parts GitHub repository has no model for 381 or any DS18B20 probe. Geometry is generated from the product page dimensions and the product photos (library/cad/py/catalog/adafruit-381-ds18b20-probe.py).",
+        "source": [
+          "https://www.adafruit.com/product/381",
+          "https://github.com/adafruit/Adafruit_CAD_Parts"
+        ]
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "build variant",
+        "value": "three-wire build: red VDD, blue or black GND, yellow or white DQ; no shield or drain wire",
+        "reason": "Adafruit ships three-wire and four-wire builds under product 381 and does not say which arrives. The smart-bottle brief assumes the three-wire build. A four-wire probe adds a copper drain wire soldered to the shield (wire_ends usage_note).",
+        "source": "https://www.adafruit.com/product/381 (Technical Details)"
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "tube length",
+        "value": "the 30 mm is the exposed stainless length, from the closed tip to the heat-shrink sleeve",
+        "reason": "Adafruit states 'Stainless steel tube 6mm diameter by 30mm long' without saying whether the tube continues under the heat shrink. Photo 381-02 scaled by the 6 mm tube shows about 33 mm of exposed stainless, which agrees within the photo's precision.",
+        "source": [
+          "https://www.adafruit.com/product/381 (Technical Details)",
+          "https://cdn-shop.adafruit.com/970x728/381-02.jpg"
+        ]
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "generated heat-shrink geometry",
+        "value": "sleeve behind the tube Ø6.3 x 24 mm, then a sleeve over the cable Ø4.8 x 25 mm",
+        "reason": "Not dimensioned. Read from photo 381-02 scaled by the 6 mm tube (25 px) and the 4 mm cable (16 px), about 0.245 mm/px: the first sleeve is about the tube diameter and 99 px long, the second 19-20 px wide and 103 px long.",
+        "source": "https://cdn-shop.adafruit.com/970x728/381-02.jpg"
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "generated cable and wire-end geometry",
+        "value": "jacket drawn 50 mm (not 910 mm); three wires broken out 35 mm beyond the jacket, insulation Ø1.5 mm, stranded conductor drawn as a Ø0.6 mm rod stripped 15 mm; wires on a 0.9 mm radius in the jacket, red at +Y, GND at 210 deg, DQ at 330 deg",
+        "reason": "The cable is drawn as a stub because a project cuts it to its routed length (the wire-end frames sit at the drawn ends, not 910 mm away); the cable_length parameter states the delivered length. Breakout and wire sizes are read from photos 381-01 and 381-02; the gauge is not stated.",
+        "source": [
+          "https://cdn-shop.adafruit.com/970x728/381-02.jpg",
+          "https://www.adafruit.com/product/381 (Technical Details)"
+        ]
+      }
+    }
+  ]
+}

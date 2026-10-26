@@ -1,0 +1,102 @@
+{
+  "artifact": "kingbright-aptf1616-smd-1616",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "400170d3343df9653cf6c4f01dc74642a4ba8fdf8d34afdcf36aa6d671c560e3",
+  "units": "mm",
+  "volume_mm3": 1.464,
+  "bodies": {
+    "substrate": 0.627,
+    "lens": 0.828,
+    "pad_1": 0.002,
+    "pad_2": 0.002,
+    "pad_3": 0.002,
+    "pad_4": 0.002
+  },
+  "features": {
+    "pin_1": {
+      "area_mm2": 0.215,
+      "centroid": [
+        0.616,
+        -0.425,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.215,
+      "centroid": [
+        -0.616,
+        -0.425,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_3": {
+      "area_mm2": 0.215,
+      "centroid": [
+        -0.616,
+        0.425,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_4": {
+      "area_mm2": 0.215,
+      "centroid": [
+        0.616,
+        0.425,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 0.858,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 4,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "light_output": {
+      "area_mm2": 1.76,
+      "centroid": [
+        0.0,
+        0.0,
+        0.7
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

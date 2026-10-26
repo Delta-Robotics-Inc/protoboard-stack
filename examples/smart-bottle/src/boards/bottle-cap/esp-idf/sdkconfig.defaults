@@ -1,0 +1,9 @@
+# Bottle cap board: ESP-IDF 5.3.5 defaults, generated from the UHD model by @protoboardai/ext-esp-idf. Do not edit;
+# list your own defaults file after this one in SDKCONFIG_DEFAULTS.
+
+# espressif-esp32-c3-mini-1-h4x: ESP32-C3FH4X, chip revision v1.1 (4 MB flash in package)
+CONFIG_IDF_TARGET="esp32c3"
+# 4 MB flash in the package
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+# console on USB Serial/JTAG: D+/D- wired to d9, j1
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y

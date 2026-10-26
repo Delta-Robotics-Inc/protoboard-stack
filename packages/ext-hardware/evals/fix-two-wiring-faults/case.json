@@ -1,0 +1,97 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Find and fix two wiring faults at once: the O4 powered from the pack, and the GNSS RX and TX swapped",
+  "skills": ["system-compose", "system-review", "harness-author"],
+  "tags": ["fault", "system", "two-faults", "harder"],
+  "fixture": {
+    "from": "../../../../examples/quadcopter-5in",
+    "exclude": ["docs"],
+    "steps": [
+      {
+        "note": "the seeds are hidden: the two scenarios that describe them are taken out of src/scenarios.ts (docs/, which lists them, is not copied), so the agent has to find the faults, not match them to scenarios",
+        "replace": { "file": "src/scenarios.ts", "find": "  {\n    id: \"o4-on-vbat\",\n    label: \"O4 wired to raw 6S\",\n    description: \"The DJI O4 power lead is soldered to the battery instead of the 10 V BEC.\",\n    expect: [\"UHD_LINK_STATE\"],\n    // The cable's red wire is cut off the DJI plug and soldered to the XT60\n    // lead: positions 2-6 still mate, VCC now comes straight off the pack.\n    system: {\n      ...QUADCOPTER_5IN,\n      links: [\n        ...(QUADCOPTER_5IN.links ?? []).map((l) => (l.id === \"dji_fc\" ? { ...l, childLinks: [2, 3, 4, 5, 6].map((n) => ({ a: `p${n}`, b: `p${n}` })) } : l)),\n        { id: \"video_power\", name: \"O4 VCC on the pack\", a: { child: \"battery\", interfaceId: \"battery_out\" }, b: { child: \"video\", interfaceId: \"vcc\" }, harness: \"dji_cable\" },\n      ],\n    },\n  },\n", "with": "", "count": 1 }
+      },
+      { "replace": { "file": "src/scenarios.ts", "find": "  {\n    id: \"gnss-rx-tx-swapped\",\n    label: \"GNSS lead with RX and TX swapped\",\n    description: \"The soldered end of the GNSS lead has its RX and TX wires on the wrong pads (GNSS TX on TX1).\",\n    expect: [\"UHD_LINK_STATE\"],\n    system: recompose(QUADCOPTER_5IN, \"gnss_pads\", { p2: \"fc:uart1_rx\", p3: \"fc:uart1_tx\" }),\n  },\n", "with": "", "count": 1 } },
+      {
+        "note": "the fault of the (removed) o4-on-vbat scenario on the system itself: the 3-in-1 cable's VCC position cut off the plug, the O4's VCC soldered to the pack",
+        "replace": {
+          "file": "src/quadcopter.uhd.ts",
+          "find": "    link(\"dji_fc\", \"DJI socket\", [\"stack\", \"dji_socket\"], [\"dji_cable\", \"end_fc\"]),\n",
+          "with": "    link(\"dji_fc\", \"DJI socket\", [\"stack\", \"dji_socket\"], [\"dji_cable\", \"end_fc\"], { childLinks: [2, 3, 4, 5, 6].map((n) => ({ a: `p${n}`, b: `p${n}` })) }),\n    link(\"video_power\", \"O4 VCC\", [\"battery\", \"battery_out\"], [\"video\", \"vcc\"], { harness: \"dji_cable\" }),\n",
+          "count": 1
+        }
+      },
+      {
+        "note": "and the fault of the (removed) gnss-rx-tx-swapped scenario",
+        "replace": { "file": "src/quadcopter.uhd.ts", "find": "p2: \"fc:uart1_tx\", p3: \"fc:uart1_rx\"", "with": "p2: \"fc:uart1_rx\", p3: \"fc:uart1_tx\"", "count": 1 }
+      }
+    ]
+  },
+  "instruction": "This quadcopter came back from a bench repair: the GNSS lead was re-soldered to the flight controller, and the DJI O4's power lead was repaired. The system model (src/quadcopter.uhd.ts) was updated to match the bench, and since then `npx protoboard check` reports errors. Find everything that is wrong, fix the system model so that it describes the quad as it is meant to be built and check reports no errors, and say in a sentence or two per fault what each one was. The purchased parts' definitions and the harness modules are correct; do not edit anything under parts/ or src/harnesses/.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *", "npx tsx node_modules/@protoboardai/ext-hardware/skills/*"] },
+  "budget": { "turns": 30, "seconds": 900, "usd": 4 },
+  "graders": [
+    {
+      "id": "o4-power-fixed-and-named",
+      "kind": "fault",
+      "code": "UHD_LINK_STATE",
+      "subject": "video_power|dji",
+      "caught": "(o4|air unit|video|vtx)[\\s\\S]*(battery|pack|vbat|6s|raw|xt60|25\\.2|unregulated)|(battery|pack|vbat|6s|raw|xt60)[\\s\\S]*(o4|air unit|video|vtx)"
+    },
+    {
+      "id": "gnss-fixed-and-named",
+      "kind": "fault",
+      "code": "UHD_LINK_STATE",
+      "subject": "gnss",
+      "caught": "(rx|tx|receive|transmit)[^.]*(swap|revers|cross|wrong|backward)|(swap|revers|cross)[^.]*(rx|tx)"
+    },
+    {
+      "id": "check-clean",
+      "kind": "check",
+      "maxErrors": 0,
+      "ran": ["uhd/checkSystem", "ext:@protoboardai/ext-harness-cad/routes"],
+      "diagnostics": [{ "code": "HARNESS_ROUTE_STALE", "present": false }, { "severity": "error", "message": "O4|GNSS|UART1", "present": false }]
+    },
+    {
+      "id": "wired-as-designed",
+      "kind": "facts",
+      "definition": "quadcopter-5in",
+      "facts": [
+        { "path": "links[id=video_power]", "exists": false },
+        { "path": "links[id=dji_fc].childLinks", "exists": false },
+        { "path": "links[id=dji_fc].b.child", "equals": "dji_cable" },
+        { "path": "links[id=dji_o4].b.child", "equals": "video" },
+        { "path": "links[id=gnss_pads].b.compose.p2", "equals": "fc:uart1_tx" },
+        { "path": "links[id=gnss_pads].b.compose.p3", "equals": "fc:uart1_rx" }
+      ],
+      "description": "the O4 takes its power through the 3-in-1 cable again (every position of the DJI socket, no lead to the pack), and the GNSS lead's p2 is on TX1, p3 on RX1. Re-pointing the O4 lead at another rail clears the error but is not the quad as designed"
+    },
+    {
+      "id": "scenarios-hold",
+      "kind": "script",
+      "script": "skills/system-compose/scripts/scenarios.ts",
+      "args": ["--json"],
+      "exit": 0,
+      "facts": [{ "path": "[id=nominal].ok", "equals": true }]
+    },
+    { "id": "harnesses-untouched", "kind": "digest", "file": "src/harnesses/harnesses.uhd.ts", "changed": false },
+    { "id": "scenarios-untouched", "kind": "digest", "file": "src/scenarios.ts", "changed": false },
+    { "id": "gnss-part-untouched", "kind": "digest", "file": "parts/catalog/matek-m9n-5883.json", "changed": false },
+    { "id": "o4-part-untouched", "kind": "digest", "file": "parts/catalog/dji-o4-air-unit.json", "changed": false }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    {
+      "replace": {
+        "file": "src/quadcopter.uhd.ts",
+        "find": "    link(\"dji_fc\", \"DJI socket\", [\"stack\", \"dji_socket\"], [\"dji_cable\", \"end_fc\"], { childLinks: [2, 3, 4, 5, 6].map((n) => ({ a: `p${n}`, b: `p${n}` })) }),\n    link(\"video_power\", \"O4 VCC\", [\"battery\", \"battery_out\"], [\"video\", \"vcc\"], { harness: \"dji_cable\" }),\n",
+        "with": "    link(\"dji_fc\", \"DJI socket\", [\"stack\", \"dji_socket\"], [\"dji_cable\", \"end_fc\"]),\n",
+        "count": 1
+      }
+    },
+    { "replace": { "file": "src/quadcopter.uhd.ts", "find": "p2: \"fc:uart1_rx\", p3: \"fc:uart1_tx\"", "with": "p2: \"fc:uart1_tx\", p3: \"fc:uart1_rx\"", "count": 1 } },
+    { "protoboard": ["check"] },
+    { "command": ["npx", "tsx", "node_modules/@protoboardai/ext-hardware/skills/system-compose/scripts/scenarios.ts"] },
+    { "say": "Two faults. 1) The O4's VCC was soldered to the battery (link video_power from battery_out, 18-25.2 V) with only positions 2-6 of the 3-in-1 cable mated, while the O4 takes 3.7-13.2 V: I removed that lead and mated every position of the DJI socket again, so the O4 is powered from the FC's 10 V BEC through the cable. 2) The GNSS lead's RX and TX were swapped on the FC's UART1 pads (p2 on RX1, p3 on TX1); I put p2 back on uart1_tx and p3 on uart1_rx. check reports no errors and every remaining fault scenario is caught." }
+  ]
+}

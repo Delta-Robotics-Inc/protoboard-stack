@@ -1,0 +1,120 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "murata-grm1555c1h200ja01",
+  "manufacturer": "Murata",
+  "mpn": "GRM1555C1H200JA01D",
+  "need": {
+    "quantity": 4,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "LCSC",
+      "supplier_sku": "C76959",
+      "mpn": "GRM1555C1H200JA01D",
+      "url": "https://www.lcsc.com/product-detail/C76959.html",
+      "as_of": "2026-10-03T13:59:39Z",
+      "via": "web",
+      "stock": 32850,
+      "moq": 50,
+      "packaging": "Tape & Reel (TR)",
+      "price_breaks": [
+        {
+          "quantity": 50,
+          "unit_price": 0.0158,
+          "currency": "USD"
+        },
+        {
+          "quantity": 500,
+          "unit_price": 0.0134,
+          "currency": "USD"
+        },
+        {
+          "quantity": 1500,
+          "unit_price": 0.0121,
+          "currency": "USD"
+        },
+        {
+          "quantity": 10000,
+          "unit_price": 0.0082,
+          "currency": "USD"
+        },
+        {
+          "quantity": 20000,
+          "unit_price": 0.0075,
+          "currency": "USD"
+        },
+        {
+          "quantity": 50000,
+          "unit_price": 0.0071,
+          "currency": "USD"
+        }
+      ],
+      "market": "global (USD storefront)",
+      "note": "LCSC product page; brand listed as muRata; full reel 10000"
+    },
+    {
+      "supplier": "JLCPCB",
+      "supplier_sku": "C76959",
+      "mpn": "GRM1555C1H200JA01D",
+      "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM1555C1H200JA01D/C76959",
+      "as_of": "2026-10-03T13:57:33Z",
+      "via": "api",
+      "stock": 40188,
+      "moq": 1,
+      "price_breaks": [
+        {
+          "quantity": 1,
+          "unit_price": 0.0157,
+          "currency": "USD"
+        },
+        {
+          "quantity": 500,
+          "unit_price": 0.0133,
+          "currency": "USD"
+        },
+        {
+          "quantity": 1500,
+          "unit_price": 0.012,
+          "currency": "USD"
+        },
+        {
+          "quantity": 10000,
+          "unit_price": 0.0081,
+          "currency": "USD"
+        },
+        {
+          "quantity": 20000,
+          "unit_price": 0.0074,
+          "currency": "USD"
+        },
+        {
+          "quantity": 50000,
+          "unit_price": 0.0071,
+          "currency": "USD"
+        }
+      ],
+      "market": "global (USD)",
+      "note": "JLCPCB parts library (public parts search API, no login): prices for JLCPCB assembly and parts orders; library type 'expand'"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": true
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; listed"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:e3da8b9b19c878d096776dbc2a29055046aae4a00367eda5a8ac42570c5e7c38",
+    "moduleDigest": "sha256:2989d2c7a131d6b902f0b0ff819bfdfab5fa35c46d150dae93f6764de146ddf2"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ab74bb15152f39ea5a97af14cc3f74353ffb677a7b762553dfdf13172e64b956",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T08:46:51.944Z",
+  "status": "failed",
+  "summary": "circuit.config.ts constraints: outline 40.9901 × 40.995 mm exceeds the board's design envelope 40 × 40 mm (Brief: round case at most 46 mm across and 13.5 mm thick. The board is the disc under the 35.6 x 37.8 mm display (tab and FPC fold to 20.5 mm from its centre) inside a cavity of about 42 mm; the tallest part, the USB-C receptacle (3.31 mm), plus the 0.8 mm board sets the height.)",
+  "outputs": [],
+  "data": {
+    "problems": [
+      "outline 40.9901 × 40.995 mm exceeds the board's design envelope 40 × 40 mm (Brief: round case at most 46 mm across and 13.5 mm thick. The board is the disc under the 35.6 x 37.8 mm display (tab and FPC fold to 20.5 mm from its centre) inside a cavity of about 42 mm; the tallest part, the USB-C receptacle (3.31 mm), plus the 0.8 mm board sets the height.)"
+    ]
+  },
+  "finishedAt": "2026-10-03T08:46:52.052Z"
+}

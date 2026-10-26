@@ -1,0 +1,553 @@
+{
+  "schema": "protoboard.enclosure-cad.job/v0",
+  "module": "watch-case",
+  "name": "watch-case",
+  "root": "../../../..",
+  "process": "print",
+  "material": "PETG",
+  "inputsDigest": "sha256:8359c0f1fda65dcb5fb4d5e0047084bb2bad2894a310e354e06003bf41197fcd",
+  "design": {
+    "shape": "round",
+    "wall": 1.1,
+    "floor": 1.3,
+    "lid": 1.3,
+    "clearance": 0.25,
+    "clearance_top": 0.25,
+    "min_wall": 0.8,
+    "cavity": {
+      "centre": [
+        0.5,
+        0
+      ],
+      "radius": 21.26,
+      "z": [
+        -0.25,
+        10.64
+      ]
+    },
+    "split_z": null,
+    "joint": {
+      "style": "flat",
+      "lip_height": 1.5,
+      "clearance": 0.15
+    },
+    "fasteners": "screws",
+    "resolution": 0.25
+  },
+  "contents": [
+    {
+      "key": "board",
+      "label": "Watch main board",
+      "glb": "src/boards/watch-main/out/board.glb",
+      "digest": "sha256:a23912ce3cb46948419229520cf74ac2146cd807e15defe0d2afb8764361b13b",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        6.68,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "key": "cell",
+      "label": "LiPol LP402030 200 mAh 3.7 V LiPo with PCM",
+      "glb": "parts/local/lipol-lp402030/lipol-lp402030.glb",
+      "digest": "sha256:7ee2f6d68ece6316b7284bfa7c2a1a8ea06fc58428332871019d0a5faddb3376",
+      "matrix": [
+        0,
+        -1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        1.75,
+        0,
+        0,
+        0,
+        1
+      ],
+      "skip_nodes": [
+        "battery_out",
+        "charge_in",
+        "lead_neg",
+        "lead_pos",
+        "mount_face"
+      ]
+    },
+    {
+      "key": "lra",
+      "label": "Vybronics VG0832012 8 mm Z-axis coin LRA",
+      "glb": "parts/catalog/vybronics-vg0832012/artifacts/cad/vybronics-vg0832012.glb",
+      "digest": "sha256:4abd1c6bc8dde49809d036f582b82216514d6f8b02dfa24c58f5e64eeaa6e4d5",
+      "matrix": [
+        0,
+        1,
+        0,
+        10,
+        1,
+        0,
+        0,
+        -9,
+        0,
+        0,
+        -1,
+        10.39,
+        0,
+        0,
+        0,
+        1
+      ],
+      "skip_nodes": [
+        "drive",
+        "lead_neg",
+        "lead_pos",
+        "mount_face"
+      ]
+    },
+    {
+      "key": "battery_leads",
+      "label": "Cell leads",
+      "glb": "src/harnesses/watch-battery-leads/out/body.glb",
+      "digest": "sha256:28e254caf081a6bdd1b5fcf38aa5a7ff7a6a7be4b944203aa0148b9a3280077b",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "key": "lra_leads",
+      "label": "LRA leads",
+      "glb": "src/harnesses/watch-lra-leads/out/body.glb",
+      "digest": "sha256:48c2ece1916b878233d1e37848b05dd10d7e8623a8417a0c4c3ef0d87069a4f7",
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "display_window",
+      "kind": "window",
+      "params": {
+        "aperture": {
+          "diameter_mm": 33.6
+        },
+        "cover": {
+          "diameter_mm": 38,
+          "thickness_mm": 0.5,
+          "material": "PMMA"
+        },
+        "side": "outside",
+        "assumption": "Aperture: the 33.4 mm visual area (ER-TFT1.28-1 §2.2) + 0.1 mm a side. Lens: a 38 mm x 0.5 mm clear PMMA disc over the polarizer, as the display datasheet asks (§7.2, a protective plate); size and material are this project's choice, not yet sourced (OQ-W11)."
+      },
+      "frame": {
+        "origin": [
+          0,
+          0,
+          -1.55
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "mates": [
+        "lens"
+      ],
+      "served": {
+        "key": "board",
+        "label": "board.display_face",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1
+          ]
+        }
+      }
+    },
+    {
+      "id": "hr_window",
+      "kind": "window",
+      "params": {
+        "aperture": {
+          "width_mm": 2.4,
+          "height_mm": 6.6
+        },
+        "cover": {
+          "width_mm": 4,
+          "height_mm": 8.2,
+          "thickness_mm": 0.5,
+          "material": "PMMA"
+        },
+        "side": "outside",
+        "assumption": "One aperture over both MAX30102 windows: centred on the photodetector window (1.97 x 2.75 mm, 0.822 mm off the package centre), 6.6 mm long so it also clears the LED window (1.97 x 1.094 mm, 1.64 mm the other way; MAX30102 outline 21-1048). Clear PMMA cover, flush. The opaque barrier between the two apertures and the air gap to the sensor are open (OQ-W7)."
+      },
+      "frame": {
+        "origin": [
+          3,
+          4.822,
+          11.94
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "mates": [
+        "hr_cover"
+      ],
+      "served": {
+        "key": "board",
+        "label": "board.hr_sensor",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            3,
+            4.822,
+            8.63
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "usb_opening",
+      "kind": "opening",
+      "params": {
+        "shape": "rect",
+        "width_mm": 10,
+        "height_mm": 3.8,
+        "corner_radius_mm": 1.6,
+        "max_recess_mm": 1.85,
+        "plug": {
+          "name": "USB Type-C plug",
+          "overmold_width_mm": 12.35,
+          "overmold_height_mm": 6.5,
+          "plug_length_mm": 6.65,
+          "plug_width_mm": 8.25,
+          "plug_thickness_mm": 2.4,
+          "source": "https://www.usb.org/sites/default/files/USB_Type-C_Compliance_Document_rev_1_2.pdf, Appendix B, Figure B-1"
+        },
+        "seat": "flat",
+        "assumption": "Receptacle shell 8.94 x 3.16 mm (GCT USB4105 drawing) plus about 0.3 mm a side, widened to 10.0 mm so the round wall leaves no sliver beside the receptacle's corners. The plug's overmold stays at least 1.85 mm in front of the receptacle face (the part's usage note), so the receptacle may sit at most 1.85 mm behind the outer surface."
+      },
+      "frame": {
+        "origin": [
+          -21.86,
+          0,
+          8.81
+        ],
+        "normal": [
+          -1,
+          0,
+          0
+        ],
+        "xAxis": [
+          0,
+          -1,
+          0
+        ]
+      },
+      "served": {
+        "key": "board",
+        "label": "board.usb",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -20.02,
+            0,
+            8.81
+          ],
+          "normal": [
+            -1,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "button_1",
+      "kind": "button",
+      "params": {
+        "hole_d_mm": 2,
+        "travel_mm": 0.2,
+        "gap_mm": 0.1,
+        "flange_d_mm": 3,
+        "assumption": "Bore 2.0 mm (a 1.7 mm plunger shaft) pressing the 2 mm stem at its centre (Alps SKRT series: press the stem centre, ideally with a 2 mm flat tip; 0.2 mm travel); 0.1 mm rest gap. Flange 3.0 mm: the stem axis is 1.7 mm above the board and 1.86 mm below the back cover, so a larger flange would be cut away by both; it still overlaps the wall by 0.5 mm all round."
+      },
+      "frame": {
+        "origin": [
+          -18.865,
+          11.18,
+          8.78
+        ],
+        "normal": [
+          -0.866,
+          0.5,
+          0
+        ],
+        "xAxis": [
+          -0.5,
+          -0.866,
+          0
+        ]
+      },
+      "served": {
+        "key": "board",
+        "label": "board.btn_1",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -16.3454,
+            9.725,
+            8.78
+          ],
+          "normal": [
+            -0.866,
+            0.5,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "button_2",
+      "kind": "button",
+      "params": {
+        "hole_d_mm": 2,
+        "travel_mm": 0.2,
+        "gap_mm": 0.1,
+        "flange_d_mm": 3,
+        "assumption": "As button 1."
+      },
+      "frame": {
+        "origin": [
+          -18.865,
+          -11.18,
+          8.78
+        ],
+        "normal": [
+          -0.866,
+          -0.5,
+          0
+        ],
+        "xAxis": [
+          0.5,
+          -0.866,
+          0
+        ]
+      },
+      "served": {
+        "key": "board",
+        "label": "board.btn_2",
+        "from": "manifest",
+        "frame": {
+          "origin": [
+            -16.3454,
+            -9.725,
+            8.78
+          ],
+          "normal": [
+            -0.866,
+            -0.5,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "lugs_12",
+      "kind": "strap_lugs",
+      "params": {
+        "end": "+y",
+        "spring_bar": {
+          "name": "Esslinger 82.2225",
+          "bar_d_mm": 1.5,
+          "tip_d_mm": 0.8,
+          "tip_length_mm": 1.5,
+          "lug_gap_mm": 22,
+          "source": "https://www.esslinger.com/stainless-steel-1-5mm-double-flange-watch-band-spring-bar-assortment-900-pc/"
+        },
+        "strap_width_mm": 22,
+        "bar_d_mm": 1.5,
+        "hole_d_mm": 1,
+        "hole_depth_mm": 1.8
+      },
+      "frame": {
+        "origin": [
+          0.5,
+          25.11,
+          0.45
+        ],
+        "normal": [
+          0,
+          1,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "mates": [
+        "bar_12"
+      ]
+    },
+    {
+      "id": "lugs_6",
+      "kind": "strap_lugs",
+      "params": {
+        "end": "-y",
+        "spring_bar": {
+          "name": "Esslinger 82.2225",
+          "bar_d_mm": 1.5,
+          "tip_d_mm": 0.8,
+          "tip_length_mm": 1.5,
+          "lug_gap_mm": 22,
+          "source": "https://www.esslinger.com/stainless-steel-1-5mm-double-flange-watch-band-spring-bar-assortment-900-pc/"
+        },
+        "strap_width_mm": 22,
+        "bar_d_mm": 1.5,
+        "hole_d_mm": 1,
+        "hole_depth_mm": 1.8
+      },
+      "frame": {
+        "origin": [
+          0.5,
+          -25.11,
+          0.45
+        ],
+        "normal": [
+          0,
+          -1,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "mates": [
+        "bar_6"
+      ]
+    },
+    {
+      "id": "back_joint",
+      "kind": "joint",
+      "params": {
+        "screw": {
+          "name": "M2 × 6 pan head (ISO 7045)",
+          "d_mm": 2,
+          "length_mm": 6,
+          "head_d_mm": 4,
+          "head_h_mm": 1.72,
+          "clearance_d_mm": 2.4,
+          "source": "Accu SPP-M2-6-A2 product data (watch project source W20); clearance hole: ISO 273 medium series"
+        },
+        "insert": {
+          "name": "ruthex RX-M2x4",
+          "thread": "M2",
+          "outer_d_mm": 3.6,
+          "length_mm": 4,
+          "hole_d_mm": 3.2,
+          "hole_depth_mm": 5,
+          "min_wall_mm": 1.3,
+          "source": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen (dimensions: https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces)",
+          "assumption": "hole depth = insert length + 1.0 mm, room for the plastic the insert displaces"
+        },
+        "count": 4
+      },
+      "frame": {
+        "origin": [
+          0.5,
+          0,
+          10.64
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "mates": [
+        "case"
+      ]
+    }
+  ]
+}

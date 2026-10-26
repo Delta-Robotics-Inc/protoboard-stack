@@ -1,0 +1,450 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-enclosure-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-enclosure-cad",
+    "module": "watch-case",
+    "config": "src/enclosures/watch-case/cad.config.ts",
+    "configDigest": "sha256:d06a642ddf577809b905df39f98089b4851ba440d5277a6581fd886cb61a1c57",
+    "moduleDigest": "sha256:89e313a7c7ea2a0382c8110f895857c910c4d567342246e8d54d31f1948eda38"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:a05c0a74135b8cd86189eb56e04fcf8cc54b95ca56b33a50865b1e6e0add13d3",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T09:24:49.767Z",
+  "status": "succeeded",
+  "summary": "watch-case: 4 part(s) (base, lid, plunger_button_1, plunger_button_2), 8 feature(s); fit: board collision (-0.174 mm), cell clear (1.387 mm), display tight (0.118 mm), lra collision (-0.05 mm)",
+  "outputs": [
+    {
+      "path": "src/enclosures/watch-case/build123d/watch-case.job.json",
+      "digest": "sha256:8f7896203bc78210547bbedf01578b35fc1d5aec2acbdeb601e87d44b4e5ffaf",
+      "bytes": 8925,
+      "description": "watch-case: generator inputs from the model, the assembly and cad.config.ts"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/watch-case.py",
+      "digest": "sha256:169e0cbcfa468d37a0a3b5da5906f42f63fff88303e5bb62c00bd264f4918b70",
+      "bytes": 1198,
+      "description": "watch-case: build123d build script"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/body.glb",
+      "digest": "sha256:996a4085517853f6d89ba8437398a7c309a757b26aedcdccf2f23d48e26e0ee9",
+      "bytes": 605576,
+      "description": "watch-case: body.glb"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/body.manifest.json",
+      "digest": "sha256:9a2c286db40ec4ea4e0c19c7309374225ef18d25c78ece15873026b4c475be0c",
+      "bytes": 3452,
+      "description": "watch-case: body.manifest.json"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/body.step",
+      "digest": "sha256:48819a1835988b25dc3fc9710fe6442c1538ded5dd5bde9a811fd08cd08f5c9e",
+      "bytes": 1217000,
+      "description": "watch-case: body.step"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/base.3mf",
+      "digest": "sha256:2873792d798c6999173f674a7d67881b8b1eaae24b3d16656753b1b67d38d9bf",
+      "bytes": 95177,
+      "description": "watch-case: parts/base.3mf"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/base.glb",
+      "digest": "sha256:1111fe995d9e05c4be14c820224bebabc2d96af0cbab155d06a8bb883d0f9555",
+      "bytes": 218276,
+      "description": "watch-case: parts/base.glb"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/base.step",
+      "digest": "sha256:7fac542c955c672642c05a6549e3c7cbcb4d91479b1e3e5940a40c20465b34f5",
+      "bytes": 296889,
+      "description": "watch-case: parts/base.step"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/base.stl",
+      "digest": "sha256:628d4dcdfab638e74a53f4491bc2b6e7b5c495052465336ee647a7566bc12151",
+      "bytes": 449584,
+      "description": "watch-case: parts/base.stl"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/lid.3mf",
+      "digest": "sha256:ec6f18c335b68388f5839570798235a57ee5fc9d9c546e3a9ec50f8ae4ba0a9c",
+      "bytes": 40827,
+      "description": "watch-case: parts/lid.3mf"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/lid.glb",
+      "digest": "sha256:828e650dd2f69d7c837039a2151b539414c698fe07b877c357eb62a1fc34a3c4",
+      "bytes": 90520,
+      "description": "watch-case: parts/lid.glb"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/lid.step",
+      "digest": "sha256:dadbae8f5ad33099e00a7949b786266be0c1d4e29674656ef430378c35bbcd02",
+      "bytes": 102570,
+      "description": "watch-case: parts/lid.step"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/lid.stl",
+      "digest": "sha256:9d35313b79f50836d6bcc7361ab6e947b0d7a56a9cf6f6bade4e1c27930ac0b5",
+      "bytes": 193284,
+      "description": "watch-case: parts/lid.stl"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_1.3mf",
+      "digest": "sha256:15c4b97fd1134c24dfe1ef003dcc6ee995b2c78a8eb4cfa582f6ed896a354e76",
+      "bytes": 6849,
+      "description": "watch-case: parts/plunger_button_1.3mf"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_1.glb",
+      "digest": "sha256:d4e359c37d82d45b4aefc1d45ccab2db74a79c4899561bed575a402e5985f908",
+      "bytes": 20168,
+      "description": "watch-case: parts/plunger_button_1.glb"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_1.step",
+      "digest": "sha256:65ea559e8c2820c80fea74467e22964f647550f09614ba8c1eb69312df6fb909",
+      "bytes": 45584,
+      "description": "watch-case: parts/plunger_button_1.step"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_1.stl",
+      "digest": "sha256:2afc3a9e5c471b1f29dd8c21a7830c164b5f8cdfe2f193f71e9b326e509688b6",
+      "bytes": 28684,
+      "description": "watch-case: parts/plunger_button_1.stl"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_2.3mf",
+      "digest": "sha256:a86a75766bb940aa3d5c1e484947d749810dbeda943a7ca850229e6ad4a25a67",
+      "bytes": 6837,
+      "description": "watch-case: parts/plunger_button_2.3mf"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_2.glb",
+      "digest": "sha256:03cd41d5031a85a7c32c30347389013be01765d64f243a435ceadd5907f9fec7",
+      "bytes": 19908,
+      "description": "watch-case: parts/plunger_button_2.glb"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_2.step",
+      "digest": "sha256:a00a65d54ddec89ee2ff757c53b803951235b6fd91f4697aa8e613bfeab64f22",
+      "bytes": 41324,
+      "description": "watch-case: parts/plunger_button_2.step"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/parts/plunger_button_2.stl",
+      "digest": "sha256:f7b135ccc6b09a520bd91bc8c9d7fe72ed904a03e94dee0b8a0e3bdef54c2963",
+      "bytes": 28484,
+      "description": "watch-case: parts/plunger_button_2.stl"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/build/section.svg",
+      "digest": "sha256:ffc22b7ed2acb6be90aa2b3f4fa5ddb212ff1eaee65314bb9c9f23f2e6682908",
+      "bytes": 1224,
+      "description": "watch-case: section.svg"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/watch-case.report.json",
+      "digest": "sha256:6743cf9efa813acb73024a27a192dd420d2a13bcb68f4ecffa161edac5a68208",
+      "bytes": 15619,
+      "description": "watch-case: what the build found (cavity, features, walls, fit)"
+    },
+    {
+      "path": "src/enclosures/watch-case/build123d/watch-case.source.json",
+      "digest": "sha256:14f3084efc968d46db41fae6d14c1483ef9e889f9d22570ab5780aeae13c9af7",
+      "bytes": 174,
+      "description": "digests of the native design this build came from"
+    }
+  ],
+  "data": {
+    "native": "src/enclosures/watch-case/build123d",
+    "parts": {
+      "base": {
+        "volume_mm3": 4751.428,
+        "printed": true
+      },
+      "lid": {
+        "volume_mm3": 2209.755,
+        "printed": true
+      },
+      "plunger_button_1": {
+        "volume_mm3": 17.116,
+        "printed": true
+      },
+      "plunger_button_2": {
+        "volume_mm3": 17.116,
+        "printed": true
+      }
+    },
+    "cavity": {
+      "shape": "round",
+      "min": [
+        -20.75,
+        -21.15,
+        -0.5
+      ],
+      "max": [
+        21.55,
+        21.15,
+        10.34
+      ],
+      "centre": [
+        0.4,
+        0
+      ],
+      "radius": 21.15,
+      "split_z": 10.34,
+      "side_top": 10.34,
+      "solids": [
+        {
+          "name": "lid screw column",
+          "origin": [
+            17.406,
+            17.006,
+            -0.5
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 10.84
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            -16.606,
+            17.006,
+            -0.5
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 10.84
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            -16.606,
+            -17.006,
+            -0.5
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 10.84
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            17.406,
+            -17.006,
+            -0.5
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 10.84
+        }
+      ]
+    },
+    "overall": {
+      "min": [
+        -22.25,
+        -27.15,
+        -1.8
+      ],
+      "max": [
+        23.05,
+        27.15,
+        11.64
+      ]
+    },
+    "features": [
+      "back_joint",
+      "button_1",
+      "button_2",
+      "display_window",
+      "hr_window",
+      "lugs_12",
+      "lugs_6",
+      "usb_opening"
+    ],
+    "problems": [],
+    "notes": [],
+    "fit": {
+      "resolution_mm": 0.25,
+      "grid": [
+        205,
+        241,
+        73
+      ],
+      "bodies": [
+        {
+          "key": "board",
+          "label": "Watch main board",
+          "min_clearance_mm": -0.174,
+          "at": [
+            -20.45,
+            -4.47,
+            8.56
+          ],
+          "near": "base (cavity side)",
+          "basis": "exact",
+          "exact_clearance_mm": -0.174,
+          "voxel_clearance_mm": -0.25,
+          "outside_cavity_mm": 0.174,
+          "outside_at": [
+            -20.45,
+            -4.47,
+            8.56
+          ],
+          "samples": 6496766,
+          "status": "collision"
+        },
+        {
+          "key": "cell",
+          "label": "LiPol LP402030 200 mAh 3.7 V LiPo with PCM",
+          "min_clearance_mm": 1.387,
+          "at": [
+            12,
+            -16,
+            1.7
+          ],
+          "near": "base (cavity side)",
+          "basis": "exact",
+          "exact_clearance_mm": 1.387,
+          "voxel_clearance_mm": 1.25,
+          "outside_cavity_mm": 0,
+          "samples": 905662,
+          "status": "clear"
+        },
+        {
+          "key": "display",
+          "label": "EastRising ER-TFT1.28-1 1.28\" round TFT",
+          "min_clearance_mm": 0.118,
+          "at": [
+            20.37,
+            -6.6,
+            6.03
+          ],
+          "near": "base (cavity side)",
+          "basis": "exact",
+          "exact_clearance_mm": 0.118,
+          "voxel_clearance_mm": 0.01,
+          "outside_cavity_mm": 0,
+          "samples": 5799448,
+          "status": "tight"
+        },
+        {
+          "key": "lra",
+          "label": "Vybronics VG0832012 8 mm Z-axis coin LRA",
+          "min_clearance_mm": -0.05,
+          "at": [
+            11.19,
+            -5.41,
+            10.39
+          ],
+          "near": "lid (cavity ceiling)",
+          "basis": "exact",
+          "exact_clearance_mm": -0.05,
+          "voxel_clearance_mm": -0.39,
+          "outside_cavity_mm": 0.05,
+          "outside_at": [
+            10,
+            -5,
+            10.39
+          ],
+          "samples": 720286,
+          "status": "collision"
+        }
+      ],
+      "walls": {
+        "base": {
+          "min_mm": 0.25,
+          "at": [
+            -20.5,
+            -4.25,
+            8
+          ]
+        },
+        "lid": {
+          "min_mm": 1.25,
+          "at": [
+            -21.75,
+            -1.5,
+            11
+          ]
+        }
+      },
+      "plungers": [
+        {
+          "key": "plunger_button_1",
+          "feature": "button_1",
+          "min_clearance_mm": 0.1,
+          "at": [
+            -17.17,
+            9.98,
+            7.54
+          ],
+          "near": "board",
+          "basis": "voxel",
+          "resolution_mm": 0.25,
+          "status": "collision",
+          "wall_overlap_mm3": {
+            "base": 0.4018,
+            "lid": 0
+          }
+        },
+        {
+          "key": "plunger_button_2",
+          "feature": "button_2",
+          "min_clearance_mm": 0.1,
+          "at": [
+            -17.17,
+            -9.03,
+            7.54
+          ],
+          "near": "board",
+          "basis": "voxel",
+          "resolution_mm": 0.25,
+          "status": "collision",
+          "wall_overlap_mm3": {
+            "base": 0.4018,
+            "lid": 0
+          }
+        }
+      ]
+    },
+    "toolVersion": "0.13.0"
+  },
+  "finishedAt": "2026-10-03T09:25:22.152Z"
+}

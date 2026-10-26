@@ -1,0 +1,11 @@
+{
+  "name": "protoboard-webview-probe",
+  "displayName": "Protoboard webview probe",
+  "description": "Not shipped. A VS Code test (scripts/macos/webview/run.mjs) that asks whether a webview can read a loopback server the way the Protoboard viewer tabs read the dev server.",
+  "version": "0.0.0",
+  "private": true,
+  "publisher": "deltarobotics",
+  "engines": { "vscode": "^1.100.0" },
+  "main": "./extension.cjs",
+  "activationEvents": ["onStartupFinished"]
+}

@@ -1,0 +1,376 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs",
+  "extension": {
+    "id": "@protoboardai/ext-docs",
+    "version": "0.1.1"
+  },
+  "effect": "export",
+  "inputs": {
+    "pdf": "true",
+    "standins": "true"
+  },
+  "projectDigest": "sha256:cad3e743edb7594bd37eecc8fbd3d9a3a2283c73caae5dd9606a0f7eb13b956e",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 155.0.8059.39"
+    }
+  ],
+  "startedAt": "2026-10-07T03:14:14.322Z",
+  "status": "succeeded",
+  "summary": "datasheet: 21 pages, 492 bound values; assembly: 9 pages, 14 bound values",
+  "outputs": [
+    {
+      "path": "docs/smart-bottle-datasheet.html",
+      "digest": "sha256:8c3e0616e2e6eba7ddd4aca79982446fdb199484a5654b3003ecd107c5862081",
+      "bytes": 226605,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/smart-bottle-datasheet.values.json",
+      "digest": "sha256:7b81aecdb754ae8a1a06f00652042218d1623c12f72882b7b81e6cdbc679aacd",
+      "bytes": 85793,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/smart-bottle-datasheet.pdf",
+      "digest": "sha256:b0f328c0a0b7cbeb783c21aa86c9d8c901eb1f9151238e960f15b85ff3bb9e55",
+      "bytes": 1009817,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/smart-bottle-assembly-guide.html",
+      "digest": "sha256:991aef102433fefdbe869080b601d7b42bd2a06134901b60b6803b9180503679",
+      "bytes": 55759,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/smart-bottle-assembly-guide.values.json",
+      "digest": "sha256:320c5b25c793869716da0f87851f9730136577085e8ade51c39ffff87b4aa0db",
+      "bytes": 2437,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/smart-bottle-assembly-guide.pdf",
+      "digest": "sha256:5b8898afb2364c666f17e6b6571c9a9e93b02a726979ee98f5ba41fb86ef4bd3",
+      "bytes": 454718,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/smart-bottle-bom.json",
+      "digest": "sha256:3084ac198f14b2bfaa030ebfb680a4f7bff567cfae3e10ab3901b9563a086cd0",
+      "bytes": 17521,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-hero.png",
+      "digest": "sha256:2388aa3433ebb41ad5bd6cedf6b52a4a94f919fc9481330f32b48b22e8be31d5",
+      "bytes": 96996,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-01-board.png",
+      "digest": "sha256:00997780b1f253cfac2bf4a7166be37a780a4d35401236c172b94bea42ec4500",
+      "bytes": 105971,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-06-bottle.png",
+      "digest": "sha256:e0c70518bbe5ca9d5718d14de5a71ba58d746d0c17dbc350f10b609d74e6efd2",
+      "bytes": 71150,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-hero.png",
+      "digest": "sha256:5e94e02feb7d153bb1f37fe4ee741bf83e17fec0060fe1162efd7cf41bf970d7",
+      "bytes": 89094,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-interfaces.png",
+      "digest": "sha256:c614b9abae94e6e486cf840df180916b7074fbbda4e64e9a45a93106c743c1e4",
+      "bytes": 88298,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-side.png",
+      "digest": "sha256:0eb6f892e0435ac19aa93f35e494f7d85e429b8e6c89dd5c4f74d49e4430a875",
+      "bytes": 29338,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-top.png",
+      "digest": "sha256:cdddedb19207d733352f0ad076860b712b77d6b85999bb6c1024918aaa526670",
+      "bytes": 90529,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-adafruit-381-ds18b20-probe.png",
+      "digest": "sha256:ed47e4fc3f5966db6f0dcec99107fa661d294fc2325530ea12a0eba6b1dc5f5e",
+      "bytes": 6410,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-adi-max17048g-t10.png",
+      "digest": "sha256:4885e390d51589cb3fa4a27149abe3235251385d7230b628f5a12bf7b1a4ae9a",
+      "bytes": 10155,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-alps-skrtlae010.png",
+      "digest": "sha256:676a8bf47af011cea319d9c7c284f3cd1a946a640d854e1febf8b986e9c8af3a",
+      "bytes": 14050,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-as568-010-silicone.png",
+      "digest": "sha256:bec8541d718ebf75ae8c3d0b3d01ec43addf7a5638fec4525ecf341aedd063ce",
+      "bytes": 24973,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-as568-040-silicone.png",
+      "digest": "sha256:548ada1c067d774129adfa4d330b2aa9775f7436760d43fe2a4d712146e701fc",
+      "bytes": 14531,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-as568-138-silicone.png",
+      "digest": "sha256:19d894cdaa63d6b675596e249de52252f81623f457078abea10ed4a08ea1b98c",
+      "bytes": 17216,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-bottle-battery-leads.png",
+      "digest": "sha256:5541b160c3c739b4f1832fbd37dda01d1d27fa32852b81b3ebfd4a26e7d36a56",
+      "bytes": 25531,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-bottle-cap-board.png",
+      "digest": "sha256:177f39725241fe03c92dad707d9253ff48e2a9c918ccdb2b82840f6bde855eb6",
+      "bytes": 20600,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-bottle-cap-enclosure.png",
+      "digest": "sha256:a94c497debdaf490e3473546eeb140977d8c4d0809336e639b447f4f6826a7a7",
+      "bytes": 14922,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-bottle-probe-cable.png",
+      "digest": "sha256:12da65a691bf1e75932323710af32ffd8abd82536e6f55f4640c8ebb003d0b0f",
+      "bytes": 25154,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-coilcraft-xfl4020-152me.png",
+      "digest": "sha256:f64ad9b723637f9f83ec0a374811b5d9d76c65b1ba7dc36458b5ef41ca48ba2e",
+      "bytes": 10027,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-espressif-esp32-c3-mini-1-h4x.png",
+      "digest": "sha256:39dea1add30c8331087f914633faa567c726d062a2545464dab02436c83fe503",
+      "bytes": 11016,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-gct-usb4720-03-a.png",
+      "digest": "sha256:20cbd17490cc5345ace495f3482dd3346fe767c003114acac57de41f6dce7cea",
+      "bytes": 21062,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-7045-m2x6-a2.png",
+      "digest": "sha256:265108f151f9db36900a49725558cf3ccd07881e2ea244ac6babb273102630b4",
+      "bytes": 9676,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-kingbright-aptf1616lseezgkqbkc.png",
+      "digest": "sha256:25e542aae80aa78ee2a8dfc8c450e327ed40a8045451453d925166828a631eb6",
+      "bytes": 11239,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-lipol-lp503450.png",
+      "digest": "sha256:690a980675a09ac5db16f1dc5519ae3ea45286eb77c950c644cd3a3d2131f7e5",
+      "bytes": 9529,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-microchip-mcp73831t-2aci-mc.png",
+      "digest": "sha256:926711452486d736bef4ab3da2bd15e9caf4847348b8aa41e48d6b4d135fdd3f",
+      "bytes": 10042,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-murata-grm155.png",
+      "digest": "sha256:879fbdedcf79b18c22783271f80a8efe8bc061741b44c76b32ca71d4852d6a6d",
+      "bytes": 8693,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-murata-grm188.png",
+      "digest": "sha256:34ee4869f75753e6481f4cdb3e7b1509693f39435c2b42ac180ba609f1328c65",
+      "bytes": 8724,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-nalgene-32oz-wide-mouth.png",
+      "digest": "sha256:cc214b245e07dd3e0656c82141fb1ddc7dddd5cc13536671e12dbe22b5ad8d17",
+      "bytes": 13261,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ruthex-rx-m2x4.png",
+      "digest": "sha256:4df93ba6e6a01c8c9ab4061c95389c4abecb5e6192a4f3aed31437dbe297940e",
+      "bytes": 35731,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-st-usblc6-2sc6.png",
+      "digest": "sha256:8cc5e723b883bb3056b0f3954e22faea4cc16ac4827927e105317745f6606b7d",
+      "bytes": 13596,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-st-vl53l4cdv0dh-1.png",
+      "digest": "sha256:48c61597b1f8ff5066ecffa614935707f85ab61c5f2cca351b7bd2e7f3504859",
+      "bytes": 9906,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ti-lp5024rsm.png",
+      "digest": "sha256:8b8f049d9965b5753b8542c8e9e28b94fd663abe69cc620c97d1b16928fc1fb7",
+      "bytes": 10107,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ti-tps63020dsjr.png",
+      "digest": "sha256:e34594736b0b5320b447426816b7a4452aaa71808c1dd1c0382fcf0b73a2cb8c",
+      "bytes": 9136,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-yageo-rc0402.png",
+      "digest": "sha256:84555ebbe3d2d5bb09b2bd7b9b16dfdc5b62ab48d226f61cb5513b7639380714",
+      "bytes": 8906,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/viewer-3d-exploded.png",
+      "digest": "sha256:21c839e2dd39e6860012565e497f1953cca68868a8df114ed606d0309ce22730",
+      "bytes": 297113,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/viewer-3d-section.png",
+      "digest": "sha256:725d686baba3e19cd0fce5d1c7fa347159e37089b1c5e2573dea89ec07bd4bc2",
+      "bytes": 127953,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/viewer-3d.png",
+      "digest": "sha256:ca77e3247d86983f41ff33105aa8aef43c2762e59a83b22e858959eee0daa05f",
+      "bytes": 274227,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/viewer-board.png",
+      "digest": "sha256:b0e996da085d518b788bb0211ab76b1fe100b63d54a0cc71b6b1a06ea1e53358",
+      "bytes": 298708,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/viewer-system.png",
+      "digest": "sha256:3ee1a45bc30c974e97517f31746a19e6fa33a2caa47ad1801fd375d5f7d4f380",
+      "bytes": 134034,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/test-data/battery-life.json",
+      "digest": "sha256:e197ab4cc5f74051462051f226eb810bccc87d82c546014dcdf5e331265766c4",
+      "bytes": 2704,
+      "description": "technical document"
+    }
+  ],
+  "data": {
+    "docs": [
+      {
+        "type": "datasheet",
+        "html": "docs/smart-bottle-datasheet.html",
+        "pdf": "docs/smart-bottle-datasheet.pdf",
+        "values": "docs/smart-bottle-datasheet.values.json",
+        "pages": 21,
+        "overflow": [],
+        "boundValues": 492
+      },
+      {
+        "type": "assembly",
+        "html": "docs/smart-bottle-assembly-guide.html",
+        "pdf": "docs/smart-bottle-assembly-guide.pdf",
+        "values": "docs/smart-bottle-assembly-guide.values.json",
+        "pages": 9,
+        "overflow": [],
+        "boundValues": 14
+      }
+    ],
+    "files": [
+      "docs/smart-bottle-bom.json",
+      "docs/images/ag-hero.png",
+      "docs/images/ag-step-01-board.png",
+      "docs/images/ag-step-06-bottle.png",
+      "docs/images/ds-hero.png",
+      "docs/images/ds-interfaces.png",
+      "docs/images/ds-side.png",
+      "docs/images/ds-top.png",
+      "docs/images/part-adafruit-381-ds18b20-probe.png",
+      "docs/images/part-adi-max17048g-t10.png",
+      "docs/images/part-alps-skrtlae010.png",
+      "docs/images/part-as568-010-silicone.png",
+      "docs/images/part-as568-040-silicone.png",
+      "docs/images/part-as568-138-silicone.png",
+      "docs/images/part-bottle-battery-leads.png",
+      "docs/images/part-bottle-cap-board.png",
+      "docs/images/part-bottle-cap-enclosure.png",
+      "docs/images/part-bottle-probe-cable.png",
+      "docs/images/part-coilcraft-xfl4020-152me.png",
+      "docs/images/part-espressif-esp32-c3-mini-1-h4x.png",
+      "docs/images/part-gct-usb4720-03-a.png",
+      "docs/images/part-iso-7045-m2x6-a2.png",
+      "docs/images/part-kingbright-aptf1616lseezgkqbkc.png",
+      "docs/images/part-lipol-lp503450.png",
+      "docs/images/part-microchip-mcp73831t-2aci-mc.png",
+      "docs/images/part-murata-grm155.png",
+      "docs/images/part-murata-grm188.png",
+      "docs/images/part-nalgene-32oz-wide-mouth.png",
+      "docs/images/part-ruthex-rx-m2x4.png",
+      "docs/images/part-st-usblc6-2sc6.png",
+      "docs/images/part-st-vl53l4cdv0dh-1.png",
+      "docs/images/part-ti-lp5024rsm.png",
+      "docs/images/part-ti-tps63020dsjr.png",
+      "docs/images/part-yageo-rc0402.png",
+      "docs/images/viewer-3d-exploded.png",
+      "docs/images/viewer-3d-section.png",
+      "docs/images/viewer-3d.png",
+      "docs/images/viewer-board.png",
+      "docs/images/viewer-system.png",
+      "docs/test-data/battery-life.json"
+    ],
+    "standins": {
+      "written": [],
+      "kept": []
+    },
+    "figures": {
+      "rendered": 11,
+      "reused": 17
+    },
+    "fonts": true
+  },
+  "finishedAt": "2026-10-07T03:14:27.498Z"
+}

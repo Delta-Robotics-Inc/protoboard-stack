@@ -1,0 +1,55 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Record a regulator's supplier offers and lifecycle as sourcing evidence",
+  "skills": ["supplier-compare", "lifecycle-alternates", "sourcing-verify"],
+  "tags": ["sourcing", "evidence"],
+  "fixture": { "from": "fixture" },
+  "instruction": "We need to buy the ACME LDO3300-33SOT-TR regulators for the first build (docs/brief.md). The supplier and manufacturer pages we read are saved in inputs/ (there is no network access). Record what they show as the part's sourcing evidence, so that `npx protoboard check` reports no errors, and tell me whether we can buy enough and what the sourcing risks are. Do not place, prepare or quote an order, and do not accept any risk on anyone's behalf.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *", "npx tsx node_modules/@protoboardai/ext-sourcing/skills/*"] },
+  "budget": { "turns": 25, "seconds": 900, "usd": 3 },
+  "graders": [
+    { "id": "record-valid", "kind": "format", "file": "parts/evidence/acme-ldo3300-33/sourcing.json", "format": "json" },
+    {
+      "id": "check-clean",
+      "kind": "check",
+      "maxErrors": 0,
+      "absent": ["SRC_RECORD_INVALID", "SRC_OFFER_INCOMPLETE", "SRC_FORBIDDEN_FIELD", "SRC_CREDENTIAL_IN_URL", "SRC_PART_MISMATCH", "SRC_UNKNOWN_PART", "SRC_OFFER_MPN_MISMATCH", "SRC_LOW_STOCK", "SRC_NO_OFFER"],
+      "present": ["SRC_SINGLE_SOURCE"],
+      "ran": ["ext:@protoboardai/ext-sourcing/sourcing"],
+      "description": "only Distributor A is an authorized source with stock: the honest record leaves the single-source warning standing"
+    },
+    {
+      "id": "facts",
+      "kind": "facts",
+      "file": "parts/evidence/acme-ldo3300-33/sourcing.json",
+      "facts": [
+        { "path": "part", "equals": "acme-ldo3300-33" },
+        { "path": "mpn", "equals": "LDO3300-33SOT-TR" },
+        { "path": "need.quantity", "equals": 44 },
+        { "path": "offers[supplier~=^Distributor A\\b].stock", "equals": 4210 },
+        { "path": "offers[supplier~=^Distributor A\\b].authorized", "equals": true },
+        { "path": "offers[supplier~=^Distributor A\\b].as_of", "equals": "2026-09-28" },
+        { "path": "offers[supplier~=^Distributor A\\b].price_breaks[quantity=100].unit_price", "equals": 0.35 },
+        { "path": "offers[supplier~=^Distributor B\\b].stock", "equals": 0 },
+        { "path": "offers[supplier~=^Marketplace C\\b].authorized", "equals": false },
+        { "path": "lifecycle.status", "equals": "active" },
+        { "path": "lifecycle.source", "equals": "https://acme.example/products/ldo3300" },
+        { "path": "risks[code=single-source]", "exists": false }
+      ]
+    },
+    { "id": "risk-reported", "kind": "text", "matches": ["single[- ]source|only one (authorized )?(supplier|source|distributor)|one authorized"], "description": "the answer states the single-source risk instead of hiding it" },
+    { "id": "enough-stock", "kind": "text", "matches": ["4,?210", "\\b44\\b"], "notMatches": ["not enough|insufficient|(doesn't|does not|won't|will not|can't|cannot) cover|short of|too few"], "description": "the answer compares the stock (4,210) with the need (44) and does not conclude it falls short" },
+    { "id": "part-untouched", "kind": "digest", "file": "parts/local/acme-ldo3300-33.uhd.ts", "changed": false },
+    {
+      "id": "evidence-quality",
+      "kind": "rubric",
+      "files": ["parts/evidence/acme-ldo3300-33/sourcing.json"],
+      "rubric": "A sourcing record for ACME LDO3300-33SOT-TR built from saved pages. 1. Every offer names its supplier, URL, date read and how it was read (web). 2. Figures are copied as shown (stock, MOQ, packaging, price breaks with currency). 3. The marketplace seller is marked as not authorized. 4. The bulk ordering code (LDO3300-33SOT) is not mixed into this ordering code's offers; if recorded, it is an alternate with its difference stated. 5. Lifecycle comes from the manufacturer's page. 6. No order, cart, credential or invented risk acceptance appears."
+    }
+  ],
+  "solution": [
+    { "write": { "file": "parts/evidence/acme-ldo3300-33/sourcing.json", "from": "solution/sourcing.json" } },
+    { "protoboard": ["check"] },
+    { "say": "Recorded parts/evidence/acme-ldo3300-33/sourcing.json. We need 44 (2 × 20 + 4 spares); Distributor A has 4,210 in stock at 0.35 USD from 100, which covers it. Risk: single source. Distributor B is out of stock (16 weeks), Marketplace C is not an authorized seller, and Distributor E lists the bulk code LDO3300-33SOT (recorded as a family-variant alternate). Lifecycle: active per ACME. The single-source warning stands until someone accepts it." }
+  ]
+}

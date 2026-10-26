@@ -1,0 +1,69 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "meps-phase-leads-m4",
+    "config": "src/harnesses/meps-phase-leads-m4/cad.config.ts",
+    "configDigest": "sha256:1c943074cb17b25361d1a7936fdaf8b5fe090faa3e78e8ad81437d5aa332d903"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:03bd8a6dfd2b5cb78fd8b98cee829a24df4449d2b2882e2a7b1512e5451db0a0",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0"
+    }
+  ],
+  "startedAt": "2026-10-03T02:27:50.608Z",
+  "status": "succeeded",
+  "summary": "arm_fl_leads: body.glb, body.step and body.manifest.json in src/harnesses/meps-phase-leads-m4/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/meps-phase-leads-m4/out/body.glb",
+      "digest": "sha256:31d10eb130e1ba83dd634e163c81bccbdab70f2e35cce60aad365c963681df06",
+      "bytes": 206824,
+      "description": "arm_fl_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/meps-phase-leads-m4/out/body.step",
+      "digest": "sha256:457f10fbb98b5c11d34405a4f452d4795ae7e2823a348eefabfdfb7321d19f33",
+      "bytes": 2356149,
+      "description": "arm_fl_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/meps-phase-leads-m4/out/body.manifest.json",
+      "digest": "sha256:2de233f456c63d557cd53937919971ab68186682f10fbbc7db9d22cb7d040478",
+      "bytes": 4196,
+      "description": "arm_fl_leads: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "meps-phase-leads-m4",
+    "path": "arm_fl_leads",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 78,
+    "route_length_mm": 77.9,
+    "slack_mm": 8.32,
+    "bend_mm": {
+      "target": 8.79,
+      "minimum": 5.49,
+      "centreline": 8.27,
+      "conductors": 1.63,
+      "at_terminations": 2.29
+    },
+    "clearance_mm": 0.96,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T02:27:55.915Z"
+}

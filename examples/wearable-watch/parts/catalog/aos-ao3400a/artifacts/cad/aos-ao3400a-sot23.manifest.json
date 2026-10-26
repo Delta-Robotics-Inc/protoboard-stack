@@ -1,0 +1,86 @@
+{
+  "artifact": "aos-ao3400a-sot23",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "4e2fc588f83ba52c288a90011f00548489c8d35f8607831a3239adbda3d56462",
+  "units": "mm",
+  "volume_mm3": 5.025,
+  "bodies": {
+    "package": 4.866,
+    "lead_1": 0.053,
+    "lead_2": 0.053,
+    "lead_3": 0.053
+  },
+  "features": {
+    "package_top": {
+      "area_mm2": 4.514,
+      "centroid": [
+        0.011,
+        -0.028,
+        1.125
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "pin_1": {
+      "area_mm2": 0.18,
+      "centroid": [
+        -1.175,
+        0.95,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.18,
+      "centroid": [
+        -1.175,
+        -0.95,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_3": {
+      "area_mm2": 0.18,
+      "centroid": [
+        1.175,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 0.54,
+      "centroid": [
+        -0.392,
+        0.0,
+        0.0
+      ],
+      "faces": 3,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

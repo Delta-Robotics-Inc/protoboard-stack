@@ -1,0 +1,8 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboard-test/ext-demo",
+  "version": "0.1.0",
+  "description": "TEST FIXTURE: an extension that ships eval cases and nothing else.",
+  "compatibility": { "protoboard": "^0.2.0" },
+  "tools": [{ "id": "never-there", "purpose": "a tool no machine has", "probe": ["protoboard-test-no-such-command"], "install": "it cannot be installed" }]
+}

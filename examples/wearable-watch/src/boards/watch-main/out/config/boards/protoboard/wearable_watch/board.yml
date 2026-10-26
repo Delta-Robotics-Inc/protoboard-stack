@@ -1,0 +1,9 @@
+# Generated from the UHD model by @protoboardai/ext-zephyr. Do not edit.
+
+board:
+  name: wearable_watch
+  full_name: Watch main board
+  vendor: protoboard
+  socs:
+    # Nordic nRF52840 revision 2, aQFN-73
+    - name: nrf52840

@@ -1,0 +1,53 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "dolphinrc-xt60-battery-lead",
+    "config": "src/harnesses/dolphinrc-xt60-battery-lead/cad.config.ts",
+    "configDigest": "sha256:b35ac304d2eb9199b4e374a7e92b33b15a2009b4340c3a6b73f29210f76b7930",
+    "moduleDigest": "sha256:e0fb7c868f7b2e5c177688e967d78761704671ce693659b470013b83851cd639"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:83a9d628c2c4a9ca0bd3864e1443503749230cd30a179d7f6a90c181f0c40e66",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:24:01.974Z",
+  "status": "succeeded",
+  "summary": "xt60_lead: ok; routed in one run with 9 other cable(s) (run harness-cad)",
+  "outputs": [
+    {
+      "path": "src/harnesses/dolphinrc-xt60-battery-lead/harness-cad/route.json",
+      "digest": "sha256:6d446a6a6c71ea3027864b9469d86649d2faf735bd3c4bf45addfa5ca4d5203b",
+      "bytes": 15514,
+      "description": "xt60_lead: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "harnesses": [
+      {
+        "id": "dolphinrc-xt60-battery-lead",
+        "path": "xt60_lead",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.04
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-03T18:24:04.522Z"
+}

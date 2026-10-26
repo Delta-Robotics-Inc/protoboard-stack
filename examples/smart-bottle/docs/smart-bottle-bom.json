@@ -1,0 +1,665 @@
+[
+  {
+    "line": 1,
+    "partId": "adafruit-381-ds18b20-probe",
+    "name": "Adafruit 381 waterproof DS18B20 temperature probe",
+    "manufacturer": "Adafruit Industries",
+    "partNumber": "381 (ADA381)",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "probe"
+    ],
+    "source": "https://www.adafruit.com/product/381",
+    "verification": "not audited",
+    "assumptions": 4,
+    "openGaps": 5
+  },
+  {
+    "line": 2,
+    "partId": "adi-max17048g-t10",
+    "name": "ADI MAX17048 1-cell fuel gauge (TDFN-8)",
+    "manufacturer": "Analog Devices (Maxim Integrated)",
+    "partNumber": "MAX17048G+T10",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u6"
+    ],
+    "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 3,
+    "partId": "alps-skrtlae010",
+    "name": "Alps Alpine SKRTLAE010 side-push TACT switch",
+    "manufacturer": "Alps Alpine",
+    "partNumber": "SKRTLAE010",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/sw1"
+    ],
+    "source": "https://tech.alpsalpine.com/e/products/detail/SKRTLAE010/",
+    "verification": "not audited",
+    "assumptions": 3,
+    "openGaps": 3
+  },
+  {
+    "line": 4,
+    "partId": "as568-010-silicone",
+    "name": "AS568-010 O-ring, silicone 70A, FDA grade",
+    "manufacturer": "Generic (SAE AS568)",
+    "partNumber": "S70010 (The O-Ring Store); alternate Marco S1000-010",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "probe_oring"
+    ],
+    "source": "http://robots.engin.umich.edu/uploads/ORD5700.pdf",
+    "verification": "audited 17/17",
+    "assumptions": 1,
+    "openGaps": 4
+  },
+  {
+    "line": 5,
+    "partId": "as568-138-silicone",
+    "name": "AS568-138 O-ring, silicone 70A, FDA grade",
+    "manufacturer": "Generic (SAE AS568)",
+    "partNumber": "S70138 (The O-Ring Store, AS568-138 S70 FDA)",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "lip_oring"
+    ],
+    "source": "https://www.applerubber.com/src/pdf/as568-standard-size-o-rings.pdf",
+    "verification": "audited 35/38",
+    "assumptions": 2,
+    "openGaps": 5
+  },
+  {
+    "line": 6,
+    "partId": "coilcraft-xfl4020-152me",
+    "name": "Coilcraft XFL4020-152ME 1.5 µH Power Inductor",
+    "manufacturer": "Coilcraft",
+    "partNumber": "XFL4020-152ME",
+    "value": "1.5 µH ±20 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/l1"
+    ],
+    "source": "https://www.coilcraft.com/getmedia/50632d43-da1b-4cdb-8ab4-3029cab51df3/xfl4020.pdf",
+    "verification": "audited 16/17",
+    "assumptions": 2,
+    "openGaps": 4
+  },
+  {
+    "line": 7,
+    "partId": "espressif-esp32-c3-mini-1-h4x",
+    "name": "Espressif ESP32-C3-MINI-1-H4X module (PCB antenna, 4 MB flash)",
+    "manufacturer": "Espressif Systems",
+    "partNumber": "ESP32-C3-MINI-1-H4X",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u1"
+    ],
+    "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf",
+    "verification": "audited 23/25",
+    "assumptions": 3,
+    "openGaps": 5
+  },
+  {
+    "line": 8,
+    "partId": "gct-usb4720-03-a",
+    "name": "GCT USB4720-03-A USB-C receptacle (USB 2.0, IP67, mid-mount)",
+    "manufacturer": "GCT",
+    "partNumber": "USB4720-03-A",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/j1"
+    ],
+    "source": "https://gct.co/files/drawings/usb4720.pdf",
+    "verification": "audited 18/18",
+    "assumptions": 3,
+    "openGaps": 5
+  },
+  {
+    "line": 9,
+    "partId": "kingbright-aptf1616lseezgkqbkc",
+    "name": "Kingbright APTF1616LSEEZGKQBKC RGB LED (1.6 x 1.6 mm, common anode)",
+    "manufacturer": "Kingbright",
+    "partNumber": "APTF1616LSEEZGKQBKC",
+    "quantity": 8,
+    "buy": "purchase",
+    "usedBy": [
+      "board/d1",
+      "board/d2",
+      "board/d3",
+      "board/d4",
+      "board/d5",
+      "board/d6",
+      "board/d7",
+      "board/d8"
+    ],
+    "source": "https://www.kingbrightusa.com/images/catalog/SPEC/APTF1616LSEEZGKQBKC.pdf",
+    "assumptions": 1,
+    "openGaps": 3
+  },
+  {
+    "line": 10,
+    "partId": "lipol-lp503450",
+    "name": "LP503450 1000 mAh 3.7 V LiPo with PCM",
+    "manufacturer": "LiPoly Batteries Co., Ltd. (polybattery.com)",
+    "partNumber": "LP503450",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "cell"
+    ],
+    "source": "https://polybattery.com/product/1000mah-lipo-battery-lp503450-3-7-v-lithium-rechargeable-battery-cqc",
+    "verification": "audited 16/16",
+    "assumptions": 4,
+    "openGaps": 6
+  },
+  {
+    "line": 11,
+    "partId": "iso-7045-m2x6-a2",
+    "name": "M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless",
+    "manufacturer": "Generic (ISO 7045 / DIN 7985 Z)",
+    "partNumber": "SPP-M2-6-A2",
+    "quantity": 4,
+    "buy": "purchase",
+    "usedBy": [
+      "board_hardware/screws"
+    ],
+    "source": "https://www.accu.co.uk/pozi-pan-head-screws/9242-SPP-M2-6-A2",
+    "verification": "not audited",
+    "assumptions": 2,
+    "openGaps": 4
+  },
+  {
+    "line": 12,
+    "partId": "microchip-mcp73831t-2aci-mc",
+    "name": "Microchip MCP73831 Li-ion charger, 4.20 V (2x3 DFN-8)",
+    "manufacturer": "Microchip Technology",
+    "partNumber": "MCP73831T-2ACI/MC",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u5"
+    ],
+    "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP73831-Family-Data-Sheet-DS20001984H.pdf",
+    "verification": "not audited",
+    "assumptions": 3,
+    "openGaps": 5
+  },
+  {
+    "line": 13,
+    "partId": "murata-grm155",
+    "name": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM155R61A105KE15D",
+    "value": "1 µF ±10 %",
+    "quantity": 3,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c3",
+      "board/c6",
+      "board/c7"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71C104KA88-01A.pdf",
+    "verification": "audited 10/10",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 14,
+    "partId": "murata-grm155",
+    "name": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM155R71C104KA88D",
+    "value": "100 nF ±10 %",
+    "quantity": 4,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c2",
+      "board/c5",
+      "board/c9",
+      "board/c15"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71C104KA88-01A.pdf",
+    "verification": "audited 10/10",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 15,
+    "partId": "murata-grm188",
+    "name": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM188R61A106ME69D",
+    "value": "10 µF ±20 %",
+    "quantity": 4,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c1",
+      "board/c4",
+      "board/c8",
+      "board/c14"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf",
+    "verification": "audited 8/8",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 16,
+    "partId": "murata-grm188",
+    "name": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM188R61A226ME15D",
+    "value": "22 µF ±20 %",
+    "quantity": 3,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c10",
+      "board/c11",
+      "board/c12"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf",
+    "verification": "audited 8/8",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 17,
+    "partId": "murata-grm188",
+    "name": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM188R61E106MA73D",
+    "value": "10 µF ±20 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c13"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf",
+    "verification": "audited 8/8",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 18,
+    "partId": "nalgene-32oz-wide-mouth",
+    "name": "Nalgene 32oz Wide Mouth Bottle, Tritan Renew",
+    "manufacturer": "Nalgene",
+    "partNumber": "2020-3732 (Clear; most colours 2020-xx32, gray-black 682021-0333)",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "bottle"
+    ],
+    "source": "https://nalgene.com/product/32oz-wide-mouth-bottle/",
+    "verification": "not audited",
+    "assumptions": 7,
+    "openGaps": 5
+  },
+  {
+    "line": 19,
+    "partId": "as568-040-silicone",
+    "name": "O-ring AS568-040, silicone 70A (72.75 x 1.78 mm)",
+    "manufacturer": "Generic (SAE AS568)",
+    "partNumber": "S1000-040 (Marco Sealing Solutions, AS568-040 silicone 70A, FDA)",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "lid_oring"
+    ],
+    "source": "https://www.macroseal.com/pdf/Parker%20O-rings.pdf",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 20,
+    "partId": "ruthex-rx-m2x4",
+    "name": "ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm",
+    "manufacturer": "ruthex",
+    "partNumber": "GE-M2x04-001",
+    "quantity": 4,
+    "buy": "purchase",
+    "usedBy": [
+      "cap/inserts"
+    ],
+    "source": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+    "verification": "audited 21/21",
+    "assumptions": 1,
+    "openGaps": 3
+  },
+  {
+    "line": 21,
+    "partId": "st-usblc6-2sc6",
+    "name": "ST USBLC6-2SC6 USB ESD Protection (SOT23-6L)",
+    "manufacturer": "STMicroelectronics",
+    "partNumber": "USBLC6-2SC6",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/d9"
+    ],
+    "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+    "verification": "not audited",
+    "assumptions": 2,
+    "openGaps": 5
+  },
+  {
+    "line": 22,
+    "partId": "st-vl53l4cdv0dh-1",
+    "name": "ST VL53L4CD time-of-flight sensor (VL53L4CDV0DH/1, Optical LGA12)",
+    "manufacturer": "STMicroelectronics",
+    "partNumber": "VL53L4CDV0DH/1",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u2"
+    ],
+    "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 23,
+    "partId": "ti-lp5024rsm",
+    "name": "TI LP5024 24-channel I2C RGB LED driver (VQFN-32)",
+    "manufacturer": "Texas Instruments",
+    "partNumber": "LP5024RSMR",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u3"
+    ],
+    "source": "https://www.ti.com/lit/ds/symlink/lp5024.pdf",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 24,
+    "partId": "ti-tps63020dsjr",
+    "name": "TI TPS63020DSJR buck-boost converter",
+    "manufacturer": "Texas Instruments",
+    "partNumber": "TPS63020DSJR",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u4"
+    ],
+    "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf",
+    "verification": "audited 20/20",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 25,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-07100KL",
+    "value": "100 kΩ ±1 %",
+    "quantity": 3,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r9",
+      "board/r15",
+      "board/r18"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 26,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-0710KL",
+    "value": "10 kΩ ±1 %",
+    "quantity": 6,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r1",
+      "board/r2",
+      "board/r5",
+      "board/r6",
+      "board/r8",
+      "board/r16"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 27,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-0714K7L",
+    "value": "14.7 kΩ ±1 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r10"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 28,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-07180KL",
+    "value": "180 kΩ ±1 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r12"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 29,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-071ML",
+    "value": "1 MΩ ±1 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r11"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 30,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-073K3L",
+    "value": "3.3 kΩ ±1 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r13"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 31,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-074K7L",
+    "value": "4.7 kΩ ±1 %",
+    "quantity": 3,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r3",
+      "board/r4",
+      "board/r7"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 32,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-075K1L",
+    "value": "5.1 kΩ ±1 %",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r19",
+      "board/r20"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 33,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-0768KL",
+    "value": "68 kΩ ±1 %",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r14",
+      "board/r17"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 34,
+    "partId": "bottle-cap-board",
+    "name": "Bottle cap board",
+    "quantity": 1,
+    "buy": "fabricate",
+    "usedBy": [
+      "board"
+    ],
+    "assumptions": 3,
+    "openGaps": 0
+  },
+  {
+    "line": 35,
+    "partId": "bottle-cap-enclosure",
+    "name": "Bottle cap housing",
+    "quantity": 1,
+    "buy": "fabricate",
+    "usedBy": [
+      "cap"
+    ],
+    "assumptions": 0,
+    "openGaps": 0
+  },
+  {
+    "line": 36,
+    "partId": "bottle-battery-pads",
+    "name": "Cell lead pads (2 × Ø2.0 mm)",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "bottle-cap-board",
+    "usedBy": [
+      "board/jbat"
+    ],
+    "assumptions": 1,
+    "openGaps": 0
+  },
+  {
+    "line": 37,
+    "partId": "bottle-battery-leads",
+    "name": "Cell leads",
+    "manufacturer": "LiPoly Batteries Co., Ltd.",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "lipol-lp503450",
+    "usedBy": [
+      "battery_leads"
+    ],
+    "assumptions": 1,
+    "openGaps": 0
+  },
+  {
+    "line": 38,
+    "partId": "bottle-probe-cable",
+    "name": "Probe cable",
+    "manufacturer": "Adafruit Industries",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "adafruit-381-ds18b20-probe",
+    "usedBy": [
+      "probe_cable"
+    ],
+    "source": "https://www.adafruit.com/product/381",
+    "assumptions": 1,
+    "openGaps": 0
+  },
+  {
+    "line": 39,
+    "partId": "bottle-probe-pads",
+    "name": "Probe wire pads (3 × Ø1.8 mm)",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "bottle-cap-board",
+    "usedBy": [
+      "board/jprb"
+    ],
+    "assumptions": 1,
+    "openGaps": 0
+  },
+  {
+    "line": 40,
+    "partId": "bottle-test-pad",
+    "name": "Test pad (Ø1.2 mm)",
+    "quantity": 6,
+    "buy": "included",
+    "includedWith": "bottle-cap-board",
+    "usedBy": [
+      "board/tp_rxd",
+      "board/tp_txd",
+      "board/tp_boot",
+      "board/tp_en",
+      "board/tp_3v3",
+      "board/tp_gnd"
+    ],
+    "assumptions": 1,
+    "openGaps": 0
+  }
+]

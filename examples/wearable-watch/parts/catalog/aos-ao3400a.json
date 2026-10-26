@@ -1,0 +1,690 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "AOS AO3400A datasheet Rev 3.1",
+      "type": "datasheet",
+      "url": "https://www.aosmd.com/res/datasheets/AO3400A.pdf"
+    },
+    {
+      "id": "art_package",
+      "name": "AOS SOT23 package outline PO-00001",
+      "type": "documentation",
+      "url": "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf"
+    },
+    {
+      "id": "art_product",
+      "name": "AOS AO3400A product page",
+      "type": "documentation",
+      "url": "https://www.aosmd.com/products/mosfets/low-voltage-mosfets-12v-30v/ao3400a"
+    },
+    {
+      "id": "art_marking",
+      "name": "AOS AO3400A marking description PD-00659",
+      "type": "documentation",
+      "url": "https://www.aosmd.com/sites/default/files/res/markings/AO3400A.pdf"
+    },
+    {
+      "filePath": "library/cad/py/catalog/aos-ao3400a.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "aos-ao3400a-sot23 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/aos-ao3400a/artifacts/cad/aos-ao3400a-sot23.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "aos-ao3400a-sot23 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/aos-ao3400a/artifacts/cad/aos-ao3400a-sot23.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "aos-ao3400a-sot23 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/aos-ao3400a/artifacts/cad/aos-ao3400a-sot23.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "aos-ao3400a-sot23 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/aos-ao3400a/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "component.discrete.transistor"
+  ],
+  "description": "Alpha & Omega AO3400A trench N-channel enhancement MOSFET in a 3-lead SOT23: VDS 30 V, VGS ±12 V, 5.7 A continuous (TA 25 C), 30 A pulsed, RDS(ON) below 26.5 mOhm at VGS 10 V, 32 mOhm at 4.5 V and 48 mOhm at 2.5 V, VGS(th) 0.65-1.45 V, 1.4 W at TA 25 C. A logic-level load switch or PWM switch.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "device": "N-channel enhancement MOSFET (trench), with body diode",
+        "esd_diode": false,
+        "id_continuous_A": {
+          "ta_25C": 5.7,
+          "ta_70C": 4.7
+        },
+        "id_pulsed_A": 30,
+        "idss_uA": {
+          "max_25C": 1,
+          "max_tj_55C": 5
+        },
+        "igss_nA_max": 100,
+        "pd_W": {
+          "ta_25C": 1.4,
+          "ta_70C": 0.9
+        },
+        "rds_on_mOhm": {
+          "vgs_10V_id_5p7A": {
+            "max": 26.5,
+            "typ": 18
+          },
+          "vgs_10V_tj_125C": {
+            "max": 38,
+            "typ": 28
+          },
+          "vgs_2p5V_id_3A": {
+            "max": 48,
+            "typ": 24
+          },
+          "vgs_4p5V_id_5A": {
+            "max": 32,
+            "typ": 19
+          }
+        },
+        "source": [
+          "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1, p.2)",
+          "https://www.aosmd.com/products/mosfets/low-voltage-mosfets-12v-30v/ao3400a (parametrics)"
+        ],
+        "vds_max_V": 30,
+        "vgs_max_V": 12,
+        "vgs_th_V": [
+          0.65,
+          1.05,
+          1.45
+        ]
+      }
+    },
+    {
+      "dimensions_mm": {
+        "height": 1.25,
+        "length": 2.9,
+        "width": 2.8
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "body_mm": "D 2.80-3.10 x E1 1.40-1.80; lead span E 2.60-3.00; height A 0.85-1.25; standoff A1 0-0.15",
+        "dimensions_note": "length along the lead rows (body D, nominal), width across the leads (span E, nominal), height is the drawing maximum A",
+        "marking": "X0 + year/week + assembly location; lot code (PD-00659)",
+        "mounting_method": "surface_mount",
+        "msl": "1 (J-STD-020)",
+        "source": [
+          "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf",
+          "https://www.aosmd.com/sites/default/files/res/markings/AO3400A.pdf",
+          "https://www.aosmd.com/sites/default/files/res/reliability_reports/AO3400A.pdf",
+          "https://www.aosmd.com/products/mosfets/low-voltage-mosfets-12v-30v/ao3400a"
+        ]
+      },
+      "package": {
+        "code": "AOS PO-00001",
+        "exposed_pad": false,
+        "name": "SOT23",
+        "pin_count": 3,
+        "pitch_mm": 0.95,
+        "source": "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf (PO-00001 version N: D 2.80/2.90/3.10, E 2.60/2.80/3.00, E1 1.40/1.60/1.80, A 0.85-1.25, e 0.95 BSC, e1 1.90 BSC); https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1 SOT23 view)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "rtheta_ja_C_per_W": {
+          "steady_state": {
+            "max": 125,
+            "typ": 100
+          },
+          "t_le_10s": {
+            "max": 90,
+            "typ": 70
+          }
+        },
+        "rtheta_jl_C_per_W": {
+          "max": 80,
+          "typ": 63
+        },
+        "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1 thermal characteristics, notes A, D)",
+        "temperature_note": "The datasheet gives the junction and storage range (TJ, TSTG -55 to 150 C) only; no separate ambient range.",
+        "test_board": "1 in2 FR-4, 2 oz copper, still air, TA 25 C"
+      },
+      "operating_temperature_C": [
+        -55,
+        150
+      ]
+    }
+  ],
+  "id": "aos-ao3400a",
+  "interfaces": [
+    {
+      "capabilities": [
+        "digital_io",
+        "mosfet_gate",
+        "pwm_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                -1.175,
+                0.95,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "G",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            -12,
+            12
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "pwm"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "G — gate (N-channel MOSFET symbol, p.1); lead next to the pin-1 dot in the SOT23 top view.",
+            "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1 SOT23 top/bottom view and symbol); numbers https://components101.com/mosfets/ao3400a-n-channel-mosfet-pinout-datasheet"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "VGS ±12 V absolute maximum (to S). VGS(th) 0.65 / 1.05 / 1.45 V (min / typ / max) at VDS = VGS, ID 250 uA. RDS(ON) max 48 mOhm at VGS 2.5 V (ID 3 A), 32 mOhm at 4.5 V (5 A), 26.5 mOhm at 10 V (5.7 A), so a 3.0-3.3 V logic output switches it fully on. IGSS 100 nA max at ±12 V. Ciss 630 pF, Rg 1.5-4.5 Ohm, Qg 6 typ / 7 max nC at 4.5 V. No ESD protection diode on the gate.",
+            "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1, p.2)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "mosfet_source"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                -1.175,
+                -0.95,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "S",
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "S — source (N-channel MOSFET symbol, p.1); anode of the body diode.",
+            "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1 SOT23 top/bottom view and symbol); numbers https://components101.com/mosfets/ao3400a-n-channel-mosfet-pinout-datasheet"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "mosfet_drain"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_3",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                1.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_3",
+      "name": "D",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            30
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 5.7
+        },
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 30
+        }
+      ],
+      "pin": 3,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "D — drain (N-channel MOSFET symbol, p.1); cathode of the body diode; the single lead on the far side in the SOT23 top view.",
+            "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1 SOT23 top/bottom view and symbol); numbers https://components101.com/mosfets/ao3400a-n-channel-mosfet-pinout-datasheet"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "VDS 30 V absolute maximum (BVDSS 30 V min). ID 5.7 A continuous at TA 25 C, 4.7 A at TA 70 C; IDM 30 A pulsed (repetitive, pulse width limited by TJ 150 C); ID(ON) 30 A min at VGS 4.5 V. Continuous ratings assume 1 in2 2 oz FR-4 copper; a smaller pad dissipates less. IDSS 1 uA max at VDS 30 V (5 uA at TJ 55 C).",
+            "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1, p.2, notes A-C)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 0.54,
+              "centroid": [
+                -0.392,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "SOT23 leads (SMD)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "sot23_3",
+            "note": "3 gull-wing leads: pins 1 and 2 1.90 mm apart (e1) on one side, pin 3 centred on the other (e 0.95). Lead width 0.30-0.50, thickness 0.08-0.20, foot 0.30-0.60 mm (gauge plane); body 2.80-3.10 x 1.40-1.80 mm, span 2.60-3.00 mm, height 0.85-1.25 mm, standoff 0-0.15 mm; no exposed pad. MSL 1 (260 C reflow).",
+            "source": [
+              "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf (PO-00001)",
+              "https://www.aosmd.com/sites/default/files/res/reliability_reports/AO3400A.pdf (note A)"
+            ]
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Alpha & Omega Semiconductor",
+  "name": "AOS AO3400A 30 V N-channel MOSFET (SOT23)",
+  "part_number": "AO3400A",
+  "tags": [
+    "ao3400a",
+    "aos",
+    "alpha-omega",
+    "mosfet",
+    "n-channel",
+    "logic-level",
+    "load-switch",
+    "sot-23",
+    "sot23",
+    "discrete",
+    "transistor"
+  ],
+  "traits": [
+    {
+      "params": {
+        "id_continuous_A": {
+          "ta_25C": 5.7,
+          "ta_70C": 4.7
+        },
+        "id_pulsed_A": 30,
+        "junction_and_storage_temperature_C": [
+          -55,
+          150
+        ],
+        "note": "TA 25 C unless noted. PD is based on TJ(MAX) 150 C and the t <= 10 s RthJA; IDM is repetitive, pulse width limited by TJ(MAX).",
+        "pd_W": {
+          "ta_25C": 1.4,
+          "ta_70C": 0.9
+        },
+        "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1 absolute maximum ratings, notes B, C)",
+        "vds_V": 30,
+        "vgs_V": [
+          -12,
+          12
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "gate_drive_specified_V": [
+          2.5,
+          4.5,
+          10
+        ],
+        "junction_temperature_C": [
+          -55,
+          150
+        ],
+        "note": "No recommended-operating table; RDS(ON) is specified at VGS 2.5, 4.5 and 10 V, characteristics at TJ 25 C.",
+        "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1, p.2)"
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "body_diode": {
+          "is_max_A": 2,
+          "qrr_nC": 2.6,
+          "trr_ns": 8.5,
+          "vsd_V": {
+            "at_is_A": 1,
+            "max": 1,
+            "typ": 0.7
+          }
+        },
+        "capacitance_pF": {
+          "ciss": 630,
+          "conditions": "VGS 0 V, VDS 15 V, 1 MHz",
+          "coss": 75,
+          "crss": 50
+        },
+        "gate_charge_nC": {
+          "conditions": "VGS 4.5 V, VDS 15 V, ID 5.7 A",
+          "qg_max": 7,
+          "qg_typ": 6,
+          "qgd": 1.8,
+          "qgs": 1.3
+        },
+        "gate_resistance_ohm": [
+          1.5,
+          3,
+          4.5
+        ],
+        "gfs_S": 33,
+        "kind": "mosfet",
+        "polarity": "N-channel",
+        "rds_on_max_mOhm": {
+          "vgs_10V": 26.5,
+          "vgs_2p5V": 48,
+          "vgs_4p5V": 32
+        },
+        "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.2 electrical characteristics)",
+        "switching_ns": {
+          "conditions": "VGS 10 V, VDS 15 V, RL 2.6 Ohm, RGEN 3 Ohm",
+          "td_off": 25,
+          "td_on": 3,
+          "tf": 4,
+          "tr": 2.5
+        },
+        "vgs_th_V": [
+          0.65,
+          1.05,
+          1.45
+        ]
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Suitable as a load switch or in PWM applications. Power dissipation is ID^2 x RDS(ON) plus switching loss; TJ = TA + RthJA x PD with RthJA 100 typ / 125 max C/W steady state on 1 in2 of 2 oz copper.",
+        "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf (p.1 general description, thermal characteristics)",
+        "topic": "application"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Order the AOS part: JLCPCB C20917 (basic part, 1,535,925 in stock on 2026-10-02 through the jlcsearch mirror) lists values that match this datasheet. Other catalog rows named AO3400A (for example C347475, C344010, C700953) state different RDS(ON), capacitance and thresholds and are second-source devices. AO3400 (no A) is a different AOS part with different ratings (5.8 A, RDS(ON) < 28 / 33 / 52 mOhm at 10 / 4.5 / 2.5 V). AO3400AL carries the same marking code X0.",
+        "source": [
+          "https://jlcsearch.tscircuit.com/components/list.json?search=AO3400A",
+          "https://www.aosmd.com/sites/default/files/res/markings/AO3400A.pdf",
+          "https://www.aosmd.com/res/datasheets/AO3400.pdf (AO3400 Rev 8, p.1)"
+        ],
+        "topic": "variant"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "pin numbers",
+        "reason": "AOS documents name the leads and put the pin-1 dot at G (datasheet p.1) but print no numbers. The numbers come from a community pinout page and match the dot and counter-clockwise SOT-23 numbering (pins 1 and 2 on one side, pin 3 opposite).",
+        "source": [
+          "https://www.aosmd.com/res/datasheets/AO3400A.pdf",
+          "https://components101.com/mosfets/ao3400a-n-channel-mosfet-pinout-datasheet"
+        ],
+        "value": "pin 1 = G, pin 2 = S, pin 3 = D"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "marking code",
+        "resolution": "X0, from the AOS marking description; the community page is used only for pin numbers.",
+        "sources": [
+          "https://www.aosmd.com/sites/default/files/res/markings/AO3400A.pdf",
+          "https://components101.com/mosfets/ao3400a-n-channel-mosfet-pinout-datasheet"
+        ],
+        "values": [
+          "X0",
+          "A09T"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "recommended gate drive range",
+        "note": "The datasheet has no recommended-operating table; the gate pin's voltage range is the ±12 V absolute maximum.",
+        "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "operating ambient temperature",
+        "note": "Only the junction and storage range TJ, TSTG -55 to 150 C is given; thermal.operating_temperature_C carries that range. The allowed ambient depends on dissipation and RthJA.",
+        "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "mass",
+        "note": "Not stated in the datasheet, package outline, product page or reliability report.",
+        "source": [
+          "https://www.aosmd.com/res/datasheets/AO3400A.pdf",
+          "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf",
+          "https://www.aosmd.com/products/mosfets/low-voltage-mosfets-12v-30v/ao3400a",
+          "https://www.aosmd.com/sites/default/files/res/reliability_reports/AO3400A.pdf"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "The AOS product page offers datasheet, marking, reliability report, SOT23 package outline and tape & reel documents but no 3D model. Distributor ECAD portals were not used: their terms do not clearly permit redistribution. Geometry is generated from AOS PO-00001 (library/cad/py/catalog/aos-ao3400a.py).",
+        "source": [
+          "https://www.aosmd.com/products/mosfets/low-voltage-mosfets-12v-30v/ao3400a",
+          "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "CAD package dimensions",
+        "reason": "PO-00001 gives only limits for A1 and L, no shoulder height or pin-1 mark size, and a 0-8 degree foot angle; the representative model needs single values.",
+        "source": "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf",
+        "value": "nominal values (body D 2.90 x E1 1.60, span E 2.80, lead b 0.40 x c 0.13, foot L 0.45, body thickness A2 1.05); body underside 0.075 mm above the seating plane (A1 midpoint), top at 1.125 mm; lead shoulder top 0.55 mm; square lead bends; pin-1 dimple 0.4 mm"
+      },
+      "type": "assumption"
+    }
+  ],
+  "version": "1.0.0"
+}

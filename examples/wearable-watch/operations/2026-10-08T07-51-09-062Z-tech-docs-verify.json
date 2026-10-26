@@ -1,0 +1,99 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs-verify",
+  "extension": {
+    "id": "@protoboardai/ext-docs",
+    "version": "0.1.4"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:c7667acc8702a55a281643703a655d95c09d2abc37027c2e8b12b965d5921ab6",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 155.0.8059.39 (/usr/bin/google-chrome)"
+    },
+    {
+      "id": "poppler",
+      "available": true,
+      "detail": "pdfinfo version 24.02.0"
+    }
+  ],
+  "startedAt": "2026-10-08T07:51:09.062Z",
+  "status": "succeeded",
+  "summary": "0 error(s), 0 warning(s), 10 info",
+  "outputs": [
+    {
+      "path": "docs/.review/verify-report.json",
+      "digest": "sha256:b446a13eca679b9d8c6bdeafc9f0932ba283d8c06264440ab0c1081a5954dd30",
+      "bytes": 1829,
+      "description": "verification report"
+    }
+  ],
+  "data": {
+    "findings": [
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "values",
+        "severity": "info",
+        "message": "577 bound values re-resolved against the model"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "images",
+        "severity": "info",
+        "message": "4 images checked"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "review",
+        "severity": "info",
+        "message": "26 page PNGs in docs/.review/wearable-watch-datasheet/ for the visual checklist"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "bom",
+        "severity": "info",
+        "message": "45 BOM lines match docs/wearable-watch-bom.json"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "values",
+        "severity": "info",
+        "message": "20 bound values re-resolved against the model"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "images",
+        "severity": "info",
+        "message": "27 images checked"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "review",
+        "severity": "info",
+        "message": "12 page PNGs in docs/.review/wearable-watch-assembly-guide/ for the visual checklist"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 12, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "coverage",
+        "severity": "info",
+        "message": "7/7 mates, 8/8 hardware placements, 4/4 wiring links covered; 6 bodies placed by mates"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-08T07:51:14.490Z"
+}

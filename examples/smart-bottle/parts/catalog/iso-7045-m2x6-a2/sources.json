@@ -1,0 +1,81 @@
+[
+  {
+    "id": "src_product",
+    "title": "M2 x 6mm Pozi Pan Head Screws (DIN 7985Z / ISO 7045) - Stainless Steel (A2), Accu (SPP-M2-6-A2)",
+    "url": "https://www.accu.co.uk/pozi-pan-head-screws/9242-SPP-M2-6-A2",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:05:00Z",
+    "sha256": "070d77b58bf6bdeed9a20c967443f532d8fb043072244a8a425366e8e092325d",
+    "supports": [
+      "Accu Product Code SPP-M2-6-A2",
+      "thread M2, pitch 0.4 mm, length (L) 6 mm",
+      "head diameter (D) 4 mm +0/-0.3",
+      "head height (H) 1.72 mm +0/-0.26",
+      "drive PZ0",
+      "DIN 7985Z / ISO 7045",
+      "Stainless Steel (A2), finish natural",
+      "weight 19 g per 100 units",
+      "3D CAD (STL/STP/IGS) behind an account login"
+    ],
+    "note": "The page answers direct requests with a Cloudflare challenge (HTTP 403), so the text was captured through the r.jina.ai reader; sha256 is of that text capture. Accu is the supplier of record named in the watch and bottle briefs; it stocks the standard part. Standard part: dimensions per ISO 7045 / DIN 7985 Z; Accu's product code is kept as part_number."
+  },
+  {
+    "id": "src_spec",
+    "title": "Accu Technical Data Sheet, SPP-M2-6-A2: M2 x 6mm Pozi Pan Head Screws (DIN 7985Z / ISO 7045) - Stainless Steel (A2)",
+    "url": "https://www.accu.co.uk/api/product-datasheet?id=9242",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:07:00Z",
+    "sha256": "6b126f0842ad2b41ca97d61a7477e3d34a1fb84d2b93cd719cc5a250fac1bf1e",
+    "supports": [
+      "same specification table as the product page",
+      "drawing: ØD, H, L (L under the head), fully threaded shank",
+      "RoHS and REACH certified, certificate of conformity included"
+    ],
+    "note": "The 'Download Tech Spec' link on the product page (one-page PDF). Supplier's datasheet for the standard part."
+  },
+  {
+    "id": "src_iso",
+    "title": "ISO 7045:1994(E) Pan head screws with type H or type Z cross recess - Product grade A (iTeh Standards preview)",
+    "url": "https://cdn.standards.iteh.ai/samples/13608/caed16a7f73145ffab7712aa5196142c/ISO-7045-1994.pdf",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:10:00Z",
+    "sha256": "a106c068f2f7ad281f676425b5f20087a6ae52a3004013b5036d6c964964c412",
+    "supports": [
+      "Figure 1: pan head form, dimension symbols, type Z recess",
+      "Table 1 M2: P 0.4, a max 0.8, b min 25, da max 2.6, dk 4.0 max / 3.7 min, k 1.60 max / 1.46 min, r min 0.1, rf approx. 3.2, x max 1",
+      "Table 1 M2: recess No. 0; type Z m ref 2.1, penetration 1.42 max / 1.17 min",
+      "Table 1: l = 6 is 5.76-6.24; M2 x 6 is above the dotted line, so threaded up to the head (b = l - a)",
+      "Table 1: approximate mass 0.233 kg per 1000 pieces (steel, 7.85 kg/dm3), for information only"
+    ],
+    "note": "The standard's own text, served as a free preview by iTeh Standards (a standards reseller). This is the 1994 second edition; ISO 7045:2011 is current. The 2011 edition was not fetched, so its M2 values are taken to be the same (assumption trait on the part)."
+  },
+  {
+    "id": "src_farnell",
+    "title": "Metric Pan head machine screws - PoziDriv, DIN 7985 / BS 4183 / ISO 7045 (Farnell datasheet 11792)",
+    "url": "https://www.farnell.com/datasheets/11792.pdf",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:10:00Z",
+    "sha256": "5542730cbc4c0588b19dbf1afd0019a756035ffc46d4a282bd77e71bbf9b2e5e",
+    "supports": [
+      "M2: D nom 4, recess No. 0",
+      "M2 head H max: DIN 1.7, ISO 1.6 (explains Accu's 1.72 mm head)",
+      "M2 x 6 offered in steel only in this range (corroboration of size, not of the Accu part)"
+    ],
+    "note": "Corroborating distributor table. Used only for the DIN 7985 vs ISO 7045 head height difference."
+  },
+  {
+    "id": "src_material",
+    "title": "Stainless Steel 304 - 1.4301 Data Sheet, thyssenkrupp Materials (UK)",
+    "url": "https://www.thyssenkrupp-materials.co.uk/stainless-steel-304-14301.html",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:14:00Z",
+    "sha256": "ecfca8b503df8018b022cbb416c7d0a8032e0206de07b845172d4597f2650a56",
+    "supports": ["304 / 1.4301 density 8,000 kg/m3", "applications include screws, nuts and bolts"],
+    "note": "Density for the material record (A2 is the 304 / 1.4301 family). Same source as iso-4762-m3x30-socket-head-cap-screw."
+  }
+]

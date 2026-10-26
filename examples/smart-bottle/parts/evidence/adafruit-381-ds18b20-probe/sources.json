@@ -1,0 +1,80 @@
+[
+  {
+    "id": "src_product",
+    "title": "Adafruit product 381: Waterproof 1-Wire DS18B20 Digital temperature sensor (product page: Description, Technical Details)",
+    "url": "https://www.adafruit.com/product/381",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:38:00Z",
+    "sha256": "a83e82ce49df7624923269efd76289e96c2c47f5a7970eab337130b2feb6902b",
+    "supports": [
+      "identity: pre-wired, waterproofed (with heat shrink) DS18B20 sensor; genuine Maxim DS18B20 tested since January 2021",
+      "Cable specs: stainless steel tube 6 mm diameter by 30 mm long; cable 36 in / 91 cm long, 4 mm diameter; PVC jacket, keep under 100 C",
+      "wiring: three wires red 3-5 V, blue/black ground, yellow/white data; four-wire version red 3-5 V, black ground, white data, copper wire soldered to the shielding",
+      "4.7k resistor supplied, required as a pull-up from DATA to VCC",
+      "usable temperature range -55 to 125 C; +-0.5 C from -10 to +85 C; 9 to 12 bit resolution; query time less than 750 ms; usable with 3.0-5.5 V power/data (description: 3.0-5.0 V systems)",
+      "not for salt water or corrosive environments; not IP rated; not guaranteed for long-term or high-pressure use",
+      "links the DS18B20 datasheet (https://cdn-shop.adafruit.com/datasheets/DS18B20.pdf)"
+    ]
+  },
+  {
+    "id": "src_product_api",
+    "title": "Adafruit product API record for product 381 (JSON)",
+    "url": "https://www.adafruit.com/api/product/381",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:41:00Z",
+    "sha256": "2db506864a8e7604675a5370511d769df5ede373c7196e8173c5fa5ea7ab40d7",
+    "supports": [
+      "product_mpn ADA381",
+      "product_shipping_weight 27.2 (g, shipping weight, packaging and resistor included)",
+      "country of origin CN",
+      "discontinue_status None (current)"
+    ]
+  },
+  {
+    "id": "src_photos",
+    "title": "Adafruit product 381 photos 381-01.jpg and 381-02.jpg (970 x 728)",
+    "url": "https://cdn-shop.adafruit.com/970x728/381-02.jpg",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:42:00Z",
+    "sha256": "2fbf755035cb933aa3bbd5640755f4f893d1827db6309f260a459dc8ff6c2d5c",
+    "supports": [
+      "381-02.jpg (sha256 above): top view with the 4.7k resistor and a US quarter; tube, heat-shrink sleeve and cable proportions measured in px, scaled by the 6 mm tube (25 px) and the 4 mm cable (16 px), about 0.245 mm/px",
+      "381-01.jpg (https://cdn-shop.adafruit.com/970x728/381-01.jpg, sha256 dc4e44c3079ca784e3195c4d4a4896cfc73c1a37e146b67ccb727a3ab63e64f8): three-wire build, red, blue and yellow wires, jacket stripped back, stranded copper ends stripped and untinned",
+      "two-step heat shrink: a sleeve about the tube diameter behind the exposed stainless, then a narrower one over the cable"
+    ]
+  },
+  {
+    "id": "src_datasheet",
+    "title": "Maxim Integrated (Analog Devices) DS18B20 Programmable Resolution 1-Wire Digital Thermometer, 19-7487 Rev 6, 7/19",
+    "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/DS18B20.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:40:00Z",
+    "sha256": "066c8a3c7e9222c49e84488840d5cfe9dd109cf0da6ab4a55480cebac8f97f76",
+    "supports": [
+      "Absolute Maximum Ratings: any pin -0.5 to +6.0 V; operating and storage -55 to +125 C",
+      "DC Electrical Characteristics: VDD 3.0-5.5 V (local and parasite power); VPU 3.0 V to VDD (local power); thermometer error +-0.5 C (-10 to +85 C), +-1 C (-30 to +100 C), +-2 C (-55 to +125 C); VIL -0.3 to 0.8 V; VIH 2.2 V (local power) to the lower of 5.5 V or VDD + 0.3 V; sink current 4.0 mA min at 0.4 V; standby 750 nA typ, 1000 nA max; active 1 mA typ, 1.5 mA max (VDD = 5 V); DQ input current 5 uA typ; drift +-0.2 C",
+      "AC Electrical Characteristics: tCONV 93.75 / 187.5 / 375 / 750 ms max at 9 / 10 / 11 / 12 bits; tSLOT 60-120 us; tRSTL 480 us min; CIN/OUT 25 pF max; NV write 10 ms max",
+      "Pin Description: TO-92 pin 1 GND, pin 2 DQ (open-drain 1-Wire data I/O; parasite power), pin 3 VDD (optional; grounded for parasite power)",
+      "Overview: 64-bit ROM code, family code 28h; default 12-bit resolution at power-up; resolution 0.5 / 0.25 / 0.125 / 0.0625 C",
+      "Powering the DS18B20: parasite power needs a strong pull-up within 10 us of Convert T, not recommended above +100 C; external supply on VDD frees the bus during conversion (Figure 7, 4.7 kOhm pull-up)",
+      "1-Wire Bus System: external pull-up of approximately 5 kOhm; idle state high; bus held low more than 480 us resets all devices",
+      "Ordering Information: TO-92, 8-pin SO and 8-pin uSOP packages"
+    ]
+  },
+  {
+    "id": "src_datasheet_adafruit",
+    "title": "DS18B20 datasheet copy linked from the Adafruit product page (Dallas/Maxim, REV 042208)",
+    "url": "https://cdn-shop.adafruit.com/datasheets/DS18B20.pdf",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:39:00Z",
+    "sha256": "39d191cd1fb657e43eac061f605bbd375d3c42dc40e7839c17fa0675bb0404d8",
+    "supports": [
+      "the datasheet Adafruit links for the probe; an older revision, used only to corroborate. Values are taken from src_datasheet (Rev 6)"
+    ]
+  }
+]

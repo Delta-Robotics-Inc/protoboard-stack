@@ -1,0 +1,70 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:832464e97a5e9bfe965c0c606912be3e4f8ceb24115ef4f84ab5aac8ca2dd206",
+    "moduleDigest": "sha256:6871cc551d6da7394f591eb55019990d7d5a6ebdfe2a7f553c1ede686c6beca3"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:7cc41c44947aba506b35ecfa5273efc6ea6dba6b28759257a17f30c63479b0f2",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T08:50:31.441Z",
+  "status": "succeeded",
+  "summary": "47 components (7 fixed, 40 layout), 36 nets → 151 traces, 139 vias in 175.3 s; 6 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/tscircuit/board.gen.tsx",
+      "digest": "sha256:cef2c0d7fabe3510520be992da885ac17c867a2f3f87352c30078ceff3a6ebe6",
+      "bytes": 56864,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/circuit.json",
+      "digest": "sha256:b99cb8c00f9b4def9fd7464fee09f2e51583ad4b59463a95470bc2bb9f879e2a",
+      "bytes": 949161,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/build.json",
+      "digest": "sha256:82c853afb22135a0e373c2065e233d270682cacd6c2a8c2acfe5051e8f88ed74",
+      "bytes": 17488,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 47,
+    "nets": 36,
+    "placement": {
+      "fixed": 7,
+      "layout": 40
+    },
+    "traces": 151,
+    "vias": 139,
+    "build_ms": 175327,
+    "errors": [
+      "pcb_port_not_connected_error: Port [j1.GND_B1] is not connected to net [gnd] by a PCB trace.",
+      "pcb_port_not_connected_error: Port [j1.GND_B12] is not connected to net [gnd] by a PCB trace.",
+      "pcb_port_not_connected_error: Port [j1.VBUS_B4] is not connected to net [vbus] by a PCB trace.",
+      "pcb_port_not_connected_error: Port [j1.VBUS_B9] is not connected to net [vbus] by a PCB trace.",
+      "pcb_placement_error: Via hole at (-9.10mm, -0.95mm) overlaps SMD pad d1.I_O2_4 at (-9.10mm, -0.95mm)",
+      "pcb_placement_error: Via hole at (-7.35mm, -3.61mm) overlaps SMD pad u2.INT2 at (-7.44mm, -3.65mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T08:53:26.873Z"
+}

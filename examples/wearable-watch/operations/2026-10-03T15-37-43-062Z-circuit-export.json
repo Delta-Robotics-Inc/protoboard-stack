@@ -1,0 +1,315 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:export",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "export",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:838471e52d58b11566e8dca8435945222bed284fa6daa360e5bc1cf9e1d2107e",
+    "moduleDigest": "sha256:4e0455c291f5bd899885f3122599be2493b43bd1dcb8ac2b8eb6352c49401e4d"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:b82492fbb74efe5f72900e3619cd71d7dfa66936b3633b231919bcc01e7a36df",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T15:37:43.062Z",
+  "status": "succeeded",
+  "summary": "exported 49 components: Gerber + drill, BOM, PnP, GLB/STEP (46 part bodies, 0 package boxes, 3 without a body), manifest, netlist, renders",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/tscircuit/models/raytac-mdbt50q-1mv2-cad_step.step",
+      "digest": "sha256:f785f715c06d4d23285308076d2c89f416bd3792c2d197b119bce07d9d5e3ec6",
+      "bytes": 1304552,
+      "description": "raytac-mdbt50q-1mv2#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_6, pin_8, pin_10, pin_12, pin_14, pin_5, pin_7, pin_9, pin_11, pin_13, pin_15, pin_16, pin_17, pin_18, pin_20, pin_22, pin_24, pin_26, pin_28, pin_30, pin_31, pin_32, pin_33, pin_19, pin_21, pin_23, pin_25, pin_27, pin_29, pin_34, pin_35, pin_37, pin_39, pin_41, pin_44, pin_46, pin_48, pin_51, pin_53, pin_55, pin_36, pin_38, pin_40, pin_42, pin_43, pin_45, pin_47, pin_49, pin_50, pin_52, pin_54, pin_56, pin_57, pin_58, pin_59, pin_60, pin_61, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/bosch-bmi270-cad_step.step",
+      "digest": "sha256:3f82ad0799f2505d4e2131078056e7d9639c402d03624741195ae799dbbe2224",
+      "bytes": 250721,
+      "description": "bosch-bmi270#cad_step without its interface feature shapes (pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/adi-max30102efd-cad_step.step",
+      "digest": "sha256:e52d0d75d3c2666689f0046a8db6bb76a9aebf1a11a7eb72b0c72e33251618b0",
+      "bytes": 428067,
+      "description": "adi-max30102efd#cad_step without its interface feature shapes (sensor_window, led_window, pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, pin_9, pin_10, pin_11, pin_12, pin_13, pin_14, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/ti-drv2605ldgs-cad_step.step",
+      "digest": "sha256:a15373f1c5fa21d867a832d1c3c5d25b44e17b5b6561e7c0b540264bb86bec93",
+      "bytes": 418095,
+      "description": "ti-drv2605ldgs#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, pin_9, pin_10, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/adi-max17048g-t10-cad_step.step",
+      "digest": "sha256:6467d4a5f4d8b9abb485d0cfca1119701872d6fbc928e73738534e8622fc5c91",
+      "bytes": 255632,
+      "description": "adi-max17048g-t10#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, ep, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/microchip-mcp73831t-2aci-ot-cad_step.step",
+      "digest": "sha256:6bd350c15c246cac3d153536e09d11e9b8c3969cc1b15203af20feba8a50c9eb",
+      "bytes": 232046,
+      "description": "microchip-mcp73831t-2aci-ot#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/ti-tps7a0230pdbv-cad_step.step",
+      "digest": "sha256:78cb13d58beca6872e14443b5415ecbb5a59156d8550c0629f6e0b37940a8be0",
+      "bytes": 231417,
+      "description": "ti-tps7a0230pdbv#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/ti-tps7a0218pdbv-cad_step.step",
+      "digest": "sha256:66dd9d6c79f8d0a75b04c45db2a6499f9a8c081062ff44fbaab7855c6c45eaf1",
+      "bytes": 231417,
+      "description": "ti-tps7a0218pdbv#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/gct-usb4105-gf-a-cad_step.step",
+      "digest": "sha256:c45a50280cf5f94c28d1371006396b3ff0b8c6877149c855fda3685bcc985058",
+      "bytes": 659755,
+      "description": "gct-usb4105-gf-a#cad_step without its interface feature shapes (shell, usb_c, pin_a1, pin_b12, pin_a4, pin_b9, pin_b8, pin_a5, pin_b7, pin_a6, pin_a7, pin_b6, pin_a8, pin_b5, pin_b4, pin_a9, pin_b1, pin_a12, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/st-usblc6-2sc6-cad_step.step",
+      "digest": "sha256:02c3aa6bceb5c8b16036e93f7647ac7fa150af7896a2b3ff9f44474a466ad464",
+      "bytes": 268360,
+      "description": "st-usblc6-2sc6#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/alps-skrtlae010-cad_step.step",
+      "digest": "sha256:803a7ffbc12fe41c3807ca6853fdc8fc2adf29b4a19748b4076e1ca1f0bf8713",
+      "bytes": 232199,
+      "description": "alps-skrtlae010#cad_step without its interface feature shapes (pin_1, pin_2, pin_3)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/epson-fc-135-32k768-12p5-cad_step.step",
+      "digest": "sha256:b17d1f3e4908fca9ceb385285a1f7753950956a7a8b4f657b64d57adcb7aa548",
+      "bytes": 273226,
+      "description": "epson-fc-135-32k768-12p5#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/aos-ao3400a-cad_step.step",
+      "digest": "sha256:a663162eeeca59fc8abdc9da979cb2725d5b5833476522e14e063b2cd2724349",
+      "bytes": 157486,
+      "description": "aos-ao3400a#cad_step without its interface feature shapes (pin_1, pin_2, pin_3, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/eastrising-er-tft128-1-cad_step.step",
+      "digest": "sha256:2e09bb0ba54c42d2accada4fde53278a11b3da0171aa1ed089722ffe9b6a79a6",
+      "bytes": 405826,
+      "description": "eastrising-er-tft128-1#cad_step without its interface feature shapes (display_face, fpc_tail, pin_1, pin_2, pin_3, pin_4, pin_5, pin_6, pin_7, pin_8, pin_9, pin_10, pin_11, pin_12)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/murata-grm188-cad_step.step",
+      "digest": "sha256:b86f8be03fa1235862deb249f28e6518c7f6603d515752c6dd66f9d024844d3d",
+      "bytes": 84022,
+      "description": "murata-grm188#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/murata-grm155-cad_step.step",
+      "digest": "sha256:a373f6d200e1f9e1c602536024af705d8346bbec8eab11dfcc2247462c15a59a",
+      "bytes": 84126,
+      "description": "murata-grm155#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/murata-grm1555c1h200ja01-cad_step.step",
+      "digest": "sha256:9f916d9527838c5f1aa831715de862ae1e0259bcf1a78c9f7d163536ca885075",
+      "bytes": 64491,
+      "description": "murata-grm1555c1h200ja01#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/models/yageo-rc0402-cad_step.step",
+      "digest": "sha256:9040262c260712babd21ae16f24ae6adb21e959e73aa86212c53198f46443399",
+      "bytes": 84173,
+      "description": "yageo-rc0402#cad_step without its interface feature shapes (pin_1, pin_2, pcb_mount)"
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/F_Cu.gbr",
+      "digest": "sha256:010647ff2032b53e24f530ddc437a6392a997c17cbb4956286a507041c3bde64",
+      "bytes": 55627
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/F_SilkScreen.gbr",
+      "digest": "sha256:8192aefaaf276ed7ea36ee54d488a14a488276e4697457342bbeb1ccd853135f",
+      "bytes": 62230
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/F_Mask.gbr",
+      "digest": "sha256:c70571b5691ce00f01d8011e2073a1e221bad4bfacb671e00dac0299c4298ba6",
+      "bytes": 11860
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/F_Paste.gbr",
+      "digest": "sha256:903c65eb5ff4d8778452e3aa7ff2860a0b78d6ca1b7bebf0cfaa089feea91557",
+      "bytes": 9474
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/B_Cu.gbr",
+      "digest": "sha256:f931b3b156f9d11f715430c509f5332bd1c2ead237fcb5b51e8989b1ae14d4a8",
+      "bytes": 14914
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/B_SilkScreen.gbr",
+      "digest": "sha256:b19842a0436f7a5579ea41fe9ec19340762eda27d390976bef8e221477334dc2",
+      "bytes": 6062
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/B_Mask.gbr",
+      "digest": "sha256:8a488d8be70f7dd570e7298c958e79688a642db83467d1dfe9e2b6d282769a4c",
+      "bytes": 2931
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/B_Paste.gbr",
+      "digest": "sha256:973dfe36df9e72ff457ed01e7a23965d9ae77ad2f2af0a5ee167c1b2e562cf16",
+      "bytes": 2181
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/Edge_Cuts.gbr",
+      "digest": "sha256:9c425c0346dbead3d9156667eef7c9c7c8d43a861b0840a3f7e57fae36fbe616",
+      "bytes": 3344
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/In1_Cu.gbr",
+      "digest": "sha256:033f5c6c3def09f0d4d34a749277775825530280b0edd28e680917a0107e15cb",
+      "bytes": 199067
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/In2_Cu.gbr",
+      "digest": "sha256:0e7773d8abbb5b4e8868d29b75817a0ccc9d5690e88c6f974b652f0ac02a992a",
+      "bytes": 176322
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/drill-L1-L4.drl",
+      "digest": "sha256:15bb6cfbb600b298c3ae24f70d521071f77e0606fef1840a191ab14a9e8db963",
+      "bytes": 2600
+    },
+    {
+      "path": "src/boards/watch-main/out/gerber/drill_npth.drl",
+      "digest": "sha256:a61edb31a55641629857e60b5313a80fdef2a0e35e622cf14ec523e41d6c63c5",
+      "bytes": 424
+    },
+    {
+      "path": "src/boards/watch-main/out/bom.csv",
+      "digest": "sha256:81b6812ae84656e99597109fd331c9e6a101285341bd448a8b2a740de0e382e1",
+      "bytes": 4139,
+      "description": "bill of materials by UHD instance"
+    },
+    {
+      "path": "src/boards/watch-main/out/pnp.csv",
+      "digest": "sha256:d6fc973bcbf2d859c156b7718f26754fa3f8cfd3566379215e47809bd9a80c2c",
+      "bytes": 3013,
+      "description": "pick-and-place by UHD instance"
+    },
+    {
+      "path": "src/boards/watch-main/out/board.manifest.json",
+      "digest": "sha256:eb3de74d022e731a80849ff30aa6c86109fe89846cdc48b791cb905793929098",
+      "bytes": 25724,
+      "description": "geometry manifest"
+    },
+    {
+      "path": "src/boards/watch-main/out/netlist.json",
+      "digest": "sha256:8ad154e6ebd6f09e8317bc73ea4c01be56f08723ca17077541b28cc72bfb5249",
+      "bytes": 6189,
+      "description": "nets as laid out"
+    },
+    {
+      "path": "src/boards/watch-main/out/board.glb",
+      "digest": "sha256:c463eee642656c821eb0a421f8acebc85d5bab5f59e893f35756992cf5bc4f1b",
+      "bytes": 1251820,
+      "description": "board with component bodies (glTF binary, metres, Y up)"
+    },
+    {
+      "path": "src/boards/watch-main/out/board.step",
+      "digest": "sha256:3dd4434e77460d4779d4e19faa30b62abc2138475754757a11b582d0a526aeb9",
+      "bytes": 5181221,
+      "description": "board with component bodies (STEP, mm, board frame)"
+    },
+    {
+      "path": "src/boards/watch-main/out/schematic.svg",
+      "digest": "sha256:9768ef5a1fc8e9b4ca05ea1caff14ac9e70453459bb59b354694c6cbef11455e",
+      "bytes": 567450,
+      "description": "render"
+    },
+    {
+      "path": "src/boards/watch-main/out/pcb-top.svg",
+      "digest": "sha256:ef3637ad545bb8bd02b29c373dfac466a05d49856ae00919f703def1775f1722",
+      "bytes": 382136,
+      "description": "render"
+    },
+    {
+      "path": "src/boards/watch-main/out/pcb-bottom.svg",
+      "digest": "sha256:6b4305912c32abea83b248b8e296ba79e1b71a0dcb637d6c2fb33236b4e00e9f",
+      "bytes": 138794,
+      "description": "render"
+    }
+  ],
+  "data": {
+    "bodies": {
+      "u1": "part",
+      "u2": "part",
+      "u3": "part",
+      "u4": "part",
+      "u5": "part",
+      "u6": "part",
+      "u7": "part",
+      "u8": "part",
+      "j1": "part",
+      "d1": "part",
+      "sw1": "part",
+      "sw2": "part",
+      "y1": "part",
+      "q1": "part",
+      "ds1": "part",
+      "j3": "none",
+      "j4": "none",
+      "j5": "none",
+      "c1": "part",
+      "c2": "part",
+      "c3": "part",
+      "c4": "part",
+      "c5": "part",
+      "c6": "part",
+      "c7": "part",
+      "c8": "part",
+      "c9": "part",
+      "c10": "part",
+      "c11": "part",
+      "c12": "part",
+      "c13": "part",
+      "c14": "part",
+      "c15": "part",
+      "c16": "part",
+      "c17": "part",
+      "c18": "part",
+      "c19": "part",
+      "c20": "part",
+      "r1": "part",
+      "r2": "part",
+      "r3": "part",
+      "r4": "part",
+      "r5": "part",
+      "r6": "part",
+      "r7": "part",
+      "r8": "part",
+      "r9": "part",
+      "r10": "part",
+      "r11": "part"
+    },
+    "notes": []
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T15:37:50.063Z"
+}

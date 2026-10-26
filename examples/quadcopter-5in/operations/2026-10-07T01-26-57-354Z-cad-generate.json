@@ -1,0 +1,93 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "matek-gh6p-gnss-lead",
+    "config": "src/harnesses/matek-gh6p-gnss-lead/cad.config.ts",
+    "configDigest": "sha256:ee5f0c20a355baf2e12fcde265198d1ae8a63d0e11541f23a8328b8028dc84ca",
+    "moduleDigest": "sha256:43a17abf467041238b9bbd43c3333c08c7530f7a3bcd47720b8264e0a9baa675"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:89b8212a38dd8538fa8e12019ae9b9c58066449153cc8e3ae83a8ed438877c21",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:26:57.354Z",
+  "status": "succeeded",
+  "summary": "gnss_lead: ok; routed around the parts and 4 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/harness-cad/route.json",
+      "digest": "sha256:746b770a40cd731288835feb43a86ea8a261f2cd8d86887df94fda3258b91121",
+      "bytes": 105239,
+      "description": "gnss_lead: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboardai/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        313,
+        313,
+        144
+      ],
+      "res_mm": 1,
+      "seconds": 5
+    },
+    "harnesses": [
+      {
+        "id": "matek-gh6p-gnss-lead",
+        "path": "gnss_lead",
+        "status": "ok",
+        "notes": [],
+        "search_s": 5.08
+      }
+    ],
+    "context": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.95
+      },
+      {
+        "id": "dji-o4-3in1-cable",
+        "path": "dji_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 3.94
+      },
+      {
+        "id": "panasonic-eeu-fr1v471-leads",
+        "path": "bulk_cap_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.01
+      },
+      {
+        "id": "dolphinrc-xt60-battery-lead",
+        "path": "xt60_lead",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.04
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-07T01:27:27.227Z"
+}

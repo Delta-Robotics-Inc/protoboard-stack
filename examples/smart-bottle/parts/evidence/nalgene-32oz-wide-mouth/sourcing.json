@@ -1,0 +1,51 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "nalgene-32oz-wide-mouth",
+  "manufacturer": "Nalgene",
+  "mpn": "2020-3732",
+  "need": {
+    "quantity": 1,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "Nalgene",
+      "mpn": "2020-3732",
+      "supplier_sku": "2020-3732",
+      "url": "https://nalgene.com/product/32oz-wide-mouth-bottle/",
+      "as_of": "2026-10-03",
+      "moq": 1,
+      "price_breaks": [
+        {
+          "quantity": 1,
+          "unit_price": 16.99,
+          "currency": "USD"
+        }
+      ],
+      "authorized": true,
+      "market": "US",
+      "note": "manufacturer store, colour 'clear' (SKU 2020-3732): 'In stock'",
+      "via": "web"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": false,
+      "note": "not listed (found through the JLCPCB search, which indexes LCSC codes)"
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; no listing with stock or a real price"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

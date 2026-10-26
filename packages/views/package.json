@@ -1,0 +1,48 @@
+{
+  "name": "@protoboardai/views",
+  "version": "0.2.0",
+  "description": "Protoboard's domain views as components, the view registry the shells' tabs come from (extensions declare views in contributes.views), and the host and theme adapter interfaces the shells implement",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/views"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./registry": "./src/registry.ts",
+    "./tabs": "./src/tabs.ts",
+    "./theme": "./src/theme.ts",
+    "./parts": "./src/parts/index.ts",
+    "./parts-data": "./src/parts/library-data.ts",
+    "./parts-model": "./src/parts/model.ts",
+    "./part-status": "./src/parts/part-status.ts",
+    "./inspector": "./src/inspector/index.ts",
+    "./inspector-model": "./src/inspector/model.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@deltarobotics/uhd-viewer": "^0.2.0",
+    "@radix-ui/react-select": "^2.3.7"
+  },
+  "peerDependencies": {
+    "@deltarobotics/uhd": ">=0.3.0",
+    "@protoboardai/core": "^0.2.0",
+    "react": "^19.0.0",
+    "three": ">=0.170.0"
+  }
+}

@@ -1,0 +1,1219 @@
+{
+  "artifacts": [
+    {
+      "id": "datasheet",
+      "name": "TPS6302x datasheet SLVS916I",
+      "type": "datasheet",
+      "url": "https://www.ti.com/lit/ds/symlink/tps63020.pdf"
+    },
+    {
+      "id": "package_drawing",
+      "name": "DSJ (R-PVSON-N14) mechanical data MPSS014A",
+      "type": "documentation",
+      "url": "https://www.ti.com/lit/pdf/MPSS014A"
+    },
+    {
+      "id": "product",
+      "name": "TPS63020DSJR part details",
+      "type": "documentation",
+      "url": "https://www.ti.com/product/TPS63020/part-details/TPS63020DSJR"
+    },
+    {
+      "filePath": "library/cad/py/catalog/ti-tps63020dsjr.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "ti-tps63020-dsj14 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/ti-tps63020dsjr/artifacts/cad/ti-tps63020-dsj14.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "ti-tps63020-dsj14 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/ti-tps63020dsjr/artifacts/cad/ti-tps63020-dsj14.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "ti-tps63020-dsj14 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/ti-tps63020dsjr/artifacts/cad/ti-tps63020-dsj14.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "ti-tps63020-dsj14 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/ti-tps63020dsjr/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/ti-tps63020dsjr/artifacts/cad/interfaces/thermal_pad.glb",
+      "format": "glb",
+      "id": "cad_if_thermal_pad",
+      "interfaceId": "thermal_pad",
+      "name": "thermal_pad geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "power.regulator"
+  ],
+  "description": "Single-inductor buck-boost converter with 4 A switches: VIN 1.8-5.5 V, adjustable VOUT 1.2-5.5 V (500 mV feedback), 2 A at VOUT 3.3 V for VIN > 2.5 V, 2.4 MHz, 25 uA quiescent, power-good output, VSON-14 (DSJ) 4 x 3 mm with exposed pad.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "feedback_voltage_mV": [
+          495,
+          500,
+          505
+        ],
+        "output_ovp_V": [
+          5.5,
+          7
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§6.5)",
+        "switch_current_limit_mA": [
+          3500,
+          4000,
+          4500
+        ],
+        "switch_rds_on_mOhm": 50,
+        "switching_frequency_kHz": [
+          2200,
+          2400,
+          2600
+        ]
+      },
+      "power_domains": [
+        {
+          "id": "vin",
+          "name": "Input (VIN/VINA)",
+          "nominal_voltage_V": 3.6,
+          "voltage_range_V": [
+            1.8,
+            5.5
+          ]
+        },
+        {
+          "id": "vout",
+          "max_current_mA": 2000,
+          "name": "Output (VOUT, adjustable)",
+          "regulation_type": "regulated",
+          "voltage_range_V": [
+            1.2,
+            5.5
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 0.9,
+        "length": 4,
+        "width": 3
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "height_range_mm": [
+          0.8,
+          1
+        ],
+        "source": "https://www.ti.com/lit/pdf/MPSS014A"
+      },
+      "package": {
+        "assumption": "TI numbers no exposed pad; \"EP\" is this part's label for it. Height 0.9 mm is the midpoint of 0.80-1.00 mm (see the assumption trait).",
+        "code": "DSJ (R-PVSON-N14)",
+        "exposed_pad": true,
+        "exposed_pad_mm": [
+          2.85,
+          1.58
+        ],
+        "exposed_pad_pin": "EP",
+        "name": "VSON-14",
+        "pin_count": 14,
+        "pitch_mm": 0.5,
+        "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5: \"DSJ Package, 14-Pin VSON with Exposed Thermal Pad\"; p.32 exposed pad 2.85 x 1.58 mm); https://www.ti.com/lit/pdf/MPSS014A (body 3.85-4.15 x 2.85-3.15 x 0.80-1.00 mm, pitch 0.50)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "hysteresis_C": 20,
+        "junction_C": [
+          -40,
+          125
+        ],
+        "overtemperature_protection_C": 140,
+        "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§6.3-6.5)",
+        "theta_ja_C_per_W": 41.8
+      },
+      "operating_temperature_C": [
+        -40,
+        85
+      ]
+    }
+  ],
+  "id": "ti-tps63020dsjr",
+  "interfaceGroups": [
+    {
+      "id": "vin_pair",
+      "label": "VIN pins 10 and 11 (both must be connected)",
+      "members": [
+        "pin_10",
+        "pin_11"
+      ],
+      "policy": "all_of"
+    },
+    {
+      "id": "vout_pair",
+      "label": "VOUT pins 4 and 5 (both must be connected)",
+      "members": [
+        "pin_4",
+        "pin_5"
+      ],
+      "policy": "all_of"
+    },
+    {
+      "id": "inductor_pads",
+      "label": "Inductor pads L1 (8, 9) and L2 (6, 7)",
+      "members": [
+        "pin_6",
+        "pin_7",
+        "pin_8",
+        "pin_9"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_1",
+      "name": "VINA",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.8,
+            5.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VINA — supply voltage for control stage.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "0.1 uF ceramic from VINA to GND recommended; must not be higher than 0.22 uF.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.2.4)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_2",
+      "name": "GND",
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GND — control / logic ground.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "analog_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_3",
+      "name": "FB",
+      "pin": 3,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "FB — voltage feedback of adjustable versions, must be connected to VOUT on fixed output voltage versions.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Divider VOUT-FB-GND, VFB = 500 mV; R2 (FB to GND) about 200 kOhm; R1 = R2 x (VOUT/VFB - 1). Table 3: 3.3 V = 1 MOhm / 180 kOhm.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.3)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_4",
+      "name": "VOUT",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            5.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 4,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VOUT — buck-boost converter output (pins 4, 5).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_5",
+      "name": "VOUT",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            5.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 5,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VOUT — buck-boost converter output (pins 4, 5).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "inductor_l2"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_6",
+      "name": "L2",
+      "pin": 6,
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "L2 — connection for inductor (pins 6, 7).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "L2: connect the single external inductor between L1 (pins 8, 9) and L2 (pins 6, 7); 1 uH or 1.5 uH recommended for 1.5-2 A output (e.g. Coilcraft XFL4020-152ML, 1.5 uH).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.2.2, Table 2 BOM)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "inductor_l2"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_7",
+      "name": "L2",
+      "pin": 7,
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "L2 — connection for inductor (pins 6, 7).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "L2: connect the single external inductor between L1 (pins 8, 9) and L2 (pins 6, 7); 1 uH or 1.5 uH recommended for 1.5-2 A output (e.g. Coilcraft XFL4020-152ML, 1.5 uH).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.2.2, Table 2 BOM)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "inductor_l1"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_8",
+      "name": "L1",
+      "pin": 8,
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "L1 — connection for inductor (pins 8, 9).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "L1: connect the single external inductor between L1 (pins 8, 9) and L2 (pins 6, 7); 1 uH or 1.5 uH recommended for 1.5-2 A output (e.g. Coilcraft XFL4020-152ML, 1.5 uH).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.2.2, Table 2 BOM)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "inductor_l1"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_9",
+      "name": "L1",
+      "pin": 9,
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "L1 — connection for inductor (pins 8, 9).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "L1: connect the single external inductor between L1 (pins 8, 9) and L2 (pins 6, 7); 1 uH or 1.5 uH recommended for 1.5-2 A output (e.g. Coilcraft XFL4020-152ML, 1.5 uH).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.2.2, Table 2 BOM)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_10",
+      "name": "VIN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.8,
+            5.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 10,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VIN — supply voltage for power stage (pins 10, 11).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_11",
+      "name": "VIN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.8,
+            5.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 11,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VIN — supply voltage for power stage (pins 10, 11).",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "enable"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_12",
+      "name": "EN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 12,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "EN — enable input (1 enabled, 0 disabled), must not be left open. VIL <= 0.4 V, VIH >= 1.2 V.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "clock_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_13",
+      "name": "PS/SYNC",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 13,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "PS/SYNC — enable / disable power save mode (1 disabled, 0 enabled, clock signal for synchronization), must not be left open. Sync range 2200-2600 kHz.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "open_drain",
+        "power_good"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_14",
+      "name": "PG",
+      "pin": 14,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "PG — output power good (1 good, 0 failure; open-drain), can be left open. VOL 0.04 V typ / 0.4 V max at 10 uA.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "thermal_pad",
+            "signature": {
+              "area_mm2": 4.503,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pgnd",
+      "name": "PGND (exposed thermal pad)",
+      "pin": "EP",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "PGND — power ground. The exposed thermal pad is connected to PGND.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§5 Pin Functions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Solder the exposed pad to the PCB ground plane (thermal and mechanical); place output capacitors close to VOUT and PGND.",
+            "source": [
+              "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§8.2.2.3)",
+              "https://www.ti.com/lit/pdf/MPSS014A"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "vin",
+      "name": "Input supply (VIN + VINA)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.8,
+            5.5
+          ],
+          "unit": "V",
+          "value": 3.6
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "gnd": "pgnd",
+            "vin_a": "pin_10",
+            "vin_b": "pin_11",
+            "vina": "pin_1"
+          },
+          "default_active": true,
+          "id": "vin_pins",
+          "label": "VIN 10/11, VINA 1, PGND"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "vin_a",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "vin_b",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "vina",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "1.8-5.5 V (2-3 cell alkaline/NiMH, 1-cell Li-ion/LiPo, supercap). Minimum start-up input 1.8 V typ (1.9 V max 0-85 C, 2.0 V max full range). UVLO 1.5 V falling, 200 mV hysteresis. 10 uF input capacitor recommended. Quiescent 25 uA typ (VIN+VINA), shutdown 0.1 uA typ.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§6.5, §8.2.2.4)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "vout",
+      "name": "Regulated output (VOUT)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            5.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 2
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "gnd": "pgnd",
+            "vout_a": "pin_4",
+            "vout_b": "pin_5"
+          },
+          "default_active": true,
+          "id": "vout_pins",
+          "label": "VOUT 4/5, PGND"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "vout_a",
+          "match": {
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "vout_b",
+          "match": {
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Adjustable 1.2-5.5 V set by the FB divider. 2 A output for VIN > 2.5 V at VOUT = 3.3 V; 'as high as 2 A in boost mode and as high as 4 A in buck mode' (see Figures 1-2 for the operating-point limit). 2.4 MHz fixed frequency; power-save mode at light load unless PS/SYNC is high. Recommended output capacitance 3 x 22 uF ceramic. Load disconnected in shutdown.",
+            "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (Features, §6.5, §8.2)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount",
+        "vson14_dsj_4x3_0p5mm"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 1.344,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "VSON-14 (DSJ) leads (SMD)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "vson_14_dsj",
+            "note": "14 leads, pitch 0.50 mm, lead width 0.18-0.30, length 0.30-0.50; body 3.85-4.15 x 2.85-3.15 x 0.80-1.00 mm; exposed pad 2.85 x 1.58 mm. MSL Level-1-260C-UNLIM, NIPDAU finish.",
+            "source": [
+              "https://www.ti.com/lit/pdf/MPSS014A",
+              "https://www.ti.com/lit/ds/symlink/tps63020.pdf (p.27 package option addendum, pp.31-32)"
+            ]
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "exposed_pad"
+      ],
+      "default_active": true,
+      "domain": "thermal",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "thermal_pad",
+            "signature": {
+              "area_mm2": 4.503,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_thermal_pad",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "thermal_pad",
+      "name": "Exposed thermal pad (heat path to PCB)",
+      "protocols": [
+        {
+          "roles": [
+            "thermal_source"
+          ],
+          "type": "thermal_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "kind": "thermal",
+            "pad_mm": [
+              2.85,
+              1.58
+            ],
+            "psi_jb_C_per_W": 16.8,
+            "psi_jt_C_per_W": 0.9,
+            "source": [
+              "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§6.4, p.32)"
+            ],
+            "theta_ja_C_per_W": 41.8,
+            "theta_jb_C_per_W": 17,
+            "theta_jc_bottom_C_per_W": 3.6,
+            "theta_jc_top_C_per_W": 47
+          },
+          "type": "performance"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Texas Instruments",
+  "name": "TI TPS63020DSJR buck-boost converter",
+  "part_number": "TPS63020DSJR",
+  "tags": [
+    "tps63020",
+    "ti",
+    "buck-boost",
+    "dc-dc",
+    "regulator",
+    "adjustable",
+    "vson-14",
+    "li-ion"
+  ],
+  "traits": [
+    {
+      "params": {
+        "ambient_C": [
+          -40,
+          85
+        ],
+        "junction_C": [
+          -40,
+          125
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§6.3)",
+        "vin_V": [
+          1.8,
+          5.5
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "esd": "HBM ±500 V (VIN, VINA, L1), ±2000 V other pins; CDM ±1500 V",
+        "junction_C": [
+          -40,
+          150
+        ],
+        "l1_l2_ac_10ns_V": [
+          -3,
+          10
+        ],
+        "l1_l2_dc_V": [
+          -0.3,
+          7
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (§6.1-6.2)",
+        "storage_C": [
+          -65,
+          150
+        ],
+        "vin_vina_vout_ps_en_fb_pg_V": [
+          -0.3,
+          7
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "kind": "regulator",
+        "output_current_A": "2 A (VIN > 2.5 V, VOUT 3.3 V); up to 4 A in buck mode, 2 A in boost mode",
+        "quiescent_current_uA": 25,
+        "shutdown_current_uA": 0.1,
+        "source": "https://www.ti.com/lit/ds/symlink/tps63020.pdf (Features, §6.5, §8.2)",
+        "switching_frequency_MHz": 2.4,
+        "topology": "single-inductor buck-boost, average current mode, synchronous"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "field": "input max current",
+        "resolution": "vin carries no max_current; the switch limit is in electrical metadata.",
+        "sources": [
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/tps63020dsjr/definition.json",
+          "https://www.ti.com/lit/ds/symlink/tps63020.pdf"
+        ],
+        "values": [
+          "4000 mA on the VIN rail (ProtoPart, from the switch current limit)",
+          "average switch current limit 3.5/4.0/4.5 A; no input-current rating (datasheet §6.5)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "package height (CAD, dimensions)",
+        "reason": "Drawing gives 0.80-1.00 mm; midpoint used.",
+        "value": "0.9 mm"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD lead size and pad thickness",
+        "reason": "Drawing gives ranges (0.18-0.30 x 0.30-0.50); pad thickness is not dimensioned. PGND tie bars (4 x 0.20 mm) not modelled.",
+        "value": "0.24 x 0.40 mm leads, 0.02 mm pads"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "fields": [
+          "manufacturer CAD"
+        ],
+        "note": "TI product folder (www.ti.com/product/TPS63020, 'CAD symbols, footprints & 3D models' tab) offers CAD/3D models (STEP etc.) only through Ultra Librarian, whose download requires accepting its terms as a registered user (not redistributable here); the Digi-Key model page (digikey.com/en/models/2353761) returned HTTP 403. Geometry generated from TI drawings 4208212-3/C and 4208549-3/G (library/cad/py/catalog/ti-tps63020dsjr.py).",
+        "source": [
+          "https://www.ti.com/product/TPS63020",
+          "https://vendor.ultralibrarian.com/TI/embedded/?gpn=TPS63020&package=DSJ&pin=14"
+        ]
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.1.0"
+}

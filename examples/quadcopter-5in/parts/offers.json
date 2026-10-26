@@ -1,0 +1,424 @@
+{
+  "schema": "protoboard.offers/v0",
+  "service": "http://localhost:8913",
+  "retrievedAt": "2026-10-03T14:23:01.272Z",
+  "parts": {
+    "cnhl-black-series-1100mah-6s-100c": [
+      {
+        "mpn": "1101006BK",
+        "supplier": "Pilots HQ",
+        "sku": "1101006BK",
+        "url": "https://www.pilotshq.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+        "unitPrice": 21,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 21
+          }
+        ],
+        "minQuantity": 1,
+        "market": "US",
+        "observedAt": "2026-10-03T14:01:14Z"
+      },
+      {
+        "mpn": "1101006BK",
+        "supplier": "CNHL (China Hobby Line)",
+        "sku": "1101006BK Combo 2 US JH",
+        "url": "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+        "unitPrice": 23.99,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 2,
+            "unitPrice": 23.99
+          }
+        ],
+        "minQuantity": 2,
+        "stock": 0,
+        "market": "US",
+        "authorized": true,
+        "observedAt": "2026-10-03T14:01:06Z"
+      }
+    ],
+    "dji-o4-air-unit": [
+      {
+        "mpn": "DF3L2904",
+        "supplier": "RaceDayQuads",
+        "sku": "22794",
+        "url": "https://www.racedayquads.com/products/dji-o4-air-unit",
+        "unitPrice": 139.99,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 139.99
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 225,
+        "market": "US",
+        "observedAt": "2026-10-03T14:01:08Z"
+      }
+    ],
+    "dolphinrc-am32-60a-4in1-esc": [
+      {
+        "mpn": "DolphinRC AM32 ESC 60A (F405 V3 stack, SKU DPDZ00041 option '60A ESC')",
+        "supplier": "DolphinRC",
+        "sku": "DPDZ0003",
+        "url": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+        "unitPrice": 35,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 35
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 47,
+        "authorized": true,
+        "observedAt": "2026-10-03"
+      }
+    ],
+    "dolphinrc-f405-v3-flight-controller": [
+      {
+        "mpn": "DolphinRC F405 V3 (F405 V3 stack, SKU DPDZ00041 option 'F405-FC')",
+        "supplier": "DolphinRC",
+        "sku": "DPDZ00011",
+        "url": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+        "unitPrice": 34.99,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 34.99
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "authorized": true,
+        "observedAt": "2026-10-03"
+      }
+    ],
+    "ettinger-005-83-060-m3-nylon-spacer-6mm": [
+      {
+        "mpn": "005.83.060",
+        "supplier": "ETTINGER",
+        "sku": "005.83.060",
+        "url": "https://www.ettinger.de/en/p/round-spacer-oe3.4-6.0-x-6.0-pa-gf-black/005.83.060",
+        "unitPrice": 0.0335,
+        "currency": "EUR",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0335
+          }
+        ],
+        "minQuantity": 100,
+        "packaging": "purchase unit 100 pcs",
+        "market": "DE",
+        "authorized": true,
+        "observedAt": "2026-10-03"
+      }
+    ],
+    "hglrc-kevlar-battery-strap-20x250mm": [
+      {
+        "mpn": "F.ZD.02.00010",
+        "supplier": "EpicFPV",
+        "sku": "HGLRC6767",
+        "url": "https://epicfpv.ca/products/hglrc-kevlar-battery-strap-20x250mm",
+        "unitPrice": 3,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 3
+          }
+        ],
+        "minQuantity": 1,
+        "market": "CA",
+        "observedAt": "2026-10-03T14:01:14Z"
+      },
+      {
+        "mpn": "F.ZD.02.00010",
+        "supplier": "HGLRC",
+        "sku": "F.ZD.02.00010",
+        "url": "https://www.hglrc.com/products/hglrc-kevlar-battery-strap-15x250mm-20x250mm",
+        "unitPrice": 1.99,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 1.99
+          }
+        ],
+        "minQuantity": 1,
+        "authorized": true,
+        "observedAt": "2026-10-03T14:01:09Z"
+      }
+    ],
+    "hqprop-ethix-s5": [
+      {
+        "mpn": "EthixS5-GR-PC",
+        "supplier": "RaceDayQuads",
+        "sku": "11231",
+        "url": "https://www.racedayquads.com/products/hq-prop-ethix-s5-5x4x3-tri-blade-5-prop-4-pack-light-grey",
+        "unitPrice": 1.2475,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 4,
+            "unitPrice": 1.2475
+          }
+        ],
+        "minQuantity": 4,
+        "stock": 540,
+        "packaging": "4-pack",
+        "market": "US",
+        "observedAt": "2026-10-03T14:01:11Z"
+      },
+      {
+        "mpn": "EthixS5-GR-PC",
+        "supplier": "HQProp",
+        "sku": "EthixS5-GR-PC",
+        "url": "https://www.hqprop.com/ethix-s5-light-grey-2cw2ccw-poly-carbonate-p0206.html",
+        "unitPrice": 0.8725,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 4,
+            "unitPrice": 0.8725
+          }
+        ],
+        "minQuantity": 4,
+        "stock": 1770,
+        "packaging": "set of 4 (2CW+2CCW)",
+        "market": "CN",
+        "authorized": true,
+        "observedAt": "2026-10-03"
+      }
+    ],
+    "iso-10511-m3-nyloc-nut": [
+      {
+        "mpn": "WF1288",
+        "supplier": "Westfield Fasteners",
+        "sku": "WF1288",
+        "url": "https://www.westfieldfasteners.co.uk/Metric-Nuts/Nyloc-Nut-Type-T-Thin-M3-A2-Stainless.html",
+        "unitPrice": 0.141,
+        "currency": "GBP",
+        "priceBreaks": [
+          {
+            "quantity": 10,
+            "unitPrice": 0.141
+          },
+          {
+            "quantity": 20,
+            "unitPrice": 0.124
+          },
+          {
+            "quantity": 25,
+            "unitPrice": 0.1032
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0626
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.0419
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 0.0317
+          },
+          {
+            "quantity": 250,
+            "unitPrice": 0.02968
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.02196
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.02196
+          }
+        ],
+        "minQuantity": 10,
+        "packaging": "sold in sale-quantity multiples",
+        "market": "UK",
+        "authorized": true,
+        "observedAt": "2026-10-03T14:08:01Z"
+      }
+    ],
+    "iso-4762-m3x30-socket-head-cap-screw": [
+      {
+        "mpn": "WF2352",
+        "supplier": "Westfield Fasteners",
+        "sku": "WF2352",
+        "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Allen-Screw-M3x30-A2-Stainless.html",
+        "unitPrice": 0.206,
+        "currency": "GBP",
+        "priceBreaks": [
+          {
+            "quantity": 10,
+            "unitPrice": 0.206
+          },
+          {
+            "quantity": 20,
+            "unitPrice": 0.1415
+          },
+          {
+            "quantity": 25,
+            "unitPrice": 0.1228
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0852
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.0664
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 0.05695
+          },
+          {
+            "quantity": 250,
+            "unitPrice": 0.05512
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.04928
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.03799
+          }
+        ],
+        "minQuantity": 10,
+        "packaging": "sold in sale-quantity multiples",
+        "market": "UK",
+        "authorized": true,
+        "observedAt": "2026-10-03T14:08:16Z"
+      }
+    ],
+    "matek-m9n-5883": [
+      {
+        "mpn": "M9N-5883",
+        "supplier": "Unmanned Tech",
+        "sku": "M-M9N-5883",
+        "url": "https://www.unmannedtechshop.co.uk/products/matek-m9n-5883-gnss-compass-gps",
+        "unitPrice": 30.52,
+        "currency": "GBP",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 30.52
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "market": "UK",
+        "observedAt": "2026-10-03T14:12:52Z"
+      },
+      {
+        "mpn": "M9N-5883",
+        "supplier": "Flying Tech",
+        "url": "https://www.flyingtech.co.uk/product/matek-gnss-m9n-gps-5883-compass/",
+        "unitPrice": 43.9,
+        "currency": "GBP",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 43.9
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "market": "UK",
+        "observedAt": "2026-10-03"
+      },
+      {
+        "mpn": "M9N-5883",
+        "supplier": "Ready Made RC (RMRC)",
+        "url": "https://www.readymaderc.com/products/details/Matek-GPS-Compass-Module-M9N-5883",
+        "unitPrice": 55.76,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 55.76
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "market": "US",
+        "observedAt": "2026-10-03"
+      }
+    ],
+    "meps-neon-2207-v2-1950kv": [
+      {
+        "mpn": "NEON 2207 V2 1950KV",
+        "supplier": "MEPS",
+        "sku": "AMD03010043",
+        "url": "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html",
+        "unitPrice": 10.99,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 10.99
+          },
+          {
+            "quantity": 4,
+            "unitPrice": 10.975
+          }
+        ],
+        "minQuantity": 1,
+        "market": "CN",
+        "authorized": true,
+        "observedAt": "2026-10-03"
+      }
+    ],
+    "radiomaster-rp1-v2-elrs-2g4": [
+      {
+        "mpn": "RP1 V2",
+        "supplier": "RaceDayQuads",
+        "sku": "19362",
+        "url": "https://www.racedayquads.com/products/radiomaster-rp1-v2-2-4ghz-elrs-nano-receiver",
+        "unitPrice": 24.99,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 24.99
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 225,
+        "market": "US",
+        "observedAt": "2026-10-03T14:01:12Z"
+      },
+      {
+        "mpn": "RP1 V2",
+        "supplier": "RadioMaster",
+        "sku": "HP0157.RX-RP1-V2",
+        "url": "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver",
+        "unitPrice": 18.99,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 18.99
+          }
+        ],
+        "minQuantity": 1,
+        "authorized": true,
+        "observedAt": "2026-10-03T14:01:12Z"
+      }
+    ]
+  }
+}

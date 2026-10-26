@@ -1,0 +1,701 @@
+{
+  "schema": "protoboard.origins/v0",
+  "definitions": {
+    "cnhl-black-series-1100mah-6s-100c": {
+      "file": "parts/catalog/cnhl-black-series-1100mah-6s-100c.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "cnhl-black-series-1100mah-6s-100c",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:05097050ca85f154548939c2c4277019159cd8a520e92fb6d9965421552384eb",
+      "envelopeDigest": "sha256:166e1d6f35e40183cdb0ff82179dc6a5a4dc011bec5d059940bae0e889f2c4f7",
+      "retrievedAt": "2026-10-03T05:54:21.581Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/cnhl-black-series-1100mah-6s-100c"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/cnhl-1100-6s.glb": "sha256:91ff7255bd4b64c383f767eb48a48e0146bfafab76869e893600856123b35258",
+        "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/cnhl-1100-6s.manifest.json": "sha256:ef94314cb640c5416078b44b6fd5cd6c893aa54c0881da534e113f717764f744",
+        "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/cnhl-1100-6s.step": "sha256:08e03270919b6890bb8318803f98f6ef9ff43a50b829a15b8e2f19cf14153222",
+        "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/interfaces/xt60.glb": "sha256:0df901e67e66c1304e68fd14f3392a75dc2279b1ef67e14d3d0b8db842ed2022",
+        "library/parts/cnhl-black-series-1100mah-6s-100c/sources.json": "sha256:34b0b8b2a9a2c0daed76dc6d8ff2041c10c827a33fbe0906d8ddacbd7a34052e",
+        "library/parts/cnhl-black-series-1100mah-6s-100c/verification.json": "sha256:4504b51132d87c109f5056aaa9ea28fe698baf78db0fc260d08542f5834573ab"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/cnhl-black-series-1100mah-6s-100c/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/cnhl-black-series-1100mah-6s-100c/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:dde37a820b8850a9fce70b83661a29f91a2fee8d30b6bcf781c6f2b67df643b7",
+        "envelopeDigest": "sha256:86462578ba96e6728cb9a1ce3c6db96f9a16e495e05ab61efd53a746b5aecd7e",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "cnhl-black-series-1100mah-6s-100c.uhd.ts",
+        "export": "CNHL_BLACK_SERIES_1100MAH_6S_100C",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "cnhl-black-series-1100mah-6s-100c.uhd.ts": "sha256:893216cdf856f8cd2cdbff702a269bfef19aa7c8634f2c0bb2ab8a193ec78c8d",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "dji-o4-air-unit": {
+      "file": "parts/catalog/dji-o4-air-unit.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "dji-o4-air-unit",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:023a507b0cf3363fb2de83e27f2b985267398c653515cf445a5a73e3a92a71d4",
+      "envelopeDigest": "sha256:a4a67f5dbbf02158e5bbc4057a5a181aaf79307aae87f1b326081f58c14653ee",
+      "retrievedAt": "2026-10-03T05:54:21.928Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/dji-o4-air-unit"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/dji-o4-air-unit/artifacts/cad/dji-o4-air-unit.glb": "sha256:476c827abf1809272d51364117a6c57ce55bdebbd23610b118218b82079e3e9e",
+        "library/parts/dji-o4-air-unit/artifacts/cad/dji-o4-air-unit.manifest.json": "sha256:d83593821ca32e28cf701bdb078980b5dc79b6dc5dc025aa2fa8eaa54b5476e1",
+        "library/parts/dji-o4-air-unit/artifacts/cad/dji-o4-air-unit.step": "sha256:6ca9dd570521c253d827ea42e680c77908e93f4013d76b8f0b72d8a04edd3326",
+        "library/parts/dji-o4-air-unit/artifacts/cad/dji-o4-camera.glb": "sha256:88338d112ad933e41d2b243c7273b38dd5fce3c9524da3fa1c13e784f9083daf",
+        "library/parts/dji-o4-air-unit/artifacts/cad/dji-o4-camera.manifest.json": "sha256:77996f0964585d26efca80404927d797af09c4cf7879c34017c867880399c9ab",
+        "library/parts/dji-o4-air-unit/artifacts/cad/dji-o4-camera.step": "sha256:b06424939655a3cb3f61a3976e77fd4dc2ed9fcf33245e96800a720f2a750121",
+        "library/parts/dji-o4-air-unit/artifacts/cad/interfaces/camera_mount.glb": "sha256:133689eb23de434a98e8ce2c5b55dd68b08f14ac1090ae27cf2f82d1364adb8d",
+        "library/parts/dji-o4-air-unit/artifacts/cad/interfaces/fc_cable_socket.glb": "sha256:5b862032dd8b8652e44de3dfc7d7bbebfba291e25d5979d91f0d1a8fe761aced",
+        "library/parts/dji-o4-air-unit/artifacts/cad/interfaces/tx_module_mount.glb": "sha256:5e7c36befd8277d719e6a33f4a66e7f67637f043bf13c5a7d61ae4d24ac315be",
+        "library/parts/dji-o4-air-unit/sources.json": "sha256:1918cc0654a1a73ca7dbbfcf9806e592d5b90bc72eb9ecb320d63185a6796455",
+        "library/parts/dji-o4-air-unit/verification.json": "sha256:e302c26b11fc6c6bedb46ca6d32916b2e1a35319949a79f97da68c3d823a3731"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/dji-o4-air-unit/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/dji-o4-air-unit/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:dcd77b7a1055bf407f438fd14ab1f6049ddfe152191752e345fa829c9fd68161",
+        "envelopeDigest": "sha256:39e694b8db894bd6694ce25bdf88a8d06a9965d8da64e05fb1d9b0e8bc698900",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "dji-o4-air-unit.uhd.ts",
+        "export": "DJI_O4_AIR_UNIT",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "dji-o4-air-unit.uhd.ts": "sha256:abfa416bd9eb153383200e8802f30f3888cd540e64b4ecf173f1c01a6f183210",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "dolphinrc-am32-60a-4in1-esc": {
+      "file": "parts/catalog/dolphinrc-am32-60a-4in1-esc.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "dolphinrc-am32-60a-4in1-esc",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:ca10a0ac593d253ff2e82d53d916089900a953c0c717c8dda89d0fad07f24702",
+      "envelopeDigest": "sha256:83357198b27fe435b0442c1e99e4ad54f5285b7bf6dd11a2b3c25c2317c5cf85",
+      "retrievedAt": "2026-10-03T05:54:22.289Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/dolphinrc-am32-60a-4in1-esc"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/dolphinrc-am32-60a.glb": "sha256:bb73e68b4d4af589ad778282b41e6a6abbeb6dda86fce4583e7d7e757beee2aa",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/dolphinrc-am32-60a.manifest.json": "sha256:e1c3975493eeb21318c869ff23c63f230d116c2407f8611827453a2ae8972aaa",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/dolphinrc-am32-60a.step": "sha256:f251682ba953afe7efcaa0dfa2e051fce10fe78ab37c543cc1353f1a4a0a0157",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/bat_in.glb": "sha256:a289edfe6617b7980c8689b27b4d57cc9dc401a2a1e883b1cd6736c536d250cf",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/bat_neg.glb": "sha256:57e0790502bd8611d48e94ad40801d4e9cb61865a3a556da624d32b46fb4cb0a",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/fc_socket.glb": "sha256:ce32595f961613810aa6b6a674f276fe18befd0802510e103f4178a9f63941dd",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1_a.glb": "sha256:c0acddaa6a53bdbd1f6d0a6433a0a95adfaea8bb38fc1c4c8c23cb18cb1b618a",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1_b.glb": "sha256:65090241977632f115a0bfb970d8928cc710a245c3355318a653f968bf5faebc",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1_c.glb": "sha256:63fa8ed684540e1262cbe940982edd8d0b6b24a1da1a94c0f7ce3f224c6d5fe5",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1.glb": "sha256:d527183c3cf8fd271e20c35a7b7bd1ae017ab578612be12684f2fce011346ced",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2_a.glb": "sha256:dbc90ca9190d67ed3bfde9a270bcb21aff81f10047513027256f9014f82d036b",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2_b.glb": "sha256:cef92b98b4f9c16cfd7aee5b07f9a40f3fb2396957c7dc3957d22ae3eb089d65",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2_c.glb": "sha256:0b8f129208023b9e4728a16d46bad9c3f72bc50966d24a6d43c8930f7da5ea0f",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2.glb": "sha256:81613d14ac06dda0b44f8d96f69ca73292a1b7568b7e0f231b0343bfbec634d7",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3_a.glb": "sha256:9052a0670c1e681216ed991b78d2f97d8f8251270d6012dba5d24da85596d300",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3_b.glb": "sha256:5784fd40028dab01b03edf0715a6383a2193e682c5b132556a0368973f9658ba",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3_c.glb": "sha256:9cc51c046a9dc5bcbca56ff80e1a05d8ca8743bd9df9c70ddccf89dfbfbebf8f",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3.glb": "sha256:9c04eddacb0c4972720df9077e031a3caaf6ca6a882e4f3bc6107dd714dc3623",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4_a.glb": "sha256:c5b06d52c4758a90bc1588659d112d20045e286c6825424cacb7a2513d523998",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4_b.glb": "sha256:b554251f6cdfc2e96a1607d1dff50abaaf98cdc268dd32f88f0bda9ff1fdfc0c",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4_c.glb": "sha256:8c6f47f0554ea708f2906b4b789e39786643a6a7e5b6d6fc19451b38a615acfc",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4.glb": "sha256:533196217e223661cbd6b4ad11bd0fe764a8d1727bec59e02012c76efbb65590",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/stack_mount.glb": "sha256:8d9410b3ea4f3b554c56bd62cfe02dfdbe5f728886fb7bd749f8c68d54da5b2c",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/sources.json": "sha256:22fd1e34b144cf1f9afabfe9f1ab4a4e0e935f5297d284acdf8d01798eb877b2",
+        "library/parts/dolphinrc-am32-60a-4in1-esc/verification.json": "sha256:0cec26e5321bf9bd3e347dbe68bdc0fd1cafdd3be1236b864207becc487b404c"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/dolphinrc-am32-60a-4in1-esc/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/dolphinrc-am32-60a-4in1-esc/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:de2dbff60cc0353c9916621c799412e9064cfc020a430b690a9ccdba4437c061",
+        "envelopeDigest": "sha256:3986c6c8800f476eae7b86bafb46e6e24fbeaf0172cb1bd9df2784a532bf5cba",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "dolphinrc-am32-60a-4in1-esc.uhd.ts",
+        "export": "DOLPHINRC_AM32_60A_4IN1_ESC",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "dolphinrc-am32-60a-4in1-esc.uhd.ts": "sha256:8a94d20264d322ef57a5ee60d894d6897bad7c74f578218c717daa35e07e91b2",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "dolphinrc-f405-v3-flight-controller": {
+      "file": "parts/catalog/dolphinrc-f405-v3-flight-controller.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "dolphinrc-f405-v3-flight-controller",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:1112a33a31cf9449fbf0e78afbfd7c63c42154c2c623b59147986c8673fc17d9",
+      "envelopeDigest": "sha256:06b62d1b252c68669e9e9009cccdd295cf999bb53ccec7f66c4f6c43573185e7",
+      "retrievedAt": "2026-10-03T05:54:22.648Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/dolphinrc-f405-v3-flight-controller"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/dolphinrc-f405-v3.glb": "sha256:9ddb863a24226020cecebdddf1777cfda724f8ea5d3f4acf96f519674b7fd33d",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/dolphinrc-f405-v3.manifest.json": "sha256:89bdaa5682248ec0af0a5f12d5190f678472ef94bd5fc881563559ea35c359a3",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/dolphinrc-f405-v3.step": "sha256:8719dc13a9afa1309b12c1e671509af8bc691ce08456b18134c77b7692ea26db",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/bec_5v.glb": "sha256:0653579c6d6d466708ba1d84f1738d8f0d0b261bd3fac20741a35d868ea2eb9c",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/cam_socket.glb": "sha256:93d90160c04d48e0d7ea25169cffcb1ddd045f875c769419e312525283aac5f0",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/dji_socket.glb": "sha256:6d1b636c9a7cec5f0732b4558eaf8e1c90b89c8f3be1b490b233ccde370c9124",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/esc_socket.glb": "sha256:34948e9ebb79d1695f986beb8dc996912c200f185613cc823c68780f9bed33e1",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/gnd.glb": "sha256:69dd9badfdaf47937d98656e2003d5931cc9b42c33505067db972410584fb570",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/gps_socket.glb": "sha256:b9d04d063c693dfbcbf85de9d5ccd0df4c8ffd31aac2c8a01c0ac4430dba7053",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/i2c1_scl.glb": "sha256:3a7211761cc4ee4f870d2f57247c8d702a88b344e6fb9083384bc807dca31ff2",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/i2c1_sda.glb": "sha256:c77190776c8c3b1c930a74f5457de136659c801967aa75a3375f490b6048071d",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/rail_4v5.glb": "sha256:85f2dbe03dcf9029ca0bd04cb3659ae1110b05a874b4955075dfa39aea2a2ec1",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/rc_socket.glb": "sha256:697d2dcbe70198392ab99c3e598b94615c3f22244b62f203597a16435733ac01",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/stack_mount.glb": "sha256:8d9410b3ea4f3b554c56bd62cfe02dfdbe5f728886fb7bd749f8c68d54da5b2c",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart1_rx.glb": "sha256:7f0aef12c4a15e450ebb9608181c3804ca36b35d51d20927de4bf78d41fb7480",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart1_tx.glb": "sha256:3a683fe2ffe5075c2e0621311cd4cd529598b57cef6e0e3f5f34ffb03979ab8e",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart2_rx.glb": "sha256:2d01dd0f9afd861cb8e91d5fd875d49aed4c8f91e98f7a292d38fa68afdfb8af",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/uart2_tx.glb": "sha256:c268d4e45e9fb77df7e56be0ac0000b30d864fb48ac6cad02991599a8c44cd58",
+        "library/parts/dolphinrc-f405-v3-flight-controller/artifacts/cad/interfaces/vtx_socket.glb": "sha256:5b3562157d1c996d2bc44e342fa0078f21487d6200db899b8e9c2a5edfe9cd2a",
+        "library/parts/dolphinrc-f405-v3-flight-controller/sources.json": "sha256:26da2f8e784349699e99b16f9df1aa60c43c424d4bbf9b2e1515db5a891aa2a6",
+        "library/parts/dolphinrc-f405-v3-flight-controller/verification.json": "sha256:be8bc40f044529d6dda1f448a54359b92d79e9f530f7976ba52ab395c2c0e1f2"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/dolphinrc-f405-v3-flight-controller/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/dolphinrc-f405-v3-flight-controller/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:de16d8941f8fc8cd86abb59cb7846d3bc7d5792b87970e948277eff65146c6be",
+        "envelopeDigest": "sha256:0868d58d4b18ade2872ceb4df65a39ce587be2709cdb0b46ee503c28bb29f508",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "dolphinrc-f405-v3-flight-controller.uhd.ts",
+        "export": "DOLPHINRC_F405_V3_FLIGHT_CONTROLLER",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "dolphinrc-f405-v3-flight-controller.uhd.ts": "sha256:8f1657b512462ef60651c831cde0c138251005a5fbe1b5e0409f397dd7a89ce2",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "ettinger-005-83-060-m3-nylon-spacer-6mm": {
+      "file": "parts/catalog/ettinger-005-83-060-m3-nylon-spacer-6mm.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "ettinger-005-83-060-m3-nylon-spacer-6mm",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:958f77923e49a6c429a0899d262e217fb850191051c5c1b81efe53a29ae3bfed",
+      "envelopeDigest": "sha256:86228f2a1ec13a9c2e3f949f4499833d553dec1e511c67eb637ca03ab3e2b452",
+      "retrievedAt": "2026-10-03T05:54:23.000Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/ettinger-005-83-060-m3-nylon-spacer-6mm"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/artifacts/cad/ettinger-spacer-6mm.glb": "sha256:5b8e6709affe8fc13793a5159ea1d3b6bcdde23496a9855e32ff8e829117d096",
+        "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/artifacts/cad/ettinger-spacer-6mm.manifest.json": "sha256:5febba4011ce9f306a0c469c9434ad5e59e77829fcb1ebe0c3d8bfc136e17f9e",
+        "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/artifacts/cad/ettinger-spacer-6mm.step": "sha256:7a1ee3996174ed50a6f8d7b280a5251302406c9adac396ed0fed7380cff29137",
+        "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/artifacts/cad/interfaces/bore.glb": "sha256:f0937903ce6790c56b5288ff15221679a1e58c95ffbdf5b07d59541c39ea53ea",
+        "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/sources.json": "sha256:ea1f2452b8f65a2b28289e4250d4784c405c4f7e541783fe329f319ba8fb7121",
+        "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/verification.json": "sha256:aa5b835a21a57c63ca89bd0530d60d4a0af000edb61d3f964947caee2854f0bb"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/ettinger-005-83-060-m3-nylon-spacer-6mm/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:cc8fe01ab06986429efc6a575276847dd858b6930199468da63d7d5f3bc6b511",
+        "envelopeDigest": "sha256:4292f46ecfead9b1e2bbfbc4702834b4fa608e50d235c83c64d8db2d6cc0f573",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "ettinger-005-83-060-m3-nylon-spacer-6mm.uhd.ts",
+        "export": "ETTINGER_005_83_060_M3_NYLON_SPACER_6MM",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "ettinger-005-83-060-m3-nylon-spacer-6mm.uhd.ts": "sha256:d4bbf773d87c885fc1767d80a173da237d861cff309397a09deb8e800b91aec8",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "hglrc-kevlar-battery-strap-20x250mm": {
+      "file": "parts/catalog/hglrc-kevlar-battery-strap-20x250mm.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "hglrc-kevlar-battery-strap-20x250mm",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:29e4c663d20c7e10603a99f17023edce8130911c54b642d97a781bb00af92879",
+      "envelopeDigest": "sha256:35fe53f2eb89274602e9c6dda099bfc50078cbbbab555e13aaae41f82697d58c",
+      "retrievedAt": "2026-10-03T05:54:23.352Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/hglrc-kevlar-battery-strap-20x250mm"
+      },
+      "files": {
+        "library/parts/hglrc-kevlar-battery-strap-20x250mm/sources.json": "sha256:75ef020b117e029578f660246abc970324ee4dffdaa07b78eabffaa19cf1d562",
+        "library/parts/hglrc-kevlar-battery-strap-20x250mm/verification.json": "sha256:b09eb5ad2aaf9db51025211f987d5536b9d451689566ed74a8b4bc7a95c38186"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/hglrc-kevlar-battery-strap-20x250mm/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/hglrc-kevlar-battery-strap-20x250mm/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:ea627e4042fa98985ad00842512184634e0443aa40479bdd2559e2a3b07670b9",
+        "envelopeDigest": "sha256:233223cec2c2a9d71987640b7a8149281492d1b9432f9b23b88729bf7dbe9881",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "hglrc-kevlar-battery-strap-20x250mm.uhd.ts",
+        "export": "HGLRC_KEVLAR_BATTERY_STRAP_20X250MM",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "hglrc-kevlar-battery-strap-20x250mm.uhd.ts": "sha256:257fbf318a4f402be95770606f0e08cbafde2289163fd5fcf6cdc89968aea058"
+        }
+      }
+    },
+    "hqprop-ethix-s5": {
+      "file": "parts/catalog/hqprop-ethix-s5.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "hqprop-ethix-s5",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:e9bbf495646d73a4d99dd64be0d638c86eebf3290aac0a68168aa2cc5712dd06",
+      "envelopeDigest": "sha256:35d0ba91d376a4cc5cc21338a0a035be4f5066b20c2d9b53678fcce59b42b014",
+      "retrievedAt": "2026-10-03T05:54:23.705Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/hqprop-ethix-s5"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/hqprop-ethix-s5/artifacts/cad/hqprop-ethix-s5.glb": "sha256:74a3b5c3a3e591407686284caffe08c83eab14ca37b8c14709f142d0e501e67d",
+        "library/parts/hqprop-ethix-s5/artifacts/cad/hqprop-ethix-s5.manifest.json": "sha256:9189d71c99a207d59f2918d57844cdc44deb4a473f2d893bce078728ecf99ec4",
+        "library/parts/hqprop-ethix-s5/artifacts/cad/hqprop-ethix-s5.step": "sha256:cbfeb1a4a4e29d4152ca8d89074f6a0a9c64f254ffa644dcfbd7b4df68026c80",
+        "library/parts/hqprop-ethix-s5/artifacts/cad/interfaces/hub_bore.glb": "sha256:41f3c603d7422a1737cc0cab05ecddf988cf108d19fd1116939fc673310a1039",
+        "library/parts/hqprop-ethix-s5/sources.json": "sha256:0001a513c7b0fa80881a4e746cb3d626da94e4594cc51e33ceb585935cfbdf6e",
+        "library/parts/hqprop-ethix-s5/verification.json": "sha256:07ea3d8d62fa9c7456f866115337c24a92363ae8678d1bfe8eb0ed3caf5e90c7"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/hqprop-ethix-s5/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/hqprop-ethix-s5/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:cde02506d80a248d69da23a61ea4315a20d9b260e4d2c68d40c702c9cb69f62c",
+        "envelopeDigest": "sha256:647f502ea03756683982ec731b444b0967f34274799d28e566c5b27b9642f2b3",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "hqprop-ethix-s5.uhd.ts",
+        "export": "HQPROP_ETHIX_S5",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "hqprop-ethix-s5.uhd.ts": "sha256:dcd676cb3c692c745567f8f0a6692c8ea1573dda0f57a594ee33575278b7b236",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "iso-10511-m3-nyloc-nut": {
+      "file": "parts/catalog/iso-10511-m3-nyloc-nut.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "iso-10511-m3-nyloc-nut",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:8e2966e769eeebefbb2653fc84a1f89767d27fdaa40563e8814941ef7401fbd7",
+      "envelopeDigest": "sha256:6d7d01b779452999a1b0f29a030d1a8f36edbb1644de556377e3542962ce523a",
+      "retrievedAt": "2026-10-03T05:54:24.060Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/iso-10511-m3-nyloc-nut"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/iso-10511-m3-nyloc-nut/artifacts/cad/interfaces/thread.glb": "sha256:145a9eea33aca37e75967908ebc244de1a3d30727d8e5c0001511327f1c517e5",
+        "library/parts/iso-10511-m3-nyloc-nut/artifacts/cad/iso-10511-m3-nyloc.glb": "sha256:a48a9770d7710c04a12fbe4d683193c31e408bc06e82a56438af52aff5ee6fe0",
+        "library/parts/iso-10511-m3-nyloc-nut/artifacts/cad/iso-10511-m3-nyloc.manifest.json": "sha256:4a56828611c572aadcd0f666835036240765bfd69242e8319e70cb645ea61116",
+        "library/parts/iso-10511-m3-nyloc-nut/artifacts/cad/iso-10511-m3-nyloc.step": "sha256:1f1522426ebac104db33c4b6238df2c0ceaf2cbc157f0009d1edf3f2821ede07",
+        "library/parts/iso-10511-m3-nyloc-nut/sources.json": "sha256:6458df33d1c88b57a81416b2093e4c8299c231de5250f927ef03ef82431ce287",
+        "library/parts/iso-10511-m3-nyloc-nut/verification.json": "sha256:f16b7d9aedf075303d35d6ad9fbe3831ca7f106132d575eae7574102fc0a60de"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/iso-10511-m3-nyloc-nut/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/iso-10511-m3-nyloc-nut/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:af08858bb50286977626b40c57d6e0502a4a2d979955905e2f921852ac63c834",
+        "envelopeDigest": "sha256:b3cfe1a81d22c59c0286f943c979ec4ff3931c492232095ef4dfd42d5cde9791",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "iso-10511-m3-nyloc-nut.uhd.ts",
+        "export": "ISO_10511_M3_NYLOC_NUT",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "iso-10511-m3-nyloc-nut.uhd.ts": "sha256:91261240fec601c9d8a50ad9bfbc7a50c9640872c295e4cba1a004553bdf1ac7",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "iso-4762-m3x30-socket-head-cap-screw": {
+      "file": "parts/catalog/iso-4762-m3x30-socket-head-cap-screw.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "iso-4762-m3x30-socket-head-cap-screw",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:dff93f254f341020cce97651735121f186da31b0e859283d7f17d5e1fc9de78a",
+      "envelopeDigest": "sha256:e9b4b4f20c3cb0d291b336a1da3a1ab48523d54489e3abac23d46a8a07a30851",
+      "retrievedAt": "2026-10-03T05:54:24.424Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/iso-4762-m3x30-socket-head-cap-screw"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/interfaces/thread.glb": "sha256:1454e7bbf49a5cbbff6873e5285173eadb8908a323b933af625c601d8cb19e22",
+        "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/iso-4762-m3x30.glb": "sha256:ab09c2c3d67d9e3ed81c089e0ed06c923d7f31ea452a70a2120231c8da7e4b50",
+        "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/iso-4762-m3x30.manifest.json": "sha256:f2f306d8367c799386c6828a64b7d2a49ce8995d9ece029c655313e5dca09ea2",
+        "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/iso-4762-m3x30.step": "sha256:d3a3def6d10ce5c3fc11633e03f55bad84ad73ff122c8c22f2e878c821c104ce",
+        "library/parts/iso-4762-m3x30-socket-head-cap-screw/sources.json": "sha256:e8734f6d6e05943a0f54c51a90e91884488bd57ba95abea786968b09f451f558",
+        "library/parts/iso-4762-m3x30-socket-head-cap-screw/verification.json": "sha256:dc6e2281292380a6ae5cae10670393db9db4a1a54e55cc1ff71400878d07c7fc"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/iso-4762-m3x30-socket-head-cap-screw/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/iso-4762-m3x30-socket-head-cap-screw/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:3f23a479f9dbf9e6acd03669551496f6f1f64301516f601c280d02ceaff6a698",
+        "envelopeDigest": "sha256:4dc92e5d248c8cb1e2adff08472b6bb40011d9572b934ef0cf55220a3c2b64f5",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "iso-4762-m3x30-socket-head-cap-screw.uhd.ts",
+        "export": "ISO_4762_M3X30_SOCKET_HEAD_CAP_SCREW",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "iso-4762-m3x30-socket-head-cap-screw.uhd.ts": "sha256:feaeb373b85fcfaca55e0eb422f2f9bd434ee9ddd88ee1d04fa825165fd72018",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "matek-m9n-5883": {
+      "file": "parts/catalog/matek-m9n-5883.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8836",
+      "partId": "matek-m9n-5883",
+      "revision": 3,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:a7636877ec374503fa55a533721a0b6c941bc05fa88bac3acb6be2ef35bf217b",
+      "envelopeDigest": "sha256:4d34956a85f7085a71856883e6383f9ecf73392a04ad8b930469ddacc4a4d028",
+      "retrievedAt": "2026-10-03T18:13:24.806Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/matek-m9n-5883"
+      },
+      "files": {
+        "library/parts/matek-m9n-5883/artifacts/cad/matek-m9n-5883-vendor.manifest.json": "sha256:503e77b31a057334cbf56543fa0dd5eae9fadac22a476c9e8ee97d2f23ef77ae",
+        "library/parts/matek-m9n-5883/artifacts/cad/vendor/interfaces/GH6P-1.glb": "sha256:0d5abd6d680c7fd93095220d33ed9d63d571b98c058d985210700a1a153df2ba",
+        "library/parts/matek-m9n-5883/artifacts/cad/vendor/interfaces/GH6P-2.glb": "sha256:b6f631f42f9d1e34ef230244bb4cb15ba7476697e8f9272bc20cd05741951740",
+        "library/parts/matek-m9n-5883/artifacts/cad/vendor/interfaces/MAG.glb": "sha256:7767a31bd609218de725bebf74361de0bce98635932837e744f8c8a58b25b6b0",
+        "library/parts/matek-m9n-5883/artifacts/cad/vendor/interfaces/mount.glb": "sha256:6db8ef2c29592d2046f2c183dfda58a54df079010927cdcf754c534cc8475286",
+        "library/parts/matek-m9n-5883/artifacts/cad/vendor/M9N-5883_step.zip": "sha256:0b3cb5cd696a2982639e4c7bc7bd24bb720b7a4fc0e2f60d088e5903134e5272",
+        "library/parts/matek-m9n-5883/artifacts/cad/vendor/M9N-5883.glb": "sha256:37db402fc976309103f2eb27cd6e01baac2d6594fc8ecd81e8dd6980a22cd30d",
+        "library/parts/matek-m9n-5883/artifacts/cad/vendor/M9N-5883.step": "sha256:0633ce4af1e71f97776f30975111396f07a6c80ccee10dbd7672a8591be0be18",
+        "library/parts/matek-m9n-5883/artifacts/thumbnail.png": "sha256:ac3f4fb6ea33cfdfa00f335300a3707baa4c0305390dc2f45af093805d8e3ba4",
+        "library/parts/matek-m9n-5883/sources.json": "sha256:72a83f5019b16f8814d78709b937b91502d87ad02d66a9d4db8c2d454dd94162",
+        "library/parts/matek-m9n-5883/verification.json": "sha256:53c747faac35a968cf1c291adf4fff3538e778b9fceebbdaa91650879d9475f7"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/matek-m9n-5883/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/matek-m9n-5883/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "library": "protoboard",
+        "revision": 2,
+        "digest": "sha256:a15051fbec19f6a3c4f31d40855c9d3ff55954bbab252f9b7da74b524d85792f",
+        "envelopeDigest": "sha256:242357d58aefed2ca8b248a8a82c1e9454624e9231f94071a8eb73c252d4c8b2",
+        "retrievedAt": "2026-10-03T05:54:24.778Z"
+      },
+      "source": {
+        "entry": "matek-m9n-5883.uhd.ts",
+        "export": "MATEK_M9N_5883",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "matek-m9n-5883.uhd.ts": "sha256:56c48c4b3536735edddedf7273631c159d2b063adbd765f2f7e6626062acacc1",
+          "cad/artifacts.ts": "sha256:43be8ce74bb25e25329181c229cccf23b4a1bd81c3f2d67df55bff7878ab78d3"
+        }
+      }
+    },
+    "meps-neon-2207-v2-1950kv": {
+      "file": "parts/catalog/meps-neon-2207-v2-1950kv.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "meps-neon-2207-v2-1950kv",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:b65ea2dad292c88021dea796deefcb96c8c61fad8d187a87e923255c59c040bc",
+      "envelopeDigest": "sha256:4706848d6df05e26cfa347e020cc0600eaeb1e43d407795592628b88f8564276",
+      "retrievedAt": "2026-10-03T05:54:25.144Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/meps-neon-2207-v2-1950kv"
+      },
+      "files": {
+        "library/cad/kcl/motor_base_mount.kcl": "sha256:41a6740c851cdb43f98e225433c13360b61967591b0add5c0702bb9fdd4ad32a",
+        "library/cad/kcl/motor.kcl": "sha256:967b082d643a196f4f1a46edd1096837b0731a7c9d5e265c7e24a118eb4c38f7",
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/base_mount.glb": "sha256:e854a849f5d6423f8c55bdd8bcc967c008e5f01ade6235f81a8aaddcccb6b231",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/phases_a.glb": "sha256:7c4b744195d25ceaa77962f8ef0d10cfb2a895f9ae18ea44eae414b797fb17c7",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/phases_b.glb": "sha256:a71a9c3e329407a03080e35bbea69efa4477f03a719e4db82607ad3fa1cf121d",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/phases_c.glb": "sha256:0db5458422e58c85091170d555f735cf7589bb8ef4cc2790de8810d576ae4f44",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/shaft.glb": "sha256:bec4ac040a4865848b9e90673c9fec8547602021f461e96429a37ed76ea12294",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/meps-neon-2207-v2.glb": "sha256:cca33e6e47cfea13b603521fa86fcd8a0490fcfc5c00579e7a6de48e36f32401",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/meps-neon-2207-v2.manifest.json": "sha256:28051b2d8b1a7f6eecf4fde45a55c7c28faea4e4ffb6bfce51707f5f07f8da87",
+        "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/meps-neon-2207-v2.step": "sha256:ad97a19ec63f9aaf9a1a59d91a7cb79b9957f25a28c42b116ce96e3a7d40be35",
+        "library/parts/meps-neon-2207-v2-1950kv/sources.json": "sha256:0882b806e2784058681a7f0d946ad3048c4175438b327597b11c80dc59c33fd5",
+        "library/parts/meps-neon-2207-v2-1950kv/verification.json": "sha256:be7ec8bdf2b1391e8d67366cd862909afd83cb4466dc07abd07758ec9f1aa55a"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/meps-neon-2207-v2-1950kv/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/meps-neon-2207-v2-1950kv/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:4bc02aaa231c581c6c69bc3017097fb76288a4860c0f9a02a6dcb25612cc214d",
+        "envelopeDigest": "sha256:eb1567da1d1de30712009b7dcdb04c12c6755cf93541488e4327b5e7ccf38127",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "meps-neon-2207-v2-1950kv.uhd.ts",
+        "export": "MEPS_NEON_2207_V2_1950KV",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "meps-neon-2207-v2-1950kv.uhd.ts": "sha256:57d2b9a4751f285f0b534cd3462298a2cbd7f12ed8e987540d14fff50c3c671e",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "radiomaster-rp1-v2-elrs-2g4": {
+      "file": "parts/catalog/radiomaster-rp1-v2-elrs-2g4.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "radiomaster-rp1-v2-elrs-2g4",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:36f46b0cab50fd43d863394517c5ca8a3a8c91ccd9f55f9b518d39b76fd3d200",
+      "envelopeDigest": "sha256:818097398cf7dcf61bdc100b7917e903784f2e22dfa9cceb6bfc56f997bb57d4",
+      "retrievedAt": "2026-10-03T05:54:25.506Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/radiomaster-rp1-v2-elrs-2g4"
+      },
+      "files": {
+        "library/cad/py/parts.py": "sha256:3792063c902a19d3b7f11325e533f70be6977169622bd3321f77fc1e44961e27",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/crsf_rx.glb": "sha256:8166386286896cafb740bf1f1b713c9216759fd2d7f98b39bc59c6a7908ed3bb",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/crsf_tx.glb": "sha256:65baeafca601a979fbc275b4cb9b976837a639a632622cba61ca733a8c99a5cb",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/gnd.glb": "sha256:da81884779322eaf938c4be0317afdb630605a8b25d40487a068ca3af5f702b0",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/vcc_5v.glb": "sha256:f2ed6400ac379a8aeaf9d4e072b8f12bf15610d5f8d6dddc3be0178b643f26e7",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/radiomaster-rp1-v2.glb": "sha256:19984e3083b6d870ac1e8e0151101d49d3bb9192145c445bcceb5dd75d6e6888",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/radiomaster-rp1-v2.manifest.json": "sha256:323f0b5e57aa033bc69f45aa856ea7ceaf119dca2b21d98cdf6412a49989aad0",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/radiomaster-rp1-v2.step": "sha256:5d539bf66c6a24b2e9a4509cc41273161cb733bd52dd88fd69cfb18a09bd4580",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/sources.json": "sha256:3b9bbe55e750d97a89ebffbb661a3bc4228505318676934ba20eec7ec3495650",
+        "library/parts/radiomaster-rp1-v2-elrs-2g4/verification.json": "sha256:f2789fc996783948fd02598827208b6380f611ab17219bf4296ba3423f07ae36"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "library/parts/radiomaster-rp1-v2-elrs-2g4/sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "library/parts/radiomaster-rp1-v2-elrs-2g4/verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "revision": 1,
+        "digest": "sha256:36f5378bd0b4294a19a16820de5d744dbb650e6d4cbdc20a525a0cf42d4034d7",
+        "envelopeDigest": "sha256:b76bca9d14b2937153655424a7b1f8a3c7b685d11772af569f6b22a767a52812",
+        "retrievedAt": "2026-10-03T01:14:12.529Z"
+      },
+      "source": {
+        "entry": "radiomaster-rp1-v2-elrs-2g4.uhd.ts",
+        "export": "RADIOMASTER_RP1_V2_ELRS_2G4",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "radiomaster-rp1-v2-elrs-2g4.uhd.ts": "sha256:78dd088dc85c7d24335af269fdf6daeb38905ec1c7a125b9fe7d63a5c34cc5f1",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    }
+  }
+}

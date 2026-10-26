@@ -1,0 +1,1014 @@
+{
+  "artifacts": [
+    {
+      "id": "art_product_page",
+      "name": "MEPS NEON 2207 V2 product page",
+      "type": "documentation",
+      "url": "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+    },
+    {
+      "id": "art_spec_table",
+      "name": "NEON 2207 V2 specification table",
+      "type": "datasheet",
+      "url": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg"
+    },
+    {
+      "id": "art_size_chart",
+      "name": "NEON 2207 V2 size chart",
+      "type": "cad",
+      "url": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg"
+    },
+    {
+      "id": "art_test_data",
+      "name": "NEON 2207 V2 thrust test data",
+      "type": "datasheet",
+      "url": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-test-data-pc.jpg"
+    },
+    {
+      "filePath": "library/cad/py/parts.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "meps-neon-2207-v2 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/meps-neon-2207-v2.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "meps-neon-2207-v2 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/meps-neon-2207-v2.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "meps-neon-2207-v2 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/meps-neon-2207-v2.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "meps-neon-2207-v2 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/base_mount.glb",
+      "format": "glb",
+      "id": "cad_if_base_mount",
+      "interfaceId": "base_mount",
+      "name": "base_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/shaft.glb",
+      "format": "glb",
+      "id": "cad_if_shaft",
+      "interfaceId": "shaft",
+      "name": "shaft geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/phases_a.glb",
+      "format": "glb",
+      "id": "cad_if_phases_a",
+      "interfaceId": "phases_a",
+      "name": "phases_a geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/phases_b.glb",
+      "format": "glb",
+      "id": "cad_if_phases_b",
+      "interfaceId": "phases_b",
+      "name": "phases_b geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/meps-neon-2207-v2-1950kv/artifacts/cad/interfaces/phases_c.glb",
+      "format": "glb",
+      "id": "cad_if_phases_c",
+      "interfaceId": "phases_c",
+      "name": "phases_c geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "description": "KCL body; the motor face is the extrude start cap tagged $baseMount.",
+      "filePath": "library/cad/kcl/motor.kcl",
+      "format": "kcl",
+      "id": "cad_kcl",
+      "name": "Motor (KCL)",
+      "provenance": {
+        "tool": "Zoo KCL"
+      },
+      "role": "source",
+      "type": "cad",
+      "units": "mm"
+    },
+    {
+      "filePath": "library/cad/kcl/motor_base_mount.kcl",
+      "format": "kcl",
+      "id": "cad_kcl_base_mount",
+      "interfaceId": "base_mount",
+      "name": "Motor face (KCL)",
+      "provenance": {
+        "tool": "Zoo KCL"
+      },
+      "role": "interface",
+      "type": "cad",
+      "units": "mm"
+    }
+  ],
+  "categories": [
+    "actuator.motor.brushless",
+    "robotics.drone"
+  ],
+  "description": "2207, 12N14P, 1950KV brushless outrunner for 5-inch FPV drones, rated for 6S LiPo. Three 150 mm pre-tinned phase leads, 4x M3 base mount on a 16 mm circle, Φ5 mm M5-threaded shaft. 36 g including leads.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "idle_current_A_max": 1.6,
+        "idle_current_test_voltage_V": 10,
+        "internal_resistance_mohm": 69,
+        "internal_resistance_tolerance_mohm": 5,
+        "max_power_W": 1036,
+        "peak_current_A": 42.97,
+        "peak_current_duration_s": 60,
+        "rated_cells": 6,
+        "source": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg"
+      }
+    },
+    {
+      "dimensions_mm": {
+        "height": 31.6,
+        "length": 28.3,
+        "width": 28.3
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "body_height_mm": 19.3,
+        "diameter_mm": 28.3,
+        "diameter_tolerance_mm": 0.2,
+        "materials": "6082 aluminium shell, stainless-steel shaft, NMB bearings, N50H magnets",
+        "overall_height_mm": 31.6,
+        "shaft_thread_dimension_mm": 8,
+        "source": [
+          "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg",
+          "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+          "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+        ],
+        "weight_includes_leads": true,
+        "weight_tolerance_g": 1
+      },
+      "weight_g": 36
+    }
+  ],
+  "id": "meps-neon-2207-v2-1950kv",
+  "interfaces": [
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            23.65,
+            -1.9,
+            1.5
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "phases_a",
+            "signature": {
+              "area_mm2": 2.545,
+              "centroid": [
+                23.65,
+                -1.9,
+                1.5
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_phases_a",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "phases_a",
+      "name": "Phase A",
+      "pin": "A",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "bare_wire_lead"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "Motor phase lead (unlabelled). Lead 150±2 mm, pre-tinned, 10 mm heat shrink at the motor, 3 mm stripped end.",
+            "source": [
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg",
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+              "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            23.65,
+            0,
+            1.5
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "phases_b",
+            "signature": {
+              "area_mm2": 2.545,
+              "centroid": [
+                23.65,
+                0,
+                1.5
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_phases_b",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "phases_b",
+      "name": "Phase B",
+      "pin": "B",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "bare_wire_lead"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "Motor phase lead (unlabelled). Lead 150±2 mm, pre-tinned, 10 mm heat shrink at the motor, 3 mm stripped end.",
+            "source": [
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg",
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+              "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            23.65,
+            1.9,
+            1.5
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "phases_c",
+            "signature": {
+              "area_mm2": 2.545,
+              "centroid": [
+                23.65,
+                1.9,
+                1.5
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_phases_c",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "phases_c",
+      "name": "Phase C",
+      "pin": "C",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "bare_wire_lead"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "Motor phase lead (unlabelled). Lead 150±2 mm, pre-tinned, 10 mm heat shrink at the motor, 3 mm stripped end.",
+            "source": [
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg",
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+              "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "phases",
+      "name": "Motor phases",
+      "parameters": [
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 42.97
+        },
+        {
+          "id": "cell_count",
+          "unit": "dimensionless",
+          "value": 6
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "phases_a",
+            "phase_b": "phases_b",
+            "phase_c": "phases_c"
+          },
+          "default_active": true,
+          "id": "phases_default",
+          "label": "Phase A/B/C"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "bldc_3phase"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_c",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "input"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Brushless phases are not polarity-sensitive: swapping any two phase connections reverses rotation direction."
+          },
+          "type": "phase_order"
+        },
+        {
+          "params": {
+            "connector_type": "bare_wire_lead",
+            "heat_shrink_length_mm": 10,
+            "lead_gauge_awg": null,
+            "lead_length_mm": 150,
+            "lead_length_tolerance_mm": 2,
+            "note": "Lead 150±2 mm (spec table); heat shrink 10 mm and 3 mm strip (size chart); 'pre-tinned wires' (FAQ). Gauge not stated.",
+            "positions": 3,
+            "pre_tinned": true,
+            "source": [
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg",
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+              "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+            ],
+            "stripped_length_mm": 3
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "burst_duration_s": 60,
+            "note": "Peak Current (60S) 42.97 A — the burst_current parameter is this 60-second peak; no continuous rating is published. Rated Voltage (Lipo) 6S. Manufacturer ESC recommendation: 35–55A (FAQ); 35A–60A BLHeli_32 / AM32 (review section).",
+            "source": [
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg",
+              "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "symmetryDeg": 90,
+          "xAxis": [
+            0.7071,
+            0.7071,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "base_mount",
+            "signature": {
+              "area_mm2": 524.646,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_base_mount",
+            "kind": "artifact"
+          },
+          {
+            "artifact": "cad_kcl",
+            "kind": "feature",
+            "name": "baseMount"
+          },
+          {
+            "artifact": "cad_kcl_base_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "base_mount",
+      "name": "Base mount 4x M3 on 16 mm",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 16
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 4
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 3
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "component"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "M3",
+            "note": "Size chart '4-M3' on 'Ø16' (16 mm bolt circle); FAQ: 'standard 16×16mm mounting'. M3 socket-head screws are included (package photo); lengths not stated.",
+            "shape": "circle",
+            "threaded": true
+          },
+          "type": "bolt_pattern"
+        },
+        {
+          "params": {
+            "field": "mount pattern designation",
+            "resolution": "Drawing geometry used (16 mm circle, 4 holes). '16×16mm' is the FPV naming for the same 16 mm hole-to-hole pattern; hole_spacing is 16 mm either way.",
+            "sources": [
+              "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+              "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+            ],
+            "values": [
+              "4-M3 on Ø16 bolt circle",
+              "16×16mm"
+            ]
+          },
+          "type": "source_discrepancy"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "shaft"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            19.3
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "shaft",
+            "signature": {
+              "area_mm2": 193.208,
+              "centroid": [
+                0,
+                0,
+                25.45
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_shaft",
+            "kind": "artifact"
+          },
+          {
+            "generator": "shaft",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "shaft",
+      "max_instances": 1,
+      "name": "Output shaft Φ5 mm M5",
+      "parameters": [
+        {
+          "id": "shaft_diameter",
+          "unit": "mm",
+          "value": 5
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "shaft"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Φ5 mm solid stainless-steel shaft (spec table, materials section), M5 thread with an 8 mm dimension on the threaded section (size chart). A flanged lock prop nut is included (package photo). Nut thread handedness and motor rotation direction are not stated.",
+            "thread": "M5"
+          },
+          "type": "shaft"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "MEPS",
+  "name": "MEPS NEON 2207 V2 1950KV Brushless Motor",
+  "part_number": "NEON 2207 V2 1950KV",
+  "tags": [
+    "brushless",
+    "bldc",
+    "fpv",
+    "quadcopter",
+    "motor",
+    "2207",
+    "6s",
+    "5-inch"
+  ],
+  "traits": [
+    {
+      "params": {
+        "configuration": "12N14P",
+        "idle_current_A_max": 1.6,
+        "idle_current_test_voltage_V": 10,
+        "internal_resistance_mohm": 69,
+        "internal_resistance_tolerance_mohm": 5,
+        "kind": "motor",
+        "kv_rpm_per_V": 1950,
+        "max_power_W": 1036,
+        "note": "KV, configuration, resistance, currents and power from the 1950 column of the spec table; stator size from the page text; thrust tables: all ten rows (10-100 %) of both KV1950 tables. The test props are MEPS SZ4942 and SZ5145, not the fitted HQProp Ethix S5; the source does not give their size.",
+        "peak_current_A": 42.97,
+        "peak_current_duration_s": 60,
+        "rated_cells": 6,
+        "source": [
+          "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-specification-pc.jpg",
+          "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-test-data-pc.jpg",
+          "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html"
+        ],
+        "stator_size": "2207",
+        "thrust_tests": [
+          {
+            "propeller": "MEPS SZ4942",
+            "rows": [
+              {
+                "current_A": 0.3,
+                "efficiency_g_per_W": 3.3,
+                "power_W": 9,
+                "rpm": 4888,
+                "throttle_pct": 10,
+                "thrust_g": 28,
+                "voltage_V": 25.2
+              },
+              {
+                "current_A": 1.3,
+                "efficiency_g_per_W": 3.6,
+                "power_W": 33,
+                "rpm": 9570,
+                "throttle_pct": 20,
+                "thrust_g": 119,
+                "voltage_V": 25.2
+              },
+              {
+                "current_A": 3.3,
+                "efficiency_g_per_W": 3.4,
+                "power_W": 83,
+                "rpm": 14157,
+                "throttle_pct": 30,
+                "thrust_g": 277,
+                "voltage_V": 25.1
+              },
+              {
+                "current_A": 5.8,
+                "efficiency_g_per_W": 3.1,
+                "power_W": 145,
+                "rpm": 17710,
+                "throttle_pct": 40,
+                "thrust_g": 452,
+                "voltage_V": 25.1
+              },
+              {
+                "current_A": 9.5,
+                "efficiency_g_per_W": 2.7,
+                "power_W": 237,
+                "rpm": 20929,
+                "throttle_pct": 50,
+                "thrust_g": 648,
+                "voltage_V": 25
+              },
+              {
+                "current_A": 14.3,
+                "efficiency_g_per_W": 2.4,
+                "power_W": 355,
+                "rpm": 23893,
+                "throttle_pct": 60,
+                "thrust_g": 865,
+                "voltage_V": 24.9
+              },
+              {
+                "current_A": 20,
+                "efficiency_g_per_W": 2.2,
+                "power_W": 494,
+                "rpm": 26534,
+                "throttle_pct": 70,
+                "thrust_g": 1083,
+                "voltage_V": 24.7
+              },
+              {
+                "current_A": 27.3,
+                "efficiency_g_per_W": 1.9,
+                "power_W": 668,
+                "rpm": 28890,
+                "throttle_pct": 80,
+                "thrust_g": 1298,
+                "voltage_V": 24.5
+              },
+              {
+                "current_A": 35.2,
+                "efficiency_g_per_W": 1.7,
+                "power_W": 855,
+                "rpm": 30766,
+                "throttle_pct": 90,
+                "thrust_g": 1470,
+                "voltage_V": 24.3
+              },
+              {
+                "current_A": 41.8,
+                "efficiency_g_per_W": 1.6,
+                "power_W": 1009,
+                "rpm": 31973,
+                "throttle_pct": 100,
+                "thrust_g": 1584,
+                "voltage_V": 24.2
+              }
+            ],
+            "source": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-test-data-pc.jpg",
+            "supply_V": 25.2
+          },
+          {
+            "propeller": "MEPS SZ5145",
+            "rows": [
+              {
+                "current_A": 0.4,
+                "efficiency_g_per_W": 3.7,
+                "power_W": 9,
+                "rpm": 4854,
+                "throttle_pct": 10,
+                "thrust_g": 33,
+                "voltage_V": 25.2
+              },
+              {
+                "current_A": 1.4,
+                "efficiency_g_per_W": 4.1,
+                "power_W": 35,
+                "rpm": 9465,
+                "throttle_pct": 20,
+                "thrust_g": 143,
+                "voltage_V": 25.2
+              },
+              {
+                "current_A": 3.6,
+                "efficiency_g_per_W": 3.7,
+                "power_W": 90,
+                "rpm": 13911,
+                "throttle_pct": 30,
+                "thrust_g": 334,
+                "voltage_V": 25.1
+              },
+              {
+                "current_A": 6.4,
+                "efficiency_g_per_W": 3.4,
+                "power_W": 159,
+                "rpm": 17304,
+                "throttle_pct": 40,
+                "thrust_g": 533,
+                "voltage_V": 25
+              },
+              {
+                "current_A": 10.4,
+                "efficiency_g_per_W": 2.9,
+                "power_W": 260,
+                "rpm": 20457,
+                "throttle_pct": 50,
+                "thrust_g": 763,
+                "voltage_V": 24.9
+              },
+              {
+                "current_A": 15.5,
+                "efficiency_g_per_W": 2.6,
+                "power_W": 384,
+                "rpm": 23263,
+                "throttle_pct": 60,
+                "thrust_g": 1000,
+                "voltage_V": 24.8
+              },
+              {
+                "current_A": 21.5,
+                "efficiency_g_per_W": 2.3,
+                "power_W": 531,
+                "rpm": 25704,
+                "throttle_pct": 70,
+                "thrust_g": 1233,
+                "voltage_V": 24.7
+              },
+              {
+                "current_A": 28.7,
+                "efficiency_g_per_W": 2.1,
+                "power_W": 701,
+                "rpm": 27751,
+                "throttle_pct": 80,
+                "thrust_g": 1446,
+                "voltage_V": 24.5
+              },
+              {
+                "current_A": 36.8,
+                "efficiency_g_per_W": 1.8,
+                "power_W": 893,
+                "rpm": 29199,
+                "throttle_pct": 90,
+                "thrust_g": 1580,
+                "voltage_V": 24.3
+              },
+              {
+                "current_A": 43,
+                "efficiency_g_per_W": 1.6,
+                "power_W": 1036,
+                "rpm": 30342,
+                "throttle_pct": 100,
+                "thrust_g": 1699,
+                "voltage_V": 24.1
+              }
+            ],
+            "source": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-test-data-pc.jpg",
+            "supply_V": 25.2
+          }
+        ]
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "field": "lead wire gauge",
+        "resolution": "Unresolved: the V2 product page does not state it. The generated CAD draws 20 AWG (the maker's own combo listing); measure a lead to confirm. Leads are three loose white silicone wires, untwisted and unsleeved beyond the 10 mm heat shrink (product photos).",
+        "sources": [
+          "https://www.mepsking.shop/4pcs-neon-2207-fpv-motors-with-4pairs-sz5145-propellers.html",
+          "https://www.toydronehq.com/products/meps-neon-2207-fpv-motor-for-5-inch-freestyle-drone-1950kv-2050kv-2550kv/"
+        ],
+        "values": [
+          "20 AWG ('Lead:20#150mm', MEPS 4-motor combo listing; motor version not stated)",
+          "24 AWG ('Lead: 24#150mm', reseller listing)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "fields": [
+          "continuous current rating",
+          "maximum voltage in volts",
+          "lead wire gauge",
+          "operating / storage temperature",
+          "prop nut thread handedness and rotation direction",
+          "mounting screw lengths / max engagement depth",
+          "part number / SKU"
+        ],
+        "note": "None of the manufacturer sources state these."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

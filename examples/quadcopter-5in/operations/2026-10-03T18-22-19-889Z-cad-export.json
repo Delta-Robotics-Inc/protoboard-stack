@@ -1,0 +1,100 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "quadcopter-5in-top-plate",
+    "config": "src/modules/top-plate/cad.config.ts",
+    "configDigest": "sha256:b0d539d96a635f9f7914349174adf40d412c8a7b1cb95cfeaead77e71ca56ccd",
+    "moduleDigest": "sha256:4952960b9b667719e4e2427efe61501fc54d4a5d42fb52fe9118feffc7ff5925"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4cf82c4b20f0fb7448deee95078d3a145411d08f6b73cbf5b092b88450d6ac98",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:22:19.889Z",
+  "status": "succeeded",
+  "summary": "quadcopter-5in-top-plate: body.step, body.glb, body.manifest.json, body.dxf and 2 interface GLBs in src/modules/top-plate/out",
+  "outputs": [
+    {
+      "path": "src/modules/top-plate/out/body.step",
+      "digest": "sha256:9262355f5613f599eb524c88c63c1560ea9223b14883173767132546b0c170fe",
+      "bytes": 176001,
+      "description": "quadcopter-5in-top-plate: body with one named sub-shape per interface feature"
+    },
+    {
+      "path": "src/modules/top-plate/out/body.glb",
+      "digest": "sha256:2c3b9a7d0c921c393fc0daff785a6baa6b91fd2ccaaa0147ab0e59e5cb00e0ff",
+      "bytes": 165024,
+      "description": "quadcopter-5in-top-plate: viewer mesh"
+    },
+    {
+      "path": "src/modules/top-plate/out/body.dxf",
+      "digest": "sha256:4802dd94ae091c2885fa7860a9432d10da9960025aafef71f0a24b76f411c6fc",
+      "bytes": 18140,
+      "description": "quadcopter-5in-top-plate: cutting profiles"
+    },
+    {
+      "path": "src/modules/top-plate/out/interfaces/gps_mount.glb",
+      "digest": "sha256:cc63c856c41e8dd5bcd73df265be6fd2eb2dffafd533cb9a774c7078a1821b2b",
+      "bytes": 162876,
+      "description": "quadcopter-5in-top-plate: gps_mount geometry"
+    },
+    {
+      "path": "src/modules/top-plate/out/interfaces/standoff_mount.glb",
+      "digest": "sha256:ee1930ca6f0b4821749bc48e9a12f0d6ab246373811a34b969c9eef8b1d2de4c",
+      "bytes": 162552,
+      "description": "quadcopter-5in-top-plate: standoff_mount geometry"
+    },
+    {
+      "path": "src/modules/top-plate/out/body.manifest.json",
+      "digest": "sha256:00f31058a0069028244c6fc3e5903776eb39fe3d3ff8abb26d12bec13679e93e",
+      "bytes": 1001,
+      "description": "quadcopter-5in-top-plate: geometry manifest (features that carry interfaces, volume)"
+    }
+  ],
+  "data": {
+    "module": "quadcopter-5in-top-plate",
+    "out": "src/modules/top-plate/out",
+    "volume_mm3": 13053.781,
+    "features": {
+      "standoff_mount": {
+        "area_mm2": 80.425,
+        "centroid": [
+          0,
+          0,
+          1
+        ],
+        "faces": 4
+      },
+      "gps_mount": {
+        "area_mm2": 55.292,
+        "centroid": [
+          -52,
+          0,
+          1
+        ],
+        "faces": 4
+      }
+    },
+    "interfaces": [
+      "gps_mount",
+      "standoff_mount"
+    ]
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:22:25.191Z"
+}

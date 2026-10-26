@@ -1,0 +1,15 @@
+{
+  "$comment": "Project overrides of the provider's land-pattern table (TEST FIXTURE). Never written into UHD parts.",
+  "packages": [
+    {
+      "id": "xfl4020-fixture",
+      "match": { "package": "XFL4020", "pin_count": 2 },
+      "pads": [
+        { "pin": "1", "x": -1.6, "y": 0, "w": 1.2, "h": 3.4 },
+        { "pin": "2", "x": 1.6, "y": 0, "w": 1.2, "h": 3.4 }
+      ],
+      "source": "ASSUMPTION for the test fixture: two 1.2 × 3.4 mm pads 3.2 mm apart for a 4 × 4 mm two-terminal inductor; not taken from Coilcraft's XFL4020 drawing",
+      "verified": false
+    }
+  ]
+}

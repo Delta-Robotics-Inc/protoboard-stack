@@ -1,0 +1,51 @@
+/* Watch core board (test fixture): pin assignment, generated from the board's nets. Do not edit. */
+
+&pinctrl {
+	i2c0_default: i2c0_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 13)>, /* SDA on net i2c_sda: u1:pin_37 P0.13 */
+				<NRF_PSEL(TWIM_SCL, 0, 14)>; /* SCL on net i2c_scl: u1:pin_36 P0.14 */
+		};
+	};
+
+	i2c0_sleep: i2c0_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 13)>, /* SDA on net i2c_sda: u1:pin_37 P0.13 */
+				<NRF_PSEL(TWIM_SCL, 0, 14)>; /* SCL on net i2c_scl: u1:pin_36 P0.14 */
+			low-power-enable; /* pins released in sleep */
+		};
+	};
+
+	spi3_default: spi3_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 19)>, /* SCK on net lcd_sck: u1:pin_42 P0.19 */
+				<NRF_PSEL(SPIM_MOSI, 0, 21)>; /* MOSI on net lcd_mosi: u1:pin_43 P0.21 */
+		};
+	};
+
+	spi3_sleep: spi3_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 19)>, /* SCK on net lcd_sck: u1:pin_42 P0.19 */
+				<NRF_PSEL(SPIM_MOSI, 0, 21)>; /* MOSI on net lcd_mosi: u1:pin_43 P0.21 */
+			low-power-enable; /* pins released in sleep */
+		};
+	};
+
+	uart0_default: uart0_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 26)>; /* TX on net gnss_rx: u1:pin_19 P0.26 */
+		};
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 0, 27)>; /* RX on net gnss_tx: u1:pin_16 P0.27 */
+			bias-pull-up; /* idle-high receive line */
+		};
+	};
+
+	uart0_sleep: uart0_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 26)>, /* TX on net gnss_rx: u1:pin_19 P0.26 */
+				<NRF_PSEL(UART_RX, 0, 27)>; /* RX on net gnss_tx: u1:pin_16 P0.27 */
+			low-power-enable; /* pins released in sleep */
+		};
+	};
+};

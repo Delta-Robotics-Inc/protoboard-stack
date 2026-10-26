@@ -1,0 +1,127 @@
+{
+  "artifact": "body",
+  "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+  "toolVersion": "0.1.0",
+  "sourceDigest": "e8648393a18d08e8e177e75d95501eb2b0c612f9441ad1b6528460a4a7a05332",
+  "units": "mm",
+  "coordinates": "assembly root (mm, Z up); glTF export in m, Y up",
+  "harness": "battery_leads",
+  "length_mm": 9,
+  "route_length_mm": 8.28,
+  "conductor_lengths_mm": [
+    10.76,
+    12.26
+  ],
+  "length_fit": {
+    "route_mm": 8.29,
+    "method": "shortest"
+  },
+  "bundle": {
+    "kind": "parallel",
+    "conductors": 2,
+    "conductor_od_mm": 0.9,
+    "bundle_od_mm": 2.04,
+    "twist_pitch_mm": null
+  },
+  "bend_radius_mm": {
+    "target": 4,
+    "minimum": 2.5,
+    "centreline": null,
+    "conductors": 4.8,
+    "at_terminations": 0.89
+  },
+  "clearance_mm": {
+    "min_conductor_surface": null
+  },
+  "ends": {
+    "end_cell": {
+      "frame": {
+        "normal": [
+          0,
+          1,
+          0
+        ],
+        "origin": [
+          14.25,
+          -27,
+          12.8
+        ],
+        "xAxis": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "counterpart": "cell.leads",
+      "termination": "integral",
+      "link": "cell_leads"
+    },
+    "end_board": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "origin": [
+          16.75,
+          -26.75,
+          7.4
+        ],
+        "xAxis": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "counterpart": "board.bat_pads",
+      "termination": "solder",
+      "link": "bat_pads"
+    }
+  },
+  "features": {
+    "end_board": {
+      "area_mm2": 32.269,
+      "centroid": [
+        16.668,
+        -26.833,
+        8.179
+      ],
+      "faces": 4
+    }
+  },
+  "step": "ok",
+  "route": [
+    [
+      14.25,
+      -27,
+      12.8
+    ],
+    [
+      14.53,
+      -28.94,
+      12.46
+    ],
+    [
+      15.6,
+      -28.44,
+      10.92
+    ],
+    [
+      16.45,
+      -27.54,
+      9.29
+    ],
+    [
+      16.75,
+      -26.75,
+      7.4
+    ]
+  ],
+  "status": "ok",
+  "notes": [],
+  "exportedFrom": {
+    "file": "src/harnesses/bottle-battery-leads/harness-cad/route.json",
+    "digest": "sha256:e3e275dc545b526a26ea9021c7c11b976535856f6cf0043aef6811167eee7227"
+  }
+}

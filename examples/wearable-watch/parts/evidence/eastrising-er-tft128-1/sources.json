@@ -1,0 +1,115 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "EastRising ER-TFT1.28-1 TFT LCD Display Datasheet, REV 1.0 (Dec-02-2019), outline drawing dated Feb-07-2025",
+    "url": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:00:00Z",
+    "sha256": null,
+    "note": "Read as text through the Protoboard fetch service; a direct download returns HTTP 403 (Cloudflare challenge) here. The drawing's dimension strings come through the text extraction only, so geometry was read from the archived 2019 drawing (src_datasheet_2019) and checked against these strings.",
+    "supports": [
+      "1.1 order number: ER-TFT1.28-1, no touch panel",
+      "2.1: 240xRGBx240, FPC connector 'Hollow out FPC', operating -20..+70 C, storage -30..+80 C",
+      "2.2: outline with FPC folded 35.60 (W) x 37.80 (H) x 1.5 (T) mm, visual area 33.4 mm, active area 32.4 mm, dot pitch 0.135 mm",
+      "2.3: COG, GC9A01 controller, 4-wire serial SPI",
+      "2.4: IPS, 400 cd/m2 typ, contrast 500:1",
+      "3.1 drawing strings: 35.60+-0.1 (LCM), 37.8+-0.1 (LCM), 1.55+-0.1, 12 contacts P0.7*(12-1)=7.70, 0.35 contact width, 11.4+-0.2 tail width, 2.00+-0.2 and 1.70+-0.2 contact window, 2-dia 1.0 holes at 10.00, 1.00, 12.24+-0.3, 10.24+-0.5, 0.50 max",
+      "4.1 pin configuration (12 pins)",
+      "4.2 absolute maximum: supplies -0.3..+4.6 V, logic input -0.3..VDD+0.3 V",
+      "4.3 electrical: VDD 2.5/2.8/3.3 V, VIH 0.7 VDD, VIL 0.3 VDD, IDD 8.5 typ 10.5 max mA, sleep-in 15 typ 30 max uA",
+      "4.4 backlight: 2-chip LED, Vf 2.9/3.0/3.1 V at 30 mA, If 30 typ 40 max mA, 30000 h",
+      "6.1-6.2 power precautions: VDD must also supply every device that drives the bus",
+      "7.5 soldering: 280 +-10 C, 3-4 s",
+      "7.5: remove flux residue after soldering, except with non-halogen flux"
+    ]
+  },
+  {
+    "id": "src_datasheet_2019",
+    "title": "EastRising ER-TFT1.28-1 datasheet, REV 1.0, drawing dated Dec-02-2019 (Internet Archive capture of 2023-01-28)",
+    "url": "https://web.archive.org/web/20230128234518/https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:03:00Z",
+    "sha256": "b490a0e8203efdfb7ac9673e4a98a2467fa295bbdbcf28a299e9ce4d1318764f",
+    "note": "Earlier issue of the same document, read as a rendered drawing. Same pin table and electrical tables as src_datasheet; outline height 38.10 (BL) where the 2025 drawing gives 37.8 (LCM).",
+    "supports": [
+      "3.1 drawing (rendered): backlight 35.60 x 38.10, LCD glass 35.2 x 37.24, polarizer 34.74 x 34.32, active area 32.40 offset 1.60 from the backlight edges, thickness 1.50 +-0.1, FPC 0.13 +-0.03 thick",
+      "3.1 drawing: FPC tail 11.4 +-0.2 wide, 12 contacts 0.35 wide at 0.7 pitch (7.7 span) in a window at the tail end, 2.00 long in the front view and 1.70 in the rear view; 2 x dia 1.0 +-0.05 holes 10.00 apart, the pin-12 hole centre 1.00 in from the pin-12 side edge of the tail (a sideways dimension; nothing places the holes along the tail)",
+      "3.1 drawing scaled at 1200 dpi (marked not to scale; 50.0 px/mm along the tail, 45.6 px/mm across): hole centres about 4.0 from the tail end (2.0 beyond the window); tail pad about 10.0 long and about 0.9 wider than 11.4 on the pin-1 side at the hole end. Used only for assumption traits",
+      "3.1 drawing: unfolded tail end 12.24 +-0.3 beyond the backlight edge; folded tail end 10.24 +-0.5 in from the outer edge; fold protrudes 0.50 max beyond the backlight frame",
+      "3.1 drawing: pin 1 nearest the +y alignment hole in the front view; LED schematic: 2 LEDs in parallel between A and K, If = 40 mA, Vf = 2.9-3.1 V",
+      "4.1-4.4: same pin table, ratings and backlight table as src_datasheet",
+      "3.1 fold note: the FPC fold stands out of the backlight frame; backlight lead region H = 0.45 max; leave clearance in the housing"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "BuyDisplay (EastRising) product page for ER-TFT1.28-1, Chinese store, product id 1806",
+    "url": "https://www.buydisplay.com/chinese/catalog/product/view/id/1806/s/1-28-inch-tft-lcd-display-240x240-round-circle-screen-for-smart-watch/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:01:00Z",
+    "sha256": null,
+    "supports": [
+      "identity: ER-TFT1.28-1, GC9A01A controller, 4-wire SPI, soldered FPC ('焊接型FPC'), 3 V supply",
+      "outline 35.60 (W) x 37.80 (H) x 1.5 (T) mm",
+      "backlight 30 mA typ, white",
+      "gross (shipping) weight 0.0180 kg",
+      "in stock, 10-year continuity promise from 2019",
+      "documents listed: datasheet and controller datasheet only; no 3D model listed"
+    ]
+  },
+  {
+    "id": "src_product_en_slug",
+    "title": "BuyDisplay English product URL formerly used for ER-TFT1.28-1 (now sells ER-TFT1.28-3)",
+    "url": "https://www.buydisplay.com/1-28-inch-tft-lcd-display-240x240-round-circle-screen-for-smart-watch",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:02:00Z",
+    "sha256": null,
+    "supports": [
+      "availability note: the English page lists ER-TFT1.28-3 (plug-in FPC, 300 cd/m2, 35.59 x 37.74 x 1.6 mm), not ER-TFT1.28-1"
+    ]
+  },
+  {
+    "id": "src_controller",
+    "title": "GalaxyCore GC9A01A datasheet, Rev 1.0 Preliminary (2019-07-02), as hosted by BuyDisplay (Internet Archive capture of 2025-02-18)",
+    "url": "https://web.archive.org/web/20250218222306/https://www.buydisplay.com/download/ic/GC9A01A.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:05:00Z",
+    "sha256": "e343306ad364b20459b2b03f004ba255b6260fd71afccb5b0f6d0e711c398b6e",
+    "note": "Controller datasheet the panel datasheet refers to for IC details. The live URL https://www.buydisplay.com/download/ic/GC9A01A.pdf returns HTTP 403 here.",
+    "supports": [
+      "7.3.4 Table 48 (4-line SPI): serial clock cycle write twc >= 10 ns, read trc >= 150 ns, D/CX setup/hold 10 ns, CSX setup 20 ns",
+      "SDA is the serial data input and output in the 4-line serial interface"
+    ]
+  },
+  {
+    "id": "src_community_breakout",
+    "title": "banoz/ER-TFT1.28-1.Breakout (Eagle board with a 12P-FPC land pattern for this panel), The Unlicense",
+    "url": "https://github.com/banoz/ER-TFT1.28-1.Breakout",
+    "type": "pcb",
+    "authority": "community",
+    "fetched_at": "2026-10-03T01:02:30Z",
+    "sha256": "f28049495d754c4ad6be0962184879c4432837ae180f920b0d2a4666177973c0",
+    "note": "sha256 of project/Breakout.brd. Used only to corroborate the 12-contact, 0.7 mm pitch, pin 1 to 12 order; no land pattern is carried into the part.",
+    "supports": [
+      "12 contacts at 0.7 mm pitch in pin 1..12 order on a third-party board designed for this panel"
+    ]
+  },
+  {
+    "id": "src_cad_grabcad",
+    "title": "BuyDisplay.com GrabCAD library: '1.28'' IPS TFT LCD Display 240x240 Round Circle Screen for Smart Watch' (ER-TFT1.28-1)",
+    "url": "https://grabcad.com/buydisplay.com-1/models",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:04:00Z",
+    "sha256": null,
+    "licence": "not stated; download needs a GrabCAD login. Not downloaded, not redistributed.",
+    "supports": [
+      "a manufacturer-posted model exists; not used (no stated redistribution terms)"
+    ]
+  }
+]

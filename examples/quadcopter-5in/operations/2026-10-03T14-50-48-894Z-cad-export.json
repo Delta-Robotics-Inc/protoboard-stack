@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "dji-o4-3in1-cable",
+    "config": "src/harnesses/dji-o4-3in1-cable/cad.config.ts",
+    "configDigest": "sha256:b449f223d038a4aaebf1c311437f68793ca597b09294a1ea1a187e51776e7ae7",
+    "moduleDigest": "sha256:3cd0dd36544d6c614efb0b47bb6d9a0070a0cacdf1c8c45cb9f79f6fa20ba042"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:da4b668ffe2e8d10d98fb8655d8f81ef26e9d4cd5c8867eebd3350d2b1693e4a",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:50:48.894Z",
+  "status": "succeeded",
+  "summary": "dji_cable: body.glb, body.step and body.manifest.json in src/harnesses/dji-o4-3in1-cable/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/dji-o4-3in1-cable/out/body.glb",
+      "digest": "sha256:ac30477aa70688740fd2afde8df22dcdee3b132a46cf63620bb2b5121894375a",
+      "bytes": 245816,
+      "description": "dji_cable: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/dji-o4-3in1-cable/out/body.step",
+      "digest": "sha256:0236982f57765e13709d42562c26d9af7bea0f4d88c3c99f0edc1e952c2c31d5",
+      "bytes": 2245260,
+      "description": "dji_cable: swept solids"
+    },
+    {
+      "path": "src/harnesses/dji-o4-3in1-cable/out/body.manifest.json",
+      "digest": "sha256:a3518a71ecf4dab149cc8ef5dac65e72778fa34db037841c25772a9ab7d3a65c",
+      "bytes": 3687,
+      "description": "dji_cable: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "dji-o4-3in1-cable",
+    "path": "dji_cable",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 50,
+    "route_length_mm": 49.79,
+    "slack_mm": 1.02,
+    "bend_mm": {
+      "target": 4,
+      "minimum": 2.5,
+      "centreline": 2.95,
+      "conductors": 1.34,
+      "at_terminations": 0.68
+    },
+    "clearance_mm": 1.49,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T14:50:57.577Z"
+}

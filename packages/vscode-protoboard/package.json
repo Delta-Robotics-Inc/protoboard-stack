@@ -1,0 +1,1183 @@
+{
+  "name": "vscode-protoboard",
+  "displayName": "Protoboard",
+  "description": "Protoboard Stack in VS Code: the viewer as editor tabs (diagram, 3D and the module's domain views), a hierarchy in each viewer tab, the Protoboard Inspector following the focused tab, the DRC panel and Problems, the Library, Project Parts and Cloud views, the BOM editor, a CAD viewer for STEP and GLB, and Protoboard Dark and Light colour themes",
+  "version": "0.2.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/vscode-protoboard"
+  },
+  "publisher": "deltarobotics",
+  "icon": "media/icon.png",
+  "type": "module",
+  "engines": {
+    "vscode": "^1.106.0"
+  },
+  "categories": [
+    "Other",
+    "Themes"
+  ],
+  "main": "./dist/extension.cjs",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Protoboard checks, builds and serves a project by running its code (protoboard.config.ts, its model files, and the project's own CLI when it has one), so it does not run in Restricted Mode. In a trusted window it still asks once per project before it runs that project's code."
+    }
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "workspaceContains:**/protoboard.config.ts",
+    "onCustomEditor:protoboard.cadViewer",
+    "onWebviewPanel:protoboard.bomProject"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "protoboard.openViewer",
+        "title": "Open Viewer",
+        "category": "Protoboard",
+        "icon": "$(protoboard-logo)"
+      },
+      {
+        "command": "protoboard.openModule",
+        "title": "Open in New Viewer Tab",
+        "category": "Protoboard",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "protoboard.viewer.openSourceFile",
+        "title": "Open Source File of This Viewer Tab",
+        "category": "Protoboard",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "protoboard.viewer.revealSourceFile",
+        "title": "Reveal Source File in Explorer",
+        "category": "Protoboard",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "protoboard.viewer.copySourcePath",
+        "title": "Copy Path of Source File",
+        "category": "Protoboard",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "protoboard.viewer.copyRelativeSourcePath",
+        "title": "Copy Relative Path of Source File",
+        "category": "Protoboard",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "protoboard.openSourceInViewer",
+        "title": "Open in Protoboard Viewer",
+        "category": "Protoboard",
+        "icon": "$(protoboard-logo)"
+      },
+      {
+        "command": "protoboard.check",
+        "title": "Check",
+        "category": "Protoboard",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "protoboard.openArtifact",
+        "title": "Open Artifact",
+        "category": "Protoboard",
+        "icon": "$(file-symlink-file)"
+      },
+      {
+        "command": "protoboard.fetchParts",
+        "title": "Fetch Parts",
+        "category": "Protoboard",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "protoboard.stopDev",
+        "title": "Stop Dev Server",
+        "category": "Protoboard"
+      },
+      {
+        "command": "protoboard.showLog",
+        "title": "Show Log",
+        "category": "Protoboard"
+      },
+      {
+        "command": "protoboard.openSettings",
+        "title": "Open Settings",
+        "category": "Protoboard",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "protoboard.agents.connect",
+        "title": "Connect Agents (MCP)",
+        "category": "Protoboard",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "protoboard.about",
+        "title": "About",
+        "category": "Protoboard"
+      },
+      {
+        "command": "protoboard.explorer.focus",
+        "title": "Focus in Viewer",
+        "category": "Protoboard",
+        "icon": "$(target)"
+      },
+      {
+        "command": "protoboard.explorer.select",
+        "title": "Select in Viewer",
+        "category": "Protoboard"
+      },
+      {
+        "command": "protoboard.explorer.openSource",
+        "title": "Open Source",
+        "category": "Protoboard",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "protoboard.explorer.openArtifact",
+        "title": "Open Artifact of Module…",
+        "category": "Protoboard",
+        "icon": "$(file-symlink-file)"
+      },
+      {
+        "command": "protoboard.explorer.runOperation",
+        "title": "Run Operation…",
+        "category": "Protoboard",
+        "icon": "$(play)"
+      },
+      {
+        "command": "protoboard.explorer.filter",
+        "title": "Filter Hierarchy…",
+        "category": "Protoboard",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "protoboard.hierarchy.toggle",
+        "title": "Toggle Hierarchy",
+        "category": "Protoboard",
+        "icon": "$(layout-sidebar-left)"
+      },
+      {
+        "command": "protoboard.hierarchy.reveal",
+        "title": "Reveal in Hierarchy",
+        "category": "Protoboard",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "protoboard.explorer.refresh",
+        "title": "Check Again",
+        "category": "Protoboard",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "protoboard.explorer.switchProject",
+        "title": "Switch Project…",
+        "category": "Protoboard",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "protoboard.library.manage",
+        "title": "Manage Libraries",
+        "category": "Protoboard",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "protoboard.library.closeManage",
+        "title": "Close Manage Libraries",
+        "category": "Protoboard",
+        "icon": "$(close)"
+      },
+      {
+        "command": "protoboard.library.refresh",
+        "title": "Refresh Library",
+        "category": "Protoboard",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "protoboard.library.add",
+        "title": "Add Part…",
+        "category": "Protoboard",
+        "icon": "$(add)"
+      },
+      {
+        "command": "protoboard.generate",
+        "title": "Generate Deployment Artifacts",
+        "category": "Protoboard",
+        "icon": "$(package)"
+      },
+      {
+        "command": "protoboard.openPackage",
+        "title": "Open Manufacturing Package",
+        "category": "Protoboard",
+        "icon": "$(book)"
+      },
+      {
+        "command": "protoboard.fetchOffers",
+        "title": "Get Catalog Offers",
+        "category": "Protoboard",
+        "icon": "$(tag)"
+      },
+      {
+        "command": "protoboard.cloud.refresh",
+        "title": "Refresh Cloud View",
+        "category": "Protoboard",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "protoboard.signIn",
+        "title": "Sign In",
+        "category": "Protoboard",
+        "icon": "$(sign-in)"
+      },
+      {
+        "command": "protoboard.signOut",
+        "title": "Sign Out",
+        "category": "Protoboard",
+        "icon": "$(sign-out)"
+      },
+      {
+        "command": "protoboard.account",
+        "title": "Protoboard Cloud Account",
+        "category": "Protoboard",
+        "icon": "$(account)"
+      },
+      {
+        "command": "protoboard.library.openPage",
+        "title": "Open Full Library",
+        "category": "Protoboard",
+        "icon": "$(library)"
+      },
+      {
+        "command": "protoboard.part.back",
+        "title": "Back from Part Detail",
+        "category": "Protoboard",
+        "icon": "$(arrow-left)"
+      },
+      {
+        "command": "protoboard.openBom",
+        "title": "Open Bill of Materials",
+        "category": "Protoboard",
+        "icon": "$(table)"
+      },
+      {
+        "command": "protoboard.parts.refresh",
+        "title": "Refresh Project Parts",
+        "category": "Protoboard",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "protoboard.parts.openPage",
+        "title": "Open Project Parts Page",
+        "category": "Protoboard",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "protoboard.parts.check",
+        "title": "Check Libraries for Updates",
+        "category": "Protoboard",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "protoboard.parts.open",
+        "title": "Open Part",
+        "category": "Protoboard"
+      },
+      {
+        "command": "protoboard.parts.update",
+        "title": "Update Part",
+        "category": "Protoboard",
+        "icon": "$(desktop-download)"
+      },
+      {
+        "command": "protoboard.parts.restore",
+        "title": "Restore Pinned Revision",
+        "category": "Protoboard",
+        "icon": "$(discard)"
+      },
+      {
+        "command": "protoboard.parts.compare",
+        "title": "Compare with Library",
+        "category": "Protoboard",
+        "icon": "$(git-compare)"
+      },
+      {
+        "command": "protoboard.parts.publish",
+        "title": "Submit for Verification…",
+        "category": "Protoboard",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "protoboard.parts.openSource",
+        "title": "Open Source",
+        "category": "Protoboard",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "protoboard.newProject",
+        "title": "New Project…",
+        "category": "Protoboard",
+        "icon": "$(add)"
+      },
+      {
+        "command": "protoboard.signInDevice",
+        "title": "Sign In with a Code (Remote or Headless)",
+        "category": "Protoboard",
+        "icon": "$(key)"
+      },
+      {
+        "command": "protoboard.account.check",
+        "title": "Check the Account Again",
+        "category": "Protoboard",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "protoboard.stack.show",
+        "title": "Show Where the Stack Is Installed",
+        "category": "Protoboard",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "protoboard.stack.update",
+        "title": "Update Project to the Stack This Extension Carries",
+        "category": "Protoboard",
+        "icon": "$(desktop-download)"
+      },
+      {
+        "command": "protoboard.project.upgrade",
+        "title": "Update Project to This Extension's Protoboard Version",
+        "category": "Protoboard",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "protoboard.stack.install",
+        "title": "Install the Stack Version the Project Pins (from a Registry)",
+        "category": "Protoboard",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "protoboard.stack.fromVsix",
+        "title": "Add the Stack from Another .vsix File…",
+        "category": "Protoboard",
+        "icon": "$(package)"
+      },
+      {
+        "command": "protoboard.setupProject",
+        "title": "Initialize Project",
+        "category": "Protoboard",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "protoboard.trustProject",
+        "title": "Trust This Project's Code…",
+        "category": "Protoboard",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "protoboard.path.add",
+        "title": "Add the protoboard Command to PATH",
+        "category": "Protoboard",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "protoboard.tools.install",
+        "title": "Install a Tool Runtime (CAD, Circuit)…",
+        "category": "Protoboard",
+        "icon": "$(tools)"
+      }
+    ],
+    "configuration": {
+      "title": "Protoboard",
+      "properties": {
+        "protoboard.cliPath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "A particular `protoboard` CLI to run. Empty (the default) lets Protoboard choose, in this order: the project's own installed `@protoboardai/cli` (from `npm install`, or links to the stack this extension carries), this setting, a stack copy in `~/.protoboard/stack` that matches the version the project pins, the stack carried by this extension. The project's own CLI always wins over this setting. A `.mjs`/`.js` file runs with `#protoboard.nodePath#`. **Protoboard: Show Log** says which one runs."
+        },
+        "protoboard.nodePath": {
+          "type": "string",
+          "default": "node",
+          "scope": "machine",
+          "markdownDescription": "The Node.js that runs the CLI. `node` (the default) lets Protoboard choose: a Node.js 22 or later on this window's `PATH`, else one found where Homebrew, nvm, Volta, fnm, mise or asdf put it (a VS Code started from the macOS Dock does not have your shell's `PATH`), else VS Code's own runtime, so a machine without Node.js works too. Set a full path (`which node` in a terminal) to choose one yourself. **Protoboard: Show Log** says which one runs."
+        },
+        "protoboard.dev.port": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null,
+          "markdownDescription": "Port for a dev server the extension starts. Empty: 5180, or the next free port. A port given here must be free."
+        },
+        "protoboard.check.onSave": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Check again (`protoboard build`) when a file of a project that has been checked is saved."
+        },
+        "protoboard.check.onOpen": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Check the project (`protoboard build`, which runs every validator) when the window opens, so the Explorer and the DRC view are current."
+        },
+        "protoboard.libraries": {
+          "type": "array",
+          "default": [],
+          "scope": "application",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "url"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$",
+                "description": "Short id, shown with results and recorded in parts/origins.json."
+              },
+              "url": {
+                "type": "string",
+                "pattern": "^https?://",
+                "description": "The library's URL (its discovery document is at <url>/.well-known/uhd-library)."
+              },
+              "authEnv": {
+                "type": "string",
+                "pattern": "^PROTOBOARD_[A-Z0-9_]+_TOKEN$",
+                "description": "Name of the environment variable holding the library's read token, PROTOBOARD_<NAME>_TOKEN (not PROTOBOARD_CLOUD_TOKEN). Never the token itself."
+              }
+            }
+          },
+          "markdownDescription": "Your personal part libraries (`uhd-library/v1`), searched after the project's own (`libraries` in `protoboard.config.ts`). Kept in your user settings, never in the project; the CLI runs from VS Code see them as `PROTOBOARD_USER_LIBRARIES`. Credentials only as environment variable names (`authEnv`). Manage them from the Library view's **Manage Libraries**."
+        },
+        "protoboard.drc.revealOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show the **DRC** view in the panel when a Protoboard project opens."
+        },
+        "protoboard.inspector.revealOnSelection": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Bring the **Protoboard Inspector** to the front of the secondary side bar when a module or a link is selected in a viewer tab. The keyboard focus stays in the viewer. Turn it off to keep another view (an agent's chat) in front; **Inspect** in a module's right-click menu still shows it."
+        },
+        "protoboard.viewer.openOnFirstVisit": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Open the viewer at the top-level system the first time a Protoboard project is opened in a workspace, or appears in it (`protoboard init` run in the open folder). After that, VS Code restores the tabs that were open."
+        },
+        "protoboard.editor.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show **Open in Viewer** above each module a `.uhd.ts` file defines (as the project's last build knows them)."
+        },
+        "protoboard.terminal.addCommand": {
+          "type": "boolean",
+          "default": true,
+          "scope": "window",
+          "markdownDescription": "Add the `protoboard` command to this window's terminals (`~/.protoboard/bin` at the end of `PATH`), so you and your agent can run `protoboard check` in a project without installing anything else. In a project that has its own CLI the command runs that one. A `protoboard` already on your `PATH` stays first. **Protoboard: Add the protoboard Command to PATH** does the same for terminals outside VS Code."
+        },
+        "protoboard.agents.offerSetup": {
+          "type": "boolean",
+          "default": true,
+          "scope": "application",
+          "markdownDescription": "Offer once, after the first sign-in or the first Protoboard project, to connect the agents found on this machine (Claude Code, Cursor, Codex and others) to Protoboard's MCP server. Nothing is changed without your choice per agent. **Protoboard: Open Settings** connects and disconnects them at any time."
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "protoboard-library",
+          "title": "Protoboard Library",
+          "icon": "media/library.svg"
+        },
+        {
+          "id": "protoboard-parts",
+          "title": "Protoboard Project Parts",
+          "icon": "media/parts.svg"
+        },
+        {
+          "id": "protoboard-cloud",
+          "title": "Protoboard Cloud",
+          "icon": "media/cloud.svg"
+        }
+      ],
+      "secondarySidebar": [
+        {
+          "id": "protoboard-inspector",
+          "title": "Protoboard Inspector",
+          "icon": "media/protoboard.svg"
+        }
+      ],
+      "panel": [
+        {
+          "id": "protoboard-drc",
+          "title": "DRC",
+          "icon": "media/drc.svg"
+        }
+      ]
+    },
+    "icons": {
+      "protoboard-logo": {
+        "description": "The Protoboard mark",
+        "default": {
+          "fontPath": "media/protoboard-icons.woff",
+          "fontCharacter": "\\E000"
+        }
+      }
+    },
+    "views": {
+      "protoboard-inspector": [
+        {
+          "id": "protoboard.start.inspector",
+          "name": "Protoboard Inspector",
+          "when": "protoboard.noProject || protoboard.needsSetup",
+          "icon": "media/protoboard.svg",
+          "contextualTitle": "Protoboard"
+        },
+        {
+          "type": "webview",
+          "id": "protoboard.inspector",
+          "name": "Protoboard Inspector",
+          "when": "protoboard.hasProject && !protoboard.needsSetup",
+          "icon": "media/protoboard.svg",
+          "contextualTitle": "Protoboard Inspector",
+          "initialSize": 2
+        }
+      ],
+      "protoboard-drc": [
+        {
+          "type": "webview",
+          "id": "protoboard.drc",
+          "name": "DRC",
+          "when": "protoboard.hasProject && !protoboard.needsSetup",
+          "icon": "media/drc.svg",
+          "contextualTitle": "Protoboard"
+        }
+      ],
+      "protoboard-library": [
+        {
+          "id": "protoboard.start.library",
+          "name": "Protoboard Library",
+          "when": "protoboard.noProject || protoboard.needsSetup",
+          "icon": "media/library.svg",
+          "contextualTitle": "Protoboard"
+        },
+        {
+          "type": "webview",
+          "id": "protoboard.library",
+          "name": "Protoboard Library",
+          "when": "protoboard.hasProject && !protoboard.needsSetup",
+          "icon": "media/library.svg",
+          "contextualTitle": "Protoboard"
+        }
+      ],
+      "protoboard-parts": [
+        {
+          "id": "protoboard.start.parts",
+          "name": "Protoboard Project Parts",
+          "when": "protoboard.noProject || protoboard.needsSetup",
+          "icon": "media/parts.svg",
+          "contextualTitle": "Protoboard"
+        },
+        {
+          "type": "webview",
+          "id": "protoboard.parts",
+          "name": "Protoboard Project Parts",
+          "when": "protoboard.hasProject && !protoboard.needsSetup",
+          "icon": "media/parts.svg",
+          "contextualTitle": "Protoboard"
+        }
+      ],
+      "protoboard-cloud": [
+        {
+          "id": "protoboard.start.cloud",
+          "name": "Protoboard Cloud",
+          "when": "protoboard.noProject || protoboard.needsSetup",
+          "icon": "media/cloud.svg",
+          "contextualTitle": "Protoboard"
+        },
+        {
+          "type": "webview",
+          "id": "protoboard.cloud",
+          "name": "Protoboard Cloud",
+          "when": "protoboard.hasProject && !protoboard.needsSetup",
+          "icon": "media/cloud.svg",
+          "contextualTitle": "Protoboard"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "protoboard.start.inspector",
+        "contents": "This project is not set up on this machine yet.\n[$(rocket) Initialize](command:protoboard.setupProject)",
+        "when": "protoboard.needsSetup"
+      },
+      {
+        "view": "protoboard.start.inspector",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template. No account needed; template parts need a [sign-in](command:protoboard.signIn).",
+        "when": "protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.inspector",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template.",
+        "when": "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.library",
+        "contents": "This project is not set up on this machine yet.\n[$(rocket) Initialize](command:protoboard.setupProject)",
+        "when": "protoboard.needsSetup"
+      },
+      {
+        "view": "protoboard.start.library",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template. No account needed; template parts need a [sign-in](command:protoboard.signIn).",
+        "when": "protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.library",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template.",
+        "when": "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.parts",
+        "contents": "This project is not set up on this machine yet.\n[$(rocket) Initialize](command:protoboard.setupProject)",
+        "when": "protoboard.needsSetup"
+      },
+      {
+        "view": "protoboard.start.parts",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template. No account needed; template parts need a [sign-in](command:protoboard.signIn).",
+        "when": "protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.parts",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template.",
+        "when": "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.cloud",
+        "contents": "This project is not set up on this machine yet.\n[$(rocket) Initialize](command:protoboard.setupProject)",
+        "when": "protoboard.needsSetup"
+      },
+      {
+        "view": "protoboard.start.cloud",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template. No account needed; template parts need a [sign-in](command:protoboard.signIn).",
+        "when": "protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.cloud",
+        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template.",
+        "when": "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "protoboard.part.back",
+        "key": "alt+left",
+        "when": "activeWebviewPanelId == 'protoboard.part'"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "protoboard.library.openPage",
+          "when": "view == protoboard.library",
+          "group": "navigation@1"
+        },
+        {
+          "command": "protoboard.library.manage",
+          "when": "view == protoboard.library",
+          "group": "navigation@2"
+        },
+        {
+          "command": "protoboard.library.refresh",
+          "when": "view == protoboard.library",
+          "group": "navigation@3"
+        },
+        {
+          "command": "protoboard.library.add",
+          "when": "view == protoboard.library",
+          "group": "more@1"
+        },
+        {
+          "command": "protoboard.parts.openPage",
+          "when": "view == protoboard.parts",
+          "group": "navigation@0"
+        },
+        {
+          "command": "protoboard.parts.check",
+          "when": "view == protoboard.parts",
+          "group": "more@0"
+        },
+        {
+          "command": "protoboard.parts.refresh",
+          "when": "view == protoboard.parts",
+          "group": "navigation@2"
+        },
+        {
+          "command": "protoboard.library.manage",
+          "when": "view == protoboard.parts",
+          "group": "more@1"
+        },
+        {
+          "command": "protoboard.openBom",
+          "when": "view == protoboard.parts",
+          "group": "more@2"
+        },
+        {
+          "command": "protoboard.cloud.refresh",
+          "when": "view == protoboard.cloud",
+          "group": "navigation@1"
+        },
+        {
+          "command": "protoboard.openSettings",
+          "when": "view == protoboard.cloud",
+          "group": "navigation@2"
+        },
+        {
+          "command": "protoboard.generate",
+          "when": "view == protoboard.cloud",
+          "group": "more@0"
+        },
+        {
+          "command": "protoboard.openBom",
+          "when": "view == protoboard.cloud",
+          "group": "more@0"
+        },
+        {
+          "command": "protoboard.openPackage",
+          "when": "view == protoboard.cloud",
+          "group": "more@1"
+        },
+        {
+          "command": "protoboard.fetchOffers",
+          "when": "view == protoboard.cloud",
+          "group": "more@2"
+        },
+        {
+          "command": "protoboard.showLog",
+          "when": "view == protoboard.cloud",
+          "group": "more@3"
+        },
+        {
+          "command": "protoboard.signIn",
+          "when": "view == protoboard.cloud && !protoboard.signedIn",
+          "group": "more@4"
+        },
+        {
+          "command": "protoboard.signOut",
+          "when": "view == protoboard.cloud && protoboard.signedIn",
+          "group": "more@4"
+        },
+        {
+          "command": "protoboard.newProject",
+          "when": "view =~ /^protoboard\\.start\\./ && !protoboard.needsSetup",
+          "group": "navigation@1"
+        },
+        {
+          "command": "protoboard.setupProject",
+          "when": "view =~ /^protoboard\\.start\\./ && protoboard.needsSetup",
+          "group": "navigation@1"
+        },
+        {
+          "command": "protoboard.signIn",
+          "when": "view == protoboard.library && protoboard.cloudLocked && protoboard.access != 'checking'",
+          "group": "navigation@0"
+        },
+        {
+          "command": "protoboard.explorer.refresh",
+          "when": "view == protoboard.inspector",
+          "group": "navigation@3"
+        },
+        {
+          "command": "protoboard.openViewer",
+          "when": "view == protoboard.inspector",
+          "group": "navigation@4"
+        },
+        {
+          "command": "protoboard.explorer.switchProject",
+          "when": "view == protoboard.inspector",
+          "group": "more@1"
+        },
+        {
+          "command": "protoboard.showLog",
+          "when": "view == protoboard.inspector",
+          "group": "more@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "protoboard.part.back",
+          "when": "activeWebviewPanelId == 'protoboard.part'"
+        },
+        {
+          "command": "protoboard.openModule",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.explorer.select",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.explorer.focus",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.explorer.openSource",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.explorer.openArtifact",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.explorer.runOperation",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.explorer.filter",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.hierarchy.toggle",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.hierarchy.reveal",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.explorer.refresh",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.explorer.switchProject",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.library.manage",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.library.closeManage",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.library.refresh",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.library.add",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.generate",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.openPackage",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.fetchOffers",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.cloud.refresh",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.signIn",
+          "when": "!protoboard.signedIn"
+        },
+        {
+          "command": "protoboard.signOut",
+          "when": "protoboard.signedIn"
+        },
+        {
+          "command": "protoboard.library.openPage",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.openBom",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.parts.refresh",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.parts.check",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.parts.open",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.parts.update",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.parts.restore",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.parts.compare",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.parts.publish",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.parts.openSource",
+          "when": "false"
+        },
+        {
+          "command": "protoboard.parts.openPage",
+          "when": "protoboard.hasProject"
+        },
+        {
+          "command": "protoboard.openSourceInViewer",
+          "when": "protoboard.hasProject && resourceFilename =~ /\\.uhd\\.ts$/"
+        },
+        {
+          "command": "protoboard.setupProject",
+          "when": "protoboard.needsSetup"
+        },
+        {
+          "command": "protoboard.tools.install",
+          "when": "protoboard.hasProject && !protoboard.needsSetup"
+        },
+        {
+          "command": "protoboard.viewer.openSourceFile",
+          "when": "activeCustomEditorId == 'protoboard.viewer'"
+        },
+        {
+          "command": "protoboard.viewer.revealSourceFile",
+          "when": "activeCustomEditorId == 'protoboard.viewer'"
+        },
+        {
+          "command": "protoboard.viewer.copySourcePath",
+          "when": "activeCustomEditorId == 'protoboard.viewer'"
+        },
+        {
+          "command": "protoboard.viewer.copyRelativeSourcePath",
+          "when": "activeCustomEditorId == 'protoboard.viewer'"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "protoboard.openSourceInViewer",
+          "when": "resourceScheme == file && resourceFilename =~ /\\.uhd\\.ts$/ && protoboard.hasProject",
+          "group": "navigation@-10"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "protoboard.openSourceInViewer",
+          "when": "resourceScheme == file && resourceFilename =~ /\\.uhd\\.ts$/ && protoboard.hasProject",
+          "group": "navigation@90"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "protoboard.openSourceInViewer",
+          "when": "resourceScheme == file && resourceFilename =~ /\\.uhd\\.ts$/ && protoboard.hasProject",
+          "group": "3_open@90"
+        },
+        {
+          "command": "protoboard.viewer.openSourceFile",
+          "when": "resourceScheme == protoboard-viewer",
+          "group": "2_files@10"
+        },
+        {
+          "command": "protoboard.viewer.revealSourceFile",
+          "when": "resourceScheme == protoboard-viewer",
+          "group": "2_files@20"
+        },
+        {
+          "command": "protoboard.viewer.copySourcePath",
+          "when": "resourceScheme == protoboard-viewer",
+          "group": "1_cutcopypaste@10"
+        },
+        {
+          "command": "protoboard.viewer.copyRelativeSourcePath",
+          "when": "resourceScheme == protoboard-viewer",
+          "group": "1_cutcopypaste@20"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "protoboard.openSourceInViewer",
+          "when": "resourceScheme == file && resourceFilename =~ /\\.uhd\\.ts$/ && protoboard.hasProject",
+          "group": "navigation@90"
+        }
+      ],
+      "webview/context": [
+        {
+          "command": "protoboard.openModule",
+          "when": "webviewId == 'protoboard.viewer' && webviewSection == 'hierarchy' && pbLevel",
+          "group": "1_open@0"
+        },
+        {
+          "command": "protoboard.explorer.focus",
+          "when": "webviewId == 'protoboard.viewer' && webviewSection == 'hierarchy'",
+          "group": "1_open@1"
+        },
+        {
+          "command": "protoboard.explorer.openSource",
+          "when": "webviewId == 'protoboard.viewer' && webviewSection == 'hierarchy'",
+          "group": "1_open@2"
+        },
+        {
+          "command": "protoboard.explorer.openArtifact",
+          "when": "webviewId == 'protoboard.viewer' && webviewSection == 'hierarchy' && pbArtifacts",
+          "group": "1_open@3"
+        },
+        {
+          "command": "protoboard.explorer.runOperation",
+          "when": "webviewId == 'protoboard.viewer' && webviewSection == 'hierarchy' && pbKind =~ /^(board|enclosure|structure|assembly|part)$/",
+          "group": "2_run@1"
+        },
+        {
+          "command": "protoboard.explorer.filter",
+          "when": "webviewId == 'protoboard.viewer' && webviewSection == 'hierarchy'",
+          "group": "3_view@1"
+        }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "protoboard.viewer",
+        "displayName": "Protoboard Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.protoboard-viewer"
+          }
+        ],
+        "priority": "option"
+      },
+      {
+        "viewType": "protoboard.cadViewer",
+        "displayName": "Protoboard CAD Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.{step,stp,STEP,STP,glb,GLB}"
+          }
+        ],
+        "priority": "default"
+      },
+      {
+        "viewType": "protoboard.bom",
+        "displayName": "Protoboard Bill of Materials",
+        "selector": [
+          {
+            "filenamePattern": "**/system/ordering-list.csv"
+          },
+          {
+            "filenamePattern": "*.bom.csv"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "themes": [
+      {
+        "label": "Protoboard Dark",
+        "id": "Protoboard Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/protoboard-dark-color-theme.json"
+      },
+      {
+        "label": "Protoboard Light",
+        "id": "Protoboard Light",
+        "uiTheme": "vs",
+        "path": "./themes/protoboard-light-color-theme.json"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "protoboard.start",
+        "title": "Get Started with Protoboard",
+        "description": "Make a project and see it. No account needed.",
+        "steps": [
+          {
+            "id": "newProject",
+            "title": "Create a project",
+            "description": "Start blank or from a template: a drone, a wearable or an IoT board.\n[New Project](command:protoboard.newProject)",
+            "media": {
+              "markdown": "media/walkthrough/new-project.md"
+            },
+            "completionEvents": [
+              "onContext:protoboard.hasProject"
+            ]
+          },
+          {
+            "id": "viewer",
+            "title": "See it",
+            "description": "The system as a diagram and in 3D, in an editor tab.\n[Open Viewer](command:protoboard.openViewer)",
+            "media": {
+              "markdown": "media/walkthrough/viewer.md"
+            },
+            "completionEvents": [
+              "onCommand:protoboard.openViewer"
+            ]
+          },
+          {
+            "id": "signIn",
+            "title": "Use the Protoboard library (optional)",
+            "description": "Library parts, their files and prices need an account.\n[Sign In](command:protoboard.signIn)\nRemote or headless window: [Sign In with a Code](command:protoboard.signInDevice)",
+            "media": {
+              "markdown": "media/walkthrough/sign-in.md"
+            },
+            "completionEvents": [
+              "onContext:protoboard.signedIn"
+            ]
+          },
+          {
+            "id": "terminal",
+            "title": "Use it from the terminal, and with your agent",
+            "description": "This window's terminals have the ``protoboard`` command; so does your agent.\n[Open a Terminal](command:workbench.action.terminal.new)\nOther terminals: [Add the Command to PATH](command:protoboard.path.add). Agents: [Connect Agents](command:protoboard.agents.connect)",
+            "media": {
+              "markdown": "media/walkthrough/terminal.md"
+            },
+            "completionEvents": [
+              "onCommand:workbench.action.terminal.new"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "cd ../.. && vitest run packages/vscode-protoboard/test",
+    "test:integration": "node esbuild.mjs && node test/integration/run.mjs && node test/integration/run-new-project.mjs && node test/integration/run-setup.mjs && node test/integration/run-pcb.mjs && node test/integration/run-views.mjs",
+    "package": "node scripts/package.mjs",
+    "themes": "tsx scripts/build-themes.ts",
+    "themes:install": "tsx scripts/install-terminal-themes.ts",
+    "test:integration:new-project": "node esbuild.mjs && node test/integration/run-new-project.mjs",
+    "build:stack": "tsx scripts/build-stack.ts",
+    "test:integration:setup": "node esbuild.mjs && node test/integration/run-setup.mjs",
+    "test:integration:pcb": "node esbuild.mjs && node test/integration/run-pcb.mjs",
+    "test:integration:views": "node esbuild.mjs && node test/integration/run-views.mjs"
+  },
+  "devDependencies": {
+    "@types/vscode": "~1.106.0",
+    "@vscode/codicons": "^0.0.36",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "occt-import-js": "^0.0.23",
+    "three": "^0.180.0"
+  }
+}

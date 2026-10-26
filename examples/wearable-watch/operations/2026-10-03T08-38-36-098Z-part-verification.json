@@ -1,0 +1,48 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "murata-grm1555c1h200ja01",
+    "repairs": "version added after the first automated check"
+  },
+  "projectDigest": "sha256:c9dac17249dd39b3b83fc9ff8b28b7275e6b71eea4de1ea79c5956e529fa81ef",
+  "tools": [],
+  "startedAt": "2026-10-03T08:38:36.098Z",
+  "status": "succeeded",
+  "summary": "murata-grm1555c1h200ja01: audit 8/8, 2 assumption(s), 2 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/murata-grm1555c1h200ja01/verification.json",
+      "digest": "sha256:0e45ad54336757609dee0d6a97f09066952ba32da17ec4068a3fe6b60005a4b3",
+      "bytes": 492,
+      "description": "murata-grm1555c1h200ja01: verification record"
+    }
+  ],
+  "data": {
+    "partId": "murata-grm1555c1h200ja01",
+    "recorded_at": "2026-10-03T08:38:36.110Z",
+    "audit": {
+      "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+      "checked": 8,
+      "confirmed": 8,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": "version added after the first automated check",
+    "assumptions": [
+      "terminal designators",
+      "CAD package dimensions"
+    ],
+    "data_gaps": [
+      "manufacturer CAD",
+      "mass"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T08:38:36.111Z"
+}

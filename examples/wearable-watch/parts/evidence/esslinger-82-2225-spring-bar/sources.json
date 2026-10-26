@@ -1,0 +1,67 @@
+[
+  {
+    "id": "src_size_table",
+    "title": "Esslinger: Stainless Steel 1.5mm Double Flange Watch Band Spring Bar Assortment 900 Pc. (SKU 82.2005), size table by refill part number",
+    "url": "https://www.esslinger.com/stainless-steel-1-5mm-double-flange-watch-band-spring-bar-assortment-900-pc/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:00:00Z",
+    "sha256": "9128459a97fc6b62a29c6c74c80952d8e862deb1f25441d60ad31e336b9d7c06",
+    "supports": [
+      "part number 82.2225 fits 22mm lugs",
+      "82.2225 compressed length 21.8mm",
+      "82.2225 overall length 25.0mm",
+      "82.2225 body length 18.6mm",
+      "82.2225 tip diameter .80mm",
+      "1.50mm bar diameter",
+      "double flanged",
+      "stainless steel",
+      "sizes are determined by the compressed length",
+      "sizes are approximate as measurements may vary slightly by gauge"
+    ],
+    "note": "Esslinger & Co. (St. Paul, MN) is the seller of record that defines part number 82.2225 and publishes this size table under its own name; the mill is not named (the assortment's MPN PB18A-SDF-150S points to an OEM). Marked manufacturer authority on that basis, as the only technical source for this part number. The table rows are refill part numbers for the 82.2005 assortment."
+  },
+  {
+    "id": "src_product",
+    "title": "Esslinger: Watch Band Pin 1.50mm Thin Double Flanged Stainless Steel Spring Bars Package of 10",
+    "url": "https://www.esslinger.com/watch-band-pin-1-50mm-thin-double-flanged-stainless-steel-spring-bars-package-of-10/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:00:00Z",
+    "sha256": "a2222c1095087ec1d335d8f59df787c55e77fc4672bf5903e33533adce98ab34",
+    "supports": [
+      "purchasable form: package of 10, 22mm option",
+      "82.2225 listed among the page's part numbers (meta keywords)",
+      "1.50 mm thin diameter",
+      "double flanged",
+      "stainless steel",
+      "sizes are determined by the compressed length"
+    ],
+    "note": "Same seller of record as src_size_table. The page gives no dimensions beyond the size option and the 1.50 mm diameter."
+  },
+  {
+    "id": "src_photo",
+    "title": "Esslinger product photo: Double Flanged 1.50mm spring bar (82.2185-main-image)",
+    "url": "https://cdn11.bigcommerce.com/s-iic0hc/products/44289/images/87836/82.2185-main-image__37464.1659985844.500.750.gif",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:00:00Z",
+    "sha256": "e253c45a136f7ed5cafbea04b81edbfab22ef38e4aedd510ea85fd365428b378",
+    "supports": [
+      "end construction: tip, two flanges with a groove between, plunger shank, tapered tube end",
+      "proportions of the undimensioned end features (scaled by the 1.50 mm body, 32 px)"
+    ],
+    "note": "Main image of src_product; the file name says 82.2185 (the 18 mm size), so only the end construction and diameters carry over to 82.2225, not the lengths. Pixel measurements are estimates and are recorded as assumption traits on the part."
+  },
+  {
+    "id": "src_density",
+    "title": "thyssenkrupp Materials UK: Stainless Steel 304 / 1.4301 (density 8,000 kg/m3)",
+    "url": "https://www.thyssenkrupp-materials.co.uk/stainless-steel-304-14301.html",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-02T21:00:00Z",
+    "sha256": "ecfca8b503df8018b022cbb416c7d0a8032e0206de07b845172d4597f2650a56",
+    "supports": ["304 stainless density 8,000 kg/m3"],
+    "note": "Material-supplier data sheet for the density used in the mass-from-volume estimate. Esslinger states only 'stainless steel', so the grade is an assumption on the part."
+  }
+]

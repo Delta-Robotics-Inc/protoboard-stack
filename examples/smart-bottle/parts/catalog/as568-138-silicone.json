@@ -1,0 +1,600 @@
+{
+  "artifacts": [
+    {
+      "id": "art_product_page",
+      "name": "The O-Ring Store AS568-138 S70 FDA (S70138)",
+      "type": "documentation",
+      "url": "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682"
+    },
+    {
+      "id": "art_datasheet",
+      "name": "The O-Ring Store FDA Silicone 70 Durometer O-Ring data sheet",
+      "type": "datasheet",
+      "url": "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf"
+    },
+    {
+      "id": "art_as568_chart",
+      "name": "Apple Rubber AS568 quick reference chart",
+      "type": "datasheet",
+      "url": "https://www.applerubber.com/src/pdf/as568-standard-size-o-rings.pdf"
+    },
+    {
+      "id": "art_size_chart",
+      "name": "O-Ring Handbook AS568 size chart",
+      "type": "documentation",
+      "url": "https://oringhandbook.com/as568-o-ring-size-chart/"
+    },
+    {
+      "filePath": "library/cad/py/catalog/as568-138-silicone.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "as568-138-silicone generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/as568-138-silicone/artifacts/cad/as568-138-silicone.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "as568-138-silicone (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/as568-138-silicone/artifacts/cad/as568-138-silicone.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "as568-138-silicone (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-138-silicone/artifacts/cad/as568-138-silicone.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "as568-138-silicone feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/as568-138-silicone/artifacts/cad/interfaces/seal_face.glb",
+      "format": "glb",
+      "id": "cad_if_seal_face",
+      "interfaceId": "seal_face",
+      "name": "seal_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-138-silicone/artifacts/cad/interfaces/gland_face.glb",
+      "format": "glb",
+      "id": "cad_if_gland_face",
+      "interfaceId": "gland_face",
+      "name": "gland_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-138-silicone/artifacts/cad/interfaces/outer_face.glb",
+      "format": "glb",
+      "id": "cad_if_outer_face",
+      "interfaceId": "outer_face",
+      "name": "outer_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-138-silicone/artifacts/cad/interfaces/inner_face.glb",
+      "format": "glb",
+      "id": "cad_if_inner_face",
+      "interfaceId": "inner_face",
+      "name": "inner_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "mechanical.seal"
+  ],
+  "description": "AS568 dash -138 O-ring, ID 53.64 ± 0.43 mm (2.112 in) x CS 2.62 ± 0.08 mm (0.103 in), OD 58.88 mm for reference, in a brick-red FDA silicone (VMQ) of 70 ± 5 Shore A, compliant to 21 CFR 177.2600 by the supplier's statement. A static seal only. In the smart bottle it is the cap's face seal on the Nalgene 63 mm lip.",
+  "domains": [
+    {
+      "dimensions_mm": {
+        "height": 2.62,
+        "length": 58.88,
+        "width": 58.88
+      },
+      "domain": "mechanical",
+      "material": {
+        "assumption": "The specific gravity 1.38 is the supplier's compound test value, not a lot specification. The CAD body is the nominal torus (952.9 mm³), so the computed mass (about 1.31 g) ignores the tolerance and flash.",
+        "density_g_cm3": 1.38,
+        "name": "FDA silicone rubber, VMQ, 70 ± 5 Shore A (TORS VMQ-70, legacy S70)",
+        "source": "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf"
+      },
+      "metadata": {
+        "astm_d2000": "MBGE606 A19 B37 EA14 EO36 F19 Z",
+        "colour": "brick red (product page; the compound record does not specify one)",
+        "compression_set_pct": 15,
+        "cross_section_in": [
+          0.1,
+          0.106
+        ],
+        "elongation_pct": 269,
+        "flash_in": "0.005 thick x 0.003 extension (Apple Rubber standard sizes)",
+        "inner_diameter_in": [
+          2.095,
+          2.129
+        ],
+        "nominal_in": "2-1/8 ID x 2-5/16 OD x 3/32 CS",
+        "source": [
+          "https://www.applerubber.com/src/pdf/as568-standard-size-o-rings.pdf",
+          "https://oringhandbook.com/as568-o-ring-size-chart/",
+          "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682",
+          "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf"
+        ],
+        "standard": "SAE AS568, dash -138 (100 series, 0.103 in cross-section)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "brittleness_pass_C": -55,
+        "hot_water_max_C": 100,
+        "source": "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf (§3, §4)",
+        "steam_reversion_above_C": 121
+      },
+      "operating_temperature_C": [
+        -62,
+        204
+      ]
+    }
+  ],
+  "id": "as568-138-silicone",
+  "interfaces": [
+    {
+      "capabilities": [
+        "face_seal",
+        "static_seal",
+        "o_ring"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "seal_face",
+            "signature": {
+              "area_mm2": 363.698,
+              "centroid": [
+                0,
+                0,
+                0.131
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_seal_face",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "face_seal",
+      "name": "Sealing face (bears on the counterface)",
+      "parameters": [
+        {
+          "id": "o_ring_mean_diameter",
+          "name": "Centre-line diameter (ID + CS)",
+          "unit": "mm",
+          "value": 56.26
+        },
+        {
+          "id": "o_ring_cross_section",
+          "range": [
+            2.54,
+            2.7
+          ],
+          "unit": "mm",
+          "value": 2.62
+        },
+        {
+          "id": "squeeze_static",
+          "name": "Recommended static squeeze (toward the high end)",
+          "range": [
+            15,
+            30
+          ],
+          "unit": "%"
+        },
+        {
+          "id": "hardness",
+          "range": [
+            65,
+            75
+          ],
+          "unit": "Shore A",
+          "value": 70
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "o_ring_face_seal",
+            "note": "The ring's -Z side in its CAD (frame origin on the axis at z = 0, normal -Z): it bears on a flat counterface such as nalgene-32oz-wide-mouth.lip_seal. Uncompressed contact is a line on the Ø56.26 centre line; the compressed footprint widens about it. The ring is symmetric, so the side is a naming convention."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "'AS568-138 S70 FDA Silicone (VMQ) 70 Duro O-Ring'; 'Actual: 2.112\"ID X 0.103\"CS Metric: 53.64mm ID X 2.62mm CS'. Data sheet: 'Squeeze, static: 15 to 30%. Toward the high end for the best seal margin given this compound's low modulus.' 'AS568 standard static gland. Not rated for a dynamic gland design.'",
+            "source": [
+              "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682",
+              "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "o_ring_gland",
+        "as568_138"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            2.62
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "gland_face",
+            "signature": {
+              "area_mm2": 363.698,
+              "centroid": [
+                0,
+                0,
+                2.489
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "outer_face",
+            "signature": {
+              "area_mm2": 378.947,
+              "centroid": [
+                0,
+                0,
+                1.31
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "inner_face",
+            "signature": {
+              "area_mm2": 348.449,
+              "centroid": [
+                0,
+                0,
+                1.31
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_gland_face",
+            "kind": "artifact"
+          },
+          {
+            "artifact": "cad_if_outer_face",
+            "kind": "artifact"
+          },
+          {
+            "artifact": "cad_if_inner_face",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gland",
+      "name": "Seat in the host's groove (groove bottom and walls)",
+      "parameters": [
+        {
+          "id": "o_ring_inner_diameter",
+          "range": [
+            53.21,
+            54.07
+          ],
+          "unit": "mm",
+          "value": 53.64
+        },
+        {
+          "id": "o_ring_cross_section",
+          "range": [
+            2.54,
+            2.7
+          ],
+          "unit": "mm",
+          "value": 2.62
+        },
+        {
+          "id": "o_ring_outer_diameter",
+          "name": "OD (reference: ID + 2 x CS)",
+          "unit": "mm",
+          "value": 58.88
+        },
+        {
+          "id": "stretch_max",
+          "name": "Maximum installed stretch",
+          "unit": "%",
+          "value": 5
+        },
+        {
+          "id": "gland_fill",
+          "name": "Recommended gland fill at temperature",
+          "range": [
+            65,
+            85
+          ],
+          "unit": "%"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "as568_o_ring_gland",
+            "note": "The ring's +Z side and both flanks in its CAD (frame origin on the axis at z = 2.62, normal +Z): the bottom and walls of the host's groove. AS568-138 fits a static face gland for the 0.103 in cross-section; see the gland usage note for the groove dimensions."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "AS568 -138: I.D. 2.112 ± .017, W. .103 ± .003 (in); nominal 2 1/8 x 2 5/16 x 3/32. 'Outside diameter (O.D.) is for reference only. O-Rings are specified by I.D. and cross section.' Data sheet: 'Stretch on installation: Keep under 5%.' 'Gland fill: 65 to 85% at temperature.'",
+            "source": [
+              "https://www.applerubber.com/src/pdf/as568-standard-size-o-rings.pdf",
+              "https://oringhandbook.com/as568-o-ring-size-chart/",
+              "https://www.americanrubbercorp.com/products/standard-o-rings/as568-o-ring-size-chart/",
+              "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Generic (SAE AS568)",
+  "name": "AS568-138 O-ring, silicone 70A, FDA grade",
+  "part_number": "S70138 (The O-Ring Store, AS568-138 S70 FDA)",
+  "tags": [
+    "seal",
+    "o-ring",
+    "as568",
+    "as568-138",
+    "silicone",
+    "vmq",
+    "fda",
+    "food-contact",
+    "face-seal",
+    "standard-part",
+    "smart-bottle"
+  ],
+  "traits": [
+    {
+      "params": {
+        "food_contact": "FDA 21 CFR 177.2600 (supplier's formulation and test based claim, not a third-party certificate; statement of compliance on request)",
+        "gas_permeability": "high",
+        "kind": "seal",
+        "material": "silicone (VMQ), 70 ± 5 Shore A",
+        "not_certified": [
+          "NSF/ANSI 51",
+          "NSF/ANSI/CAN 61",
+          "USP Class VI",
+          "3-A"
+        ],
+        "seal_type": "O-ring, static",
+        "size_standard": "SAE AS568-138",
+        "source": [
+          "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf",
+          "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682"
+        ],
+        "water": "-2 Shore A / +3 % volume after 70 h at 100 °C"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "hot_water_max_C": 100,
+        "note": "Continuous in dry air; in hot water below 100 °C; reversion in steam above about 250 °F (121 °C). Static service only.",
+        "source": "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf",
+        "temperature_C": [
+          -62,
+          204
+        ],
+        "temperature_F": [
+          -80,
+          400
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "note": "Static seal only: do not use it on a moving or rotating joint. It tears and cuts easily: deburr the groove, chamfer lead-ins, and do not drag it over sharp edges or threads. Never lubricate it with silicone grease, which swells it badly; use a compatible FDA-grade lubricant. Not compatible with silicone oils, ketones, concentrated acids and alkalis, chlorine, hydrocarbon fuels or superheated steam. Clean with mild soap and water or isopropyl alcohol. Static surface finish 16 to 32 µin Ra.",
+        "source": [
+          "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf",
+          "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Face gland for the 0.103 in cross-section (host design): Minnesota Rubber gives a static gland depth of 0.082 in (2.08 mm, about 21 % squeeze) and a static axial groove width of 0.115 +0.005/-0 in (2.92 mm); Marco gives width 0.121 ± 0.003 in and depth 0.078 ± 0.003 in (about 24 % squeeze), corner radii 0.010 / 0.005 in, and a finish of 32 Ra max for fluids. Both sit inside the compound's 15-30 % static squeeze, but at nominal size both give about 89 % gland fill (ring section 5.39 mm² in 2.08 x 2.92 or 1.98 x 3.07 mm), above the compound's 65-85 % at temperature: at 2.08 mm depth a groove 3.05-3.45 mm wide gives 85-75 % (calculated from nominal values, not a source figure). Place the ring on the side of the groove away from the pressure: with pressure from inside (a liquid-filled bottle) the ring bears on the groove's outer wall, so the groove OD is about the ring OD (58.88 mm) and the ring is not stretched.",
+        "source": [
+          "https://www.mnrubber.com/tools-resources/design-guide/rubber-standard-parts/groove-design-o-ring-seals/",
+          "https://www.marcorubber.com/o-ring-groove-design-face-seal.htm/",
+          "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Smart bottle: one ring in a face groove on the cap floor, compressed onto the Nalgene 63 mm lip land (nalgene-32oz-wide-mouth.lip_seal) by the cap thread at the closing torque. Its Ø56.26 centre line lands on the bottle's assumed land (Ø55-Ø59.68); the ring's ID (53.64 mm) overhangs the assumed 1 mm inner chamfer. Both lip dimensions are assumptions on the bottle part, so check the footprint after measuring the bottle (OQ-B4)."
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "dimensional tolerance",
+        "reason": "src_size_chart states the AS568 limits are for standard-shrinkage compounds; the supplier lists the AS568 size and its actual dimensions but no silicone-specific tolerance. It verifies each lot's ID and CS (src_datasheet §11).",
+        "value": "AS568 limits: ID 53.64 ± 0.43 mm, CS 2.62 ± 0.08 mm"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "generated body",
+        "reason": "AS568 defines a circular section of the given ID and CS; the body is that shape at nominal size.",
+        "value": "nominal torus: centre-line Ø56.26, section Ø2.62, lying on z = 0 (z 0..2.62); no flash, parting line or tolerance"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "minimum service temperature",
+        "resolution": "The data sheet's compound value is used; its -55 °C brittleness pass is also recorded. A drinking bottle never approaches either.",
+        "sources": [
+          "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf",
+          "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682"
+        ],
+        "values": [
+          "-80 °F (-62 °C) continuous, dry air (data sheet)",
+          "approximately -75 °F (-59 °C) cold flexibility (product page)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "face gland width and depth (0.103 in CS)",
+        "resolution": "Host-groove guidance, not a ring property; both are given to the cap track, which chooses the groove and checks squeeze and fill with the compound's limits.",
+        "sources": [
+          "https://www.mnrubber.com/tools-resources/design-guide/rubber-standard-parts/groove-design-o-ring-seals/",
+          "https://www.marcorubber.com/o-ring-groove-design-face-seal.htm/"
+        ],
+        "values": [
+          "width 0.115 +0.005 in, depth 0.082 in (Minnesota Rubber, static axial)",
+          "width 0.121 ± 0.003 in, depth 0.078 ± 0.003 in (Marco, face seal)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "AS568 is a size standard with no manufacturer model. The supplier page and data sheet, Apple Rubber's chart and the two gland guides publish no STEP; Parker's O-Ring Handbook (ORD 5700) returned HTTP 403. Generated body: library/cad/py/catalog/as568-138-silicone.py.",
+        "source": [
+          "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682",
+          "https://www.applerubber.com/src/pdf/as568-standard-size-o-rings.pdf"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "fields": [
+          "mass",
+          "pressure rating",
+          "tensile strength",
+          "silicone-specific dimensional tolerance"
+        ],
+        "note": "Not stated. The data sheet flags its own tensile value (6.9) as a probable hundreds-of-psi shorthand, so it is not used.",
+        "source": "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf"
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

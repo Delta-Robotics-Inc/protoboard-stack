@@ -1,0 +1,61 @@
+{
+  "name": "@protoboardai/core",
+  "version": "0.2.0",
+  "description": "Protoboard framework core: project loading, definition registry and origins, resolution, aggregated checks, build",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/core"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./library-client": "./src/library-client.ts",
+    "./views": "./src/view-ids.ts",
+    "./cdp": "./src/cdp.ts",
+    "./account": "./src/account.ts",
+    "./access": "./src/access.ts",
+    "./stack": "./src/stack.ts",
+    "./build-info": "./src/build-info.ts",
+    "./stack-unpack": "./src/stack-unpack.ts",
+    "./pbar": "./src/pbar.ts",
+    "./path-setup": "./src/path-setup.ts",
+    "./part-trust": "./src/part-trust.ts",
+    "./library-sort": "./src/library-sort.ts",
+    "./bom": "./src/bom-model.ts",
+    "./fx": "./src/fx-rates.ts",
+    "./offers": "./src/part-offers.ts",
+    "./agents": "./src/agents.ts",
+    "./agent-launcher": "./src/agent-launcher.ts",
+    "./user-folders": "./src/user-folders.ts",
+    "./private-dir": "./src/private-dir.ts"
+  },
+  "files": [
+    "src",
+    "templates",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "protoboard": {
+    "toolchain": {
+      "uhd": "0.3.0",
+      "typescript": "7.0.2"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@deltarobotics/uhd": "^0.3.0",
+    "@protoboardai/cloud": "^0.2.0",
+    "jsonc-parser": "^3.3.1",
+    "smol-toml": "^1.9.0",
+    "tsx": "^4.23.8"
+  }
+}

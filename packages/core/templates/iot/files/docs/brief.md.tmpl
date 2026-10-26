@@ -1,0 +1,17 @@
+# {{name}}: brief
+
+Requirements and acceptance targets. Cite a source for every number; say how
+each requirement will be shown (check, test, inspection).
+
+| ID | Requirement | Target | Shown by |
+| --- | --- | --- | --- |
+| R1 | Connectivity | Wi-Fi 2.4 GHz and Bluetooth LE (template: ESP32-C3-MINI-1) | `protoboard check`; bench test |
+| R2 | Battery | 1-cell LiPo, charged from USB-C (template: 1000 mAh LP503450, 303 mA charge) | `protoboard check` (UHD power links); charge test |
+| R3 | Battery life | _e.g. 2 weeks with one reading every 10 minutes_ | a power budget from the parts' currents (see smart-bottle's scripts/power-budget.ts) |
+| R4 | Sensing | _what the device measures, to what accuracy_ | sensors on the board; bench test |
+| R5 | Environment | _e.g. splash-proof housing, IP67 port_ | housing CAD (`run cad:generate`); seal checks |
+
+The template's starting system covers R1 and R2. The smart-bottle reference
+project shows a complete product: a time-of-flight level sensor, a sealed
+temperature probe, an RGB LED ring, a fuel gauge, a button, a printed sealed
+cap, routed cables, the ESP-IDF pin header, technical documents and a release.

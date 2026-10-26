@@ -1,0 +1,413 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "harness-cad",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "out": "src/harnesses/cad/routes"
+  },
+  "projectDigest": "sha256:e84ad9c0e171a0c4fcbc8568d87eefb0baeb4891939ecd431f86b0f47c55ecbd",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0"
+    }
+  ],
+  "startedAt": "2026-09-30T22:34:00.754Z",
+  "status": "succeeded",
+  "summary": "10/10 harness(es) routed into src/harnesses/cad/routes",
+  "outputs": [
+    {
+      "path": "src/harnesses/cad/routes/dji-o4-3in1-cable.glb",
+      "digest": "sha256:ac30477aa70688740fd2afde8df22dcdee3b132a46cf63620bb2b5121894375a",
+      "bytes": 245816,
+      "description": "routed harness: dji-o4-3in1-cable.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dji-o4-3in1-cable.manifest.json",
+      "digest": "sha256:c6c7ef06e37ae9ccf61c26d75e1d6a3145a249c876c007e6571bf8a01fd9c1bb",
+      "bytes": 3531,
+      "description": "routed harness: dji-o4-3in1-cable.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dji-o4-3in1-cable.step",
+      "digest": "sha256:84c159213145f4a242e1a44b58f8e4635dbb0b9af7d12e53119f73e34f1df006",
+      "bytes": 2245268,
+      "description": "routed harness: dji-o4-3in1-cable.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dolphinrc-sh8-fc-esc-cable.glb",
+      "digest": "sha256:856caeeeeb8199fb29819ecd4b40ab0b1ce66e0280eff53264745bbee53dd718",
+      "bytes": 307500,
+      "description": "routed harness: dolphinrc-sh8-fc-esc-cable.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dolphinrc-sh8-fc-esc-cable.manifest.json",
+      "digest": "sha256:7c1ebcd5d948a22ee1e94e63383447c4e5bee919948c73cfa654d2f47afb7238",
+      "bytes": 3621,
+      "description": "routed harness: dolphinrc-sh8-fc-esc-cable.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dolphinrc-sh8-fc-esc-cable.step",
+      "digest": "sha256:c899efe51306db34152a522436f477eccf4be3d101037b25bbf25ccc0d97ce51",
+      "bytes": 2693107,
+      "description": "routed harness: dolphinrc-sh8-fc-esc-cable.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dolphinrc-xt60-battery-lead.glb",
+      "digest": "sha256:237d072e964c044aecc8841776ebed73cc11feea2e699bfca9d539123d091921",
+      "bytes": 81200,
+      "description": "routed harness: dolphinrc-xt60-battery-lead.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dolphinrc-xt60-battery-lead.manifest.json",
+      "digest": "sha256:03fed2df00caa146e7419c1e4669854e0cdaffb4077263ac163b23a6a6eeefc5",
+      "bytes": 2716,
+      "description": "routed harness: dolphinrc-xt60-battery-lead.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/dolphinrc-xt60-battery-lead.step",
+      "digest": "sha256:bc8c38e99567c1890fc1ed2054fd2beb6400b6c2870f2cc89e04faab50eb4f10",
+      "bytes": 617816,
+      "description": "routed harness: dolphinrc-xt60-battery-lead.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/matek-gh6p-gnss-lead.glb",
+      "digest": "sha256:05ac3fc0c7a3f46db0ccb15505f7cff4a7ad5d1f1c92adf558e9603f7fb3019c",
+      "bytes": 510412,
+      "description": "routed harness: matek-gh6p-gnss-lead.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/matek-gh6p-gnss-lead.manifest.json",
+      "digest": "sha256:e1ba1a34d54dbc8c1c3b0468fee432d7a33308bf293c564f28cad96d76fa6db8",
+      "bytes": 4549,
+      "description": "routed harness: matek-gh6p-gnss-lead.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/matek-gh6p-gnss-lead.step",
+      "digest": "sha256:4a515e2d89d87a687d5435a5837eacbf1e2932c7da05e3992e20d975f84e03c2",
+      "bytes": 4729776,
+      "description": "routed harness: matek-gh6p-gnss-lead.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m1.glb",
+      "digest": "sha256:660aeeb0b5bd174af58300a71156f6a7115ef1e7029474c5c16ab1a5d95325bb",
+      "bytes": 206824,
+      "description": "routed harness: meps-phase-leads-m1.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m1.manifest.json",
+      "digest": "sha256:bd2669aa2453dcdbc886a3db292bcd453379010d8a0551c650e6c0794ca0fe81",
+      "bytes": 4119,
+      "description": "routed harness: meps-phase-leads-m1.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m1.step",
+      "digest": "sha256:6feb64b8c2f4e467e44def6b1ff5da1610cf90e4c6352e6fd80b69860b425182",
+      "bytes": 2357078,
+      "description": "routed harness: meps-phase-leads-m1.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m2.glb",
+      "digest": "sha256:8ee77c9561e355342a64ab21c7747d86d1b894b17b1825b068c63e68807e8ba3",
+      "bytes": 205368,
+      "description": "routed harness: meps-phase-leads-m2.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m2.manifest.json",
+      "digest": "sha256:62d71d6caf002675ef55f9cd90da16b144a6f0df7d4c62852c465020594bfe56",
+      "bytes": 4075,
+      "description": "routed harness: meps-phase-leads-m2.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m2.step",
+      "digest": "sha256:ed8b3f67bc30e10659d1101a6f423fe916b8f13e7fa0f6f3993b70fc98489677",
+      "bytes": 2443503,
+      "description": "routed harness: meps-phase-leads-m2.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m3.glb",
+      "digest": "sha256:71d98aecdb830dbe958ac640f3771935351b6113b1ac8f9605d5455d02db8c44",
+      "bytes": 205404,
+      "description": "routed harness: meps-phase-leads-m3.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m3.manifest.json",
+      "digest": "sha256:822747e0a76470cfda506054058f40a33dc0358d17eb653a6f1ecbab303eebd1",
+      "bytes": 4074,
+      "description": "routed harness: meps-phase-leads-m3.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m3.step",
+      "digest": "sha256:ca4e93924ceef38eee333a47b68e559eb378162834818e37f055b7b55016019e",
+      "bytes": 2443976,
+      "description": "routed harness: meps-phase-leads-m3.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m4.glb",
+      "digest": "sha256:31d10eb130e1ba83dd634e163c81bccbdab70f2e35cce60aad365c963681df06",
+      "bytes": 206824,
+      "description": "routed harness: meps-phase-leads-m4.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m4.manifest.json",
+      "digest": "sha256:8e83803d2516a54cdb808361b762a6b64cff10e6c6f352f4d66986afa9800e8c",
+      "bytes": 4032,
+      "description": "routed harness: meps-phase-leads-m4.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/meps-phase-leads-m4.step",
+      "digest": "sha256:90db9e5c0e08f47da0fa7dabd293b8f5e025026b783d4333da15124b03dc4952",
+      "bytes": 2356155,
+      "description": "routed harness: meps-phase-leads-m4.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/panasonic-eeu-fr1v471-leads.glb",
+      "digest": "sha256:8410701095f296c4e7985baea01eda57f1d839467f125f394cfe5d005dad29ab",
+      "bytes": 56668,
+      "description": "routed harness: panasonic-eeu-fr1v471-leads.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/panasonic-eeu-fr1v471-leads.manifest.json",
+      "digest": "sha256:8225a4b178c8532b6ab2b8c8fbab7cde7f7c6c368ce0756edc59a5e4eb44bd78",
+      "bytes": 2220,
+      "description": "routed harness: panasonic-eeu-fr1v471-leads.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/panasonic-eeu-fr1v471-leads.step",
+      "digest": "sha256:73374b7d3df07774506559d9ae0fd378eb3f488eefb41fe4916baa279c5939f3",
+      "bytes": 131778,
+      "description": "routed harness: panasonic-eeu-fr1v471-leads.step"
+    },
+    {
+      "path": "src/harnesses/cad/routes/radiomaster-rp1-crsf-wire.glb",
+      "digest": "sha256:bb871ceb0a2a2327bb656ead439ec0b9492b977a75d7967f014f7d34c7224570",
+      "bytes": 222744,
+      "description": "routed harness: radiomaster-rp1-crsf-wire.glb"
+    },
+    {
+      "path": "src/harnesses/cad/routes/radiomaster-rp1-crsf-wire.manifest.json",
+      "digest": "sha256:a152d97d27e05375c87e58e3ed6c4c608aed4578d7f47c71e89b7c6b5d13e08f",
+      "bytes": 3072,
+      "description": "routed harness: radiomaster-rp1-crsf-wire.manifest.json"
+    },
+    {
+      "path": "src/harnesses/cad/routes/radiomaster-rp1-crsf-wire.step",
+      "digest": "sha256:4ecae4e5952849a76e0bb42f08dbf2d7d39bd8ed4d4f723806a35b4daf415275",
+      "bytes": 2044128,
+      "description": "routed harness: radiomaster-rp1-crsf-wire.step"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "out": "src/harnesses/cad/routes",
+    "problems": [],
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        313,
+        313,
+        144
+      ],
+      "res_mm": 1,
+      "seconds": 6.3
+    },
+    "harnesses": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 50,
+        "route_length_mm": 49.86,
+        "slack_mm": 1.18,
+        "bend_mm": {
+          "target": 4,
+          "minimum": 2.5,
+          "centreline": 3.02,
+          "conductors": 1.2,
+          "at_terminations": 2.6
+        },
+        "clearance_mm": 4.51,
+        "search_s": 1.13,
+        "step": "ok"
+      },
+      {
+        "id": "dji-o4-3in1-cable",
+        "path": "dji_cable",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 50,
+        "route_length_mm": 49.79,
+        "slack_mm": 1.02,
+        "bend_mm": {
+          "target": 4,
+          "minimum": 2.5,
+          "centreline": 2.95,
+          "conductors": 1.34,
+          "at_terminations": 0.68
+        },
+        "clearance_mm": 1.49,
+        "search_s": 4.66,
+        "step": "ok"
+      },
+      {
+        "id": "panasonic-eeu-fr1v471-leads",
+        "path": "bulk_cap_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 14,
+        "route_length_mm": 14.21,
+        "slack_mm": null,
+        "bend_mm": {
+          "target": 4,
+          "minimum": 2.5,
+          "centreline": 23.33,
+          "conductors": 0.87,
+          "at_terminations": 1.34
+        },
+        "clearance_mm": 0.36,
+        "search_s": 0.01,
+        "step": "ok"
+      },
+      {
+        "id": "dolphinrc-xt60-battery-lead",
+        "path": "xt60_lead",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 30,
+        "route_length_mm": 29.44,
+        "slack_mm": null,
+        "bend_mm": {
+          "target": 13.6,
+          "minimum": 8.5,
+          "centreline": 35.07,
+          "conductors": 1.42,
+          "at_terminations": 3.4
+        },
+        "clearance_mm": 0.06,
+        "search_s": 0.05,
+        "step": "ok"
+      },
+      {
+        "id": "matek-gh6p-gnss-lead",
+        "path": "gnss_lead",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 97,
+        "route_length_mm": 95.97,
+        "slack_mm": null,
+        "bend_mm": {
+          "target": 4.4,
+          "minimum": 2.75,
+          "centreline": 9.18,
+          "conductors": 1.31,
+          "at_terminations": 1.51
+        },
+        "clearance_mm": 0.08,
+        "search_s": 6.52,
+        "step": "ok"
+      },
+      {
+        "id": "meps-phase-leads-m2",
+        "path": "arm_fr_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 78,
+        "route_length_mm": 77.9,
+        "slack_mm": 8.32,
+        "bend_mm": {
+          "target": 8.79,
+          "minimum": 5.49,
+          "centreline": 8.27,
+          "conductors": 1.75,
+          "at_terminations": 2.29
+        },
+        "clearance_mm": 0.71,
+        "search_s": 1.42,
+        "step": "ok"
+      },
+      {
+        "id": "meps-phase-leads-m1",
+        "path": "arm_rr_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 78,
+        "route_length_mm": 77.9,
+        "slack_mm": 8.32,
+        "bend_mm": {
+          "target": 8.79,
+          "minimum": 5.49,
+          "centreline": 8.27,
+          "conductors": 1.63,
+          "at_terminations": 2.29
+        },
+        "clearance_mm": 0.96,
+        "search_s": 1.43,
+        "step": "ok"
+      },
+      {
+        "id": "meps-phase-leads-m3",
+        "path": "arm_rl_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 78,
+        "route_length_mm": 77.9,
+        "slack_mm": 8.32,
+        "bend_mm": {
+          "target": 8.79,
+          "minimum": 5.49,
+          "centreline": 8.27,
+          "conductors": 1.75,
+          "at_terminations": 2.29
+        },
+        "clearance_mm": 0.71,
+        "search_s": 1.36,
+        "step": "ok"
+      },
+      {
+        "id": "meps-phase-leads-m4",
+        "path": "arm_fl_leads",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 78,
+        "route_length_mm": 77.9,
+        "slack_mm": 8.32,
+        "bend_mm": {
+          "target": 8.79,
+          "minimum": 5.49,
+          "centreline": 8.27,
+          "conductors": 1.63,
+          "at_terminations": 2.29
+        },
+        "clearance_mm": 0.96,
+        "search_s": 1.35,
+        "step": "ok"
+      },
+      {
+        "id": "radiomaster-rp1-crsf-wire",
+        "path": "rx_wire",
+        "status": "ok",
+        "notes": [],
+        "length_mm": 41,
+        "route_length_mm": 39.81,
+        "slack_mm": null,
+        "bend_mm": {
+          "target": 6.37,
+          "minimum": 3.98,
+          "centreline": 54.26,
+          "conductors": 1.41,
+          "at_terminations": 1.35
+        },
+        "clearance_mm": 0.06,
+        "search_s": 0.21,
+        "step": "ok"
+      }
+    ]
+  },
+  "finishedAt": "2026-09-30T22:35:13.840Z"
+}

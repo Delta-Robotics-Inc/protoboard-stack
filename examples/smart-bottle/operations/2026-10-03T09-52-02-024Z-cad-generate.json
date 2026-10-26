@@ -1,0 +1,484 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-enclosure-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-enclosure-cad",
+    "module": "bottle-cap-enclosure",
+    "config": "src/enclosures/bottle-cap/cad.config.ts",
+    "configDigest": "sha256:d5745536a5d5f6bbac9c47abf72df15992c8e635a5ac8fdf25dd66e64e2e084b",
+    "moduleDigest": "sha256:5354bbd215ec29f93964ffb2f76da33f9c471be2a7a7b03df5f2179723110bdc"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:2fb2a400c5ec615e9fd1d05b09c47830a8fb29d0f4dc71423f05e6cdb5d6ed00",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T09:52:02.024Z",
+  "status": "succeeded",
+  "summary": "bottle-cap-enclosure: 3 part(s) (base, lid, plunger_button), 17 feature(s); fit: board collision (-1.6 mm), cell clear (0.5 mm)",
+  "outputs": [
+    {
+      "path": "src/enclosures/bottle-cap/build123d/bottle-cap-enclosure.job.json",
+      "digest": "sha256:ed3beac298e8c30951ce8fabd476c0ec10b368d682c4ae92888d4de27d7419f1",
+      "bytes": 14784,
+      "description": "bottle-cap-enclosure: generator inputs from the model, the assembly and cad.config.ts"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/bottle-cap-enclosure.py",
+      "digest": "sha256:5bba55a1f38bc26f83885b9f0fb60f19676865c543222db23ca751e6979918d3",
+      "bytes": 1248,
+      "description": "bottle-cap-enclosure: build123d build script"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/body.glb",
+      "digest": "sha256:fe86d80de20efe665f4e47c3dc17392e2038731b00e3e4ff48a2638d8567b98c",
+      "bytes": 1300488,
+      "description": "bottle-cap-enclosure: body.glb"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/body.manifest.json",
+      "digest": "sha256:6ff421a801dee1f9db28bb737ea9b92836737663cc7aa3cbe831913dffd59317",
+      "bytes": 6665,
+      "description": "bottle-cap-enclosure: body.manifest.json"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/body.step",
+      "digest": "sha256:af2273e7e4b8d9b49e381a7447066f536ac637a4f8a7d5731f62aa66e103fa0f",
+      "bytes": 1733233,
+      "description": "bottle-cap-enclosure: body.step"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/base.3mf",
+      "digest": "sha256:af9a442da57ea0ae19671e97dedfe746267c84993e4ba351709b4844cbae4e54",
+      "bytes": 206744,
+      "description": "bottle-cap-enclosure: parts/base.3mf"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/base.glb",
+      "digest": "sha256:f55d91a62290cc0c812635094d5ae207a9796f241b0717cff351040a823c5f62",
+      "bytes": 431352,
+      "description": "bottle-cap-enclosure: parts/base.glb"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/base.step",
+      "digest": "sha256:2794500d353e53959fddd96b24467b2929b62b936ea7851121f36f36767ca2d4",
+      "bytes": 419922,
+      "description": "bottle-cap-enclosure: parts/base.step"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/base.stl",
+      "digest": "sha256:e625d93ebae7360952bb19356310e57b284219287e87ec677b34897504e952c4",
+      "bytes": 978284,
+      "description": "bottle-cap-enclosure: parts/base.stl"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/lid.3mf",
+      "digest": "sha256:3a9842d7dcc73ee1fa62e2e3f4c73c925c5f0f57f491f59c7dacb2056145ac40",
+      "bytes": 111257,
+      "description": "bottle-cap-enclosure: parts/lid.3mf"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/lid.glb",
+      "digest": "sha256:12a7e7dfc423a8c76da5fcb7553dbfd7d3a2938ca095536b292ca246d9a61196",
+      "bytes": 232260,
+      "description": "bottle-cap-enclosure: parts/lid.glb"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/lid.step",
+      "digest": "sha256:d781ff5bbfd0b6ed06b7915a9d0d8e05ba995ef6b37a4e396f2f15e0c0b4d9d9",
+      "bytes": 134176,
+      "description": "bottle-cap-enclosure: parts/lid.step"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/lid.stl",
+      "digest": "sha256:e3418c1b91d0d793946cdeb12a20c317466316d45b99b69caf489d06314570cd",
+      "bytes": 559684,
+      "description": "bottle-cap-enclosure: parts/lid.stl"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/plunger_button.3mf",
+      "digest": "sha256:9e6edb085ce973844bd94b4e1233e2ae51ea4b1eb876e62b9a17b415c1a4766d",
+      "bytes": 14935,
+      "description": "bottle-cap-enclosure: parts/plunger_button.3mf"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/plunger_button.glb",
+      "digest": "sha256:c99871b9f5600c5b26a6ba24111001e336b15239dc53469c9ab96b8a83a95f62",
+      "bytes": 33240,
+      "description": "bottle-cap-enclosure: parts/plunger_button.glb"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/plunger_button.step",
+      "digest": "sha256:e0c5dfcbe538104b5ae8cbbc31f0d771b4014b8ee0e9604be1f569d08ade43f6",
+      "bytes": 14737,
+      "description": "bottle-cap-enclosure: parts/plunger_button.step"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/parts/plunger_button.stl",
+      "digest": "sha256:554d835ac9f80e9321f91c7044a444a3e100ebf639db62b27c5738a5cdaba6ed",
+      "bytes": 75484,
+      "description": "bottle-cap-enclosure: parts/plunger_button.stl"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/build/section.svg",
+      "digest": "sha256:668987b093395816102a346e5d62f6ec4cbd46f86d39e039416505041cdf8e55",
+      "bytes": 3364,
+      "description": "bottle-cap-enclosure: section.svg"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/bottle-cap-enclosure.report.json",
+      "digest": "sha256:da6bc71f48a20abd10e784c9c8bf7e096bcc6fa35bf0d1f4759acc0074cac6eb",
+      "bytes": 22710,
+      "description": "bottle-cap-enclosure: what the build found (cavity, features, walls, fit)"
+    },
+    {
+      "path": "src/enclosures/bottle-cap/build123d/bottle-cap-enclosure.source.json",
+      "digest": "sha256:2c9a4a79afb4b6d617afad4ec51716dbee808aa875fcb9b874dc87d3cf6e1f83",
+      "bytes": 174,
+      "description": "digests of the native design this build came from"
+    }
+  ],
+  "data": {
+    "native": "src/enclosures/bottle-cap/build123d",
+    "parts": {
+      "base": {
+        "volume_mm3": 44438.43,
+        "printed": true
+      },
+      "lid": {
+        "volume_mm3": 12864.821,
+        "printed": true
+      },
+      "plunger_button": {
+        "volume_mm3": 54.538,
+        "printed": true
+      }
+    },
+    "cavity": {
+      "shape": "round",
+      "min": [
+        -35.7,
+        -35.7,
+        4
+      ],
+      "max": [
+        35.7,
+        35.7,
+        15.8
+      ],
+      "centre": [
+        0,
+        0
+      ],
+      "radius": 35.7,
+      "split_z": 15.8,
+      "side_top": 15.8,
+      "solids": [
+        {
+          "name": "lid screw column",
+          "origin": [
+            29.768,
+            29.768,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 11.8
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            -10.896,
+            40.664,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 11.8
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            -40.664,
+            10.896,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 11.8
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            -29.768,
+            -29.768,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 11.8
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            10.896,
+            -40.664,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 11.8
+        },
+        {
+          "name": "lid screw column",
+          "origin": [
+            40.664,
+            -10.896,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 11.8
+        },
+        {
+          "name": "gland boss probe_seal",
+          "part": "base",
+          "origin": [
+            -20.5,
+            0,
+            4.425
+          ],
+          "axis": [
+            0,
+            0,
+            -1
+          ],
+          "radius": 5.4955,
+          "length": 0.4255
+        },
+        {
+          "name": "boss board_mount",
+          "part": "base",
+          "origin": [
+            19.092,
+            19.092,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 2.8
+        },
+        {
+          "name": "boss board_mount",
+          "part": "base",
+          "origin": [
+            -19.092,
+            19.092,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 2.8
+        },
+        {
+          "name": "boss board_mount",
+          "part": "base",
+          "origin": [
+            -19.092,
+            -19.092,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 2.8
+        },
+        {
+          "name": "boss board_mount",
+          "part": "base",
+          "origin": [
+            19.092,
+            -19.092,
+            4
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "radius": 2.9,
+          "length": 2.8
+        }
+      ]
+    },
+    "overall": {
+      "min": [
+        -44.364,
+        -44.364,
+        -12
+      ],
+      "max": [
+        44.364,
+        44.364,
+        18.3
+      ]
+    },
+    "features": [
+      "board_mount",
+      "button",
+      "led1",
+      "led2",
+      "led3",
+      "led4",
+      "led5",
+      "led6",
+      "led7",
+      "led8",
+      "lid_joint",
+      "lid_seal",
+      "lip_seal",
+      "neck",
+      "probe_seal",
+      "tof_window",
+      "usb_port"
+    ],
+    "problems": [],
+    "notes": [],
+    "fit": {
+      "resolution_mm": 0.37,
+      "grid": [
+        256,
+        256,
+        99
+      ],
+      "bodies": [
+        {
+          "key": "board",
+          "label": "Bottle cap board",
+          "min_clearance_mm": -1.6,
+          "at": [
+            3.35,
+            37.15,
+            8.05
+          ],
+          "near": "base (cavity side)",
+          "basis": "exact",
+          "exact_clearance_mm": -1.6,
+          "voxel_clearance_mm": -1.11,
+          "outside_cavity_mm": 1.6,
+          "outside_at": [
+            3.35,
+            37.15,
+            8.1
+          ],
+          "samples": 4917600,
+          "status": "collision"
+        },
+        {
+          "key": "cell",
+          "label": "LP503450 1000 mAh 3.7 V LiPo with PCM",
+          "min_clearance_mm": 0.5,
+          "at": [
+            14.99,
+            -23.23,
+            15.3
+          ],
+          "near": "lid (cavity ceiling)",
+          "basis": "exact",
+          "exact_clearance_mm": 0.5,
+          "voxel_clearance_mm": 0.41,
+          "outside_cavity_mm": 0,
+          "samples": 1060984,
+          "status": "clear"
+        }
+      ],
+      "walls": {
+        "base": {
+          "min_mm": 0.37,
+          "at": [
+            -3.71,
+            35.51,
+            7.2
+          ]
+        },
+        "lid": {
+          "min_mm": 1.28,
+          "at": [
+            -35.53,
+            17.38,
+            15.71
+          ]
+        }
+      },
+      "plungers": [
+        {
+          "key": "plunger_button",
+          "feature": "button",
+          "min_clearance_mm": -1.6,
+          "at": [
+            -0.03,
+            -31.7,
+            8.94
+          ],
+          "near": "board",
+          "basis": "voxel",
+          "resolution_mm": 0.37,
+          "status": "collision",
+          "wall_overlap_mm3": {
+            "base": 0,
+            "lid": 0
+          }
+        }
+      ]
+    },
+    "toolVersion": "0.13.0"
+  },
+  "finishedAt": "2026-10-03T09:52:27.388Z"
+}

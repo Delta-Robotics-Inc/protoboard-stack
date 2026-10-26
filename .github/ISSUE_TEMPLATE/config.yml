@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/Delta-Robotics-Inc/protoboard-stack/security/advisories/new
+    about: Report it privately, never in a public issue (SECURITY.md).
+  - name: Installation guide
+    url: https://github.com/Delta-Robotics-Inc/protoboard-stack/blob/main/docs/guides/installation.md
+    about: Installing Protoboard on macOS, Windows and Linux, and connecting your agent.

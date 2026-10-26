@@ -1,0 +1,101 @@
+{
+  "source": "src/power-budget.ts; figures and assumptions in docs/power-budget.md",
+  "cell": {
+    "capacitymAh": 200,
+    "usable": 0.85,
+    "continuousA": 0.2,
+    "chargeMaxA": 0.1,
+    "usablemAh": 170
+  },
+  "floor_uA": {
+    "items": {
+      "nRF52840 System ON + LFXO [W2]": 3.39,
+      "BLE connection, 3 ms at 6.4 mA per 1 s interval (assumption)": 19.2,
+      "Display sleep-in [W3]": 15,
+      "BMI270 low-power accel + features [W5]": 13,
+      "DRV2605L shutdown [W7]": 4,
+      "MAX17048 hibernate [W9]": 4,
+      "MAX30102 shutdown [W6]": 0.7,
+      "MCP73831 reverse leakage [W10]": 0.15,
+      "Two TPS7A02 ground current [W11]": 0.05
+    },
+    "total": 59.49
+  },
+  "typical": {
+    "items": [
+      {
+        "name": "Screen on",
+        "mA": 19.474999999999998,
+        "s": 2100,
+        "mAhPerDay": 11.360416666666664
+      },
+      {
+        "name": "Heart rate",
+        "mA": 0.8976,
+        "s": 4320,
+        "mAhPerDay": 1.0771199999999999
+      },
+      {
+        "name": "Haptics",
+        "mA": 58.5,
+        "s": 10,
+        "mAhPerDay": 0.1625
+      }
+    ],
+    "mAhPerDay": 14.027796666666664,
+    "days": 12.118795562809938
+  },
+  "standby": {
+    "mAhPerDay": 1.4277600000000001,
+    "days": 119.06763041407518
+  },
+  "peak": {
+    "A": 0.177,
+    "items": {
+      "3V0 load: display 10.5 + BLE TX 16.4 + CPU 3.3 + IMU ~1 [W2, W3, W5]": 31.2,
+      "Backlight on-current at 4.2 V through R9 (33 Ohm), PWM on [W3]": 39.393939393939405,
+      "LRA drive, DRV2605L at full scale [W7]": 80,
+      "MAX30102 VDD [W6]": 1.2,
+      "MAX30102 LED pulses, two LEDs at the 12.6 mA firmware cap [W6]": 25.2
+    },
+    "stackUpA": 0.1769939393939394,
+    "cellContinuousA": 0.2
+  },
+  "charge": {
+    "A_max": 0.0917,
+    "cellChargeMaxA": 0.1,
+    "hours": 2.419302071973828
+  },
+  "targets": {
+    "typicalDays": 5,
+    "standbyDays": 30,
+    "chargeHours": 3.5
+  },
+  "checks": [
+    {
+      "what": "typical use 12.1 days >= 5",
+      "ok": true
+    },
+    {
+      "what": "standby 119 days >= 30",
+      "ok": true
+    },
+    {
+      "what": "cell pads state 177 mA >= peak stack-up 177.0 mA",
+      "ok": true
+    },
+    {
+      "what": "peak 177 mA <= cell 200 mA continuous",
+      "ok": true
+    },
+    {
+      "what": "charge 91.7 mA <= cell 100 mA charge",
+      "ok": true
+    },
+    {
+      "what": "charge time about 2.4 h <= 3.5 h",
+      "ok": true
+    }
+  ],
+  "pass": true
+}

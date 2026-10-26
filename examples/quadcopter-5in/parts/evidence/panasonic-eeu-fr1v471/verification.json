@@ -1,0 +1,26 @@
+{
+  "partId": "panasonic-eeu-fr1v471",
+  "recorded_at": "2026-09-26T19:53:44.000Z",
+  "audit": {
+    "method": "independent stage-2 audit (uhd-part-verify) by an agent with no authoring context: it re-fetched the datasheet (sha256 matches sources.json) and the DolphinRC product page (dynamic HTML, text unchanged), followed the series page's datasheet link, and re-checked each fact",
+    "independent": true,
+    "auditor": "independent stage-2 auditor",
+    "checked": 18,
+    "confirmed": 17,
+    "wrong": 0,
+    "unsupported": 1
+  },
+  "repairs": "unsupported pad-hole claim removed; impedance wording corrected",
+  "assumptions": [
+    "identity",
+    "lead polarity identification"
+  ],
+  "data_gaps": [
+    "bundled capacitor brand/series/MPN",
+    "mass",
+    "ESR (as such)"
+  ],
+  "vocabulary_gaps": [
+    "No capacitor builder; modelled as PowerIn (+) and Ground (-) so DRC checks the rail voltage against the rated voltage. Capacitance/ESR live in a performance trait (kind 'capacitor'), ripple_current is a new parameter id (A)."
+  ]
+}

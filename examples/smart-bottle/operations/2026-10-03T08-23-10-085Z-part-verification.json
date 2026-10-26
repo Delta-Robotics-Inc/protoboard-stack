@@ -1,0 +1,50 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "adafruit-381-ds18b20-probe",
+    "repairs": "categories moved to the UHD taxonomy 1.0.0 (sensor, sensor.temperature -> sensor.environmental) when vendored into smart-bottle; part-verify re-run clean"
+  },
+  "projectDigest": "sha256:56ca3b6be82540a59e7351f775b991773eae9f0368448a271b3bfbf1e58a0d91",
+  "tools": [],
+  "startedAt": "2026-10-03T08:23:10.085Z",
+  "status": "succeeded",
+  "summary": "adafruit-381-ds18b20-probe: audit none, 4 assumption(s), 5 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/adafruit-381-ds18b20-probe/verification.json",
+      "digest": "sha256:341bd8ff9c91cdd9dc36ae21e259730e8a3f46ce9c9b86a71211021b9f63b637",
+      "bytes": 1245,
+      "description": "adafruit-381-ds18b20-probe: verification record"
+    }
+  ],
+  "data": {
+    "partId": "adafruit-381-ds18b20-probe",
+    "recorded_at": "2026-10-03T08:23:10.097Z",
+    "audit": null,
+    "repairs": "categories moved to the UHD taxonomy 1.0.0 (sensor, sensor.temperature -> sensor.environmental) when vendored into smart-bottle; part-verify re-run clean",
+    "assumptions": [
+      "build variant",
+      "tube length",
+      "generated heat-shrink geometry",
+      "generated cable and wire-end geometry"
+    ],
+    "data_gaps": [
+      "manufacturer CAD",
+      "heat-shrink and wire-breakout dimensions",
+      "internal DS18B20 package and wire gauge",
+      "mass",
+      "cable length reference"
+    ],
+    "vocabulary_gaps": [
+      "No 1-Wire protocol or builder. DQ is modelled as a digital leaf with role bidirectional and capabilities onewire_dq and open_drain, so it pairs with an MCU GPIO; the protocol, ROM code and timing are in traits. A onewire protocol (master/slave, multidrop, pull-up rule like bus_pullup) would let DRC check the pull-up and parasite power.",
+      "No protocol for a cylindrical surface sealed by an O-ring (rod seal) or a cable gland. Modelled as mechanical `custom` (peer) with capability rod_seal_surface and tube_diameter / tube_length parameters, as the spring bar and fastener parts do for their joints."
+    ]
+  },
+  "finishedAt": "2026-10-03T08:23:10.098Z"
+}

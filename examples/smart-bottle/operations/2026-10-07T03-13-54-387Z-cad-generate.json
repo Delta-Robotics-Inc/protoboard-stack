@@ -1,0 +1,67 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "bottle-probe-cable",
+    "config": "src/harnesses/bottle-probe-cable/cad.config.ts",
+    "configDigest": "sha256:eaf10f0139a41bb1061adcd2a90c1bc4faf3d6d20b202bd7fa6dc3f312832975",
+    "moduleDigest": "sha256:ebb00eb1d9eb129127d28deea26a87718288a0d3804ef7e11c35f66fdd2a982a"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:cad3e743edb7594bd37eecc8fbd3d9a3a2283c73caae5dd9606a0f7eb13b956e",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T03:13:54.387Z",
+  "status": "succeeded",
+  "summary": "probe_cable: ok; routed around the parts",
+  "outputs": [
+    {
+      "path": "src/harnesses/bottle-probe-cable/harness-cad/route.json",
+      "digest": "sha256:dad35ac2d1323cee269247007bfaa8233b4276162a62a4356ec03a553c1c99bc",
+      "bytes": 12055,
+      "description": "probe_cable: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboardai/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        155,
+        149,
+        294
+      ],
+      "res_mm": 1,
+      "seconds": 3.1
+    },
+    "harnesses": [
+      {
+        "id": "bottle-probe-cable",
+        "path": "probe_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.03
+      }
+    ],
+    "context": [],
+    "problems": [
+      "board/jbat: no GLB body to route around (none declared)",
+      "board/jprb: no GLB body to route around (none declared)"
+    ]
+  },
+  "finishedAt": "2026-10-07T03:14:00.564Z"
+}

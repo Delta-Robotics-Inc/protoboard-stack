@@ -1,0 +1,19 @@
+[
+  {
+    "id": "src_reference_sheet",
+    "title": "Murata reference sheet GRM1555C1H200JA01-01A: GRM1555C1H200JA01_(1005M(0402), C0G(EIA), 20pF, DC 50V), product specifications as of Jun.13,2026",
+    "url": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM1555C1H200JA01-01A.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T09:30:00Z",
+    "sha256": "6daa7114ba1819c00902b992630c0d57b810e375ccdbc5be82d03945db8ed3d7",
+    "supports": [
+      "identity: Murata Part No. System GRM 15 5 5C 1H 200 J A01 D (series, 1.0 x 0.5 dimension, T 0.5, C0G temperature characteristic, DC 50 V, 20 pF, ±5 %, control code A01, package D)",
+      "Type & Dimension: size code 1005M (0402); L 1.0 +/-0.05, W 0.5 +/-0.05, T 0.5 +/-0.05, e 0.15 to 0.35, g 0.3 min (mm)",
+      "Rated Value: temperature characteristic 5C (C0G(EIA)), 0 +/-30 ppm/C over 25 to 125 C (reference 25 C); rated voltage DC 50 V; capacitance 20 pF; tolerance +/-5 %; operating temperature -55 to 125 C; mounting flow, reflow",
+      "Package: D 180 mm reel paper tape W8P2 10000 pcs; W 20000 pcs; J 330 mm 50000 pcs; V 100000 pcs",
+      "Specifications and Test Methods: insulation resistance more than 10000 MOhm; capacitance measured at 1.0 +/-0.1 MHz; Q >= 400 + 20C (C in pF)",
+      "Scope: consumer, industrial, medical (GHTF A/B/C except implants) and automotive infotainment/comfort equipment"
+    ]
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "eastrising-er-tft128-1",
+    "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit (manifests identical)"
+  },
+  "projectDigest": "sha256:c9dac17249dd39b3b83fc9ff8b28b7275e6b71eea4de1ea79c5956e529fa81ef",
+  "tools": [],
+  "startedAt": "2026-10-03T08:24:43.575Z",
+  "status": "succeeded",
+  "summary": "eastrising-er-tft128-1: audit 19/19, 6 assumption(s), 6 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/eastrising-er-tft128-1/verification.json",
+      "digest": "sha256:b9fb1b28981cf0e52f41e8fbbe61509e679377a94742311e20fba02fde14b164",
+      "bytes": 913,
+      "description": "eastrising-er-tft128-1: verification record"
+    }
+  ],
+  "data": {
+    "partId": "eastrising-er-tft128-1",
+    "recorded_at": "2026-10-03T08:24:43.590Z",
+    "audit": {
+      "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+      "checked": 19,
+      "confirmed": 19,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit (manifests identical)",
+    "assumptions": [
+      "mass",
+      "CAD layer split",
+      "CAD tab and FPC neck outline",
+      "FPC alignment-hole position along the tail",
+      "CAD tail pad widening",
+      "CAD installed state"
+    ],
+    "data_gaps": [
+      "manufacturer CAD",
+      "mass",
+      "layer stack split",
+      "tab and neck outline",
+      "SPI clock for the panel",
+      "alignment-hole position along the tail"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T08:24:43.590Z"
+}

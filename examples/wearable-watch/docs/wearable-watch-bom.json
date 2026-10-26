@@ -1,0 +1,710 @@
+[
+  {
+    "line": 1,
+    "partId": "adi-max17048g-t10",
+    "name": "ADI MAX17048 1-cell fuel gauge (TDFN-8)",
+    "manufacturer": "Analog Devices (Maxim Integrated)",
+    "partNumber": "MAX17048G+T10",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u5"
+    ],
+    "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17048-MAX17049.pdf",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 2,
+    "partId": "adi-max30102efd",
+    "name": "ADI MAX30102 pulse oximeter / heart-rate module (OESIP-14)",
+    "manufacturer": "Analog Devices (Maxim Integrated)",
+    "partNumber": "MAX30102EFD+T",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u3"
+    ],
+    "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 3,
+    "partId": "alps-skrtlae010",
+    "name": "Alps Alpine SKRTLAE010 side-push TACT switch",
+    "manufacturer": "Alps Alpine",
+    "partNumber": "SKRTLAE010",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/sw1",
+      "board/sw2"
+    ],
+    "source": "https://tech.alpsalpine.com/e/products/detail/SKRTLAE010/",
+    "verification": "not audited",
+    "assumptions": 3,
+    "openGaps": 3
+  },
+  {
+    "line": 4,
+    "partId": "aos-ao3400a",
+    "name": "AOS AO3400A 30 V N-channel MOSFET (SOT23)",
+    "manufacturer": "Alpha & Omega Semiconductor",
+    "partNumber": "AO3400A",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/q1"
+    ],
+    "source": "https://www.aosmd.com/res/datasheets/AO3400A.pdf",
+    "verification": "audited 20/20",
+    "assumptions": 2,
+    "openGaps": 5
+  },
+  {
+    "line": 5,
+    "partId": "bosch-bmi270",
+    "name": "Bosch BMI270",
+    "manufacturer": "Bosch Sensortec",
+    "partNumber": "BMI270",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u2"
+    ],
+    "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf",
+    "verification": "audited 19/19",
+    "assumptions": 1,
+    "openGaps": 2
+  },
+  {
+    "line": 6,
+    "partId": "watch-cell-foam-pad",
+    "name": "Cell foam pad, 0.25 mm double-sided",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "cell_pad"
+    ],
+    "assumptions": 1,
+    "openGaps": 1
+  },
+  {
+    "line": 7,
+    "partId": "watch-cover-adhesive",
+    "name": "Clear UV-curing adhesive for the window covers",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "cover_adhesive"
+    ],
+    "assumptions": 1,
+    "openGaps": 1
+  },
+  {
+    "line": 8,
+    "partId": "watch-display-adhesive-ring",
+    "name": "Display adhesive ring, 0.25 mm",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "display_ring"
+    ],
+    "assumptions": 1,
+    "openGaps": 1
+  },
+  {
+    "line": 9,
+    "partId": "eastrising-er-tft128-1",
+    "name": "EastRising ER-TFT1.28-1 1.28\" round TFT",
+    "manufacturer": "EastRising Technology (BuyDisplay)",
+    "partNumber": "ER-TFT1.28-1",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/ds1"
+    ],
+    "source": "https://www.buydisplay.com/download/manual/ER-TFT1.28-1_Datasheet.pdf",
+    "verification": "audited 19/19",
+    "assumptions": 6,
+    "openGaps": 6
+  },
+  {
+    "line": 10,
+    "partId": "epson-fc-135-32k768-12p5",
+    "name": "Epson FC-135 32.768 kHz Crystal, 12.5 pF ±20 ppm",
+    "manufacturer": "Seiko Epson",
+    "partNumber": "Q13FC13500004",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/y1"
+    ],
+    "source": "https://download.epsondevice.com/td/pdf/app/FC-135_en.pdf",
+    "verification": "audited 32/35",
+    "assumptions": 1,
+    "openGaps": 3
+  },
+  {
+    "line": 11,
+    "partId": "esslinger-82-2225-spring-bar",
+    "name": "Esslinger 82.2225 spring bar, 22 mm, ø1.50 mm, double flange",
+    "manufacturer": "Esslinger",
+    "partNumber": "82.2225",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "bar_12",
+      "bar_6"
+    ],
+    "source": "https://www.esslinger.com/stainless-steel-1-5mm-double-flange-watch-band-spring-bar-assortment-900-pc/",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 4
+  },
+  {
+    "line": 12,
+    "partId": "gct-usb4105-gf-a",
+    "name": "GCT USB4105-GF-A USB-C receptacle (USB 2.0, top mount)",
+    "manufacturer": "GCT",
+    "partNumber": "USB4105-GF-A",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/j1"
+    ],
+    "source": "https://gct.co/files/drawings/usb4105.pdf",
+    "verification": "audited 19/19",
+    "assumptions": 2,
+    "openGaps": 4
+  },
+  {
+    "line": 13,
+    "partId": "lipol-lp402030",
+    "name": "LiPol LP402030 200 mAh 3.7 V LiPo with PCM",
+    "manufacturer": "LiPol Battery Co., Ltd.",
+    "partNumber": "LP402030",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "cell"
+    ],
+    "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf",
+    "verification": "audited 14/14",
+    "assumptions": 3,
+    "openGaps": 6
+  },
+  {
+    "line": 14,
+    "partId": "watch-lra-adhesive-pad",
+    "name": "LRA adhesive pad, 0.25 mm, ø8 mm",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "lra_pad"
+    ],
+    "assumptions": 1,
+    "openGaps": 1
+  },
+  {
+    "line": 15,
+    "partId": "iso-7045-m2x6-a2",
+    "name": "M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless",
+    "manufacturer": "Generic (ISO 7045 / DIN 7985 Z)",
+    "partNumber": "SPP-M2-6-A2",
+    "quantity": 4,
+    "buy": "purchase",
+    "usedBy": [
+      "back_screws/screws"
+    ],
+    "source": "https://www.accu.co.uk/pozi-pan-head-screws/9242-SPP-M2-6-A2",
+    "verification": "not audited",
+    "assumptions": 2,
+    "openGaps": 4
+  },
+  {
+    "line": 16,
+    "partId": "microchip-mcp73831t-2aci-ot",
+    "name": "Microchip MCP73831 Li-ion charger, 4.20 V (SOT-23-5)",
+    "manufacturer": "Microchip Technology",
+    "partNumber": "MCP73831T-2ACI/OT",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u6"
+    ],
+    "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP73831-Family-Data-Sheet-DS20001984H.pdf",
+    "verification": "audited",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 17,
+    "partId": "murata-grm155",
+    "name": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM155R60J475ME47D",
+    "value": "4.7 µF ±20 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c9"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71C104KA88-01A.pdf",
+    "verification": "audited 10/10",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 18,
+    "partId": "murata-grm155",
+    "name": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM155R61A105KE15D",
+    "value": "1 µF ±10 %",
+    "quantity": 6,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c6",
+      "board/c7",
+      "board/c8",
+      "board/c12",
+      "board/c13",
+      "board/c20"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71C104KA88-01A.pdf",
+    "verification": "audited 10/10",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 19,
+    "partId": "murata-grm155",
+    "name": "Murata GRM155 MLCC (1005M / 0402, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM155R71C104KA88D",
+    "value": "100 nF ±10 %",
+    "quantity": 6,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c2",
+      "board/c10",
+      "board/c14",
+      "board/c17",
+      "board/c18",
+      "board/c19"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM155R71C104KA88-01A.pdf",
+    "verification": "audited 10/10",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 20,
+    "partId": "murata-grm1555c1h200ja01",
+    "name": "Murata GRM1555C1H200JA01D 20 pF C0G 50 V 0402",
+    "manufacturer": "Murata",
+    "partNumber": "GRM1555C1H200JA01D",
+    "value": "20 pF ±5 %",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c4",
+      "board/c5"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM1555C1H200JA01-01A.pdf",
+    "verification": "audited 8/8",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 21,
+    "partId": "murata-grm188",
+    "name": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM188R61A106KE69D",
+    "value": "10 µF ±10 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c1"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf",
+    "verification": "audited 8/8",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 22,
+    "partId": "murata-grm188",
+    "name": "Murata GRM188 MLCC (1608M / 0603, X5R / X7R)",
+    "manufacturer": "Murata",
+    "partNumber": "GRM188R61A475KE15D",
+    "value": "4.7 µF ±10 %",
+    "quantity": 4,
+    "buy": "purchase",
+    "usedBy": [
+      "board/c3",
+      "board/c11",
+      "board/c15",
+      "board/c16"
+    ],
+    "source": "https://search.murata.co.jp/Ceramy/image/img/A01X/G101/ENG/GRM188R71C104KA01-01.pdf",
+    "verification": "audited 8/8",
+    "assumptions": 2,
+    "openGaps": 3
+  },
+  {
+    "line": 23,
+    "partId": "raytac-mdbt50q-1mv2",
+    "name": "Raytac MDBT50Q-1MV2 nRF52840 module (chip antenna)",
+    "manufacturer": "Raytac Corporation",
+    "partNumber": "MDBT50Q-1MV2",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u1"
+    ],
+    "source": "https://www.raytac.com/download/index.php?index_id=43",
+    "verification": "audited 20/20",
+    "assumptions": 3,
+    "openGaps": 3
+  },
+  {
+    "line": 24,
+    "partId": "ruthex-rx-m2x4",
+    "name": "ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm",
+    "manufacturer": "ruthex",
+    "partNumber": "GE-M2x04-001",
+    "quantity": 4,
+    "buy": "purchase",
+    "usedBy": [
+      "back_screws/inserts"
+    ],
+    "source": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+    "verification": "audited 21/21",
+    "assumptions": 1,
+    "openGaps": 3
+  },
+  {
+    "line": 25,
+    "partId": "st-usblc6-2sc6",
+    "name": "ST USBLC6-2SC6 USB ESD Protection (SOT23-6L)",
+    "manufacturer": "STMicroelectronics",
+    "partNumber": "USBLC6-2SC6",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/d1"
+    ],
+    "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+    "verification": "not audited",
+    "assumptions": 2,
+    "openGaps": 5
+  },
+  {
+    "line": 26,
+    "partId": "ti-drv2605ldgs",
+    "name": "TI DRV2605L haptic driver (VSSOP-10)",
+    "manufacturer": "Texas Instruments",
+    "partNumber": "DRV2605LDGSR",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u4"
+    ],
+    "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf",
+    "assumptions": 1,
+    "openGaps": 3
+  },
+  {
+    "line": 27,
+    "partId": "ti-tps7a0218pdbv",
+    "name": "TI TPS7A0218P 1.8 V 200 mA LDO (SOT-23-5)",
+    "manufacturer": "Texas Instruments",
+    "partNumber": "TPS7A0218PDBVR",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u8"
+    ],
+    "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf",
+    "verification": "audited 18/18",
+    "assumptions": 1,
+    "openGaps": 4
+  },
+  {
+    "line": 28,
+    "partId": "ti-tps7a0230pdbv",
+    "name": "TI TPS7A0230P 3.0 V 200 mA LDO (SOT-23-5)",
+    "manufacturer": "Texas Instruments",
+    "partNumber": "TPS7A0230PDBVR",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/u7"
+    ],
+    "source": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf",
+    "verification": "audited 18/18",
+    "assumptions": 1,
+    "openGaps": 4
+  },
+  {
+    "line": 29,
+    "partId": "vybronics-vg0832012",
+    "name": "Vybronics VG0832012 8 mm Z-axis coin LRA",
+    "manufacturer": "Vybronics",
+    "partNumber": "VG0832012",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "lra"
+    ],
+    "source": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 30,
+    "partId": "watch-case",
+    "name": "Watch case",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "case"
+    ],
+    "assumptions": 0,
+    "openGaps": 0
+  },
+  {
+    "line": 31,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-07100KL",
+    "value": "100 kΩ ±1 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r8"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 32,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-0710KL",
+    "value": "10 kΩ ±1 %",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r6",
+      "board/r7"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 33,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-0712KL",
+    "value": "12 kΩ ±1 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r3"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 34,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-0722KL",
+    "value": "22 kΩ ±1 %",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r10",
+      "board/r11"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 35,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-0733RL",
+    "value": "33 Ω ±1 %",
+    "quantity": 1,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r9"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 36,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-074K7L",
+    "value": "4.7 kΩ ±1 %",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r4",
+      "board/r5"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 37,
+    "partId": "yageo-rc0402",
+    "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+    "manufacturer": "Yageo",
+    "partNumber": "RC0402FR-075K1L",
+    "value": "5.1 kΩ ±1 %",
+    "quantity": 2,
+    "buy": "purchase",
+    "usedBy": [
+      "board/r1",
+      "board/r2"
+    ],
+    "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+    "verification": "audited 9/9",
+    "assumptions": 2,
+    "openGaps": 2
+  },
+  {
+    "line": 38,
+    "partId": "watch-display-lens",
+    "name": "Display lens, 38 × 0.5 mm PMMA",
+    "manufacturer": "Laser cut for this project (custom)",
+    "quantity": 1,
+    "buy": "fabricate",
+    "usedBy": [
+      "lens"
+    ],
+    "assumptions": 1,
+    "openGaps": 1
+  },
+  {
+    "line": 39,
+    "partId": "watch-hr-cover",
+    "name": "Heart-rate window cover, 4.0 × 8.2 × 0.5 mm PMMA",
+    "manufacturer": "Laser cut for this project (custom)",
+    "quantity": 1,
+    "buy": "fabricate",
+    "usedBy": [
+      "hr_cover"
+    ],
+    "assumptions": 1,
+    "openGaps": 1
+  },
+  {
+    "line": 40,
+    "partId": "watch-main-board",
+    "name": "Watch main board",
+    "quantity": 1,
+    "buy": "fabricate",
+    "usedBy": [
+      "board"
+    ],
+    "assumptions": 2,
+    "openGaps": 0
+  },
+  {
+    "line": 41,
+    "partId": "watch-cell-pads",
+    "name": "Cell lead solder pads (2)",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "watch-main-board",
+    "usedBy": [
+      "board/j3"
+    ],
+    "assumptions": 0,
+    "openGaps": 0
+  },
+  {
+    "line": 42,
+    "partId": "watch-battery-leads",
+    "name": "Cell leads",
+    "manufacturer": "LiPol Battery Co.",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "lipol-lp402030",
+    "usedBy": [
+      "battery_leads"
+    ],
+    "source": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf",
+    "assumptions": 1,
+    "openGaps": 0
+  },
+  {
+    "line": 43,
+    "partId": "watch-lra-pads",
+    "name": "LRA lead solder pads (2)",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "watch-main-board",
+    "usedBy": [
+      "board/j4"
+    ],
+    "assumptions": 0,
+    "openGaps": 0
+  },
+  {
+    "line": 44,
+    "partId": "watch-lra-leads",
+    "name": "LRA leads",
+    "manufacturer": "Vybronics",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "vybronics-vg0832012",
+    "usedBy": [
+      "lra_leads"
+    ],
+    "source": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf",
+    "assumptions": 1,
+    "openGaps": 0
+  },
+  {
+    "line": 45,
+    "partId": "watch-swd-pads",
+    "name": "SWD test pads (5)",
+    "quantity": 1,
+    "buy": "included",
+    "includedWith": "watch-main-board",
+    "usedBy": [
+      "board/j5"
+    ],
+    "assumptions": 0,
+    "openGaps": 0
+  }
+]

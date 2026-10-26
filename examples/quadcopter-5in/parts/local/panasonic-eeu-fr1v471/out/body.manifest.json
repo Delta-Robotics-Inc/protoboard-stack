@@ -1,0 +1,47 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "7450a69b8614566a484ecacc09fa1588771db6350da16bdde2188d4a5c9cbe81",
+  "units": "mm",
+  "volume_mm3": 1254.841,
+  "bodies": {
+    "can": 1254.275,
+    "lead_pos": 0.283,
+    "lead_neg": 0.283
+  },
+  "features": {
+    "pos": {
+      "area_mm2": 0.283,
+      "centroid": [
+        2.5,
+        0,
+        -1
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    },
+    "neg": {
+      "area_mm2": 0.283,
+      "centroid": [
+        -2.5,
+        0,
+        -1
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    }
+  },
+  "exportedFrom": {
+    "file": "parts/local/panasonic-eeu-fr1v471/part-cad/source.json",
+    "digest": "sha256:f7b12eef0caf7721a28394796c6b47a3e361d6e16508415a19b95215930e9ea2"
+  }
+}

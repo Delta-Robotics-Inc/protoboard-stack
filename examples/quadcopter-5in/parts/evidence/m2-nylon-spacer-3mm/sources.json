@@ -1,0 +1,29 @@
+[
+  {
+    "id": "src_supplier",
+    "title": "Ettinger 007.02.403 product page: Distanzhülse Ø2,7/4,0 x 3,0 PA6.0 GV25 schwarz",
+    "url": "https://www.ettinger.de/p/distanzhuelse-oe2-7-4-0-x-3-0-pa6.0-gv25-schwarz/007.02.403",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "720d13c9199903f377562342c59f99f63338fcb5967048b11bd3144914fc12c9",
+    "supports": [
+      "spacer Ø2.7/4.0 x 3.0 mm, PA6.0 GF25, black",
+      "pack of 100"
+    ]
+  },
+  {
+    "id": "src_datasheet",
+    "title": "Ettinger 007.02.403 Artikeldatenblatt (PDF)",
+    "url": "https://www.ettinger.de/product-datasheet/1462c93e0bc370857bb3fbeaf80ee590/create",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "3801050208721b8d373c7b3b6f55aea957eae40cfa18aebff16605e6b9bae329",
+    "supports": [
+      "Außendurchmesser 4, Innendurchmesser 2.7, Länge 3 mm",
+      "Für Gewinde M2,5; PA 6.0 25% GV",
+      "Gewicht 0.05 g"
+    ]
+  }
+]

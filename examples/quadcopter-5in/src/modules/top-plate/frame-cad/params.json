@@ -1,0 +1,138 @@
+{
+  "interfaces": [
+    {
+      "fastener_d": 3,
+      "height": 0,
+      "hole_count": 4,
+      "holes": [
+        [
+          -28,
+          24
+        ],
+        [
+          28,
+          24
+        ],
+        [
+          28,
+          -24
+        ],
+        [
+          -28,
+          -24
+        ]
+      ],
+      "id": "standoff_mount",
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "placement": "holes_bottom",
+      "shape": "rectangle",
+      "spacing": 56,
+      "spacing_y": 48,
+      "symmetry": 180,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 2,
+      "height": 0,
+      "hole_count": 4,
+      "holes": [
+        [
+          -65,
+          -13
+        ],
+        [
+          -39,
+          -13
+        ],
+        [
+          -39,
+          13
+        ],
+        [
+          -65,
+          13
+        ]
+      ],
+      "id": "gps_mount",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        -52,
+        0
+      ],
+      "placement": "holes_top",
+      "shape": "square",
+      "spacing": 26,
+      "spacing_y": null,
+      "symmetry": 90,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "module": "quadcopter-5in-top-plate",
+  "name": "quadcopter-5in-top-plate",
+  "plate": {
+    "arm_slot_width": 5,
+    "arm_width": 14,
+    "clamp_margin": 4,
+    "clamp_wall": 2,
+    "corner_radius": 4,
+    "hole_clearance": 0.1,
+    "hub_extra": 1,
+    "margin": 3,
+    "outline": {
+      "x": [
+        -70,
+        50
+      ],
+      "y": [
+        -28,
+        28
+      ]
+    },
+    "pad_center_relief": 3.5,
+    "pad_margin": 3,
+    "slots": [
+      {
+        "center": [
+          7.5,
+          -23
+        ],
+        "size": [
+          22,
+          3
+        ]
+      },
+      {
+        "center": [
+          7.5,
+          23
+        ],
+        "size": [
+          22,
+          3
+        ]
+      }
+    ],
+    "thickness": 2
+  },
+  "schema": "protoboard.frame-cad.params/v0"
+}

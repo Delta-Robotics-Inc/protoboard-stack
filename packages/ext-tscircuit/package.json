@@ -1,0 +1,72 @@
+{
+  "name": "@protoboardai/ext-tscircuit",
+  "version": "0.2.0",
+  "description": "Protoboard circuit provider: PCBs from UHD board modules with tscircuit (generate, export, extract, check), offline under Node",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-tscircuit"
+  },
+  "type": "module",
+  "files": [
+    "protoboard-extension.json",
+    "ops",
+    "lib",
+    "skills",
+    "README.md",
+    "evals",
+    "NOTICE",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "@tscircuit/alphabet": "0.0.25",
+    "@tscircuit/capacity-autorouter": "0.0.953",
+    "@tscircuit/checks": "0.0.233",
+    "@tscircuit/circuit-json-util": "0.0.118",
+    "@tscircuit/core": "0.0.2056",
+    "@tscircuit/create-fdm-enclosure": "0.0.4",
+    "@tscircuit/footprinter": "0.0.430",
+    "@tscircuit/image-utils": "0.0.8",
+    "@tscircuit/infgrid-ijump-astar": "0.0.35",
+    "@tscircuit/matchpack": "0.0.97",
+    "@tscircuit/math-utils": "0.0.36",
+    "@tscircuit/props": "0.0.677",
+    "@tscircuit/schematic-match-adapt": "0.0.18",
+    "bpc-graph": "0.0.57",
+    "circuit-json": "0.0.510",
+    "circuit-json-to-bpc": "0.0.13",
+    "circuit-json-to-connectivity-map": "0.0.33",
+    "circuit-json-to-gerber": "0.0.111",
+    "circuit-json-to-gltf": "0.0.141",
+    "circuit-json-to-kicad": "0.0.237",
+    "circuit-json-to-spice": "0.0.45",
+    "circuit-json-to-step": "0.0.43",
+    "circuit-to-svg": "0.0.438",
+    "kicadts": "0.0.58",
+    "polygon-clipping": "0.15.7",
+    "react": "19.3.0",
+    "schematic-symbols": "0.0.248",
+    "spicets": "0.0.4",
+    "sucrase": "3.35.1",
+    "three": "0.179.1"
+  },
+  "peerDependencies": {
+    "@deltarobotics/uhd": ">=0.3.0",
+    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/ext-release": "^0.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@protoboardai/ext-release": {
+      "optional": true
+    }
+  }
+}

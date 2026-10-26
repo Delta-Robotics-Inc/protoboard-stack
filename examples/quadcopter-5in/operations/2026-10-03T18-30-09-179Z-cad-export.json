@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "panasonic-eeu-fr1v471-leads",
+    "config": "src/harnesses/panasonic-eeu-fr1v471-leads/cad.config.ts",
+    "configDigest": "sha256:8302e6e86af4fdea3221bfa642629648fb4e2693bc5c653e8e8a8c9c7b409795",
+    "moduleDigest": "sha256:24b26258a10098cbdd4f1d69c1ca3fbd472fde9925d6465d382a0284b155d3e3"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:7be17e6a7f1cfcfbf16b4e71fd846ec4ef112b7523a3d9fc2419ab9a8ede02a7",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:30:09.179Z",
+  "status": "succeeded",
+  "summary": "bulk_cap_leads: body.glb, body.step and body.manifest.json in src/harnesses/panasonic-eeu-fr1v471-leads/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/panasonic-eeu-fr1v471-leads/out/body.glb",
+      "digest": "sha256:8410701095f296c4e7985baea01eda57f1d839467f125f394cfe5d005dad29ab",
+      "bytes": 56668,
+      "description": "bulk_cap_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/panasonic-eeu-fr1v471-leads/out/body.step",
+      "digest": "sha256:3d58edf69ce9b5494cc9f5d8d97132701995b5e4caea14bb06e8a80589384220",
+      "bytes": 131771,
+      "description": "bulk_cap_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/panasonic-eeu-fr1v471-leads/out/body.manifest.json",
+      "digest": "sha256:009cd81ed33d267fa5d03dfa281868b4084f21b620015501791c34434edca292",
+      "bytes": 2376,
+      "description": "bulk_cap_leads: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "panasonic-eeu-fr1v471-leads",
+    "path": "bulk_cap_leads",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 14,
+    "route_length_mm": 14.21,
+    "slack_mm": null,
+    "bend_mm": {
+      "target": 4,
+      "minimum": 2.5,
+      "centreline": 23.33,
+      "conductors": 0.87,
+      "at_terminations": 1.34
+    },
+    "clearance_mm": 0.36,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:30:20.068Z"
+}

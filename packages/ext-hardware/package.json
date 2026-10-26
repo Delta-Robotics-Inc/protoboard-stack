@@ -1,0 +1,32 @@
+{
+  "name": "@protoboardai/ext-hardware",
+  "version": "0.2.0",
+  "description": "Protoboard extension: system composition, harness, test and release skills, BOM, evidence checks",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-hardware"
+  },
+  "type": "module",
+  "files": [
+    "protoboard-extension.json",
+    "ops",
+    "checks",
+    "skills",
+    "evals",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0"
+  }
+}

@@ -1,0 +1,742 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "release",
+  "extension": {
+    "id": "@protoboard/ext-release",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "allow-dirty": "false",
+    "check": "false"
+  },
+  "projectDigest": "sha256:3b03ae48a8d8416cbda8e0cdc360244c414f5be63354ba183d0a39c0ecc908b3",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-04T00:50:05.357Z",
+  "status": "succeeded",
+  "summary": "release/0.1.0: 2 unit(s), 11 documents (48 pages), 108 files; package 5e6dd5ee1f7a",
+  "outputs": [
+    {
+      "path": "release/0.1.0/00-overview.pdf",
+      "digest": "sha256:a510265528c3251c2c2225bbb80d7e5b26e18f712a83c16ccfcedaa069903aa4",
+      "bytes": 317117,
+      "description": "overview, order of work, index and traceability"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Bold.ttf",
+      "digest": "sha256:fb8e3bd30f23195495f577c21919a4e56f74a204e8e895bbfc667da86e42b6dd",
+      "bytes": 43468,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Medium.ttf",
+      "digest": "sha256:f2f83fce1c8edbf8bc8e630aff724c80242d919319d1ea4c6ddf4a64c4f014ca",
+      "bytes": 43572,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Regular.ttf",
+      "digest": "sha256:76b65c04b353e2e38f8b0f7fecad2d1820c902d2dde500f161d009a011a3b153",
+      "bytes": 43476,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-SemiBold.ttf",
+      "digest": "sha256:d41ea722f247efb86fce550219927d05afbb3432f59b34890801b719eabed349",
+      "bytes": 43564,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-01-covers.png",
+      "digest": "sha256:6367af9ab4a35d314cf5a8be46eb2b47229543634aaf6ab940281d33afb13dcb",
+      "bytes": 95618,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-02-cell-leads.png",
+      "digest": "sha256:3c024e663049bfad029157592ae893bf09382f38b9b68678b9f03358e7cf9a40",
+      "bytes": 40502,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-03-board.png",
+      "digest": "sha256:25a00934ac518d917963f5fb446a8328eabb45f598ef0c4dafa256f09aa3155d",
+      "bytes": 133509,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-04-lra-leads.png",
+      "digest": "sha256:3c024e663049bfad029157592ae893bf09382f38b9b68678b9f03358e7cf9a40",
+      "bytes": 40502,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-05-lra.png",
+      "digest": "sha256:1dc1356a84826f8ed4e4c164a75839b9103328067d9c6a54a955c039e849d0e1",
+      "bytes": 88686,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-06-close.png",
+      "digest": "sha256:f68ccf24c9231575632c8cd4ce4466ea835b2c20ed96f68b629b6e357696991e",
+      "bytes": 114697,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-07-strap.png",
+      "digest": "sha256:d481df534e26ca9605caea2d25f129b3d1d5f24ba7957e2fbb1277441c12e14d",
+      "bytes": 113341,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-watch-battery-leads.png",
+      "digest": "sha256:5ade0a44d39ea31c75c599e2a3eb83891e3ba0798543b8da3feece9a47332a28",
+      "bytes": 77196,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-watch-case.png",
+      "digest": "sha256:51486d6fa6b3decec121ae642b648b38ffaa09b93fcec4481fee54fec603595d",
+      "bytes": 68830,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-watch-lra-leads.png",
+      "digest": "sha256:f62f986211d54305995beb49bbfcb3940dcb8a0de3c826785d038a3dd6f55717",
+      "bytes": 78817,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-watch-main-board.png",
+      "digest": "sha256:6aab4952ae1051e50cb2e76b18e4c9cac157473f545394fa91708d259089bd8c",
+      "bytes": 160166,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-adi-max17048g-t10.png",
+      "digest": "sha256:4885e390d51589cb3fa4a27149abe3235251385d7230b628f5a12bf7b1a4ae9a",
+      "bytes": 10155,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-adi-max30102efd.png",
+      "digest": "sha256:e7c9df23ae8353e642347d2961753d8125b3f892f7407a107b15975e21caf606",
+      "bytes": 14107,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-alps-skrtlae010.png",
+      "digest": "sha256:676a8bf47af011cea319d9c7c284f3cd1a946a640d854e1febf8b986e9c8af3a",
+      "bytes": 14050,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-aos-ao3400a.png",
+      "digest": "sha256:dca37a09ba229271d12438e2abac057f35a97179f749f051b5031814b83fd73f",
+      "bytes": 11363,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-bosch-bmi270.png",
+      "digest": "sha256:8eeeeac442c78a50a0a44cf57023b044f959f3b7cec6be7e3ebb39bf7f66bb80",
+      "bytes": 9302,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-eastrising-er-tft128-1.png",
+      "digest": "sha256:f2657ca7241dc7c871cece5da715c22860f15f8e69973debe8c24e65cabff1b0",
+      "bytes": 13944,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-epson-fc-135-32k768-12p5.png",
+      "digest": "sha256:7c0cc0890ea656fdf87bd4eb0f6cf83c0c42d50955b409eef13a397eaf921f46",
+      "bytes": 11675,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-esslinger-82-2225-spring-bar.png",
+      "digest": "sha256:a58467a2d3b46bdd8f1a2e7b231cab1f1f57aa99ac437aea031a7a2f0212c3b7",
+      "bytes": 12862,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-gct-usb4105-gf-a.png",
+      "digest": "sha256:77d32687f27fb099e9a2f85e4fe8b41f676a7637e62d5fc88bf30497f122e9c7",
+      "bytes": 11714,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-7045-m2x6-a2.png",
+      "digest": "sha256:265108f151f9db36900a49725558cf3ccd07881e2ea244ac6babb273102630b4",
+      "bytes": 9676,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-lipol-lp402030.png",
+      "digest": "sha256:161331339b6b6c0c3c2f4b790e8e10065036dd6a5d24f04e0ac6e820cda49226",
+      "bytes": 9924,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-microchip-mcp73831t-2aci-ot.png",
+      "digest": "sha256:20a5f5a917e83cbd373a2c20bda744431b627875b9c42d565402587f9c38cf35",
+      "bytes": 12059,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-murata-grm155.png",
+      "digest": "sha256:879fbdedcf79b18c22783271f80a8efe8bc061741b44c76b32ca71d4852d6a6d",
+      "bytes": 8693,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-murata-grm1555c1h200ja01.png",
+      "digest": "sha256:879fbdedcf79b18c22783271f80a8efe8bc061741b44c76b32ca71d4852d6a6d",
+      "bytes": 8693,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-murata-grm188.png",
+      "digest": "sha256:34ee4869f75753e6481f4cdb3e7b1509693f39435c2b42ac180ba609f1328c65",
+      "bytes": 8724,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-raytac-mdbt50q-1mv2.png",
+      "digest": "sha256:fdcfe7179c963e5f173bc7412893845c803b8d77d20e313ff84c9bbab9696c22",
+      "bytes": 11504,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ruthex-rx-m2x4.png",
+      "digest": "sha256:4df93ba6e6a01c8c9ab4061c95389c4abecb5e6192a4f3aed31437dbe297940e",
+      "bytes": 35731,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-st-usblc6-2sc6.png",
+      "digest": "sha256:8cc5e723b883bb3056b0f3954e22faea4cc16ac4827927e105317745f6606b7d",
+      "bytes": 13596,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ti-drv2605ldgs.png",
+      "digest": "sha256:add19a28560d5581c579bcf9ebb4566fe261b1d305eee0c2e2fc20c11977fffc",
+      "bytes": 13233,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ti-tps7a0218pdbv.png",
+      "digest": "sha256:da245e415289b3518ebed851e207c3af599e1770937edf0cd6083e0d47108bdc",
+      "bytes": 12447,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ti-tps7a0230pdbv.png",
+      "digest": "sha256:da245e415289b3518ebed851e207c3af599e1770937edf0cd6083e0d47108bdc",
+      "bytes": 12447,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-vybronics-vg0832012.png",
+      "digest": "sha256:a1043f108e04cfd42ccc7bffdf63acf14647b2b165cb2cb5701c3ae728a5b2e0",
+      "bytes": 11885,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-watch-battery-leads.png",
+      "digest": "sha256:980cd360581c28b4d61f4a8b903a1394e1e1520c2e70b117989fb58be3022ec9",
+      "bytes": 31895,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-watch-case.png",
+      "digest": "sha256:2371a3a89f9cdd5a9f1efaac18948e08da1631a95ed7d823123007e3189a7e54",
+      "bytes": 13829,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-watch-display-lens.png",
+      "digest": "sha256:9a1e17faef3ee0512ceb8f75fa8446d538e1fdc764d5cd5aad9c5935c695cf18",
+      "bytes": 9455,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-watch-hr-cover.png",
+      "digest": "sha256:abeab6746f633ec3a9ec128cba0f8f4c498f93e1a82c2d7cae9c739512e70c2a",
+      "bytes": 9039,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-watch-lra-leads.png",
+      "digest": "sha256:06d1c44478452655c77940bb8a54160b12604ac72a1847aa3c13da0e40b70147",
+      "bytes": 30327,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-watch-main-board.png",
+      "digest": "sha256:9791e5b8a0d9be5b906bef94129295ec7d95c89e0037445650dbb8ca0bff3dac",
+      "bytes": 26890,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-yageo-rc0402.png",
+      "digest": "sha256:84555ebbe3d2d5bb09b2bd7b9b16dfdc5b62ab48d226f61cb5513b7639380714",
+      "bytes": 8906,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-system.png",
+      "digest": "sha256:d604517716e9f61d4c2cb8c762194c3419cfe27c0ee3c05feace578c12beadb4",
+      "bytes": 141114,
+      "description": "assembled unit, line art from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-thumb-board.png",
+      "digest": "sha256:9791e5b8a0d9be5b906bef94129295ec7d95c89e0037445650dbb8ca0bff3dac",
+      "bytes": 26890,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/index.html",
+      "digest": "sha256:4d5bbd9ed1e193af0b7e51ac382a5741d66c51cabb022ebc3ac137ac4d4e3f48",
+      "bytes": 223079,
+      "description": "the whole package, by unit and by section"
+    },
+    {
+      "path": "release/0.1.0/system/assembly-guide.pdf",
+      "digest": "sha256:f00ae181082c99b42df3d6f6a06e47dde9033ae04e0b3279574c37d4e44a5501",
+      "bytes": 616752,
+      "description": "Assembly guide"
+    },
+    {
+      "path": "release/0.1.0/system/bom.csv",
+      "digest": "sha256:0d47b0a32f1956b45f178b2f055c0de8666dc867019e30dff7e529ad4c6f9b89",
+      "bytes": 2485,
+      "description": "module breakdown of one build"
+    },
+    {
+      "path": "release/0.1.0/system/bom.pdf",
+      "digest": "sha256:cfdada926e9b9d4df3b5955ee1cbbc580a1cf03a6f2cf26d26f2129cf5e78d8a",
+      "bytes": 170614,
+      "description": "Bill of materials"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/watch-battery-leads/cut-list.csv",
+      "digest": "sha256:c95d9e2a9b01d86daacbc24b4c1d55e63300ca52dc9f30ec5b345d3dd09498c8",
+      "bytes": 384,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/watch-battery-leads/watch-battery-leads.glb",
+      "digest": "sha256:28e254caf081a6bdd1b5fcf38aa5a7ff7a6a7be4b944203aa0148b9a3280077b",
+      "bytes": 40676,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/watch-battery-leads/watch-battery-leads.step",
+      "digest": "sha256:050135d9ace08a0f62550b79c13e2c4d42f1c0134e9ec95debf0f2a0fab06bad",
+      "bytes": 65351,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/watch-lra-leads/cut-list.csv",
+      "digest": "sha256:e6b9026dca656827a37b3874d16a8d0996f0d8d990ba6fe599954af6bccddf1f",
+      "bytes": 400,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/watch-lra-leads/watch-lra-leads.glb",
+      "digest": "sha256:48c2ece1916b878233d1e37848b05dd10d7e8623a8417a0c4c3ef0d87069a4f7",
+      "bytes": 34888,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/watch-lra-leads/watch-lra-leads.step",
+      "digest": "sha256:f2fee3cb21ce6b5663e23df7322a87a3dd4507cc4861d73dbba0f05475ef65b0",
+      "bytes": 26715,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/base.3mf",
+      "digest": "sha256:01b43c831a434d367394996c3931348b6898be4ac45265e28e4e743ac158569b",
+      "bytes": 97613,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/base.stl",
+      "digest": "sha256:ab94ef44985ec05b4567b91f458696e8eccee7d6ab2eebabde3c97d587d60235",
+      "bytes": 459284,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/cover_display_window.dxf",
+      "digest": "sha256:bdabb2b3de0ffcdaa28c24beaf57c9efe7409ffee94fa0e91db6554b1f0299ee",
+      "bytes": 15365,
+      "description": "cutting profile (DXF)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/cover_display_window.step",
+      "digest": "sha256:9976ccb19c0841eb26b609f9acae7b0fced3a0e03f3b72286c0571b9538a6e8c",
+      "bytes": 5715,
+      "description": "body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/cover_hr_window.dxf",
+      "digest": "sha256:10fe042a11ac2dc12d3ef0f209592115c40c99d125288d1e3868b160145d9822",
+      "bytes": 15698,
+      "description": "cutting profile (DXF)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/cover_hr_window.step",
+      "digest": "sha256:3e67cbd9f3a5ce1d0b225ba7a674e8ade80e8605f7d04def903903a18b273bfd",
+      "bytes": 15401,
+      "description": "body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/lid.3mf",
+      "digest": "sha256:9313530c064306b9ea65e7990d07fbaaa0f8cd0734a5b6f285b176ed2f0c2bca",
+      "bytes": 39956,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/lid.stl",
+      "digest": "sha256:7c618ecef749c0c4a1744a5d595654f7bd1a285cc0872c07307c2a5ec691bf72",
+      "bytes": 194284,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/plunger_button_1.3mf",
+      "digest": "sha256:a34b9a8025695fd47d4b1e98b26e04d95ec59c294003a7968ff5effb29e708f1",
+      "bytes": 18294,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/plunger_button_1.stl",
+      "digest": "sha256:e50db02123639e9a6422815c5dfb763cc4adf72cbe9eda39a6e8ec31ce1dfb4a",
+      "bytes": 74284,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/plunger_button_2.3mf",
+      "digest": "sha256:af327779643f2ed5604dd1a8aa686fcfb95e71c08d5c9a6dbcded707ba2c4055",
+      "bytes": 18338,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/plunger_button_2.stl",
+      "digest": "sha256:f1a1eb3a06d690cf546b40b0dd0bde71f9973bfd76a820d5812248b3f93efeea",
+      "bytes": 74284,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/system/files/mechanical/watch-case/watch-case.step",
+      "digest": "sha256:1dc79338cbb1b89db62ace1853044428f593e82827f4c9a5a2fad244cda47d75",
+      "bytes": 2114965,
+      "description": "body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/model/uhd-bundle.json",
+      "digest": "sha256:72a9015581f663153b1300ee10c29b09a98d2980886f97c6c6426a1aa5870e35",
+      "bytes": 1475009,
+      "description": "UHD bundle of the released system"
+    },
+    {
+      "path": "release/0.1.0/system/files/test/test-record.csv",
+      "digest": "sha256:eadd3d68ef6d1144537446a9b4918b8e16cade446f21f12c779b5172f49806d8",
+      "bytes": 8825,
+      "description": "test record to fill in, one row per check"
+    },
+    {
+      "path": "release/0.1.0/system/ordering-list.csv",
+      "digest": "sha256:8c30a067b78a8c06a72a3348d626ac20052f1c5d2750d04d84d366f96c7d2493",
+      "bytes": 15279,
+      "description": "whole-product ordering list"
+    },
+    {
+      "path": "release/0.1.0/system/spec-sheet.pdf",
+      "digest": "sha256:2434166ef2d566433309e575424d22747fcf6b6cd91669ed9a9dfa67c097a35a",
+      "bytes": 284384,
+      "description": "Spec sheet"
+    },
+    {
+      "path": "release/0.1.0/system/test-plan.pdf",
+      "digest": "sha256:75496e2bf17daf64966d5358eb5c74dca8622a90ed8e4d49105039dc5d5d16f0",
+      "bytes": 161110,
+      "description": "Test and validation plan"
+    },
+    {
+      "path": "release/0.1.0/system/work-order.pdf",
+      "digest": "sha256:23330c0498cdf087f3de733e257ed1688ee5e096b851826b8c7dbf64b3b18dae",
+      "bytes": 254212,
+      "description": "Work order"
+    },
+    {
+      "path": "release/0.1.0/units/board/assembly-guide.pdf",
+      "digest": "sha256:e863c749dd6034b2839535dc0c31dbf03a8108f4254041e64a239e5dcf0eea76",
+      "bytes": 149679,
+      "description": "Assembly guide"
+    },
+    {
+      "path": "release/0.1.0/units/board/bom.csv",
+      "digest": "sha256:0d1438fe87e7ae6c394572a2ade56cdd1b924543eeaec58316a51faa82ddbf37",
+      "bytes": 6911,
+      "description": "module breakdown of one build"
+    },
+    {
+      "path": "release/0.1.0/units/board/bom.pdf",
+      "digest": "sha256:eb363eba0259e56c441e7d3c0bced209ae2ba9165db4b2ffee9e25d271254964",
+      "bytes": 129858,
+      "description": "Bill of materials"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/board.glb",
+      "digest": "sha256:c463eee642656c821eb0a421f8acebc85d5bab5f59e893f35756992cf5bc4f1b",
+      "bytes": 1251820,
+      "description": "board body (GLB)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/board.step",
+      "digest": "sha256:3dd4434e77460d4779d4e19faa30b62abc2138475754757a11b582d0a526aeb9",
+      "bytes": 5181221,
+      "description": "board body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/bom.csv",
+      "digest": "sha256:81b6812ae84656e99597109fd331c9e6a101285341bd448a8b2a740de0e382e1",
+      "bytes": 4139,
+      "description": "board BOM (UHD instance keys)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/B_Cu.gbr",
+      "digest": "sha256:f931b3b156f9d11f715430c509f5332bd1c2ead237fcb5b51e8989b1ae14d4a8",
+      "bytes": 14914,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/B_Mask.gbr",
+      "digest": "sha256:8a488d8be70f7dd570e7298c958e79688a642db83467d1dfe9e2b6d282769a4c",
+      "bytes": 2931,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/B_Paste.gbr",
+      "digest": "sha256:973dfe36df9e72ff457ed01e7a23965d9ae77ad2f2af0a5ee167c1b2e562cf16",
+      "bytes": 2181,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/B_SilkScreen.gbr",
+      "digest": "sha256:b19842a0436f7a5579ea41fe9ec19340762eda27d390976bef8e221477334dc2",
+      "bytes": 6062,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/Edge_Cuts.gbr",
+      "digest": "sha256:9c425c0346dbead3d9156667eef7c9c7c8d43a861b0840a3f7e57fae36fbe616",
+      "bytes": 3344,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/F_Cu.gbr",
+      "digest": "sha256:010647ff2032b53e24f530ddc437a6392a997c17cbb4956286a507041c3bde64",
+      "bytes": 55627,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/F_Mask.gbr",
+      "digest": "sha256:dda4bd0dd51f9767264a541c3fbd31b6bec724ac6694f41a6b75070282a4991b",
+      "bytes": 11776,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/F_Paste.gbr",
+      "digest": "sha256:21aa591d3acd45b2cbfcc2f74e2e86d243c55f1326488a31d631de4051230ea5",
+      "bytes": 10355,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/F_SilkScreen.gbr",
+      "digest": "sha256:8192aefaaf276ed7ea36ee54d488a14a488276e4697457342bbeb1ccd853135f",
+      "bytes": 62230,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/In1_Cu.gbr",
+      "digest": "sha256:033f5c6c3def09f0d4d34a749277775825530280b0edd28e680917a0107e15cb",
+      "bytes": 199067,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/In2_Cu.gbr",
+      "digest": "sha256:0e7773d8abbb5b4e8868d29b75817a0ccc9d5690e88c6f974b652f0ac02a992a",
+      "bytes": 176322,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/drill-L1-L4.drl",
+      "digest": "sha256:15bb6cfbb600b298c3ae24f70d521071f77e0606fef1840a191ab14a9e8db963",
+      "bytes": 2600,
+      "description": "Excellon drill"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/gerber/drill_npth.drl",
+      "digest": "sha256:a61edb31a55641629857e60b5313a80fdef2a0e35e622cf14ec523e41d6c63c5",
+      "bytes": 424,
+      "description": "Excellon drill"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/watch-main-board/pnp.csv",
+      "digest": "sha256:d6fc973bcbf2d859c156b7718f26754fa3f8cfd3566379215e47809bd9a80c2c",
+      "bytes": 3013,
+      "description": "pick-and-place"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/firmware/watch-main-board/boards/protoboard/wearable_watch/Kconfig.wearable_watch",
+      "digest": "sha256:6e982a654e7ce73c4c63aba873ba923858dc7a043870bff0ebbcf0a7417dd9fc",
+      "bytes": 205,
+      "description": "firmware configuration"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/firmware/watch-main-board/boards/protoboard/wearable_watch/board.yml",
+      "digest": "sha256:e55da58fe69d151f55f3c15610ddcb3b4e59ca4563c252c8b7b3071ae38a20fe",
+      "bytes": 224,
+      "description": "firmware configuration"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/firmware/watch-main-board/boards/protoboard/wearable_watch/wearable_watch-pinctrl.dtsi",
+      "digest": "sha256:a69f8775610c83cccdff4ddd9f5687e48c83825c032e4cc8573d1008af5c6b8f",
+      "bytes": 1014,
+      "description": "firmware configuration"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/firmware/watch-main-board/boards/protoboard/wearable_watch/wearable_watch.dts",
+      "digest": "sha256:7d42246d663a6f38040886b3196bbce7bfed35defa8639bf62eb75f3d1f091fe",
+      "bytes": 4483,
+      "description": "firmware configuration"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/firmware/watch-main-board/boards/protoboard/wearable_watch/wearable_watch_defconfig",
+      "digest": "sha256:8d8f2ef24e3286211f66d8c60a3148d5ff607f8d3b495fdefe1ce89322dd8f25",
+      "bytes": 297,
+      "description": "firmware configuration"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/firmware/watch-main-board/firmware.conf",
+      "digest": "sha256:fb1dc3b03ebbfc0667ebe575a752231f5784619c9521c7b67ac1c1b1d71fd98a",
+      "bytes": 793,
+      "description": "firmware configuration"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/firmware/watch-main-board/firmware.manifest.json",
+      "digest": "sha256:ed0ce66914b94a2e42fc48efc4e3fa5c820850ea057ba7125f16d2571c68f148",
+      "bytes": 16411,
+      "description": "firmware configuration manifest (cites the board)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/test/test-record.csv",
+      "digest": "sha256:fa8fb37b75c03cef0561c5c53fdd07b81e0bfb208b3741d68d1536f6e145c19e",
+      "bytes": 3973,
+      "description": "test record to fill in, one row per check"
+    },
+    {
+      "path": "release/0.1.0/units/board/spec-sheet.pdf",
+      "digest": "sha256:85b371ee5d8473dd1363535d374b0d11d214fe735f6b3798186e557987e05d02",
+      "bytes": 210779,
+      "description": "Spec sheet"
+    },
+    {
+      "path": "release/0.1.0/units/board/test-plan.pdf",
+      "digest": "sha256:08e4f62a71364ce8ecd8b0d80d0bd5f208440108936d051231ffeedb58c3cf64",
+      "bytes": 82380,
+      "description": "Test and validation plan"
+    },
+    {
+      "path": "release/0.1.0/units/board/work-order.pdf",
+      "digest": "sha256:a6b70ca838d0fa74eea39f180e9bbe3bb5823ca58da5e1a5b4ad4f1a557e2f0a",
+      "bytes": 141282,
+      "description": "Work order"
+    },
+    {
+      "path": "release/0.1.0/manifest.json",
+      "digest": "sha256:cc284fb7ca9124e581230e3ab20ca7d173026a4ffcc401bf783552de7a156e52",
+      "bytes": 66048,
+      "description": "release manifest"
+    }
+  ],
+  "data": {
+    "status": "succeeded",
+    "summary": "release/0.1.0: 2 unit(s), 11 documents (48 pages), 108 files; package 5e6dd5ee1f7a",
+    "diagnostics": [],
+    "version": "0.1.0",
+    "dir": "release/0.1.0",
+    "units": [
+      {
+        "id": "board",
+        "folder": "units/board",
+        "perProduct": 1
+      },
+      {
+        "id": "system",
+        "folder": "system",
+        "perProduct": 1
+      }
+    ],
+    "documents": [
+      {
+        "path": "00-overview.pdf",
+        "pages": 6
+      },
+      {
+        "path": "units/board/spec-sheet.pdf",
+        "pages": 3
+      },
+      {
+        "path": "units/board/bom.pdf",
+        "pages": 2
+      },
+      {
+        "path": "units/board/work-order.pdf",
+        "pages": 3
+      },
+      {
+        "path": "units/board/assembly-guide.pdf",
+        "pages": 2
+      },
+      {
+        "path": "units/board/test-plan.pdf",
+        "pages": 3
+      },
+      {
+        "path": "system/spec-sheet.pdf",
+        "pages": 4
+      },
+      {
+        "path": "system/bom.pdf",
+        "pages": 3
+      },
+      {
+        "path": "system/work-order.pdf",
+        "pages": 8
+      },
+      {
+        "path": "system/assembly-guide.pdf",
+        "pages": 8
+      },
+      {
+        "path": "system/test-plan.pdf",
+        "pages": 6
+      }
+    ],
+    "packageDigest": "sha256:5e6dd5ee1f7afb74ee82dac8a652df51724b043aa82f74b393a2436a06e65148",
+    "manifestDigest": "sha256:cc284fb7ca9124e581230e3ab20ca7d173026a4ffcc401bf783552de7a156e52"
+  },
+  "finishedAt": "2026-10-04T00:50:30.874Z"
+}

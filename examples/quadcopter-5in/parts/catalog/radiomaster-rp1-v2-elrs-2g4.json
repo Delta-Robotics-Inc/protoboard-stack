@@ -1,0 +1,824 @@
+{
+  "artifacts": [
+    {
+      "id": "art_manual",
+      "name": "RadioMaster RP1 Receiver User Manual",
+      "type": "datasheet",
+      "url": "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+    },
+    {
+      "id": "art_product",
+      "name": "RadioMaster RP1 V2 product page",
+      "type": "documentation",
+      "url": "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver"
+    },
+    {
+      "id": "art_elrs_wiring",
+      "name": "ExpressLRS receiver wiring guide",
+      "type": "documentation",
+      "url": "https://www.expresslrs.org/quick-start/receivers/wiring-up/"
+    },
+    {
+      "id": "art_elrs_targets",
+      "name": "ExpressLRS targets.json",
+      "type": "firmware",
+      "url": "https://raw.githubusercontent.com/ExpressLRS/targets/master/targets.json"
+    },
+    {
+      "filePath": "library/cad/py/parts.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "radiomaster-rp1-v2 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/radiomaster-rp1-v2.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "radiomaster-rp1-v2 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/radiomaster-rp1-v2.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "radiomaster-rp1-v2 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/radiomaster-rp1-v2.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "radiomaster-rp1-v2 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/crsf_rx.glb",
+      "format": "glb",
+      "id": "cad_if_crsf_rx",
+      "interfaceId": "crsf_rx",
+      "name": "crsf_rx geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/crsf_tx.glb",
+      "format": "glb",
+      "id": "cad_if_crsf_tx",
+      "interfaceId": "crsf_tx",
+      "name": "crsf_tx geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/vcc_5v.glb",
+      "format": "glb",
+      "id": "cad_if_vcc_5v",
+      "interfaceId": "vcc_5v",
+      "name": "vcc_5v geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/radiomaster-rp1-v2-elrs-2g4/artifacts/cad/interfaces/gnd.glb",
+      "format": "glb",
+      "id": "cad_if_gnd",
+      "interfaceId": "gnd",
+      "name": "gnd geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "robotics.rc",
+    "robotics.drone",
+    "connectivity.wireless"
+  ],
+  "description": "ExpressLRS 2.4 GHz nano receiver (ESP8285 + SX1281, TCXO) with CRSF serial output over solder pads (5V, G, TX, RX) and a U.FL antenna socket; 13x11x3 mm, 2.2 g with the included 65 mm T antenna.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "pad_order_top_view": [
+          "RX",
+          "TX",
+          "5V",
+          "G"
+        ],
+        "source": "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+      },
+      "power_domains": [
+        {
+          "id": "vcc_5v",
+          "name": "5V input",
+          "nominal_voltage_V": 5
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 3,
+        "length": 13,
+        "width": 11
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "mounting": "none (no holes); heat shrink / foam tape / zip tie",
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+          "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver"
+        ],
+        "weight_basis": "including antenna"
+      },
+      "weight_g": 2.2
+    },
+    {
+      "domain": "network",
+      "metadata": {
+        "antenna_connector": "u_fl",
+        "band_MHz": [
+          2400,
+          2483
+        ],
+        "protocol": "ExpressLRS",
+        "source": "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+      }
+    }
+  ],
+  "id": "radiomaster-rp1-v2-elrs-2g4",
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -5.4,
+            1.27,
+            1.3
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "vcc_5v",
+            "signature": {
+              "area_mm2": 2.88,
+              "centroid": [
+                -5.4,
+                1.27,
+                1.3
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_vcc_5v",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "vcc_5v",
+      "name": "5V",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        }
+      ],
+      "pin": "5V",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Supply input pad. Input Voltage: 5V.",
+            "label": "5V",
+            "source": [
+              "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+              "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Connect to a 5V (or 4V5) pad on the flight controller.",
+            "source": "https://www.expresslrs.org/quick-start/receivers/wiring-up/"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "supply current / voltage tolerance",
+            "note": "Only a single 5V figure is stated; no current draw or min/max supply range is given.",
+            "source": [
+              "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+              "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver"
+            ]
+          },
+          "type": "data_gap"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -5.4,
+            3.81,
+            1.3
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "gnd",
+            "signature": {
+              "area_mm2": 2.88,
+              "centroid": [
+                -5.4,
+                3.81,
+                1.3
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_gnd",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gnd",
+      "name": "G",
+      "pin": "G",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground pad (top-view label 'G', bottom silkscreen '-').",
+            "label": "G",
+            "source": "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -5.4,
+            -3.81,
+            1.3
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "crsf_rx",
+            "signature": {
+              "area_mm2": 2.88,
+              "centroid": [
+                -5.4,
+                -3.81,
+                1.3
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_crsf_rx",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "crsf_rx",
+      "name": "RX",
+      "pin": "RX",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Receiver serial RX: accepts telemetry from the flight controller for the radio. Wire to FC TX of the same UART.",
+            "label": "RX",
+            "source": [
+              "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+              "https://www.expresslrs.org/quick-start/receivers/wiring-up/"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "field": "logic level",
+            "note": "No source states the TX/RX pad logic level or 5V tolerance.",
+            "source": "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+          },
+          "type": "data_gap"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -5.4,
+            -1.27,
+            1.3
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "crsf_tx",
+            "signature": {
+              "area_mm2": 2.88,
+              "centroid": [
+                -5.4,
+                -1.27,
+                1.3
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_crsf_tx",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "crsf_tx",
+      "name": "TX",
+      "pin": "TX",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Receiver serial TX: sends CRSF control data received from the radio to the flight controller. Wire to FC RX of the same UART.",
+            "label": "TX",
+            "source": [
+              "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+              "https://www.expresslrs.org/quick-start/receivers/wiring-up/"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "field": "logic level",
+            "note": "No source states the TX/RX pad logic level or 5V tolerance.",
+            "source": "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+          },
+          "type": "data_gap"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "crsf",
+      "name": "CRSF (UART)",
+      "parameters": [
+        {
+          "id": "baud_rate",
+          "unit": "Hz",
+          "value": 420000
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "crsf_rx",
+            "tx": "crsf_tx"
+          },
+          "id": "crsf_default",
+          "label": "CRSF (UART)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "device"
+          ],
+          "type": "uart"
+        },
+        {
+          "roles": [
+            "device"
+          ],
+          "type": "crsf"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "CRSF framing over full-duplex UART; the flight controller assigns serial RX to one of its UARTs in firmware.",
+            "protocol": "crsf"
+          },
+          "type": "serial_rx_protocol"
+        },
+        {
+          "params": {
+            "note": "Crossover to the FC UART: receiver TX -> FC RX, receiver RX -> FC TX (same UART number). Avoid FC UARTs with SBUS pull-downs on RX (can hold the receiver in bootloader). In Betaflight: Ports tab -> enable Serial RX on that UART; Configuration/Receiver -> Serial-based receiver, provider CRSF.",
+            "source": [
+              "https://www.expresslrs.org/quick-start/receivers/wiring-up/",
+              "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "Leave UART baud at the default 420000; set 400000 only for KISS/KISS Ultra flight controllers.",
+            "source": "https://www.expresslrs.org/quick-start/webui/"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "network",
+      "exposed": true,
+      "id": "antenna_ufl",
+      "name": "U.FL antenna socket",
+      "protocols": [
+        {
+          "roles": [
+            "transceiver"
+          ],
+          "type": "rf"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "u_fl",
+            "gender": "receptacle",
+            "note": "U.FL antenna socket on top of the PCB (src_manual drawing 'U.FL'; src_product 'UFL antenna socket for full-range antenna use').",
+            "positions": 1
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Included antenna: 1x 65mm UFL 2.4GHz T-Antenna (drawing: 65 mm lead, 55 mm T element). Band 2400-2483 MHz.",
+            "source": [
+              "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+              "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "RadioMaster",
+  "name": "RadioMaster RP1 V2 ExpressLRS 2.4GHz Nano Receiver",
+  "part_number": "RP1 V2",
+  "tags": [
+    "receiver",
+    "expresslrs",
+    "elrs",
+    "2.4ghz",
+    "crsf",
+    "nano",
+    "fpv",
+    "rc",
+    "radiomaster",
+    "rp1"
+  ],
+  "traits": [
+    {
+      "params": {
+        "note": "Package includes '1 * CRSF wire' (product page); the manual card lists silicone wires and the product photo shows four (red, black, white, green) twisted together with bare tinned ends and no plug. Their gauge, length and colour-to-pad assignment are not stated.",
+        "source": [
+          "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver",
+          "https://flymod.net/download/radiomaster_receiver_rp1_v2_manual"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "band_MHz": [
+          2400,
+          2483
+        ],
+        "firmware_preinstalled": "ExpressLRS v3.0",
+        "firmware_target": "RadioMaster RP1/2 2400 RX (Unified_ESP8285_2400_RX, min ELRS 3.0.0)",
+        "frequency_range_GHz": [
+          2.404,
+          2.479
+        ],
+        "kind": "radio",
+        "packet_rate_max": "500Hz / F1000Hz",
+        "packet_rate_min_Hz": 25,
+        "protocol": "ExpressLRS",
+        "rf_chip": "SX1281",
+        "sensitivity_dBm_elrs_generic_2g4": {
+          "100Hz Full": -112,
+          "150Hz": -112,
+          "250Hz": -108,
+          "333Hz Full": -105,
+          "500Hz": -105,
+          "50Hz": -115,
+          "F1000": -104,
+          "F500": -104,
+          "K1000": -103
+        },
+        "sensitivity_note": "ExpressLRS-documented per-rate sensitivity limits for 2.4 GHz; not an RP1-specific measurement (RadioMaster states none).",
+        "source": [
+          "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver",
+          "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+          "https://www.expresslrs.org/info/signal-health/",
+          "https://raw.githubusercontent.com/ExpressLRS/targets/master/targets.json"
+        ],
+        "tcxo": true,
+        "telemetry_power_mW": 10,
+        "wifi_webui": true
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "MCU ESP8285, RF chip Semtech SX1281, built-in TCXO. WiFi built in: firmware update and configuration via the WebUI. ELRS target 'RadioMaster RP1 2.4GHz RX' (upload via UART, WiFi, or Betaflight passthrough).",
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+          "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver",
+          "https://raw.githubusercontent.com/ExpressLRS/targets/master/targets.json"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Binding: set a binding phrase, or power the RX on/off 3 times until the LED double-blinks (bind mode), then press [BIND] in the ExpressLRS Lua script; solid LED = bound. BOOT pad: short to GND with a metal object while powering on to enter firmware-upgrade (bootloader) mode.",
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+          "https://www.expresslrs.org/quick-start/receivers/wiring-up/"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Mounting: no mounting holes. Secure with heat shrink, foam tape or zip tie after bench-testing (ELRS docs: do not shrink wrap until the receiver is tested; heat shrink can press the boot button/pad).",
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+          "https://www.expresslrs.org/quick-start/receivers/wiring-up/"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Sold as FCC and LBT variants (regulatory firmware domain); hardware is the same product. Package: RP1 receiver, 65mm UFL T antenna, user manual card, 4x silicone wires (manual) / CRSF wire (product page).",
+        "source": [
+          "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver",
+          "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "RF chip",
+        "resolution": "SX1281 (manufacturer spec tables; chip marking '1281' in the manual drawing). SX1276 is a sub-GHz chip and a clear typo.",
+        "sources": [
+          "src_manual (EN) + src_product spec table",
+          "src_product description + src_rdq",
+          "src_manual (CN spec table)"
+        ],
+        "values": [
+          "SX1281",
+          "SX1280",
+          "SX1276"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "pre-installed firmware",
+        "resolution": "v3.0: manual and distributor agree, and the ELRS rp1 target's min_version is 3.0.0.",
+        "sources": [
+          "src_manual, src_rdq",
+          "src_product"
+        ],
+        "values": [
+          "ExpressLRS v3.0",
+          "ExpressLRS v2.4"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "frequency range",
+        "resolution": "Both kept: band 2400-2483 MHz (manual) and operating range 2.404-2.479 GHz (product page).",
+        "sources": [
+          "src_manual",
+          "src_product"
+        ],
+        "values": [
+          "2400MHz-2483MHz",
+          "2.404-2.479 GHz"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "telemetry RF power",
+        "resolution": "10 mW (manufacturer). The layout value is a chip output setting, not a stated radiated power.",
+        "sources": [
+          "src_product",
+          "src_elrs_layout"
+        ],
+        "values": [
+          "10mW",
+          "power_values [13] (SX128x dBm setting)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "weight basis",
+        "resolution": "2.2 g including antenna (EN manual and product page agree).",
+        "sources": [
+          "src_manual (EN), src_product",
+          "src_manual (CN)"
+        ],
+        "values": [
+          "2.2g w/antenna",
+          "2.2g w/o antenna"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "operating / storage temperature, supply current",
+        "note": "Neither RadioMaster source nor the ExpressLRS docs state them.",
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0609/8324/7079/files/RP1_User_Manual.pdf?v=1722923320",
+          "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver"
+        ]
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

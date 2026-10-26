@@ -1,0 +1,147 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Build and verify the quadcopter's datasheet",
+  "skills": [
+    "uhd-tech-docs",
+    "uhd-tech-docs-verify"
+  ],
+  "tags": [
+    "documents"
+  ],
+  "requires": [
+    "chrome",
+    "poppler"
+  ],
+  "fixture": {
+    "from": "../../../../examples/quadcopter-5in",
+    "steps": [
+      {
+        "note": "no datasheet yet",
+        "remove": "docs/quadcopter-5in-datasheet.html"
+      },
+      {
+        "remove": "docs/quadcopter-5in-datasheet.pdf"
+      },
+      {
+        "remove": "docs/quadcopter-5in-datasheet.values.json"
+      }
+    ]
+  },
+  "instruction": "This quadcopter has no datasheet yet. Produce its datasheet (HTML and PDF in docs/), verified against the model, and tell me the all-up mass and the docId the datasheet states. Only the datasheet: leave the assembly guide as it is.",
+  "tools": {
+    "read": true,
+    "edit": true,
+    "commands": [
+      "npx protoboard *"
+    ]
+  },
+  "budget": {
+    "turns": 20,
+    "seconds": 900,
+    "usd": 3
+  },
+  "graders": [
+    {
+      "id": "files",
+      "kind": "files",
+      "exist": [
+        "docs/quadcopter-5in-datasheet.html",
+        "docs/quadcopter-5in-datasheet.pdf",
+        "docs/quadcopter-5in-datasheet.values.json"
+      ]
+    },
+    {
+      "id": "pdf-complete",
+      "kind": "format",
+      "file": "docs/quadcopter-5in-datasheet.pdf",
+      "format": "pdf"
+    },
+    {
+      "id": "verified",
+      "kind": "operation",
+      "run": [
+        "tech-docs-verify",
+        "--input",
+        "only=datasheet"
+      ],
+      "status": "succeeded"
+    },
+    {
+      "id": "bound-values",
+      "kind": "facts",
+      "file": "docs/quadcopter-5in-datasheet.values.json",
+      "facts": [
+        {
+          "path": "docId",
+          "equals": "UHD-QUAD5-DS"
+        },
+        {
+          "path": "system",
+          "equals": "quadcopter-5in"
+        },
+        {
+          "path": "values[q=derived:mass.all_up].text",
+          "matches": "^587\\s*g$"
+        },
+        {
+          "path": "values[q=derived:mass.all_up].status",
+          "equals": "assumption"
+        },
+        {
+          "path": "values[q=derived:propulsion.thrust_full_total].text",
+          "matches": "^6\\.3\\s*kg$"
+        }
+      ]
+    },
+    {
+      "id": "answer",
+      "kind": "text",
+      "matches": [
+        "587\\s*g",
+        "UHD-QUAD5-DS"
+      ],
+      "description": "the answer reads the figures from the document"
+    },
+    {
+      "id": "assembly-guide-untouched",
+      "kind": "digest",
+      "file": "docs/quadcopter-5in-assembly-guide.pdf",
+      "changed": false
+    },
+    {
+      "id": "reads-well",
+      "kind": "rubric",
+      "files": [
+        "docs/quadcopter-5in-datasheet.values.json"
+      ],
+      "rubric": "A datasheet's bound values for a 5-inch 6S quadcopter. 1. Every value has a status (source, derived, model, assumption, measured, stand-in, or gap: a value the model does not state, shown as the gap marker \u2014 and listed for the model's author, as the uhd-tech-docs skill requires instead of a typed value) and derived values name their formula and inputs. 2. The displayed values (`text`) carry units that are SI or conventional for the field (V, mAh, A, g, kg, mm); the `unit` metadata fields are written by the generator, not the agent. 3. No value is a placeholder (TBD, NaN, undefined, an empty string); a gap marker is not a placeholder. 4. Stand-in test data, if any, is labelled as such, not as measured. 5. Key figures a buyer needs are present: all-up mass, battery voltage and capacity, thrust, peak current."
+    }
+  ],
+  "solution": [
+    {
+      "protoboard": [
+        "run",
+        "tech-docs",
+        "--input",
+        "only=datasheet"
+      ],
+      "expect": {
+        "status": "succeeded"
+      }
+    },
+    {
+      "protoboard": [
+        "run",
+        "tech-docs-verify",
+        "--input",
+        "only=datasheet"
+      ],
+      "expect": {
+        "status": "succeeded"
+      }
+    },
+    {
+      "say": "Built docs/quadcopter-5in-datasheet.html and .pdf (docId UHD-QUAD5-DS) and verified them against the model: 0 errors. The datasheet states an all-up mass of 587 g."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "module": "iso-4762-m2x12",
+  "name": "iso-4762-m2x12",
+  "part": {
+    "diameter": 2,
+    "head_diameter": 3.8,
+    "head_height": 2,
+    "kind": "screw",
+    "length": 12,
+    "outer": null
+  },
+  "schema": "protoboard.hardware-cad.params/v0"
+}

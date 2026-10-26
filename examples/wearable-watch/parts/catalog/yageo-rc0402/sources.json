@@ -1,0 +1,19 @@
+[
+ {
+  "id": "src_datasheet",
+  "title": "Yageo General purpose chip resistors, RC_L series, product specification V.14 (2025-11-14)",
+  "url": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L",
+  "type": "datasheet",
+  "authority": "manufacturer",
+  "fetched_at": "2026-10-03T04:15:00Z",
+  "sha256": "7b6f0ae72708ca4b38126f84b5407a3e970a94cb60bc1a0afdaeb25a23d839bb",
+  "supports": [
+   "p.2 ordering information: RC <size> <tolerance B ±0.1 %, D ±0.5 %, F ±1 %, J ±5 %> <packing R paper, K embossed> - <reel 07 (7 in, standard power), 10, 13, 7W (2x power), 7D (0201/0402, 2x quantity)> <value, R/K/M as decimal point> L; example RC0402JR-07100KL",
+   "p.3 marking: RC0402 no marking (Fig. 1)",
+   "p.4 Table 1: RC0402 L 1.00 ±0.05, W 0.50 ±0.05, H 0.35 ±0.05, I1 0.20 ±0.10, I2 0.25 ±0.10 mm; construction: thick film on ceramic, matte tin on Ni-barrier terminations",
+   "p.5 Table 2: RC0402 1/16 W, -55 to 155 °C, max working 50 V, overload 100 V, DWV 100 V; ranges 5 % 1 Ω-100 MΩ, 1 % 1 Ω-10 MΩ, 0.5 % 1 Ω-1 MΩ, 0.1 % 10 Ω-1 MΩ; TCR ±100 ppm/°C 10 Ω-10 MΩ, ±200 elsewhere; jumper < 50 mΩ, 1 A rated, 2 A max",
+   "p.7 operating temperature -55 to +155 °C (RC0402 and up); rated power at 70 °C, derated to 0 at 155 °C (Fig. 10-1); rated voltage = sqrt(P x R) or max working voltage, whichever is less",
+   "p.2 features: RoHS compliant, halogen free, MSL 1"
+  ]
+ }
+]

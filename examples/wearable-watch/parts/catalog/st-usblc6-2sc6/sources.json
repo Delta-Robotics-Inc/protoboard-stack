@@ -1,0 +1,63 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "STMicroelectronics USBLC6-2 datasheet, DS4260 Rev 6 (October 2020) — ST document fetched from the ChipDip mirror because st.com refused every connection (HTTP/2 stream error or timeout)",
+    "url": "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+    "canonical_url": "https://www.st.com/resource/en/datasheet/usblc6-2.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:47:00Z",
+    "sha256": "5100599724a040f5804960e4068dbd5bf055ea59a50f337a5be547c1c5e5f303",
+    "supports": [
+      "cover: features (2 data lines + VBUS, 3.5 pF max, 150 nA max, IEC 61000-4-2 level 4: 15 kV air / 8 kV contact), applications (USB 2.0 up to 480 Mb/s)",
+      "cover: functional diagram (top view), pinout I/O1 1, GND 2, I/O2 3, I/O2 4, VBUS 5, I/O1 6",
+      "Table 1: absolute ratings (VPP 15 kV air, 15 kV contact, 25 kV MIL STD883G; Tstg -55..+150 C; Tj -40..+125 C; TL 260 C 10 s)",
+      "Table 2: electrical characteristics at 25 C (IRM 10 typ / 150 max nA at VRM 5.25 V; VBR 6 V min; VF 1.1 V max; VCL 12 V / 17 V max; Ci/o-GND 2.5 typ / 3.5 max pF; Ci/o-i/o 1.2 / 1.7 pF; matching 0.015 / 0.04 pF)",
+      "section 2: surge protection (2.1-2.2), layout guidance (2.3: short tracks, device close to the connector), USB 2.0 application (2.5, Figure 13), PSpice model of one cell (2.6, Figures 15-16: D+in joined to D+out, D-in to D-out through the cell), PCB layout considerations (Figure 17: flow-through D+in/D+out, D-in/D-out, CBUS = 100 nF on VBUS)",
+      "Table 3 / Figure 18: SOT23-6L package mechanical data (A 0.9-1.45, A1 0-0.15, A2 0.9-1.3, b 0.30-0.5, c 0.09-0.2, D 2.8-3.05, E 1.5-1.75, e 0.95, H 2.6-3, L 0.3-0.6, theta 0-10 deg)",
+      "Table 6: ordering information (USBLC6-2SC6, marking UL26, SOT23-6L, 16.7 mg, 3000 tape and reel)",
+      "Table 7: revision history (Rev 6, 16-Oct-2020, minor text changes)"
+    ]
+  },
+  {
+    "id": "src_datasheet_rev5",
+    "title": "STMicroelectronics USBLC6-2 datasheet, Doc ID 11265 Rev 5 (October 2011) — the copy LCSC attaches to C7519; used to cross-check Rev 6",
+    "url": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1810101111_STMicroelectronics-USBLC6-2SC6_C7519.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:45:00Z",
+    "sha256": "8ba7ab4ec1781b7f6052f5999a2304bd611c0ed2b5e8f36ffa5092552932a42e",
+    "supports": [
+      "same pinout, absolute ratings and electrical characteristics as Rev 6",
+      "Table 4: SOT23-6L dimensions differ from Rev 6 in three rows (A1 max 0.10, b min 0.35, L min 0.10); recorded as a source_discrepancy"
+    ]
+  },
+  {
+    "id": "src_estore",
+    "title": "ST eStore: USBLC6-2SC6 product page (status, package name and size, grade)",
+    "url": "https://estore.st.com/en/usblc6-2sc6-cpn.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:48:00Z",
+    "sha256": "5fee0879ce162a1dbe8d2347b996b2a3ea521b9fc099066c24d23393c6c91af9",
+    "supports": [
+      "status Active",
+      "title: ESD Protection for USB 2.0 High Speed in SOT23 with 15kV contact ESD protection capability",
+      "Package Name SOT23-6L; Package Size 2.9 x 2.8 x 1.18; Ecopack2; Grade Industrial; Tape And Reel",
+      "key features list (same as the datasheet cover)"
+    ]
+  },
+  {
+    "id": "src_jlc",
+    "title": "JLCPCB/LCSC in-stock catalog through jlcsearch (unofficial mirror), query USBLC6-2SC6",
+    "url": "https://jlcsearch.tscircuit.com/components/list.json?search=USBLC6-2SC6",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:49:00Z",
+    "sha256": "3abcb56836a0fed3a56a4f8ff4eb1692a40636f98ecd842f0f699b80dea6913b",
+    "supports": [
+      "LCSC C7519: USBLC6-2SC6, SOT-23-6L, -40..+125 C, 150 nA, 17 V, 3.5 pF, 5.25 V, 6 V (matches the ST datasheet), 36,380 in stock",
+      "other LCSC entries with the same part number (C2687116, C2827654, C5261088) state different capacitance, leakage and surge figures: second-source parts, not the ST device"
+    ]
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Re-route the cable whose part moved: the DJI O4 lead after the transmission module moved 5 mm back",
+  "skills": ["harness-cad"],
+  "tags": ["cad", "regenerate", "harness"],
+  "requires": ["python-build123d"],
+  "fixture": {
+    "from": "../../../../examples/quadcopter-5in",
+    "exclude": ["docs"],
+    "steps": [
+      {
+        "note": "the transmission module mount moves 5 mm back, and the frame is regenerated and re-bound for it (as in ext-frame-cad's regenerate-after-vtx-move)",
+        "replace": { "file": "src/modules/frame/frame.uhd.ts", "find": "frame: { origin: [-45.0, 0, 5], normal: [0, 0, 1], xAxis: [1, 0, 0], symmetryDeg: 90 },", "with": "frame: { origin: [-50.0, 0, 5], normal: [0, 0, 1], xAxis: [1, 0, 0], symmetryDeg: 90 },", "count": 1 }
+      },
+      { "protoboard": ["run", "cad:generate", "--module", "quadcopter-5in-frame"], "expect": { "status": "succeeded" } },
+      { "protoboard": ["run", "cad:export", "--module", "quadcopter-5in-frame"], "expect": { "status": "succeeded" } },
+      { "protoboard": ["run", "frame-cad-rebind", "--input", "module=quadcopter-5in-frame"], "expect": { "status": "succeeded" } },
+      { "remove": "operations" }
+    ]
+  },
+  "instruction": "We moved the DJI O4 transmission module 5 mm towards the rear of the frame; the frame's CAD is already regenerated for it. Now `npx protoboard check` warns that a cable no longer meets the part it plugs into. Bring the harness CAD up to date so that check reports no errors and no harness warnings. (Warnings about the GNSS module's vendor CAD, which the parts catalog does not carry, and the propulsion current warning are expected.) Do not change the model: the new position is final.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *"] },
+  "budget": { "turns": 25, "seconds": 1200, "usd": 3 },
+  "graders": [
+    { "id": "route-stale-fixed", "kind": "fault", "code": "HARNESS_ROUTE_STALE", "seeded": ["HARNESS_ROUTE_STALE", "UHD_ASSEMBLY"] },
+    {
+      "id": "harnesses-current",
+      "kind": "check",
+      "maxErrors": 0,
+      "absent": ["HARNESS_EXPORT_STALE", "HARNESS_ROUTE_LENGTH", "HARNESS_NOT_ROUTED", "UHD_ASSEMBLY"],
+      "ran": ["ext:@protoboardai/ext-harness-cad/routes", "ext:@protoboardai/ext-harness-cad/cad:check"]
+    },
+    { "id": "dji-outputs-valid", "kind": "outputs", "module": "dji-o4-3in1-cable" },
+    { "id": "route-regenerated", "kind": "digest", "file": "src/harnesses/dji-o4-3in1-cable/harness-cad/route.json", "changed": true },
+    { "id": "body-reexported", "kind": "digest", "file": "src/harnesses/dji-o4-3in1-cable/out/body.glb", "changed": true },
+    { "id": "model-unchanged", "kind": "digest", "file": "src/modules/frame/frame.uhd.ts", "changed": false },
+    { "id": "harness-model-unchanged", "kind": "digest", "file": "src/harnesses/harnesses.uhd.ts", "changed": false },
+    { "id": "other-cable-unchanged", "kind": "digest", "file": "src/harnesses/dolphinrc-sh8-fc-esc-cable/out/body.glb", "changed": false }
+  ],
+  "solution": [
+    { "protoboard": ["check"] },
+    { "protoboard": ["run", "cad:generate", "--module", "dji-o4-3in1-cable"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["run", "cad:export", "--module", "dji-o4-3in1-cable"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["check"] },
+    { "say": "The DJI O4 cable's O4 end was 5 mm from the moved socket; re-routed it (cad:generate) and exported it (cad:export). Check reports no harness warnings." }
+  ]
+}

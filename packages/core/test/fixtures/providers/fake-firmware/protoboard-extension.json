@@ -1,0 +1,19 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@fixtures/fake-firmware",
+  "version": "0.1.0",
+  "description": "TEST FIXTURE: fake firmware provider. Writes one config file whose lines cite the board's links, and a firmware manifest. Not a real firmware framework.",
+  "compatibility": { "protoboard": "^0.2.0" },
+  "capabilities": [
+    {
+      "id": "firmware",
+      "summary": "Fake: one line per board link",
+      "operations": {
+        "generate": "./firmware.ts#generate",
+        "export": "./firmware.ts#exportOutputs",
+        "extract": "./firmware.ts#extract",
+        "check": "./firmware.ts#check"
+      }
+    }
+  ]
+}

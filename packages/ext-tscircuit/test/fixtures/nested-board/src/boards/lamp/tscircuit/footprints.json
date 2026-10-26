@@ -1,0 +1,4 @@
+{
+  "$comment": "Project overrides of the provider's land-pattern table (TEST FIXTURE): tscircuit's generated SOIC-8 for the fixture controller. Never written into UHD parts.",
+  "packages": [{ "id": "soic8-fixture", "match": { "package": "SOIC-8", "pin_count": 8 }, "footprinter": "soic8", "source": "tscircuit footprinter soic8 (JEDEC SOIC-8, 1.27 mm pitch); test fixture, not compared with any datasheet", "verified": false }]
+}

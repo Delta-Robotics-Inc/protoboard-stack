@@ -1,0 +1,19 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "betaflight-cli",
+  "extension": {
+    "id": "@protoboard/ext-drone",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "out": "firmware/betaflight/cli.txt"
+  },
+  "projectDigest": "sha256:8d9d37a302f4c23d34299335fb52326e0767f5108482712ee584f3eec661baa5",
+  "tools": [],
+  "startedAt": "2026-09-26T22:45:39.294Z",
+  "status": "failed",
+  "summary": "The requested module '@deltarobotics/uhd' does not provide an export named 'resolveSpins'",
+  "outputs": [],
+  "finishedAt": "2026-09-26T22:45:39.372Z"
+}

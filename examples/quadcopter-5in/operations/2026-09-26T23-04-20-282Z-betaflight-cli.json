@@ -1,0 +1,40 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "betaflight-cli",
+  "extension": {
+    "id": "@protoboard/ext-drone",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "out": "firmware/betaflight/cli.txt"
+  },
+  "projectDigest": "sha256:785a7d48616be1968b8dcabd518eab2ba2b463e754f80e1352d4019a170a3a29",
+  "tools": [],
+  "startedAt": "2026-09-26T23:04:20.282Z",
+  "status": "succeeded",
+  "summary": "19 CLI lines for MATEKF405TE, firmware ≥ 2025.12.1, 1 warning(s)",
+  "outputs": [
+    {
+      "path": "firmware/betaflight/cli.txt",
+      "digest": "sha256:b5757661f0f1939d0b669fbdeb6025ff868d44bb551d9539619be50514efd2c2",
+      "bytes": 2666,
+      "description": "Betaflight CLI (min firmware 2025.12.1)"
+    }
+  ],
+  "data": {
+    "target": "MATEKF405TE",
+    "minFirmware": "2025.12.1",
+    "buildOptions": [
+      "DSHOT",
+      "GPS",
+      "MAG",
+      "OSD_HD",
+      "SERIALRX_CRSF"
+    ],
+    "warnings": [
+      "matek-m9n-5883: QMC5883P compass (0x2C) is detected only by Betaflight >= 2025.12.1"
+    ]
+  },
+  "finishedAt": "2026-09-26T23:04:20.363Z"
+}

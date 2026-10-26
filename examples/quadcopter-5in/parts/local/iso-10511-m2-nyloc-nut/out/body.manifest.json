@@ -1,0 +1,18 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/hardware_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "07f5e7fa9e0e010b07bacbd16bffb006e292d955751b53dd1b76a7ea2c3c87f4",
+  "units": "mm",
+  "volume_mm3": 30.001,
+  "bodies": {
+    "nut": 30.001
+  },
+  "features": {},
+  "exportedFrom": {
+    "file": "parts/local/iso-10511-m2-nyloc-nut/frame-cad/params.json",
+    "digest": "sha256:f150ae3766eee80d9329b46c81817d8b48536acbda32337947786ae28715b2f2"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "The diagram reads before the build is done: no strip of parts, nothing on top of anything, measured and looked at",
+  "skills": ["build-a-project"],
+  "tags": ["system", "diagram", "layout"],
+  "fixture": { "from": "fixture" },
+  "instruction": "Someone opened this project's diagram and said it is one long strip of parts, with two of them on top of each other. Make the diagram readable before you hand it back. Do not change what the system is (src/ stays as it is). There is no network and no parts service. Follow the stack's guidance (AGENTS.md, the build-a-project SOP). End by telling me what you changed and how the diagram measures now.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *"] },
+  "budget": { "turns": 25, "seconds": 900, "usd": 3 },
+  "graders": [
+    { "id": "found-before", "kind": "fault", "code": "PB_DIAGRAM_LAYOUT" },
+    { "id": "layout-clean", "kind": "check", "maxErrors": 0, "absent": ["PB_DIAGRAM_LAYOUT"], "ran": ["protoboard/layout", "uhd/checkSystem"] },
+    { "id": "model-untouched", "kind": "digest", "file": "src/bike-computer.uhd.ts", "changed": false },
+    { "id": "layout-saved", "kind": "digest", "file": ".protoboard/display.json", "changed": true },
+    { "id": "says-the-numbers", "kind": "text", "matches": ["cross", "overlap|on top|strip|row"] },
+    {
+      "id": "laid-out-by-function",
+      "kind": "rubric",
+      "files": [".protoboard/display.json"],
+      "rubric": "The person asked for the bike computer's diagram to be made readable without changing the model. 1. The saved layout puts the controller near the middle with the blocks it talks to around it, the USB port and the battery on the feeding side, and no long row or column of blocks. 2. The agent measured the layout (protoboard layout or project_layout) after changing it and reports the numbers (crossings, overlaps, the longest row) honestly, including anything still above the limits. 3. The final answer says what changed in plain words and does not claim the model or design changed."
+    }
+  ],
+  "solution": [
+    { "protoboard": ["layout", "--check"], "expect": { "exit": 1 } },
+    { "protoboard": ["layout", "", "--apply"] },
+    { "protoboard": ["layout", "--check"] },
+    { "protoboard": ["check"] },
+    { "say": "The diagram was one row of nine blocks with the buzzer on top of the radio. I laid the top level out again with protoboard layout --apply: the controller in the middle, the USB port and the battery feeding it from the left, the sensors, screen, buzzer, buttons and radio around it. It now measures 0 overlaps, longest row 3 and few line crossings, and check no longer lists PB_DIAGRAM_LAYOUT. Only .protoboard/display.json changed; the model in src/ is as it was." }
+  ]
+}

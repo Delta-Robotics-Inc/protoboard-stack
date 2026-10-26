@@ -1,0 +1,9 @@
+# Generated from the UHD model by @protoboardai/ext-zephyr. Do not edit.
+
+board:
+  name: watch_core
+  full_name: Watch core board (test fixture)
+  vendor: protoboard
+  socs:
+    # Nordic nRF52840 revision 2, aQFN-73
+    - name: nrf52840

@@ -1,0 +1,56 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Configure ESP-IDF for the bottle cap after a wake source was asked for on a pin that cannot wake the chip",
+  "skills": ["firmware-config-esp-idf"],
+  "tags": ["firmware", "esp-idf", "judgement"],
+  "fixture": {
+    "from": "../../../../examples/smart-bottle",
+    "exclude": ["release"],
+    "steps": [
+      { "note": "the request: the fuel gauge's ALRT (u6, on IO6) as a Deep-sleep wake source", "write": { "file": "src/boards/bottle-cap/firmware.config.ts", "from": "seed-firmware.config.ts.txt" } },
+      { "note": "the firmware configuration has not been generated in this copy", "remove": "src/boards/bottle-cap/esp-idf" },
+      { "remove": "src/boards/bottle-cap/out/config" },
+      { "remove": "src/boards/bottle-cap/out/firmware.manifest.json" }
+    ]
+  },
+  "instruction": "The smart bottle's cap board (module bottle-cap-board, src/boards/bottle-cap) needs its ESP-IDF firmware configuration generated and exported; the copy you have has none yet. The firmware owner has just added the fuel gauge's alert as a Deep-sleep wake source in firmware.config.ts, so the cap can warn about a low battery. Produce fresh firmware outputs so that `npx protoboard check` reports no errors and no firmware finding left open. The board is already fabricated: do not change the board module, its circuit config or its circuit outputs. Tell me what you generated and what the firmware owner needs to know about their wake request.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *"] },
+  "budget": { "turns": 30, "seconds": 900, "usd": 4 },
+  "graders": [
+    {
+      "id": "wake-fault-resolved-and-explained",
+      "kind": "fault",
+      "code": "FW_WAKE_INVALID",
+      "caught": "(gpio ?6|io ?6|pin_20)[\\s\\S]*(rtc|gpio ?0[\\s\\S]{0,12}5|cannot|can't|not able)|(rtc|gpio ?0[\\s\\S]{0,12}5)[\\s\\S]*(gpio ?6|io ?6|pin_20)",
+      "description": "the invalid wake source is gone and the answer says why (IO6 is not an RTC GPIO, only GPIO0-5 wake the chip)"
+    },
+    {
+      "id": "check-clean",
+      "kind": "check",
+      "maxErrors": 0,
+      "absent": ["FW_NOT_GENERATED", "FW_NATIVE_STALE", "FW_NATIVE_EDITED", "FW_PIN_DRIFT", "PB_OUTPUT_NOT_EXPORTED"],
+      "ran": ["ext:@protoboardai/ext-esp-idf/firmware:check", "protoboard/standard-outputs"]
+    },
+    { "id": "outputs-valid", "kind": "outputs", "module": "bottle-cap-board" },
+    { "id": "manifest", "kind": "facts", "file": "src/boards/bottle-cap/out/firmware.manifest.json", "facts": [{ "path": "schema", "equals": "protoboard.firmware/v0" }, { "path": "module", "equals": "bottle-cap-board" }, { "path": "provider", "equals": "@protoboardai/ext-esp-idf" }, { "path": "files[path=config/board_pins.h].digest", "matches": "^sha256:" }] },
+    {
+      "id": "wake-mask",
+      "kind": "text",
+      "file": "src/boards/bottle-cap/out/config/board_pins.h",
+      "matches": ["BOARD_DEEP_SLEEP_WAKE_LOW_MASK \\(\\(1ULL << GPIO_NUM_3\\)\\)", "BOARD_U6_ALRT_GPIO GPIO_NUM_6"],
+      "notMatches": ["WAKE[^\\n]*GPIO_NUM_6"],
+      "description": "the button wakes the chip; the alert is still configured as an input on IO6, not as a wake source"
+    },
+    { "id": "board-untouched", "kind": "digest", "file": "src/boards/bottle-cap/bottle-cap.uhd.ts", "changed": false },
+    { "id": "circuit-config-untouched", "kind": "digest", "file": "src/boards/bottle-cap/circuit.config.ts", "changed": false },
+    { "id": "circuit-outputs-untouched", "kind": "digest", "file": "src/boards/bottle-cap/out/netlist.json", "changed": false }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "write": { "file": "src/boards/bottle-cap/firmware.config.ts", "from": "solution-firmware.config.ts.txt" } },
+    { "protoboard": ["run", "firmware:generate", "--module", "bottle-cap-board"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["run", "firmware:export", "--module", "bottle-cap-board"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["check"] },
+    { "say": "The fuel gauge's ALRT reaches the ESP32-C3 on IO6 (u1:pin_20), and only the RTC GPIOs GPIO0-5 can wake the chip from Deep-sleep, so firmware:check refused it (FW_WAKE_INVALID). GPIO0-5 are all in use and the board is fabricated, so I removed u6 from the wake sources (the button sw1 on GPIO3 stays), generated and exported: out/config/board_pins.h and sdkconfig.defaults with the manifest. The alert is still configured as an input (BOARD_U6_ALRT_GPIO, IO6, active low) for when the chip is awake; a low-battery wake needs the next board revision to route ALRT to an RTC GPIO, or the firmware can poll the gauge on each timer wake." }
+  ]
+}

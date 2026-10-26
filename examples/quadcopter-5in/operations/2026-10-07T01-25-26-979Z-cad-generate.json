@@ -1,0 +1,79 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-parts",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-parts",
+    "module": "panasonic-eeu-fr1v471",
+    "config": "parts/local/panasonic-eeu-fr1v471/cad.config.ts",
+    "configDigest": "sha256:1082339d580e9a011a8356a7d4f165fde08deb680ec833455a326b96cd60e063",
+    "moduleDigest": "sha256:9db274d3afc183ec89a3acd510a2994744ab065dd2a4c2299dd93ca6a055fcbf"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ee706bef3f8bd1d33b860cae803c8801b6e9cb10816c4b16b728174d063ce54f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:25:26.979Z",
+  "status": "succeeded",
+  "summary": "panasonic-eeu-fr1v471: 2 features from parts/local/panasonic-eeu-fr1v471/part-cad/bulk_capacitor.py; every bound signature matches",
+  "outputs": [
+    {
+      "path": "parts/local/panasonic-eeu-fr1v471/part-cad/source.json",
+      "digest": "sha256:f7b12eef0caf7721a28394796c6b47a3e361d6e16508415a19b95215930e9ea2",
+      "bytes": 706,
+      "description": "panasonic-eeu-fr1v471: what parts/local/panasonic-eeu-fr1v471/part-cad/bulk_capacitor.py generated"
+    }
+  ],
+  "data": {
+    "schema": "protoboard.part-cad.source/v0",
+    "module": "panasonic-eeu-fr1v471",
+    "generator": "parts/local/panasonic-eeu-fr1v471/part-cad/bulk_capacitor.py",
+    "generatorDigest": "sha256:7450a69b8614566a484ecacc09fa1588771db6350da16bdde2188d4a5c9cbe81",
+    "toolVersion": "0.13.0",
+    "volume_mm3": 1254.841,
+    "features": {
+      "pos": {
+        "area_mm2": 0.283,
+        "centroid": [
+          2.5,
+          0,
+          -1
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          -1
+        ]
+      },
+      "neg": {
+        "area_mm2": 0.283,
+        "centroid": [
+          -2.5,
+          0,
+          -1
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          -1
+        ]
+      }
+    },
+    "rebind": []
+  },
+  "finishedAt": "2026-10-07T01:25:31.503Z"
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "motor-screw-m3x8",
+    "independent": "true"
+  },
+  "projectDigest": "sha256:64bb3ea7385092c446ff1991b09f92f87837f183b683453160ce41e06c790500",
+  "tools": [],
+  "startedAt": "2026-10-03T18:29:27.433Z",
+  "status": "succeeded",
+  "summary": "motor-screw-m3x8: audit 10/10 (independent), 1 assumption(s), 2 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/motor-screw-m3x8/verification.json",
+      "digest": "sha256:8e38d3fd9a35ee35c2898da03bd581b004984e75c32fe9ddfa14021f35ca1183",
+      "bytes": 1227,
+      "description": "motor-screw-m3x8: verification record"
+    }
+  ],
+  "data": {
+    "partId": "motor-screw-m3x8",
+    "recorded_at": "2026-10-03T18:29:27.457Z",
+    "audit": {
+      "method": "independent stage-2 audit, 2026-10-03: re-fetched every cited source live (curl). Westfield and Ettinger HTML pages differ byte-wise from the pins (pages do on every request) and Ettinger's generated datasheet PDFs differ too, so facts were read from the live text; Westfield's DIN 985 PDF, DJI's O4 manual and MEPS's two images matched their pinned sha256 and were read from those bytes (the images visually). The generated bodies were measured with ext-parts scripts/audit/step_measure.py. Every sourced fact the part states was checked; these small parts state fewer than 12 sourced facts each, so the count includes the gap, assumption and CAD checks.",
+      "independent": true,
+      "auditor": "stage-2 agent of the PB-836 Matek track (p4cQuad worktree; did not author these parts)",
+      "checked": 10,
+      "confirmed": 10,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": null,
+    "assumptions": [
+      "length"
+    ],
+    "data_gaps": [
+      "screw length 8 mm (not stated; chosen for the stack-up (assumption trait))",
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T18:29:27.457Z"
+}

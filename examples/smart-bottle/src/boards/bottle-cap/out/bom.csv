@@ -1,0 +1,62 @@
+instance,part,name,kind,manufacturer,mpn,value,package,quantity,lcsc,supplier_part_numbers
+u1,espressif-esp32-c3-mini-1-h4x,Wi-Fi/BLE module,ic,Espressif Systems,ESP32-C3-MINI-1-H4X,,"ESP32-C3-MINI-1 module, 53 pins",1,C41349510,lcsc:C41349510
+u2,st-vl53l4cdv0dh-1,Level sensor (ToF),ic,STMicroelectronics,VL53L4CDV0DH/1,,Optical LGA12,1,C3178291,lcsc:C3178291
+u3,ti-lp5024rsm,LED driver,ic,Texas Instruments,LP5024RSMR,,VQFN-32,1,C427525,lcsc:C427525
+u4,ti-tps63020dsjr,3V3 buck-boost,ic,Texas Instruments,TPS63020DSJR,,VSON-14,1,C15483,lcsc:C15483
+l1,coilcraft-xfl4020-152me,Buck-boost inductor,inductor,Coilcraft,XFL4020-152ME,1.5 µH,XFL4020 4.0 x 4.0 mm SMD,1,,
+u5,microchip-mcp73831t-2aci-mc,LiPo charger,ic,Microchip Technology,MCP73831T-2ACI/MC,,DFN-8,1,C411870,lcsc:C411870
+u6,adi-max17048g-t10,Fuel gauge,ic,Analog Devices (Maxim Integrated),MAX17048G+T10,,TDFN-8,1,C2682616,lcsc:C2682616
+j1,gct-usb4720-03-a,USB-C (IP67),connector,GCT,USB4720-03-A,,"USB4720 (USB Type-C receptacle, USB 2.0, SMT mid-mount, IP67)",1,,
+d9,st-usblc6-2sc6,USB ESD protection,ic,STMicroelectronics,USBLC6-2SC6,,SOT23-6L,1,C7519,lcsc:C7519
+sw1,alps-skrtlae010,Button,switch,Alps Alpine,SKRTLAE010,,"SMD side-push TACT switch, 4.5 × 3.4 mm, with guide bosses",1,C110293,lcsc:C110293
+d1,kingbright-aptf1616lseezgkqbkc,RGB LED 1,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+d2,kingbright-aptf1616lseezgkqbkc,RGB LED 2,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+d3,kingbright-aptf1616lseezgkqbkc,RGB LED 3,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+d4,kingbright-aptf1616lseezgkqbkc,RGB LED 4,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+d5,kingbright-aptf1616lseezgkqbkc,RGB LED 5,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+d6,kingbright-aptf1616lseezgkqbkc,RGB LED 6,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+d7,kingbright-aptf1616lseezgkqbkc,RGB LED 7,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+d8,kingbright-aptf1616lseezgkqbkc,RGB LED 8,ic,Kingbright,APTF1616LSEEZGKQBKC,,"1.6 x 1.6 mm SMD LED, 4 castellated pads",1,C3019103,lcsc:C3019103
+jbat,bottle-battery-pads,Cell lead pads,connector,,,,Wire pads 2 x 2.0 mm,1,,
+jprb,bottle-probe-pads,Probe wire pads,connector,,,,Wire pads 3 x 1.8 mm,1,,
+tp_rxd,bottle-test-pad,Test pad RXD,connector,,,,Test pad 1.2 mm,1,,
+tp_txd,bottle-test-pad,Test pad TXD,connector,,,,Test pad 1.2 mm,1,,
+tp_boot,bottle-test-pad,Test pad BOOT,connector,,,,Test pad 1.2 mm,1,,
+tp_en,bottle-test-pad,Test pad EN,connector,,,,Test pad 1.2 mm,1,,
+tp_3v3,bottle-test-pad,Test pad 3V3,connector,,,,Test pad 1.2 mm,1,,
+tp_gnd,bottle-test-pad,Test pad GND,connector,,,,Test pad 1.2 mm,1,,
+r1,yageo-rc0402,EN pull-up,resistor,Yageo,RC0402FR-0710KL,10 kΩ,0402,1,C60490,lcsc:C60490
+r2,yageo-rc0402,GPIO9 BOOT pull-up,resistor,Yageo,RC0402FR-0710KL,10 kΩ,0402,1,C60490,lcsc:C60490
+r3,yageo-rc0402,I2C SDA pull-up,resistor,Yageo,RC0402FR-074K7L,4.7 kΩ,0402,1,C105871,lcsc:C105871
+r4,yageo-rc0402,I2C SCL pull-up,resistor,Yageo,RC0402FR-074K7L,4.7 kΩ,0402,1,C105871,lcsc:C105871
+r5,yageo-rc0402,ToF XSHUT pull-down,resistor,Yageo,RC0402FR-0710KL,10 kΩ,0402,1,C60490,lcsc:C60490
+r6,yageo-rc0402,ToF interrupt pull-up,resistor,Yageo,RC0402FR-0710KL,10 kΩ,0402,1,C60490,lcsc:C60490
+r7,yageo-rc0402,1-Wire DQ pull-up,resistor,Yageo,RC0402FR-074K7L,4.7 kΩ,0402,1,C105871,lcsc:C105871
+r8,yageo-rc0402,Button pull-up,resistor,Yageo,RC0402FR-0710KL,10 kΩ,0402,1,C60490,lcsc:C60490
+r9,yageo-rc0402,LED driver EN pull-down,resistor,Yageo,RC0402FR-07100KL,100 kΩ,0402,1,C60491,lcsc:C60491
+r10,yageo-rc0402,LED driver IREF (5 mA full scale),resistor,Yageo,RC0402FR-0714K7L,14.7 kΩ,0402,1,C138055,lcsc:C138055
+r11,yageo-rc0402,Feedback upper,resistor,Yageo,RC0402FR-071ML,1 MΩ,0402,1,C138033,lcsc:C138033
+r12,yageo-rc0402,Feedback lower,resistor,Yageo,RC0402FR-07180KL,180 kΩ,0402,1,C138046,lcsc:C138046
+r13,yageo-rc0402,Charger PROG (303 mA),resistor,Yageo,RC0402FR-073K3L,3.3 kΩ,0402,1,C137992,lcsc:C137992
+r14,yageo-rc0402,STAT divider upper,resistor,Yageo,RC0402FR-0768KL,68 kΩ,0402,1,C137947,lcsc:C137947
+r15,yageo-rc0402,STAT divider lower,resistor,Yageo,RC0402FR-07100KL,100 kΩ,0402,1,C60491,lcsc:C60491
+r16,yageo-rc0402,Fuel gauge ALRT pull-up,resistor,Yageo,RC0402FR-0710KL,10 kΩ,0402,1,C60490,lcsc:C60490
+r17,yageo-rc0402,VBUS sense upper,resistor,Yageo,RC0402FR-0768KL,68 kΩ,0402,1,C137947,lcsc:C137947
+r18,yageo-rc0402,VBUS sense lower,resistor,Yageo,RC0402FR-07100KL,100 kΩ,0402,1,C60491,lcsc:C60491
+r19,yageo-rc0402,CC1 Rd,resistor,Yageo,RC0402FR-075K1L,5.1 kΩ,0402,1,C105872,lcsc:C105872
+r20,yageo-rc0402,CC2 Rd,resistor,Yageo,RC0402FR-075K1L,5.1 kΩ,0402,1,C105872,lcsc:C105872
+c1,murata-grm188,3V3 bulk at the module,capacitor,Murata,GRM188R61A106ME69D,10 µF,0603,1,C90053,lcsc:C90053
+c2,murata-grm155,3V3 bypass at the module,capacitor,Murata,GRM155R71C104KA88D,100 nF,0402,1,C71629,lcsc:C71629
+c3,murata-grm155,EN delay,capacitor,Murata,GRM155R61A105KE15D,1 µF,0402,1,C76999,lcsc:C76999
+c4,murata-grm188,ToF AVDDVCSEL,capacitor,Murata,GRM188R61A106ME69D,10 µF,0603,1,C90053,lcsc:C90053
+c5,murata-grm155,ToF AVDD,capacitor,Murata,GRM155R71C104KA88D,100 nF,0402,1,C71629,lcsc:C71629
+c6,murata-grm155,LED driver VCC,capacitor,Murata,GRM155R61A105KE15D,1 µF,0402,1,C76999,lcsc:C76999
+c7,murata-grm155,LED driver VCAP,capacitor,Murata,GRM155R61A105KE15D,1 µF,0402,1,C76999,lcsc:C76999
+c8,murata-grm188,Buck-boost VIN,capacitor,Murata,GRM188R61A106ME69D,10 µF,0603,1,C90053,lcsc:C90053
+c9,murata-grm155,Buck-boost VINA,capacitor,Murata,GRM155R71C104KA88D,100 nF,0402,1,C71629,lcsc:C71629
+c10,murata-grm188,Buck-boost VOUT 1,capacitor,Murata,GRM188R61A226ME15D,22 µF,0603,1,C84419,lcsc:C84419
+c11,murata-grm188,Buck-boost VOUT 2,capacitor,Murata,GRM188R61A226ME15D,22 µF,0603,1,C84419,lcsc:C84419
+c12,murata-grm188,Buck-boost VOUT 3,capacitor,Murata,GRM188R61A226ME15D,22 µF,0603,1,C84419,lcsc:C84419
+c13,murata-grm188,Charger VDD (VBUS),capacitor,Murata,GRM188R61E106MA73D,10 µF,0603,1,C91606,lcsc:C91606
+c14,murata-grm188,Charger VBAT,capacitor,Murata,GRM188R61A106ME69D,10 µF,0603,1,C90053,lcsc:C90053
+c15,murata-grm155,Fuel gauge VDD,capacitor,Murata,GRM155R71C104KA88D,100 nF,0402,1,C71629,lcsc:C71629

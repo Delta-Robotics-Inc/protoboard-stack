@@ -1,0 +1,764 @@
+{
+  "schema": "protoboard.eval-scorecard/v0",
+  "runId": "EV6 ablation control with the skills (PB-871), 2026-10-03",
+  "startedAt": "2026-10-03T18:52:20.213Z",
+  "finishedAt": "2026-10-03T19:00:09.823Z",
+  "host": {
+    "id": "claude-code",
+    "version": "2.1.288 (Claude Code)"
+  },
+  "judge": "claude-code",
+  "skills": "exported",
+  "jobs": 3,
+  "trialsPerCase": 3,
+  "framework": "0.1.0",
+  "environment": {
+    "node": "v24.14.1",
+    "platform": "linux"
+  },
+  "cases": [
+    {
+      "key": "@protoboard/ext-hardware/fix-gnss-uart-swap",
+      "id": "fix-gnss-uart-swap",
+      "extension": "@protoboard/ext-hardware",
+      "title": "Find and fix a GNSS lead soldered with RX and TX swapped",
+      "skills": [
+        "system-compose",
+        "system-review"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 20,
+        "seconds": 600,
+        "usd": 2
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 25712,
+            "turns": 7,
+            "costUsd": 0.227,
+            "model": "claude-opus-5-5",
+            "answer": "`npx protoboard check` now reports 0 errors; the four remaining warnings are the ones that were already there (three undistributed vendor CAD artifacts and the propulsion-current warning).\n\n**The fault:** the GNSS lead's UART wires were modelled straight-through at the flight controller pads — the GNSS RX wire landed on the FC's RX1 pad and GNSS TX on TX1, so neither side could hear the other. A UART has to cross over: GNSS RX to TX1, GNSS TX to RX1, as the lead's own usage note says.\n\n**The fix:** in `src/quadcopter.uhd.ts:186` (the `gnss_pads` link) I swapped the two pads, so `p2` (the lead's RX wire) now goes to `fc:uart1_tx` and `p3` (the TX wire) to `fc:uart1_rx`. This also cleared the \"route stale\" warning on the GNSS lead, with no CAD regeneration needed. Nothing under `parts/` was touched.\n\nI could not run the fault scenarios script — the command was denied — so that is unverified.\n\nIf the physical lead really was soldered RX-to-RX and TX-to-TX, the model fix alone does not help: those two wires need swapping on the board as well.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s)"
+            },
+            {
+              "id": "pads-restored",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/quadcopter.uhd.ts: text holds"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19…"
+            },
+            {
+              "id": "fc-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dolphinrc-f405-v3-flight-controller.json sha256:1112a33a31cf…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-gnss-uart-swap/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 30931,
+            "turns": 10,
+            "costUsd": 0.2755,
+            "model": "claude-opus-5-5",
+            "answer": "The fault was a TX/RX swap on the GNSS lead's soldered end: the model had the GNSS RX wire on the flight controller's RX1 pad and the GNSS TX wire on TX1, so neither side could hear the other. I crossed them over in the `gnss_pads` link in `src/quadcopter.uhd.ts` (GNSS RX → TX1, GNSS TX → RX1), and `npx protoboard check` now reports 0 errors.\n\n- **Warnings:** the stale-route warning on the GNSS lead cleared with the fix, so no CAD regeneration was needed. Four warnings remain (three unavailable vendor CAD artifacts for the M9N, and the propulsion peak-current note), none of them about this link.\n- **Not run:** the fault-scenario script was blocked by permissions in this session, so I did not confirm the scenarios still pass.\n- **Bench:** the fix is to the model only; if the physical lead was soldered the way the model previously described, the two wires need swapping on the pads too.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s)"
+            },
+            {
+              "id": "pads-restored",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/quadcopter.uhd.ts: text holds"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19…"
+            },
+            {
+              "id": "fc-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dolphinrc-f405-v3-flight-controller.json sha256:1112a33a31cf…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-gnss-uart-swap/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 22795,
+            "turns": 6,
+            "costUsd": 0.2171,
+            "model": "claude-opus-5-5",
+            "answer": "**Fault:** the GNSS lead's UART wires were modelled as soldered straight-through to the flight controller's UART1 pads (GNSS RX to RX1, GNSS TX to TX1), so both ends' transmitters faced each other. A UART has to cross over: GNSS RX to TX1 and GNSS TX to RX1, which is also what the lead's own usage note says.\n\n**Fix:** in `src/quadcopter.uhd.ts:186` (the `gnss_pads` link) I swapped the two pads, so the lead's pin 2 (GNSS RX) now lands on `fc:uart1_tx` and pin 3 (GNSS TX) on `fc:uart1_rx`. Nothing under `parts/` was touched.\n\n`npx protoboard check` now reports 0 errors. The `HARNESS_ROUTE_STALE` warning on the GNSS lead also cleared, leaving four warnings that are unrelated to this fault (three undistributed vendor CAD files for the M9N, and the propulsion peak-current note).\n\nThe model fix only describes the correct wiring: if the physical lead really was re-soldered RX-to-RX, the two wires need swapping on the board as well.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s)"
+            },
+            {
+              "id": "pads-restored",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/quadcopter.uhd.ts: text holds"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19…"
+            },
+            {
+              "id": "fc-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dolphinrc-f405-v3-flight-controller.json sha256:1112a33a31cf…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-gnss-uart-swap/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 204,
+        "steps": [
+          {
+            "step": "replace in src/quadcopter.uhd.ts",
+            "ms": 1,
+            "ok": true
+          }
+        ],
+        "seeded": [
+          "UHD_LINK_STATE"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 26479,
+      "meanTurns": 7.7,
+      "costUsd": 0.7196
+    },
+    {
+      "key": "@protoboard/ext-parts/author-ldo-regulator",
+      "id": "author-ldo-regulator",
+      "extension": "@protoboard/ext-parts",
+      "title": "Author a small purchased part (an LDO regulator) from datasheet excerpts and pass verification",
+      "skills": [
+        "uhd-part-research",
+        "uhd-part-author",
+        "uhd-part-verify"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 40,
+        "seconds": 1500,
+        "usd": 5
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 395803,
+            "turns": 62,
+            "costUsd": 2.7258,
+            "model": "claude-opus-5-5",
+            "answer": "The part `acme-ldo3300-33` is authored and both gates pass: `part-verify` reports 0 errors and 0 warnings, and `npx protoboard check` reports 0 errors. `src/` is untouched.\n\nWhat `check` still reports:\n- **Two `UHD_UNPOWERED` warnings:** the sensor node has no supply link to the regulator's input. That is in `src/sensor-node.uhd.ts`, which I was told not to change.\n- **One `HW_NOT_VERIFIED` info:** there is no `verification.json`. That record comes from an evidence audit by someone other than the author, so I did not write one.\n\nWhat the definition says, all from the datasheet text:\n- **Pins:** 1 VIN, 2 GND, 3 EN, 4 NC, 5 VOUT.\n- **Ratings:** 2.5–6.0 V in, 3.3 V out (3.25–3.35 V at 25 °C), 300 mA.\n- **Enable:** active high, with an internal 2 MΩ pull-down.\n- **Package:** SOT-23-5, with a 2.9 × 1.6 mm body, 1.1 mm max height and 0.95 mm pitch.\n- **Temperature:** junction range −40 to +125 °C; the datasheet gives no ambient range.\n\nThings you should know before relying on it:\n- **Pin 1 position in the 3D body is an assumption.** Neither the datasheet text nor ACME's model marks pin 1, so I applied the usual SOT-23-5 numbering (pins 1–3 on the three-lead side, counter-clockwise from above). It is recorded as an assumption trait; check it against the real datasheet drawing before layout.\n- **The bound body is generated, not ACME's model.** The script `part-cad/sot23_5.py` builds it from the datasheet package line, with lead size and standoff taken from ACME's STEP. I read those from the STEP's vertex coordinates, because the measuring script was blocked in this session.\n- **ACME's STEP and GLB stay in `inputs/cad/`.** Copying was blocked, so they are referenced in place rather than under `parts/local/acme-ldo3300-33/vendor/`. Their hashes match the README.\n- **`terms.json` marks ACME's two files `redistributable`.** That is my reading of \"may be used and redistributed, unmodified, in designs that use ACME parts\"; both conditions are written into the entries and into a notice file, `vendor/ACME-CAD-TERMS.txt`. If you read conditional redistribution as restricted, change them to `internal`. The terms page itself was not fetched, only the README's quote of it.\n- **The generated files are marked `internal`.** The project is private and states no licence.\n- **The datasheet's hash is not pinned in `sources.json`.** Only the text capture was available, not the PDF.\n\nFiles are in `parts/local/` and `parts/evidence/acme-ldo3300-33/`:\n- `parts/local/acme-ldo3300-33.uhd.ts`\n- `parts/local/acme-ldo3300-33/` (`cad.config.ts`, `part-cad/`, `out/`, `vendor/ACME-CAD-TERMS.txt`)\n- `parts/evidence/acme-ldo3300-33/sources.json`\n- `parts/evidence/acme-ldo3300-33/terms.json`\n- `parts/evidence/acme-ldo3300-33/.research/` (extracts, gaps, summary)",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "unresolved-fixed",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "PB_UNRESOLVED_DEFINITION fixed"
+            },
+            {
+              "id": "verify-passes",
+              "kind": "operation",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "succeeded: acme-ldo3300-33: 0 errors, 0 warning(s)"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s)"
+            },
+            {
+              "id": "files",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 present, 0 absent"
+            },
+            {
+              "id": "datasheet-facts",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "9 fact(s) hold"
+            },
+            {
+              "id": "cad-cited",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 fact(s) hold"
+            },
+            {
+              "id": "system-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/sensor-node.uhd.ts sha256:d1519713b32b…"
+            },
+            {
+              "id": "modelling",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 0.8,
+              "detail": "claude-code: 0.80 — 4 of 5 criteria met.\n\n1. Met. The header comment cites the ACME LDO3300 datasheet (Rev. 3, URL, text capture) and has a full \"Modelling notes\" section.\n\n2. Met. `pinTable` defines one leaf per pin with the right role: pin 1 VIN `power_in` 2.5-6.0 V, pin 2 GND `ground`, pin 3 EN `input` with capability `enable`, pin 4 NC `nc`, pin 5 VOUT `power_out` at 3.3 V nominal.\n\n3. Met. Each value is recorded with its datasheet section:\n- Output current 300 mA (§5).\n- Dropout 180 mV typ / 260 mV max at 300 mA (§6).\n- Quiescent current 45 µA typ / 70 µA max (§6).\n- An `operating_conditions` trait (§5).\n- An `absolute_maximum` trait (§4).\n\n4. Met. Values the datasheet does not give are recorded as `data_gap` traits (ambient range, thermal resistance, mass, ESD, regulation over temperature and load). The two assumed items, pin-1 orientation in the CAD and lead dimensions measured from the STEP, are `assumption` traits. The 3.56 V minimum-input figure is labelled as arithmetic, not a datasheet value.\n\n5. NOT met. The manufacturer CAD is explicitly not bound as the body. The bound body is generated by `sot23_5.py` via `partCadArtifacts`, and ACME's STEP and GLB are declared only as `source` artifacts, with a `data_gap` trait saying \"They are not the bound body\". The vendor artifact entries carry no sha256 and no licence field. `terms.json` is referenced and the final answer says it exists, but its contents are not shown, and that alone does not satisfy the binding and citation requirement."
+            }
+          ],
+          "score": 0.975,
+          "passed": true,
+          "transcript": "ext-parts--author-ldo-regulator/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 188377,
+            "turns": 36,
+            "costUsd": 1.5738,
+            "model": "claude-opus-5-5",
+            "answer": "The regulator is authored: `part-verify` for `acme-ldo3300-33` reports 0 errors and 1 warning, and `npx protoboard check` reports 0 errors, 1 warning and 1 info. `src/` is untouched.\n\n**What I added**\n- `parts/local/acme-ldo3300-33.uhd.ts` — the definition, taken from the datasheet text for the 3.3 V variant only:\n  - **Pins:** all five SOT-23-5 pins — VIN (2.5–6.0 V), GND, EN (digital input), NC, VOUT (3.25–3.35 V, 0.3 A).\n  - **Ratings:** operating conditions, absolute maximums and regulator performance, each cited to its datasheet section.\n  - **Package:** SOT-23-5, 2.9 × 1.6 mm body, 1.1 mm max height, 0.95 mm pitch.\n  - **Categories:** `power.regulator` and `component.ic`.\n- `parts/evidence/acme-ldo3300-33/sources.json` — datasheet, STEP, GLB and the CAD terms page, all manufacturer authority; the two CAD rows carry the README's sha256 and the quoted licence.\n- `parts/evidence/acme-ldo3300-33/terms.json` — one entry per ACME CAD file.\n- `parts/evidence/acme-ldo3300-33/.research/gaps.json` — what the datasheet does not give: ambient temperature range, thermal resistance, mass, lead dimensions.\n\n**Things you should know**\n- **CAD is referenced in place.** The definition points at `inputs/cad/` rather than a copy under `parts/local/acme-ldo3300-33/vendor/`, because copying files was blocked in this session. The terms entries are keyed by those `inputs/cad/` paths. Moving the files means updating the two `filePath`s and the two `terms.json` keys.\n- **The body is ACME's own model, not a generated one.** The part-author skill says a project part should bind a body generated from the drawing; I bound ACME's GLB instead, since ACME's terms only cover unmodified models and the datasheet has no drawing to generate from.\n- **Terms are recorded as `redistributable`.** This is my reading of \"may be used and redistributed, unmodified, in designs that use ACME parts\", with both conditions written into the summary. If you read those conditions as restrictive, change both entries to `internal`.\n- **Remaining diagnostics:**\n  - `part-verify` warns that the part has no mechanical interface. That is intended for a soldered chip and is justified in the modelling notes.\n  - `check` warns `UHD_UNPOWERED` because `src/sensor-node.uhd.ts` has no supply link to the regulator's VIN.\n  - I did not read the text of the one info diagnostic from `check`.\n- **Not done:** no `verification.json` and no independent evidence audit — I authored the part, so that audit should be someone else's. The STEP was not measured with the shared measuring script (running it was blocked); I only confirmed the body extents from the STEP text and the sha256 of both files against the README.\n- **Leftovers:** three empty folders I created could not be removed: `parts/local/acme-ldo3300-33/vendor/`, its parent, and `parts/evidence/acme-ldo3300-33/.research/downloads/`.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "unresolved-fixed",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "PB_UNRESOLVED_DEFINITION fixed"
+            },
+            {
+              "id": "verify-passes",
+              "kind": "operation",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "succeeded: acme-ldo3300-33: 0 errors, 1 warning(s)"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 1 warning(s)"
+            },
+            {
+              "id": "files",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 present, 0 absent"
+            },
+            {
+              "id": "datasheet-facts",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "9 fact(s) hold"
+            },
+            {
+              "id": "cad-cited",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 fact(s) hold"
+            },
+            {
+              "id": "system-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/sensor-node.uhd.ts sha256:d1519713b32b…"
+            },
+            {
+              "id": "modelling",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 0.8,
+              "detail": "claude-code: 0.80 — Four of five criteria are met from the material shown; criterion 5 is unmet because its evidence is not shown.\n\n1. **Met.** The header comment cites the ACME LDO3300 datasheet (Rev. 3, URL, sections 1-7) and has a full \"Modelling notes\" block.\n2. **Met.** There is one interface per pin with the right designator:\n   - Pin 1 VIN is `power_in` at 2.5-6.0 V.\n   - Pin 2 GND is `ground`.\n   - Pin 3 EN is `input` with an enable capability.\n   - Pin 4 NC is `nc`.\n   - Pin 5 VOUT is `PowerOut` at 3.3 V nominal.\n3. **Met.** Each required value is recorded with its datasheet section:\n   - Output current is 300 mA (§5, §1/§6).\n   - Dropout is 180 mV typical / 260 mV maximum at 300 mA (§6).\n   - Quiescent current is 45 µA typical / 70 µA maximum (§6).\n   - The `operating_conditions` trait cites §5.\n   - The `absolute_maximum` trait cites §4.\n4. **Met, with minor reservations.** Missing values (ambient temperature, thermal resistance, mass, lead dimensions) are left unset and declared in a `data_gap` trait, and no nominal input voltage is invented. Two derived figures are presented under datasheet citations rather than as assumption traits: \"VIN must stay above about 3.56 V\" and the EN range `[0, 6.0]`. Both are arithmetic from cited values, not invented data.\n5. **Unmet (not demonstrated).** The manufacturer GLB is bound with `role: \"body\"` and both CAD artifacts carry a `sourceDigest`. The remaining parts fall short:\n   - The licence is not cited on the body artifact. It appears only as a prose remark in the header and a separate `cad_terms` documentation link.\n   - The digest is not labelled as sha256 in the file.\n   - `parts/evidence/acme-ldo3300-33/terms.json` is not shown. Its existence and contents rest only on the agent's claim, so they cannot be confirmed.\n   - The agent also reports that the CAD was not copied into the part's vendor folder and that the terms classification is its own reading of the licence."
+            }
+          ],
+          "score": 0.975,
+          "passed": true,
+          "transcript": "ext-parts--author-ldo-regulator/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 215112,
+            "turns": 54,
+            "costUsd": 1.8313,
+            "model": "claude-opus-5-5",
+            "answer": "The regulator is authored as a project-researched part: `part-verify` reports 0 errors and 1 warning, and `npx protoboard check` reports 0 errors, 1 warning and 1 info. `src/` is untouched.\n\n## What I added\n- **`parts/local/acme-ldo3300-33.uhd.ts`** — the definition for the LDO3300-33SOT-TR (3.3 V version only), with all five SOT-23-5 pins from the datasheet pin table:\n  - Pin 1 VIN: supply input, 2.5–6.0 V.\n  - Pin 2 GND.\n  - Pin 3 EN: digital input, active high (on above 1.2 V, off below 0.4 V).\n  - Pin 4 NC: no-connect.\n  - Pin 5 VOUT: 3.25–3.35 V output (3.3 V typical), 300 mA.\n  - Ratings, dropout, quiescent current, package facts and junction temperature range are recorded with their datasheet sections cited.\n- **`parts/local/acme-ldo3300-33/vendor/`** — ACME's STEP and GLB, copied unchanged from `inputs/cad/` (hashes match the README).\n- **`parts/evidence/acme-ldo3300-33/sources.json`** — datasheet, both CAD files (with sha256 and licence) and the CAD terms page.\n- **`parts/evidence/acme-ldo3300-33/terms.json`** — terms for both manufacturer files.\n\n## Remaining diagnostics\n- **part-verify warning, \"no mechanical interfaces\":** intended. A bare SOT-23-5 has no mounting pattern; this is justified in the file's modelling notes.\n- **check warning `UHD_UNPOWERED`:** `ldo:pin_1 (VIN)` has no supply link. That is the system in `src/sensor-node.uhd.ts`, which has no links at all.\n- **check info `HW_NOT_VERIFIED`:** no `verification.json` exists. The independent evidence audit has to be done by someone other than the author, so I did not record one.\n\n## Judgement calls to review\n- **CAD terms classed as `redistributable`.** ACME's terms allow redistribution \"unmodified, in designs that use ACME parts\", so the permission is conditional, and both conditions are written into the summary. I could not read the terms page (no network), so the wording is the quote in `inputs/README.md`. If you read the conditions as restrictive, change `distribution` to `internal` in `terms.json`.\n- **Vendor CAD bound directly as the body.** The authoring skill's default in a project is a body generated from the drawing. I used ACME's own GLB instead, because the datasheet has only a one-line package description and the terms require the models unmodified. Nothing was generated or converted.\n- **Width over the leads (3.2 mm) comes from the STEP, not the datasheet.** The datasheet gives the body only (2.9 × 1.6 mm). I read the lead extent from the STEP's point coordinates because the shared measuring script could not be run here (Python was blocked). It is recorded as an assumption trait.\n- **No ambient temperature is claimed.** The datasheet rates junction temperature only (−40 to +125 °C); ambient range, thermal resistance and mass are recorded as a data gap.\n\nI skipped the research working notes (`.research/` extracts and summary); the definition was written straight from the 67-line datasheet text.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "unresolved-fixed",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "PB_UNRESOLVED_DEFINITION fixed"
+            },
+            {
+              "id": "verify-passes",
+              "kind": "operation",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "succeeded: acme-ldo3300-33: 0 errors, 1 warning(s)"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 1 warning(s)"
+            },
+            {
+              "id": "files",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 present, 0 absent"
+            },
+            {
+              "id": "datasheet-facts",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "9 fact(s) hold"
+            },
+            {
+              "id": "cad-cited",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 fact(s) hold"
+            },
+            {
+              "id": "system-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/sensor-node.uhd.ts sha256:d1519713b32b…"
+            },
+            {
+              "id": "modelling",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 0.9,
+              "detail": "claude-code: 0.90 — Four of the five criteria are met and the fifth is only partly evidenced in the material shown.\n\n1. **Met.** The header comment cites the ACME LDO3300 datasheet (Rev. 3, URL, §1–§7) and has an extensive \"Modelling notes\" block.\n2. **Met.** `pinTable` defines one entry per package pin with designators 1–5: 1 VIN `power_in` 2.5–6.0 V, 2 GND `ground`, 3 EN `input` with enable capability, 4 NC `nc`, 5 VOUT `power_out` at 3.3 V nominal.\n3. **Met.** Output current 300 mA (§5), dropout 180/260 mV and quiescent current 45/70 µA (§6), the `operating_conditions` trait (§5) and the `absolute_maximum` trait (§4) are all recorded with section citations.\n4. **Met, as far as can be judged without the datasheet.** The only non-datasheet value, the 3.2 mm width over the leads, is an `assumption` trait sourced to the STEP. Ambient temperature, thermal resistance and mass are declared a `data_gap` rather than invented.\n5. **Partly met.** The manufacturer GLB is bound as `role: \"body\"` (STEP as source) with 64-hex digests in `provenance.sourceDigest`. Two parts are not evidenced:\n   - **Licence:** the artifacts carry no licence field. The licence is only paraphrased in the header (\"allow its models only unmodified\") and deferred to `sources.json` and `terms.json`.\n   - **`terms.json`:** the contents of `parts/evidence/acme-ldo3300-33/terms.json` are not shown. Its existence rests on the agent's claim, and the agent says the terms wording was taken from a README quote, not the terms page.\n\nScoring: four criteria in full plus half of criterion 5 gives 0.9."
+            }
+          ],
+          "score": 0.988,
+          "passed": true,
+          "transcript": "ext-parts--author-ldo-regulator/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 7,
+        "steps": [],
+        "seeded": [
+          "PB_UNRESOLVED_DEFINITION"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 0.979,
+      "meanDurationMs": 266431,
+      "meanTurns": 50.7,
+      "costUsd": 6.1309
+    },
+    {
+      "key": "@protoboard/ext-sourcing/record-ldo-offers",
+      "id": "record-ldo-offers",
+      "extension": "@protoboard/ext-sourcing",
+      "title": "Record a regulator's supplier offers and lifecycle as sourcing evidence",
+      "skills": [
+        "supplier-compare",
+        "lifecycle-alternates",
+        "sourcing-verify"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 25,
+        "seconds": 900,
+        "usd": 3
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 43249,
+            "turns": 19,
+            "costUsd": 0.3369,
+            "model": "claude-opus-5-5",
+            "answer": "Yes, you can buy enough: the build needs 44 regulators (20 nodes × 2, plus 4 spares), and Distributor A showed 4,210 in stock on cut tape. The main risk is that A is the only authorized supplier with stock.\n\nI recorded the saved pages in `parts/evidence/acme-ldo3300-33/sourcing.json`. `npx protoboard check` now reports 0 errors, 1 warning (single source) and 2 info.\n\n## What the pages show (all read 2026-09-28, saved web pages)\n\n| Supplier | Authorized | Stock | Packaging | Price (USD) |\n| --- | --- | --- | --- | --- |\n| Distributor A | yes (franchised) | 4,210 | cut tape, minimum order 1 | 0.62 at 1, 0.48 at 10, 0.35 at 100 |\n| Distributor B | yes (franchised) | 0, factory lead time 16 weeks | tape and reel, cut tape available | 0.66 at 1+ |\n| Marketplace C | no (independent seller) | 300 | not stated | 0.25, any quantity |\n\n- **Distributor A** covers the need about 95 times over, well past the 10× stock rule, and cut tape suits the assembly.\n- **ACME's product page** lists the part as Active with no change notices.\n\n## Sourcing risks\n\n- **Single source (open warning):** if Distributor A's stock goes before you buy, the fallback is a 16-week wait at Distributor B or the marketplace. I left this warning open: clearing it requires a named person to accept the risk, or a second authorized stocked source.\n- **Marketplace C is counterfeit exposure:** it is the cheapest listing, but the seller says it is not an ACME distributor. Parts from there would need incoming inspection and a functional test.\n- **Distributor E is not a second source for this code:** it stocks 900 of `LDO3300-33SOT`, the bulk (loose in a bag) version, which the brief's assembly cannot take as-is. I recorded it as a family-variant alternate, not an offer; its pinout and ratings have not been compared against the datasheet.\n- **Figures are five days old and not re-read:** there was no network access, so nothing was checked against live pages.\n- **Authorized status is self-declared:** it comes from each supplier's own page, not from ACME's distributor list.\n\nNothing was ordered, prepared or quoted, and no risk was accepted.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "record-valid",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/evidence/acme-ldo3300-33/sourcing.json is valid json"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 1 warning(s)"
+            },
+            {
+              "id": "facts",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "12 fact(s) hold"
+            },
+            {
+              "id": "risk-reported",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "enough-stock",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/local/acme-ldo3300-33.uhd.ts sha256:4a0cf8006d55…"
+            },
+            {
+              "id": "evidence-quality",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "claude-code: 1.00 — All six criteria are met on the material shown; no criterion is unmet.\n\n1. Met. Each of the three offers (Distributor A, Distributor B, Marketplace C) has a supplier, a URL, `as_of` 2026-09-28 and `via: web`.\n2. Met, with one limit: the saved input pages were not included, so the figures could not be compared against their source. Stock, MOQ, packaging and price breaks with USD are recorded for each offer, fields a page did not show are noted as \"not shown\" rather than filled in, and the JSON agrees with the final answer.\n3. Met. Marketplace C has `authorized: false`, and the note says the seller states it is not an ACME distributor.\n4. Met. LDO3300-33SOT (Distributor E) appears only under `alternates` as a family variant, with the difference stated as bulk packaging instead of tape and reel. It is not in `offers`.\n5. Met. Lifecycle status \"active\" is sourced to the ACME product page URL, with a read date.\n6. Met. No order, cart or credential appears. `risks` is empty, the single-source warning is left open, and the answer states that no risk was accepted."
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-sourcing--record-ldo-offers/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 44617,
+            "turns": 20,
+            "costUsd": 0.3439,
+            "model": "claude-opus-5-5",
+            "answer": "Yes, you can buy enough: the build needs 44 regulators (2 × 20 nodes + 4 spares), and Distributor A alone shows 4,210 in stock on cut tape. The sourcing record is in `parts/evidence/acme-ldo3300-33/sourcing.json`, and `npx protoboard check` reports 0 errors, 1 warning and 2 info.\n\nAll figures are from the saved pages, read 2026-09-28 via web; nothing was re-read live.\n\n| Supplier | Authorized | Stock | Price at 44 | Notes |\n| --- | --- | --- | --- | --- |\n| Distributor A | yes (franchised, per its page) | 4,210 | USD 0.48 each = USD 21.12 | Cut tape, MOQ 1; the only offer that is both authorized and in stock |\n| Distributor B | yes (per its page) | 0 | USD 0.66 each = USD 29.04 | Factory lead time 16 weeks |\n| Marketplace C | no (independent seller) | 300 | USD 0.25 each = USD 11.00 | Cheapest, but not an ACME distributor |\n\nACME's product page shows the part as Active with no change notices listed.\n\nSourcing risks:\n\n- **Single source (the open warning, `SRC_SINGLE_SOURCE`).** Distributor A is the only independent source with stock. If its stock goes before you order, the authorized fallback is a 16-week wait at Distributor B. I left this warning open because clearing it means a named person accepting the risk in the record, and that is your call.\n- **Counterfeit exposure at Marketplace C.** Its price is about half of A's, but anything bought there needs incoming inspection and a functional test before it is trusted. I noted this on the offer.\n- **Bulk variant is not a ready fallback.** Distributor E lists only LDO3300-33SOT (loose parts in a bag): 900 in stock, USD 0.58 at 1 and USD 0.33 at 100. The brief says assembly takes cut tape or reels, so I recorded it as a family-variant alternate, not an offer. Its pinout and ratings have not been diffed against the datasheet.\n- **Authorized status is self-declared.** It comes from each distributor's own page; the ACME distributor list was not among the saved pages (flagged by the `SRC_UNVERIFIED` info).\n- **Figures are five days old.** Re-read Distributor A's stock on the day anyone orders.\n\nThe other info, `HW_NOT_VERIFIED`, says the part definition has no recorded verification; it is not about sourcing and I did not touch it.\n\nNo order, cart or quote was prepared, and `risks[]` is empty.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "record-valid",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/evidence/acme-ldo3300-33/sourcing.json is valid json"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 1 warning(s)"
+            },
+            {
+              "id": "facts",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "12 fact(s) hold"
+            },
+            {
+              "id": "risk-reported",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "enough-stock",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/local/acme-ldo3300-33.uhd.ts sha256:4a0cf8006d55…"
+            },
+            {
+              "id": "evidence-quality",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "claude-code: 1.00 — All six criteria are met; none are unmet. One caveat: the saved input pages were not shown, so criterion 2 could only be checked for internal consistency, not against the sources.\n\n1. Met. All three offers (Distributor A, Distributor B, Marketplace C) carry a supplier, a URL, `as_of` 2026-09-28 and `via: web`.\n2. Met, as far as the material shows. Stock, MOQ, packaging and price breaks are recorded with USD currency. Fields the pages did not show (MOQ for B; MOQ and packaging for C) are noted as not shown, not filled in. Nothing in the record or the final answer contradicts itself.\n3. Met. Marketplace C has `authorized: false` and is noted as an independent seller, not an ACME distributor.\n4. Met. LDO3300-33SOT appears only under `alternates` as a family-variant, with the difference stated (bulk in a bag versus tape and reel). Distributor E's figures stay inside that alternate, not in `offers`.\n5. Met. Lifecycle status \"active\" is sourced to the ACME product page URL, with the saved file named.\n6. Met. No order, cart or credential appears. `risks[]` is empty, and the single-source warning was left open instead of being cleared with an invented acceptance."
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-sourcing--record-ldo-offers/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 48992,
+            "turns": 21,
+            "costUsd": 0.3666,
+            "model": "claude-opus-5-5",
+            "answer": "Yes, you can buy enough: the build needs 44 regulators (2 × 20 nodes + 4 spares), and Distributor A showed 4,210 in stock on cut tape. The sourcing record is written to `parts/evidence/acme-ldo3300-33/sourcing.json`, and `npx protoboard check` reports 0 errors, 1 warning and 2 info.\n\nAll figures below are from the saved pages, read 2026-09-28 via web; nothing was re-read live. The offer comparison script was blocked in this session, so the extended costs are my own arithmetic.\n\n| Supplier | Ordering code | Authorized | Stock | Price at 44 (USD) | Notes |\n| --- | --- | --- | --- | --- | --- |\n| Distributor A | LDO3300-33SOT-TR | yes (franchised) | 4,210 | 0.48 each, about 21.12 total | Cut tape, minimum order 1 |\n| Distributor B | LDO3300-33SOT-TR | yes (franchised) | 0 | 0.66 each | Factory lead time 16 weeks |\n| Marketplace C | LDO3300-33SOT-TR | no (independent seller) | 300 | 0.25 each, about 11.00 total | Minimum order and packaging not shown |\n| Distributor E | LDO3300-33SOT (bulk) | yes | 900 | 0.58 at 1, 0.33 at 100 | Different ordering code, loose parts in a bag |\n\nACME's product page shows the part as Active with no change notices.\n\nSourcing risks:\n\n- **Single source (the open warning, `SRC_SINGLE_SOURCE`):** Distributor A is the only authorized supplier with stock. If its stock goes before you order, the authorized fallback is Distributor B's 16-week lead time. I have not accepted this risk; someone on your side needs to accept it by name in `risks[]`, or a second stocked authorized source needs to be found.\n- **Marketplace C is cheapest but not authorized:** the listing says the seller is not an ACME distributor, so there is counterfeit exposure. Those parts would need incoming inspection and a functional test before being trusted.\n- **Distributor E is not a second source for this code:** it lists only the bulk variant, and the brief says assembly takes cut tape or reels. I recorded it as a family-variant alternate, not an offer; using it would need the assembler to agree to loose parts, and its equivalence has not been checked against the datasheet.\n- **\"Authorized\" is self-declared:** it comes from each distributor's own page, because ACME's distributor list was not among the saved pages.\n- **Figures are five days old:** re-read stock and price before anyone commits (this is the `SRC_UNVERIFIED` info).\n\nThe remaining info, `HW_NOT_VERIFIED`, was there before I started and concerns the part definition, not sourcing.\n\nNo order, quote or cart was placed or prepared.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "record-valid",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/evidence/acme-ldo3300-33/sourcing.json is valid json"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 1 warning(s)"
+            },
+            {
+              "id": "facts",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "12 fact(s) hold"
+            },
+            {
+              "id": "risk-reported",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "enough-stock",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/local/acme-ldo3300-33.uhd.ts sha256:4a0cf8006d55…"
+            },
+            {
+              "id": "evidence-quality",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "claude-code: 1.00 — All six criteria are met on the material shown; no criterion is unmet. One caveat: criterion 2 could not be checked against the saved pages, because they were not provided.\n\n1. Met. Each of the three offers has supplier, url, as_of (2026-09-28) and via: \"web\". The Distributor E figures in the alternate also carry URL, date and \"via web\".\n2. Met, as far as can be judged. Stock, MOQ, packaging and price breaks with USD are recorded per offer. Where a page did not show a value (MOQ for Distributor B, MOQ and packaging for Marketplace C), the record says \"not shown\" rather than inventing one. Nothing in the record or the final answer is internally inconsistent.\n3. Met. Marketplace C has authorized: false, and the note says the seller is not an ACME distributor.\n4. Met. LDO3300-33SOT appears only under alternates as a family-variant, with its difference stated (bulk loose parts instead of tape, not usable as-is, equivalence unchecked). Distributor E's figures are explicitly labelled as an offer for the sibling code, not for LDO3300-33SOT-TR.\n5. Met. Lifecycle status \"active\" is sourced to https://acme.example/products/ldo3300, the manufacturer's product page, with date.\n6. Met. risks[] is empty, and the final answer says the single-source risk was not accepted and that no order, quote or cart was placed. No credentials appear."
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-sourcing--record-ldo-offers/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 6,
+        "steps": []
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 45619,
+      "meanTurns": 20,
+      "costUsd": 1.0474
+    }
+  ],
+  "problems": [],
+  "totals": {
+    "cases": 3,
+    "ran": 3,
+    "skipped": 0,
+    "errors": 0,
+    "trials": 9,
+    "passed": 9,
+    "passRate": 1,
+    "meanScore": 0.993,
+    "costUsd": 7.8979
+  },
+  "mergedFrom": [
+    "2026-10-03T18-52-20-213Z"
+  ]
+}

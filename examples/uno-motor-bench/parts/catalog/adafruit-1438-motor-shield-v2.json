@@ -1,0 +1,2538 @@
+{
+  "artifacts": [
+    {
+      "id": "art_guide",
+      "name": "Adafruit Motor Shield V2 guide (PDF)",
+      "type": "datasheet",
+      "url": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf"
+    },
+    {
+      "id": "art_product",
+      "name": "Adafruit product 1438 page",
+      "type": "documentation",
+      "url": "https://www.adafruit.com/product/1438"
+    },
+    {
+      "id": "art_pcb",
+      "name": "Motor Shield v2.3 Eagle board (CC-BY-SA 3.0)",
+      "type": "pcb",
+      "url": "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+    },
+    {
+      "id": "art_tb6612",
+      "name": "TB6612FNG datasheet",
+      "type": "datasheet",
+      "url": "https://cdn-shop.adafruit.com/datasheets/TB6612FNG_datasheet_en_20121101.pdf"
+    },
+    {
+      "description": "Manufacturer STEP, committed (MIT License, Copyright (c) 2016 Adafruit Industries).",
+      "filePath": "library/parts/adafruit-1438-motor-shield-v2/artifacts/cad/1438-Adafruit-MotorShield.step",
+      "format": "step",
+      "id": "cad_vendor_step",
+      "name": "1438-Adafruit-MotorShield STEP (manufacturer)",
+      "provenance": {
+        "sourceDigest": "600a37b31421d17d8141c0bbef370992ce12716ddd24f7274d180ac75380504b",
+        "tool": "manufacturer"
+      },
+      "role": "source",
+      "type": "3d_model",
+      "units": "mm",
+      "url": "https://raw.githubusercontent.com/adafruit/Adafruit_CAD_Parts/main/1438%20Adafruit%20MotorShield/1438%20Adafruit%20MotorShield.step"
+    },
+    {
+      "description": "Converted locally from the vendor STEP by library/cad/py/vendor_step.py (gitignored).",
+      "filePath": "library/parts/adafruit-1438-motor-shield-v2/artifacts/cad/vendor/1438-Adafruit-MotorShield.glb",
+      "format": "glb",
+      "id": "cad_vendor_glb",
+      "name": "1438-Adafruit-MotorShield (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adafruit-1438-motor-shield-v2/artifacts/cad/adafruit-1438-motor-shield-v2-vendor.manifest.json",
+      "format": "json",
+      "id": "cad_vendor_manifest",
+      "name": "1438-Adafruit-MotorShield vendor feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/adafruit-1438-motor-shield-v2/artifacts/cad/vendor/interfaces/mount.glb",
+      "format": "glb",
+      "id": "cad_vendor_if_mount",
+      "name": "mount geometry (vendor)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adafruit-1438-motor-shield-v2/artifacts/cad/vendor/interfaces/MPOWER.glb",
+      "format": "glb",
+      "id": "cad_vendor_if_MPOWER",
+      "name": "MPOWER geometry (vendor)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0 (library/cad/py/vendor_step.py)"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "actuator.motor_controller",
+    "expansion.arduino_shield"
+  ],
+  "description": "Arduino UNO R3 shield driving up to 4 brushed DC motors or 2 steppers from two TB6612 H-bridges (1.2 A per bridge, 3 A 20 ms peaks, 4.5-13.5 V motor supply) under a PCA9685 PWM driver on I2C (0x60, 0x60-0x7F by jumper, stackable to 32 shields), plus two 5 V hobby-servo headers wired to Arduino D9/D10. Polarity-protected motor power terminal, VIN jumper, 5 V or 3.3 V logic (IOREF). 70 x 55 x 10 mm assembled.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "motor_driver": "2 x Toshiba TB6612FNG",
+        "polarity_protection": "P-FET AOD417 on the motor power terminal",
+        "pwm_controller": "NXP PCA9685 (I2C)"
+      },
+      "power_domains": [
+        {
+          "id": "vmotor",
+          "name": "Motor supply (terminal block, or Arduino VIN with the jumper)",
+          "voltage_range_V": [
+            4.5,
+            13.5
+          ]
+        },
+        {
+          "id": "logic",
+          "name": "Logic (IOREF; 5V or 3.3V)",
+          "voltage_range_V": [
+            3.3,
+            5
+          ]
+        },
+        {
+          "id": "servo_5v",
+          "name": "Servo supply (Arduino 5V)",
+          "nominal_voltage_V": 5
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 10,
+        "length": 70,
+        "width": 55
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "cad": "Adafruit_CAD_Parts 1438 STEP (MIT), committed",
+        "form_factor": "Arduino UNO R3 shield (R3 header layout incl. SDA/SCL and IOREF)",
+        "mounting_holes": "3 x Φ3.2 mm (UNO positions minus (66.04, 7.62))",
+        "pcb_mm": [
+          68.58,
+          53.34,
+          1.64
+        ],
+        "terminal_blocks": "2 x 5-pos + 1 x 2-pos 3.5 mm, 18-26 AWG"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "basis": "TB6612FNG Topr; Adafruit states no board rating (assumption trait)",
+        "cooling_method": "passive; heat-sink the drivers near 1.2 A continuous"
+      },
+      "operating_temperature_C": [
+        -20,
+        85
+      ]
+    }
+  ],
+  "id": "adafruit-1438-motor-shield-v2",
+  "interfaceGroups": [
+    {
+      "id": "motor_port_mode",
+      "label": "M1-M4 as DC motors or steppers",
+      "members": [
+        "dc_motor_output",
+        "stepper_output"
+      ],
+      "policy": "one_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_POWER",
+            "signature": {
+              "area_mm2": 267.6,
+              "centroid": [
+                37.266,
+                2.5,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "arduino_5v",
+      "name": "5V",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        }
+      ],
+      "pin": "5V",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Arduino 5V: powers the servo headers (+5V net) and, on v2.3 boards with the Logic jumper at 5v, the logic.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_POWER",
+            "signature": {
+              "area_mm2": 267.6,
+              "centroid": [
+                37.266,
+                2.5,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "arduino_ioref",
+      "name": "IOREF",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3.3,
+            5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "IOREF",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Arduino IOREF: logic supply of the PCA9685/TB6612 logic on boards from March 2024 (\"We changed the default logic voltage to IOref instead of 5V\"). 5 V or 3.3 V logic.",
+            "source": [
+              "https://www.adafruit.com/product/1438",
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_POWER",
+            "signature": {
+              "area_mm2": 267.6,
+              "centroid": [
+                37.266,
+                2.5,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "arduino_gnd",
+      "name": "GND",
+      "pin": "GND",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Arduino GND: common ground with the motor supply, motor terminals and servo headers.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_POWER",
+            "signature": {
+              "area_mm2": 267.6,
+              "centroid": [
+                37.266,
+                2.5,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "arduino_vin",
+      "name": "VIN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "VIN",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Arduino VIN: connected to the motor supply rail only when the VIN (PWR) jumper is fitted, so the motors run from the Arduino DC jack. Remove the jumper when a separate motor supply is on the terminal block.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Jumper fitted: motors are powered from the Arduino DC barrel jack via VIN (or the terminal block also feeds VIN). Jumper removed: separate motor supply on the terminal block (the recommended split supply). Do not use a 9 V battery.",
+            "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+            "topic": "VIN jumper"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_sda"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_DIGITAL_HIGH",
+            "signature": {
+              "area_mm2": 299.35,
+              "centroid": [
+                30.215,
+                50.99,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c_sda",
+      "name": "SDA",
+      "pin": "SDA",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SDA: I2C data to the PCA9685 (R3 SDA pin).",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_DIGITAL_HIGH",
+            "signature": {
+              "area_mm2": 299.35,
+              "centroid": [
+                30.215,
+                50.99,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c_scl",
+      "name": "SCL",
+      "pin": "SCL",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SCL: I2C clock to the PCA9685 (R3 SCL pin).",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_DIGITAL_HIGH",
+            "signature": {
+              "area_mm2": 299.35,
+              "centroid": [
+                30.215,
+                50.99,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c",
+      "name": "I2C (PCA9685)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "unit": "Hz",
+          "value": 400000
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 96
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "i2c_scl",
+            "sda": "i2c_sda"
+          },
+          "id": "i2c_default",
+          "label": "I2C (PCA9685)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Default 7-bit address 0x60. Five solder jumpers A0-A4 add a binary offset (0x60-0x7F, up to 32 stacked shields). 0x70 is the PCA9685 all-call address: every shield answers it, so no other device may use 0x70.",
+            "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+            "topic": "address"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "10 kOhm pull-ups (R7, R8) from SDA/SCL to the shield logic supply are fitted.",
+            "source": "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd",
+            "topic": "pull-ups"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "I2C address range",
+            "resolution": "0x60-0x7F: five jumpers A0-A4 on the Eagle board, base 0x60 plus a 5-bit offset (guide stacking section).",
+            "sources": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://www.adafruit.com/product/1438",
+              "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/adafruit-motor-shield-v2/definition.json"
+            ],
+            "values": [
+              "0x60-0x7F (guide, 5 address bits)",
+              "0x60-0x80 (product page)",
+              "6 jumpers A0-A5 (ProtoPart design_rules)"
+            ]
+          },
+          "type": "source_discrepancy"
+        }
+      ]
+    },
+    {
+      "bridgesTo": [
+        "servo1_sig"
+      ],
+      "capabilities": [
+        "digital_io"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_DIGITAL_HIGH",
+            "signature": {
+              "area_mm2": 299.35,
+              "centroid": [
+                30.215,
+                50.99,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "arduino_d10",
+      "name": "D10",
+      "pin": "D10",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Arduino D10: wired straight to the Servo 1 signal pin. Unused if no servo is plugged in.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "bridgesTo": [
+        "servo2_sig"
+      ],
+      "capabilities": [
+        "digital_io"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "HDR_DIGITAL_HIGH",
+            "signature": {
+              "area_mm2": 299.35,
+              "centroid": [
+                30.215,
+                50.99,
+                -1.5
+              ]
+            }
+          }
+        ]
+      },
+      "id": "arduino_d9",
+      "name": "D9",
+      "pin": "D9",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Arduino D9: wired straight to the Servo 2 signal pin. Unused if no servo is plugged in.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "Arduino UNO R3 shield header (plain or stacking header, soldered by the user)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo1_gnd",
+      "name": "Servo 1 GND",
+      "pin": "SERVO1-1",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Servo 1 GND.",
+            "source": "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "3-pin 0.1\" male header for a hobby servo lead (Eagle SERVO1/SERVO2: pad 1 GND, 2 +5V, 3 signal).",
+            "pinout": [
+              "GND",
+              "+5V",
+              "SIG"
+            ],
+            "positions": 3
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo1_5v",
+      "name": "Servo 1 +5V",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        }
+      ],
+      "pin": "SERVO1-2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Servo 1 +5V: the Arduino 5V net. For an external 5-6 V servo supply, cut the 5v trace and use the Opt Servo terminal.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "3-pin 0.1\" male header for a hobby servo lead (Eagle SERVO1/SERVO2: pad 1 GND, 2 +5V, 3 signal).",
+            "pinout": [
+              "GND",
+              "+5V",
+              "SIG"
+            ],
+            "positions": 3
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "pwm_out",
+        "rc_pwm_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo1_sig",
+      "name": "Servo 1 signal (D10)",
+      "pin": "SERVO1-3",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Servo 1 signal: Arduino pin D10 (the Arduino's high-resolution timer; use the Arduino Servo library).",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "3-pin 0.1\" male header for a hobby servo lead (Eagle SERVO1/SERVO2: pad 1 GND, 2 +5V, 3 signal).",
+            "pinout": [
+              "GND",
+              "+5V",
+              "SIG"
+            ],
+            "positions": 3
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo1",
+      "max_instances": 1,
+      "name": "Servo 1 header (D10)",
+      "profiles": [
+        {
+          "bindings": {
+            "ground": "servo1_gnd",
+            "power": "servo1_5v",
+            "signal": "servo1_sig"
+          },
+          "default_active": true,
+          "id": "servo1_header",
+          "label": "SERVO1 GND/+5V/SIG"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "pwm"
+        }
+      ],
+      "slots": [
+        {
+          "id": "power",
+          "match": {
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "ground",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        },
+        {
+          "id": "signal",
+          "match": {
+            "capability": "rc_pwm_out",
+            "protocol": "pwm",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Servos are powered from the Arduino's 5V regulator; fine for small hobby servos. Servo pulse timing is set by the Arduino sketch, not the shield.",
+            "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo2_gnd",
+      "name": "Servo 2 GND",
+      "pin": "SERVO2-1",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Servo 2 GND.",
+            "source": "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "3-pin 0.1\" male header for a hobby servo lead (Eagle SERVO1/SERVO2: pad 1 GND, 2 +5V, 3 signal).",
+            "pinout": [
+              "GND",
+              "+5V",
+              "SIG"
+            ],
+            "positions": 3
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo2_5v",
+      "name": "Servo 2 +5V",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        }
+      ],
+      "pin": "SERVO2-2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Servo 2 +5V: the Arduino 5V net. For an external 5-6 V servo supply, cut the 5v trace and use the Opt Servo terminal.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "3-pin 0.1\" male header for a hobby servo lead (Eagle SERVO1/SERVO2: pad 1 GND, 2 +5V, 3 signal).",
+            "pinout": [
+              "GND",
+              "+5V",
+              "SIG"
+            ],
+            "positions": 3
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "pwm_out",
+        "rc_pwm_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo2_sig",
+      "name": "Servo 2 signal (D9)",
+      "pin": "SERVO2-3",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Servo 2 signal: Arduino pin D9 (the Arduino's high-resolution timer; use the Arduino Servo library).",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "pin_header",
+            "note": "3-pin 0.1\" male header for a hobby servo lead (Eagle SERVO1/SERVO2: pad 1 GND, 2 +5V, 3 signal).",
+            "pinout": [
+              "GND",
+              "+5V",
+              "SIG"
+            ],
+            "positions": 3
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "servo2",
+      "max_instances": 1,
+      "name": "Servo 2 header (D9)",
+      "profiles": [
+        {
+          "bindings": {
+            "ground": "servo2_gnd",
+            "power": "servo2_5v",
+            "signal": "servo2_sig"
+          },
+          "default_active": true,
+          "id": "servo2_header",
+          "label": "SERVO2 GND/+5V/SIG"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host"
+          ],
+          "type": "pwm"
+        }
+      ],
+      "slots": [
+        {
+          "id": "power",
+          "match": {
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "ground",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        },
+        {
+          "id": "signal",
+          "match": {
+            "capability": "rc_pwm_out",
+            "protocol": "pwm",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Servos are powered from the Arduino's 5V regulator; fine for small hobby servos. Servo pulse timing is set by the Arduino sketch, not the shield.",
+            "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "MPOWER",
+            "signature": {
+              "area_mm2": 320.485,
+              "centroid": [
+                20.447,
+                3.712,
+                5.704
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_if_MPOWER",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "vmotor_in",
+      "name": "Motor power +",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "MPOWER+",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Motor supply + (\"5-12V Motor Power\" terminal): feeds both TB6612 VM pins through the polarity-protection FET. Green power LED lit = motor supply present.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "2-position 3.5 mm terminal block silkscreened \"5-12V Motor Power\", polarity protected by a P-FET (AOD417). Eagle v2.3 MPOWER pad 1 = GND (-), pad 2 = VMOTOR (+).",
+            "pinout": [
+              "-",
+              "+"
+            ],
+            "positions": 2
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "motor supply voltage",
+            "resolution": "Range 4.5-13.5 V from the spec list (also the TB6612 VM operating maximum 13.5 V); 5-12 V is Adafruit's recommended practical range. ProtoPart's nominal 6 V has no source and is dropped.",
+            "sources": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://www.adafruit.com/product/1438",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd",
+              "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/adafruit-motor-shield-v2/definition.json"
+            ],
+            "values": [
+              "4.5-13.5 VDC (spec list)",
+              "5-12 VDC (setup instructions and silkscreen)",
+              "nominal 6 V (ProtoPart)"
+            ]
+          },
+          "type": "source_discrepancy"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "MPOWER",
+            "signature": {
+              "area_mm2": 320.485,
+              "centroid": [
+                20.447,
+                3.712,
+                5.704
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_if_MPOWER",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "vmotor_gnd",
+      "name": "Motor power -",
+      "pin": "MPOWER-",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Motor supply - : common ground with the Arduino GND.",
+            "source": [
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "2-position 3.5 mm terminal block silkscreened \"5-12V Motor Power\", polarity protected by a P-FET (AOD417). Eagle v2.3 MPOWER pad 1 = GND (-), pad 2 = VMOTOR (+).",
+            "pinout": [
+              "-",
+              "+"
+            ],
+            "positions": 2
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_a"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J1_M1_M2",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                3.721,
+                22.86,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m1a",
+      "name": "M1A",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M1A",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M1A: TB6612 H-bridge output, motor port M1 (terminal J1). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_a_bar"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J1_M1_M2",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                3.721,
+                22.86,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m1b",
+      "name": "M1B",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M1B",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M1B: TB6612 H-bridge output, motor port M1 (terminal J1). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_b"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J1_M1_M2",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                3.721,
+                22.86,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m2a",
+      "name": "M2A",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M2A",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M2A: TB6612 H-bridge output, motor port M2 (terminal J1). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_b_bar"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J1_M1_M2",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                3.721,
+                22.86,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m2b",
+      "name": "M2B",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M2B",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M2B: TB6612 H-bridge output, motor port M2 (terminal J1). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_a"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J2_M3_M4",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                63.279,
+                14.224,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m3a",
+      "name": "M3A",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M3A",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M3A: TB6612 H-bridge output, motor port M3 (terminal J2). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_a_bar"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J2_M3_M4",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                63.279,
+                14.224,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m3b",
+      "name": "M3B",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M3B",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M3B: TB6612 H-bridge output, motor port M3 (terminal J2). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_b"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J2_M3_M4",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                63.279,
+                14.224,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m4a",
+      "name": "M4A",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M4A",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M4A: TB6612 H-bridge output, motor port M4 (terminal J2). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "phase_b_bar"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J2_M3_M4",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                63.279,
+                14.224,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "m4b",
+      "name": "M4B",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "pin": "M4B",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "M4B: TB6612 H-bridge output, motor port M4 (terminal J2). 1.2 A continuous, 3 A for brief 20 ms peaks; thermal shutdown and internal flyback diodes.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J1_M1_M2",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                3.721,
+                22.86,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "j1_gnd",
+      "name": "GND (M1/M2 terminal)",
+      "pin": "J1-3",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Centre pin of the M1/M2 terminal: GND, for the common wire of a unipolar stepper. Leave unconnected for a bipolar stepper.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J2_M3_M4",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                63.279,
+                14.224,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "j2_gnd",
+      "name": "GND (M3/M4 terminal)",
+      "pin": "J2-3",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Centre pin of the M3/M4 terminal: GND, for the common wire of a unipolar stepper. Leave unconnected for a bipolar stepper.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "screw_terminal",
+            "note": "5-position 3.5 mm terminal block, 18-26 AWG. J1 pads: M2A M2B GND M1B M1A; J2 pads: M3A M3B GND M4B M4A (Eagle v2.3).",
+            "positions": 5
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J1_M1_M2",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                3.721,
+                22.86,
+                5.698
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J2_M3_M4",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                63.279,
+                14.224,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "dc_motor_output",
+      "max_instances": 4,
+      "name": "DC motor output (M1-M4)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        },
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 3
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "m1a",
+            "phase_b": "m1b"
+          },
+          "default_active": true,
+          "id": "m1",
+          "label": "Motor port M1 (M1A + M1B)"
+        },
+        {
+          "bindings": {
+            "phase_a": "m2a",
+            "phase_b": "m2b"
+          },
+          "default_active": true,
+          "id": "m2",
+          "label": "Motor port M2 (M2A + M2B)"
+        },
+        {
+          "bindings": {
+            "phase_a": "m3a",
+            "phase_b": "m3b"
+          },
+          "default_active": true,
+          "id": "m3",
+          "label": "Motor port M3 (M3A + M3B)"
+        },
+        {
+          "bindings": {
+            "phase_a": "m4a",
+            "phase_b": "m4b"
+          },
+          "default_active": true,
+          "id": "m4",
+          "label": "Motor port M4 (M4A + M4B)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "motor_out",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "motor_out",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Up to 4 bi-directional brushed DC motors, 8-bit speed each, set over I2C by the Adafruit_MotorShield library. Motors are disabled at power-up. Motors rated for 1.5-3 V will not work. Peak current can only be tolerated for milliseconds; near 1.2 A continuous, heat-sink the driver.",
+            "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "burst_current 3 A for brief ~20 ms peaks (Adafruit). TB6612FNG: 2 A for 20 ms pulses at <= 20 % duty, 3.2 A for a 10 ms single pulse.",
+            "source": [
+              "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+              "https://cdn-shop.adafruit.com/datasheets/TB6612FNG_datasheet_en_20121101.pdf"
+            ],
+            "topic": "burst duration"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J1_M1_M2",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                3.721,
+                22.86,
+                5.698
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "J2_M3_M4",
+            "signature": {
+              "area_mm2": 647.673,
+              "centroid": [
+                63.279,
+                14.224,
+                5.698
+              ]
+            }
+          }
+        ]
+      },
+      "id": "stepper_output",
+      "max_instances": 2,
+      "name": "Stepper output (M1+M2 or M3+M4)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            13.5
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 1.2
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "m1a",
+            "phase_a_bar": "m1b",
+            "phase_b": "m2a",
+            "phase_b_bar": "m2b"
+          },
+          "default_active": true,
+          "id": "stepper_1",
+          "label": "Stepper 1: coil 1 on M1, coil 2 on M2"
+        },
+        {
+          "bindings": {
+            "phase_a": "m3a",
+            "phase_a_bar": "m3b",
+            "phase_b": "m4a",
+            "phase_b_bar": "m4b"
+          },
+          "default_active": true,
+          "id": "stepper_2",
+          "label": "Stepper 2: coil 1 on M3, coil 2 on M4"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "driver"
+          ],
+          "type": "bipolar_stepper_phases"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "phase_a",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_a_bar",
+          "match": {
+            "capability": "phase_a_bar",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "phase_b",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b_bar",
+          "match": {
+            "capability": "phase_b_bar",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Up to 2 unipolar (5- or 6-wire, common to the centre GND pin) or bipolar (4-wire) steppers; single, double, interleaved or micro-stepping. No active current limiting: choose a motor that stays under 1.2 A per phase (rule of thumb: phase resistance >= 10 Ohm up to 12 V).",
+            "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            40.005,
+            19.05,
+            0
+          ],
+          "xAxis": [
+            0.844509,
+            0.535542,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "mount",
+            "signature": {
+              "area_mm2": 49.461,
+              "centroid": [
+                31.75,
+                29.633,
+                0.82
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_if_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "mount",
+      "name": "Mounting holes (UNO R3 diagonal pair)",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 61.657
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 2
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 3
+        },
+        {
+          "id": "hole_spacing_y",
+          "unit": "mm",
+          "value": 0
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "component"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "M3 (Φ3.2 mm through holes; fastener not named)",
+            "note": "UNO R3 shield convention (shared with adafruit-1411-16ch-pwm-servo-shield): 2-hole pattern on the diagonal pair (13.97, 2.54) and (66.04, 35.56) mm from the lower-left board corner, 61.657 mm apart, as a rectangle with spacingYmm 0; frame origin at the pair midpoint (40.005, 19.05) on the board bottom, normal -Z toward the Arduino, xAxis from (13.97, 2.54) toward (66.04, 35.56). This shield has three Φ3.2 mm holes; the third, (15.24, 50.8), is not in the pattern. The UNO's fourth hole (66.04, 7.62) is not on this shield. The holes line up with the Arduino UNO R3 holes below.",
+            "shape": "rectangle",
+            "threaded": false
+          },
+          "type": "bolt_pattern"
+        },
+        {
+          "params": {
+            "field": "bolt pattern",
+            "reason": "The three holes contain no square or rectangle. Library convention for UNO R3 shields: the diagonal pair present on every UNO R3 shield board (the longest pair here) is the pattern, so stacked shields' mount frames coincide; the third hole (15.24, 50.8) is listed in the note. Hole positions from the Eagle board and the Adafruit STEP.",
+            "source": [
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd",
+              "https://raw.githubusercontent.com/adafruit/Adafruit_CAD_Parts/main/1438%20Adafruit%20MotorShield/1438%20Adafruit%20MotorShield.step"
+            ],
+            "value": "2-hole diagonal pair (13.97, 2.54)-(66.04, 35.56), a rectangle 61.657 x 0 mm"
+          },
+          "type": "assumption"
+        },
+        {
+          "params": {
+            "field": "fastener diameter",
+            "reason": "Holes are Φ3.2 mm (Eagle drill, STEP); Adafruit names no fastener.",
+            "source": [
+              "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd",
+              "https://raw.githubusercontent.com/adafruit/Adafruit_CAD_Parts/main/1438%20Adafruit%20MotorShield/1438%20Adafruit%20MotorShield.step"
+            ],
+            "value": "3 mm (M3)"
+          },
+          "type": "assumption"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Adafruit Industries",
+  "name": "Adafruit Motor/Stepper/Servo Shield v2.3",
+  "part_number": "1438",
+  "tags": [
+    "adafruit",
+    "motor-shield",
+    "arduino-shield",
+    "arduino-uno-r3",
+    "tb6612",
+    "pca9685",
+    "i2c",
+    "dc-motor",
+    "stepper",
+    "servo",
+    "h-bridge"
+  ],
+  "traits": [
+    {
+      "params": {
+        "logic_V": [
+          3.3,
+          5
+        ],
+        "motor_supply_V": [
+          4.5,
+          13.5
+        ],
+        "operating_temperature_C": [
+          -20,
+          85
+        ],
+        "source": [
+          "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+          "https://cdn-shop.adafruit.com/datasheets/TB6612FNG_datasheet_en_20121101.pdf"
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "field": "operating temperature",
+        "reason": "Adafruit states no board operating temperature; the TB6612FNG driver's Topr is used as the limit.",
+        "source": "https://cdn-shop.adafruit.com/datasheets/TB6612FNG_datasheet_en_20121101.pdf",
+        "value": "-20 to 85 C"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "note": "TB6612FNG: VM 15 V max, output 1.2 A average per channel, 3.2 A single 10 ms pulse.",
+        "source": "https://cdn-shop.adafruit.com/datasheets/TB6612FNG_datasheet_en_20121101.pdf"
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "field": "board revision: A4/A5 and logic supply",
+        "resolution": "Modelled as the current (2024) revision: only the R3 SDA/SCL pins and IOREF are used. Older boards also tie A4/A5 to SDA/SCL, so A4/A5 must not be used as GPIO with them.",
+        "sources": [
+          "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd",
+          "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+          "https://www.adafruit.com/product/1438"
+        ],
+        "values": [
+          "A4/A5 tied to SDA/SCL, Logic jumper 5v/3v (v2.3 Eagle 2019, guide)",
+          "A4/A5 disconnected, logic from IOREF by default (product page, from March 7 2024)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "dimensions",
+        "resolution": "Product page for the envelope, Eagle/STEP for the PCB; ProtoPart height 15 mm has no source.",
+        "sources": [
+          "https://www.adafruit.com/product/1438",
+          "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd",
+          "https://raw.githubusercontent.com/adafruit/Adafruit_CAD_Parts/main/1438%20Adafruit%20MotorShield/1438%20Adafruit%20MotorShield.step",
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/adafruit-motor-shield-v2/definition.json"
+        ],
+        "values": [
+          "70 x 55 x 10 mm assembled (product page)",
+          "PCB 68.58 x 53.34 mm (Eagle, STEP)",
+          "70 x 55 x 15 mm (ProtoPart)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "servo pin mapping and servo headers",
+        "resolution": "Eagle netlist: SERVO1 pad 3 on D10, SERVO2 pad 3 on D9, two 3-pin headers. ProtoPart's 3x4 block likely counts the 4-pin PWMs header too; not modelled.",
+        "sources": [
+          "https://github.com/adafruit/Adafruit-Motor-Shield-V2-PCB/blob/master/Adafruit%20Motor%20Shield%20v2.3.brd",
+          "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/adafruit-motor-shield-v2/definition.json"
+        ],
+        "values": [
+          "Servo 1 = D10, Servo 2 = D9, two 1x3 headers (Eagle v2.3 netlist and silkscreen)",
+          "\"pins #9 and #10\" (guide)",
+          "3x4 right-angle servo header block (ProtoPart)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "weight",
+        "note": "Adafruit states no weight; ProtoPart's 28 g has no source, so it is omitted."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "I2C clock rate, logic current",
+        "note": "Not stated in the guide or product page (the PCA9685 datasheet was not consulted)."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "note": "Recommended split supply: Arduino on USB or its DC jack, motors on the shield terminal block, VIN jumper removed. The green LED next to the terminal must be lit brightly for the DC/stepper outputs to work. Servo ports use the Arduino 5V, not the motor supply.",
+        "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+        "topic": "power"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Stackable with stacking headers; each shield needs a unique address. Stacking does not add servo ports (always D9/D10). Works with UNO, Leonardo, Mega/ADK R3, Due (3.3 V logic); Mega R2 and older need wires from SDA/SCL to D20/D21.",
+        "source": "https://cdn-learn.adafruit.com/downloads/pdf/adafruit-motor-shield-v2-for-arduino.pdf",
+        "topic": "stacking"
+      },
+      "type": "usage_note"
+    }
+  ],
+  "version": "1.0.0"
+}

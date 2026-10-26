@@ -1,0 +1,216 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboardai/ext-frame-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboardai/ext-frame-cad",
+    "module": "quadcopter-5in-frame",
+    "config": "src/modules/frame/cad.config.ts",
+    "configDigest": "sha256:f3519e890c72e52d297f10bd53be2d87288c3c2aae02104ca1c1a19e9b67b266",
+    "moduleDigest": "sha256:95bccf02ae5cf68326e5d454df3dd1c42d13aebf38a38ff7ac880fb708bd1d49"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ee706bef3f8bd1d33b860cae803c8801b6e9cb10816c4b16b728174d063ce54f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:23:30.020Z",
+  "status": "succeeded",
+  "summary": "quadcopter-5in-frame: body.step, body.glb, body.manifest.json, body.dxf and 8 interface GLBs in src/modules/frame/out",
+  "outputs": [
+    {
+      "path": "src/modules/frame/out/body.step",
+      "digest": "sha256:d03fc3f25858f3c3bc04f5356053d9c041a716bbce4631d84e03bc5a44b37cce",
+      "bytes": 802732,
+      "description": "quadcopter-5in-frame: body with one named sub-shape per interface feature"
+    },
+    {
+      "path": "src/modules/frame/out/body.glb",
+      "digest": "sha256:5e47f5a765a02a28b604a1742c30d856a054a18d9b53a460455f6e98d17c5e93",
+      "bytes": 812320,
+      "description": "quadcopter-5in-frame: viewer mesh"
+    },
+    {
+      "path": "src/modules/frame/out/body.dxf",
+      "digest": "sha256:61743dd701e44f7916232a0e577d67a51bc22c51a0f7b5b990288897e343c0b4",
+      "bytes": 28615,
+      "description": "quadcopter-5in-frame: cutting profiles"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/camera_mount.glb",
+      "digest": "sha256:65b6d981748a5fc7cf7cc3a666d5d363bbaded7b3ccf2d008f9d1ef942bcf164",
+      "bytes": 87008,
+      "description": "quadcopter-5in-frame: camera_mount geometry"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/motor_mount_fl.glb",
+      "digest": "sha256:42b7232f6c3aa91dbc5c2b8f5dac301a642794433bffe9ab2e1006a04d863332",
+      "bytes": 120144,
+      "description": "quadcopter-5in-frame: motor_mount_fl geometry"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/motor_mount_fr.glb",
+      "digest": "sha256:71cffafcc5cdbb3a822e60b0452f42481071b5b5116eeb62ae052f41c8fa5dd1",
+      "bytes": 120164,
+      "description": "quadcopter-5in-frame: motor_mount_fr geometry"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/motor_mount_rl.glb",
+      "digest": "sha256:20a1c1afe76017bba1365a0ea79c2d98644c973c0f6c390bc55141727592e7a8",
+      "bytes": 120160,
+      "description": "quadcopter-5in-frame: motor_mount_rl geometry"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/motor_mount_rr.glb",
+      "digest": "sha256:52246da390cb22bde7aa1f4785d1af39df5c9516da61a55a06e8499e8ad7829b",
+      "bytes": 120180,
+      "description": "quadcopter-5in-frame: motor_mount_rr geometry"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/stack_mount.glb",
+      "digest": "sha256:8ada2daf316c91353eb0ec879e25557688878df64d954a017c935216792f4aa6",
+      "bytes": 162572,
+      "description": "quadcopter-5in-frame: stack_mount geometry"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/standoff_mount.glb",
+      "digest": "sha256:39253587d59acefd5c419609d541ecf7e38aa61bc377e0ad303154a89d3c2ff9",
+      "bytes": 162488,
+      "description": "quadcopter-5in-frame: standoff_mount geometry"
+    },
+    {
+      "path": "src/modules/frame/out/interfaces/vtx_mount.glb",
+      "digest": "sha256:99380c0e2bddad7313142b1a44c84d13d96924ce2b02c402fab8f59726442d54",
+      "bytes": 162704,
+      "description": "quadcopter-5in-frame: vtx_mount geometry"
+    },
+    {
+      "path": "src/modules/frame/out/body.manifest.json",
+      "digest": "sha256:b87981b005a7b8e61f74fd256d60236a6ebd03accb02f075b0304d0464578b7e",
+      "bytes": 2319,
+      "description": "quadcopter-5in-frame: geometry manifest (features that carry interfaces, volume)"
+    }
+  ],
+  "data": {
+    "module": "quadcopter-5in-frame",
+    "out": "src/modules/frame/out",
+    "volume_mm3": 57154.081,
+    "features": {
+      "stack_mount": {
+        "area_mm2": 201.062,
+        "centroid": [
+          0,
+          0,
+          2.5
+        ],
+        "faces": 4
+      },
+      "standoff_mount": {
+        "area_mm2": 201.062,
+        "centroid": [
+          0,
+          0,
+          2.5
+        ],
+        "faces": 4
+      },
+      "vtx_mount": {
+        "area_mm2": 138.23,
+        "centroid": [
+          -45,
+          0,
+          2.5
+        ],
+        "faces": 4
+      },
+      "motor_mount_fl": {
+        "area_mm2": 309.478,
+        "centroid": [
+          79.55,
+          79.55,
+          5.5
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      "motor_mount_fr": {
+        "area_mm2": 309.478,
+        "centroid": [
+          79.55,
+          -79.55,
+          5.5
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      "motor_mount_rl": {
+        "area_mm2": 309.478,
+        "centroid": [
+          -79.55,
+          79.55,
+          5.5
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      "motor_mount_rr": {
+        "area_mm2": 309.478,
+        "centroid": [
+          -79.55,
+          -79.55,
+          5.5
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      "camera_mount": {
+        "area_mm2": 864.795,
+        "centroid": [
+          50,
+          0,
+          16.018
+        ],
+        "faces": 2
+      }
+    },
+    "interfaces": [
+      "camera_mount",
+      "motor_mount_fl",
+      "motor_mount_fr",
+      "motor_mount_rl",
+      "motor_mount_rr",
+      "stack_mount",
+      "standoff_mount",
+      "vtx_mount"
+    ]
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-07T01:23:35.455Z"
+}

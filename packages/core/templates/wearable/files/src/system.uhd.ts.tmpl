@@ -1,0 +1,50 @@
+/**
+ * {{name}}: the root system (from the Protoboard wearable template, derived
+ * from the wearable-watch reference project).
+ *
+ * A BLE main board (src/boards/main: nRF52840 module, LDO, charger, USB-C)
+ * on a 200 mAh LiPo cell soldered to it by the cell's own leads. Children are
+ * a board designed here, a purchased part researched here (parts/local:
+ * the cell, evidence in parts/evidence/) and a harness (src/harnesses); the
+ * board's components are catalog parts (parts/catalog, pinned in
+ * parts/origins.json).
+ *
+ * Next: the brief (docs/brief.md), then sensors, display and haptics on the
+ * board, a case in src/enclosures/ (@protoboardai/ext-enclosure-cad) and the
+ * board's PCB (`protoboard run circuit:generate --module main-board`). The
+ * wearable-watch reference project shows each of them.
+ */
+import type { ModuleDef } from "@deltarobotics/uhd";
+
+export const {{CONST}}: ModuleDef = {
+  id: "{{id}}",
+  name: "{{name}}",
+  kind: "module",
+  version: "0.1.0",
+  description: "BLE wearable core: Raytac MDBT50Q-1MV2 (nRF52840) main board with a 3.0 V LDO and an MCP73831 charger from USB-C, on a 200 mAh LP402030 LiPo cell.",
+  tags: ["wearable", "nrf52840", "ble"],
+  display: { icon: "watch" },
+  interfaces: [],
+  children: [
+    { id: "board", moduleDefId: "main-board", name: "Main board" },
+    { id: "cell", moduleDefId: "lipol-lp402030", name: "LiPo cell" },
+    // harnesses carrying links
+    { id: "battery_leads", moduleDefId: "battery-leads", name: "Cell leads" },
+  ],
+  links: [
+    // Cell: its own leads, soldered to J3 (+ to 1). UHD derives the cell's battery output
+    // to the board's pads through them.
+    {
+      id: "cell_leads",
+      name: "Cell leads",
+      a: { child: "cell", interfaceId: "leads", compose: { p1: "lead_pos", p2: "lead_neg" } },
+      b: { child: "battery_leads", interfaceId: "end_cell" },
+    },
+    {
+      id: "cell_pads",
+      name: "Cell leads on J3",
+      a: { child: "battery_leads", interfaceId: "end_board" },
+      b: { child: "board", interfaceId: "cell_pads", compose: { p1: "bat_pos", p2: "bat_neg" } },
+    },
+  ],
+};

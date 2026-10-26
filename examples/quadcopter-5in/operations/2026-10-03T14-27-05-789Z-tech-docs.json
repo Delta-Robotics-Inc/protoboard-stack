@@ -1,0 +1,523 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs",
+  "extension": {
+    "id": "@protoboard/ext-docs",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "pdf": "true",
+    "standins": "true"
+  },
+  "projectDigest": "sha256:fc12584971d5ab4f40f39d01a08ac49c8ca6e12242baf558e466155d62577a2f",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T14:27:05.789Z",
+  "status": "succeeded",
+  "summary": "datasheet: 21 pages, 652 bound values; assembly: 20 pages, 67 bound values",
+  "outputs": [
+    {
+      "path": "docs/quadcopter-5in-datasheet.html",
+      "digest": "sha256:360247a4891032dc4c8f26f61385ade63e13143394acd9ad45d53794ddefd4fa",
+      "bytes": 300303,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/quadcopter-5in-datasheet.values.json",
+      "digest": "sha256:42351ad4c1ee6aaab504e5256f81716c997b5d3258b552d7c241c109c1ce04ce",
+      "bytes": 130110,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/quadcopter-5in-datasheet.pdf",
+      "digest": "sha256:bd93145d54986f9849b301c2a6a65d2daf25b9d11f036e80e9c89dd1490f2e4e",
+      "bytes": 1527488,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/quadcopter-5in-assembly-guide.html",
+      "digest": "sha256:9fa10142e0c01448fd0f735f429ae7092ccaf5697e6728b761e498f7a92e7a38",
+      "bytes": 171526,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/quadcopter-5in-assembly-guide.values.json",
+      "digest": "sha256:51eafa089fc123ca98605949cf0f1af7aa45d886ce5ac2399da504607ddbb78c",
+      "bytes": 8966,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/quadcopter-5in-assembly-guide.pdf",
+      "digest": "sha256:6dfae71d51a94b6839e3b901f6bbba75f3cf86c46f09213983ddf5bdaecbc705",
+      "bytes": 2009354,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/quadcopter-5in-bom.json",
+      "digest": "sha256:04f918d7091acd621ca2d0ae2ae6b3b30a1195c49fd5c3545affc55789a0ae24",
+      "bytes": 17931,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-hero.png",
+      "digest": "sha256:a99123a6212cbc485b6322fe3981650f4f4f67031f294ebae12ecbc7c4f90a47",
+      "bytes": 477606,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-01-motors.png",
+      "digest": "sha256:f1c813504a86e2701b033536e3f8938ae936c6a4dd4bad4f690202a65481a561",
+      "bytes": 148423,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-02-stack.png",
+      "digest": "sha256:4a98c5113d423994a7491ed30ddf000014c02ccd9ab81035c2cbfd1193e4082b",
+      "bytes": 155595,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-03-stack.png",
+      "digest": "sha256:decde7d26f777857c34f5ce3e3b7838327d64322c314ba7d129b04cb8917c92c",
+      "bytes": 149450,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-05-air-unit.png",
+      "digest": "sha256:679bc49adbb9a3504d08d5b52ded4926d2e8df1e5e63b62498eb54620e29209f",
+      "bytes": 162144,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-08-top-plate.png",
+      "digest": "sha256:c0c0f67738c70e5df043ead7f7957e5c10465a06c0496bbc8c3fe9d7ca058cf7",
+      "bytes": 160978,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-09-gnss.png",
+      "digest": "sha256:dc6a238e32b3e7307f09335f5cb1fbbfa75ed6c1b5abcde4b48143ffcd6021ac",
+      "bytes": 171579,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-10-battery.png",
+      "digest": "sha256:c8cdad654cd6ae3a9df90686602f013a1d83ebcfda6eee0cbef065842f37f467",
+      "bytes": 168537,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-10-top-plate.png",
+      "digest": "sha256:5bf14ce5f04bc1fbe73837913cc2246a0d4479abd21f74e79eeddf92e5f5bae5",
+      "bytes": 164167,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-11-battery.png",
+      "digest": "sha256:e95c33c4a3a5b484681de63d07eab7951a5997f8c13d58dfe64624a317b561a7",
+      "bytes": 166091,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-11-props.png",
+      "digest": "sha256:73ea4eba60385a6b8f7beb7a414606dad988d16cb1467c360fcd4e7fba6fe22c",
+      "bytes": 263842,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-12-props.png",
+      "digest": "sha256:977086ab8b897d3d793a70a1af40a506f8225cc9b06cc501ad3a922463c6915e",
+      "bytes": 249278,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-hero.png",
+      "digest": "sha256:52c6cdddb813999ce7162f8f7f06a9c1a2c679eeb4c7ab7128ebe95bd59b1d37",
+      "bytes": 405153,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-interfaces.png",
+      "digest": "sha256:e509002c261ecf5a15d9ed2a7383bf81a72f4decb5a6369d1f96ccafb1c9bad2",
+      "bytes": 134521,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-side.png",
+      "digest": "sha256:564b85f3b0cf782e4659ab14b87ac38c273615caf22b2ae271f28c38eb7bef8f",
+      "bytes": 87902,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-top.png",
+      "digest": "sha256:beb9bd88417c2c4a9c5bba82263a73947a3badad11e5aea9e3edc2de8a39fefc",
+      "bytes": 216276,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-cnhl-black-series-1100mah-6s-100c.png",
+      "digest": "sha256:b042e92100418b647892b181d354fca5db539ed58776ab95200208e1fe043c8d",
+      "bytes": 17883,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dji-o4-3in1-cable.png",
+      "digest": "sha256:d1a4f3ac8af4210510922cc3ec49b16d2a5c6dbdc5cf5149023d28aa95b401d4",
+      "bytes": 29506,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dji-o4-air-unit.png",
+      "digest": "sha256:fe48f30bc9609dc98bb0648f9ce6104b8277180309fdf6744a32097c7cda205c",
+      "bytes": 10697,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dolphinrc-am32-60a-4in1-esc.png",
+      "digest": "sha256:3857f4dcc824d417102b77d2bc391987003f45f6c2b3347c453abc6136339408",
+      "bytes": 18678,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dolphinrc-f405-v3-flight-controller.png",
+      "digest": "sha256:7ddf24f3b17ccbc5b9e8c3b6ed6230d25099b9b4ecabbb3f74f68749464f8823",
+      "bytes": 18983,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dolphinrc-m3-grommet-esc.png",
+      "digest": "sha256:f3df18843bbc22aad10110eae283dbd79e483b5b1228b51c8ca36190ff9e30cd",
+      "bytes": 10835,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dolphinrc-m3-grommet-fc.png",
+      "digest": "sha256:1cd4ff2c54fc8b26b976ec94f76291ecd7ab463e8d6f5eab302de0dd6fb615c0",
+      "bytes": 11069,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dolphinrc-sh8-fc-esc-cable.png",
+      "digest": "sha256:c4f4111265f4ac2ffbd4723436c2f8d1ec842746924ecc11ba34e5a35185e00c",
+      "bytes": 44992,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-dolphinrc-xt60-battery-lead.png",
+      "digest": "sha256:062da4fa2146050b9b395659f421581900ab7d1030fae78d4dc314c2a9be9447",
+      "bytes": 23103,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ettinger-005-83-060-m3-nylon-spacer-6mm.png",
+      "digest": "sha256:0f77b13a98102346e814fd13da734116d088a93aa80254365830e4f80c1d9919",
+      "bytes": 9980,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-hqprop-ethix-s5.png",
+      "digest": "sha256:9f23cc308f965fca9ddc8c21baa30ef0f5a4fd949f73b2920150eaea6e8fe921",
+      "bytes": 21360,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-10511-m2-nyloc-nut.png",
+      "digest": "sha256:7b72c068e9ed1be9025718445125ff39972ad35f623eec8f2a7d54cba617def4",
+      "bytes": 10662,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-10511-m3-nyloc-nut.png",
+      "digest": "sha256:c9aa2be8fda99fbcd5bd80211e384638a72a548c5742dcde5f67416d8c2351f3",
+      "bytes": 10601,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-4762-m2x12.png",
+      "digest": "sha256:8cdbc3f8e84a33b82ce6e0221a47692e06b54a5c424be4e78ed14b6ea9e48215",
+      "bytes": 7331,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-4762-m2x18.png",
+      "digest": "sha256:ab3f5c67ae4c8f55bcd326ab9b3abf1eff53fe7cc89beefdc367483d843e8e80",
+      "bytes": 6585,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-4762-m2x5.png",
+      "digest": "sha256:162b10d14747fb15bebef2157b9b4dbea07e1ac4a9f3a6c9f0afc04c93a8ceab",
+      "bytes": 9282,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-4762-m3x30-socket-head-cap-screw.png",
+      "digest": "sha256:f133727e0beeb67cab741f05480badb7ea60fcf599d478b0281cc6424d5083c0",
+      "bytes": 6399,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-4762-m3x8.png",
+      "digest": "sha256:6ef13a54221097d4d8533d028528720742031d2b5312126cf86d0bb2671b9e2d",
+      "bytes": 9118,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-m2-nylon-spacer-3mm.png",
+      "digest": "sha256:107288d6de1fe7bd869f70ced416eb34c655bed644b06ea0681aad73e2c65836",
+      "bytes": 10595,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-m2-nylon-spacer-5mm.png",
+      "digest": "sha256:2e03447166bdbb4f416a8a424bf0ab8e03a6942549d6f4ac85c713994b9a31f8",
+      "bytes": 9335,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-m3-aluminium-standoff-30mm.png",
+      "digest": "sha256:430cf6a611d1c33a8243768b67febf56644815a7def524e2add39407739a9eec",
+      "bytes": 6121,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-matek-gh6p-gnss-lead.png",
+      "digest": "sha256:38aafbec1c8ce34f2183ee70214ed86fd896489af1c1fd6e392449e6cd7f6185",
+      "bytes": 23026,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-matek-m9n-5883.png",
+      "digest": "sha256:8b27fec5f30310d74fdaa212d25ee856841999cf20a6b7f47851d29c0b0c0a9f",
+      "bytes": 19445,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-meps-m5-flanged-lock-nut.png",
+      "digest": "sha256:9e7a941f62d9ba8587e6bd72a8632ac5895b435d75a8e383b1baa8fb956d9766",
+      "bytes": 11051,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-meps-neon-2207-v2-1950kv.png",
+      "digest": "sha256:c7afef5b078fa6adb219ce4f6743d6c68ea71682e663e07e2f0a16526f0acdba",
+      "bytes": 24947,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-meps-phase-leads-m1.png",
+      "digest": "sha256:2821a4351c60189350dfa5fd500ca079f20d6a39f3549528b457a0bf83bf84cc",
+      "bytes": 14966,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-meps-phase-leads-m2.png",
+      "digest": "sha256:4104cca5b6d7fd1cb866063b331a7250b861d1db49ba95020850c69712ef846c",
+      "bytes": 18722,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-meps-phase-leads-m3.png",
+      "digest": "sha256:a4db4d59129dbdd882d82d468c74276dff9234dd816d5ec27329bcace6768b71",
+      "bytes": 25849,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-meps-phase-leads-m4.png",
+      "digest": "sha256:19bccb056fb2d38e1fd15b85cb36d903262d398ac4dbc83d092e9d6cea0b66a5",
+      "bytes": 13638,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-motor-screw-m3x8.png",
+      "digest": "sha256:6ef13a54221097d4d8533d028528720742031d2b5312126cf86d0bb2671b9e2d",
+      "bytes": 9118,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-o4-camera-screw-m2x5.png",
+      "digest": "sha256:162b10d14747fb15bebef2157b9b4dbea07e1ac4a9f3a6c9f0afc04c93a8ceab",
+      "bytes": 9282,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-panasonic-eeu-fr1v471-leads.png",
+      "digest": "sha256:7146b0f608a5881ddacf4b879d98ef18d82d6a3d2483581d1c5055f6a2772326",
+      "bytes": 22579,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-panasonic-eeu-fr1v471.png",
+      "digest": "sha256:50f3ec2a5ea02e2de95191dfc2d6be2d82611a619aa20e79d0139f6fd057b262",
+      "bytes": 11687,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-quadcopter-5in-frame.png",
+      "digest": "sha256:26f3a6136335074198f82b656f1222de19e3426a26f808f72bd6b3d90376b8e1",
+      "bytes": 17974,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-quadcopter-5in-top-plate.png",
+      "digest": "sha256:68f4dc499db52faf7161fb15f588cccf86d1e504727dbdfde04d86ffa7faf847",
+      "bytes": 12863,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-radiomaster-rp1-crsf-wire.png",
+      "digest": "sha256:85f60c6118432c2480e5c8d0e22bbf8a1b09ec59765d51ebcb80d15acddaec6f",
+      "bytes": 19511,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-radiomaster-rp1-v2-elrs-2g4.png",
+      "digest": "sha256:559509917a4b082e6939831f7200f9002c293cbc8b33d724eafbc55e40ee818f",
+      "bytes": 13105,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/test-data/battery-discharge.json",
+      "digest": "sha256:d8dcc059ede04338133947f3f8eff8fc5dcd7a3266764907d6809c0347d99158",
+      "bytes": 2385,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/test-data/esc-temp-punchout.json",
+      "digest": "sha256:1a24e366af06ba77d23a8bc69d7f272e34e4a4326871cce5dbfd6935512d9476",
+      "bytes": 5211,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/test-data/flight-time.json",
+      "digest": "sha256:f089bb58f894059b8f5dc2e54e253d8a07d3a0a16785c8b6cc0d8bce85aa0954",
+      "bytes": 3419,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/test-data/hover-current.json",
+      "digest": "sha256:e6bbe2610b65245d7449f1113e6eef2a01a906daa0fbe5f68516ba1b51d111a5",
+      "bytes": 3714,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/test-data/throttle-sweep.json",
+      "digest": "sha256:f0a2e6bd66f1b8e553ad20e34d849294b82c0195595ff58ce5752f411304852f",
+      "bytes": 4250,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/test-data/thrust-to-weight.json",
+      "digest": "sha256:90f36a928d0de98baaa108d871a088ce7e14383b6f1994f348f32bd957c6a6e2",
+      "bytes": 3083,
+      "description": "technical document"
+    }
+  ],
+  "data": {
+    "docs": [
+      {
+        "type": "datasheet",
+        "html": "docs/quadcopter-5in-datasheet.html",
+        "pdf": "docs/quadcopter-5in-datasheet.pdf",
+        "values": "docs/quadcopter-5in-datasheet.values.json",
+        "pages": 21,
+        "overflow": [],
+        "boundValues": 652
+      },
+      {
+        "type": "assembly",
+        "html": "docs/quadcopter-5in-assembly-guide.html",
+        "pdf": "docs/quadcopter-5in-assembly-guide.pdf",
+        "values": "docs/quadcopter-5in-assembly-guide.values.json",
+        "pages": 20,
+        "overflow": [],
+        "boundValues": 67
+      }
+    ],
+    "files": [
+      "docs/quadcopter-5in-bom.json",
+      "docs/images/ag-hero.png",
+      "docs/images/ag-step-01-motors.png",
+      "docs/images/ag-step-02-stack.png",
+      "docs/images/ag-step-03-stack.png",
+      "docs/images/ag-step-05-air-unit.png",
+      "docs/images/ag-step-08-top-plate.png",
+      "docs/images/ag-step-09-gnss.png",
+      "docs/images/ag-step-10-battery.png",
+      "docs/images/ag-step-10-top-plate.png",
+      "docs/images/ag-step-11-battery.png",
+      "docs/images/ag-step-11-props.png",
+      "docs/images/ag-step-12-props.png",
+      "docs/images/ds-hero.png",
+      "docs/images/ds-interfaces.png",
+      "docs/images/ds-side.png",
+      "docs/images/ds-top.png",
+      "docs/images/part-cnhl-black-series-1100mah-6s-100c.png",
+      "docs/images/part-dji-o4-3in1-cable.png",
+      "docs/images/part-dji-o4-air-unit.png",
+      "docs/images/part-dolphinrc-am32-60a-4in1-esc.png",
+      "docs/images/part-dolphinrc-f405-v3-flight-controller.png",
+      "docs/images/part-dolphinrc-m3-grommet-esc.png",
+      "docs/images/part-dolphinrc-m3-grommet-fc.png",
+      "docs/images/part-dolphinrc-sh8-fc-esc-cable.png",
+      "docs/images/part-dolphinrc-xt60-battery-lead.png",
+      "docs/images/part-ettinger-005-83-060-m3-nylon-spacer-6mm.png",
+      "docs/images/part-hqprop-ethix-s5.png",
+      "docs/images/part-iso-10511-m2-nyloc-nut.png",
+      "docs/images/part-iso-10511-m3-nyloc-nut.png",
+      "docs/images/part-iso-4762-m2x12.png",
+      "docs/images/part-iso-4762-m2x18.png",
+      "docs/images/part-iso-4762-m2x5.png",
+      "docs/images/part-iso-4762-m3x30-socket-head-cap-screw.png",
+      "docs/images/part-iso-4762-m3x8.png",
+      "docs/images/part-m2-nylon-spacer-3mm.png",
+      "docs/images/part-m2-nylon-spacer-5mm.png",
+      "docs/images/part-m3-aluminium-standoff-30mm.png",
+      "docs/images/part-matek-gh6p-gnss-lead.png",
+      "docs/images/part-matek-m9n-5883.png",
+      "docs/images/part-meps-m5-flanged-lock-nut.png",
+      "docs/images/part-meps-neon-2207-v2-1950kv.png",
+      "docs/images/part-meps-phase-leads-m1.png",
+      "docs/images/part-meps-phase-leads-m2.png",
+      "docs/images/part-meps-phase-leads-m3.png",
+      "docs/images/part-meps-phase-leads-m4.png",
+      "docs/images/part-motor-screw-m3x8.png",
+      "docs/images/part-o4-camera-screw-m2x5.png",
+      "docs/images/part-panasonic-eeu-fr1v471-leads.png",
+      "docs/images/part-panasonic-eeu-fr1v471.png",
+      "docs/images/part-quadcopter-5in-frame.png",
+      "docs/images/part-quadcopter-5in-top-plate.png",
+      "docs/images/part-radiomaster-rp1-crsf-wire.png",
+      "docs/images/part-radiomaster-rp1-v2-elrs-2g4.png",
+      "docs/test-data/battery-discharge.json",
+      "docs/test-data/esc-temp-punchout.json",
+      "docs/test-data/flight-time.json",
+      "docs/test-data/hover-current.json",
+      "docs/test-data/throttle-sweep.json",
+      "docs/test-data/thrust-to-weight.json"
+    ],
+    "standins": {
+      "written": [
+        "throttle-sweep",
+        "hover-current",
+        "flight-time",
+        "thrust-to-weight",
+        "esc-temp-punchout",
+        "battery-discharge"
+      ],
+      "kept": []
+    },
+    "figures": {
+      "rendered": 47,
+      "reused": 35
+    },
+    "fonts": true
+  },
+  "finishedAt": "2026-10-03T14:27:33.597Z"
+}

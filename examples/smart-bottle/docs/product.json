@@ -1,0 +1,48 @@
+{
+  "schema": "protoboard.product/v0",
+  "summary": "A cap module that replaces the stock lid of a 32 oz Nalgene wide-mouth bottle and reports how much water is left and how warm it is, reminds the user to drink with a light ring, and syncs readings over Wi-Fi.",
+  "features": [
+    "Water level and temperature measured from the cap, with nothing in the bottle but a sealed stainless probe",
+    "A ring of 8 RGB LEDs for reminders and status, and one button",
+    "Wi-Fi sync, with provisioning over Bluetooth LE",
+    "A 1000 mAh LiPo cell charged from USB-C through an IP67 receptacle; target of 30 days or more between charges",
+    "A printed PETG cap that seals on the bottle's lip; hand wash only, no ingress rating claimed"
+  ],
+  "functions": [
+    {
+      "id": "F1",
+      "text": "Measure the water level from the cap by time of flight to the surface",
+      "by": "VL53L4CD looking down through a window"
+    },
+    {
+      "id": "F2",
+      "text": "Measure the temperature inside the bottle with a sealed stainless probe",
+      "by": "DS18B20 probe through the cap floor"
+    },
+    {
+      "id": "F3",
+      "text": "Show reminders and status on a ring of RGB LEDs",
+      "by": "LP5024 driving 8 RGB LEDs, light guide in the cap"
+    },
+    {
+      "id": "F4",
+      "text": "Sync readings to a server over Wi-Fi; provision over BLE",
+      "by": "ESP32-C3-MINI-1 module"
+    },
+    {
+      "id": "F5",
+      "text": "Charge from USB-C; update firmware over USB or Wi-Fi",
+      "by": "MCP73831, IP67 USB-C receptacle, ESP32-C3 USB Serial/JTAG"
+    },
+    {
+      "id": "F6",
+      "text": "Report battery state of charge",
+      "by": "MAX17048"
+    },
+    {
+      "id": "F7",
+      "text": "One button: wake, show level, pairing",
+      "by": "Side-push tact switch behind a sealed plunger"
+    }
+  ]
+}

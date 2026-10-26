@@ -1,0 +1,15 @@
+[
+  {
+    "id": "src_supplier",
+    "title": "Westfield Fasteners WF17972: M2 x 18mm Socket Head Cap Screw in A2 Stainless - ISO 4762 (DIN 912)",
+    "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Screw-M2x18-A2-Stainless.html",
+    "type": "documentation",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "29c1327de655d766f8fed858ee7a957513de4d37a62f59670f64d6d247b3cfbd",
+    "supports": [
+      "M2 x 18 mm, A2 stainless, ISO 4762 (DIN 912)",
+      "dk max 3.8, k max 2.0, drive 1.5, b min 16, pitch 0.40"
+    ]
+  }
+]

@@ -1,0 +1,53 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "radiomaster-rp1-crsf-wire",
+    "config": "src/harnesses/radiomaster-rp1-crsf-wire/cad.config.ts",
+    "configDigest": "sha256:74f714abcd2cb13f37e5c4269aee0b13952c9fa65877aca83ebb174c31384174",
+    "moduleDigest": "sha256:32eeca5524a58270c89f9a141026422069b949b4a578a52af87cc3199db3c60c"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:83a9d628c2c4a9ca0bd3864e1443503749230cd30a179d7f6a90c181f0c40e66",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:24:17.889Z",
+  "status": "succeeded",
+  "summary": "rx_wire: ok; routed in one run with 9 other cable(s) (run harness-cad)",
+  "outputs": [
+    {
+      "path": "src/harnesses/radiomaster-rp1-crsf-wire/harness-cad/route.json",
+      "digest": "sha256:84d88809c8266c57ea65bfa6c39112bff87e473b9e51e2f6e0e4bdf2c4a1f073",
+      "bytes": 33789,
+      "description": "rx_wire: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "harnesses": [
+      {
+        "id": "radiomaster-rp1-crsf-wire",
+        "path": "rx_wire",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.21
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-03T18:24:20.313Z"
+}

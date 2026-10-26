@@ -1,0 +1,2670 @@
+{
+  "artifacts": [
+    {
+      "id": "manual",
+      "name": "DolphinRC F405 V3 FPV Stack User Manual V1.0",
+      "type": "datasheet",
+      "url": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+    },
+    {
+      "id": "product",
+      "name": "DolphinRC F405 V3 50A 60A STACK product page",
+      "type": "documentation",
+      "url": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+    },
+    {
+      "id": "review",
+      "name": "DolphinRC F405 V3 stack review (DolphinRC blog)",
+      "type": "documentation",
+      "url": "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+    },
+    {
+      "filePath": "library/cad/py/parts.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "dolphinrc-am32-60a generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/dolphinrc-am32-60a.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "dolphinrc-am32-60a (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/dolphinrc-am32-60a.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "dolphinrc-am32-60a (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/dolphinrc-am32-60a.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "dolphinrc-am32-60a feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/stack_mount.glb",
+      "format": "glb",
+      "id": "cad_if_stack_mount",
+      "interfaceId": "stack_mount",
+      "name": "stack_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1.glb",
+      "format": "glb",
+      "id": "cad_if_motor_1",
+      "interfaceId": "motor_1",
+      "name": "motor_1 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2.glb",
+      "format": "glb",
+      "id": "cad_if_motor_2",
+      "interfaceId": "motor_2",
+      "name": "motor_2 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3.glb",
+      "format": "glb",
+      "id": "cad_if_motor_3",
+      "interfaceId": "motor_3",
+      "name": "motor_3 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4.glb",
+      "format": "glb",
+      "id": "cad_if_motor_4",
+      "interfaceId": "motor_4",
+      "name": "motor_4 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1_a.glb",
+      "format": "glb",
+      "id": "cad_if_motor_1_a",
+      "interfaceId": "motor_1_a",
+      "name": "motor_1_a geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1_b.glb",
+      "format": "glb",
+      "id": "cad_if_motor_1_b",
+      "interfaceId": "motor_1_b",
+      "name": "motor_1_b geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_1_c.glb",
+      "format": "glb",
+      "id": "cad_if_motor_1_c",
+      "interfaceId": "motor_1_c",
+      "name": "motor_1_c geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2_a.glb",
+      "format": "glb",
+      "id": "cad_if_motor_2_a",
+      "interfaceId": "motor_2_a",
+      "name": "motor_2_a geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2_b.glb",
+      "format": "glb",
+      "id": "cad_if_motor_2_b",
+      "interfaceId": "motor_2_b",
+      "name": "motor_2_b geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_2_c.glb",
+      "format": "glb",
+      "id": "cad_if_motor_2_c",
+      "interfaceId": "motor_2_c",
+      "name": "motor_2_c geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3_a.glb",
+      "format": "glb",
+      "id": "cad_if_motor_3_a",
+      "interfaceId": "motor_3_a",
+      "name": "motor_3_a geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3_b.glb",
+      "format": "glb",
+      "id": "cad_if_motor_3_b",
+      "interfaceId": "motor_3_b",
+      "name": "motor_3_b geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_3_c.glb",
+      "format": "glb",
+      "id": "cad_if_motor_3_c",
+      "interfaceId": "motor_3_c",
+      "name": "motor_3_c geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4_a.glb",
+      "format": "glb",
+      "id": "cad_if_motor_4_a",
+      "interfaceId": "motor_4_a",
+      "name": "motor_4_a geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4_b.glb",
+      "format": "glb",
+      "id": "cad_if_motor_4_b",
+      "interfaceId": "motor_4_b",
+      "name": "motor_4_b geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/motor_4_c.glb",
+      "format": "glb",
+      "id": "cad_if_motor_4_c",
+      "interfaceId": "motor_4_c",
+      "name": "motor_4_c geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/bat_in.glb",
+      "format": "glb",
+      "id": "cad_if_bat_in",
+      "interfaceId": "bat_in",
+      "name": "bat_in geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/bat_neg.glb",
+      "format": "glb",
+      "id": "cad_if_bat_neg",
+      "interfaceId": "bat_neg",
+      "name": "bat_neg geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/dolphinrc-am32-60a-4in1-esc/artifacts/cad/interfaces/fc_socket.glb",
+      "format": "glb",
+      "id": "cad_if_fc_socket",
+      "interfaceId": "fc_socket",
+      "name": "fc_socket geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "actuator.motor_controller",
+    "robotics.drone"
+  ],
+  "description": "AM32 4-in-1 brushless ESC, 60 A continuous / 65 A burst per channel, 2-6S (6-30 V), AT32F421 MCU, 30.5 x 30.5 mm, with 8-pin SH connector to the DolphinRC F405 V3 flight controller.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "power_domains": [
+        {
+          "id": "vbat",
+          "name": "Battery",
+          "regulation_type": "unregulated",
+          "voltage_range_V": [
+            6,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 6,
+        "length": 45,
+        "width": 41
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "mounting": "30.5 x 30.5 mm, Φ4 mm holes",
+        "weight_note": "13.2±0.1 g excluding accessories (manual)"
+      },
+      "weight_g": 13.2
+    }
+  ],
+  "id": "dolphinrc-am32-60a-4in1-esc",
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -19.3,
+            -5.5,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "bat_in",
+            "signature": {
+              "area_mm2": 37.8,
+              "centroid": [
+                -19.3,
+                -5.5,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_bat_in",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "bat_in",
+      "name": "BAT+",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            30
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "cell_count",
+          "range": [
+            2,
+            6
+          ],
+          "unit": "dimensionless"
+        }
+      ],
+      "pin": "+",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "+ — battery positive (BAT+ / 电源正极). Input 6~30V (2~6S LiPo).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad",
+            "note": "Large solder pad; stack ships with a 12AWG 12 cm red/black lead and XT60 male plug (product page). The included 35V 470uF low-ESR capacitor is soldered by the builder across +/- (each pad has a small hole for its leads, per review)."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -19.3,
+            5.5,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "bat_neg",
+            "signature": {
+              "area_mm2": 37.8,
+              "centroid": [
+                -19.3,
+                5.5,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_bat_neg",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "bat_neg",
+      "name": "BAT-",
+      "pin": "-",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "- — battery negative (BAT- / 电源负极).",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "vbat_out",
+      "name": "V (BAT)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            30
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "V",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "V / BAT — battery voltage passed to the flight controller over the 8-pin connector.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "gnd",
+      "name": "G (GND)",
+      "pin": "G",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "G / GND — ground on the 8-pin FC connector.",
+            "source": "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "analog_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "cur",
+      "name": "CUR",
+      "pin": "CUR",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "CUR — current sensor output to the FC current ADC. Current Sensor: Support (Scale=150 Offset=0).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m1",
+      "name": "M1",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 1
+        }
+      ],
+      "pin": "M1",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M1 — ESC channel 1 signal input from the FC (8-pin connector).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m2",
+      "name": "M2",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 2
+        }
+      ],
+      "pin": "M2",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M2 — ESC channel 2 signal input from the FC (8-pin connector).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m3",
+      "name": "M3",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 3
+        }
+      ],
+      "pin": "M3",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M3 — ESC channel 3 signal input from the FC (8-pin connector).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esc_signal",
+        "dshot_bidirectional"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "m4",
+      "name": "M4",
+      "parameters": [
+        {
+          "id": "esc_signal_rate",
+          "range": [
+            300,
+            600
+          ],
+          "unit": "kbit/s"
+        },
+        {
+          "id": "motor_index",
+          "unit": "dimensionless",
+          "value": 4
+        }
+      ],
+      "pin": "M4",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "dshot"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "bidirectional_dshot": true,
+            "protocols": [
+              "dshot300",
+              "dshot600"
+            ]
+          },
+          "type": "esc_signal_protocols"
+        },
+        {
+          "params": {
+            "description": "M4 — ESC channel 4 signal input from the FC (8-pin connector).",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "fc_port",
+      "max_instances": 1,
+      "name": "FC connector (8-pin SH)",
+      "profiles": [
+        {
+          "bindings": {
+            "current": "cur",
+            "gnd": "gnd",
+            "motor_1": "m1",
+            "motor_2": "m2",
+            "motor_3": "m3",
+            "motor_4": "m4",
+            "vbat": "vbat_out"
+          },
+          "default_active": true,
+          "id": "fc_port_default",
+          "label": "Connector pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "device"
+          ],
+          "type": "fc_esc_connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "motor_1",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "motor_2",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "motor_3",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "motor_4",
+          "match": {
+            "capability": "esc_signal",
+            "protocol": "dshot",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "vbat",
+          "match": {
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": false
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": false
+        },
+        {
+          "id": "current",
+          "match": {
+            "protocol": "analog",
+            "role": "output"
+          },
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Plug the included 50 mm SH 1.0 mm 8-pin cable into the FC's SH socket. Pin 4 (VOID) is unused; no ESC telemetry line.",
+            "source": [
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            22.2,
+            0,
+            3.05
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "fc_socket",
+            "signature": {
+              "area_mm2": 29,
+              "centroid": [
+                22.2,
+                0,
+                3.05
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_fc_socket",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "fc_socket",
+      "max_instances": 1,
+      "name": "FC socket (SH1.0 8-pin)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "vbat_out",
+            "p2": "gnd",
+            "p3": "cur",
+            "p5": "m1",
+            "p6": "m2",
+            "p7": "m3",
+            "p8": "m4"
+          },
+          "default_active": true,
+          "id": "fc_socket_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "BAT",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "GND",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "CUR",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "VOID",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p5",
+          "label": "M1",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p6",
+          "label": "M2",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p7",
+          "label": "M3",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p8",
+          "label": "M4",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_sh_8",
+            "gender": "receptacle",
+            "note": "SH 1.0 mm 8-pin socket; stack ships with a 50 mm SH 1.0 mm 8-pin cable for the FC-ESC connection (product page). Wire labels BAT GND CUR VOID M1 M2 M3 M4 (manual p4); ESC silkscreen V G CUR (blank) M1 M2 M3 M4 (manual p3). Pin 1 is not marked; order is given from the BAT end. The pads can also be soldered directly (review).",
+            "pinout": [
+              "BAT",
+              "GND",
+              "CUR",
+              "VOID",
+              "M1",
+              "M2",
+              "M3",
+              "M4"
+            ],
+            "positions": 8
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector pin 1",
+            "reason": "Neither silkscreen nor manual marks pin 1; order taken from the BAT end so FC and ESC parts share one pinout (the included cable is 1:1).",
+            "value": "BAT end"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -6.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_1_a",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                -6.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_1_a",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_1_a",
+      "name": "M1 phase pad 1",
+      "pin": "M1",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -11.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_1_b",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                -11.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_1_b",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_1_b",
+      "name": "M1 phase pad 2",
+      "pin": "M1",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -16.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_1_c",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                -16.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_1_c",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_1_c",
+      "name": "M1 phase pad 3",
+      "pin": "M1",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -11.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_1",
+            "signature": {
+              "area_mm2": 36,
+              "centroid": [
+                -11.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_1",
+            "kind": "artifact"
+          },
+          {
+            "generator": "pad",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "motor_1",
+      "name": "Motor 1 phases (M1)",
+      "parameters": [
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 60
+        },
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 65
+        },
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            30
+          ],
+          "unit": "V"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "motor_1_a",
+            "phase_b": "motor_1_b",
+            "phase_c": "motor_1_c"
+          },
+          "default_active": true,
+          "id": "motor_1_default",
+          "label": "Phase A/B/C"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_3phase"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_c",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Brushless phases are not polarity-sensitive: swapping any two phase connections reverses rotation direction."
+          },
+          "type": "phase_order"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            6.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_2_a",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                6.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_2_a",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_2_a",
+      "name": "M2 phase pad 1",
+      "pin": "M2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            11.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_2_b",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                11.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_2_b",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_2_b",
+      "name": "M2 phase pad 2",
+      "pin": "M2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            16.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_2_c",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                16.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_2_c",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_2_c",
+      "name": "M2 phase pad 3",
+      "pin": "M2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            11.5,
+            -18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_2",
+            "signature": {
+              "area_mm2": 36,
+              "centroid": [
+                11.5,
+                -18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_2",
+            "kind": "artifact"
+          },
+          {
+            "generator": "pad",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "motor_2",
+      "name": "Motor 2 phases (M2)",
+      "parameters": [
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 60
+        },
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 65
+        },
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            30
+          ],
+          "unit": "V"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "motor_2_a",
+            "phase_b": "motor_2_b",
+            "phase_c": "motor_2_c"
+          },
+          "default_active": true,
+          "id": "motor_2_default",
+          "label": "Phase A/B/C"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_3phase"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_c",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Brushless phases are not polarity-sensitive: swapping any two phase connections reverses rotation direction."
+          },
+          "type": "phase_order"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -6.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_3_a",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                -6.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_3_a",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_3_a",
+      "name": "M3 phase pad 1",
+      "pin": "M3",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -11.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_3_b",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                -11.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_3_b",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_3_b",
+      "name": "M3 phase pad 2",
+      "pin": "M3",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -16.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_3_c",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                -16.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_3_c",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_3_c",
+      "name": "M3 phase pad 3",
+      "pin": "M3",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            -11.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_3",
+            "signature": {
+              "area_mm2": 36,
+              "centroid": [
+                -11.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_3",
+            "kind": "artifact"
+          },
+          {
+            "generator": "pad",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "motor_3",
+      "name": "Motor 3 phases (M3)",
+      "parameters": [
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 60
+        },
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 65
+        },
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            30
+          ],
+          "unit": "V"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "motor_3_a",
+            "phase_b": "motor_3_b",
+            "phase_c": "motor_3_c"
+          },
+          "default_active": true,
+          "id": "motor_3_default",
+          "label": "Phase A/B/C"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_3phase"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_c",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Brushless phases are not polarity-sensitive: swapping any two phase connections reverses rotation direction."
+          },
+          "type": "phase_order"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            6.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_4_a",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                6.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_4_a",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_4_a",
+      "name": "M4 phase pad 1",
+      "pin": "M4",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            11.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_4_b",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                11.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_4_b",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_4_b",
+      "name": "M4 phase pad 2",
+      "pin": "M4",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bldc_phase"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            16.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_4_c",
+            "signature": {
+              "area_mm2": 12,
+              "centroid": [
+                16.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_4_c",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "motor_4_c",
+      "name": "M4 phase pad 3",
+      "pin": "M4",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_phase"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "solder_pad"
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            11.5,
+            18.3,
+            1.9
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "motor_4",
+            "signature": {
+              "area_mm2": 36,
+              "centroid": [
+                11.5,
+                18.3,
+                1.9
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_motor_4",
+            "kind": "artifact"
+          },
+          {
+            "generator": "pad",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "motor_4",
+      "name": "Motor 4 phases (M4)",
+      "parameters": [
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 60
+        },
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 65
+        },
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            30
+          ],
+          "unit": "V"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "motor_4_a",
+            "phase_b": "motor_4_b",
+            "phase_c": "motor_4_c"
+          },
+          "default_active": true,
+          "id": "motor_4_default",
+          "label": "Phase A/B/C"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "bldc_3phase"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_c",
+          "match": {
+            "capability": "bldc_phase",
+            "protocol": "bldc_phase",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Brushless phases are not polarity-sensitive: swapping any two phase connections reverses rotation direction."
+          },
+          "type": "phase_order"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "symmetryDeg": 90,
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "stack_mount",
+            "signature": {
+              "area_mm2": 80.425,
+              "centroid": [
+                0,
+                0,
+                0.8
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_stack_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "stack_mount",
+      "name": "30.5 x 30.5 mm stack mount",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 30.5
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 4
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 3
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "component"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "M3",
+            "note": "Hole: 30.5*30.5mm / Φ4mm (manual). M3*8.1mm rubber grommets for the ESC are included (product page).",
+            "shape": "square",
+            "threaded": false
+          },
+          "type": "bolt_pattern"
+        },
+        {
+          "params": {
+            "description": "Four Φ4 mm corner mounting holes, 30.5 x 30.5 mm pattern.",
+            "source": [
+              "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+              "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "DolphinRC (Shenzhen DolphinRC Model Technology Co., Ltd.)",
+  "name": "DolphinRC AM32 60A 4-in-1 ESC",
+  "part_number": "DolphinRC AM32 ESC 60A (F405 V3 stack, SKU DPDZ00041 option '60A ESC')",
+  "tags": [
+    "esc",
+    "4in1",
+    "am32",
+    "60a",
+    "6s",
+    "30.5x30.5",
+    "fpv",
+    "drone",
+    "dshot"
+  ],
+  "traits": [
+    {
+      "params": {
+        "burst_current_A": 65,
+        "channels": 4,
+        "continuous_current_A": 60,
+        "firmware": "AM32 (32-bit); firmware target AT32DEVF421",
+        "kind": "esc",
+        "mcu": "AT32F421, 120 MHz",
+        "mosfets": "40V dual MOSFET 5*6mm package (60A version)",
+        "pwm_frequency": "Programmable PWM frequency of up to 48KHz",
+        "source": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+        ],
+        "tvs": "SMBJ24A 26V"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "ESC protocols DShot300 / DShot600. For RPM filtering with bidirectional DShot on the F405 FC, keep DShot300.",
+        "source": "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Current sensor: Betaflight current meter scale 150, offset 0.",
+        "source": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "capacitor": {
+          "capacitance_uF": 470,
+          "type": "low ESR electrolytic",
+          "voltage_V": 35
+        },
+        "note": "Bundled with the stack: 1x 35V 470uF low-ESR capacitor, 5x M3*8.1mm rubber grommets (ESC), 12AWG 12 cm power lead, XT60 male plug.",
+        "source": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "burst current duration",
+        "resolution": "burst_current = 65 A (manual and product page agree); duration unresolved (manual '5S' may mean 5 s).",
+        "sources": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+          "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+        ],
+        "values": [
+          "65A (5S) — manual",
+          "65A 10s — product page",
+          "~80A 10s — review"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "current sensor scale",
+        "resolution": "150 (product page; matches the MATEKF405TE Betaflight default).",
+        "sources": [
+          "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+          "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+        ],
+        "values": [
+          "150",
+          "~400"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "weight",
+        "resolution": "13.2 g (manual spec table); product page 3 g is a typo.",
+        "sources": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+          "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+        ],
+        "values": [
+          "13.2±0.1 g",
+          "3 g",
+          "~23.5 g"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "dimensions",
+        "resolution": "45 x 41 x 6 mm (manual spec table).",
+        "sources": [
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/u_file/2608/24/file/DolphinRCF40520250616153927-165929bb5a.pdf",
+          "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+        ],
+        "values": [
+          "45*41*6 mm",
+          "45 x 40.5 mm (drawing)",
+          "~45 x 44 x 8 mm"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "capacitor fitted",
+        "resolution": "Treated as a loose accessory the builder solders to the battery pads.",
+        "sources": [
+          "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+          "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review"
+        ],
+        "values": [
+          "included as accessory",
+          "preinstalled / soldered on board"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "fields": [
+          "operating temperature",
+          "total battery current rating",
+          "VBAT pin current limit",
+          "current-sensor output voltage range"
+        ],
+        "note": "Not stated by any source."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

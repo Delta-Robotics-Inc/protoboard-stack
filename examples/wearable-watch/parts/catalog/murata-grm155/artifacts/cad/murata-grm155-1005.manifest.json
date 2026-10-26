@@ -1,0 +1,71 @@
+{
+  "artifact": "murata-grm155-1005",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "6ab936db53f0181dc39d3b38fd17f337e9e65597da20ea31080508402f63708a",
+  "units": "mm",
+  "volume_mm3": 0.25,
+  "bodies": {
+    "ceramic_body": 0.125,
+    "termination_1": 0.062,
+    "termination_2": 0.062
+  },
+  "features": {
+    "pin_1": {
+      "area_mm2": 0.125,
+      "centroid": [
+        -0.375,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.125,
+      "centroid": [
+        0.375,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 2,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "package_top": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

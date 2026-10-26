@@ -1,0 +1,67 @@
+{
+  "artifact": "vybronics-vg0832012",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "992d57959ba15566b9d7383cc5eb98e5e84f6eeb61db93a6d876de0e4735e81d",
+  "units": "mm",
+  "volume_mm3": 177.374,
+  "bodies": {
+    "can": 163.363,
+    "lead_tab": 1.56,
+    "uv_adhesive": 9.335,
+    "lead_red": 1.511,
+    "lead_blue": 1.511,
+    "lead_red_tinned": 0.047,
+    "lead_blue_tinned": 0.047
+  },
+  "features": {
+    "mount_face": {
+      "area_mm2": 50.265,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "lead_pos": {
+      "area_mm2": 0.942,
+      "centroid": [
+        14.85,
+        0.575,
+        0.46
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          14.85,
+          0.575,
+          0.46
+        ]
+      ],
+      "diameter_mm": 0.2
+    },
+    "lead_neg": {
+      "area_mm2": 0.942,
+      "centroid": [
+        14.85,
+        -0.575,
+        0.46
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          14.85,
+          -0.575,
+          0.46
+        ]
+      ],
+      "diameter_mm": 0.2
+    }
+  }
+}

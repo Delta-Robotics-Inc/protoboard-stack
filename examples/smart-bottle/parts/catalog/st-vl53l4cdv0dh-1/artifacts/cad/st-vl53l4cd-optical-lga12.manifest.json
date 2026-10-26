@@ -1,0 +1,238 @@
+{
+  "artifact": "st-vl53l4cd-optical-lga12",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "fd50ddd59423f4bc7db85700a433b3e51e5ea0b24afddbd9c55fd75a95d58009",
+  "units": "mm",
+  "volume_mm3": 10.62,
+  "bodies": {
+    "substrate": 3.274,
+    "cap": 7.279,
+    "rx_aperture": 0.002,
+    "tx_aperture": 0.006,
+    "pad_1": 0.005,
+    "pad_2": 0.005,
+    "pad_3": 0.005,
+    "pad_4": 0.005,
+    "pad_5": 0.005,
+    "pad_6": 0.005,
+    "pad_7": 0.005,
+    "pad_8": 0.005,
+    "pad_9": 0.005,
+    "pad_10": 0.005,
+    "pad_11": 0.005,
+    "pad_12": 0.005
+  },
+  "features": {
+    "pin_1": {
+      "area_mm2": 0.27,
+      "centroid": [
+        1.621,
+        -0.791,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.8,
+        -0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_3": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.0,
+        -0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_4": {
+      "area_mm2": 0.25,
+      "centroid": [
+        -0.8,
+        -0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_5": {
+      "area_mm2": 0.25,
+      "centroid": [
+        -1.6,
+        -0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_6": {
+      "area_mm2": 0.25,
+      "centroid": [
+        -1.6,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_7": {
+      "area_mm2": 0.25,
+      "centroid": [
+        -1.6,
+        0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_8": {
+      "area_mm2": 0.25,
+      "centroid": [
+        -0.8,
+        0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_9": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.0,
+        0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_10": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.8,
+        0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_11": {
+      "area_mm2": 0.25,
+      "centroid": [
+        1.6,
+        0.8,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_12": {
+      "area_mm2": 0.25,
+      "centroid": [
+        1.6,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 3.02,
+      "centroid": [
+        0.013,
+        -0.004,
+        0.0
+      ],
+      "faces": 12,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "rx_aperture": {
+      "area_mm2": 0.031,
+      "centroid": [
+        -1.535,
+        0.0,
+        1.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "tx_aperture": {
+      "area_mm2": 0.126,
+      "centroid": [
+        1.465,
+        0.0,
+        1.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

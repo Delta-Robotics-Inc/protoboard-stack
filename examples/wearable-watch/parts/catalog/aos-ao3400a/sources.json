@@ -1,0 +1,116 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "Alpha & Omega Semiconductor AO3400A 30V N-Channel MOSFET datasheet, Rev 3.1 (July 2023)",
+    "url": "https://www.aosmd.com/res/datasheets/AO3400A.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:03:00Z",
+    "sha256": "9c60d0b6c1ddc7609a4b788a91181468d8ffe6c3e9ba425c3d8ffc5ba88c5033",
+    "supports": [
+      "p.1 product summary: VDS 30 V; ID 5.7 A at VGS 10 V; RDS(ON) < 26.5 mOhm at VGS 10 V, < 32 mOhm at 4.5 V, < 48 mOhm at 2.5 V; load switch or PWM applications",
+      "p.1 SOT23 top/bottom view: leads D (alone on one side), G and S (the other side); pin-1 index dot on the top face next to G; schematic symbol with body diode (S anode, D cathode)",
+      "p.1 absolute maximum (TA 25 C): VDS 30 V; VGS ±12 V; ID 5.7 A (TA 25 C), 4.7 A (TA 70 C); IDM 30 A (note C); PD 1.4 W (25 C), 0.9 W (70 C) (note B); TJ, TSTG -55 to 150 C",
+      "p.1 thermal: RthJA 70 typ / 90 max C/W (t <= 10 s), 100 typ / 125 max C/W (steady state); RthJL 63 typ / 80 max C/W",
+      "p.2 static: BVDSS 30 V min; IDSS 1 uA max (VDS 30 V), 5 uA at TJ 55 C; IGSS 100 nA max at VGS ±12 V; VGS(th) 0.65 / 1.05 / 1.45 V; ID(ON) 30 A min; RDS(ON) 18 / 26.5 mOhm (10 V, 5.7 A), 28 / 38 at TJ 125 C, 19 / 32 (4.5 V, 5 A), 24 / 48 (2.5 V, 3 A); gFS 33 S; VSD 0.7 / 1 V at IS 1 A; IS 2 A",
+      "p.2 dynamic and switching: Ciss 630 pF, Coss 75 pF, Crss 50 pF (VDS 15 V, 1 MHz); Rg 1.5 / 3 / 4.5 Ohm; Qg 6 typ / 7 max nC, Qgs 1.3 nC, Qgd 1.8 nC (VGS 4.5 V, VDS 15 V, ID 5.7 A); tD(on) 3, tr 2.5, tD(off) 25, tf 4 ns; trr 8.5 ns, Qrr 2.6 nC",
+      "p.2 notes A-F: RthJA on 1 in2 FR-4 2 oz copper; PD from TJ(MAX) and the t <= 10 s RthJA; IDM repetitive, pulse width limited by TJ(MAX)"
+    ]
+  },
+  {
+    "id": "src_package",
+    "title": "AOS SOT23 package outline, document PO-00001 version N",
+    "url": "https://www.aosmd.com/sites/default/files/res/package/SOT23.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:03:00Z",
+    "sha256": "b6fac64d55f133ce74dd85ddddc618c3d5408e9531cb21e660f6a8ef3d8c5408",
+    "supports": [
+      "A 0.85-1.25; A1 0.00-0.15; A2 0.70 / 1.05 / 1.20; b 0.30 / 0.40 / 0.50; c 0.08 / 0.13 / 0.20; D 2.80 / 2.90 / 3.10; e 0.95 BSC; e1 1.90 BSC; E 2.60 / 2.80 / 3.00; E1 1.40 / 1.60 / 1.80; L 0.30-0.60 (gauge plane); lead angle 0 / 5 / 8 deg (all mm, min / nom / max)",
+      "top view: two leads 1.90 apart on one long side, one lead centred on the other side",
+      "notes: body sizes exclude mould flash (< 5 mil each on the non-lead sides); tolerance ±0.100 mm unless specified"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "AOS AO3400A product page (parametrics, documentation list, package details)",
+    "url": "https://www.aosmd.com/products/mosfets/low-voltage-mosfets-12v-30v/ao3400a",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:03:00Z",
+    "sha256": "19ebfe45bc28404c68cb3cfb8352847a6b9e298b3c4eae630dda92031c7de040",
+    "supports": [
+      "Status Full Production; package SOT23, single N-channel; qualification Industrial; no ESD diode; Tj max 150 C",
+      "parametrics agree with the datasheet: VDS 30 V, VGS ±12 V, ID 5.7 A, PD 1.4 W, Qg(4.5 V) 6 nC, VGS(th) 0.65 / 1.05 / 1.45 V",
+      "package details: SOT23 2.90 x 2.80, tape and reel",
+      "documentation list: datasheet, marking, reliability report, SOT23 package, SOT23 tape & reel; no 3D/CAD model offered"
+    ]
+  },
+  {
+    "id": "src_marking",
+    "title": "AOS AO3400A marking description, document PD-00659 version C",
+    "url": "https://www.aosmd.com/sites/default/files/res/markings/AO3400A.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:03:00Z",
+    "sha256": "1509889690255bbb7e1a88d3aeb722672bd5f9b4d9194688f0e55283e633fa19",
+    "supports": [
+      "top marking PNWA + LT: part number code, year/week, assembly location, lot code",
+      "AO3400A and AO3400AL: green product, part number code X0"
+    ]
+  },
+  {
+    "id": "src_datasheet_ao3400",
+    "title": "Alpha & Omega Semiconductor AO3400 (no A) 30V N-Channel MOSFET datasheet, Rev 8 (Dec 2011)",
+    "url": "https://www.aosmd.com/res/datasheets/AO3400.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:02:00Z",
+    "sha256": "78d25ce9d2a776f837b3db4f180c31ebbfaa0aa47c9ac296e2b54c63aeda7d24",
+    "supports": [
+      "AO3400 is a separate AOS part with different ratings from AO3400A: p.1 ID 5.8 A at VGS 10 V (4.9 A at TA 70 C); RDS(ON) < 28 mOhm at 10 V, < 33 mOhm at 4.5 V, < 52 mOhm at 2.5 V (AO3400A: 5.7 A, 4.7 A, < 26.5 / 32 / 48 mOhm)",
+      "used only to show that AO3400 is not evidence for AO3400A; no AO3400A fact comes from it"
+    ]
+  },
+  {
+    "id": "src_reliability",
+    "title": "AOS AO3400A product reliability report, rev C (Feb. 2018)",
+    "url": "https://www.aosmd.com/sites/default/files/res/reliability_reports/AO3400A.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:03:00Z",
+    "sha256": "59d6ab02219581f6898c6f3600bf4cdc162e7f7ff50d9a5d9faa4d72e9118bd3",
+    "supports": [
+      "plastic encapsulated device",
+      "precondition 168 h 85 C / 85 % RH + 3 reflow cycles at 260 C: MSL 1 per J-STD-020",
+      "temperature cycle -65 to 150 C, 1000 cycles; FIT 1.91"
+    ]
+  },
+  {
+    "id": "src_pinout_community",
+    "title": "Components101: AO3400A N-Channel MOSFET pinout, specifications, marking code",
+    "url": "https://components101.com/mosfets/ao3400a-n-channel-mosfet-pinout-datasheet",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-03T02:03:00Z",
+    "sha256": "c20b45f2575644a13205d60138ad91f56da7e00f8f5507c78dd0f44144ad325f",
+    "supports": [
+      "pin numbers: 1 Gate (G), 2 Source (S), 3 Drain (D); used only for the numeric designators, which AOS documents do not print",
+      "its marking code (A09T) conflicts with the AOS marking document (X0) and is not used"
+    ]
+  },
+  {
+    "id": "src_jlc",
+    "title": "JLCPCB in-stock catalog through jlcsearch (unofficial mirror), query AO3400A",
+    "url": "https://jlcsearch.tscircuit.com/components/list.json?search=AO3400A",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:03:00Z",
+    "sha256": "d7bd90aa8175ec7e60287afd310b35d0f079e77c2b749c825de29affa7b4383a",
+    "supports": [
+      "C20917 AO3400A SOT-23 basic part, 1,535,925 in stock; description matches the AOS datasheet (48 mOhm at 2.5 V, 630 / 75 / 50 pF, 1.45 V VGS(th) max, 1.4 W, -55 to 150 C)",
+      "mismatch: the C20917 row says '7nC@10V', but the AOS datasheet gives Qg 6 typ / 7 max nC at VGS 4.5 V (p.2) and no gate charge at 10 V; the part uses the datasheet value",
+      "other listings named AO3400A (C347475, C344010, C700953, ...) state different RDS(ON), capacitance and thresholds: second-source devices, not this part"
+    ]
+  }
+]

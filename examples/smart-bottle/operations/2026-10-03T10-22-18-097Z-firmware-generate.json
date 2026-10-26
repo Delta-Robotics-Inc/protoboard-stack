@@ -1,0 +1,76 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "firmware:generate",
+  "extension": {
+    "id": "@protoboard/ext-esp-idf",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "firmware",
+    "operation": "generate",
+    "provider": "@protoboard/ext-esp-idf",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/firmware.config.ts",
+    "configDigest": "sha256:d0e04ae27ee5be452cdd76655e82f3702dc41de594beb1990d576591ac4acc57",
+    "moduleDigest": "sha256:83bba1955f64fe5daa6c2914def8504493be8fadf8ff6f2badfb364cffec8fd1"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:a1e5e95c571df1f46444861f18e380914e430d159217268a1bec63df0caee285",
+  "tools": [],
+  "startedAt": "2026-10-03T10:22:18.097Z",
+  "status": "succeeded",
+  "summary": "esp-idf configuration for u1 (espressif-esp32-c3-mini-1-h4x): 2 files, 29 cited settings, 2 bus(es), 1 GPIO(s)",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/esp-idf/board_pins.h",
+      "digest": "sha256:697896d8c13b60aea7c48be296c1ac5f2ec3e4b24b0d8d2586bd7ee4d88f4ecf",
+      "bytes": 2288,
+      "description": "pins and peripherals header"
+    },
+    {
+      "path": "src/boards/bottle-cap/esp-idf/sdkconfig.defaults",
+      "digest": "sha256:f1ec051cd23e983c6283b34a3423b09c4702948357f321ab7dee2848def9fde0",
+      "bytes": 451,
+      "description": "sdkconfig defaults"
+    },
+    {
+      "path": "src/boards/bottle-cap/esp-idf/protoboard.lines.json",
+      "digest": "sha256:f1a9607d78661a3efe8f63c516d096bf41763b2d80ffe3e7a8519483466f6a3c",
+      "bytes": 6145,
+      "description": "line → UHD fact index"
+    }
+  ],
+  "data": {
+    "files": [
+      "board_pins.h",
+      "sdkconfig.defaults"
+    ],
+    "warnings": [],
+    "findings": [
+      {
+        "code": "FW_STRAPPING_PIN",
+        "severity": "warning",
+        "instance": "u1",
+        "message": "i2c0 SDA uses strapping pin u1:pin_22 (IO8); its pull-up holds it high at reset, check that selects the boot mode you want",
+        "cites": [
+          "net:i2c_sda",
+          "pin:u1:pin_22",
+          "pin:u2:pin_9"
+        ]
+      },
+      {
+        "code": "FW_STRAPPING_PIN",
+        "severity": "warning",
+        "instance": "u1",
+        "message": "i2c0 SCL uses strapping pin u1:pin_5 (IO2); its pull-up holds it high at reset, check that selects the boot mode you want",
+        "cites": [
+          "net:i2c_scl",
+          "pin:u1:pin_5",
+          "pin:u2:pin_10"
+        ]
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T10:22:18.119Z"
+}

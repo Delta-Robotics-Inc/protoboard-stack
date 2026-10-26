@@ -1,0 +1,33 @@
+/* Watch main board: pin assignment, generated from the board's nets. Do not edit. */
+
+&pinctrl {
+	i2c0_default: i2c0_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 24)>, /* SDA on net sda: u1:pin_48 P0.24 */
+				<NRF_PSEL(TWIM_SCL, 0, 25)>; /* SCL on net scl: u1:pin_49 P0.25 */
+		};
+	};
+
+	i2c0_sleep: i2c0_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 24)>, /* SDA on net sda: u1:pin_48 P0.24 */
+				<NRF_PSEL(TWIM_SCL, 0, 25)>; /* SCL on net scl: u1:pin_49 P0.25 */
+			low-power-enable; /* pins released in sleep */
+		};
+	};
+
+	spi3_default: spi3_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>, /* SCK on net lcd_sck: u1:pin_37 P0.13 */
+				<NRF_PSEL(SPIM_MOSI, 0, 14)>; /* MOSI on net lcd_mosi: u1:pin_36 P0.14 */
+		};
+	};
+
+	spi3_sleep: spi3_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>, /* SCK on net lcd_sck: u1:pin_37 P0.13 */
+				<NRF_PSEL(SPIM_MOSI, 0, 14)>; /* MOSI on net lcd_mosi: u1:pin_36 P0.14 */
+			low-power-enable; /* pins released in sleep */
+		};
+	};
+};

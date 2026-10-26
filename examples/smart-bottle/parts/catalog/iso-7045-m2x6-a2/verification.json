@@ -1,0 +1,19 @@
+{
+  "partId": "iso-7045-m2x6-a2",
+  "recorded_at": "2026-10-03T02:23:01.010Z",
+  "audit": null,
+  "repairs": null,
+  "assumptions": [
+    "ISO 7045 edition",
+    "CAD simplifications"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "Pozidriv recess form",
+    "tightening torque, proof load, operating temperature",
+    "as-rolled end form"
+  ],
+  "vocabulary_gaps": [
+    "fastener / threaded joint protocol"
+  ]
+}

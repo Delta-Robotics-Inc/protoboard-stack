@@ -1,0 +1,491 @@
+{
+  "schema": "uhd.display/v0",
+  "diagram": {
+    "layouts": {
+      "": {
+        "nodes": {
+          "arm_fl": {
+            "x": 48,
+            "y": 48,
+            "w": 270,
+            "h": 132
+          },
+          "arm_fl/prop": {
+            "x": 34,
+            "y": 50
+          },
+          "arm_fl/motor": {
+            "x": 158,
+            "y": 36
+          },
+          "arm_fr": {
+            "x": 1488,
+            "y": 48,
+            "w": 270,
+            "h": 132
+          },
+          "arm_fr/motor": {
+            "x": 34,
+            "y": 36
+          },
+          "arm_fr/prop": {
+            "x": 176,
+            "y": 50
+          },
+          "arm_rl": {
+            "x": 48,
+            "y": 944,
+            "w": 270,
+            "h": 132
+          },
+          "arm_rl/prop": {
+            "x": 34,
+            "y": 50
+          },
+          "arm_rl/motor": {
+            "x": 158,
+            "y": 36
+          },
+          "arm_rr": {
+            "x": 1488,
+            "y": 944,
+            "w": 270,
+            "h": 132
+          },
+          "arm_rr/motor": {
+            "x": 34,
+            "y": 36
+          },
+          "arm_rr/prop": {
+            "x": 176,
+            "y": 50
+          },
+          "gnss": {
+            "x": 784,
+            "y": 48,
+            "w": 250,
+            "h": 100
+          },
+          "stack": {
+            "x": 784,
+            "y": 432,
+            "w": 240,
+            "h": 290
+          },
+          "battery": {
+            "x": 320,
+            "y": 512,
+            "w": 200,
+            "h": 110
+          },
+          "bulk_cap": {
+            "x": 64,
+            "y": 384,
+            "w": 150,
+            "h": 104
+          },
+          "strap": {
+            "x": 64,
+            "y": 656,
+            "w": 150,
+            "h": 76
+          },
+          "top_plate": {
+            "x": 1152,
+            "y": 240,
+            "w": 170,
+            "h": 84
+          },
+          "receiver": {
+            "x": 1232,
+            "y": 512,
+            "w": 200,
+            "h": 100
+          },
+          "video": {
+            "x": 784,
+            "y": 976,
+            "w": 240,
+            "h": 120
+          },
+          "frame": {
+            "x": 48,
+            "y": 1216,
+            "w": 1712,
+            "h": 86
+          },
+          "solder": {
+            "x": 48,
+            "y": 1360,
+            "w": 170,
+            "h": 76
+          },
+          "flux": {
+            "x": 348,
+            "y": 1360,
+            "w": 170,
+            "h": 76
+          },
+          "threadlocker": {
+            "x": 648,
+            "y": 1360,
+            "w": 170,
+            "h": 76
+          },
+          "rx_sleeve": {
+            "x": 948,
+            "y": 1360,
+            "w": 170,
+            "h": 76
+          },
+          "mount_tape": {
+            "x": 1248,
+            "y": 1360,
+            "w": 170,
+            "h": 76
+          },
+          "cable_ties": {
+            "x": 1548,
+            "y": 1360,
+            "w": 170,
+            "h": 76
+          }
+        },
+        "ports": {
+          "arm_fl|motor__base_mount": "bottom",
+          "arm_fr|motor__base_mount": "bottom",
+          "frame|motor_mount_fl": "left",
+          "frame|motor_mount_fr": "right",
+          "frame|motor_mount_rl": "top",
+          "frame|motor_mount_rr": "top",
+          "frame|stack_mount": "top",
+          "frame|camera_mount": "top",
+          "frame|vtx_mount": "top",
+          "stack|stack_mount": "bottom",
+          "video|camera_mount": "bottom",
+          "video|tx_module_mount": "bottom",
+          "gnss|mount": "right",
+          "bulk_cap|pos": "right",
+          "bulk_cap|neg": "right",
+          "frame|standoff_mount": "top",
+          "top_plate|standoff_mount": "bottom",
+          "top_plate|gps_mount": "left"
+        }
+      }
+    },
+    "expanded": [
+      "arm_fl",
+      "arm_fr",
+      "arm_rl",
+      "arm_rr"
+    ],
+    "openLinks": []
+  },
+  "spatial": {
+    "root": "frame",
+    "placements": {
+      "battery": {
+        "matrix": [
+          1,
+          0,
+          0,
+          7,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          37,
+          0,
+          0,
+          0,
+          1
+        ],
+        "note": "strapped to the top plate between the strap slots (x -14 \u2026 28); no mechanical interface yet (PB-802 models the strap as a harness)"
+      },
+      "receiver": {
+        "matrix": [
+          -1,
+          0,
+          0,
+          -52,
+          0,
+          1,
+          0,
+          -16,
+          0,
+          0,
+          -1,
+          34,
+          0,
+          0,
+          0,
+          1
+        ],
+        "note": "taped under the top plate, rear right, pads facing forward and down; no mounting feature on the part"
+      },
+      "bulk_cap": {
+        "matrix": [
+          0,
+          0,
+          -1,
+          -26,
+          1,
+          0,
+          0,
+          10,
+          0,
+          -1,
+          0,
+          19,
+          0,
+          0,
+          0,
+          1
+        ],
+        "note": "hangs on its leads from the ESC battery pads, lying on the air unit (left side)"
+      }
+    },
+    "labels": {
+      "modules": {
+        "frame": {
+          "title": "Frame",
+          "sub": "bottom plate \u00b7 5 mm, 225 mm wheelbase"
+        },
+        "top_plate": {
+          "title": "Top plate",
+          "sub": "2 mm, on 30 mm standoffs"
+        },
+        "stack/fc": {
+          "title": "Flight controller",
+          "sub": "DolphinRC F405 V3"
+        },
+        "stack/esc": {
+          "title": "4-in-1 ESC",
+          "sub": "DolphinRC AM32 60A 4-in-1"
+        },
+        "arm_fl/motor": {
+          "title": "Motor \u00b7 front-left",
+          "sub": "MEPS NEON 2207 V2 1950KV"
+        },
+        "arm_fr/motor": {
+          "title": "Motor \u00b7 front-right",
+          "sub": "MEPS NEON 2207 V2 1950KV"
+        },
+        "arm_rl/motor": {
+          "title": "Motor \u00b7 rear-left",
+          "sub": "MEPS NEON 2207 V2 1950KV"
+        },
+        "arm_rr/motor": {
+          "title": "Motor \u00b7 rear-right",
+          "sub": "MEPS NEON 2207 V2 1950KV"
+        },
+        "arm_fl/prop": {
+          "title": "Propeller",
+          "sub": "HQProp Ethix S5 \u00b7 5x4x3 light grey"
+        },
+        "battery": {
+          "title": "Battery",
+          "sub": "CNHL 6S 1100 mAh \u00b7 strapped"
+        },
+        "video": {
+          "title": "O4 air unit",
+          "sub": "DJI O4 transmission module"
+        },
+        "video#cad_camera_step": {
+          "title": "O4 camera",
+          "sub": "side-plate mount"
+        },
+        "gnss": {
+          "title": "GNSS + compass",
+          "sub": "Matek M9N-5883 (vendor CAD)"
+        },
+        "arm_fr/prop": {
+          "hide": true
+        },
+        "arm_rl/prop": {
+          "hide": true
+        },
+        "arm_rr/prop": {
+          "hide": true
+        }
+      },
+      "harnesses": {
+        "arm_fr_hardware": {
+          "title": "Motor hardware (\u00d74 motors)"
+        },
+        "arm_fl_hardware": {
+          "hide": true
+        },
+        "arm_rl_hardware": {
+          "hide": true
+        },
+        "arm_rr_hardware": {
+          "hide": true
+        },
+        "stack_hardware": {
+          "title": "Stack hardware"
+        },
+        "frame_hardware": {
+          "title": "Frame hardware"
+        },
+        "gps_hardware": {
+          "title": "GPS hardware"
+        },
+        "vtx_hardware": {
+          "title": "Air unit hardware"
+        },
+        "camera_hardware": {
+          "title": "Camera hardware"
+        },
+        "arm_fl_leads": {
+          "title": "Motor phase leads (\u00d74)",
+          "sub": "3 \u00d7 20 AWG, cut and twisted"
+        },
+        "arm_fr_leads": {
+          "hide": true
+        },
+        "arm_rl_leads": {
+          "hide": true
+        },
+        "arm_rr_leads": {
+          "hide": true
+        }
+      }
+    },
+    "appearance": {
+      "quadcopter-5in-frame": {
+        "color": "#232326",
+        "roughness": 0.62,
+        "metalness": 0.08
+      },
+      "quadcopter-5in-top-plate": {
+        "color": "#232326",
+        "roughness": 0.62,
+        "metalness": 0.08
+      },
+      "meps-neon-2207-v2-1950kv": {
+        "color": "#1f4a2c",
+        "metalness": 0.35,
+        "roughness": 0.42,
+        "parts": {
+          "bell": {
+            "color": "#1f4a2c",
+            "metalness": 0.35,
+            "roughness": 0.4
+          },
+          "base": {
+            "color": "#183b23",
+            "metalness": 0.35,
+            "roughness": 0.45
+          },
+          "windings": {
+            "color": "#b0662a",
+            "metalness": 0.8,
+            "roughness": 0.35
+          },
+          "shaft_body": {
+            "color": "#c9ccd1",
+            "metalness": 0.9,
+            "roughness": 0.25
+          },
+          "heat_shrink": {
+            "color": "#161616",
+            "roughness": 0.7
+          },
+          "lead_a": {
+            "color": "#ececec"
+          },
+          "lead_b": {
+            "color": "#ececec"
+          },
+          "lead_c": {
+            "color": "#ececec"
+          }
+        }
+      },
+      "hqprop-ethix-s5": {
+        "color": "#ff5c00",
+        "opacity": 0.9,
+        "roughness": 0.32,
+        "metalness": 0.0
+      },
+      "dolphinrc-am32-60a-4in1-esc": {
+        "color": "#1e3a5f",
+        "parts": {
+          "components": {
+            "color": "#3f3f46"
+          }
+        }
+      },
+      "dolphinrc-f405-v3-flight-controller": {
+        "color": "#14532d",
+        "parts": {
+          "components": {
+            "color": "#3f3f46"
+          }
+        }
+      },
+      "dji-o4-air-unit": {
+        "color": "#3a3a3c",
+        "metalness": 0.4
+      },
+      "cnhl-black-series-1100mah-6s-100c": {
+        "color": "#16171a",
+        "roughness": 0.55,
+        "parts": {
+          "label": {
+            "color": "#2a2c33",
+            "roughness": 0.4
+          },
+          "lead_pos": {
+            "color": "#c8202a",
+            "roughness": 0.5
+          },
+          "lead_neg": {
+            "color": "#1a1a1a",
+            "roughness": 0.5
+          },
+          "xt60_housing": {
+            "color": "#1c1c1c"
+          }
+        }
+      },
+      "motor-screw-m3x8": {
+        "color": "#2b2b2b",
+        "metalness": 0.7
+      },
+      "panasonic-eeu-fr1v471": {
+        "color": "#20242c",
+        "roughness": 0.45,
+        "parts": {
+          "lead_pos": {
+            "color": "#c9ccd1",
+            "metalness": 0.85
+          },
+          "lead_neg": {
+            "color": "#c9ccd1",
+            "metalness": 0.85
+          }
+        }
+      },
+      "radiomaster-rp1-v2-elrs-2g4": {
+        "color": "#1d2530",
+        "parts": {
+          "pcb": {
+            "color": "#1b2a44"
+          },
+          "components": {
+            "color": "#3f3f46"
+          },
+          "u_fl": {
+            "color": "#c9ccd1",
+            "metalness": 0.85
+          }
+        }
+      }
+    }
+  }
+}

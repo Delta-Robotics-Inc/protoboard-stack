@@ -1,0 +1,24 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Fix a child that names a definition with a typo",
+  "fixture": {
+    "from": "fixture",
+    "steps": [{ "replace": { "file": "src/rig.uhd.ts", "find": "moduleDefId: \"demo-sensor\"", "with": "moduleDefId: \"demo-snesor\"", "count": 1 } }]
+  },
+  "instruction": "`npx protoboard check` fails on this rig. Fix it.",
+  "budget": { "turns": 5, "seconds": 120 },
+  "graders": [
+    { "id": "fixed", "kind": "fault", "code": "PB_UNRESOLVED_DEFINITION", "caught": "typo|misspel" },
+    { "id": "clean", "kind": "check", "maxErrors": 0 },
+    { "id": "sensor-kept", "kind": "text", "file": "src/rig.uhd.ts", "matches": ["\\{ id: \"sensor\", moduleDefId: \"demo-sensor\" \\}"] },
+    { "id": "edited", "kind": "digest", "file": "src/rig.uhd.ts", "changed": true },
+    { "id": "config-kept", "kind": "digest", "file": "protoboard.config.ts", "changed": false },
+    { "id": "judged", "kind": "rubric", "rubric": "The fix renames nothing but the reference.", "files": ["src/rig.uhd.ts"] }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "replace": { "file": "src/rig.uhd.ts", "find": "demo-snesor", "with": "demo-sensor" } },
+    { "protoboard": ["check"] },
+    { "say": "The sensor's moduleDefId had a typo (demo-snesor); fixed." }
+  ]
+}

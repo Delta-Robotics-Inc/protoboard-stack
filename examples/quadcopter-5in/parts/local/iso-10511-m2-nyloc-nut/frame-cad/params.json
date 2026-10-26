@@ -1,0 +1,13 @@
+{
+  "module": "iso-10511-m2-nyloc-nut",
+  "name": "iso-10511-m2-nyloc-nut",
+  "part": {
+    "diameter": 2,
+    "head_diameter": null,
+    "head_height": null,
+    "kind": "nut",
+    "length": 2.8,
+    "outer": 4
+  },
+  "schema": "protoboard.hardware-cad.params/v0"
+}

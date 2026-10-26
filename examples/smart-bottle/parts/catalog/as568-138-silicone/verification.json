@@ -1,0 +1,26 @@
+{
+  "partId": "as568-138-silicone",
+  "recorded_at": "2026-10-03T03:25:28.886Z",
+  "audit": {
+    "method": "independent agent re-fetched cited sources (skills/uhd-part-verify stage 2)",
+    "checked": 38,
+    "confirmed": 35,
+    "wrong": 0,
+    "unsupported": 3
+  },
+  "repairs": "1 iteration after the independent audit: dropped unsourced values squeeze_static 22.5 % and gland_fill 75 % (source ranges 15-30 % and 65-85 % kept); food_contact now 'statement of compliance on request', not a certificate; data gaps aligned with the part's data_gap traits.",
+  "assumptions": [
+    "dimensional tolerance",
+    "generated body"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "mass",
+    "pressure rating",
+    "tensile strength",
+    "silicone-specific dimensional tolerance"
+  ],
+  "vocabulary_gaps": [
+    "No seal or gland protocol exists (same gap as nalgene-32oz-wide-mouth 'face seal'); the ring's faces are custom peer with capabilities face_seal and o_ring_gland, like the fasteners and the bottle lip."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "release",
+  "extension": {
+    "id": "@protoboard/ext-release",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "allow-dirty": "false",
+    "check": "false"
+  },
+  "projectDigest": "sha256:3b8d8fac284110cbc224eef7ad840f9449d34ca4dd8815f1e22c0bc4f8550e40",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T16:37:13.722Z",
+  "status": "failed",
+  "summary": "release refused: 1 problem(s); first: watch-main-board: src/boards/watch-main/circuit.config.ts changed since the last export (operations/2026-10-03T15-39-07-719Z-circuit-export.json); run `protoboard run circuit:export --module watch-main-board`",
+  "outputs": [],
+  "data": {
+    "status": "failed",
+    "summary": "release refused: 1 problem(s); first: watch-main-board: src/boards/watch-main/circuit.config.ts changed since the last export (operations/2026-10-03T15-39-07-719Z-circuit-export.json); run `protoboard run circuit:export --module watch-main-board`",
+    "diagnostics": [
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "watch-main-board: src/boards/watch-main/circuit.config.ts changed since the last export (operations/2026-10-03T15-39-07-719Z-circuit-export.json); run `protoboard run circuit:export --module watch-main-board`"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T16:37:13.949Z"
+}

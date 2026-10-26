@@ -1,0 +1,92 @@
+[
+  {
+    "id": "src_drawing",
+    "title": "GCT USB4105 customer drawing, USB Type C Receptacle for USB 2.0, SMT Type, PCB Top Mount (sheet 1/2 and 2/2, revision B4, 18/12/23)",
+    "url": "https://gct.co/files/drawings/usb4105.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:49:39Z",
+    "sha256": "fb331fbabee8392ed2937ed757c1610cb0f174b84625147c0b580a18eea8c0e5",
+    "supports": [
+      "pin table: A1/A12/B1/B12 GND, A4/A9/B4/B9 VBUS, A5 CC1, B5 CC2, A6 Dp1, A7 Dn1, B6 Dp2, B7 Dn2, A8 SBU1, B8 SBU2, SHELL GND; mating sequence first (GND, VBUS) and second (CC, D, SBU)",
+      "16 contacts (16x 0.20 solder tails) at 0.50 pitch; tail centres ±0.25, ±0.75, ±1.25, ±1.75 (single) and ±2.40, ±3.20 (paired, 4x 0.45 wide) from the centreline; tails reach 0.38 behind the body",
+      "component outline 8.94 wide x 7.35 deep x 3.31 high; mating axis 1.73 above the seating plane; opening 8.34 (+0.06/-0.02) x 2.56 ±0.04",
+      "4 shell stakes on 8.64 across, 4.18 apart front to rear, front pair 2.60 behind the mating face; stake widths 0.80 (front) and 1.10 (rear); stake length S = 0.95 ±0.15 for the blank suffix",
+      "2 locating pegs Ø0.50 on 5.78, 3.68 behind the front stakes, protruding 0.60 below the seating plane; coplanarity 0.10",
+      "plug mating view: plug overmold 6.5 max high, at least 1.85 in front of the receptacle face",
+      "electrical: 5.00 A collectively for VBUS pins, 6.25 A collectively for GND pins, 1.25 A for A5/B5, 0.25 A per other pin; 48 V DC; 240 W; contact resistance 40 mOhm max initial, 50 mOhm after test; DWV 100 V AC; insulation 100 MOhm min",
+      "material: LCP UL 94V-0 black insulator, copper alloy contacts, stainless steel shell and mid plate; plating per ordering grid (GF = gold flash), 50 u\" Ni underplating",
+      "mechanical: operating -40 to +85 C; mating force 5-20 N; unmating 6-20 N after test; durability 20,000 cycles",
+      "ordering grid: USB4105-XX-A-XXX: GF = gold flash (standard), A = tape and reel, stake length blank = 0.95 mm, 060 = 0.60 mm, 120 = 1.20 mm",
+      "sheet 2/2: tape and reel, 800 pcs per reel, 24.0 mm tape, 10 reels (8000 pcs) per carton"
+    ]
+  },
+  {
+    "id": "src_spec",
+    "title": "GCT USB4105 product specification, USB Type C Receptacle for USB2.0, SMT Type, PCB Top Mount (rev. A3, 27/02/23)",
+    "url": "https://gct.co/files/specs/usb4105-spec.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:49:39Z",
+    "sha256": "372fe1bc0e0b1b4ce7e18b61514e967c7c2f883f0c7fe1f4586b567785ee9cd2",
+    "supports": [
+      "§4.1 current rating: 5.00 A collectively for VBUS pins (A4, A9, B4, B9); 6.25 A collectively for GND pins (A1, A12, B1, B12); 1.25 A for VCONN (A5/B5); 0.25 A for all other pins, per pin",
+      "§4.2-4.4: 48 V DC, 240 W, operating -40 to +85 C",
+      "§6.1: LLCR 40 mOhm max initial (20 mV open circuit, 100 mA); insulation resistance 100 MOhm min at 100 V DC; dielectric strength 100 V AC 1 min; contact current rating test: temperature rise <= 30 C on the shell surface at 5 A VBUS + 1.25 A VCONN",
+      "§6.2: mating force 5-20 N initial; unmating 8-20 N up to 30 cycles, 6-20 N after 20,000 cycles; durability 20,000 cycles (contact resistance 50 mOhm max after)",
+      "§7.0 reflow: peak 255 C (-0/+5), time above 217 C 60 s, above 230 C 50 s, above 250 C 5 s, soak 2-3 min, lead-free",
+      "revision A1 (24/10/2019) raised the ratings from VBUS 3 A / GND 4.25 A to VBUS 5 A / GND 6.25 A"
+    ]
+  },
+  {
+    "id": "src_lcsc",
+    "title": "LCSC product page C3020560, Global Connector Technology USB4105-GF-A",
+    "url": "https://www.lcsc.com/product-detail/C3020560.html",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:49:39Z",
+    "sha256": "8ebb31c3924c124776f69a29f2a1002b3c3c0ae67d00ba061defe935ebd2f6cf",
+    "supports": [
+      "MPN USB4105-GF-A sold by LCSC as C3020560; product cycle \"normal\"",
+      "attributes: USB 2.0, 1 port, Number of Contacts 12P, Type-C, 48 V, -40 to +85 C, Surface Mount, Right Angle, Female",
+      "unit weight 0.68 g (distributor figure; GCT states no mass)"
+    ]
+  },
+  {
+    "id": "src_jlc",
+    "title": "JLCPCB in-stock catalog through jlcsearch (unofficial mirror), search USB4105-GF-A, snapshot 2026-10-03",
+    "url": "https://jlcsearch.tscircuit.com/components/list.json?search=USB4105-GF-A",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:49:39Z",
+    "sha256": "b1a25aab9bba6c765ba24b58829ad2e5a1445ec074d71eb30ef3640bb9bae2f2",
+    "supports": [
+      "C3020560 USB4105-GF-A: 11,505 in stock, \"-40~+85 C 1 12P 48V 5A Black Female Surface Mount, Right Angle Type-C USB 2.0\"",
+      "the -060 (C3025063) and -120 (C5184243) stake-length variants are separate catalog parts"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "GCT USB4105 product page (blocked by a Cloudflare challenge, HTTP 403; not read)",
+    "url": "https://gct.co/connector/usb4105",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:49:39Z",
+    "sha256": null,
+    "supports": [
+      "nothing: the page could not be fetched; listed so the CAD search is traceable (GCT's 3D model downloads are linked from it)"
+    ]
+  },
+  {
+    "id": "src_kicad_licence",
+    "title": "KiCad library licence (CC-BY-SA 4.0 with design exception), for the community USB4105 3D model considered and not used",
+    "url": "https://www.kicad.org/libraries/license/",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-03T01:49:39Z",
+    "sha256": null,
+    "supports": [
+      "KiCad library data is CC-BY-SA 4.0; the exception covers designs that use it, not redistribution of the library data itself, which stays share-alike"
+    ]
+  }
+]

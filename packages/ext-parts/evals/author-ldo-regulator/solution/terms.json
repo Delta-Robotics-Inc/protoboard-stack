@@ -1,0 +1,23 @@
+{
+  "schema": "protoboard.library-terms/v1",
+  "files": {
+    "parts/local/acme-ldo3300-33/LDO3300-SOT-23-5.step": {
+      "distribution": "redistributable",
+      "license": "LicenseRef-ACME-CAD-Terms",
+      "licenseUrl": "https://acme.example/cad-terms",
+      "summary": "ACME's CAD terms: 3D models may be used and redistributed, unmodified, in designs that use ACME parts.",
+      "sourceUrl": "https://acme.example/cad/LDO3300-SOT-23-5.step",
+      "retrieved": "2026-09-26",
+      "sha256": "9ebd51c6762c47d77be43394fc0346ea989ec4ec4eef71ecc92725809dabd604"
+    },
+    "parts/local/acme-ldo3300-33/LDO3300-SOT-23-5.glb": {
+      "distribution": "redistributable",
+      "license": "LicenseRef-ACME-CAD-Terms",
+      "licenseUrl": "https://acme.example/cad-terms",
+      "summary": "ACME's CAD terms: 3D models may be used and redistributed, unmodified, in designs that use ACME parts.",
+      "sourceUrl": "https://acme.example/cad/LDO3300-SOT-23-5.glb",
+      "retrieved": "2026-09-26",
+      "sha256": "3f058ee740c15184b0ee21e40f2c2fcb1bd3fabbfcd172d3e12ea2f5d0a3574b"
+    }
+  }
+}

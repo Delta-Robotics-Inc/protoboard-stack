@@ -1,0 +1,81 @@
+[
+  {
+    "id": "src_product",
+    "title": "Alps Alpine SKRTLAE010 product information (SKRT series, 4.5 x 3.4 mm side push surface mount TACT Switch)",
+    "url": "https://tech.alpsalpine.com/e/products/detail/SKRTLAE010/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:43:00Z",
+    "sha256": "707276a25dabc2dc5991a4aac8783b4a091740dd697f488c73293c06ecf6341c",
+    "supports": [
+      "supply status: Standard (mass-produced and recommended for new designs)",
+      "basic information: surface mount, operating force 1.6 N, side push, travel 0.2 mm, product height 3.3 mm, operating life 100,000 cycles, initial contact resistance 500 mOhm max, guide bosses: with, W x D x H 4.5 x 3.4 x 3.3",
+      "specifications: sharp feeling type, -40 to +90 C, absolute maximum 50 mA 12 V DC, rating (min.) 10 uA 1 V DC, insulation 100 MOhm min at 100 V DC, voltage proof 250 V AC 1 min",
+      "packing: 12 mm tape, 3,000 per reel",
+      "reflow cautions: 260 C max at the switch surface, 2 reflows max, do not wash",
+      "links to the dimensions / land / circuit images (same drawing as src_catalog), the spec sheet (src_spec), the catalog (src_catalog) and the 3D CAD archive (src_cad)"
+    ]
+  },
+  {
+    "id": "src_spec",
+    "title": "Alps SKRTLAE010 product specifications, document KRT-701 (2017-07, 'For reference'), 6 pages",
+    "url": "https://tech.alpsalpine.com/cms.media/product_spec_skrtlae010_en_1db35b7ed3.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:43:00Z",
+    "sha256": "e7f14671f396defdddc3aab5774da62f07b2fa6c585f3c7fc18bddaa005ff20e",
+    "supports": [
+      "§1.2-1.3 operating and storage temperature -40 to 90 C",
+      "§3 tactile feedback; §4 1 pole 1 throw",
+      "§5 maximum rating 12 V DC 50 mA; minimum rating 1 V DC 10 uA",
+      "§6.1 contact resistance 500 mOhm max; §6.2 insulation 100 MOhm min (terminals and frame); §6.3 250 V AC 1 min; §6.4 bounce ON/OFF 10 ms max",
+      "§7.1 operating force 1.6 +- 0.5 N; §7.2 travel 0.2 +0.2/-0.1 mm; §7.3 return force 0.3 N min; §7.4 stop strength 30 N 15 s",
+      "§8 environmental tests; §9.1 100,000 cycles at 5 V DC 5 mA, 2.1 N; §9.2 vibration; §9.3 shock 784 m/s2",
+      "§10 reflow only (no hand soldering), 260 C 3 s peak, 2 times max, solder paste 0.1-0.15 mm",
+      "precautions A2 (DC resistive loads), B3/D3 (no side load on the stem), B4 (board edge and dip soldering), D4 press the stem centre, D6 stop strength, D8 flat dia 2 mm keying tip, D9 tilt 3 degrees max, E1 not sealed, E3 siloxane, E4 humidity, G4 94HB"
+    ]
+  },
+  {
+    "id": "src_catalog",
+    "title": "Alps TACT Switch Surface Mount Type, SKRT series catalog page (update 2510), Drawing No.1 (SKRTLAE010)",
+    "url": "https://tech.alpsalpine.com/cms.media/product_catalog_ta_02_skrt_en_01ec237785.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:43:00Z",
+    "sha256": "3ad21dbfcd7187004bc327875b978ca90d118e825a36a69540f0043aec83ffce",
+    "supports": [
+      "product list: SKRTLAE010 with guide bosses, SKRTLBE010 without; 1.6 N, 0.2 mm, 100,000 cycles, 4.5 x 3.4 x 3.3",
+      "applications: mobile, headsets, wearables",
+      "Drawing No.1 dimensions: width 4.5, guide bosses 4.25 apart, leg 0.8 +- 0.1, stem dia 2, height 3.3, stem axis 1.7, guide bosses 0.45 below the mounting face and 0.7 +- 0.05 wide, 2.05 +- 0.1 from the stem tip, depth 0.84 + 2.56 = 3.4, terminals 1/2/3 (0.65 and 0.5 wide, 3 across)",
+      "Drawing No.1 land dimensions (viewed from the mounting face): 2 x dia 0.9 holes 4.25 apart, prohibited copper area between the leg lands",
+      "Drawing No.1 circuit diagram: terminals 1 and 3 common, contact to terminal 2"
+    ]
+  },
+  {
+    "id": "src_cad",
+    "title": "Alps SKRTLAE010 3D CAD archive (SKRTLA.STEP and SKRTLA.pdf, 'Read me first.rtf')",
+    "url": "https://tech.alpsalpine.com/cms.media/product_3dcad_skrtlae010_en_0a8d627682.zip",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:43:00Z",
+    "sha256": "f652ecb6b9c97fd447e20910344a732f3cab9e1bf7debe3ca695fd2baf3ce718",
+    "licence": "Not stated: the archive's 'Read me first.rtf' only describes the STEP and PDF formats, the product page gives no terms, and the Alps terms-of-use pages returned HTTP 403. Not redistributed; used only as measurement evidence. The committed body is generated from the src_catalog drawing.",
+    "supports": [
+      "one solid, bbox 4.50 x 3.55 x 3.80 mm including the guide bosses",
+      "stem dia 2.00 on an axis 1.698 above the terminal undersides; stem tip 0.84 in front of the frame face; body 2.56 deep behind it",
+      "guide bosses 0.21 x 0.70 mm, 0.45 below the mounting face, centres x = +-2.125 (4.25 apart), 1.21 behind the frame face",
+      "fixing legs 0.80 wide (x 1.45-2.25) and 0.21 thick at the front corners",
+      "terminal feet: x -1.50..-0.86, -0.25..0.25, 0.86..1.50, 1.34-2.67 behind the frame face (terminal 2 from 1.54)"
+    ]
+  },
+  {
+    "id": "src_jlc",
+    "title": "JLCPCB in-stock catalog through jlcsearch (unofficial mirror), query SKRTLAE010",
+    "url": "https://jlcsearch.tscircuit.com/components/list.json?search=SKRTLAE010",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-02T20:50:00Z",
+    "sha256": "04b71d718a79612e69aa38bdaa7bc23f1b8ac349c61ec64e0e8e3159e80f3af0",
+    "supports": ["LCSC C110293, 33,262 in stock on 2026-10-02", "description: SPST-NO, right angle, 1.63 N, 12 V 50 mA, 4.5 x 3.4 x 3.3 mm, -40 to +90 C (corroboration only)"]
+  }
+]

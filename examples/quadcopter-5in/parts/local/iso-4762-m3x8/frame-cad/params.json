@@ -1,0 +1,13 @@
+{
+  "module": "iso-4762-m3x8",
+  "name": "iso-4762-m3x8",
+  "part": {
+    "diameter": 3,
+    "head_diameter": 5.5,
+    "head_height": 3,
+    "kind": "screw",
+    "length": 8,
+    "outer": null
+  },
+  "schema": "protoboard.hardware-cad.params/v0"
+}

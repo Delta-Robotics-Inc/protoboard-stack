@@ -1,0 +1,1235 @@
+{
+  "artifacts": [
+    {
+      "id": "datasheet",
+      "name": "BMI270 datasheet BST-BMI270-DS000-08 rev 1.6",
+      "type": "datasheet",
+      "url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf"
+    },
+    {
+      "id": "product",
+      "name": "BMI270 product page",
+      "type": "documentation",
+      "url": "https://www.bosch-sensortec.com/en/products/motion-sensors/imus/bmi270/"
+    },
+    {
+      "filePath": "library/cad/py/catalog/bosch-bmi270.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "bosch-bmi270-lga14 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/bosch-bmi270/artifacts/cad/bosch-bmi270-lga14.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "bosch-bmi270-lga14 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/bosch-bmi270/artifacts/cad/bosch-bmi270-lga14.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "bosch-bmi270-lga14 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/bosch-bmi270/artifacts/cad/bosch-bmi270-lga14.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "bosch-bmi270-lga14 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/bosch-bmi270/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "sensor.motion"
+  ],
+  "description": "6-axis IMU (16-bit accelerometer ±2/4/8/16 g, 16-bit gyroscope ±125-2000 dps) in a 14-pad LGA, 3.0 x 2.5 x 0.83 mm. Primary I2C (0x68/0x69, up to 1 MHz) or SPI (up to 10 MHz) target interface; secondary AUX I2C / OIS SPI. VDD 1.71-3.6 V, VDDIO 1.2-3.6 V.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "idd_typ_uA": {
+          "a_low_power_25Hz": 10,
+          "a_normal": 210,
+          "ag_low_power_25Hz": 420,
+          "ag_normal": 685,
+          "ag_performance": 970,
+          "suspend": 3.5
+        },
+        "logic_levels": {
+          "vih_min": "0.7 VDDIO",
+          "vil_max": "0.3 VDDIO",
+          "voh_min": "0.8 VDDIO",
+          "vol_max": "0.2 VDDIO"
+        },
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 1)"
+      },
+      "power_domains": [
+        {
+          "id": "vdd",
+          "name": "VDD (analog & digital)",
+          "nominal_voltage_V": 1.8,
+          "voltage_range_V": [
+            1.71,
+            3.6
+          ]
+        },
+        {
+          "id": "vddio",
+          "name": "VDDIO (digital I/O)",
+          "nominal_voltage_V": 1.8,
+          "voltage_range_V": [
+            1.2,
+            3.6
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 0.83,
+        "length": 3,
+        "width": 2.5
+      },
+      "domain": "mechanical",
+      "package": {
+        "exposed_pad": false,
+        "name": "LGA-14",
+        "pin_count": 14,
+        "pitch_mm": 0.5,
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Basic description: \"LGA mold package, 14 pins, footprint 2.5x3.0mm², height 0.83mm\"; §8.1 package outline)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 1)"
+      },
+      "operating_temperature_C": [
+        -40,
+        85
+      ]
+    }
+  ],
+  "id": "bosch-bmi270",
+  "interfaceGroups": [
+    {
+      "id": "primary_host_interface",
+      "label": "Primary host interface (I2C or SPI, shared pads)",
+      "members": [
+        "i2c",
+        "spi_4wire"
+      ],
+      "policy": "one_of"
+    },
+    {
+      "id": "secondary_interface",
+      "label": "Secondary interface (AUX I2C or OIS SPI, shared pads)",
+      "members": [
+        "aux_i2c",
+        "ois_spi"
+      ],
+      "policy": "one_of"
+    },
+    {
+      "id": "required_power_pins",
+      "label": "Supply pads",
+      "members": [
+        "pin_5",
+        "pin_6",
+        "pin_7",
+        "pin_8"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "capabilities": [
+        "digital_io",
+        "spi_miso"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_1",
+      "name": "SDO",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connect_to": "SPI4W: SDO; SPI3W: DNC; I2C: GND for default I2C address",
+            "description": "SDO — primary interface: serial data output in SPI 4W; I2C address bit-0 select in I2C mode.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "spi_mosi"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_2",
+      "name": "ASDx",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connect_to": "VDDIO or DNC or Aux SDA or OIS SDI; do not connect to GND if unused",
+            "description": "ASDx — secondary interface: Aux interface / OIS interface data (Aux SDA or OIS SDI).",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_scl",
+        "spi_sck"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_3",
+      "name": "ASCx",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 3,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connect_to": "VDDIO or DNC or Aux SCL or OIS SCK; do not connect to GND if unused",
+            "description": "ASCx — secondary interface: Aux interface / OIS interface clock (Aux SCL or OIS SCK).",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_4",
+      "name": "INT1",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 4,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "INT1 — interrupt pin 1. If unused, do not connect. Can be configured as input for FIFO external data synchronization.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_5",
+      "name": "VDDIO",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V",
+          "value": 1.8
+        }
+      ],
+      "pin": 5,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VDDIO — digital I/O supply voltage (1.2 … 3.6V).",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_6",
+      "name": "GNDIO",
+      "pin": 6,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GNDIO — ground for I/O.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_7",
+      "name": "GND",
+      "pin": 7,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GND — ground for digital & analog.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_8",
+      "name": "VDD",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.71,
+            3.6
+          ],
+          "unit": "V",
+          "value": 1.8
+        }
+      ],
+      "pin": 8,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VDD — power supply analog & digital domain (1.71V – 3.6V).",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_9",
+      "name": "INT2",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 9,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "INT2 — interrupt pin 2. If unused, do not connect. Can be configured as input for FIFO external data synchronization.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "spi_ss"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_10",
+      "name": "OCSB",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 10,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connect_to": "DNC or OIS CSB; tie to GND only if IF_CONF.ois_en = 0",
+            "description": "OCSB — secondary OIS interface chip select (digital in).",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "spi_miso"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_11",
+      "name": "OSDO",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 11,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connect_to": "DNC or OIS SDO; tie to GND only if IF_CONF.ois_en = 0",
+            "description": "OSDO — secondary OIS interface serial data out (digital out).",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "spi_ss"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_12",
+      "name": "CSB",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 12,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connect_to": "SPI: CSB; I2C: VDDIO (DNC possible with internal pull-up, not recommended)",
+            "description": "CSB — primary interface chip select for SPI mode.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "spi_sck",
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_13",
+      "name": "SCx",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 13,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SCx — primary interface: SCK for SPI serial clock, SCL for I2C serial clock.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "spi_mosi",
+        "i2c_sda"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "pin_14",
+      "name": "SDx",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.2,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 14,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SDx — primary interface: SDA serial data I/O in I2C; SDI serial data input in SPI 4W; SDA (SDIO) serial data I/O in SPI 3W.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "i2c",
+      "name": "Primary I2C (target)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            0,
+            1000000
+          ],
+          "unit": "Hz"
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 104
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "pin_13",
+            "sda": "pin_14"
+          },
+          "id": "i2c_default",
+          "label": "Primary I2C (target)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "alternate_address": 105,
+            "note": "7-bit address 0x68 with SDO (pin 1) to GND, 0x69 with SDO to VDDIO. Standard (100 kHz), fast (400 kHz) and fast-mode plus (1000 kHz); 7-bit addressing only. Tie CSB (pin 12) to VDDIO for I2C.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (§6.5, Table 22)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "spi_4wire",
+      "name": "Primary SPI 4-wire (target)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            0,
+            10000000
+          ],
+          "unit": "Hz"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "miso": "pin_1",
+            "mosi": "pin_14",
+            "sck": "pin_13",
+            "ss": "pin_12"
+          },
+          "id": "spi_4wire_default",
+          "label": "Primary SPI 4-wire (target)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "spi"
+        }
+      ],
+      "slots": [
+        {
+          "id": "mosi",
+          "match": {
+            "capability": "spi_mosi",
+            "protocol": "spi",
+            "role": "data_out"
+          },
+          "required": true
+        },
+        {
+          "id": "miso",
+          "match": {
+            "capability": "spi_miso",
+            "protocol": "spi",
+            "role": "data_in"
+          },
+          "required": true
+        },
+        {
+          "id": "sck",
+          "match": {
+            "capability": "spi_sck",
+            "protocol": "spi",
+            "role": "clock"
+          },
+          "required": true
+        },
+        {
+          "id": "ss",
+          "match": {
+            "capability": "spi_ss",
+            "protocol": "spi",
+            "role": "select"
+          },
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "fSPI max 10 MHz at VDDIO >= 1.62 V (30 pF load), 7 MHz at VDDIO < 1.62 V. SPI 3-wire is also supported with SDx as SDIO and SDO DNC (not modelled as a separate bus).",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 19, Table 22)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "aux_i2c",
+      "name": "Secondary AUX I2C (controller)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            0,
+            1000000
+          ],
+          "unit": "Hz"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "pin_3",
+            "sda": "pin_2"
+          },
+          "id": "aux_i2c_default",
+          "label": "Secondary AUX I2C (controller)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "master"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Aux interface to connect an I2C slave sensor device (e.g. magnetometer): ASCx push-pull, ASDx open-drain; internal pull-up configured in AUX_IF_TRIM.asda_pupsel, no external pull-ups needed. Secondary I2C timings follow I2C fast-mode plus (up to 1 MHz); fast-mode (400 kHz) operation requires contacting Bosch Sensortec. No other I2C masters/slaves may share this bus.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (§6.6.1, Table 21, Table 22 note **)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "ois_spi",
+      "name": "Secondary OIS SPI (target)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            0,
+            10000000
+          ],
+          "unit": "Hz"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "miso": "pin_11",
+            "mosi": "pin_2",
+            "sck": "pin_3",
+            "ss": "pin_10"
+          },
+          "id": "ois_spi_default",
+          "label": "Secondary OIS SPI (target)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "spi"
+        }
+      ],
+      "slots": [
+        {
+          "id": "mosi",
+          "match": {
+            "capability": "spi_mosi",
+            "protocol": "spi",
+            "role": "data_out"
+          },
+          "required": true
+        },
+        {
+          "id": "miso",
+          "match": {
+            "capability": "spi_miso",
+            "protocol": "spi",
+            "role": "data_in"
+          },
+          "required": true
+        },
+        {
+          "id": "sck",
+          "match": {
+            "capability": "spi_sck",
+            "protocol": "spi",
+            "role": "clock"
+          },
+          "required": true
+        },
+        {
+          "id": "ss",
+          "match": {
+            "capability": "spi_ss",
+            "protocol": "spi",
+            "role": "select"
+          },
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "OIS interface on ASDx (SDI), ASCx (SCK), OCSB, OSDO; enabled with IF_CONF.ois_en; 10 MHz slave SPI. OIS 3-wire (ASDx as SDA/SDIO, OSDO DNC, IF_CONF.spi3_ois) is also supported, not modelled as a separate bus.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Key features, §6.6 Table 21, Table 22)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount",
+        "lga14_2p5x3p0_0p5mm"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 1.662,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "LGA-14 pads (SMD)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "lga_14",
+            "note": "14 metallized Cu pads on the underside, pitch 0.5 mm; side pads 0.475 x 0.25 mm, top/bottom pads 0.25 x 0.475 mm; package 3.00 x 2.50 x 0.83 mm.",
+            "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (§8.1)"
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Bosch Sensortec",
+  "name": "Bosch BMI270",
+  "part_number": "BMI270",
+  "tags": [
+    "bmi270",
+    "bosch",
+    "imu",
+    "accelerometer",
+    "gyroscope",
+    "6-axis",
+    "i2c",
+    "spi",
+    "lga-14"
+  ],
+  "traits": [
+    {
+      "params": {
+        "power_on_time_ms": 2,
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 1)",
+        "temperature_C": [
+          -40,
+          85
+        ],
+        "vdd_V": [
+          1.71,
+          3.6
+        ],
+        "vddio_V": [
+          1.2,
+          3.6
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "esd": "HBM 2 kV, CDM 500 V, MM 200 V",
+        "logic_pin_V": "-0.3 to VDDIO+0.3, < 4",
+        "mechanical_shock": "20,000 g (<= 200 us), 2,000 g (<= 1.0 ms)",
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 5)",
+        "storage_temperature_C": [
+          -50,
+          150
+        ],
+        "vdd_V": [
+          -0.3,
+          4
+        ],
+        "vddio_V": [
+          -0.3,
+          4
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "accel_odr_Hz": [
+          0.78,
+          1600
+        ],
+        "accel_ranges_g": [
+          2,
+          4,
+          8,
+          16
+        ],
+        "fifo_bytes": 2048,
+        "gyro_odr_Hz": [
+          25,
+          6400
+        ],
+        "gyro_ranges_dps": [
+          125,
+          250,
+          500,
+          1000,
+          2000
+        ],
+        "kind": "imu",
+        "resolution_bits": 16,
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Basic description, key features)"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Unused INT1/INT2: do not connect. Unused ASDx/ASCx: VDDIO or DNC, never GND. OCSB/OSDO: DNC, or GND only if IF_CONF.ois_en = 0. The device needs an 8 kB configuration file written to INIT_DATA after power-up before advanced features work.",
+        "source": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf (Table 22 notes, §4 initialization)"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "supply max current",
+        "resolution": "No max_current set; datasheet typical IDD recorded in electrical metadata.",
+        "sources": [
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/bosch-bmi270/definition.json",
+          "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf"
+        ],
+        "values": [
+          "1 mA per supply (ProtoPart power_domains)",
+          "IDD typ 685 uA normal / 970 uA performance, no maximum (datasheet Table 1)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "CAD pad thickness",
+        "reason": "§8.1 does not dimension pad thickness; pads are drawn flush with the seating plane.",
+        "value": "0.02 mm"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "fields": [
+          "manufacturer CAD"
+        ],
+        "note": "No manufacturer CAD: the Bosch product page lists no 3D model; Digi-Key and SnapEDA pages returned HTTP 403 to fetch; Ultra Librarian requires a login. Geometry generated from datasheet §8.1 (library/cad/py/catalog/bosch-bmi270.py)."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.1.0"
+}

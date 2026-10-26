@@ -1,0 +1,57 @@
+{
+  "artifact": "murata-grm1555c1h200ja01",
+  "tool": "build123d (representative geometry from datasheet dimensions, parts/local/cadkit/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "29f347f9f792d69442d633969cbf8ea459f4f9b36db2400ba229298157b0162a",
+  "units": "mm",
+  "volume_mm3": 0.25,
+  "bodies": {
+    "ceramic_body": 0.125,
+    "termination_1": 0.062,
+    "termination_2": 0.062
+  },
+  "features": {
+    "pin_1": {
+      "area_mm2": 0.125,
+      "centroid": [
+        -0.375,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.125,
+      "centroid": [
+        0.375,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 2,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "features": {
+    "neg": {
+      "area_mm2": 0.283,
+      "centroid": [
+        -2.5,
+        0,
+        -1
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    },
+    "pos": {
+      "area_mm2": 0.283,
+      "centroid": [
+        2.5,
+        0,
+        -1
+      ],
+      "faces": 1,
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    }
+  },
+  "generator": "parts/local/panasonic-eeu-fr1v471/part-cad/bulk_capacitor.py",
+  "generatorDigest": "sha256:7450a69b8614566a484ecacc09fa1588771db6350da16bdde2188d4a5c9cbe81",
+  "module": "panasonic-eeu-fr1v471",
+  "schema": "protoboard.part-cad.source/v0",
+  "toolVersion": "0.13.0",
+  "volume_mm3": 1254.841
+}

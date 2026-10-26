@@ -1,0 +1,120 @@
+/* Watch main board: Zephyr 4.2.0 board devicetree, generated from the UHD model by @protoboardai/ext-zephyr. Do not edit. */
+/* WARNING: u2 (bosch-bmi270): no Zephyr driver in this provider's table; its node has no compatible, so the application finds it by the label u2 and drives it itself */
+/* WARNING: u3 (adi-max30102efd): no Zephyr driver in this provider's table; its node has no compatible, so the application finds it by the label u3 and drives it itself */
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi> /* raytac-mdbt50q-1mv2: Nordic nRF52840 revision 2, aQFN-73 */
+#include "wearable_watch-pinctrl.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/display/panel.h>
+
+/ {
+	model = "Watch main board";
+	compatible = "protoboard,wearable-watch";
+
+	chosen {
+		zephyr,sram = &sram0; /* on-chip RAM */
+		zephyr,flash = &flash0; /* on-chip flash */
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		button_sw1: button_0 {
+			gpios = <&gpio1 2 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>; /* Button 1 (wake / select): u1:pin_50 P1.02 */
+			label = "Button 1 (wake / select)";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+		button_sw2: button_1 {
+			gpios = <&gpio1 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>; /* Button 2 (back): u1:pin_56 P1.04 */
+			label = "Button 2 (back)";
+			zephyr,code = <INPUT_KEY_1>;
+		};
+	};
+
+	mipi_dbi_ds1: mipi-dbi-ds1 {
+		compatible = "zephyr,mipi-dbi-spi"; /* display on SPI with D/C (MIPI DBI type C, 4-wire) */
+		spi-dev = <&spi3>;
+		dc-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>; /* Display D/C: u1:pin_38 P0.16 */
+		reset-gpios = <&gpio0 17 GPIO_ACTIVE_LOW>; /* Display RESET: u1:pin_41 P0.17 */
+		write-only; /* the panel has no MISO: it is written, never read */
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ds1: gc9x01x@0 {
+			compatible = "galaxycore,gc9x01x"; /* GC9A01 (GC9A01A) (eastrising-er-tft128-1) */
+			reg = <0>; /* chip select 0 of spi3 */
+			mipi-max-frequency = <32000000>; /* 32 MHz: the slower of the panel and spi3 */
+			pixel-format = <PANEL_PIXEL_FORMAT_RGB_565>; /* 65K colours */
+			width = <240>;
+			height = <240>;
+		};
+	};
+
+	zephyr,user {
+		u2-int1-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>; /* IMU INT1: u1:pin_46 P0.22 */
+		u2-int2-gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>; /* IMU INT2: u1:pin_45 P0.23 */
+		u3-int-gpios = <&gpio0 19 GPIO_ACTIVE_LOW>; /* Heart-rate sensor INT: u1:pin_42 P0.19, pulled up by r6 */
+		u5-alrt-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>; /* Fuel gauge ALRT: u1:pin_22 P0.06, pulled up by r7 */
+		u6-stat-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>; /* Charger STAT (through r10): u1:pin_24 P0.08, pulled down by r11 */
+		q1-g-gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>; /* Backlight switch G: u1:pin_44 P0.20, pulled down by r8 */
+		wakeup-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>, <&gpio1 4 GPIO_ACTIVE_LOW>, <&gpio0 22 GPIO_ACTIVE_HIGH>; /* wake from System OFF: sw1, sw2, u2 (any nRF52840 GPIO can, through its SENSE level) */
+	};
+};
+
+&i2c0 {
+	compatible = "nordic,nrf-twim"; /* EasyDMA TWI master */
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_FAST>; /* 400 kHz: the slowest device allows 400 kHz */
+
+	u2: sensor-motion@68 {
+		reg = <0x68>; /* I2C address 0x68 (bosch-bmi270) */
+	};
+
+	u3: sensor-biometric@57 {
+		reg = <0x57>; /* I2C address 0x57 (adi-max30102efd) */
+	};
+
+	u4: haptics@5a {
+		compatible = "ti,drv2605"; /* Haptic driver (ti-drv2605ldgs) */
+		reg = <0x5a>; /* I2C address 0x5a (ti-drv2605ldgs) */
+		actuator-mode = "LRA"; /* firmware.config.ts */
+		en-gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>; /* Haptic driver EN: u1:pin_43 P0.21 */
+	};
+
+	u5: fuel-gauge@36 {
+		compatible = "maxim,max17048"; /* Fuel gauge (adi-max17048g-t10) */
+		reg = <0x36>; /* I2C address 0x36 (adi-max17048g-t10) */
+	};
+};
+
+&spi3 {
+	compatible = "nordic,nrf-spim"; /* EasyDMA SPI master */
+	status = "okay";
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio0 15 GPIO_ACTIVE_LOW>; /* ds1 CS u1:pin_39 P0.15 */
+};
+
+&reg1 {
+	regulator-initial-mode = <NRF5X_REG_MODE_DCDC>; /* REG1 DC/DC inductor is inside the module */
+};
+
+&gpiote {
+	status = "okay"; /* GPIO interrupts */
+};
+
+&gpio0 {
+	status = "okay"; /* used: P0.00, P0.01, P0.06, P0.08, P0.13, P0.14, P0.15, P0.16, P0.17, P0.19, P0.20, P0.21, P0.22, P0.23, P0.24, P0.25 */
+};
+
+&gpio1 {
+	status = "okay"; /* used: P1.02, P1.04 */
+};
+
+zephyr_udc0: &usbd {
+	status = "okay"; /* USB D+/D- wired to d1, j1 */
+};

@@ -1,0 +1,18 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/hardware_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "580616264d5b7bd12071e3282732339e15f37ddf9954da8376a1bc3f34bee9b9",
+  "units": "mm",
+  "volume_mm3": 113.787,
+  "bodies": {
+    "screw": 113.787
+  },
+  "features": {},
+  "exportedFrom": {
+    "file": "parts/local/motor-screw-m3x8/frame-cad/params.json",
+    "digest": "sha256:e6fe9114cdd5d9cda812bea1dba2ca6731741c28ae0c5298b2a43589dc32cff1"
+  }
+}

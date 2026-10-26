@@ -1,0 +1,118 @@
+[
+  {
+    "id": "src_product",
+    "title": "The O-Ring Store: AS568-138 S70 FDA Silicone (VMQ) 70 Duro O-Ring, model S70138",
+    "url": "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4682",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T03:00:00Z",
+    "sha256": "672013d6574f29f51d811e244098def02096d9d1c96a9bfdf9de02f6fa250adf",
+    "supports": [
+      "identity: AS568-138, S70 FDA silicone (VMQ) 70 Duro, model (SKU) S70138",
+      "dimensions: 2-1/8\" ID x 2-5/16\" OD x 3/32\" CS nominal; actual 2.112\" ID x 0.103\" CS; metric 53.64 mm ID x 2.62 mm CS",
+      "colour: brick red; FDA",
+      "operating temperature: up to approximately 400 °F (204 °C), cold flexibility down to approximately -75 °F (-59 °C)",
+      "media: moderate water resistance; not compatible with silicone grease and oils, super-heated steam over 250 °F",
+      "price breaks and minimum quantity 10 (snapshot)",
+      "links the compound data sheet (src_datasheet)"
+    ],
+    "note": "Saved as .research/downloads/ors-s70138.html (HTTP 200). A supplier SKU for a standard size; no single manufacturer makes AS568 rings."
+  },
+  {
+    "id": "src_datasheet",
+    "title": "The O-Ring Store product data sheet: FDA Silicone 70 Durometer O-Ring, compound TORS VMQ-70 (legacy S70), Revision A",
+    "url": "http://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T03:05:00Z",
+    "sha256": "0e7e26c86215f2d2e3c5ba18f2e6453845229860bd5dc3cc999652dcedeea570",
+    "supports": [
+      "material: silicone rubber, methyl vinyl siloxane, ISO 1629 VMQ; compression or transfer moulded",
+      "hardness 70 ± 5 Shore A (ASTM D2240 test value 70)",
+      "regulatory: FDA compliant to 21 CFR 177.2600 (formulation and test based claim, ASTM D2000 Z callout); not NSF/ANSI 51, NSF/ANSI/CAN 61, USP Class VI or 3-A certified; RoHS not on file",
+      "ASTM D2000 line callout MBGE606 A19 B37 EA14 EO36 F19 Z",
+      "specific gravity 1.38 (ASTM D297)",
+      "elongation 269 %; compression set 15 % (22 h at 175 °C, ASTM D395 B)",
+      "water: -2 Shore A / +3 % volume after 70 h at 100 °C",
+      "service temperature: -80 °F to +400 °F (-62 °C to +204 °C) continuous dry air; hot water below +212 °F (+100 °C); brittleness pass at -55 °C",
+      "static seals only; static squeeze 15 to 30 %; installed stretch under 5 %; gland fill 65 to 85 % at temperature; static surface finish 16 to 32 µin Ra",
+      "never lubricate with silicone grease; use a compatible FDA-grade lubricant",
+      "shelf life effectively unlimited under SAE ARP5316 storage"
+    ],
+    "note": "Saved as .research/downloads/ors-vmq-s70-datasheet.pdf (3 pages). The data sheet flags its own tensile figure (6.9) as a probable hundreds-of-psi shorthand; tensile is not used in the part."
+  },
+  {
+    "id": "src_apple_as568",
+    "title": "Apple Rubber AS568 Standard O-Rings Quick Reference Chart",
+    "url": "https://www.applerubber.com/src/pdf/as568-standard-size-o-rings.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:05:00Z",
+    "sha256": "23d3fbaa360410ef5b663a9b07b7092bb6c2fc3ac94575f4a5279eb8a38dc01c",
+    "supports": [
+      "AS568 is the SAE aerospace size standard for O-rings: ID, cross-section, tolerances and dash numbers",
+      "-138: ID 2.112 ± .017 in, CS .103 ± .003 in, nominal 2 1/8 x 2 5/16 x 3/32",
+      "OD is for reference only; O-rings are specified by ID and CS",
+      "standard durometer 70 Shore A, tolerance ± 5",
+      "flash for standard sizes 0.005 in thick by 0.003 in extension",
+      "silicone class temperature -85 to +400 °F"
+    ],
+    "note": "An O-ring manufacturer's chart, used as the manufacturer-authority size source for the standard. Saved as .research/downloads/apple-as568.pdf."
+  },
+  {
+    "id": "src_size_chart",
+    "title": "O-Ring Handbook: AS568 O-Ring Size Chart (Dash Numbers)",
+    "url": "https://oringhandbook.com/as568-o-ring-size-chart/",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T03:00:00Z",
+    "sha256": "834e14ea7882e3b7d107cceb23298630af6e87ee5057dc493a21b725e9818f4e",
+    "supports": [
+      "-138: ID 2.112 ± .017 in (53.64 ± 0.43 mm), CS 0.103 ± .003 in (2.62 ± 0.08 mm), OD 2.318 in (58.88 mm)",
+      "OD = ID + 2 x CS",
+      "tolerances are the AS568 published limits for standard (AN) shrinkage compounds",
+      "AS568 is a size standard and does not specify material"
+    ],
+    "note": "The smart-bottle brief's [B23]. Linked from The O-Ring Store's site as its handbook. Saved as .research/downloads/oringhandbook.html."
+  },
+  {
+    "id": "src_size_chart_arc",
+    "title": "American Rubber Corp: AS568 O-Ring Size Chart",
+    "url": "https://www.americanrubbercorp.com/products/standard-o-rings/as568-o-ring-size-chart/",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T03:00:00Z",
+    "sha256": "7b13969644cedfe956c3cddbc57d32ab8395efae1d53a9384e08069712a0b6bf",
+    "supports": ["-138 cross-check: CS 0.103 in (2.62 mm), ID 2.112 ± .017 in (53.64 ± .43 mm), nominal 2-1/8 x 2-5/16 x 3/32"],
+    "note": "The cross-check named in the brief's [B23]. Saved as .research/downloads/arc.html."
+  },
+  {
+    "id": "src_gland_mnr",
+    "title": "Minnesota Rubber & Plastics: Groove Design, O-Ring Seals (recommended starting dimensions)",
+    "url": "https://www.mnrubber.com/tools-resources/design-guide/rubber-standard-parts/groove-design-o-ring-seals/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:10:00Z",
+    "sha256": "1077a1aa364179c6b9ba1931e76ef59ef5ebaabde16a1d885361956abec2b850",
+    "supports": [
+      "0.103 ± 0.003 in (2.62 ± 0.08 mm) cross-section (Q8102-Q8178): static gland depth 0.082 in (2.08 mm), static axial groove width 0.115 +0.005/-0 in (2.92 +0.13 mm)",
+      "face seal: choose the ID so the ring sits on the side of the groove opposite the pressure",
+      "gland fill rule of thumb: do not exceed about 90 %"
+    ],
+    "note": "Design guidance for the host groove (the cap), not a property of the ring. Saved as .research/downloads/mnrubber-groove.html."
+  },
+  {
+    "id": "src_gland_marco",
+    "title": "Marco Sealing Solutions: O-Ring Groove Design for Face Seals",
+    "url": "https://www.marcorubber.com/o-ring-groove-design-face-seal.htm/",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T03:10:00Z",
+    "sha256": "d92df15c251691d8d8ad9cafdbe4b41e9a8d0aee939997b9f0597362cd9f4558",
+    "supports": [
+      "-100 series (0.103 ± 0.003 in CS) face seal gland: width 0.121 ± 0.003 in, depth 0.078 ± 0.003 in, corner radii R1 0.010, R2 0.005 in",
+      "surface finish 16 Ra max for gases, 32 Ra max for fluids"
+    ],
+    "note": "Second face-gland reference; it differs from src_gland_mnr in width and depth (recorded as a usage note, not a part property). Saved as .research/downloads/marco-face.html."
+  }
+]

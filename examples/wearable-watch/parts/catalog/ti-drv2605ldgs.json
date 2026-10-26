@@ -1,0 +1,1429 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "TI DRV2605L datasheet SLOS854D",
+      "type": "datasheet",
+      "url": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+    },
+    {
+      "id": "art_product",
+      "name": "TI DRV2605L product folder",
+      "type": "documentation",
+      "url": "https://www.ti.com/product/DRV2605L"
+    },
+    {
+      "id": "art_part_details",
+      "name": "TI DRV2605LDGSR part details",
+      "type": "documentation",
+      "url": "https://www.ti.com/product/DRV2605L/part-details/DRV2605LDGSR"
+    },
+    {
+      "filePath": "library/cad/py/catalog/ti-drv2605ldgs.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "ti-drv2605l-dgs10 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/ti-drv2605ldgs/artifacts/cad/ti-drv2605l-dgs10.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "ti-drv2605l-dgs10 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/ti-drv2605ldgs/artifacts/cad/ti-drv2605l-dgs10.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "ti-drv2605l-dgs10 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/ti-drv2605ldgs/artifacts/cad/ti-drv2605l-dgs10.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "ti-drv2605l-dgs10 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/ti-drv2605ldgs/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "actuator.haptic",
+    "component.ic"
+  ],
+  "description": "Texas Instruments DRV2605L haptic driver for LRA and ERM actuators in the 10-pin VSSOP (DGS) package: 2-5.2 V supply, I2C target at fixed address 0x5A (400 kHz), licensed Immersion TouchSense 2200 effect library, closed-loop LRA auto-resonance (125-300 Hz), PWM/analog/trigger input on IN/TRIG, differential switching output, 4 uA shutdown.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "en_pulldown_ohm": 2000000,
+        "logic_levels": {
+          "sda_vol_condition": "IOL 4 mA",
+          "sda_vol_max_V": 0.4,
+          "vih_min_V": 1.3,
+          "vil_max_V": 0.5
+        },
+        "pwm_output_frequency_kHz": [
+          19.5,
+          20.5,
+          21.5
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.3, §6.5, §6.7)",
+        "startup_time_ms": {
+          "from_en_pwm_analog": 1.5,
+          "from_go_or_trigger": 0.7
+        },
+        "supply_current_uA": {
+          "quiescent_no_signal": [
+            500,
+            650
+          ],
+          "shutdown": [
+            4,
+            7
+          ],
+          "standby": [
+            4.1,
+            7
+          ]
+        }
+      },
+      "power_domains": [
+        {
+          "id": "vdd",
+          "name": "Supply (VDD)",
+          "voltage_range_V": [
+            2,
+            5.2
+          ]
+        },
+        {
+          "id": "reg",
+          "name": "Internal 1.8 V regulator (REG)",
+          "nominal_voltage_V": 1.83,
+          "regulation_type": "regulated"
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 1.1,
+        "length": 3,
+        "width": 4.9
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "body_mm": "2.9-3.1 x 2.9-3.1; lead span 4.75-5.05; height 1.1 max",
+        "dimensions_note": "length along the pin rows (body), width across the leads (span), height is the drawing maximum",
+        "marking": "05L",
+        "mounting_method": "surface_mount",
+        "msl": "Level-2-260C-1 YEAR",
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+      },
+      "package": {
+        "code": "DGS (DGS0010A)",
+        "exposed_pad": false,
+        "name": "VSSOP-10",
+        "pin_count": 10,
+        "pitch_mm": 0.5,
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (Device Information: VSSOP (10) 3.00 mm × 3.00 mm; §5 \"DGS Package 10-Pin VSSOP\"; DGS0010A outline: body 2.9-3.1 × 2.9-3.1, span 4.75-5.05, 8X 0.5 pitch, 1.1 mm max height, JEDEC MO-187 BA); https://www.ti.com/product/DRV2605L (VSSOP (DGS) 10: 14.7 mm², 3 mm × 4.9 mm)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "junction_C": [
+          -40,
+          150
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.1; addendum)",
+        "storage_C": [
+          -65,
+          150
+        ]
+      },
+      "operating_temperature_C": [
+        -40,
+        85
+      ]
+    }
+  ],
+  "id": "ti-drv2605ldgs",
+  "interfaceGroups": [
+    {
+      "id": "required_supply_pins",
+      "label": "VDD (10) and GND (8)",
+      "members": [
+        "pin_10",
+        "pin_8"
+      ],
+      "policy": "all_of"
+    },
+    {
+      "id": "output_pair",
+      "label": "OUT+ (7) and OUT- (9) drive one actuator",
+      "members": [
+        "pin_7",
+        "pin_9"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                -2.175,
+                1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "REG",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 1.83
+        }
+      ],
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "REG (O) — The REG pin is the 1.8-V regulator output. A 1-µF capacitor required.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "V(REG) 1.83 V typ. Place a 1 uF X5R/X7R capacitor from REG to ground, close to the pin. Internal rail only: no external load rating is given. A REG short is current-limited and the device is not functional until it is removed.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.5, §8.3.12.3, §9.2.2.2, §11.1)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                -2.175,
+                0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "SCL",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.2
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SCL (I) — I2C clock.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "open_drain"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_3",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                -2.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_3",
+      "name": "SDA",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.2
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 3,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SDA (I/O) — I2C data.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "pwm_in",
+        "analog_in",
+        "trigger_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_4",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                -2.175,
+                -0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_4",
+      "name": "IN/TRIG",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.2
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "max_frequency",
+          "range": [
+            10000,
+            250000
+          ],
+          "unit": "Hz"
+        }
+      ],
+      "pin": 4,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "IN/TRIG (I) — Multi-mode Input. I2C is selectable as PWM, analog, or trigger. If not used, this pin should be connected to GND.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "PWM input 10-250 kHz (0-100 % duty); analog input 0-1.8 V (audio-to-vibe full scale 1.8 Vpp, 1 uF optional AC-coupling capacitor; 100 kohm to V(CM_ANA) 0.9 V); trigger input: edge or level trigger of the GO bit. Connect to GND when unused.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.3, §6.5, §8.3.5.6, Table 32)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "enable"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_5",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                -2.175,
+                -1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_5",
+      "name": "EN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.2
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 5,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "EN (I) — Device enable",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "EN high = active, EN low = shutdown (registers kept). EN must be high to write I2C registers; with EN low the device can still ACK but no read or write is possible. 2 Mohm internal pull-down, so the device is in shutdown when EN floats.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.5, §8.4.1.3)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_6",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                -1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_6",
+      "name": "VDD/NC",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            2,
+            5.2
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 6,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VDD/NC (P) — Optional supply input. This pin should be tied to VDD or left floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "haptic_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_7",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                -0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_7",
+      "name": "OUT+",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.2
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 7,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "OUT+ (O) — Positive haptic driver differential output",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_8",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_8",
+      "name": "GND",
+      "pin": 8,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GND (P) — Supply ground",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "power_out",
+        "motor_out",
+        "haptic_out"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_9",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_9",
+      "name": "OUT-",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.2
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 9,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "OUT– (O) — Negative haptic driver differential output",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_10",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_10",
+      "name": "VDD",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            2,
+            5.2
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.0005
+        }
+      ],
+      "pin": 10,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VDD (P) — Supply Input (2 V to 5.2 V). A 1-µF capacitor is required.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5 Pin Functions, DGS package)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_3",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                -2.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                -2.175,
+                0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c",
+      "name": "I2C (target)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            0,
+            400000
+          ],
+          "unit": "Hz"
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 90
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "pin_2",
+            "sda": "pin_3"
+          },
+          "id": "i2c_default",
+          "label": "I2C (target)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "7-bit address 0x5A, fixed (0xB4 write / 0xB5 read). SCL up to 400 kHz. 1.8 V logic thresholds (VIL <= 0.5 V, VIH >= 1.3 V), tolerant up to VDD: SDA and SCL must not exceed VDD (absolute max VDD + 0.3 V). External pull-ups 660 ohm to 4.7 kohm (2.2 kohm typical). EN must be high to write registers. A stalled transaction is reset by a 4.33 ms watchdog, except in standby.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.1, §6.3, §6.6, §8.3.11, §8.5.3.1, Table 32)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "bridgesTo": [
+        "actuator_output"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_10",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_6",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                -1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_8",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "supply",
+      "name": "Supply (VDD + GND)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            2,
+            5.2
+          ],
+          "unit": "V"
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.0005
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "gnd": "pin_8",
+            "vdd": "pin_10",
+            "vdd_nc": "pin_6"
+          },
+          "default_active": true,
+          "id": "vdd_pins",
+          "label": "VDD 10, VDD/NC 6, GND 8"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "vdd",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "vdd_nc",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": false
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "2-5.2 V (below 2 V not recommended; 5.5 V absolute max), runs directly from a Li-ion cell. Shutdown (EN = 0) 4 uA typ / 7 uA max; standby (STANDBY = 1) 4.1 / 7 uA; quiescent with no signal 0.5 / 0.65 mA; average 2.4 mA (LRA) / 2.3 mA (ERM), 3.5 mA max at 90 % duty with no load. The actuator current is drawn through VDD as well and is not in current_draw.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.3, §6.5, §8.4.1.1-8.4.1.2)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "1 uF X5R/X7R capacitor from VDD to GND, placed close to the VDD pin. Tie VDD/NC (pin 6) to VDD or leave it floating.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§5, Table 32, §11.1)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "haptic_out",
+        "lra_drive",
+        "erm_drive"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_7",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                -0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_9",
+            "signature": {
+              "area_mm2": 0.121,
+              "centroid": [
+                2.175,
+                0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "actuator_output",
+      "max_instances": 1,
+      "name": "Haptic actuator output (OUT+ / OUT-)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.2
+          ],
+          "unit": "V"
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "phase_a": "pin_7",
+            "phase_b": "pin_9"
+          },
+          "default_active": true,
+          "id": "out_pair",
+          "label": "OUT+ / OUT- (pins 7 / 9)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "phase_a",
+          "match": {
+            "capability": "motor_out",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        },
+        {
+          "id": "phase_b",
+          "match": {
+            "capability": "motor_out",
+            "protocol": "power",
+            "role": "output"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Differential switching output for one LRA (125-300 Hz, closed-loop auto-resonance) or one ERM. PWM output 20.5 kHz typ (19.5-21.5). Peak amplitude set by OD_CLAMP (LRA: 21.22 mV x OD_CLAMP) and RATED_VOLTAGE; the output cannot exceed VDD. Load >= 8 ohm at VDD 5.2 V; a load below the 4 ohm threshold latches OC_DETECT and shuts the output down. Output impedance in shutdown 15 kohm to GND.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.3, §6.5, §6.7, §8.3.12.2, §8.5.2.2)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 1.21,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "VSSOP-10 (DGS) leads (SMD)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "vssop_10_dgs",
+            "note": "10 gull-wing leads, pitch 0.5 mm, width 0.17-0.27, thickness 0.13-0.23, foot 0.4-0.7 mm; body 2.9-3.1 x 2.9-3.1 mm, span 4.75-5.05 mm, 1.1 mm max height; no exposed pad. MSL Level-2-260C-1 YEAR, NIPDAUAG | SN finish.",
+            "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (DGS0010A; package option addendum)"
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Texas Instruments",
+  "name": "TI DRV2605L haptic driver (VSSOP-10)",
+  "part_number": "DRV2605LDGSR",
+  "tags": [
+    "drv2605l",
+    "texas-instruments",
+    "ti",
+    "haptic",
+    "haptic-driver",
+    "lra",
+    "erm",
+    "i2c",
+    "vssop-10",
+    "ic"
+  ],
+  "traits": [
+    {
+      "params": {
+        "en_sda_scl_in_trig_V": "-0.3 to VDD + 0.3",
+        "esd": "VSSOP: HBM ±500 V (OUT+, OUT-), ±1000 V other pins; CDM ±250 V",
+        "junction_temperature_C": [
+          -40,
+          150
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.1, §6.2)",
+        "storage_temperature_C": [
+          -65,
+          150
+        ],
+        "vdd_V": [
+          -0.3,
+          5.5
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "ambient_temperature_C": [
+          -40,
+          85
+        ],
+        "analog_input_V": [
+          0,
+          1.8
+        ],
+        "load_impedance_condition": "VDD = 5.2 V",
+        "load_impedance_min_ohm": 8,
+        "logic_vih_min_V": 1.3,
+        "logic_vil_max_V": 0.5,
+        "lra_frequency_Hz": [
+          125,
+          300
+        ],
+        "pwm_input_frequency_kHz": [
+          10,
+          250
+        ],
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§6.1, §6.3)",
+        "vdd_V": [
+          2,
+          5.2
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "actuators": [
+          "LRA",
+          "ERM"
+        ],
+        "channels": 1,
+        "features": "Smart-loop: automatic overdrive and braking, LRA auto-resonance tracking and reporting, actuator diagnostics, level auto-calibration; licensed Immersion TouchSense 2200 (over 100 effects: 6 ERM libraries, 1 LRA library), audio-to-vibe; I2C real-time playback; PWM/analog/trigger input",
+        "kind": "haptic_driver",
+        "overcurrent_load_threshold_ohm": 4,
+        "protection": "thermal shutdown (OVER_TEMP), actuator over-current latch (OC_DETECT), REG over-current limit",
+        "pwm_output_frequency_kHz": 20.5,
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (§1, §6.5, §6.7, §8.3.12)"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "C(VDD) 1 uF, C(REG) 1 uF, optional C(IN) 1 uF AC coupling on IN/TRIG, I2C pull-ups 2.2 kohm typical. Place the VDD and REG capacitors close to their pins.",
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (Table 32, §11.1)",
+        "topic": "external components and layout"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "VDD decoupling capacitor",
+        "resolution": "1 uF: the pin table and Table 32 are the specification; §9.2.2.2 was not updated with them.",
+        "sources": [
+          "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+        ],
+        "values": [
+          "1 uF required (§5 pin table; Table 32 C(VDD), changed from 0.1 uF in the revision history)",
+          "0.1 uF low-ESR X5R/X7R near VDD (§9.2.2.2)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "note": "Orderable DRV2605LDGSR (active, 2500 large T&R, marking 05L); DRV2605LDGST is the same device on a 250 small reel. DRV2605LYZF (DSBGA-9) and the automotive DRV2605L-Q1 are separate parts.",
+        "source": [
+          "https://www.ti.com/lit/ds/symlink/drv2605l.pdf (package option addendum)",
+          "https://www.ti.com/product/DRV2605L/part-details/DRV2605LDGSR"
+        ],
+        "topic": "variant"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "output current rating",
+        "note": "No continuous or peak output current is stated; the datasheet limits the load instead (>= 8 ohm at VDD 5.2 V, over-current at 4 ohm), so actuator_output has no max_current.",
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "DGS thermal resistance",
+        "note": "§6.4 gives thermal metrics for the YZF (DSBGA) package only (RθJA 145.2 °C/W); none for DGS.",
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "TI's product folder offers the VSSOP (DGS) 3D model only through Ultra Librarian, whose End User Subscription Agreement forbids redistribution; no model was downloaded. Geometry is generated from the DGS0010A outline (library/cad/py/catalog/ti-drv2605ldgs.py).",
+        "source": [
+          "https://www.ti.com/product/DRV2605L",
+          "https://vendor.ultralibrarian.com/TI/embedded/?gpn=DRV2605L&package=DGS&pin=10"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "CAD package dimensions",
+        "reason": "DGS0010A gives only min/max limits (standoff 0.05-0.15, height 1.1 max) and no shoulder height or pin-1 mark size; the representative model needs single values.",
+        "source": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf",
+        "value": "nominal = midpoint of each drawing range (body 3.0 x 3.0, span 4.9, lead 0.22 x 0.18, foot 0.55); body underside 0.10 mm above the seating plane, body top 1.0 mm, lead shoulder top 0.55 mm; pin-1 dimple 0.4 mm"
+      },
+      "type": "assumption"
+    }
+  ],
+  "version": "1.0.0"
+}

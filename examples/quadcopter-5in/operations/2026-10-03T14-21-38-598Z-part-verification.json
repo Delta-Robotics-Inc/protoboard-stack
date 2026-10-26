@@ -1,0 +1,48 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "iso-4762-m2x5",
+    "independent": "false"
+  },
+  "projectDigest": "sha256:b64b7a5eb5152823a9750214b29524396350306988cfd43b4c70113b7344ad18",
+  "tools": [],
+  "startedAt": "2026-10-03T14:21:38.598Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m2x5: audit 4/4 (self-audit), 1 assumption(s), 1 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/iso-4762-m2x5/verification.json",
+      "digest": "sha256:3f7408bbe123e63dd33fa7cde9d3b4dec84aad61871eb74b78cd90e3e41f3c2c",
+      "bytes": 605,
+      "description": "iso-4762-m2x5: verification record"
+    }
+  ],
+  "data": {
+    "partId": "iso-4762-m2x5",
+    "recorded_at": "2026-10-03T14:21:38.621Z",
+    "audit": {
+      "method": "self-audit: each fact re-read from the copies fetched on 2026-10-03 (sha256 in sources.json): the listing's technical summary or the maker's datasheet, product page or image",
+      "independent": false,
+      "auditor": "authoring agent (PB-836 session)",
+      "checked": 4,
+      "confirmed": 4,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": null,
+    "assumptions": [
+      "length"
+    ],
+    "data_gaps": [
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T14:21:38.621Z"
+}

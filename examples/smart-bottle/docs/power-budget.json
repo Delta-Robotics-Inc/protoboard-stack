@@ -1,0 +1,266 @@
+{
+  "schema": "smart-bottle.power-budget/v0",
+  "assumptions": {
+    "usable": 0.85,
+    "vbat": 3.7,
+    "effActive": 0.9,
+    "effSleep": 0.7,
+    "sample": {
+      "awake_s": 0.3,
+      "cpu_mA": 25,
+      "ranges": 3,
+      "range_s": 0.05,
+      "probe_s": 0.75
+    },
+    "sync": {
+      "s": 4,
+      "mA": 120
+    },
+    "reminder": {
+      "s": 3,
+      "ledPerLed_mA": 3
+    },
+    "targetDays": 30,
+    "chargeHoursMax": 5,
+    "charge": {
+      "ccFraction": 0.75,
+      "taper_h": 1.5
+    }
+  },
+  "figures": {
+    "cell_capacity_mAh": {
+      "value": 1000,
+      "unit": "mAh",
+      "source": "lipol-lp503450 battery_out.capacity"
+    },
+    "esp32_deep_sleep_uA": {
+      "value": 5,
+      "unit": "µA",
+      "source": "espressif-esp32-c3-mini-1-h4x domains.0.metadata.currents_typ.deep_sleep_rtc_timer_memory_uA"
+    },
+    "esp32_light_sleep_uA": {
+      "value": 130,
+      "unit": "µA",
+      "source": "espressif-esp32-c3-mini-1-h4x domains.0.metadata.currents_typ.light_sleep_uA"
+    },
+    "wifi_tx_peak_mA": {
+      "value": 350,
+      "unit": "mA",
+      "source": "espressif-esp32-c3-mini-1-h4x interfaces[wifi].traits[performance].params.current_mA.tx_802_11b_20dBm"
+    },
+    "wifi_rx_mA": {
+      "value": 82,
+      "unit": "mA",
+      "source": "espressif-esp32-c3-mini-1-h4x interfaces[wifi].traits[performance].params.current_mA.rx_HT20"
+    },
+    "tof_ranging_mA": {
+      "value": 22,
+      "unit": "mA",
+      "source": "st-vl53l4cdv0dh-1 supply.current_draw"
+    },
+    "tof_peak_mA": {
+      "value": 40,
+      "unit": "mA",
+      "source": "st-vl53l4cdv0dh-1 domains.0.metadata.supply_current.peak_mA"
+    },
+    "tof_hw_standby_uA": {
+      "value": 5,
+      "unit": "µA",
+      "source": "[B3] DS13812 §4.4 Table 12 (HW standby 5 µA typ; not stated on the part)"
+    },
+    "ds18b20_active_mA": {
+      "value": 1.5,
+      "unit": "mA",
+      "source": "adafruit-381-ds18b20-probe wire_vdd.current_draw (1.5 mA max)"
+    },
+    "ds18b20_standby_uA": {
+      "value": 0.75,
+      "unit": "µA",
+      "source": "[B5] DS18B20 DC characteristics (standby 750 nA typ; not stated on the part)"
+    },
+    "tps63020_quiescent_uA": {
+      "value": 25,
+      "unit": "µA",
+      "source": "ti-tps63020dsjr traits[performance].params.quiescent_current_uA"
+    },
+    "tps63020_vout_quiescent_uA": {
+      "value": 5,
+      "unit": "µA",
+      "source": "[B8] SLVS916I §6.5 (5 µA into VOUT; not stated on the part)"
+    },
+    "max17048_hibernate_uA": {
+      "value": 4,
+      "unit": "µA",
+      "source": "adi-max17048g-t10 domains.0.metadata.supply_current_uA.hibernate_comparator_enabled"
+    },
+    "lp5024_shutdown_uA": {
+      "value": 0.2,
+      "unit": "µA",
+      "source": "[B6] §6.5 (EN = 0: 0.2 µA typ; in the part's supply usage note)"
+    },
+    "lp5024_normal_mA": {
+      "value": 5,
+      "unit": "mA",
+      "source": "ti-lp5024rsm supply.current_draw (normal mode)"
+    },
+    "mcp73831_leakage_uA": {
+      "value": 0.15,
+      "unit": "µA",
+      "source": "[B10] DS20001984H (battery discharge current, no input: 0.15 µA typ)"
+    },
+    "buck_boost_vout_V": {
+      "value": 3.2777777777777777,
+      "unit": "V",
+      "source": "bottle-cap-board r11 1000000 Ω / r12 180000 Ω, VFB 0.5 V ([B8] §8.2.3)"
+    },
+    "feedback_divider_uA": {
+      "value": 2.7777777777777777,
+      "unit": "µA",
+      "source": "VOUT / (r11 + r12)"
+    },
+    "led_iset_mA": {
+      "value": 5,
+      "unit": "mA",
+      "source": "bottle-cap-board r10 14700 Ω: ISET = 105 × 0.7 V / RIREF ([B6] §7.3.3)"
+    },
+    "charge_current_mA": {
+      "value": 303.03030303030306,
+      "unit": "mA",
+      "source": "bottle-cap-board r13 3300 Ω: IREG = 1000 V / RPROG ([B10])"
+    },
+    "cell_discharge_mA": {
+      "value": 1000,
+      "unit": "mA",
+      "source": "lipol-lp503450 battery_out.max_current"
+    }
+  },
+  "sleep_floor_uA": 53,
+  "per_activity_mAs": {
+    "sample": 11.91,
+    "sync": 475.7,
+    "reminder": 87.5
+  },
+  "wifi_rx_mA": 82,
+  "profiles": [
+    {
+      "name": "baseline: samples every 5 min, 4 syncs",
+      "samplesPerDay": 288,
+      "syncsPerDay": 4,
+      "remindersPerDay": 16,
+      "mAh_per_day": 3.14,
+      "days": 271,
+      "parts": {
+        "sleep": 1.271,
+        "samples": 0.953,
+        "syncs": 0.529,
+        "reminders": 0.389
+      }
+    },
+    {
+      "name": "samples every minute, 4 syncs",
+      "samplesPerDay": 1440,
+      "syncsPerDay": 4,
+      "remindersPerDay": 16,
+      "mAh_per_day": 6.95,
+      "days": 122,
+      "parts": {
+        "sleep": 1.271,
+        "samples": 4.766,
+        "syncs": 0.529,
+        "reminders": 0.389
+      }
+    },
+    {
+      "name": "samples every 5 min, hourly sync",
+      "samplesPerDay": 288,
+      "syncsPerDay": 24,
+      "remindersPerDay": 16,
+      "mAh_per_day": 5.78,
+      "days": 147,
+      "parts": {
+        "sleep": 1.271,
+        "samples": 0.953,
+        "syncs": 3.171,
+        "reminders": 0.389
+      }
+    },
+    {
+      "name": "target: samples every minute, hourly sync",
+      "samplesPerDay": 1440,
+      "syncsPerDay": 24,
+      "remindersPerDay": 16,
+      "mAh_per_day": 9.6,
+      "days": 89,
+      "parts": {
+        "sleep": 1.271,
+        "samples": 4.766,
+        "syncs": 3.171,
+        "reminders": 0.389
+      }
+    },
+    {
+      "name": "target with poor Wi-Fi (20 s per sync)",
+      "samplesPerDay": 1440,
+      "syncsPerDay": 24,
+      "remindersPerDay": 16,
+      "mAh_per_day": 22.28,
+      "days": 38,
+      "parts": {
+        "sleep": 1.271,
+        "samples": 4.766,
+        "syncs": 15.856,
+        "reminders": 0.389
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "battery_life",
+      "requirement": "≥ 30 days, sampling every minute with hourly sync (brief)",
+      "value": "89 days",
+      "pass": true
+    },
+    {
+      "id": "battery_life_poor_wifi",
+      "requirement": "≥ 30 days with 20 s syncs (margin case, docs/power-budget.md)",
+      "value": "38 days",
+      "pass": true
+    },
+    {
+      "id": "charge_time",
+      "requirement": "≤ 5 h from empty (brief)",
+      "value": "4.0 h: 2.5 h constant current (75 % of capacity) + 1.5 h taper (assumed)",
+      "pass": true
+    },
+    {
+      "id": "charge_current",
+      "requirement": "≤ 500 mA (cell's maximum charge current)",
+      "value": "303 mA",
+      "pass": true
+    },
+    {
+      "id": "buck_boost_vout",
+      "requirement": "3.0-3.6 V (ESP32-C3 module supply)",
+      "value": "3.278 V",
+      "pass": true
+    },
+    {
+      "id": "led_current",
+      "requirement": "reminder assumption 3 mA per LED ≤ ISET",
+      "value": "ISET 5.00 mA",
+      "pass": true
+    },
+    {
+      "id": "peak_vbat",
+      "requirement": "Wi-Fi TX plus all 24 LED channels at full scale within the cell's 1000 mA",
+      "value": "472 mA (LEDs 24 × 5.00 mA = 120 mA, capped by ISET)",
+      "pass": true
+    },
+    {
+      "id": "peak_3v3",
+      "requirement": "Wi-Fi TX peak within the buck-boost's 2 A",
+      "value": "350 mA (+ ToF 40 mA if run together)",
+      "pass": true
+    }
+  ]
+}

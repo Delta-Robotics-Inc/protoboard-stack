@@ -1,0 +1,66 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/circuit.config.ts",
+    "configDigest": "sha256:3bee4bcb3b45ce36849f87eadf6c2f5fffe55d948dc63753057b25c408b46e4a",
+    "moduleDigest": "sha256:90a06bf1cecda46bab8b53909320db552a7d4b57f4b2d18ad8030058731d2899"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ed55aa2ed5bf3eb5dc5917a9fe4d6e9b71b1aade32b15f2308054e7387a08f22",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T09:43:28.177Z",
+  "status": "succeeded",
+  "summary": "61 components (14 fixed, 47 layout), 53 nets → 201 traces, 185 vias in 243.6 s; 2 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/tscircuit/board.gen.tsx",
+      "digest": "sha256:f16b42df9301fb031c7956505a145cbfdbbdff07a5fd5b32f0afcc8bf70a10f0",
+      "bytes": 70941,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/circuit.json",
+      "digest": "sha256:1f717f898a138705a7d6326ec0cac4e137f8224fdb227728e85fa400df7f43d7",
+      "bytes": 1297671,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/build.json",
+      "digest": "sha256:581794734d52d0e13d4a6ffc6fdf8f0343d1ed0983ed9e84d29ca788c3b569a1",
+      "bytes": 22096,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 61,
+    "nets": 53,
+    "placement": {
+      "fixed": 14,
+      "layout": 47
+    },
+    "traces": 201,
+    "vias": 185,
+    "build_ms": 243559,
+    "errors": [
+      "pcb_trace_error: PCB trace trace[.c6 > port.pos, .u3 > port.pin27] is too close to trace[.c6 > port.neg, .u3 > port.pin26] (gap: 0.095mm)",
+      "pcb_trace_error: PCB trace trace[.c9 > port.pos, .u3 > port.pin27] is too close to trace[.u3 > port.pin28, .u6 > port.pin8] (gap: 0.085mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T09:47:31.824Z"
+}

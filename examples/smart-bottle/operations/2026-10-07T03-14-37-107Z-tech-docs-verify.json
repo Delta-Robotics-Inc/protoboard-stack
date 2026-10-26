@@ -1,0 +1,99 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs-verify",
+  "extension": {
+    "id": "@protoboardai/ext-docs",
+    "version": "0.1.1"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:cad3e743edb7594bd37eecc8fbd3d9a3a2283c73caae5dd9606a0f7eb13b956e",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 155.0.8059.39"
+    },
+    {
+      "id": "poppler",
+      "available": true,
+      "detail": "pdfinfo version 24.02.0"
+    }
+  ],
+  "startedAt": "2026-10-07T03:14:37.107Z",
+  "status": "succeeded",
+  "summary": "0 error(s), 0 warning(s), 10 info",
+  "outputs": [
+    {
+      "path": "docs/.review/verify-report.json",
+      "digest": "sha256:6b7944434d9abcd00834d2cf3c45b299e2a36af61f6c80a45928ad5020be3870",
+      "bytes": 1798,
+      "description": "verification report"
+    }
+  ],
+  "data": {
+    "findings": [
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "info",
+        "message": "506 bound values re-resolved against the model"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "images",
+        "severity": "info",
+        "message": "4 images checked"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "review",
+        "severity": "info",
+        "message": "21 page PNGs in docs/.review/smart-bottle-datasheet/ for the visual checklist"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "bom",
+        "severity": "info",
+        "message": "40 BOM lines match docs/smart-bottle-bom.json"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "values",
+        "severity": "info",
+        "message": "15 bound values re-resolved against the model"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "images",
+        "severity": "info",
+        "message": "24 images checked"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "review",
+        "severity": "info",
+        "message": "9 page PNGs in docs/.review/smart-bottle-assembly-guide/ for the visual checklist"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 12, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "coverage",
+        "severity": "info",
+        "message": "2/2 mates, 4/4 hardware placements, 4/4 wiring links covered; 2 bodies placed by mates"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-07T03:14:41.505Z"
+}

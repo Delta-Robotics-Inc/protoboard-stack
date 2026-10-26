@@ -1,0 +1,21 @@
+{
+  "partId": "microchip-mcp73831t-2aci-ot",
+  "recorded_at": "2026-10-02T00:00:00.000Z",
+  "audit": {
+    "by": "independent verifier",
+    "result": "3 wording defects found, all facts otherwise confirmed against DS20001984H; src_product not re-fetchable (HTTP 403), its facts corroborated by the datasheet"
+  },
+  "repairs": "repair 1: PROG usage_note now says shutdown is guaranteed above 200 kOhm (threshold 70-200 kOhm, p.4 and Fig. 4-1 p.13) and metadata labels shutdown_rprog_kohm as the threshold range; battery_charge leakage note and metadata split IDISCHARGE by condition (0.15 uA PROG floating, 0.25 uA VDD floating, 0.15 uA VDD < VSTOP, 2 uA max, p.4); thermal note drops the project-specific 83 mA reference and gives a datasheet-derived 100 mA / RPROG 10 kOhm example (0.28 W). verify-part re-run: PASS, 0 errors, 0 warnings.",
+  "assumptions": [
+    "VBAT voltage lower bound",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "PROG logic-high threshold",
+    "VBAT minimum voltage"
+  ],
+  "vocabulary_gaps": [
+    "VBAT is a charge output that shares the cell terminal with the battery's own output. UHD power roles are input/output/ground only; a board net joining the cell (PowerOut) and VBAT (PowerOut) will be reported by the net rule as two drivers. Modelled as power output with capability battery_charge; a charge-port role (or a battery charge-input interface) is needed."
+  ]
+}

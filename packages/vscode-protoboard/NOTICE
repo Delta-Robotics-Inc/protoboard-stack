@@ -1,0 +1,29 @@
+Protoboard Stack: the Protoboard extension for VS Code (vscode-protoboard)
+Copyright 2026 Delta Robotics, Inc.
+
+This product includes software developed at Delta Robotics, Inc.
+(https://deltaroboticsinc.com).
+
+Licensed under the Apache License, Version 2.0 (the "License").
+See the LICENSE file in this package for full terms.
+
+"Protoboard", the Protoboard logo and the "0" mark are trademarks of
+Delta Robotics, Inc. The License grants no rights to them (section 6);
+see TRADEMARKS.md in the Protoboard Stack repository
+(https://github.com/Delta-Robotics-Inc/protoboard-stack).
+
+The bundled code of this package includes third-party packages, each under
+its own licence. They are listed, with their licence texts, in
+THIRD_PARTY_LICENSES.md beside the bundles.
+
+occt-import-js and the Open CASCADE Technology it is built from are under
+the LGPL-2.1 (Open CASCADE with its exception). They are shipped unmodified,
+as separate files in dist/ (occt-import-js.js, occt-import-js.wasm), with
+their licences beside them (license.occt-import-js.txt, license.occt.txt),
+and may be replaced by the user.
+
+The Kode Mono font, Copyright 2023 The Kode Mono Project Authors
+(https://github.com/isaozler/kode-mono), ships in media/fonts and inside
+the webview stylesheets, under the SIL Open Font License 1.1
+(media/fonts/OFL.txt). The .woff2 files are the released fonts converted to
+WOFF2, glyphs unchanged; Kode Mono has no Reserved Font Name. It is the only font the extension ships.

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "src_supplier",
+    "title": "Westfield Fasteners WF2328: M2 x 5mm Socket Head Cap Screw in A2 Stainless - ISO 4762 (DIN 912)",
+    "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Screw-M2x5-A2-Stainless.html",
+    "type": "documentation",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "87f3e0ef5f7a80732223d5924158e0fad5522a76b109002eb3bc606f69997166",
+    "supports": [
+      "M2 x 5 mm, A2 stainless, ISO 4762 (DIN 912)",
+      "dk max 3.8, k max 2.0, drive 1.5, pitch 0.40"
+    ]
+  },
+  {
+    "id": "src_o4_manual",
+    "title": "DJI O4 Air Unit User Manual v1.0, p.6 (camera mounting holes)",
+    "url": "https://dl.djicdn.com/downloads/DJI_O4_Air_Unit_Series/UM/DJI_O4_Air_Unit_Series_User_Manual_v1.0_en.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "47453ef52f96fe06b9dc1be93b99b02b514a008c14a645487760a559f68318d6",
+    "supports": [
+      "camera side holes 4-M2.0, MAX3.10 screw engagement",
+      "'The screws included with the camera can only be used for frames thicker than 2 mm.'"
+    ]
+  }
+]

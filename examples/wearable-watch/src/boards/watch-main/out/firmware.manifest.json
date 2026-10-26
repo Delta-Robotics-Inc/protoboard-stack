@@ -1,0 +1,738 @@
+{
+  "schema": "protoboard.firmware/v0",
+  "module": "watch-main-board",
+  "provider": "@protoboardai/ext-zephyr",
+  "framework": "zephyr",
+  "frameworkVersion": "4.2.0",
+  "controller": {
+    "instance": "u1",
+    "part": "raytac-mdbt50q-1mv2"
+  },
+  "files": [
+    {
+      "path": "config/boards/protoboard/wearable_watch/board.yml",
+      "digest": "sha256:f1c7fa4081d5a81a344d2caf45fd120e1a5fe26f665d6b5c29f2497da7155f4c",
+      "role": "board metadata",
+      "lines": [
+        {
+          "line": 4,
+          "cites": [
+            "constraint:board_name"
+          ]
+        },
+        {
+          "line": 5,
+          "cites": [
+            "module:name"
+          ]
+        },
+        {
+          "line": 6,
+          "cites": [
+            "module:id"
+          ]
+        },
+        {
+          "line": 9,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.soc"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "config/boards/protoboard/wearable_watch/Kconfig.wearable_watch",
+      "digest": "sha256:620ed331007facd06ef5b6fd8287d7d2408c4a993641a140dafb03c08cd3e3a1",
+      "role": "board Kconfig",
+      "lines": [
+        {
+          "line": 3,
+          "cites": [
+            "module:id"
+          ]
+        },
+        {
+          "line": 5,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.soc"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "config/boards/protoboard/wearable_watch/wearable_watch_defconfig",
+      "digest": "sha256:d236d3f05807d9d07a06705a869136de125baa161b7434b0d10e07fad7e4b709",
+      "role": "board defconfig",
+      "lines": [
+        {
+          "line": 4,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.cpu"
+          ]
+        },
+        {
+          "line": 6,
+          "cites": [
+            "pin:u1:pin_48",
+            "pin:u1:pin_49",
+            "pin:u1:pin_46"
+          ]
+        },
+        {
+          "line": 8,
+          "cites": [
+            "pin:y1:pin_1",
+            "part:epson-fc-135-32k768-12p5:traits.performance.nominal_frequency_Hz",
+            "net:xl1",
+            "pin:u1:pin_17",
+            "net:xl2",
+            "pin:u1:pin_18"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "config/boards/protoboard/wearable_watch/wearable_watch.dts",
+      "digest": "sha256:801b7ee594bdfd5c720eeba212a7d6453cf0816a828da162c4f3731feb6717ed",
+      "role": "board devicetree",
+      "lines": [
+        {
+          "line": 6,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.soc"
+          ]
+        },
+        {
+          "line": 8,
+          "cites": [
+            "net:btn1",
+            "net:btn2"
+          ]
+        },
+        {
+          "line": 9,
+          "cites": [
+            "pin:ds1:spi"
+          ]
+        },
+        {
+          "line": 12,
+          "cites": [
+            "module:name"
+          ]
+        },
+        {
+          "line": 13,
+          "cites": [
+            "module:id"
+          ]
+        },
+        {
+          "line": 16,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.memory"
+          ]
+        },
+        {
+          "line": 17,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.memory"
+          ]
+        },
+        {
+          "line": 21,
+          "cites": [
+            "net:btn1",
+            "net:btn2"
+          ]
+        },
+        {
+          "line": 23,
+          "cites": [
+            "net:btn1",
+            "pin:u1:pin_50",
+            "net:gnd"
+          ]
+        },
+        {
+          "line": 24,
+          "cites": [
+            "pin:sw1:pin_1"
+          ]
+        },
+        {
+          "line": 25,
+          "cites": [
+            "net:btn1"
+          ]
+        },
+        {
+          "line": 28,
+          "cites": [
+            "net:btn2",
+            "pin:u1:pin_56",
+            "net:gnd"
+          ]
+        },
+        {
+          "line": 29,
+          "cites": [
+            "pin:sw2:pin_1"
+          ]
+        },
+        {
+          "line": 30,
+          "cites": [
+            "net:btn2"
+          ]
+        },
+        {
+          "line": 35,
+          "cites": [
+            "pin:ds1:spi"
+          ]
+        },
+        {
+          "line": 36,
+          "cites": [
+            "pin:ds1:spi"
+          ]
+        },
+        {
+          "line": 37,
+          "cites": [
+            "net:lcd_dc",
+            "pin:u1:pin_38",
+            "pin:ds1:pin_7"
+          ]
+        },
+        {
+          "line": 38,
+          "cites": [
+            "net:lcd_rst",
+            "pin:u1:pin_41",
+            "pin:ds1:pin_11"
+          ]
+        },
+        {
+          "line": 39,
+          "cites": [
+            "pin:ds1:spi"
+          ]
+        },
+        {
+          "line": 40,
+          "cites": [
+            "pin:ds1:spi"
+          ]
+        },
+        {
+          "line": 41,
+          "cites": [
+            "pin:ds1:spi"
+          ]
+        },
+        {
+          "line": 44,
+          "cites": [
+            "part:eastrising-er-tft128-1:traits.performance.controller"
+          ]
+        },
+        {
+          "line": 45,
+          "cites": [
+            "net:lcd_cs",
+            "pin:u1:pin_39",
+            "pin:ds1:pin_8"
+          ]
+        },
+        {
+          "line": 46,
+          "cites": [
+            "part:eastrising-er-tft128-1:spi.clock_freq",
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.bus_limits.spim_Mbps"
+          ]
+        },
+        {
+          "line": 47,
+          "cites": [
+            "part:eastrising-er-tft128-1:traits.performance.colours"
+          ]
+        },
+        {
+          "line": 48,
+          "cites": [
+            "part:eastrising-er-tft128-1:traits.performance.resolution"
+          ]
+        },
+        {
+          "line": 49,
+          "cites": [
+            "part:eastrising-er-tft128-1:traits.performance.resolution"
+          ]
+        },
+        {
+          "line": 54,
+          "cites": [
+            "net:imu_int1",
+            "pin:u1:pin_46",
+            "pin:u2:pin_4"
+          ]
+        },
+        {
+          "line": 55,
+          "cites": [
+            "net:imu_int2",
+            "pin:u1:pin_45",
+            "pin:u2:pin_9"
+          ]
+        },
+        {
+          "line": 56,
+          "cites": [
+            "net:hr_int",
+            "pin:u1:pin_42",
+            "pin:u3:pin_13",
+            "pin:r6:pin_1"
+          ]
+        },
+        {
+          "line": 57,
+          "cites": [
+            "net:fg_alrt",
+            "pin:u1:pin_22",
+            "pin:u5:pin_5",
+            "pin:r7:pin_1"
+          ]
+        },
+        {
+          "line": 58,
+          "cites": [
+            "net:chg_stat",
+            "net:stat",
+            "pin:r10:pin_2",
+            "pin:u1:pin_24",
+            "pin:u6:pin_1",
+            "pin:r11:pin_1"
+          ]
+        },
+        {
+          "line": 59,
+          "cites": [
+            "net:bl_pwm",
+            "pin:u1:pin_44",
+            "pin:q1:pin_1",
+            "pin:r8:pin_1"
+          ]
+        },
+        {
+          "line": 60,
+          "cites": [
+            "constraint:wake",
+            "net:btn1",
+            "pin:u1:pin_50",
+            "net:gnd",
+            "net:btn2",
+            "pin:u1:pin_56",
+            "net:imu_int1",
+            "pin:u1:pin_46",
+            "pin:u2:pin_4"
+          ]
+        },
+        {
+          "line": 65,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14",
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 66,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14",
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 67,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14",
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 68,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14",
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 69,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14",
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 70,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.bus_limits.twim_kbps",
+            "part:bosch-bmi270:i2c.clock_freq",
+            "part:adi-max30102efd:i2c.clock_freq",
+            "part:ti-drv2605ldgs:i2c.clock_freq",
+            "part:adi-max17048g-t10:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 73,
+          "cites": [
+            "pin:u2:i2c",
+            "part:bosch-bmi270:i2c.i2c_address",
+            "part:bosch-bmi270:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 77,
+          "cites": [
+            "pin:u3:i2c",
+            "part:adi-max30102efd:i2c.i2c_address",
+            "part:adi-max30102efd:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 81,
+          "cites": [
+            "pin:u4:i2c"
+          ]
+        },
+        {
+          "line": 82,
+          "cites": [
+            "pin:u4:i2c",
+            "part:ti-drv2605ldgs:i2c.i2c_address",
+            "part:ti-drv2605ldgs:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 83,
+          "cites": [
+            "constraint:properties"
+          ]
+        },
+        {
+          "line": 84,
+          "cites": [
+            "net:hap_en",
+            "pin:u1:pin_43",
+            "pin:u4:pin_5"
+          ]
+        },
+        {
+          "line": 88,
+          "cites": [
+            "pin:u5:i2c"
+          ]
+        },
+        {
+          "line": 89,
+          "cites": [
+            "pin:u5:i2c",
+            "part:adi-max17048g-t10:i2c.i2c_address",
+            "part:adi-max17048g-t10:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 94,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10",
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 95,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10",
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 96,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10",
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 97,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10",
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 98,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10",
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 99,
+          "cites": [
+            "net:lcd_cs",
+            "pin:u1:pin_39",
+            "pin:ds1:pin_8"
+          ]
+        },
+        {
+          "line": 103,
+          "cites": [
+            "part:raytac-mdbt50q-1mv2:domains.electrical.metadata.internal"
+          ]
+        },
+        {
+          "line": 107,
+          "cites": [
+            "pin:u1:pin_48"
+          ]
+        },
+        {
+          "line": 111,
+          "cites": [
+            "pin:u1:pin_17",
+            "pin:u1:pin_18",
+            "pin:u1:pin_22",
+            "pin:u1:pin_24",
+            "pin:u1:pin_37",
+            "pin:u1:pin_36",
+            "pin:u1:pin_39",
+            "pin:u1:pin_38",
+            "pin:u1:pin_41",
+            "pin:u1:pin_42",
+            "pin:u1:pin_44",
+            "pin:u1:pin_43",
+            "pin:u1:pin_46",
+            "pin:u1:pin_45",
+            "pin:u1:pin_48",
+            "pin:u1:pin_49"
+          ]
+        },
+        {
+          "line": 115,
+          "cites": [
+            "pin:u1:pin_50",
+            "pin:u1:pin_56"
+          ]
+        },
+        {
+          "line": 119,
+          "cites": [
+            "pin:u1:usb",
+            "net:usb_dm",
+            "net:usb_dp"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "config/boards/protoboard/wearable_watch/wearable_watch-pinctrl.dtsi",
+      "digest": "sha256:a69f8775610c83cccdff4ddd9f5687e48c83825c032e4cc8573d1008af5c6b8f",
+      "role": "pin assignment",
+      "lines": [
+        {
+          "line": 6,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14"
+          ]
+        },
+        {
+          "line": 7,
+          "cites": [
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 13,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14"
+          ]
+        },
+        {
+          "line": 14,
+          "cites": [
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 15,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14",
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 21,
+          "cites": [
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 22,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10"
+          ]
+        },
+        {
+          "line": 28,
+          "cites": [
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 29,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10"
+          ]
+        },
+        {
+          "line": 30,
+          "cites": [
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9",
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "config/firmware.conf",
+      "digest": "sha256:f378ef4ad196f26ced4bd83d77d357081ce225176c36768e92602090478a3895",
+      "role": "Kconfig fragment: subsystems for the board's devices",
+      "lines": [
+        {
+          "line": 7,
+          "cites": [
+            "net:btn1",
+            "net:btn2"
+          ]
+        },
+        {
+          "line": 9,
+          "cites": [
+            "net:sda",
+            "pin:u1:pin_48",
+            "pin:u2:pin_14",
+            "net:scl",
+            "pin:u1:pin_49",
+            "pin:u2:pin_13"
+          ]
+        },
+        {
+          "line": 11,
+          "cites": [
+            "pin:u4:i2c"
+          ]
+        },
+        {
+          "line": 13,
+          "cites": [
+            "pin:u5:i2c"
+          ]
+        },
+        {
+          "line": 15,
+          "cites": [
+            "net:lcd_mosi",
+            "pin:u1:pin_36",
+            "pin:ds1:pin_10",
+            "net:lcd_sck",
+            "pin:u1:pin_37",
+            "pin:ds1:pin_9"
+          ]
+        },
+        {
+          "line": 17,
+          "cites": [
+            "pin:ds1:spi"
+          ]
+        },
+        {
+          "line": 19,
+          "cites": [
+            "pin:u1:usb",
+            "net:usb_dm",
+            "net:usb_dp"
+          ]
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "u2 (bosch-bmi270): no Zephyr driver in this provider's table; its node has no compatible, so the application finds it by the label u2 and drives it itself",
+    "u3 (adi-max30102efd): no Zephyr driver in this provider's table; its node has no compatible, so the application finds it by the label u3 and drives it itself"
+  ]
+}

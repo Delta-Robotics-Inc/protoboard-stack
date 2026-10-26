@@ -1,0 +1,23 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@fixtures/fake-cad",
+  "version": "0.1.0",
+  "description": "TEST FIXTURE: fake cad provider. Designs a box with one opening per interface; exports STEP, GLB, STL and a manifest. Not a real CAD tool.",
+  "compatibility": { "protoboard": "^0.2.0" },
+  "capabilities": [
+    {
+      "id": "cad",
+      "summary": "Fake: a box, one feature per interface",
+      "operations": {
+        "generate": "./cad.ts#generate",
+        "export": "./cad.ts#exportOutputs",
+        "extract": "./cad.ts#extract",
+        "check": "./cad.ts#check"
+      },
+      "constraints": {
+        "wall_mm": { "description": "wall thickness", "required": true },
+        "inner_mm": { "description": "inner size [x, y, z]" }
+      }
+    }
+  ]
+}

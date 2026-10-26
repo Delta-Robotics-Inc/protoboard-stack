@@ -1,0 +1,7 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "types": ["node", "vscode"] },
+  "include": ["src", "test"],
+  // the visual captures run in Chrome pages (DOM) through tsx
+  "exclude": ["test/visual"]
+}

@@ -1,0 +1,192 @@
+{
+  "$comment": "Positions (mm, board frame) for the parts circuit.config.ts does not fix, hand-placed by function as the smart-bottle board is (USB and ESD by the receptacle, charger upper left, buck-boost in the middle, the module support by its pads, the cell pads and test pads lower left); not a reviewed layout. Parts not listed are placed by tscircuit.",
+  "d9": {
+    "at": [
+      0,
+      11.5
+    ],
+    "rotation_deg": 0
+  },
+  "r19": {
+    "at": [
+      -5,
+      13.5
+    ],
+    "rotation_deg": 90
+  },
+  "r20": {
+    "at": [
+      5,
+      13.5
+    ],
+    "rotation_deg": 90
+  },
+  "c13": {
+    "at": [
+      -3.5,
+      9
+    ],
+    "rotation_deg": 0
+  },
+  "u5": {
+    "at": [
+      -9,
+      10
+    ],
+    "rotation_deg": 0
+  },
+  "r13": {
+    "at": [
+      -13,
+      10
+    ],
+    "rotation_deg": 90
+  },
+  "r14": {
+    "at": [
+      -9,
+      6.5
+    ],
+    "rotation_deg": 0
+  },
+  "r15": {
+    "at": [
+      -6,
+      6.5
+    ],
+    "rotation_deg": 0
+  },
+  "c14": {
+    "at": [
+      -13,
+      5.5
+    ],
+    "rotation_deg": 90
+  },
+  "u4": {
+    "at": [
+      -2,
+      -4
+    ],
+    "rotation_deg": 0
+  },
+  "l1": {
+    "at": [
+      -2,
+      -10
+    ],
+    "rotation_deg": 0
+  },
+  "c8": {
+    "at": [
+      -6.5,
+      -4
+    ],
+    "rotation_deg": 90
+  },
+  "c9": {
+    "at": [
+      -6.5,
+      -0.5
+    ],
+    "rotation_deg": 90
+  },
+  "c10": {
+    "at": [
+      2.5,
+      -3
+    ],
+    "rotation_deg": 90
+  },
+  "c11": {
+    "at": [
+      4.5,
+      -3
+    ],
+    "rotation_deg": 90
+  },
+  "c12": {
+    "at": [
+      2.5,
+      -7.5
+    ],
+    "rotation_deg": 90
+  },
+  "r11": {
+    "at": [
+      2.5,
+      1.5
+    ],
+    "rotation_deg": 0
+  },
+  "r12": {
+    "at": [
+      2.5,
+      3.5
+    ],
+    "rotation_deg": 0
+  },
+  "c1": {
+    "at": [
+      6,
+      4.5
+    ],
+    "rotation_deg": 90
+  },
+  "c2": {
+    "at": [
+      6,
+      1.5
+    ],
+    "rotation_deg": 90
+  },
+  "c3": {
+    "at": [
+      6,
+      -6
+    ],
+    "rotation_deg": 90
+  },
+  "r1": {
+    "at": [
+      6,
+      -9
+    ],
+    "rotation_deg": 90
+  },
+  "r2": {
+    "at": [
+      6,
+      -12
+    ],
+    "rotation_deg": 90
+  },
+  "jbat": {
+    "at": [
+      -13,
+      -8
+    ],
+    "rotation_deg": 0
+  },
+  "tp_boot": {
+    "at": [
+      -8,
+      -15
+    ],
+    "rotation_deg": 0
+  },
+  "tp_en": {
+    "at": [
+      -5,
+      -15
+    ],
+    "rotation_deg": 0
+  },
+  "tp_gnd": {
+    "at": [
+      -11,
+      -15
+    ],
+    "rotation_deg": 0
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:cfe30bb2ca17d7bbf7312c2f16888c8a79f31685b7d58a79042e4db9f069944e",
+    "moduleDigest": "sha256:1f19c01b2297e76fbb338ffae9a3b6402349fab13563ff32c17d176d7dc0df30"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:3262e13884840270dff0730083e9baf2c586fa35a7c055247c5e7dd54106c9f2",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T09:41:17.625Z",
+  "status": "succeeded",
+  "summary": "47 components (7 fixed, 40 layout), 36 nets → 155 traces, 144 vias in 48.3 s; 1 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/tscircuit/board.gen.tsx",
+      "digest": "sha256:194121faeb66255a6930623b4ad31e5798e275db47d7b7bee291143c74c04d67",
+      "bytes": 56815,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/circuit.json",
+      "digest": "sha256:4c26ef6bd8663ed89e132d1589c6aafabd91b89cddf12bf1c89d15937215e91b",
+      "bytes": 909569,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/build.json",
+      "digest": "sha256:5f17710eed4862cdd26363bd16e0c99a1a09c62258e83fcc23aa4d25503009c6",
+      "bytes": 17486,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 47,
+    "nets": 36,
+    "placement": {
+      "fixed": 7,
+      "layout": 40
+    },
+    "traces": 155,
+    "vias": 144,
+    "build_ms": 48268,
+    "errors": [
+      "pcb_placement_error: Via hole at (-10.20mm, -14.57mm) overlaps SMD pad c17.pin1 at (-9.91mm, -14.80mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T09:42:05.973Z"
+}

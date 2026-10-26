@@ -1,0 +1,12 @@
+Distributor B — LDO3300-33SOT-TR
+URL: https://distributor-b.example/p/LDO3300-33SOT-TR
+Read: 2026-09-28
+
+Manufacturer: ACME
+Mfr. part #: LDO3300-33SOT-TR
+ACME franchised partner
+Stock: 0 — factory lead time 16 weeks
+Packaging: Tape & reel (cut tape available)
+
+Price (USD)
+  1+     0.66

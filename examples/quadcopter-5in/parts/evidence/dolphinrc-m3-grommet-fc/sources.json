@@ -1,0 +1,15 @@
+[
+  {
+    "id": "src_product",
+    "title": "DolphinRC F405 V3 50A 60A STACK product page (package list)",
+    "url": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "dda25ddff7815a33a235de5c27fcd3223d92dac85af7d03cd27fde516b5963d2",
+    "supports": [
+      "Includes 5x M3*8mm Rubber (for FC)",
+      "Hole 30.5x30.5/4mm"
+    ]
+  }
+]

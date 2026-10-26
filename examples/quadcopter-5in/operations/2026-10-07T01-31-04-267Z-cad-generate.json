@@ -1,0 +1,79 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "panasonic-eeu-fr1v471-leads",
+    "config": "src/harnesses/panasonic-eeu-fr1v471-leads/cad.config.ts",
+    "configDigest": "sha256:ace52a8566a8c5a11904ce934c4d04a09f37c301c799fbf57d85ba71c617d79d",
+    "moduleDigest": "sha256:cec8bf149a5e9d9b17439c9aae10ff3c884f8c2049060d1d1a18da5989c216e8"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:89b8212a38dd8538fa8e12019ae9b9c58066449153cc8e3ae83a8ed438877c21",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:31:04.267Z",
+  "status": "succeeded",
+  "summary": "bulk_cap_leads: ok; routed around the parts and 2 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/panasonic-eeu-fr1v471-leads/harness-cad/route.json",
+      "digest": "sha256:ebe04a6bcad60bb91f4927378627b8dfd4e6f859d60affae00e4ec519268bc17",
+      "bytes": 9915,
+      "description": "bulk_cap_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboardai/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        313,
+        313,
+        144
+      ],
+      "res_mm": 1,
+      "seconds": 4.6
+    },
+    "harnesses": [
+      {
+        "id": "panasonic-eeu-fr1v471-leads",
+        "path": "bulk_cap_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.01
+      }
+    ],
+    "context": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.87
+      },
+      {
+        "id": "dji-o4-3in1-cable",
+        "path": "dji_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 3.7
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-07T01:31:24.378Z"
+}

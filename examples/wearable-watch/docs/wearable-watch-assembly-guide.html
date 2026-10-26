@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="generator" content="uhd-tech-docs (@protoboardai/ext-docs)">
+<meta name="uhd-system" content="wearable-watch">
+<meta name="uhd-doc-type" content="Assembly guide">
+<meta name="uhd-doc-id" content="UHD-WATCH-AG">
+<title>Wearable Watch — Assembly guide</title>
+<style>/* uhd-tech-docs print theme — light pages, Protoboard type and accent.
+   Rules: skills/uhd-tech-docs/references/style-study.md ("Rules we adopt"). */
+@font-face { font-family: "Kode Mono"; src: url("assets/fonts/KodeMono-Regular.ttf") format("truetype"); font-weight: 400; }
+@font-face { font-family: "Kode Mono"; src: url("assets/fonts/KodeMono-Medium.ttf") format("truetype"); font-weight: 500; }
+@font-face { font-family: "Kode Mono"; src: url("assets/fonts/KodeMono-SemiBold.ttf") format("truetype"); font-weight: 600; }
+@font-face { font-family: "Kode Mono"; src: url("assets/fonts/KodeMono-Bold.ttf") format("truetype"); font-weight: 700; }
+/* display text: the Bold file under every weight, so it is bold whatever weight a rule asks for */
+@font-face { font-family: "Kode Mono Bold"; src: url("assets/fonts/KodeMono-Bold.ttf") format("truetype"); font-weight: 100 900; }
+
+:root {
+  --ink: #1b1b1b;
+  --muted: #6f6f6f;
+  --faint: #a3a3a3;
+  --rule: #d6d6d6;
+  --tint: #f3f3f3;
+  --accent: #ff5c00;         /* oklch(0.6837 0.2120 40.59) */
+  --accent-ink: #d94e00;     /* accent for small text on white */
+  --accent-tint: #fff1e8;
+  --danger: #c62828;
+  --dark: #111111;
+  --mono: "Kode Mono", "JetBrains Mono", "DejaVu Sans Mono", monospace;
+  --display: "Kode Mono Bold", "Kode Mono", monospace;
+}
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #e9e9e9; }
+body { font-family: var(--mono); font-size: 7.6pt; line-height: 1.5; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+#pages { display: flex; flex-direction: column; align-items: center; gap: 8mm; padding: 8mm 0; }
+#flow { width: 178mm; }
+
+/* ---- page frame ---------------------------------------------------------- */
+.page { width: 210mm; height: 297mm; position: relative; overflow: hidden; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.18); break-after: page; }
+.pg-head { position: absolute; top: 9mm; left: 16mm; right: 16mm; height: 6mm; display: flex; align-items: baseline; gap: 3mm; border-bottom: 0.5pt solid var(--ink); font-size: 6.4pt; letter-spacing: .04em; text-transform: uppercase; }
+.pg-mark { width: 2.2mm; height: 2.2mm; background: var(--accent); align-self: center; flex: none; }
+.pg-title { font-family: var(--display); font-size: 7.6pt; letter-spacing: .02em; }
+.pg-type { color: var(--muted); }
+.pg-id { margin-left: auto; color: var(--muted); }
+.pg-body { position: absolute; top: 20mm; left: 16mm; right: 16mm; bottom: 17mm; overflow: hidden; }
+.pg-foot { position: absolute; bottom: 8mm; left: 16mm; right: 16mm; display: flex; align-items: baseline; gap: 4mm; border-top: 0.35pt solid var(--rule); padding-top: 1.6mm; font-size: 6.4pt; color: var(--muted); letter-spacing: .03em; }
+.pg-brand { font-family: var(--display); color: var(--ink); letter-spacing: .06em; }
+.pg-brand b { color: var(--accent); font-weight: 400; }
+.pg-num { margin-left: auto; color: var(--ink); font-weight: 600; }
+.page.overflow { outline: 2mm solid red; }
+
+/* ---- cover ---------------------------------------------------------------- */
+.page.cover .pg-head, .page.cover .pg-foot { display: none; }
+.page.cover .pg-body { top: 0; left: 0; right: 0; bottom: 0; }
+.cover-top { position: absolute; inset: 0 0 auto 0; height: 178mm; background: var(--dark); color: #fff; overflow: hidden; }
+.cover-top .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 8mm 8mm; }
+.cover-brand { position: absolute; top: 13mm; left: 16mm; font-family: var(--display); font-size: 8.6pt; letter-spacing: .12em; }
+.cover-brand b { color: var(--accent); font-weight: 400; }
+.cover-doctype { position: absolute; top: 13mm; right: 16mm; font-size: 6.9pt; letter-spacing: .14em; text-transform: uppercase; color: #bdbdbd; }
+.cover-title { position: absolute; top: 27mm; left: 16mm; right: 16mm; font-family: var(--display); font-size: 25pt; line-height: 1.08; letter-spacing: .02em; }
+.cover-title .accent { color: var(--accent); }
+.cover-sub { position: absolute; top: 49mm; left: 16mm; width: 112mm; font-size: 7.6pt; line-height: 1.55; color: #cfcfcf; }
+.cover-hero { position: absolute; left: 6mm; right: 6mm; top: 64mm; bottom: 4mm; }
+.cover-hero img { width: 100%; height: 100%; object-fit: contain; }
+.cover-rev { position: absolute; top: 13mm; right: 16mm; margin-top: 6mm; display: flex; gap: 0; font-size: 6.4pt; letter-spacing: .06em; }
+.cover-rev span { border: 0.5pt solid #7a7a7a; padding: .6mm 2mm; color: #e0e0e0; }
+.cover-rev span:first-child { background: var(--accent); border-color: var(--accent); color: #111; font-weight: 700; }
+.cover-bottom { position: absolute; top: 186mm; left: 16mm; right: 16mm; bottom: 12mm; }
+.cover-foot { position: absolute; left: 16mm; right: 16mm; bottom: 9mm; display: flex; gap: 4mm; font-size: 6.4pt; color: var(--muted); border-top: 0.35pt solid var(--rule); padding-top: 1.6mm; }
+.cover-foot .pg-brand { color: var(--ink); }
+.cover-foot .right { margin-left: auto; }
+
+/* ---- headings ------------------------------------------------------------- */
+h1.sec { font-family: var(--display); font-weight: 400; font-size: 13.5pt; line-height: 1.15; letter-spacing: .02em; margin: 0 0 3.5mm; padding-bottom: 1.8mm; border-bottom: 0.5pt solid var(--ink); display: flex; align-items: baseline; gap: 3mm; }
+h1.sec .num { color: var(--accent); font-size: 8.6pt; letter-spacing: .06em; }
+h1.sec .aside { margin-left: auto; font-family: var(--mono); font-size: 6.4pt; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+h2.sub { font-size: 7.6pt; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; margin: 5mm 0 2mm; display: flex; align-items: center; gap: 2mm; }
+h2.sub::before { content: ""; width: 1.6mm; height: 1.6mm; background: var(--accent); flex: none; }
+.pg-body > h2.sub:first-child, .pg-body > .sec + h2.sub { margin-top: 1mm; }
+p { margin: 0 0 2.2mm; }
+.prose { max-width: 128mm; }
+.lead { font-size: 8.6pt; line-height: 1.55; max-width: 150mm; margin-bottom: 4mm; }
+.muted { color: var(--muted); }
+.small { font-size: 6.4pt; }
+code, .code { font-family: var(--mono); font-size: 6.9pt; background: var(--tint); padding: 0 .6mm; }
+.gap-block { margin-bottom: 5mm; }
+
+/* ---- values and markers ---------------------------------------------------- */
+.v { white-space: nowrap; }
+.v.st-gap { color: var(--faint); }
+sup.mk { font-size: 5.5pt; font-weight: 700; color: var(--accent-ink); margin-left: .35mm; vertical-align: 2.2pt; line-height: 0; letter-spacing: 0; }
+sup.mk-gap { color: var(--faint); }
+.legend { display: flex; flex-wrap: wrap; gap: 1.2mm 5mm; font-size: 6.4pt; color: var(--muted); border-top: 0.35pt solid var(--rule); padding-top: 1.8mm; margin-top: 3mm; }
+
+/* ---- layout helpers -------------------------------------------------------- */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; }
+.cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5mm; }
+.cols-60 { display: grid; grid-template-columns: 1.45fr 1fr; gap: 7mm; }
+.block { margin-bottom: 5mm; }
+
+/* ---- key figures ------------------------------------------------------------ */
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 0.5pt solid var(--ink); border-bottom: 0.5pt solid var(--ink); }
+.kpi { padding: 2.6mm 3mm 2.8mm 0; border-right: 0.35pt solid var(--rule); padding-left: 3mm; }
+.kpi:first-child { padding-left: 0; }
+.kpi:last-child { border-right: 0; }
+.kpi .k-label { font-size: 5.8pt; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.kpi .k-value { font-family: var(--display); font-size: 15pt; line-height: 1.25; margin-top: 1mm; white-space: nowrap; }
+.kpi .k-value .v { font-family: var(--display); }
+.kpi .k-sub { font-size: 5.8pt; color: var(--muted); line-height: 1.35; margin-top: .6mm; }
+.kpis.k6 { grid-template-columns: repeat(3, 1fr); }
+.kpis.k6 .kpi:nth-child(3n+1) { padding-left: 0; }
+.kpis.k6 .kpi:nth-child(3n) { border-right: 0; }
+.kpis.k6 .kpi:nth-child(n+4) { border-top: 0.35pt solid var(--rule); }
+
+/* ---- tables ------------------------------------------------------------------ */
+table { border-collapse: collapse; width: 100%; font-size: 6.9pt; line-height: 1.38; }
+th { text-align: left; font-weight: 600; background: var(--tint); padding: 1.3mm 1.8mm; border-bottom: 0.5pt solid var(--ink); font-size: 6.4pt; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+td { padding: 1.15mm 1.8mm; border-bottom: 0.25pt solid var(--rule); vertical-align: top; }
+td.num, th.num { text-align: right; }
+td.unit { color: var(--muted); white-space: nowrap; }
+td.key { white-space: nowrap; }
+td.wrap { word-break: break-word; }
+tr.group td { font-weight: 600; border-bottom: 0.5pt solid var(--ink); padding-top: 2.4mm; background: none; text-transform: uppercase; letter-spacing: .07em; font-size: 6.4pt; }
+tr.group:first-child td { padding-top: 1.3mm; }
+table.pinout td:first-child { font-weight: 600; }
+table.dense td { padding: .8mm 1.6mm; }
+.continued > .cont-note, .cont-note { display: none; }
+.continued .cont-note { display: block; font-size: 6.4pt; color: var(--muted); margin-bottom: 1mm; text-transform: uppercase; letter-spacing: .08em; }
+.fn { font-size: 6.4pt; color: var(--muted); margin-top: 1.4mm; }
+.tag { display: inline-block; font-size: 5.8pt; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: .1mm 1.1mm; border: 0.4pt solid var(--faint); color: var(--muted); border-radius: .6mm; white-space: nowrap; }
+.tag.ok { border-color: #2e7d32; color: #2e7d32; }
+.tag.warn { border-color: var(--accent-ink); color: var(--accent-ink); }
+.tag.err { border-color: var(--danger); color: var(--danger); }
+.tag.info { border-color: var(--faint); color: var(--muted); }
+
+/* ---- figures ------------------------------------------------------------------ */
+figure { margin: 0 0 4mm; }
+.figwrap { position: relative; width: 100%; }
+.figwrap img { display: block; width: 100%; height: auto; }
+.figwrap svg.overlay { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+figcaption, .cap { font-size: 6.4pt; color: var(--muted); margin-top: 1.6mm; display: flex; gap: 2mm; }
+figcaption b, .cap b { color: var(--ink); font-weight: 600; white-space: nowrap; }
+figcaption .unit { margin-left: auto; white-space: nowrap; }
+.chart { display: block; width: 100%; height: auto; }
+.chart text { font-family: var(--mono); }
+.chartbox { border-top: 0.35pt solid var(--rule); padding-top: 2mm; }
+.chartbox h3 { font-size: 6.9pt; font-weight: 600; margin: 0 0 1mm; letter-spacing: .03em; }
+
+/* ---- callouts (SVG) ------------------------------------------------------------ */
+.co-leader { stroke: var(--ink); fill: none; }
+.co-dot { fill: var(--ink); }
+.co-bubble { fill: #fff; stroke: var(--ink); }
+.co-bubble.acc { fill: var(--accent); stroke: var(--accent); }
+.co-num { font-family: var(--mono); font-weight: 700; fill: var(--ink); }
+.co-num.acc { fill: #fff; }
+.co-label { font-family: var(--mono); fill: var(--ink); }
+.co-label.muted { fill: var(--muted); }
+
+/* ---- admonitions ------------------------------------------------------------------ */
+.note { display: grid; grid-template-columns: 5.5mm 1fr; gap: 1.5mm; border-top: 0.35pt solid var(--rule); border-bottom: 0.35pt solid var(--rule); padding: 1.8mm 0; margin: 2mm 0; font-size: 6.9pt; }
+.note + .note { border-top: 0; margin-top: -2mm; }
+.note svg { width: 4.2mm; height: 4.2mm; margin-top: .2mm; }
+.note b { font-weight: 700; letter-spacing: .04em; }
+.note.warning b { color: var(--danger); }
+.note.caution b { color: var(--accent-ink); }
+
+/* ---- contents ------------------------------------------------------------------ */
+ol.toc { list-style: none; padding: 0; margin: 0; }
+ol.toc li { display: flex; align-items: baseline; gap: 2mm; padding: 1.1mm 0; border-bottom: 0.25pt solid var(--rule); }
+.toc-n { color: var(--accent-ink); width: 7mm; flex: none; }
+.toc-dots { flex: 1; }
+.toc-p { font-weight: 600; }
+
+/* ---- assembly steps -------------------------------------------------------------- */
+.step { border-top: 0.6pt solid var(--ink); padding-top: 2.6mm; margin-bottom: 5mm; }
+.step-head { display: flex; align-items: center; gap: 3mm; margin-bottom: 2.4mm; }
+.step-no { width: 8.5mm; height: 8.5mm; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--display); font-size: 12pt; display: flex; align-items: center; justify-content: center; flex: none; }
+.step-head h2 { font-family: var(--display); font-weight: 400; font-size: 12pt; margin: 0; letter-spacing: .02em; }
+.step-head .trace { margin-left: auto; font-size: 5.8pt; color: var(--faint); text-align: right; max-width: 60mm; line-height: 1.35; }
+.parts { display: flex; flex-wrap: wrap; gap: 2mm; margin-bottom: 2mm; }
+.part { display: grid; grid-template-columns: 11mm auto; grid-template-rows: auto auto; column-gap: 1.8mm; align-items: center; border: 0.35pt solid var(--rule); padding: 1.2mm 2.4mm 1.2mm 1.4mm; min-width: 36mm; }
+.part img { grid-row: span 2; width: 11mm; height: 11mm; object-fit: contain; }
+.part .p-name { font-size: 6.4pt; line-height: 1.25; }
+.part .p-qty { font-family: var(--display); font-size: 8.6pt; color: var(--accent-ink); line-height: 1.1; display: flex; align-items: center; gap: 1.4mm; }
+.part .p-qty .letter { font-family: var(--mono); font-weight: 700; font-size: 5.8pt; width: 3.6mm; height: 3.6mm; border-radius: 50%; border: 0.5pt solid var(--ink); color: var(--ink); display: inline-flex; align-items: center; justify-content: center; }
+.part.tool { border-style: dashed; }
+.step-body { display: grid; grid-template-columns: 1fr; gap: 2mm; }
+ol.actions { margin: 0; padding: 0; list-style: none; counter-reset: a; }
+ol.actions li { counter-increment: a; position: relative; padding: .9mm 0 .9mm 5mm; border-bottom: 0.25pt solid var(--rule); }
+ol.actions li::before { content: counter(a) "."; position: absolute; left: 0; font-weight: 700; color: var(--ink); }
+ol.actions li:last-child { border-bottom: 0; }
+.step-meta { display: flex; flex-wrap: wrap; gap: 1mm 5mm; font-size: 6.4pt; color: var(--muted); margin-top: 1.2mm; }
+.step-meta b { color: var(--ink); font-weight: 600; }
+.wiretable td { font-size: 6.4pt; }
+.x-flag { color: var(--accent-ink); font-weight: 700; }
+
+/* ---- BOM thumbnails ---------------------------------------------------------------- */
+.kit { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 0.5pt solid var(--ink); }
+.kit-item { border-bottom: 0.35pt solid var(--rule); border-right: 0.35pt solid var(--rule); padding: 2mm 2mm 2.2mm; display: flex; flex-direction: column; gap: .8mm; min-height: 30mm; }
+.kit-item:nth-child(5n) { border-right: 0; }
+.kit-item img { width: 100%; height: 16mm; object-fit: contain; }
+.kit-item .k-name { font-size: 5.8pt; line-height: 1.3; }
+.kit-item .k-qty { font-family: var(--display); color: var(--accent-ink); font-size: 8.6pt; }
+.kit-item .k-id { font-size: 5.8pt; color: var(--faint); word-break: break-all; }
+.kit-item.noimg img { display: none; }
+.kit-item .ph { height: 16mm; display: flex; align-items: center; justify-content: center; color: var(--faint); font-size: 5.8pt; border: 0.35pt dashed var(--rule); }
+
+/* ---- additions ---------------------------------------------------------------------- */
+.v.wrap { white-space: normal; }
+.cover-kicker { position: absolute; top: 25mm; left: 16mm; font-size: 6.9pt; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.cover-title { top: 31mm; }
+.cover-sub { top: 52mm; }
+.cover-hero { top: 70mm; bottom: 9mm; }
+.cover-herocap { position: absolute; right: 16mm; bottom: 4mm; font-size: 5.8pt; color: #8a8a8a; letter-spacing: .03em; }
+.cover-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 8mm; margin-top: 5mm; }
+.cover-grid .legend { margin-top: 1mm; border-top: 0; padding-top: 0; flex-direction: column; gap: .8mm; }
+.co-inline { display: inline-flex; width: 4.2mm; height: 4.2mm; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 6.4pt; align-items: center; justify-content: center; }
+ul.plain, ul.tight { margin: 0 0 2mm; padding-left: 3.5mm; }
+ul.plain li, ul.tight li { margin: .4mm 0; }
+.keyrow { display: flex; align-items: center; gap: 2mm; font-size: 6.9pt; margin: .9mm 0; }
+.sw { width: 7mm; height: 3.4mm; border: 0.5pt solid; display: inline-block; flex: none; }
+.sw-ctx { background: #f5f5f5; border-color: #a8a8a8; }
+.sw-new { background: #e8eaed; border-color: #242424; }
+.sw-acc { background: #ffb584; border-color: #d24a00; }
+.sw-guide { border: 0; height: 0; border-top: 0.9pt dashed var(--accent); }
+.stackfig { border-top: 0.35pt solid var(--rule); padding-top: 1.6mm; }
+.st-title { font-size: 6.9pt; font-weight: 600; margin-bottom: 1mm; }
+.st-legend { font-size: 5.8pt; line-height: 1.4; color: var(--ink); }
+.st-legend .mm { color: var(--accent-ink); display: inline-block; min-width: 15mm; }
+.part .ph-s { grid-row: span 2; width: 11mm; height: 11mm; border: 0.35pt dashed var(--rule); }
+.part .p-qty .letter.acc { background: var(--accent); border-color: var(--accent); color: #fff; }
+.mk-inline { font-size: 5.5pt; font-weight: 700; color: var(--accent-ink); }
+code.q { font-size: 5.8pt; background: none; padding: 0; color: var(--muted); word-break: break-all; }
+.wiringfig svg { display: block; margin-bottom: 2mm; }
+table.provtable { table-layout: fixed; }
+table.provtable th:nth-child(1) { width: 20mm; } table.provtable th:nth-child(2) { width: 17mm; } table.provtable th:nth-child(3) { width: 62mm; }
+.sysdiag { display: block; margin: 1mm 0 0; }
+
+.step-top { break-inside: avoid; }
+.step-cont { margin-bottom: 1.5mm; }
+.step-end { margin-bottom: 6mm; }
+.wiretable td:nth-child(2), .wiretable td:nth-child(3) { line-height: 1.45; }
+.chartbox .cap { margin-bottom: 1mm; }
+.legend-row { display: flex; gap: 4mm; font-size: 6.4pt; color: var(--muted); margin: -0.5mm 0 1mm; }
+.legend-row i { display: inline-block; width: 5mm; height: 0; border-top: 1.2pt solid; vertical-align: middle; margin-right: 1.2mm; }
+.legend-row i.dash { border-top-style: dashed; }
+/* print: last so it wins over the screen rules above */
+@media print { html, body { background: #fff; } #pages { display: block; gap: 0; padding: 0; } .page { box-shadow: none !important; margin: 0; } }
+.accent-q { font-family: var(--display); color: var(--accent-ink); }
+.stackfig svg { display: block; }
+.hwtable td:first-child { width: 62mm; } .hwtable td:last-child { width: 16mm; white-space: nowrap; }
+.kpi .k-value .u { font-family: var(--mono); font-size: 8.6pt; letter-spacing: 0; margin-left: .4mm; }
+.cover-foot { white-space: nowrap; }
+.cover-foot > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; }
+</style>
+</head>
+<body data-pages="12">
+
+<div id="pages"><div class="page cover" data-page="1">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="coverpage" data-page="cover">
+  <div class="cover-top"><div class="grid-bg"></div>
+    <div class="cover-brand">PR<b>0</b>TOBOARD <span class="muted">·</span> UHD</div>
+    <div class="cover-rev"><span>Rev A</span><span>2026-10-24</span><span>UHD-WATCH-AG</span></div>
+    <div class="cover-kicker">Assembly guide</div>
+    <div class="cover-title">Wearable <span class="accent">Watch</span></div>
+    <div class="cover-sub"><span class="v wrap st-model" data-q="sys:system.description" data-s="model" title="Source: UHD system">Reference smartwatch: Raytac MDBT50Q-1MV2 (nRF52840, BLE), 1.28-inch round 240 x 240 display (ER-TFT1.28-1, GC9A01), BMI270 IMU, MAX30102 heart rate, DRV2605L with a VG0832012 LRA, MAX17048 fuel gauge, MCP73831 charger from USB-C, 200 mAh LiPo (LP402030), two side buttons, printed PETG case with 22 mm spring-bar lugs.</span></div>
+    <div class="cover-hero"><img src="images/ag-hero.png" width="2000" height="1180" alt="Exploded along each joint's axis in fastener-stack order (7 mates, 8 hardware parts, battery by placement hint)."></div>
+    <div class="cover-herocap">Exploded along each joint's axis in fastener-stack order (7 mates, 8 hardware parts, battery by placement hint).</div>
+  </div>
+  <div class="cover-bottom"><div class="kpis">
+        <div class="kpi"><div class="k-label">Steps</div><div class="k-value">7</div><div class="k-sub">mechanical and wiring</div></div>
+        <div class="kpi"><div class="k-label">Mates</div><div class="k-value"><span class="v st-model" data-q="sys:assembly.mates" data-s="model" title="Source: UHD assembly">7</span></div><div class="k-sub">from assemble()</div></div>
+        <div class="kpi"><div class="k-label">Hardware</div><div class="k-value"><span class="v st-derived" data-q="derived:mech.hardware_count" data-s="derived" title="Formula: assemble().hardware.length">8</span></div><div class="k-sub">screws, spacers, standoffs, nuts</div></div>
+        <div class="kpi"><div class="k-label">Parts</div><div class="k-value">71</div><div class="k-sub">45 BOM lines</div></div></div>
+        <div class="cover-grid"><div><h2 class="sub">How this guide is made</h2><p class="small">Steps, parts and hardware come from the UHD model: mates and fastener stacks from <code>assemble()</code>, wiring from <code>wiringChecklist</code>. The coverage table at the end lists where every mate, fastener and wire appears.</p></div><div><div class="legend"><span><sup class="mk mk-assumption">A</sup> Assumption: the model marks this value as an assumption (assumption trait)</span><span><sup class="mk mk-derived">D</sup> Derived: computed from model values; formula in the provenance appendix</span><span>Unmarked values are cited from the part's sources (sources.json) or are design values of the model.</span></div></div></div></div>
+  <div class="cover-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span>Generated from the UHD model of <code>wearable-watch</code> by @protoboardai/ext-docs</span><span class="right">UHD-WATCH-AG · Rev A · 2026-10-24</span></div>
+</div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">01 / 12</span></footer>
+  </div><div class="page" data-page="2">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="block"><h1 class="sec" data-num="01" data-toc="Before you begin"><span class="num">01</span>Before you begin</h1><div class="cols-60"><div>
+    <h2 class="sub">Contents</h2><ol class="toc"><li><span class="toc-n">01</span><span class="toc-t">Before you begin</span><span class="toc-dots"></span><span class="toc-p">02</span></li><li><span class="toc-n">02</span><span class="toc-t">Kit contents</span><span class="toc-dots"></span><span class="toc-p">03</span></li><li><span class="toc-n">03</span><span class="toc-t">Hardware</span><span class="toc-dots"></span><span class="toc-p">04</span></li><li><span class="toc-n">04</span><span class="toc-t">Fit the lens, the heart-rate cover and the plungers</span><span class="toc-dots"></span><span class="toc-p">05</span></li><li><span class="toc-n">05</span><span class="toc-t">Solder the cell leads to J3</span><span class="toc-dots"></span><span class="toc-p">06</span></li><li><span class="toc-n">06</span><span class="toc-t">Fold the cell and the display, and seat the board in the case</span><span class="toc-dots"></span><span class="toc-p">07</span></li><li><span class="toc-n">07</span><span class="toc-t">Solder the LRA leads to J4</span><span class="toc-dots"></span><span class="toc-p">08</span></li><li><span class="toc-n">08</span><span class="toc-t">Put the LRA in place for the back cover</span><span class="toc-dots"></span><span class="toc-p">09</span></li><li><span class="toc-n">09</span><span class="toc-t">Press the inserts and close the back cover</span><span class="toc-dots"></span><span class="toc-p">10</span></li><li><span class="toc-n">10</span><span class="toc-t">Fit the spring bars</span><span class="toc-dots"></span><span class="toc-p">11</span></li><li><span class="toc-n">11</span><span class="toc-t">Coverage</span><span class="toc-dots"></span><span class="toc-p">12</span></li></ol>
+  </div><div>
+    <h2 class="sub">Tools</h2><ul class="plain"><li>Soldering iron, solder, heat-shrink</li></ul>
+    <p class="small muted">Derived from the fasteners in the model: hex keys from each screw's stated socket or the ISO 4762 socket size for its thread, drivers and spanners from each nut's and standoff's across-flats.</p>
+    <h2 class="sub">Reading the figures</h2>
+    <div class="keyrow"><span class="sw sw-ctx"></span>Already assembled</div>
+    <div class="keyrow"><span class="sw sw-new"></span>Fitted in this step</div>
+    <div class="keyrow"><span class="sw sw-acc"></span>Hardware for this step</div>
+    <div class="keyrow"><span class="sw sw-guide"></span>Assembly axis</div>
+    <p class="small muted">Parts are drawn exploded along each joint's axis in stacking order, from the model's fastener stacks and mate gaps.</p>
+  </div></div>
+  
+  <div class="note info"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1" fill="none" stroke="#1b1b1b" stroke-width="1.7"></rect><path d="M12 10.5V17" stroke="#1b1b1b" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="7.4" r="1.2" fill="#1b1b1b"></circle></svg><div><b>NOTE</b> Each step's torque line gives the tightening torque of the part turned, from the harness's fastener stack. <span class="v st-model" data-q="sys:checks.diagnostics[id=fastener_torque:summary].details.assumed" data-s="model" title="Source: UHD checks">1</span> of them are <b>assumptions</b> (marked A): no frame, motor or DJI source states a torque, so they are derated from supplier tables for the screw grade into steel. Threadlocker is only advised where a harness says so (steel into aluminium).</div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">02 / 12</span></footer>
+  </div><div class="page" data-page="3">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="block" data-break="before"><h1 class="sec" data-num="02" data-toc="Kit contents"><span class="num">02</span>Kit contents<span class="aside">docs/wearable-watch-bom.json</span></h1><div class="kit"><div class="kit-item"><img src="images/part-watch-main-board.png" alt=""><div class="k-qty">×1</div><div class="k-name">Watch main board (assembled)</div><div class="k-id">watch-main-board</div></div><div class="kit-item noimg"><div class="ph">no CAD</div><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=6].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Cell foam pad, 0.25 mm double-sided</div><div class="k-id">watch-cell-foam-pad</div></div><div class="kit-item noimg"><div class="ph">no CAD</div><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=7].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Clear UV-curing adhesive for the window covers</div><div class="k-id">watch-cover-adhesive</div></div><div class="kit-item noimg"><div class="ph">no CAD</div><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=8].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Display adhesive ring, 0.25 mm</div><div class="k-id">watch-display-adhesive-ring</div></div><div class="kit-item"><img src="images/part-esslinger-82-2225-spring-bar.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=11].quantity" data-s="model" title="Source: UHD bom">2</span></div><div class="k-name">Esslinger 82.2225 spring bar, 22 mm, ø1.50 mm, double flange</div><div class="k-id">esslinger-82-2225-spring-bar</div></div><div class="kit-item"><img src="images/part-lipol-lp402030.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=13].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">LiPol LP402030 200 mAh 3.7 V LiPo with PCM</div><div class="k-id">lipol-lp402030</div></div><div class="kit-item noimg"><div class="ph">no CAD</div><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=14].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">LRA adhesive pad, 0.25 mm, ø8 mm</div><div class="k-id">watch-lra-adhesive-pad</div></div><div class="kit-item"><img src="images/part-iso-7045-m2x6-a2.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=15].quantity" data-s="model" title="Source: UHD bom">4</span></div><div class="k-name">M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless</div><div class="k-id">iso-7045-m2x6-a2</div></div><div class="kit-item"><img src="images/part-ruthex-rx-m2x4.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=24].quantity" data-s="model" title="Source: UHD bom">4</span></div><div class="k-name">ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm</div><div class="k-id">ruthex-rx-m2x4</div></div><div class="kit-item"><img src="images/part-vybronics-vg0832012.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=29].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Vybronics VG0832012 8 mm Z-axis coin LRA</div><div class="k-id">vybronics-vg0832012</div></div><div class="kit-item"><img src="images/part-watch-case.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=30].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Watch case</div><div class="k-id">watch-case</div></div><div class="kit-item"><img src="images/part-watch-display-lens.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=38].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Display lens, 38 × 0.5 mm PMMA</div><div class="k-id">watch-display-lens</div></div><div class="kit-item"><img src="images/part-watch-hr-cover.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=39].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Heart-rate window cover, 4.0 × 8.2 × 0.5 mm PMMA</div><div class="k-id">watch-hr-cover</div></div><div class="kit-item"><img src="images/part-watch-battery-leads.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=42].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">Cell leads</div><div class="k-id">watch-battery-leads</div></div><div class="kit-item"><img src="images/part-watch-lra-leads.png" alt=""><div class="k-qty">×<span class="v st-model" data-q="sys:bom[line=44].quantity" data-s="model" title="Source: UHD bom">1</span></div><div class="k-name">LRA leads</div><div class="k-id">watch-lra-leads</div></div></div><p class="fn">Quantities from the generated BOM; a circuit board is one item, assembled by the fab (its parts are in the BOM, not at the bench); drawings are the parts' CAD artifacts, not to scale.</p></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">03 / 12</span></footer>
+  </div><div class="page" data-page="4">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="block" data-break="before"><h1 class="sec" data-num="03" data-toc="Hardware"><span class="num">03</span>Hardware<span class="aside">fastener stacks</span></h1><p class="prose">Every screw, spacer, standoff and nut is placed by a harness's <code>fastenerStack</code>. The sections below are drawn from those positions and the mate gaps: one hole of each joint, to one scale, millimetres from the structure face.</p></div><div class="tblock block"><div class="cont-note">Hardware by harness (continued)</div><table class="dense hwtable split"><thead><tr><th class="">Harness</th><th class="">Parts placed</th><th class="num">Torque</th><th class="">Used in</th></tr></thead><tbody><tr><td class=""><b>Back cover screws</b><br><span class="muted small">joint back_cover</span></td><td class="">4 × ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm<br>4 × M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless</td><td class="num"><span class="v st-assumption" data-q="def:watch-back-cover-screws:fastenerStack[1].torque.torqueNm" data-f="u=N·m" data-s="assumption" title="assumption trait"><span class="n">0.1</span>&nbsp;<span class="u">N·m</span></span><sup class="mk mk-assumption">A</sup> <span class="muted small">M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless</span></td><td class="">Step 6</td></tr></tbody></table></div><div class="block keep"><div class="cols"><div class="stackfig"><div class="st-title">Back cover screws <span class="muted small">watch-back-cover-screws</span></div><svg viewBox="0 0 240 64.65" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="inherit"><rect x="8" y="16.049999999999997" width="72" height="1.5" fill="#cfcfd1" stroke="#1b1b1b" stroke-width="0.6"></rect><rect x="12" y="12.049999999999999" width="64" height="4" fill="#dfe8f2" stroke="#1b1b1b" stroke-width="0.6"></rect><rect x="39" y="16.049999999999997" width="10" height="10" fill="#ffffff" stroke="#1b1b1b" stroke-width="0.6"></rect><rect x="41.5" y="12.799999999999999" width="5" height="15" fill="#ffc9a3" stroke="#d24a00" stroke-width="0.6"></rect><rect x="39" y="8.5" width="10" height="4.3" fill="#ffc9a3" stroke="#d24a00" stroke-width="0.6"></rect><polyline points="49,10.649999999999999 94,10.649999999999999 98,10.649999999999999" fill="none" stroke="#a3a3a3" stroke-width="0.4"></polyline><text x="100" y="12.649999999999999" font-size="7" fill="#d24a00" font-weight="600">M2 x 6 mm Pozi pan head screw, IS…</text><text x="100" y="19.65" font-size="5.8" fill="#6f6f6f">1.3…3.02 mm</text><polyline points="76,14.049999999999999 94,14.049999999999999 98,24.65" fill="none" stroke="#a3a3a3" stroke-width="0.4"></polyline><text x="100" y="26.65" font-size="7" fill="#1b1b1b" font-weight="600">Watch case</text><text x="100" y="33.65" font-size="5.8" fill="#6f6f6f">at 0 mm</text><polyline points="80,16.049999999999997 94,16.049999999999997 98,38.65" fill="none" stroke="#a3a3a3" stroke-width="0.4"></polyline><text x="100" y="40.65" font-size="7" fill="#1b1b1b" font-weight="600">structure</text><text x="100" y="47.65" font-size="5.8" fill="#6f6f6f">face</text><polyline points="49,21.049999999999997 94,21.049999999999997 98,52.65" fill="none" stroke="#a3a3a3" stroke-width="0.4"></polyline><text x="100" y="54.65" font-size="7" fill="#1b1b1b" font-weight="600">ruthex RX-M2x4 brass heat-set ins…</text><text x="100" y="61.65" font-size="5.8" fill="#6f6f6f">-4…0 mm</text></svg></div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">04 / 12</span></footer>
+  </div><div class="page" data-page="5">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="step step-top block keep-next" data-break="before" data-step="covers" data-mates="lens_seat hr_cover_seat" data-wiring="" data-hardware="">
+  <div class="step-head"><div class="step-no">1</div><h2 data-num="04" data-toc="Fit the lens, the heart-rate cover and the plungers">Fit the lens, the heart-rate cover and the plungers</h2><div class="trace">mates: lens_seat, hr_cover_seat</div></div>
+  <div class="parts"><div class="part"><img src="images/part-watch-display-lens.png" alt=""><div class="p-qty"><span class="letter">A</span>×1</div><div class="p-name">Display lens, 38 × 0.5 mm PMMA</div></div><div class="part"><img src="images/part-watch-hr-cover.png" alt=""><div class="p-qty"><span class="letter">B</span>×1</div><div class="p-name">Heart-rate window cover, 4.0 × 8.2 × 0.5 mm PMMA</div></div><div class="part"><span class="ph-s"></span><div class="p-qty"><span class="letter">C</span>×1</div><div class="p-name">Clear UV-curing adhesive for the window covers</div></div></div>
+  <figure class="block "><div class="figwrap"><img src="images/ag-step-01-covers.png" width="1900" height="1000" alt="Fit the lens, the heart-rate cover and the plungers: parts exploded along each joint's axis in stacking order; lettered as in the parts strip."><svg class="overlay" viewBox="0 0 1900 1000" preserveAspectRatio="none"><line class="co-leader" x1="80.1" y1="735.5" x2="943.3" y2="735.5" stroke-width="1.92"></line><circle class="co-dot" cx="943.3" cy="735.5" r="5.9"></circle><circle class="co-bubble" cx="56.0" cy="735.5" r="24.0" stroke-width="1.92"></circle><text class="co-num" x="56.0" y="745.6" text-anchor="middle" font-size="27.8">A</text><line class="co-leader" x1="1819.9" y1="171.9" x2="1041.8" y2="171.9" stroke-width="1.92"></line><circle class="co-dot" cx="1041.8" cy="171.9" r="5.9"></circle><circle class="co-bubble" cx="1844.0" cy="171.9" r="24.0" stroke-width="1.92"></circle><text class="co-num" x="1844.0" y="182.0" text-anchor="middle" font-size="27.8">B</text></svg></div><figcaption><b>Figure 1</b><span>Fit the lens, the heart-rate cover and the plungers: parts exploded along each joint's axis in stacking order; lettered as in the parts strip.</span></figcaption></figure></div><div class="step-cont block"><ol class="actions"><li>Seat the Display lens, 38 × 0.5 mm PMMA onto the display window and lens.</li><li>Seat the Heart-rate window cover, 4.0 × 8.2 × 0.5 mm PMMA onto the heart-rate window.</li><li>Fit the Clear UV-curing adhesive for the window covers.</li><li>Push the two printed plungers (plunger_button_1, plunger_button_2) into their bores in the case wall from inside, flange inwards; each must slide freely.</li></ol></div><div class="step-cont block"><div class="step-meta"><span><b>Step</b> 1 of 7</span></div></div><div class="step-cont block"><div class="note tip"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6.2" fill="none" stroke="#1b1b1b" stroke-width="1.7"></circle><path d="M9.3 17.5h5.4M10 21h4" stroke="#1b1b1b" stroke-width="1.7" stroke-linecap="round"></path></svg><div><b>TIP</b> Peel the protective film from the inner face only. Put a thin bead of adhesive on each pocket's ledge, press the cover in flush and cure it before anything goes inside the case.</div></div></div><div class="step-cont block step-end"><div class="note caution"><svg viewBox="0 0 24 24"><path d="M12 2.5 1.8 21h20.4L12 2.5z" fill="none" stroke="#d94e00" stroke-width="1.8" stroke-linejoin="round"></path><path d="M12 9v5.5" stroke="#d94e00" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="17.6" r="1.2" fill="#d94e00"></circle></svg><div><b>CAUTION</b> Keep adhesive off the apertures: on the heart-rate window it would scatter the sensor's light (OQ-W7).</div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">05 / 12</span></footer>
+  </div><div class="page" data-page="6">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="step step-top block keep-next" data-step="cell-leads" data-mates="board/j3_site" data-wiring="cell_leads cell_pads" data-hardware="">
+  <div class="step-head"><div class="step-no">2</div><h2 data-num="05" data-toc="Solder the cell leads to J3">Solder the cell leads to J3</h2><div class="trace">mates: board/j3_site · links: cell_leads, cell_pads</div></div>
+  <div class="parts"><div class="part"><span class="ph-s"></span><div class="p-qty"><span class="letter">A</span>×1</div><div class="p-name">Cell lead solder pads (2)</div></div><div class="part"><img src="images/part-watch-battery-leads.png" alt=""><div class="p-qty"><span class="letter">B</span>×1</div><div class="p-name">Cell leads</div></div></div>
+  <figure class="block wiringfig"><figcaption><b>Figure 2</b><span>Pad-to-pad connections from the stored links (wiringChecklist); crossovers in accent.</span></figcaption></figure></div><div class="step-cont block"><ol class="actions"><li>Seat the Cell lead solder pads (2) onto the on the board copper.</li><li>Lay the cell flat beside the board's +y edge, PCM end towards J3 and no more than 3 mm past the board's edge, so its leads reach J3 on the board's rear face.</li><li>Connect Cell leads, Cell leads on J3 as in the table (4 connections).</li></ol></div><div class="tblock block"><div class="cont-note">Solder the cell leads to J3 (continued)</div><table class="dense wiretable split"><thead><tr><th class="">Link</th><th class="">From</th><th class="">To</th><th class=""></th><th class="">Termination</th><th class="">DRC</th></tr></thead><tbody><tr><td class=""><b>Cell leads</b></td><td class="">cell<br><b>+</b> · <b>-</b></td><td class="">Cell leads<br><b>P1</b> · <b>P2</b></td><td class=""></td><td class="">integral</td><td class=""><span class="tag ok">configured</span></td></tr><tr><td class=""><b>Cell leads on J3</b></td><td class="">Cell leads<br><b>P1</b> · <b>P2</b></td><td class="">board<br><b>1</b> · <b>2</b></td><td class=""></td><td class="">solder_leads</td><td class=""><span class="tag ok">configured</span></td></tr></tbody></table></div><div class="step-cont block"><div class="step-meta"><span><b>Step</b> 2 of 7</span></div></div><div class="step-cont block"><div class="note caution"><svg viewBox="0 0 24 24"><path d="M12 2.5 1.8 21h20.4L12 2.5z" fill="none" stroke="#d94e00" stroke-width="1.8" stroke-linejoin="round"></path><path d="M12 9v5.5" stroke="#d94e00" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="17.6" r="1.2" fill="#d94e00"></circle></svg><div><b>CAUTION</b> Red (+) to pad 1, black (-) to pad 2. Cut and strip one lead at a time so the two never touch: the cell is charged and its PCM is the only protection.</div></div></div><div class="step-cont block"><div class="note tip"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6.2" fill="none" stroke="#1b1b1b" stroke-width="1.7"></circle><path d="M9.3 17.5h5.4M10 21h4" stroke="#1b1b1b" stroke-width="1.7" stroke-linecap="round"></path></svg><div><b>TIP</b> Cut the leads to the length in the BOM (installed length plus 1.5 mm stripped) before stripping: the cell then folds under the board with no slack to spare.</div></div></div><div class="step-cont block step-end"><div class="note info"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1" fill="none" stroke="#1b1b1b" stroke-width="1.7"></rect><path d="M12 10.5V17" stroke="#1b1b1b" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="7.4" r="1.2" fill="#1b1b1b"></circle></svg><div><b>NOTE</b> The cell's own leads: cut to 9 mm, strip 1.5 mm, tin, and solder + (red) to J3 pad 1 and - (black) to pad 2 with the cell lying beside the board's +y edge, then fold the cell under the board's rear face. Never let the bare ends touch: the cell's PCM trips at 1-2.5 A, but a short still heats the leads. <span class="muted small">— watch-battery-leads</span></div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">06 / 12</span></footer>
+  </div><div class="page" data-page="7">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="step step-top block keep-next" data-step="board" data-mates="" data-wiring="" data-hardware="">
+  <div class="step-head"><div class="step-no">3</div><h2 data-num="06" data-toc="Fold the cell and the display, and seat the board in the case">Fold the cell and the display, and seat the board in the case</h2><div class="trace"></div></div>
+  <div class="parts"><div class="part"><img src="images/part-watch-main-board.png" alt=""><div class="p-qty"><span class="letter">A</span>×1</div><div class="p-name">Watch main board</div></div><div class="part"><img src="images/part-lipol-lp402030.png" alt=""><div class="p-qty"><span class="letter">B</span>×1</div><div class="p-name">LiPol LP402030 200 mAh 3.7 V LiPo with PCM</div></div><div class="part"><span class="ph-s"></span><div class="p-qty"><span class="letter">C</span>×1</div><div class="p-name">Cell foam pad, 0.25 mm double-sided</div></div><div class="part"><span class="ph-s"></span><div class="p-qty"><span class="letter">D</span>×1</div><div class="p-name">Display adhesive ring, 0.25 mm</div></div></div>
+  <figure class="block "><div class="figwrap"><img src="images/ag-step-03-board.png" width="1900" height="1000" alt="Fold the cell and the display, and seat the board in the case: shown lifted above its seat."><svg class="overlay" viewBox="0 0 1900 1000" preserveAspectRatio="none"><line class="co-leader" x1="80.1" y1="293.3" x2="944.3" y2="293.3" stroke-width="1.92"></line><circle class="co-dot" cx="944.3" cy="293.3" r="5.9"></circle><circle class="co-bubble" cx="56.0" cy="293.3" r="24.0" stroke-width="1.92"></circle><text class="co-num" x="56.0" y="303.4" text-anchor="middle" font-size="27.8">A</text><line class="co-leader" x1="1819.9" y1="345.2" x2="957.7" y2="345.2" stroke-width="1.92"></line><circle class="co-dot" cx="957.7" cy="345.2" r="5.9"></circle><circle class="co-bubble" cx="1844.0" cy="345.2" r="24.0" stroke-width="1.92"></circle><text class="co-num" x="1844.0" y="355.4" text-anchor="middle" font-size="27.8">B</text></svg></div><figcaption><b>Figure 3</b><span>Fold the cell and the display, and seat the board in the case: shown lifted above its seat.</span></figcaption></figure></div><div class="step-cont block"><ol class="actions"><li>Place the Watch main board as shown. It has no mechanical interface in the model; the figure places it by .protoboard/display.json: mid-plane at z 6.68: the display it carries on its rear face (soldered by the FPC, 4.78 mm below the rear copper) puts the viewing face at z 0 on the lens; its components face the back cover; the USB-C mouth and the switch stems line up with the case wall at this height (the case is generated around it).</li><li>Place the LiPol LP402030 200 mAh 3.7 V LiPo with PCM as shown. It has no mechanical interface in the model; the figure places it by .protoboard/display.json: between the display and the board, PCM end towards 12 o'clock as seen from the back (+y), on 0.25 mm foam tape on the display's rear face, 0.53 mm clear of the board for the cell to swell (D-W15); held by the foam tape (D-W6).</li><li>Fit the Cell foam pad, 0.25 mm double-sided.</li><li>Fit the Display adhesive ring, 0.25 mm.</li><li>Fold the cell under the board's rear face on its leads, PCM end towards 12 o'clock, and stick it to the display's rear face with the foam pad.</li><li>Fold the display over the cell on its FPC, viewing face out.</li><li>Stick the adhesive ring to the display's front rim, outside its visual area, and lower the board and display into the case: display face onto the floor, USB-C into its opening, button stems behind their plungers.</li></ol></div><div class="step-cont block"><div class="step-meta"><span><b>Step</b> 3 of 7</span></div></div><div class="step-cont block step-end"><div class="note caution"><svg viewBox="0 0 24 24"><path d="M12 2.5 1.8 21h20.4L12 2.5z" fill="none" stroke="#d94e00" stroke-width="1.8" stroke-linejoin="round"></path><path d="M12 9v5.5" stroke="#d94e00" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="17.6" r="1.2" fill="#d94e00"></circle></svg><div><b>CAUTION</b> Do not crease the display's FPC: it bends once, past the cell's edge, as it left the board unit.</div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">07 / 12</span></footer>
+  </div><div class="page" data-page="8">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="step step-top block keep-next" data-step="lra-leads" data-mates="board/j4_site" data-wiring="lra_wires lra_pads" data-hardware="">
+  <div class="step-head"><div class="step-no">4</div><h2 data-num="07" data-toc="Solder the LRA leads to J4">Solder the LRA leads to J4</h2><div class="trace">mates: board/j4_site · links: lra_wires, lra_pads</div></div>
+  <div class="parts"><div class="part"><span class="ph-s"></span><div class="p-qty"><span class="letter">A</span>×1</div><div class="p-name">LRA lead solder pads (2)</div></div><div class="part"><img src="images/part-watch-lra-leads.png" alt=""><div class="p-qty"><span class="letter">B</span>×1</div><div class="p-name">LRA leads</div></div></div>
+  <figure class="block wiringfig"><figcaption><b>Figure 4</b><span>Pad-to-pad connections from the stored links (wiringChecklist); crossovers in accent.</span></figcaption></figure></div><div class="step-cont block"><ol class="actions"><li>Seat the LRA lead solder pads (2) onto the on the board copper.</li><li>Connect LRA leads, LRA leads on J4 as in the table (4 connections).</li></ol></div><div class="tblock block"><div class="cont-note">Solder the LRA leads to J4 (continued)</div><table class="dense wiretable split"><thead><tr><th class="">Link</th><th class="">From</th><th class="">To</th><th class=""></th><th class="">Termination</th><th class="">DRC</th></tr></thead><tbody><tr><td class=""><b>LRA leads</b></td><td class="">lra<br><b>+</b> · <b>-</b></td><td class="">LRA leads<br><b>P1</b> · <b>P2</b></td><td class=""></td><td class="">integral</td><td class=""><span class="tag ok">configured</span></td></tr><tr><td class=""><b>LRA leads on J4</b></td><td class="">LRA leads<br><b>P1</b> · <b>P2</b></td><td class="">board<br><b>1</b> · <b>2</b></td><td class=""></td><td class="">solder_leads</td><td class=""><span class="tag ok">configured</span></td></tr></tbody></table></div><div class="step-cont block"><div class="step-meta"><span><b>Step</b> 4 of 7</span></div></div><div class="step-cont block"><div class="note tip"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6.2" fill="none" stroke="#1b1b1b" stroke-width="1.7"></circle><path d="M9.3 17.5h5.4M10 21h4" stroke="#1b1b1b" stroke-width="1.7" stroke-linecap="round"></path></svg><div><b>TIP</b> Red (+) to pad 1, blue (-) to pad 2, with the LRA lying in the board's free region (x 5.7-14.5 mm). An LRA is not polarised in use, but keeping the order makes the test record comparable.</div></div></div><div class="step-cont block step-end"><div class="note info"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1" fill="none" stroke="#1b1b1b" stroke-width="1.7"></rect><path d="M12 10.5V17" stroke="#1b1b1b" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="7.4" r="1.2" fill="#1b1b1b"></circle></svg><div><b>NOTE</b> The LRA's own leads: solder + (red) to J4 pad 1 and - (blue) to pad 2. The LRA is bonded to the back cover with its can face (the Z-axis vibration couples into the wrist). <span class="muted small">— watch-lra-leads</span></div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">08 / 12</span></footer>
+  </div><div class="page" data-page="9">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="step step-top block keep-next" data-step="lra" data-mates="" data-wiring="" data-hardware="">
+  <div class="step-head"><div class="step-no">5</div><h2 data-num="08" data-toc="Put the LRA in place for the back cover">Put the LRA in place for the back cover</h2><div class="trace"></div></div>
+  <div class="parts"><div class="part"><img src="images/part-vybronics-vg0832012.png" alt=""><div class="p-qty"><span class="letter">A</span>×1</div><div class="p-name">Vybronics VG0832012 8 mm Z-axis coin LRA</div></div><div class="part"><span class="ph-s"></span><div class="p-qty"><span class="letter">B</span>×1</div><div class="p-name">LRA adhesive pad, 0.25 mm, ø8 mm</div></div></div>
+  <figure class="block "><div class="figwrap"><img src="images/ag-step-05-lra.png" width="1900" height="1000" alt="Put the LRA in place for the back cover: shown lifted above its seat."><svg class="overlay" viewBox="0 0 1900 1000" preserveAspectRatio="none"><line class="co-leader" x1="1819.9" y1="286.9" x2="979.2" y2="286.9" stroke-width="1.92"></line><circle class="co-dot" cx="979.2" cy="286.9" r="5.9"></circle><circle class="co-bubble" cx="1844.0" cy="286.9" r="24.0" stroke-width="1.92"></circle><text class="co-num" x="1844.0" y="297.0" text-anchor="middle" font-size="27.8">A</text></svg></div><figcaption><b>Figure 5</b><span>Put the LRA in place for the back cover: shown lifted above its seat.</span></figcaption></figure></div><div class="step-cont block"><ol class="actions"><li>Place the Vybronics VG0832012 8 mm Z-axis coin LRA as shown. It has no mechanical interface in the model; the figure places it by .protoboard/display.json: can face up against the back cover through a 0.25 mm adhesive pad (z 10.39 to the cover's inner face at 10.64), leads towards J4 (+y), in the region of the board kept free of parts (x 5.7-14.5, y -13.5..7.2).</li><li>Fit the LRA adhesive pad, 0.25 mm, ø8 mm.</li></ol></div><div class="step-cont block"><div class="step-meta"><span><b>Step</b> 5 of 7</span></div></div><div class="step-cont block step-end"><div class="note tip"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6.2" fill="none" stroke="#1b1b1b" stroke-width="1.7"></circle><path d="M9.3 17.5h5.4M10 21h4" stroke="#1b1b1b" stroke-width="1.7" stroke-linecap="round"></path></svg><div><b>TIP</b> Stick the adhesive pad on the LRA's can face and leave its liner on until the back cover goes on: the cover picks the LRA up as it closes. Leads towards J4 (12 o'clock), clear of the heart-rate window.</div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">09 / 12</span></footer>
+  </div><div class="page" data-page="10">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="step step-top block keep-next" data-step="close" data-mates="back_cover" data-wiring="" data-hardware="back_screws/inserts#1 back_screws/inserts#2 back_screws/inserts#3 back_screws/inserts#4 back_screws/screws#1 back_screws/screws#2 back_screws/screws#3 back_screws/screws#4">
+  <div class="step-head"><div class="step-no">6</div><h2 data-num="09" data-toc="Press the inserts and close the back cover">Press the inserts and close the back cover</h2><div class="trace">mates: back_cover</div></div>
+  <div class="parts"><div class="part"><img src="images/part-ruthex-rx-m2x4.png" alt=""><div class="p-qty"><span class="letter acc">A</span>×4</div><div class="p-name">ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm</div></div><div class="part"><img src="images/part-iso-7045-m2x6-a2.png" alt=""><div class="p-qty"><span class="letter acc">B</span>×4</div><div class="p-name">M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless</div></div></div>
+  <figure class="block "><div class="figwrap"><img src="images/ag-step-06-close.png" width="1900" height="1000" alt="Press the inserts and close the back cover: parts exploded along each joint's axis in stacking order; lettered as in the parts strip."><svg class="overlay" viewBox="0 0 1900 1000" preserveAspectRatio="none"><line class="co-leader" x1="1819.9" y1="298.0" x2="1272.0" y2="298.0" stroke-width="1.92"></line><circle class="co-dot" cx="1272.0" cy="298.0" r="5.9"></circle><circle class="co-bubble acc" cx="1844.0" cy="298.0" r="24.0" stroke-width="1.92"></circle><text class="co-num acc" x="1844.0" y="308.1" text-anchor="middle" font-size="27.8">B</text><line class="co-leader" x1="1819.9" y1="393.2" x2="1272.0" y2="393.2" stroke-width="1.92"></line><circle class="co-dot" cx="1272.0" cy="393.2" r="5.9"></circle><circle class="co-bubble acc" cx="1844.0" cy="393.2" r="24.0" stroke-width="1.92"></circle><text class="co-num acc" x="1844.0" y="403.3" text-anchor="middle" font-size="27.8">A</text></svg></div><figcaption><b>Figure 6</b><span>Press the inserts and close the back cover: parts exploded along each joint's axis in stacking order; lettered as in the parts strip.</span></figcaption></figure></div><div class="step-cont block"><ol class="actions"><li>Fit 4 × ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm on the back cover joint (4 x M2).</li><li>Seat the Watch case onto the back cover joint (4 x M2).</li><li>Drive 4 × M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless from above, head down.</li><li>Remove the LRA pad's liner, then lower the back cover so the pad meets the cover's inner face, heart-rate window over U3.</li></ol></div><div class="step-cont block"><div class="step-meta"><span><b>Torque</b> <span class="v st-assumption" data-q="def:watch-back-cover-screws:fastenerStack[1].torque.torqueNm" data-f="u=N·m" data-s="assumption" title="assumption trait"><span class="n">0.1</span>&nbsp;<span class="u">N·m</span></span><sup class="mk mk-assumption">A</sup> <span class="muted small">M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless</span></span><span><b>Step</b> 6 of 7</span></div></div><div class="step-cont block"><div class="note tip"><svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="6.2" fill="none" stroke="#1b1b1b" stroke-width="1.7"></circle><path d="M9.3 17.5h5.4M10 21h4" stroke="#1b1b1b" stroke-width="1.7" stroke-linecap="round"></path></svg><div><b>TIP</b> Press the four inserts flush with the joint face before the first assembly (iron at about 220 °C for PETG). Tighten the screws in a cross pattern.</div></div></div><div class="step-cont block step-end"><div class="note info"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1" fill="none" stroke="#1b1b1b" stroke-width="1.7"></rect><path d="M12 10.5V17" stroke="#1b1b1b" stroke-width="2" stroke-linecap="round"></path><circle cx="12" cy="7.4" r="1.2" fill="#1b1b1b"></circle></svg><div><b>NOTE</b> Press the inserts into the case columns with a soldering iron and insert tip (about 220 °C for PETG, ruthex's guidance), flush with the joint face; then close the back cover with the screws. The case provider sizes the columns, insert holes and screw reach from these parts (enclosure-cad report, back_joint). <span class="muted small">— watch-back-cover-screws</span></div></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">10 / 12</span></footer>
+  </div><div class="page" data-page="11">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><div class="step step-top block keep-next" data-step="strap" data-mates="bar_12_lugs bar_6_lugs" data-wiring="" data-hardware="">
+  <div class="step-head"><div class="step-no">7</div><h2 data-num="10" data-toc="Fit the spring bars">Fit the spring bars</h2><div class="trace">mates: bar_12_lugs, bar_6_lugs</div></div>
+  <div class="parts"><div class="part"><img src="images/part-esslinger-82-2225-spring-bar.png" alt=""><div class="p-qty"><span class="letter">A</span>×2</div><div class="p-name">Esslinger 82.2225 spring bar, 22 mm, ø1.50 mm, double flange</div></div></div>
+  <figure class="block "><div class="figwrap"><img src="images/ag-step-07-strap.png" width="1900" height="1000" alt="Fit the spring bars: parts exploded along each joint's axis in stacking order; lettered as in the parts strip."><svg class="overlay" viewBox="0 0 1900 1000" preserveAspectRatio="none"><line class="co-leader" x1="1819.9" y1="811.2" x2="1413.8" y2="811.2" stroke-width="1.92"></line><circle class="co-dot" cx="1413.8" cy="811.2" r="5.9"></circle><circle class="co-bubble" cx="1844.0" cy="811.2" r="24.0" stroke-width="1.92"></circle><text class="co-num" x="1844.0" y="821.3" text-anchor="middle" font-size="27.8">A</text></svg></div><figcaption><b>Figure 7</b><span>Fit the spring bars: parts exploded along each joint's axis in stacking order; lettered as in the parts strip.</span></figcaption></figure></div><div class="step-cont block"><ol class="actions"><li>Seat a Esslinger 82.2225 spring bar, 22 mm, ø1.50 mm, double flange onto each lugs at 12 o'clock. Repeat on all 2.</li></ol></div><div class="step-cont block step-end"><div class="step-meta"><span><b>Step</b> 7 of 7</span></div></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">11 / 12</span></footer>
+  </div><div class="page" data-page="12">
+    <header class="pg-head"><span class="pg-mark"></span><span class="pg-title">Wearable Watch</span><span class="pg-type">Assembly guide</span><span class="pg-id">UHD-WATCH-AG</span></header>
+    <main class="pg-body"><h1 class="sec" data-num="11" data-toc="Coverage" data-break="before"><span class="num">11</span>Coverage<span class="aside">assemble() · wiringChecklist</span></h1><p class="prose">Every rigid mate, every hardware placement and every electrical link in the model, and the step that covers it. The verifier fails the guide if any row is not covered.</p><h2 class="sub">Mates</h2><div class="tblock block"><div class="cont-note">Mates (continued)</div><table class="dense covtable split"><thead><tr><th class="">Mate</th><th class="">Interfaces</th><th class="">Harness</th><th class="">Step</th></tr></thead><tbody><tr><td class=""><code>lens_seat</code></td><td class="">case.display_window ↔ lens.seat</td><td class="">—</td><td class="">1 · Fit the lens, the heart-rate cover and the plungers</td></tr><tr><td class=""><code>hr_cover_seat</code></td><td class="">case.hr_window ↔ hr_cover.seat</td><td class="">—</td><td class="">1 · Fit the lens, the heart-rate cover and the plungers</td></tr><tr><td class=""><code>back_cover</code></td><td class="">case.back_joint ↔ case.back_joint</td><td class="">back_screws</td><td class="">6 · Press the inserts and close the back cover</td></tr><tr><td class=""><code>bar_12_lugs</code></td><td class="">case.lugs_12 ↔ bar_12.strap_bar</td><td class="">—</td><td class="">7 · Fit the spring bars</td></tr><tr><td class=""><code>bar_6_lugs</code></td><td class="">case.lugs_6 ↔ bar_6.strap_bar</td><td class="">—</td><td class="">7 · Fit the spring bars</td></tr><tr><td class=""><code>board/j3_site</code></td><td class="">board/j3.board_mount ↔ board.site_j3</td><td class="">—</td><td class="">2 · Solder the cell leads to J3</td></tr><tr><td class=""><code>board/j4_site</code></td><td class="">board/j4.board_mount ↔ board.site_j4</td><td class="">—</td><td class="">4 · Solder the LRA leads to J4</td></tr></tbody></table></div><h2 class="sub">Hardware placements</h2><div class="tblock block"><div class="cont-note">Hardware (continued)</div><table class="dense covtable split"><thead><tr><th class="">Harness / child</th><th class="">Parts</th><th class="">Joint</th><th class="">Step</th></tr></thead><tbody><tr><td class=""><code>back_screws/inserts</code></td><td class="">4 × ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm</td><td class=""><code>back_cover</code></td><td class="">6 · Press the inserts and close the back cover</td></tr><tr><td class=""><code>back_screws/screws</code></td><td class="">4 × M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless</td><td class=""><code>back_cover</code></td><td class="">6 · Press the inserts and close the back cover</td></tr></tbody></table></div><h2 class="sub">Wiring links</h2><div class="tblock block"><div class="cont-note">Wiring (continued)</div><table class="dense covtable split"><thead><tr><th class="">Link</th><th class="">Name</th><th class="">Harness</th><th class="">Step</th></tr></thead><tbody><tr><td class=""><code>cell_leads</code></td><td class="">Cell leads</td><td class="">—</td><td class="">2 · Solder the cell leads to J3</td></tr><tr><td class=""><code>cell_pads</code></td><td class="">Cell leads on J3</td><td class="">—</td><td class="">2 · Solder the cell leads to J3</td></tr><tr><td class=""><code>lra_wires</code></td><td class="">LRA leads</td><td class="">—</td><td class="">4 · Solder the LRA leads to J4</td></tr><tr><td class=""><code>lra_pads</code></td><td class="">LRA leads on J4</td><td class="">—</td><td class="">4 · Solder the LRA leads to J4</td></tr></tbody></table></div></main>
+    <footer class="pg-foot"><span class="pg-brand">PR<b>0</b>TOBOARD · UHD</span><span class="pg-rev">UHD-WATCH-AG · Rev A · 2026-10-24</span><span class="pg-num">12 / 12</span></footer>
+  </div></div>
+
+
+
+
+</body></html>

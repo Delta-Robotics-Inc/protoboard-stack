@@ -1,0 +1,37 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:64135e5081c62e240d19994f7eede253107c5300a52786963f0f6741568f7cc7",
+    "moduleDigest": "sha256:b1744f10834176b01b730aa672b08162342f4623b8e7ce4709e3fb51c25808a7"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:a1f9912d04b14475d3a59cea276105afd228f6054ba2333b2b36c692a8975bf8",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T11:21:06.258Z",
+  "status": "failed",
+  "summary": "no source written: pours: a keep-out lies wholly inside the board, which a pour outline cannot leave out; move it to the edge or drop the pour",
+  "outputs": [],
+  "data": {
+    "problems": [
+      "pours: a keep-out lies wholly inside the board, which a pour outline cannot leave out; move it to the edge or drop the pour"
+    ]
+  },
+  "finishedAt": "2026-10-03T11:21:06.332Z"
+}

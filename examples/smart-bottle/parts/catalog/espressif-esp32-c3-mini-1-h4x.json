@@ -1,0 +1,4516 @@
+{
+  "artifacts": [
+    {
+      "id": "datasheet",
+      "name": "ESP32-C3-MINI-1 & MINI-1U Datasheet v2.2",
+      "type": "datasheet",
+      "url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf"
+    },
+    {
+      "id": "soc_datasheet",
+      "name": "ESP32-C3 Series Datasheet v2.4",
+      "type": "datasheet",
+      "url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"
+    },
+    {
+      "id": "product",
+      "name": "Espressif ESP32-C3 modules page",
+      "type": "documentation",
+      "url": "https://www.espressif.com/en/products/modules/esp32-c3"
+    },
+    {
+      "id": "sleep_modes",
+      "name": "ESP-IDF ESP32-C3 Sleep Modes (v5.3.5)",
+      "type": "documentation",
+      "url": "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html"
+    },
+    {
+      "id": "hw_guidelines",
+      "name": "ESP32-C3 Hardware Design Guidelines, PCB layout",
+      "type": "documentation",
+      "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/pcb-layout-design.html"
+    },
+    {
+      "filePath": "library/cad/py/catalog/espressif-esp32-c3-mini-1-h4x.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "espressif-esp32-c3-mini-1-h4x generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/espressif-esp32-c3-mini-1-h4x/artifacts/cad/espressif-esp32-c3-mini-1-h4x.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "espressif-esp32-c3-mini-1-h4x (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/espressif-esp32-c3-mini-1-h4x/artifacts/cad/espressif-esp32-c3-mini-1-h4x.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "espressif-esp32-c3-mini-1-h4x (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/espressif-esp32-c3-mini-1-h4x/artifacts/cad/espressif-esp32-c3-mini-1-h4x.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "espressif-esp32-c3-mini-1-h4x feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/espressif-esp32-c3-mini-1-h4x/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/espressif-esp32-c3-mini-1-h4x/artifacts/cad/interfaces/antenna.glb",
+      "format": "glb",
+      "id": "cad_if_antenna",
+      "interfaceId": "antenna",
+      "name": "antenna geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "microcontroller.module",
+    "microcontroller.esp32",
+    "connectivity.wireless"
+  ],
+  "description": "Certified 2.4 GHz Wi-Fi (802.11 b/g/n) and Bluetooth 5 LE module on the ESP32-C3FH4X (32-bit RISC-V single core up to 160 MHz, 400 KB SRAM, chip revision v1.1) with 4 MB in-package Quad SPI flash, 40 MHz crystal and PCB antenna. 53 pins: 15 GPIO (ADC on GPIO0-5, UART0, USB Serial/JTAG on GPIO18/19, JTAG), EN, 3V3. Supply 3.0-3.6 V, at least 0.5 A. -40 to 105 °C. 13.2 x 16.6 x 2.4 mm.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "cpu": "32-bit RISC-V single core, up to 160 MHz",
+        "currents_typ": {
+          "deep_sleep_rtc_timer_memory_uA": 5,
+          "light_sleep_uA": 130,
+          "modem_sleep_160MHz_mA": {
+            "all_clocks_running": 28,
+            "cpu_idle": 16,
+            "cpu_running": 23
+          },
+          "modem_sleep_80MHz_mA": {
+            "all_clocks_running": 22,
+            "cpu_idle": 13,
+            "cpu_running": 17
+          },
+          "power_off_en_low_uA": 1
+        },
+        "gpio_electrical": {
+          "default_drive_mA": {
+            "GPIO18, GPIO19": 40,
+            "GPIO2, GPIO3, GPIO4, GPIO5": 10,
+            "others": 20
+          },
+          "ioh_mA_typ": 40,
+          "iol_mA_typ": 28,
+          "pin_capacitance_pF": 2,
+          "pull_kOhm_typ": 45,
+          "vih": "0.75 x VDD to VDD + 0.3",
+          "vil": "-0.3 to 0.25 x VDD",
+          "voh_min": "0.8 x VDD",
+          "vol_max": "0.1 x VDD"
+        },
+        "internal": "40 MHz crystal, RF matching and PCB antenna, ESD diode on VDD33, 499 Ohm on U0TXD",
+        "memory": {
+          "flash": "Quad SPI, 80 MHz max by default, 100,000 P/E cycles, 20 years",
+          "flash_MB": 4,
+          "rom_KB": 384,
+          "rtc_sram_KB": 8,
+          "sram_KB": 400
+        },
+        "peripherals": [
+          "2 x UART (5 Mbps)",
+          "SPI2 (master 80 MHz / slave 60 MHz)",
+          "I2C (up to 800 kbit/s)",
+          "I2S",
+          "USB Serial/JTAG",
+          "TWAI (CAN 2.0)",
+          "LED PWM (6 channels)",
+          "RMT (2 TX + 2 RX)",
+          "2 x 12-bit SAR ADC (ADC1 5 ch, ADC2 1 ch)",
+          "temperature sensor",
+          "timers, watchdogs"
+        ],
+        "soc": "ESP32-C3FH4X, chip revision v1.1 (4 MB flash in package)",
+        "source": [
+          "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§1.1, §5.2, Tables 6-3, 6-6 to 6-8, Figure 8-1)",
+          "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1 note 4)"
+        ]
+      },
+      "power_domains": [
+        {
+          "id": "vdd33",
+          "name": "3V3 (VDD33)",
+          "nominal_voltage_V": 3.3,
+          "voltage_range_V": [
+            3,
+            3.6
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 2.4,
+        "length": 16.6,
+        "width": 13.2
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "antenna_area_mm": "the 5.4 mm of PCB beyond 11.2 mm from the pad-end edge",
+        "msl": 3,
+        "pads": "48 x 0.4 x 0.8 mm at 0.8 mm pitch; 4 corner pads 0.7 x 0.7 mm; centre pad 9 x 1.45 mm squares, 5.4 mm overall, pin-1 corner chamfered 0.6 mm",
+        "pcb_thickness_mm": 0.8,
+        "shield_mm": {
+          "edge_offset": 0.62,
+          "length": 9.95,
+          "top_mm": 2.4,
+          "width": 11.95
+        },
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Figures 10-1, 11-1; §12.1)",
+        "tolerance_mm": 0.15
+      },
+      "package": {
+        "assumption": "Espressif names no package type; the name states the module series and its pin count. Espressif numbers the centre pad 49 within pins 1-53, so pin_count counts it and exposed_pad_pin points at it.",
+        "exposed_pad": true,
+        "exposed_pad_mm": [
+          5.4,
+          5.4
+        ],
+        "exposed_pad_pin": 49,
+        "name": "ESP32-C3-MINI-1 module, 53 pins",
+        "pin_count": 53,
+        "pitch_mm": 0.8,
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§3.2 \"The module has 53 pins\"; Table 3-1; Figures 8-1, 10-1, 11-1)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 1-1, Table 6-2, §12.1)",
+        "storage": "sealed moisture barrier bag: < 40 °C, 90 %RH",
+        "version": "105 °C version (H4X)"
+      },
+      "operating_temperature_C": [
+        -40,
+        105
+      ]
+    },
+    {
+      "domain": "network",
+      "metadata": {
+        "antenna": "on-board PCB antenna",
+        "bluetooth": "Bluetooth 5 LE and mesh, 2402-2480 MHz, -24 to 20 dBm",
+        "certification": "RF certification: see Espressif certificates; RoHS/REACH",
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§1.1, §7)",
+        "wifi": "IEEE 802.11 b/g/n, 2412-2484 MHz, up to 20.5 dBm"
+      }
+    }
+  ],
+  "id": "espressif-esp32-c3-mini-1-h4x",
+  "interfaceGroups": [
+    {
+      "id": "ground_pads",
+      "label": "Ground pads 1, 2, 11, 14, 36-53",
+      "members": [
+        "pin_1",
+        "pin_2",
+        "pin_11",
+        "pin_14",
+        "pin_36",
+        "pin_37",
+        "pin_38",
+        "pin_39",
+        "pin_40",
+        "pin_41",
+        "pin_42",
+        "pin_43",
+        "pin_44",
+        "pin_45",
+        "pin_46",
+        "pin_47",
+        "pin_48",
+        "pin_49",
+        "pin_50",
+        "pin_51",
+        "pin_52",
+        "pin_53"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                1.3,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "GND",
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "GND",
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_3",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -0.3,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_3",
+      "name": "3V3",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V",
+          "value": 3.3
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.5
+        }
+      ],
+      "pin": 3,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Power supply",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "VDD33 3.0-3.6 V (typ 3.3 V); the external supply must deliver at least 0.5 A. Absolute maximum 3.6 V. Figure 9-1 places 10 uF and 0.1 uF on VDD33; R1/C3 (values left to be determined in the figure) form the EN RC delay. The module has an ESD diode on VDD33. The rails must be stable at least 50 us before EN rises.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Tables 6-1, 6-2, 4-6; Figures 8-1, 9-1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_4",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -1.1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_4",
+      "name": "NC",
+      "pin": 4,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio2",
+        "analog_in",
+        "adc1_ch2",
+        "rtc_gpio",
+        "deep_sleep_wakeup",
+        "strapping",
+        "fspiq"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_5",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -1.9,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_5",
+      "name": "IO2",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 5,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO2, ADC1_CH2, FSPIQ",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "RTC IO (powered by VDD3P3_RTC): can wake the chip from Deep-sleep (esp_deep_sleep_enable_gpio_wakeup) and can hold its level in Deep-sleep. GPIO6-21 are high impedance in Deep-sleep and wake it only from Light-sleep.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1)",
+              "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html (GPIO Wakeup; Power-down Options)"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "GPIO2 is a strapping pin, latched at chip reset (hold time >= 3 ms after CHIP_EN rises). It does not select SPI or download boot, but a pull-up is recommended because of glitches (floating by default).",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§4, Tables 4-1 to 4-4)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio3",
+        "analog_in",
+        "adc1_ch3",
+        "rtc_gpio",
+        "deep_sleep_wakeup"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_6",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -2.7,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_6",
+      "name": "IO3",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 6,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO3, ADC1_CH3",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "RTC IO (powered by VDD3P3_RTC): can wake the chip from Deep-sleep (esp_deep_sleep_enable_gpio_wakeup) and can hold its level in Deep-sleep. GPIO6-21 are high impedance in Deep-sleep and wake it only from Light-sleep.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1)",
+              "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html (GPIO Wakeup; Power-down Options)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_7",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -3.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_7",
+      "name": "NC",
+      "pin": 7,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "chip_en",
+        "reset"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_8",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -4.3,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_8",
+      "name": "EN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 8,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "High: on, enables the chip. Low: off, the chip powers off. Note: Do not leave the EN pin floating.",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "CHIP_EN has no pull-up inside the module. Espressif recommends an RC delay at EN, usually R = 10 kOhm and C = 1 uF, adjusted to the supply's power-up timing. Hold EN below VIL_nRST (0.25 x VDD) for at least 50 us to reset; it releases above VIH_nRST (0.75 x VDD). EN low: power off, 1 uA.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§9 notes, Tables 4-6, 6-3, 6-7; Figure 8-1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_9",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -5.1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_9",
+      "name": "NC",
+      "pin": 9,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_10",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -5.9,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_10",
+      "name": "NC",
+      "pin": 10,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_11",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                -6.7,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_11",
+      "name": "GND",
+      "pin": 11,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio0",
+        "analog_in",
+        "adc1_ch0",
+        "rtc_gpio",
+        "deep_sleep_wakeup",
+        "xtal_32k_p"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_12",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -4.8,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_12",
+      "name": "IO0",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 12,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO0, ADC1_CH0, XTAL_32K_P",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "RTC IO (powered by VDD3P3_RTC): can wake the chip from Deep-sleep (esp_deep_sleep_enable_gpio_wakeup) and can hold its level in Deep-sleep. GPIO6-21 are high impedance in Deep-sleep and wake it only from Light-sleep.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1)",
+              "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html (GPIO Wakeup; Power-down Options)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio1",
+        "analog_in",
+        "adc1_ch1",
+        "rtc_gpio",
+        "deep_sleep_wakeup",
+        "xtal_32k_n"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_13",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -4,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_13",
+      "name": "IO1",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 13,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO1, ADC1_CH1, XTAL_32K_N",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "RTC IO (powered by VDD3P3_RTC): can wake the chip from Deep-sleep (esp_deep_sleep_enable_gpio_wakeup) and can hold its level in Deep-sleep. GPIO6-21 are high impedance in Deep-sleep and wake it only from Light-sleep.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1)",
+              "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html (GPIO Wakeup; Power-down Options)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_14",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -3.2,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_14",
+      "name": "GND",
+      "pin": 14,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_15",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -2.4,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_15",
+      "name": "NC",
+      "pin": 15,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio10",
+        "fspics0"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_16",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -1.6,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_16",
+      "name": "IO10",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 16,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO10, FSPICS0",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_17",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -0.8,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_17",
+      "name": "NC",
+      "pin": 17,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio4",
+        "analog_in",
+        "adc1_ch4",
+        "rtc_gpio",
+        "deep_sleep_wakeup",
+        "fspihd",
+        "jtag_tms"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_18",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                0,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_18",
+      "name": "IO4",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 18,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO4, ADC1_CH4, FSPIHD, MTMS",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "RTC IO (powered by VDD3P3_RTC): can wake the chip from Deep-sleep (esp_deep_sleep_enable_gpio_wakeup) and can hold its level in Deep-sleep. GPIO6-21 are high impedance in Deep-sleep and wake it only from Light-sleep.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1)",
+              "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html (GPIO Wakeup; Power-down Options)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio5",
+        "analog_in",
+        "adc2_ch0",
+        "rtc_gpio",
+        "deep_sleep_wakeup",
+        "fspiwp",
+        "jtag_tdi"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_19",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                0.8,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_19",
+      "name": "IO5",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 19,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO5, ADC2_CH0, FSPIWP, MTDI",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "RTC IO (powered by VDD3P3_RTC): can wake the chip from Deep-sleep (esp_deep_sleep_enable_gpio_wakeup) and can hold its level in Deep-sleep. GPIO6-21 are high impedance in Deep-sleep and wake it only from Light-sleep.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1)",
+              "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html (GPIO Wakeup; Power-down Options)"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "ADC2 has one channel and is not factory-calibrated. Errata ADC-183 (affects v0.0-v1.1, so this v1.1 module): the DMA digital controller of SAR ADC2 cannot work; Espressif suggests SAR ADC1. Use GPIO0-4 (ADC1) for continuous/DMA sampling.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§5.2.2.1)",
+              "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/02-errata-summary/index.html (Table 4, ADC-183)",
+              "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/03-errata-description/shared/sar-adc-adc2-not-work.html"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio6",
+        "fspiclk",
+        "jtag_tck"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_20",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                1.6,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_20",
+      "name": "IO6",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 20,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO6, FSPICLK, MTCK",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio7",
+        "fspid",
+        "jtag_tdo"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_21",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                2.4,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_21",
+      "name": "IO7",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 21,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO7, FSPID, MTDO",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio8",
+        "strapping"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_22",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                3.2,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_22",
+      "name": "IO8",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 22,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO8",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "GPIO8 is a strapping pin, latched at chip reset (hold time >= 3 ms after CHIP_EN rises). Floating by default. Joint download boot needs GPIO8 = 1 (with GPIO9 = 0); with EFUSE_UART_PRINT_CONTROL it also gates ROM messages on UART0.",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§4, Tables 4-1 to 4-4)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio9",
+        "strapping",
+        "boot"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_23",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                4,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_23",
+      "name": "IO9",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 23,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO9",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "GPIO9 is a strapping pin, latched at chip reset (hold time >= 3 ms after CHIP_EN rises). Weak internal pull-up (1 = SPI boot). Pull it low at reset for joint download boot (UART0 or USB Serial/JTAG).",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§4, Tables 4-1 to 4-4)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_24",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                4.8,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_24",
+      "name": "NC",
+      "pin": 24,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_25",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -6.7,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_25",
+      "name": "NC",
+      "pin": 25,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio18",
+        "usb_dm"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_26",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -5.9,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_26",
+      "name": "IO18",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 26,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "bidirectional"
+          ],
+          "type": "usb"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO18, USB_D-",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "USB Serial/JTAG (USB 2.0 full speed, 12 Mbit/s) is only available on GPIO18/GPIO19; USB_D- and USB_D+ can be swapped in a register (USB_SERIAL_JTAG_EXCHG_PINS). The USB function is enabled by default, with the USB pull-up on GPIO19; disabled, the pins are plain GPIO with their pulls off.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1 notes 5, Table 2-7 note 1)",
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§5.2.1.5)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio19",
+        "usb_dp"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_27",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -5.1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_27",
+      "name": "IO19",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 27,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "bidirectional"
+          ],
+          "type": "usb"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO19, USB_D+",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "USB Serial/JTAG (USB 2.0 full speed, 12 Mbit/s) is only available on GPIO18/GPIO19; USB_D- and USB_D+ can be swapped in a register (USB_SERIAL_JTAG_EXCHG_PINS). The USB function is enabled by default, with the USB pull-up on GPIO19; disabled, the pins are plain GPIO with their pulls off.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-1 notes 5, Table 2-7 note 1)",
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§5.2.1.5)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_28",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -4.3,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_28",
+      "name": "NC",
+      "pin": 28,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_29",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -3.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_29",
+      "name": "NC",
+      "pin": 29,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio20",
+        "u0rxd"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_30",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -2.7,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_30",
+      "name": "RXD0",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 30,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO20, U0RXD",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "i2c_scl",
+        "spi_mosi",
+        "spi_miso",
+        "spi_sck",
+        "spi_ss",
+        "uart_tx",
+        "uart_rx",
+        "uart_rts",
+        "uart_cts",
+        "pwm_out",
+        "interrupt",
+        "gpio21",
+        "u0txd"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_31",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -1.9,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_31",
+      "name": "TXD0",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3,
+            3.6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 31,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GPIO21, U0TXD",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "The module puts a 499 Ohm resistor in series with U0TXD (module schematic R2).",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Figure 8-1)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_32",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -1.1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_32",
+      "name": "NC",
+      "pin": 32,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_33",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -0.3,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_33",
+      "name": "NC",
+      "pin": 33,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_34",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                0.5,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_34",
+      "name": "NC",
+      "pin": 34,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_35",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                1.3,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_35",
+      "name": "NC",
+      "pin": 35,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "NC",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_36",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                4.8,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_36",
+      "name": "GND",
+      "pin": 36,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_37",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                4,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_37",
+      "name": "GND",
+      "pin": 37,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_38",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                3.2,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_38",
+      "name": "GND",
+      "pin": 38,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_39",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                2.4,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_39",
+      "name": "GND",
+      "pin": 39,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_40",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                1.6,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_40",
+      "name": "GND",
+      "pin": 40,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_41",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                0.8,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_41",
+      "name": "GND",
+      "pin": 41,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_42",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                0,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_42",
+      "name": "GND",
+      "pin": 42,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_43",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -0.8,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_43",
+      "name": "GND",
+      "pin": 43,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_44",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -1.6,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_44",
+      "name": "GND",
+      "pin": 44,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_45",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -2.4,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_45",
+      "name": "GND",
+      "pin": 45,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_46",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -3.2,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_46",
+      "name": "GND",
+      "pin": 46,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_47",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -4,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_47",
+      "name": "GND",
+      "pin": 47,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_48",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -4.8,
+                2.2,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_48",
+      "name": "GND",
+      "pin": 48,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_49",
+            "signature": {
+              "area_mm2": 18.742,
+              "centroid": [
+                0.024,
+                -2.724,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_49",
+      "name": "GND (EPAD)",
+      "pin": 49,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Centre ground pad (EPAD in the module schematic), 3 x 3 squares of 1.45 mm, 5.4 mm overall. Soldering it to base-board ground is not a must, but improves thermal performance; too much paste can lift the module and weaken the other joints.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Figures 3-1, 8-1, 10-1; §9 notes)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_50",
+            "signature": {
+              "area_mm2": 0.49,
+              "centroid": [
+                5.95,
+                2.25,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_50",
+      "name": "GND",
+      "pin": 50,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_51",
+            "signature": {
+              "area_mm2": 0.49,
+              "centroid": [
+                5.95,
+                -7.65,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_51",
+      "name": "GND",
+      "pin": 51,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_52",
+            "signature": {
+              "area_mm2": 0.49,
+              "centroid": [
+                -5.95,
+                -7.65,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_52",
+      "name": "GND",
+      "pin": 52,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_53",
+            "signature": {
+              "area_mm2": 0.49,
+              "centroid": [
+                -5.95,
+                2.25,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_53",
+      "name": "GND",
+      "pin": 53,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart0",
+        "download_port"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_30",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -2.7,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_31",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -1.9,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "uart0",
+      "name": "UART0 (U0RXD GPIO20 pin 30 / U0TXD GPIO21 pin 31)",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "pin_30",
+            "tx": "pin_31"
+          },
+          "id": "uart0_default",
+          "label": "UART0 (U0RXD GPIO20 pin 30 / U0TXD GPIO21 pin 31)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host",
+            "device"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART0 is the firmware download and log port (joint download boot, ROM messages). UART controllers run up to 5 Mbps with hardware (RTS/CTS) and software flow control; UART0's signals can also be moved to other GPIO through the GPIO matrix, but download boot uses these pins.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§4.1-4.2, §5.2.1.1, §9 notes)",
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (Table 2-7 note 2)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_2_0",
+        "usb_full_speed",
+        "usb_serial_jtag",
+        "usb_cdc_acm"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_27",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -5.1,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_26",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                5.9,
+                -5.9,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                -5.9,
+                1.3,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "usb",
+      "name": "USB Serial/JTAG (USB 2.0 full speed device)",
+      "parameters": [
+        {
+          "id": "max_frequency",
+          "name": "Bit rate",
+          "unit": "Hz",
+          "value": 12000000
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "dm": "pin_26",
+            "dp": "pin_27",
+            "gnd": "pin_1"
+          },
+          "default_active": true,
+          "id": "usb_pins",
+          "label": "D+ 27 (GPIO19), D- 26 (GPIO18), GND 1"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "device"
+          ],
+          "type": "usb"
+        }
+      ],
+      "slots": [
+        {
+          "id": "dp",
+          "match": {
+            "capability": "usb_dp",
+            "protocol": "usb"
+          },
+          "required": true
+        },
+        {
+          "id": "dm",
+          "match": {
+            "capability": "usb_dm",
+            "protocol": "usb"
+          },
+          "required": true
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "CDC-ACM virtual serial port and JTAG adapter with an integrated full-speed PHY: flashes the in-package flash and debugs the CPU over USB with no bridge chip. The module has no VBUS pin; the controller runs from 3V3. Joint download boot works over USB Serial/JTAG as well as UART0.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§5.2.1.5, Table 4-3 note 3)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_18",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                0,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_19",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                0.8,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_20",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                1.6,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_21",
+            "signature": {
+              "area_mm2": 0.32,
+              "centroid": [
+                2.4,
+                -7.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "jtag",
+      "max_instances": 1,
+      "name": "JTAG (MTMS GPIO4, MTDI GPIO5, MTCK GPIO6, MTDO GPIO7)",
+      "profiles": [
+        {
+          "bindings": {
+            "tck": "pin_20",
+            "tdi": "pin_19",
+            "tdo": "pin_21",
+            "tms": "pin_18"
+          },
+          "default_active": true,
+          "id": "jtag_pins",
+          "label": "MTMS 18, MTDI 19, MTCK 20, MTDO 21"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "target"
+          ],
+          "type": "jtag"
+        }
+      ],
+      "slots": [
+        {
+          "id": "tms",
+          "match": {
+            "capability": "jtag_tms",
+            "protocol": "digital"
+          },
+          "required": true
+        },
+        {
+          "id": "tdi",
+          "match": {
+            "capability": "jtag_tdi",
+            "protocol": "digital"
+          },
+          "required": true
+        },
+        {
+          "id": "tck",
+          "match": {
+            "capability": "jtag_tck",
+            "protocol": "digital"
+          },
+          "required": true
+        },
+        {
+          "id": "tdo",
+          "match": {
+            "capability": "jtag_tdo",
+            "protocol": "digital"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Pad JTAG on GPIO4-7 (Table 3-1). The same pins are FSPIHD/FSPIWP/FSPICLK/FSPID and GPIO; USB Serial/JTAG gives JTAG without them.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 3-1 Pin Definitions)",
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (§2.3.4)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "wifi_802_11_bgn",
+        "wifi_2g4",
+        "pcb_antenna"
+      ],
+      "default_active": true,
+      "domain": "network",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "antenna",
+            "signature": {
+              "area_mm2": 71.28,
+              "centroid": [
+                0,
+                5.6,
+                0.8
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "wifi",
+      "name": "Wi-Fi 802.11 b/g/n (2.4 GHz), PCB antenna",
+      "parameters": [
+        {
+          "id": "tx_power",
+          "name": "TX power (802.11b, 1 Mbps)",
+          "unit": "dBm",
+          "value": 20.5
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "client",
+            "access_point"
+          ],
+          "type": "wifi"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "channels_MHz": [
+              2412,
+              2484
+            ],
+            "current_mA": {
+              "note": "peak, 3.3 V, 25 °C, TX at 100 % duty",
+              "rx_HT20": 82,
+              "rx_HT40": 84,
+              "tx_802_11b_20dBm": 350,
+              "tx_802_11g_54M": 295,
+              "tx_802_11n_MCS7": 290
+            },
+            "kind": "radio",
+            "rx_sensitivity_dBm": {
+              "802.11b_1M": -98
+            },
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§1.1, §7, Tables 6-4, 6-5)",
+              "https://www.espressif.com/en/products/modules/esp32-c3"
+            ],
+            "standard": "IEEE 802.11 b/g/n, 20/40 MHz, 1T1R up to 150 Mbps; Station, SoftAP, Station + SoftAP, promiscuous; 802.11mc FTM",
+            "tx_power_dBm": {
+              "802.11b_1M": 20.5,
+              "802.11g_54M": 18,
+              "802.11n_HT20_MCS7": 17.5,
+              "802.11n_HT40_MCS7": 17
+            }
+          },
+          "type": "performance"
+        },
+        {
+          "params": {
+            "note": "PCB antenna at the module's short end. Place the module at the base-board edge with the antenna feed point close to the edge; overhang the antenna or cut the base board away under it, keep copper out of the antenna keep-out zone, and do not centre the module in a hollowed-out board. Keep at least 15 mm of clearance around the antenna inside the housing, and test throughput and range in the end product.",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Figure 3-1 note A, Figure 11-1)",
+              "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/pcb-layout-design.html (General Principles of PCB Layout for Modules)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bluetooth_le",
+        "bluetooth_5",
+        "bluetooth_mesh",
+        "bluetooth_long_range",
+        "pcb_antenna"
+      ],
+      "default_active": true,
+      "domain": "network",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "antenna",
+            "signature": {
+              "area_mm2": 71.28,
+              "centroid": [
+                0,
+                5.6,
+                0.8
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "bluetooth",
+      "name": "Bluetooth 5 LE, PCB antenna",
+      "parameters": [
+        {
+          "id": "tx_power",
+          "name": "TX power",
+          "range": [
+            -24,
+            20
+          ],
+          "unit": "dBm"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "bluetooth"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "channels_MHz": [
+              2402,
+              2480
+            ],
+            "coexistence": "internal Wi-Fi / Bluetooth co-existence sharing the same antenna",
+            "current_mA": {
+              "note": "peak, 3.3 V, 25 °C",
+              "rx": 86,
+              "tx_0dBm": 170,
+              "tx_20dBm": 340,
+              "tx_9dBm": 190,
+              "tx_minus15dBm": 100
+            },
+            "kind": "radio",
+            "modes": [
+              "125 kbps",
+              "500 kbps",
+              "1 Mbps",
+              "2 Mbps"
+            ],
+            "rx_sensitivity_dBm": {
+              "125k": -104,
+              "1M": -96,
+              "2M": -93,
+              "500k": -99
+            },
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§1.1, §7, Tables 6-4, 6-5)",
+              "https://www.espressif.com/en/products/modules/esp32-c3",
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Tables 7-7, 7-12 to 7-15)"
+            ],
+            "tx_power_dBm": [
+              -24,
+              20
+            ]
+          },
+          "type": "performance"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 219.12,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "53 bottom pads (SMD module)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "smd_module_pads",
+            "note": "53 pads on the module underside: 48 of 0.4 x 0.8 mm at 0.8 mm pitch, 4 corner pads 0.7 x 0.7 mm, and the 5.4 mm centre pad (pin 49). Module 13.2 x 16.6 x 2.4 mm (+-0.15). MSL 3; single reflow, peak 235-250 °C for 30-70 s, SAC305. Avoid ultrasonic cleaning or welding (crystal resonance).",
+            "source": [
+              "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Figures 10-1, 11-1; §12.1, §12.3, §12.4)"
+            ]
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Espressif Systems",
+  "name": "Espressif ESP32-C3-MINI-1-H4X module (PCB antenna, 4 MB flash)",
+  "part_number": "ESP32-C3-MINI-1-H4X",
+  "tags": [
+    "esp32",
+    "esp32-c3",
+    "espressif",
+    "risc-v",
+    "wifi",
+    "ble",
+    "bluetooth-le",
+    "module",
+    "pcb-antenna",
+    "mcu",
+    "usb"
+  ],
+  "traits": [
+    {
+      "params": {
+        "ambient_C": [
+          -40,
+          105
+        ],
+        "power_up": "VDD33 stable >= 50 us before CHIP_EN rises (tSTBL)",
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 6-2, Table 4-6)",
+        "supply_current_min_A": 0.5,
+        "vdd33_V": {
+          "max": 3.6,
+          "min": 3,
+          "typ": 3.3
+        }
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "esd": "HBM +-2000 V, CDM +-500 V",
+        "msl": 3,
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (Table 6-1, §12.1-12.2)",
+        "vdd33_V": [
+          -0.3,
+          3.6
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "note": "Boot: GPIO9 high at reset (default, weak pull-up) boots from flash; GPIO9 low with GPIO8 high enters joint download boot over UART0 or USB Serial/JTAG. A pull-up on GPIO2 is recommended. Strapping values are latched at reset; the pins are ordinary GPIO afterwards.",
+        "source": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§4.1, Tables 4-1, 4-3)"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Peripheral pins are assigned in firmware through the GPIO matrix: I2C, SPI2, UART1, LED PWM, RMT, I2S and TWAI signals can use any GPIO. Espressif ranks GPIO2/8/9 (strapping), GPIO18/19 (USB), GPIO4-7 (JTAG) and GPIO20/21 (UART0) as usable with caution. Only GPIO0-5 have analog inputs and can wake from Deep-sleep.",
+        "source": [
+          "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf (§2.3.4, §4.1.3.1, Table 2-1)",
+          "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html (GPIO Wakeup)"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "shield offset from the pad-end edge",
+        "resolution": "The dimensioned datasheet drawing is used for the generated shield; the STEP agrees with it on the shield size (11.95 x 9.95 mm) and its 0.62 mm offset from the right edge.",
+        "sources": [
+          "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf",
+          "https://www.espressif.com/sites/default/files/3dmodel/ESP32-C3-MINI-1_20210903_0.STEP"
+        ],
+        "values": [
+          "0.62 mm (datasheet v2.2 Figure 10-1 top view)",
+          "0.93 mm (STEP ESP32-C3-MINI-1_20210903_0)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "3V3 current_draw",
+        "reason": "The datasheet gives no single typical draw: it requires the external supply to deliver at least 0.5 A (Table 6-2), above the 350 mA Wi-Fi TX peak (Table 6-4). The requirement is used so a supply budget sizes the 3V3 source for RF bursts; average draw depends on the duty cycle (performance traits, power-domain metadata).",
+        "value": "0.5 A on pin 3"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "GPIO voltage parameter",
+        "reason": "The GPIO are powered from VDD33 (chip Table 2-1) and their levels are fractions of it (Table 6-3); the parameter states the VDD33 range so a 3.3 V rail checks against it.",
+        "value": "3.0-3.6 V on every logic pad and EN"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD pads and antenna",
+        "reason": "The drawing dimensions pad sizes, pitch and field extents but not each pad centre or the plating thickness (the STEP uses 0.035 mm); the PCB antenna trace is not dimensioned, so its area of the PCB stands for it. The shield's Ø0.5 marking and the parts under the shield are not modelled.",
+        "value": "pads at the STEP's centres and the drawing's sizes, 0.02 mm thick on the seating plane; antenna = top face of the antenna area"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "fields": [
+          "manufacturer CAD"
+        ],
+        "note": "Espressif links ESP32-C3-MINI-1_20210903_0.STEP from datasheet §11.1 and the modules page. No licence is stated, and the datasheet's notice grants no licence ('All rights reserved'), so it is not redistributed; it was used only to measure the pad centres and shield. Geometry generated from Figures 10-1 and 11-1 (library/cad/py/catalog/espressif-esp32-c3-mini-1-h4x.py).",
+        "source": [
+          "https://www.espressif.com/sites/default/files/3dmodel/ESP32-C3-MINI-1_20210903_0.STEP",
+          "https://www.espressif.com/en/products/modules/esp32-c3",
+          "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§11.1, Disclaimer and Copyright Notice)"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "fields": [
+          "mass"
+        ],
+        "note": "No mass in the datasheet or on the modules page."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "fields": [
+          "ADC2 oneshot reads on chip revision v1.1"
+        ],
+        "note": "Errata ADC-183 lists v1.1 as affected: the DMA (digital) controller of SAR ADC2 cannot work. The errata says nothing about ADC2 oneshot reads, so whether GPIO5's ADC2_CH0 works in oneshot mode on v1.1 is not established; do not rely on it.",
+        "source": [
+          "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf (§5.2.2.1)",
+          "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/02-errata-summary/index.html (Table 4, ADC-183)",
+          "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/03-errata-description/shared/sar-adc-adc2-not-work.html"
+        ]
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

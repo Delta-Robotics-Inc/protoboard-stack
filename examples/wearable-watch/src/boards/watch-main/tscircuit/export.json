@@ -1,0 +1,35 @@
+{
+  "schema": "protoboard.tscircuit-export/v0",
+  "inputs": {
+    "circuit": "sha256:85410cae952dc99973ff2ab5303150ad7497f543f92de2f8521430109e615e8f",
+    "board": "sha256:61cff988cf3c9455124539f3c8a1bd6ac22d0677acda21a0f7700f99a9bbc1a7",
+    "constraints": "sha256:f415d25429005a1ebc382d5fd1657092cddc504479ba23ebe7a5794837337c32",
+    "models": {
+      "adi-max17048g-t10#cad_step": "sha256:e76ffe574e421dbbceeaf493a2681417b27cec5d1636d887c033379482a67d49",
+      "adi-max30102efd#cad_step": "sha256:f367b69e7c37eea26dda0450245b81ff1d5670e14c9acdfff70700369024c01c",
+      "alps-skrtlae010#cad_step": "sha256:5ecff4bedfb7470e11a551b69cc0cf807f3f06639d6dce65050d6345f58a03d3",
+      "aos-ao3400a#cad_step": "sha256:1e6d0aa883f3d4bbae288ab02240427ab78daedd3793940d3cb3b93380185e27",
+      "bosch-bmi270#cad_step": "sha256:7d177b7d174492b106306ee3c743e1a88a6fa9db6ea5412f51864972e17801f2",
+      "eastrising-er-tft128-1#cad_step": "sha256:3a6f2d71f602d99b662e214b8ee077bce0264368bb177eacac9364a543d382c2",
+      "epson-fc-135-32k768-12p5#cad_step": "sha256:2a22bed4a2f17825555daba8a1884d6bde0322001ab11d11b708dcdf4f9486c9",
+      "gct-usb4105-gf-a#cad_step": "sha256:478387b4703bb3e4bec9bc20b8dee19c54c42a914c811a43e971f42ea730c1b7",
+      "microchip-mcp73831t-2aci-ot#cad_step": "sha256:4dbb7db90fa160e658ef8b5cbc0b96dafee2dc954557819a46fa9c9210a93f71",
+      "murata-grm155#cad_step": "sha256:e0b1e9f8b04848ae341275b3ddef977e655c0245088d58f21df7404ef0e79330",
+      "murata-grm1555c1h200ja01#cad_step": "sha256:9b97a3224912b386c87c7fecc4471e35370e3ab0e58eee5346a4476c720f51ae",
+      "murata-grm188#cad_step": "sha256:b18db5461755c31e6bb37768a7c8ba006f955f8ffec6051dd139918326562018",
+      "raytac-mdbt50q-1mv2#cad_step": "sha256:ddddedceeb0c298633a8076e74d9a6bbe265b5b6d94b68b6598538ce966c96c1",
+      "st-usblc6-2sc6#cad_step": "sha256:87b6f490470638e83ce498680169c4bb383ff2b48ec112c0d611861fb60b7fe2",
+      "ti-drv2605ldgs#cad_step": "sha256:de74f9ac4b884ff8c366de3b99caf1fab2e3566e29c768d1a5c013df4d8c79e3",
+      "ti-tps7a0218pdbv#cad_step": "sha256:1361d815ee861ee26d1c66f5d9dde0a863ecb932e6eebfe55d0e81066c6b1ca6",
+      "ti-tps7a0230pdbv#cad_step": "sha256:ccd3b9ff6bb5b087082112e9a3c00ac03a7b324b0878ca828f1d289745419ca3",
+      "yageo-rc0402#cad_step": "sha256:2eae825f92a47818aa3a9895cfd0a06ca08dd24edcebf15237266469952206ec"
+    },
+    "provider": "sha256:d58e504b4fb817c3cfe5d61d74c3b9847d917129e93f7d5b0b1197643df87898",
+    "converters": {
+      "circuit-json-to-gerber": "0.0.111",
+      "circuit-json-to-gltf": "0.0.141",
+      "circuit-json-to-step": "0.0.43",
+      "circuit-to-svg": "0.0.438"
+    }
+  }
+}

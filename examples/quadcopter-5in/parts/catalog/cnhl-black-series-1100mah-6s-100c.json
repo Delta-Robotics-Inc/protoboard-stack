@@ -1,0 +1,499 @@
+{
+  "artifacts": [
+    {
+      "id": "product_page",
+      "name": "CNHL product page (spec table)",
+      "type": "documentation",
+      "url": "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug"
+    },
+    {
+      "id": "c_rating_guide",
+      "name": "CNHL C rating guide",
+      "type": "documentation",
+      "url": "https://chinahobbyline.com/blogs/news/30c-vs-100c-vs-130c-rc-battery-guide"
+    },
+    {
+      "id": "charge_guide",
+      "name": "CNHL LiPo charging guide",
+      "type": "documentation",
+      "url": "https://chinahobbyline.com/blogs/news/how-to-charge-a-lipo-battery-safely"
+    },
+    {
+      "filePath": "library/cad/py/parts.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "cnhl-1100-6s generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/cnhl-1100-6s.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "cnhl-1100-6s (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/cnhl-1100-6s.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "cnhl-1100-6s (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/cnhl-1100-6s.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "cnhl-1100-6s feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/cnhl-black-series-1100mah-6s-100c/artifacts/cad/interfaces/xt60.glb",
+      "format": "glb",
+      "id": "cad_if_xt60",
+      "interfaceId": "xt60",
+      "name": "xt60 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "power.battery",
+    "robotics.drone"
+  ],
+  "description": "6S1P 22.2 V 1100 mAh LiPo pack, 100C continual / 200C burst, XT60 discharge lead (12 AWG), JST-XH balance lead. Black Series V1.0.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "chemistry": "LiPo",
+        "configuration": "6S1P",
+        "lead_gauge_awg": 12,
+        "source": "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug"
+      },
+      "power_domains": [
+        {
+          "id": "pack",
+          "max_current_mA": 110000,
+          "name": "6S pack (XT60)",
+          "nominal_voltage_V": 22.2,
+          "regulation_type": "unregulated",
+          "voltage_range_V": [
+            18,
+            25.2
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 35,
+        "length": 75,
+        "width": 39.5
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "dimension_tolerance_mm": "1-5",
+        "lead_length_mm": null,
+        "mounting": "none — strapped around the body (no strap interface vocabulary)",
+        "source": [
+          "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+          "https://www.pilotshq.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug"
+        ],
+        "weight_includes": "wire and connector (src_pilotshq)",
+        "weight_tolerance_g": 5
+      },
+      "weight_g": 211
+    }
+  ],
+  "id": "cnhl-black-series-1100mah-6s-100c",
+  "interfaceGroups": [
+    {
+      "id": "xt60_main_lead",
+      "label": "XT60 discharge plug (+ and − mate together)",
+      "members": [
+        "battery_out",
+        "battery_gnd"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "battery_out",
+      "name": "XT60 discharge lead (+)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            18,
+            25.2
+          ],
+          "unit": "V",
+          "value": 22.2
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 110
+        },
+        {
+          "id": "burst_current",
+          "unit": "A",
+          "value": 220
+        },
+        {
+          "id": "cell_count",
+          "unit": "dimensionless",
+          "value": 6
+        },
+        {
+          "id": "capacity",
+          "unit": "mAh",
+          "value": 1100
+        }
+      ],
+      "pin": "+",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Positive conductor of the XT60 output (discharge) lead, 12 AWG.",
+            "functions": [
+              {
+                "name": "BAT+"
+              }
+            ],
+            "source": "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "max_current derivation: 'Discharge Rate: 100C Continual / 200C Burst' × 1100 mAh; CNHL: 'Capacity (Ah) × C Rating = Theoretical Maximum Continuous Current' → 1.1 Ah × 100C = 110 A continuous, 1.1 Ah × 200C = 220 A burst. CNHL calls this a theoretical figure; the burst rating is a short-duration ceiling (duration not stated).",
+            "source": [
+              "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+              "https://chinahobbyline.com/blogs/news/30c-vs-100c-vs-130c-rc-battery-guide"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "voltage.range[0] (pack minimum)",
+            "reason": "CNHL states only 'normal cell voltage is between 3.7V~4.2V' and gives no discharge cut-off; 3.0 V/cell is the standard LiPo absolute discharge floor. The 25.2 V maximum is sourced (4.2 V/cell).",
+            "value": "18 V (3 V/cell × 6)"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "battery_gnd",
+      "name": "XT60 discharge lead (−)",
+      "pin": "-",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Negative conductor of the XT60 output (discharge) lead, 12 AWG; carries the full pack return current.",
+            "functions": [
+              {
+                "name": "BAT-"
+              }
+            ],
+            "source": "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            -71,
+            0,
+            -18
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "xt60",
+            "signature": {
+              "area_mm2": 150.88,
+              "centroid": [
+                -71,
+                0,
+                -18
+              ],
+              "normal": [
+                1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_xt60",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "xt60",
+      "max_instances": 1,
+      "name": "XT60 discharge plug",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "battery_out",
+            "p2": "battery_gnd"
+          },
+          "default_active": true,
+          "id": "xt60_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "BAT+",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "BAT-",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "xt60",
+            "note": "Output Connector: XT60; Wire (AWG): 12# (src_product). Gender not stated — see assumption trait.",
+            "pinout": [
+              "BAT+",
+              "BAT-"
+            ],
+            "positions": 2
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "field": "connector gender",
+            "reason": "Source says only 'XT60'. Battery-side female XT60 is the hobby convention so the pack mates with the male XT60 on an ESC/FC lead.",
+            "value": "female (sockets) on the battery lead"
+          },
+          "type": "assumption"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "battery_balance"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "balance_lead",
+      "name": "JST-XH balance lead (6S cell taps)",
+      "parameters": [
+        {
+          "id": "cell_count",
+          "unit": "dimensionless",
+          "value": 6
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_xh_7",
+            "note": "Balance Connector: JST / XH (src_product). Position count and order per standard 6S XH layout — see assumption.",
+            "pinout": [
+              "BAT-",
+              "C1+",
+              "C2+",
+              "C3+",
+              "C4+",
+              "C5+",
+              "C6+ (BAT+)"
+            ],
+            "positions": 7
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Connect together with the main lead to a LiPo balance charger (LiPo program, 6S, stop at 4.2 V/cell; 5C max = 5.5 A per src_product). Also used by cell checkers. Not a flight-power path.",
+            "source": [
+              "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+              "https://chinahobbyline.com/blogs/news/how-to-charge-a-lipo-battery-safely"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "balance connector positions and pinout",
+            "reason": "Source states only 'JST / XH'; a 6S XH balance plug has cells+1 positions in this order by convention.",
+            "value": "7 positions: BAT-, C1+..C6+"
+          },
+          "type": "assumption"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "CNHL (China Hobby Line)",
+  "name": "CNHL Black Series 1100mAh 6S 22.2V 100C LiPo (XT60)",
+  "part_number": "1101006BK",
+  "tags": [
+    "lipo",
+    "battery",
+    "6s",
+    "xt60",
+    "fpv",
+    "5-inch",
+    "freestyle"
+  ],
+  "traits": [
+    {
+      "params": {
+        "burst_current_A": 220,
+        "burst_duration_s": null,
+        "c_rating_burst": 200,
+        "c_rating_continuous": 100,
+        "capacity_mAh": 1100,
+        "cells": 6,
+        "chemistry": "LiPo",
+        "configuration": "6S1P",
+        "continuous_current_A": 110,
+        "energy_Wh_derived": 24.42,
+        "energy_note": "Not stated by CNHL; derived as 22.2 V × 1.1 Ah.",
+        "kind": "battery",
+        "nominal_voltage_V": 22.2,
+        "source": [
+          "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+          "https://chinahobbyline.com/blogs/news/30c-vs-100c-vs-130c-rc-battery-guide"
+        ]
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "charge_cutoff_V_pack": 25.2,
+        "charge_cutoff_V_per_cell": 4.2,
+        "charge_method": "LiPo balance charge (main lead + balance plug)",
+        "charge_temperature_C": null,
+        "max_charge_current_A": 5.5,
+        "max_charge_rate_C": 5,
+        "normal_cell_voltage_V": [
+          3.7,
+          4.2
+        ],
+        "operating_temperature_C": null,
+        "source": [
+          "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+          "https://chinahobbyline.com/blogs/news/how-to-charge-a-lipo-battery-safely"
+        ],
+        "storage_temperature_C": null
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "fields": [
+          "discharge cut-off voltage",
+          "operating / charge / storage temperature",
+          "burst duration",
+          "main and balance lead length",
+          "XT60 gender",
+          "balance connector pinout"
+        ],
+        "note": "Not stated by CNHL for 1101006BK; see .research/gaps.json. The generated CAD draws the discharge lead about 101 mm long, looped down behind the pack (design values for the reference build, marked in library/cad/params.ts)."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

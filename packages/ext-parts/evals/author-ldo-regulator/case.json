@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Author a small purchased part (an LDO regulator) from datasheet excerpts and pass verification",
+  "skills": ["uhd-part-research", "uhd-part-author", "uhd-part-verify"],
+  "tags": ["parts", "authoring"],
+  "fixture": { "from": "fixture" },
+  "instruction": "The sensor node uses an ACME LDO3300-33SOT-TR regulator (part id acme-ldo3300-33) that is not defined yet, so `npx protoboard check` fails. Author it as a project-researched part from the datasheet text and the manufacturer CAD in inputs/ (read inputs/README.md first; there is no network access), with its evidence (sources.json, and terms.json recording the terms of the manufacturer files), so that `npx protoboard run part-verify --input part=acme-ldo3300-33` reports no errors and check reports no errors. Do not change src/.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *", "npx tsx node_modules/@protoboardai/ext-parts/scripts/*", "sha256sum *", "cp *", "mkdir *"] },
+  "budget": { "turns": 40, "seconds": 1500, "usd": 5 },
+  "graders": [
+    { "id": "unresolved-fixed", "kind": "fault", "code": "PB_UNRESOLVED_DEFINITION" },
+    { "id": "verify-passes", "kind": "operation", "run": ["part-verify", "--input", "part=acme-ldo3300-33"], "status": "succeeded", "data": [{ "path": "layout", "equals": "project" }, { "path": "errors", "length": 0 }] },
+    { "id": "check-clean", "kind": "check", "maxErrors": 0 },
+    { "id": "files", "kind": "files", "exist": ["parts/local/acme-ldo3300-33.uhd.ts", "parts/evidence/acme-ldo3300-33/sources.json", "parts/evidence/acme-ldo3300-33/terms.json"] },
+    {
+      "id": "datasheet-facts",
+      "kind": "facts",
+      "definition": "acme-ldo3300-33",
+      "facts": [
+        { "path": "part_number", "equals": "LDO3300-33SOT-TR" },
+        { "path": "manufacturer", "matches": "ACME" },
+        { "path": "interfaces[pin=1].protocols[type=power].roles", "includes": "input" },
+        { "path": "interfaces[pin=2].protocols[type=power].roles", "includes": "ground" },
+        { "path": "interfaces[pin=3]" },
+        { "path": "interfaces[pin=4]" },
+        { "path": "interfaces[pin=5].protocols[type=power].roles", "includes": "output" },
+        { "path": "domains[domain=mechanical].package.name", "matches": "SOT-?23-?5" },
+        { "path": "domains[domain=mechanical].package.pin_count", "equals": 5 }
+      ]
+    },
+    {
+      "id": "cad-cited",
+      "kind": "facts",
+      "file": "parts/evidence/acme-ldo3300-33/sources.json",
+      "facts": [
+        { "path": "[url=https://acme.example/ldo3300.pdf].type", "equals": "datasheet" },
+        { "path": "[url=https://acme.example/cad/LDO3300-SOT-23-5.step].sha256", "matches": "9ebd51c6762c47d77be43394fc0346ea989ec4ec4eef71ecc92725809dabd604" },
+        { "path": "[url=https://acme.example/cad/LDO3300-SOT-23-5.step].licence", "matches": "." }
+      ]
+    },
+    { "id": "system-untouched", "kind": "digest", "file": "src/sensor-node.uhd.ts", "changed": false },
+    {
+      "id": "modelling",
+      "kind": "rubric",
+      "files": ["parts/local/acme-ldo3300-33.uhd.ts"],
+      "rubric": "A UHD definition of the fictional ACME LDO3300-33SOT-TR regulator authored from its datasheet. 1. A header comment cites the datasheet and states modelling notes. 2. One interface per package pin with the right designator: 1 VIN power input 2.5-6.0 V, 2 GND, 3 EN logic input, 4 NC no connect, 5 VOUT 3.3 V power output. 3. Output current 300 mA and dropout, quiescent current, operating and absolute-maximum ranges are recorded with their datasheet sections. 4. Values not in the datasheet are not invented; anything assumed is an assumption trait. 5. The manufacturer CAD is bound as the body, cited with its sha256 and licence, and its terms are recorded in parts/evidence/acme-ldo3300-33/terms.json."
+    }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "copy": { "from": "fixture/inputs/cad/LDO3300-SOT-23-5.step", "to": "parts/local/acme-ldo3300-33/LDO3300-SOT-23-5.step" } },
+    { "copy": { "from": "fixture/inputs/cad/LDO3300-SOT-23-5.glb", "to": "parts/local/acme-ldo3300-33/LDO3300-SOT-23-5.glb" } },
+    { "write": { "file": "parts/local/acme-ldo3300-33.uhd.ts", "from": "solution/acme-ldo3300-33.uhd.ts" } },
+    { "write": { "file": "parts/evidence/acme-ldo3300-33/sources.json", "from": "solution/sources.json" } },
+    { "write": { "file": "parts/evidence/acme-ldo3300-33/terms.json", "from": "solution/terms.json" } },
+    { "protoboard": ["run", "part-verify", "--input", "part=acme-ldo3300-33"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["check"] },
+    { "say": "Authored parts/local/acme-ldo3300-33.uhd.ts (five pins from the pin table, power domains, ratings, package SOT-23-5) with ACME's STEP and GLB bound as its CAD, and parts/evidence/acme-ldo3300-33/sources.json citing the datasheet and both CAD files with their sha256 and licence, and terms.json recording ACME's CAD terms for both files. part-verify: 0 errors, 1 warning (no mechanical interfaces, intended: it is soldered)." }
+  ]
+}

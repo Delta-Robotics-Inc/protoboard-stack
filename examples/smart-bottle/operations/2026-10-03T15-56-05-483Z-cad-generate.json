@@ -1,0 +1,39 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-enclosure-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-enclosure-cad",
+    "module": "bottle-cap-enclosure",
+    "config": "src/enclosures/bottle-cap/cad.config.ts",
+    "configDigest": "sha256:edcdfc668dd4ff701765ae6944466466f944c42896116ae7e165558efc580d04",
+    "moduleDigest": "sha256:89c950213ae443b5dcf8d80425ef77f7ba88ff359a8d76485e4fbc39537a0fc1"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:05fef29c6f809c2d2ee84d204bc4a4b731e763a45d5b55ab70cd24dcf34c30fc",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T15:56:05.483Z",
+  "status": "failed",
+  "summary": "bottle-cap-enclosure: bottle-cap-enclosure.lid_seal: a radial gland needs rod_d_mm (what the O-ring seals on)",
+  "outputs": [],
+  "data": {
+    "problems": [
+      "bottle-cap-enclosure.lid_seal: a radial gland needs rod_d_mm (what the O-ring seals on)"
+    ],
+    "notes": []
+  },
+  "finishedAt": "2026-10-03T15:56:07.770Z"
+}

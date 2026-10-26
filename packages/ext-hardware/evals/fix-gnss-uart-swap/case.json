@@ -1,0 +1,32 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Find and fix a GNSS lead soldered with RX and TX swapped",
+  "skills": ["system-compose", "system-review"],
+  "tags": ["fault", "system"],
+  "fixture": {
+    "from": "../../../../examples/quadcopter-5in",
+    "exclude": ["docs"],
+    "steps": [
+      {
+        "note": "the gnss-rx-tx-swapped scenario (src/scenarios.ts), applied to the system itself",
+        "replace": { "file": "src/quadcopter.uhd.ts", "find": "p2: \"fc:uart1_tx\", p3: \"fc:uart1_rx\"", "with": "p2: \"fc:uart1_rx\", p3: \"fc:uart1_tx\"", "count": 1 }
+      }
+    ]
+  },
+  "instruction": "`npx protoboard check` reports an error on this quadcopter since the GNSS lead was re-soldered to the flight controller. Find what is wrong, fix the system model so that check reports no errors, and say in one or two sentences what the fault was. The purchased parts' definitions are correct; do not edit anything under parts/.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *", "npx tsx node_modules/@protoboardai/ext-hardware/skills/*"] },
+  "budget": { "turns": 20, "seconds": 600, "usd": 2 },
+  "graders": [
+    { "id": "fault-fixed-and-named", "kind": "fault", "code": "UHD_LINK_STATE", "caught": "(rx|tx|receive|transmit)[^.]*(swap|revers|cross|wrong|backward)|(swap|revers|cross)[^.]*(rx|tx)" },
+    { "id": "check-clean", "kind": "check", "maxErrors": 0, "ran": ["uhd/checkSystem"] },
+    { "id": "pads-restored", "kind": "text", "file": "src/quadcopter.uhd.ts", "matches": ["p2:\\s*\"fc:uart1_tx\",\\s*p3:\\s*\"fc:uart1_rx\""], "description": "the soldered end is back on the pads the lead was built for: p2 on TX1, p3 on RX1" },
+    { "id": "gnss-part-untouched", "kind": "digest", "file": "parts/catalog/matek-m9n-5883.json", "changed": false },
+    { "id": "fc-part-untouched", "kind": "digest", "file": "parts/catalog/dolphinrc-f405-v3-flight-controller.json", "changed": false }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "replace": { "file": "src/quadcopter.uhd.ts", "find": "p2: \"fc:uart1_rx\", p3: \"fc:uart1_tx\"", "with": "p2: \"fc:uart1_tx\", p3: \"fc:uart1_rx\"", "count": 1 } },
+    { "protoboard": ["check"] },
+    { "say": "The GNSS lead's soldered end had its RX and TX wires swapped on the FC's UART1 pads (p2 on RX1, p3 on TX1); I put p2 back on uart1_tx and p3 on uart1_rx, and check now reports no errors." }
+  ]
+}

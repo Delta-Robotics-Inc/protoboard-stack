@@ -1,0 +1,26 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@fixtures/fake-circuit-a",
+  "version": "0.1.0",
+  "description": "TEST FIXTURE: fake circuit provider A. Native design is JSON; exports metric Gerber/Excellon and minimal bodies. Not a real PCB tool.",
+  "compatibility": { "protoboard": "^0.2.0" },
+  "capabilities": [
+    {
+      "id": "circuit",
+      "summary": "Fake: grid placement, one net per UHD link",
+      "native": "fake-a",
+      "operations": {
+        "generate": "./circuit.ts#generate",
+        "export": "./circuit.ts#exportOutputs",
+        "extract": "./circuit.ts#extract",
+        "check": { "entry": "./circuit.ts#check", "summary": "Design against the model: components and nets" },
+        "stamp": { "entry": "./circuit.ts#stamp", "summary": "A provider's own operation: writes a stamp in the native folder", "inputs": { "force": { "description": "stamp again" } } }
+      },
+      "constraints": {
+        "width_mm": { "description": "board width limit" },
+        "height_mm": { "description": "board height limit" },
+        "layers": { "description": "copper layer count" }
+      }
+    }
+  ]
+}

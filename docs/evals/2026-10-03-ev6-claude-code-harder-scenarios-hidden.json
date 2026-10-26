@@ -1,0 +1,643 @@
+{
+  "schema": "protoboard.eval-scorecard/v0",
+  "runId": "EV6 harder cases with their scenarios hidden (PB-871), 2026-10-03",
+  "startedAt": "2026-10-03T19:42:01.735Z",
+  "finishedAt": "2026-10-03T19:43:02.925Z",
+  "host": {
+    "id": "claude-code",
+    "version": "2.1.288 (Claude Code)"
+  },
+  "judge": "claude-code",
+  "skills": "exported",
+  "jobs": 6,
+  "trialsPerCase": 3,
+  "framework": "0.1.0",
+  "environment": {
+    "node": "v24.14.1",
+    "platform": "linux"
+  },
+  "cases": [
+    {
+      "key": "@protoboard/ext-hardware/find-reversed-cell-leads",
+      "id": "find-reversed-cell-leads",
+      "extension": "@protoboard/ext-hardware",
+      "title": "Find the cell leads soldered the wrong way round, a fault check does not name",
+      "skills": [
+        "system-compose",
+        "system-review",
+        "harness-author"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 30,
+        "seconds": 900,
+        "usd": 4
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 33508,
+            "turns": 8,
+            "costUsd": 0.2224,
+            "model": "claude-opus-5-5",
+            "answer": "The fault was a reversed cell polarity in the `bat_pads` link of `src/bottle.uhd.ts`: it put the leads' red (+) conductor on the board's BAT- pad and the black (-) on BAT+. I swapped the composition back to `{ p1: \"bat_pos\", p2: \"bat_neg\" }`.\n\nI found it by comparing that link with the cable's pin order (`+`, `-`, straight through from the cell's `lead_pos`/`lead_neg`). `npx protoboard check` did not report the swap as an error; its only hint was an extra `HARNESS_ROUTE_STALE` warning on `battery_leads`.\n\nAfter the fix, `check` is back to the expected 0 errors and 2 warnings (the two strapping-pin warnings), and the stale-route warning is gone. I could not run the fault scenarios script \u2014 the command was denied in this session \u2014 so that confirmation is still outstanding.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "leads-restored",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 3 fact(s) hold"
+            },
+            {
+              "id": "route-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/bottle-battery-leads/out/body.manifest.json sha256:823604162ab7\u2026"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7\u2026"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71\u2026"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:8c05da5daab3\u2026"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--find-reversed-cell-leads/trial-1.jsonl",
+          "outside": [],
+          "dir": "<trials>/ext-hardware--find-reversed-cell-leads/1/project"
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 28833,
+            "turns": 7,
+            "costUsd": 0.2189,
+            "model": "claude-opus-5-5",
+            "answer": "The fault was a reversed cell: in `src/bottle.uhd.ts` the `bat_pads` link composed the board end of the cell leads as `{ p1: \"bat_neg\", p2: \"bat_pos\" }`, which put the red (+) lead on the BAT- pad and the black (-) lead on BAT+. I found it by reading the link against the harness's pin order (`[\"+\", \"-\"]`, straight through), and `protoboard check` pointed at the same link with a `HARNESS_ROUTE_STALE` warning on `battery_leads`.\n\nI swapped the composition to `{ p1: \"bat_pos\", p2: \"bat_neg\" }`, the only change. `npx protoboard check` now gives the expected 0 errors and 2 warnings, with the stale-route warning gone. I could not run the fault scenarios script because the command was denied permission, so that confirmation is still outstanding.\n\nThe model now describes correct wiring, but the bench cap matches the old model: the leads need to be resoldered red to BAT+ and black to BAT-. It is worth checking the board for reverse-polarity damage before reconnecting the cell.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "leads-restored",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 3 fact(s) hold"
+            },
+            {
+              "id": "route-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/bottle-battery-leads/out/body.manifest.json sha256:823604162ab7\u2026"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7\u2026"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71\u2026"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:8c05da5daab3\u2026"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--find-reversed-cell-leads/trial-2.jsonl",
+          "outside": [],
+          "dir": "<trials>/ext-hardware--find-reversed-cell-leads/2/project"
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 26707,
+            "turns": 7,
+            "costUsd": 0.2042,
+            "model": "claude-opus-5-5",
+            "answer": "The fault was reversed cell polarity in the `bat_pads` link of `src/bottle.uhd.ts`: the leads' board end was composed as `{ p1: \"bat_neg\", p2: \"bat_pos\" }`, which puts the red (+) lead on the BAT- pad and the black (-) lead on BAT+. I found it by tracing the cell leads end to end: the cell end maps p1/p2 to `lead_pos`/`lead_neg`, the harness is straight through with pins `[\"+\", \"-\"]`, so the board end has to be `bat_pos` then `bat_neg`.\n\nI swapped it to `{ p1: \"bat_pos\", p2: \"bat_neg\" }`, the only change made. `npx protoboard check` now gives the expected 0 errors and 2 warnings (the two strapping-pin ones).\n\n- **Check did not flag the polarity itself:** before the fix it reported 0 errors, and its only extra warning was `HARNESS_ROUTE_STALE` on `battery_leads` (\"generated for a different ends\"), which the fix cleared.\n- **Scenarios not run:** the fault-scenario script was denied permission in this session, so that confirmation is still outstanding.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "leads-restored",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 3 fact(s) hold"
+            },
+            {
+              "id": "route-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/bottle-battery-leads/out/body.manifest.json sha256:823604162ab7\u2026"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7\u2026"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71\u2026"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:8c05da5daab3\u2026"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--find-reversed-cell-leads/trial-3.jsonl",
+          "outside": [],
+          "dir": "<trials>/ext-hardware--find-reversed-cell-leads/3/project"
+        }
+      ],
+      "fixture": {
+        "ms": 290,
+        "steps": [
+          {
+            "step": "replace in src/scenarios.ts",
+            "ms": 0,
+            "ok": true
+          },
+          {
+            "step": "replace in src/bottle.uhd.ts",
+            "ms": 0,
+            "ok": true
+          }
+        ],
+        "seeded": [
+          "HARNESS_ROUTE_STALE"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 29683,
+      "meanTurns": 7.3,
+      "costUsd": 0.6455
+    },
+    {
+      "key": "@protoboard/ext-hardware/fix-two-wiring-faults",
+      "id": "fix-two-wiring-faults",
+      "extension": "@protoboard/ext-hardware",
+      "title": "Find and fix two wiring faults at once: the O4 powered from the pack, and the GNSS RX and TX swapped",
+      "skills": [
+        "system-compose",
+        "system-review",
+        "harness-author"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 30,
+        "seconds": 900,
+        "usd": 4
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 51718,
+            "turns": 14,
+            "costUsd": 0.4272,
+            "model": "claude-opus-5-5",
+            "answer": "`npx protoboard check` now reports 0 errors; both faults were in `src/quadcopter.uhd.ts` and nothing under `parts/` or `src/harnesses/` was touched. I could not run the fault-scenario script (the command was denied), so the scenarios are unconfirmed after the change.\n\n## The two faults\n\n1. **GNSS lead: RX and TX swapped at the FC pads.** The `gnss_pads` link soldered the GNSS RX wire to the FC's RX1 pad and the TX wire to TX1, so neither side could hear the other. I crossed them back (GNSS RX on TX1, GNSS TX on RX1), as the lead's own usage note specifies. This also cleared the `HARNESS_ROUTE_STALE` warning on the GNSS lead.\n\n2. **DJI O4 power: fed from the battery instead of the FC's 10 V BEC.** A `video_power` link ran the O4's VCC straight from the pack (18\u201325.2 V) against its 3.7\u201313.2 V input, and the `dji_fc` plug link had been restricted to pins 2\u20136, leaving the cable's 10 V conductor disconnected. I removed `video_power` and restored `dji_fc` to a full six-pin plug, so the model again derives 10 V BEC \u2192 O4 VCC through the 3-in-1 cable (10 W of the BEC's 25 W).\n\n## What is left\n\n- **Warnings:** four remain, none tied to these faults: three for vendor CAD files the catalog does not distribute for the M9N, and the motor peak current (171.88 A) exceeding the pack's 110 A continuous rating while staying within its 220 A burst rating.\n- **The bench itself:** if the model was really updated to match the bench, the physical quad may carry both faults. Check the O4 lead before powering it, since pack voltage on VCC is well over its 13.2 V limit.\n- **Generated outputs:** I did not regenerate any (firmware CLI, BOM); `check` reports nothing stale.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "o4-power-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "gnss-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "wired-as-designed",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "6 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 1 fact(s) hold"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:4e4f57c4440f\u2026"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:0ea18c5767f4\u2026"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19\u2026"
+            },
+            {
+              "id": "o4-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dji-o4-air-unit.json sha256:023a507b0cf3\u2026"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-two-wiring-faults/trial-1.jsonl",
+          "outside": [],
+          "dir": "<trials>/ext-hardware--fix-two-wiring-faults/1/project"
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 45466,
+            "turns": 14,
+            "costUsd": 0.4405,
+            "model": "claude-opus-5-5",
+            "answer": "`npx protoboard check` now reports 0 errors after two fixes in `src/quadcopter.uhd.ts`. I could not run the fault scenarios (the command was denied in this session), so those are unverified.\n\n**Fault 1 \u2014 GNSS lead soldered TX-to-TX / RX-to-RX.** The `gnss_pads` composition put the lead's RX wire on the FC's RX1 pad and its TX wire on TX1, so neither side could hear the other. I swapped them so GNSS RX lands on TX1 and GNSS TX on RX1, as the lead's own usage note says. This also cleared the stale-route warning on the GNSS lead, with no CAD regeneration needed.\n\n**Fault 2 \u2014 O4 powered straight from the battery.** A `video_power` link fed the O4's VCC from the 6S pack (18\u201325.2 V) against the O4's 3.7\u201313.2 V input, and the `dji_fc` link had been restricted to positions 2\u20136, leaving the 10 V wire off the FC's DJI socket. I removed the battery link and restored the cable as a full straight-through connection, so the O4 is fed from the FC's 10 V BEC through the 3-in-1 cable.\n\nThe four remaining warnings are untouched: three are vendor CAD files for the M9N that the catalog does not distribute, and one is the motors' combined peak current exceeding the pack's continuous rating but staying within its burst rating.\n\nIf the bench really was repaired the way the model described, the quad itself needs rework: the GNSS TX/RX wires swapped at the FC pads, and the O4 power lead moved off battery voltage, which may already have damaged the air unit.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "o4-power-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "gnss-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "wired-as-designed",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "6 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 1 fact(s) hold"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:4e4f57c4440f\u2026"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:0ea18c5767f4\u2026"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19\u2026"
+            },
+            {
+              "id": "o4-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dji-o4-air-unit.json sha256:023a507b0cf3\u2026"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-two-wiring-faults/trial-2.jsonl",
+          "outside": [],
+          "dir": "<trials>/ext-hardware--fix-two-wiring-faults/2/project"
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 37853,
+            "turns": 13,
+            "costUsd": 0.3338,
+            "model": "claude-opus-5-5",
+            "answer": "`npx protoboard check` now reports 0 errors after two fixes in `src/quadcopter.uhd.ts`. The model had two wiring faults, both introduced by the bench update.\n\n1. **O4 power lead on battery voltage.** The model had the O4's VCC fed straight from the battery (18\u201325.2 V on 6S) while the air unit accepts 3.7\u201313.2 V, and the DJI socket link had been cut down to pins 2\u20136 so the FC's 10 V pin was left out. I removed the `video_power` battery link and restored the full 6-pin `dji_fc` link, so VCC comes from the FC's 10 V BEC through the 3-in-1 cable again.\n\n2. **GNSS UART not crossed.** The re-soldered lead had its RX wire on the FC's RX1 pad and its TX wire on TX1, so neither side could hear the other. I swapped the two in the `gnss_pads` link so GNSS RX lands on TX1 and GNSS TX on RX1, as the lead's own usage note specifies.\n\nThe GNSS lead's stale-route warning cleared with the second fix. The four remaining warnings were there before the fixes and are untouched: three vendor CAD files for the Matek M9N that the catalog does not distribute, and the motor peak current (171.88 A) exceeding the pack's continuous rating but not its burst rating.\n\nIf the physical quad really is wired the way the model was, the bench needs correcting too: the O4's power lead must come off battery voltage before it is powered, and the GNSS RX/TX wires need swapping on the FC pads.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "o4-power-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "gnss-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "wired-as-designed",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "6 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 1 fact(s) hold"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:4e4f57c4440f\u2026"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:0ea18c5767f4\u2026"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19\u2026"
+            },
+            {
+              "id": "o4-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dji-o4-air-unit.json sha256:023a507b0cf3\u2026"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-two-wiring-faults/trial-3.jsonl",
+          "outside": [],
+          "dir": "<trials>/ext-hardware--fix-two-wiring-faults/3/project"
+        }
+      ],
+      "fixture": {
+        "ms": 127,
+        "steps": [
+          {
+            "step": "replace in src/scenarios.ts",
+            "ms": 0,
+            "ok": true
+          },
+          {
+            "step": "replace in src/scenarios.ts",
+            "ms": 0,
+            "ok": true
+          },
+          {
+            "step": "replace in src/quadcopter.uhd.ts",
+            "ms": 0,
+            "ok": true
+          },
+          {
+            "step": "replace in src/quadcopter.uhd.ts",
+            "ms": 1,
+            "ok": true
+          }
+        ],
+        "seeded": [
+          "UHD_LINK_STATE"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 45012,
+      "meanTurns": 13.7,
+      "costUsd": 1.2015
+    }
+  ],
+  "problems": [],
+  "totals": {
+    "cases": 2,
+    "ran": 2,
+    "skipped": 0,
+    "errors": 0,
+    "trials": 6,
+    "passed": 6,
+    "passRate": 1,
+    "meanScore": 1,
+    "costUsd": 1.847
+  }
+}

@@ -1,0 +1,103 @@
+/**
+ * `protoboard views check` (PB-1030): the tabs each level gets, from the
+ * shells' own rules, and each tab opened once in the web viewer in a
+ * headless browser. The render cases need a Chromium-family browser
+ * (core's findBrowser); without one they are skipped.
+ */
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { afterAll, describe, expect, it } from "vitest";
+import { findBrowser } from "@protoboardai/core";
+import { formatViewsCheck, viewsCheck } from "../src/views-check.js";
+
+const HERE = fileURLToPath(new URL(".", import.meta.url));
+const TMP = join(HERE, ".tmp-views-check");
+const CLI = join(HERE, "../bin/protoboard.mjs");
+afterAll(() => rmSync(TMP, { recursive: true, force: true }));
+
+const rects = (n: number) => Array.from({ length: n }, (_, i) => `<rect x="${(i % 10) * 9}" y="${Math.floor(i / 10) * 9}" width="6" height="6" fill="#c83232"/>`).join("");
+const PART = (id: string) => `{ id: "${id}", name: "${id}", interfaces: [{ id: "p", name: "P", domain: "electrical", exposed: true, pin: 1, protocols: [{ type: "gpio", roles: ["bidirectional"] }] }] }`;
+
+/** A system with one board (two parts, a schematic and a PCB drawing listed by hand) and a loose part. */
+function project(name: string, files: Record<string, string>) {
+  const dir = join(TMP, name);
+  rmSync(dir, { recursive: true, force: true });
+  const write = (rel: string, content: string) => {
+    mkdirSync(join(dir, rel, ".."), { recursive: true });
+    writeFileSync(join(dir, rel), content);
+  };
+  write("package.json", JSON.stringify({ name, private: true, type: "module" }));
+  write("protoboard.config.ts", `import { defineConfig } from "@protoboardai/core";\nexport default defineConfig({ name: "${name}", root: { source: "src/sys.uhd.ts", export: "SYS" } });\n`);
+  write(
+    "src/sys.uhd.ts",
+    `const A = ${PART("part-a")};
+const B = ${PART("part-b")};
+export const BOARD = {
+  id: "fixture-board",
+  name: "Fixture board",
+  interfaces: [],
+  children: [{ id: "u1", moduleDefId: "part-a" }, { id: "u2", moduleDefId: "part-b" }],
+  links: [{ id: "l1", a: { child: "u1", interfaceId: "p" }, b: { child: "u2", interfaceId: "p" } }],
+  artifacts: [
+    { id: "sch", name: "Schematic", type: "schematic", format: "svg", filePath: "board/out/schematic.svg" },
+    { id: "top", name: "PCB top", type: "pcb", format: "svg", filePath: "board/out/pcb-top.svg" },
+  ],
+};
+export const SYS = { id: "fixture-sys", name: "Fixture system", interfaces: [], children: [{ id: "board", moduleDefId: "fixture-board" }, { id: "loose", moduleDefId: "part-a" }] };
+export const DEFS = [A, B];
+`,
+  );
+  for (const [rel, content] of Object.entries(files)) write(rel, content);
+  return dir;
+}
+
+const DRAWN = {
+  "board/out/schematic.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90">${rects(60)}</svg>`,
+  "board/out/pcb-top.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90">${rects(60)}</svg>`,
+};
+
+describe("views check: the tabs each level gets", () => {
+  it("lists the root and every level with modules inside it, with the shells' tabs, without rendering", async () => {
+    const r = await viewsCheck({ cwd: project("listing", DRAWN), render: false });
+    expect(r.rendered).toBe(false);
+    expect(r.levels.map((l) => [l.path, l.module, l.tabs.map((t) => t.id)])).toEqual([
+      ["", "fixture-sys", ["diagram", "bom", "pair", "library"].filter((t) => t !== "pair")],
+      ["board", "fixture-board", ["diagram", "schematic", "pcb", "pair"]],
+    ]);
+    expect(formatViewsCheck(r)).toMatch(/not rendered: not rendered \(--no-render\)/);
+  });
+
+  it("--module picks one level by instance path or module id, a part included; an unknown one is refused", async () => {
+    const dir = project("module", DRAWN);
+    expect((await viewsCheck({ cwd: dir, render: false, module: "loose" })).levels.map((l) => [l.path, l.tabs.map((t) => t.id)])).toEqual([["loose", ["diagram"]]]);
+    expect((await viewsCheck({ cwd: dir, render: false, module: "fixture-board" })).levels.map((l) => l.path)).toEqual(["board"]);
+    await expect(viewsCheck({ cwd: dir, render: false, module: "nowhere" })).rejects.toThrow(/no instance path or module "nowhere"/);
+  });
+
+  it("the command: --no-render exits 0 and prints the tabs; --format json carries the report", () => {
+    const dir = project("cli", DRAWN);
+    const text = spawnSync(process.execPath, [CLI, "views", "check", "--no-render", "--cwd", dir], { encoding: "utf8", env: process.env });
+    expect(text.status).toBe(0);
+    expect(text.stdout).toMatch(/board {2}fixture-board\n {2}· Diagram\n {2}· Schematic\n {2}· PCB/);
+    const json = spawnSync(process.execPath, [CLI, "views", "check", "--no-render", "--format", "json", "--cwd", dir], { encoding: "utf8", env: process.env });
+    expect(JSON.parse(json.stdout).levels[1].tabs.map((t: { title: string }) => t.title)).toEqual(["Diagram", "Schematic", "PCB", "Pair"]);
+  });
+});
+
+describe.skipIf(!findBrowser())("views check: each tab rendered once in a headless browser", () => {
+  it("passes tabs that draw, fails a blank drawing, and keeps a PNG of each", async () => {
+    const dir = project("render", { ...DRAWN, "board/out/schematic.svg": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90"></svg>` });
+    const out = join(dir, "shots");
+    const r = await viewsCheck({ cwd: dir, module: "board", out, timeout: 20 });
+    expect(r.rendered).toBe(true);
+    const tabs = Object.fromEntries(r.levels[0].tabs.map((t) => [t.id, t]));
+    expect(tabs.diagram.status).toBe("ok");
+    expect(tabs.pcb.status).toBe("ok");
+    expect(tabs.schematic.status).not.toBe("ok");
+    expect(r.failed).toBeGreaterThanOrEqual(1);
+    expect(existsSync(join(out, "board__pcb.png"))).toBe(true);
+    expect(formatViewsCheck(r)).toMatch(/✗ Schematic/);
+  }, 240000);
+});

@@ -1,0 +1,2311 @@
+{
+  "artifacts": [
+    {
+      "id": "art_drawing",
+      "name": "GCT USB4720 drawing rev B",
+      "type": "datasheet",
+      "url": "https://gct.co/files/drawings/usb4720.pdf"
+    },
+    {
+      "id": "art_spec",
+      "name": "GCT USB4720 product specification rev A2",
+      "type": "datasheet",
+      "url": "https://gct.co/files/specs/usb4720-spec.pdf"
+    },
+    {
+      "id": "art_dk_highlight",
+      "name": "DigiKey USB4720 / USB4730 product highlight",
+      "type": "documentation",
+      "url": "https://www.digikey.se/en/product-highlight/g/gct/usb4720-and-usb4730-ip67-usb-type-c-connectors-for-usb-2-0"
+    },
+    {
+      "filePath": "library/cad/py/catalog/gct-usb4720-03-a.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "gct-usb4720 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/gct-usb4720.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "gct-usb4720 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/gct-usb4720.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "gct-usb4720 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/gct-usb4720.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "gct-usb4720 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/usb_c.glb",
+      "format": "glb",
+      "id": "cad_if_usb_c",
+      "interfaceId": "usb_c",
+      "name": "usb_c geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/panel_seal.glb",
+      "format": "glb",
+      "id": "cad_if_panel_seal",
+      "interfaceId": "panel_seal",
+      "name": "panel_seal geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/shell.glb",
+      "format": "glb",
+      "id": "cad_if_shell",
+      "interfaceId": "shell",
+      "name": "shell geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/ground_tags.glb",
+      "format": "glb",
+      "id": "cad_if_ground_tags",
+      "interfaceId": "ground_tags",
+      "name": "ground_tags geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a1.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a1",
+      "interfaceId": "pin_a1",
+      "name": "pin_a1 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a4.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a4",
+      "interfaceId": "pin_a4",
+      "name": "pin_a4 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a5.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a5",
+      "interfaceId": "pin_a5",
+      "name": "pin_a5 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a6.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a6",
+      "interfaceId": "pin_a6",
+      "name": "pin_a6 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a7.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a7",
+      "interfaceId": "pin_a7",
+      "name": "pin_a7 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a8.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a8",
+      "interfaceId": "pin_a8",
+      "name": "pin_a8 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a9.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a9",
+      "interfaceId": "pin_a9",
+      "name": "pin_a9 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_a12.glb",
+      "format": "glb",
+      "id": "cad_if_pin_a12",
+      "interfaceId": "pin_a12",
+      "name": "pin_a12 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b12.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b12",
+      "interfaceId": "pin_b12",
+      "name": "pin_b12 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b9.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b9",
+      "interfaceId": "pin_b9",
+      "name": "pin_b9 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b8.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b8",
+      "interfaceId": "pin_b8",
+      "name": "pin_b8 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b7.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b7",
+      "interfaceId": "pin_b7",
+      "name": "pin_b7 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b6.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b6",
+      "interfaceId": "pin_b6",
+      "name": "pin_b6 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b5.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b5",
+      "interfaceId": "pin_b5",
+      "name": "pin_b5 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b4.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b4",
+      "interfaceId": "pin_b4",
+      "name": "pin_b4 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/gct-usb4720-03-a/artifacts/cad/interfaces/pin_b1.glb",
+      "format": "glb",
+      "id": "cad_if_pin_b1",
+      "interfaceId": "pin_b1",
+      "name": "pin_b1 geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "connector.usb"
+  ],
+  "description": "GCT USB4720 USB Type-C receptacle for USB 2.0, SMT, mid-mount horizontal, IP67 with a pre-fitted LIM gasket: 16 contacts (GND, VBUS, CC1/CC2, D+/D- on both sides, SBU1/SBU2), a grounded stainless steel shell with four through-board stake legs and two grounding tags. VBUS 5 A and GND 6.25 A collectively, 48 V DC, 240 W, 20,000 mating cycles, -30 to 85 C. 3 u\" gold, tape and reel. 7.60 x 11.30 x 3.75 mm; 2.13 mm above the board.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "contact_resistance_mOhm": {
+          "after_test_max": 50,
+          "initial_max": 40
+        },
+        "current_rating_A": {
+          "gnd_collective": 6.25,
+          "other_per_pin": 0.25,
+          "vbus_collective": 5,
+          "vconn_a5_b5": 1.25
+        },
+        "dielectric_withstanding_V_ac": 100,
+        "insulation_resistance_MOhm_min": 100,
+        "power_rating_W": 240,
+        "source": "https://gct.co/files/specs/usb4720-spec.pdf (§4, §6.1); https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+        "temperature_rise_C_max": 30,
+        "voltage_rating_V_dc": 48
+      }
+    },
+    {
+      "dimensions_mm": {
+        "height": 3.75,
+        "length": 7.6,
+        "width": 11.3
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "board_thickness_mm": {
+          "recommended": 0.6,
+          "tolerance": 0.1
+        },
+        "body_mm": "7.60 (ref) deep from the tongue tip to the rear stake tabs, 6.50 to the body rear; 11.30 wide over the stake legs, 9.54 over the gasket; 3.75 high (gasket), 2.13 above and 1.13 (ref) below the tail plane",
+        "mated_plug_envelope_mm": {
+          "overmold_height_max": 6.5,
+          "overmold_to_panel_outer_face_ref": 2.2
+        },
+        "material": {
+          "contacts": "copper alloy",
+          "emi_plate": "stainless steel",
+          "gasket": "silicone rubber, Shore 60A",
+          "insulator": "PA9T, UL 94V-0, black",
+          "mid_plate": "stainless steel",
+          "shell": "stainless steel"
+        },
+        "mating_axis_above_tail_plane_mm": 0.35,
+        "mounting_method": "surface_mount, mid-mount horizontal in a board-edge cut-out; stake legs and grounding tags through the board",
+        "opening_mm": {
+          "height": 2.56,
+          "width": 8.34
+        },
+        "packaging": "tape and reel, 1300 pcs per reel, 24.0 mm tape, 10 reels per carton; moisture barrier bag",
+        "panel_mm": {
+          "draft_deg": 10,
+          "opening": [
+            8.44,
+            2.66
+          ],
+          "recess_inner": [
+            9.14,
+            3.35
+          ],
+          "recess_outer": [
+            9.64,
+            3.86
+          ],
+          "wall_ref": 1.8
+        },
+        "plating": {
+          "contact_area": "3 u\" gold",
+          "emi_plate": "clear",
+          "mid_plate": "50 u\" min nickel",
+          "shell_tails": "gold flash over 50 u\" min nickel",
+          "solder_tails": "gold flash",
+          "underplating": "50 u\" min nickel"
+        },
+        "source": "https://gct.co/files/drawings/usb4720.pdf; https://gct.co/files/specs/usb4720-spec.pdf (§8)",
+        "tongue_mm": {
+          "in_front_of_gasket": 0.8,
+          "thickness": 0.7,
+          "width": 6.69
+        }
+      },
+      "package": {
+        "assumption": "GCT names no package; the name is the product series. pin_count counts the 16 contacts, SHELL (the pin table lists it as a terminal; four stake legs) and the two grounding tags as TAG.",
+        "code": "GCT drawing USB4720 rev B",
+        "exposed_pad": false,
+        "name": "USB4720 (USB Type-C receptacle, USB 2.0, SMT mid-mount, IP67)",
+        "pin_count": 18,
+        "pitch_mm": 0.5,
+        "source": "https://gct.co/files/drawings/usb4720.pdf (pin table; top, bottom, front, side and rear views)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "source": "https://gct.co/files/specs/usb4720-spec.pdf (§4.4, §6.3.3); https://gct.co/files/drawings/usb4720.pdf (Mechanical & Environmental)",
+        "thermal_shock_test_C": [
+          -55,
+          85
+        ]
+      },
+      "operating_temperature_C": [
+        -30,
+        85
+      ]
+    }
+  ],
+  "id": "gct-usb4720-03-a",
+  "interfaces": [
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a1",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -3.45,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a1",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a1",
+      "name": "GND",
+      "pin": "A1",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A1: GND, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "GND contact: 6.25 A collectively for the GND pins A1, A12, B1 and B12 (not per pin). Tie all four, the shell and the grounding tags to ground.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_vbus"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a4",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -2.6,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a4",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a4",
+      "name": "VBUS",
+      "pin": "A4",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A4: VBUS, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "VBUS contact: 5.00 A collectively for the VBUS pins A4, A9, B4 and B9 (not per pin); 48 V DC. Tie all four to the board's VBUS net.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1, §4.2)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_cc"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a5",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -1.25,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a5",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a5",
+      "name": "CC1",
+      "pin": "A5",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A5: CC1, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "CC contact (the specification calls A5/B5 VCONN): 1.25 A. The CC termination the board needs is set by the USB Type-C specification, which this part's sources do not cover.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_dp"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a6",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -0.25,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a6",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a6",
+      "name": "Dp1",
+      "pin": "A6",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        },
+        {
+          "roles": [
+            "bidirectional"
+          ],
+          "type": "usb"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A6: Dp1, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "0.25 A per pin.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (Electrical)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "USB 2.0 D+, one contact on each side (Dp1 A6, Dp2 B6). The plug mates either way up (the durability test rotates it 180°); see the module's \"D+/D- contacts on both sides\" assumption.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§9 Group A-7, durability with 180° rotation)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_dm"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a7",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                0.25,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a7",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a7",
+      "name": "Dn1",
+      "pin": "A7",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        },
+        {
+          "roles": [
+            "bidirectional"
+          ],
+          "type": "usb"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A7: Dn1, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "0.25 A per pin.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (Electrical)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "USB 2.0 D-, one contact on each side (Dn1 A7, Dn2 B7). The plug mates either way up (the durability test rotates it 180°); see the module's \"D+/D- contacts on both sides\" assumption.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§9 Group A-7, durability with 180° rotation)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_sbu"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a8",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                1.25,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a8",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a8",
+      "name": "SBU1",
+      "pin": "A8",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A8: SBU1, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "0.25 A per pin.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (Electrical)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "Sideband use contact (SBU1 A8, SBU2 B8 in the pin table); no USB 2.0 function is assigned to it in this part's sources.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_vbus"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a9",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                2.6,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a9",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a9",
+      "name": "VBUS",
+      "pin": "A9",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A9: VBUS, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "VBUS contact: 5.00 A collectively for the VBUS pins A4, A9, B4 and B9 (not per pin); 48 V DC. Tie all four to the board's VBUS net.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1, §4.2)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_a12",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                3.45,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_a12",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_a12",
+      "name": "GND",
+      "pin": "A12",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "A12: GND, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "GND contact: 6.25 A collectively for the GND pins A1, A12, B1 and B12 (not per pin). Tie all four, the shell and the grounding tags to ground.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b12",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -3.1,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b12",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b12",
+      "name": "GND",
+      "pin": "B12",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B12: GND, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "GND contact: 6.25 A collectively for the GND pins A1, A12, B1 and B12 (not per pin). Tie all four, the shell and the grounding tags to ground.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_vbus"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b9",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -2.25,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b9",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b9",
+      "name": "VBUS",
+      "pin": "B9",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B9: VBUS, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "VBUS contact: 5.00 A collectively for the VBUS pins A4, A9, B4 and B9 (not per pin); 48 V DC. Tie all four to the board's VBUS net.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1, §4.2)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_sbu"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b8",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -1.75,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b8",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b8",
+      "name": "SBU2",
+      "pin": "B8",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B8: SBU2, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "0.25 A per pin.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (Electrical)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "Sideband use contact (SBU1 A8, SBU2 B8 in the pin table); no USB 2.0 function is assigned to it in this part's sources.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_dm"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b7",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                -0.75,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b7",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b7",
+      "name": "Dn2",
+      "pin": "B7",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        },
+        {
+          "roles": [
+            "bidirectional"
+          ],
+          "type": "usb"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B7: Dn2, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "0.25 A per pin.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (Electrical)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "USB 2.0 D-, one contact on each side (Dn1 A7, Dn2 B7). The plug mates either way up (the durability test rotates it 180°); see the module's \"D+/D- contacts on both sides\" assumption.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§9 Group A-7, durability with 180° rotation)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_dp"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b6",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                0.75,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b6",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b6",
+      "name": "Dp2",
+      "pin": "B6",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        },
+        {
+          "roles": [
+            "bidirectional"
+          ],
+          "type": "usb"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B6: Dp2, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "0.25 A per pin.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (Electrical)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "USB 2.0 D+, one contact on each side (Dp1 A6, Dp2 B6). The plug mates either way up (the durability test rotates it 180°); see the module's \"D+/D- contacts on both sides\" assumption.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§9 Group A-7, durability with 180° rotation)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_cc"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b5",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                1.75,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b5",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b5",
+      "name": "CC2",
+      "pin": "B5",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B5: CC2, mating sequence Second",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "CC contact (the specification calls A5/B5 VCONN): 1.25 A. The CC termination the board needs is set by the USB Type-C specification, which this part's sources do not cover.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_vbus"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b4",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                2.25,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b4",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b4",
+      "name": "VBUS",
+      "pin": "B4",
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B4: VBUS, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "VBUS contact: 5.00 A collectively for the VBUS pins A4, A9, B4 and B9 (not per pin); 48 V DC. Tie all four to the board's VBUS net.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1, §4.2)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_b1",
+            "signature": {
+              "area_mm2": 0.235,
+              "centroid": [
+                3.1,
+                6.12,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pin_b1",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pin_b1",
+      "name": "GND",
+      "pin": "B1",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "B1: GND, mating sequence First",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "GND contact: 6.25 A collectively for the GND pins A1, A12, B1 and B12 (not per pin). Tie all four, the shell and the grounding tags to ground.",
+            "source": [
+              "https://gct.co/files/drawings/usb4720.pdf (Electrical)",
+              "https://gct.co/files/specs/usb4720-spec.pdf (§4.1)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "shell",
+            "signature": {
+              "area_mm2": 1.56,
+              "centroid": [
+                0,
+                4.15,
+                -0.6
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_shell",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "shell",
+      "name": "SHELL",
+      "pin": "SHELL",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SHELL: GND",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Stainless steel shell, mid plate and EMI plate; four stake legs 0.30 ±0.05 thick and 1.30 long through the board, 0.60 ±0.15 below the tail plane. The pin table assigns SHELL to GND.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (pin table, Material, front, side and rear views)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "ground_tags",
+            "signature": {
+              "area_mm2": 0.141,
+              "centroid": [
+                0,
+                6.45,
+                -0.6
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_ground_tags",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "ground_tags",
+      "name": "Grounding tags",
+      "pin": "TAG",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TAG: two grounding tags attached to the mid-plate and GND pins A1, B12, A12, B1",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Two independent grounding tags attached to the mid-plate and pins A1, B12, A12 and B1, 8.20 ±0.10 apart on the tail row, 0.30 ±0.03 wide; the recommended PCB layout gives them two Ø0.50 holes with solder area. Designator TAG is this library's label (see the module's grounding-tag assumption).",
+            "source": [
+              "https://www.digikey.se/en/product-highlight/g/gct/usb4720-and-usb4730-ip67-usb-type-c-connectors-for-usb-2-0 (USB4720 features)",
+              "https://gct.co/files/drawings/usb4720.pdf (rear view; recommended PCB layout)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            -1,
+            0
+          ],
+          "origin": [
+            0,
+            0,
+            0.35
+          ],
+          "symmetryDeg": 180,
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "usb_c",
+            "signature": {
+              "area_mm2": 6.92,
+              "centroid": [
+                0,
+                0,
+                0.932
+              ],
+              "normal": [
+                0,
+                -1,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_usb_c",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "usb_c",
+      "max_instances": 1,
+      "name": "USB Type-C receptacle (USB 2.0, IP67)",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "pin_a1",
+            "p12": "pin_a12",
+            "p13": "pin_b1",
+            "p16": "pin_b4",
+            "p17": "pin_b5",
+            "p18": "pin_b6",
+            "p19": "pin_b7",
+            "p20": "pin_b8",
+            "p21": "pin_b9",
+            "p24": "pin_b12",
+            "p4": "pin_a4",
+            "p5": "pin_a5",
+            "p6": "pin_a6",
+            "p7": "pin_a7",
+            "p8": "pin_a8",
+            "p9": "pin_a9"
+          },
+          "default_active": true,
+          "id": "usb_c_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "A1",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "A2",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "A3",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "A4",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p5",
+          "label": "A5",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p6",
+          "label": "A6",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p7",
+          "label": "A7",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p8",
+          "label": "A8",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p9",
+          "label": "A9",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p10",
+          "label": "A10",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p11",
+          "label": "A11",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p12",
+          "label": "A12",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p13",
+          "label": "B1",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p14",
+          "label": "B2",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p15",
+          "label": "B3",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p16",
+          "label": "B4",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p17",
+          "label": "B5",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p18",
+          "label": "B6",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p19",
+          "label": "B7",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p20",
+          "label": "B8",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p21",
+          "label": "B9",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p22",
+          "label": "B10",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p23",
+          "label": "B11",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p24",
+          "label": "B12",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "usb_c",
+            "gender": "receptacle",
+            "note": "USB Type-C positions A1-A12, B1-B12; the drawing's pin table has only the 16 USB 2.0 contacts, so A2, A3, A10, A11, B2, B3, B10 and B11 are unused. GND and VBUS mate first, CC, D and SBU second. Mating force 5-20 N, unmating 8-20 N (6-20 N after 20,000 cycles), 20,000 cycles. Opening 8.34 (+0.06/-0.02) x 2.56 ±0.04 mm on an axis 0.35 mm (ref) above the tail plane; the tongue stands 0.80 mm in front of the gasket face. Sources: GCT drawing USB4720 rev B (pin table, front, side and top views), GCT specification rev A2 §6.2.",
+            "pinout": [
+              "A1",
+              "A2",
+              "A3",
+              "A4",
+              "A5",
+              "A6",
+              "A7",
+              "A8",
+              "A9",
+              "A10",
+              "A11",
+              "A12",
+              "B1",
+              "B2",
+              "B3",
+              "B4",
+              "B5",
+              "B6",
+              "B7",
+              "B8",
+              "B9",
+              "B10",
+              "B11",
+              "B12"
+            ],
+            "positions": 24
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Case opening: a mated plug's overmold is at most 6.5 mm high and stands 2.2 mm (ref) in front of the panel's outer face when the gasket is against the panel's inside (mating view).",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (sheet 2/3, Plug and Receptacle Mating View)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount",
+        "mid_mount",
+        "board_edge"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            4.15,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 5.461,
+              "centroid": [
+                0,
+                5.566,
+                -0.187
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "Solder tails, stake legs and grounding tags (SMT, mid-mount)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Mid-mount at the board edge: the body sits in a cut-out (recommended board thickness 0.6 ±0.10 mm), 2.13 mm above and 1.13 mm (ref) below the tail plane. 16 surface-mount tails: 8 singles 0.25 ±0.05 wide at 0.50 mm pitch and 4 pair groups 0.60 ±0.05 wide (2x 0.85, outer groups 3.275 from the centreline), tail line 0.75 and tips 0.89 behind the body. 4 stake legs 0.30 thick x 1.30 long, 11.30 ±0.15 mm overall width, front pair 2.95 mm behind the tongue tip and rear pair 4.00 mm further back, 0.60 ±0.15 mm below the tail plane. 2 grounding tags 8.20 ±0.10 mm apart on the tail row. Coplanarity 0.10.",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (top, bottom, front, side and rear views; recommended PCB layout)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "Lead-free reflow: peak 255 C (-0/+5), 60 s above 217 C, 50 s above 230 C, 5 s above 250 C, soak 2-3 min, ramp 2.5 C/s, cooling 5 C/s max.",
+            "source": "https://gct.co/files/specs/usb4720-spec.pdf (§7.0)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "MSL 6 (non-JEDEC): bake at 60 C, <= 5% RH for 24 h before reflow; GCT warns that air leakage after reflow is affected if floor life and baking are not followed. Store at +5 to +30 C, 40-90% RH.",
+            "source": "https://gct.co/files/specs/usb4720-spec.pdf (§8.1, §8.2)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "panel_face_seal",
+        "ip67"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            -1,
+            0
+          ],
+          "origin": [
+            0,
+            0,
+            0.35
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "panel_seal",
+            "signature": {
+              "area_mm2": 5.893,
+              "centroid": [
+                0,
+                0,
+                -0.862
+              ],
+              "normal": [
+                0,
+                -1,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_panel_seal",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "panel_seal",
+      "max_instances": 1,
+      "name": "LIM gasket face seal against the enclosure wall",
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Pre-fitted LIM gasket (silicone rubber, Shore 60A), 9.54 wide x 3.75 high, compressed between the receptacle shell and the inside of the enclosure wall (0.20 min and 0.10 min in the drawing's compression view). Recommended panel: plug opening 8.44 ±0.03 x 2.66 ±0.03 mm (end radii R1.05 / R1.39 / R1.65), 10° draft, inside recess 9.14 / 9.64 ±0.03 mm wide and 3.35 / 3.86 ±0.03 mm high with R0.20, steps 0.67 ±0.03 and 0.50 ±0.03 mm, wall 1.80 mm (ref).",
+            "source": "https://gct.co/files/drawings/usb4720.pdf (Material; sheet 2/3 Recommended Panel Spec, Gasket compression between panel and shell)"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "note": "IP67: 100% tested; rated mated or unmated. GCT's waterproof test immerses the receptacle mounted in the specified enclosure at 1 m for 30 minutes (IEC 60529:2013), and a 2 h dust test; the rating holds only for a housing built to the panel spec.",
+            "source": [
+              "https://gct.co/files/specs/usb4720-spec.pdf (§6.3.8, §6.3.9)",
+              "https://www.digikey.se/en/product-highlight/g/gct/usb4720-and-usb4730-ip67-usb-type-c-connectors-for-usb-2-0 (USB4720 features)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "GCT",
+  "name": "GCT USB4720-03-A USB-C receptacle (USB 2.0, IP67, mid-mount)",
+  "part_number": "USB4720-03-A",
+  "tags": [
+    "usb4720",
+    "gct",
+    "usb-c",
+    "type-c",
+    "usb-2.0",
+    "receptacle",
+    "connector",
+    "smt",
+    "mid-mount",
+    "ip67",
+    "sealed"
+  ],
+  "traits": [
+    {
+      "params": {
+        "current_rating_A": {
+          "gnd_A1_A12_B1_B12_collective": 6.25,
+          "other_per_pin": 0.25,
+          "vbus_A4_A9_B4_B9_collective": 5,
+          "vconn_A5_B5": 1.25
+        },
+        "ingress": "IP67, mated or unmated, mounted in an enclosure built to the drawing's panel spec",
+        "power_rating_W": 240,
+        "source": [
+          "https://gct.co/files/specs/usb4720-spec.pdf (§4, §6.3.8)",
+          "https://gct.co/files/drawings/usb4720.pdf (Electrical; Mechanical & Environmental)",
+          "https://www.digikey.se/en/product-highlight/g/gct/usb4720-and-usb4730-ip67-usb-type-c-connectors-for-usb-2-0"
+        ],
+        "temperature_C": [
+          -30,
+          85
+        ],
+        "voltage_rating_V_dc": 48
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "contact_resistance_mOhm_max": {
+          "after_test": 50,
+          "initial": 40
+        },
+        "durability_cycles": 20000,
+        "ingress_protection": "IP67",
+        "kind": "connector",
+        "mating_force_N": [
+          5,
+          20
+        ],
+        "mating_sequence": {
+          "first": [
+            "GND",
+            "VBUS"
+          ],
+          "second": [
+            "CC",
+            "D+/D-",
+            "SBU"
+          ]
+        },
+        "source": [
+          "https://gct.co/files/specs/usb4720-spec.pdf (§6.1, §6.2, §6.3.8)",
+          "https://gct.co/files/drawings/usb4720.pdf (pin table; Mechanical & Environmental)"
+        ],
+        "standard": "USB Type-C receptacle, USB 2.0 contacts only",
+        "unmating_force_N": {
+          "after_20000_cycles": [
+            6,
+            20
+          ],
+          "initial": [
+            8,
+            20
+          ]
+        }
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Ordering grid USB4720-03-A: 03 = 3 u\" gold contact plating; A = tape and reel (1300 per reel). USB4730 is the top-mount version with a separate gasket (USBTJ-04) fitted after soldering.",
+        "source": [
+          "https://gct.co/files/drawings/usb4720.pdf (Ordering Grid)",
+          "https://www.digikey.se/en/product-highlight/g/gct/usb4720-and-usb4730-ip67-usb-type-c-connectors-for-usb-2-0"
+        ],
+        "topic": "variant"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "GCT's product page could not be read (Cloudflare challenge). Rutronik lists USB4720-03-A in reels of 1300 with a 15-week supplier lead time; it is not in the JLCPCB catalog (2026-10-03).",
+        "source": [
+          "https://www.rutronik24.com/product/gct/usb472003a/25198718.html",
+          "https://jlcsearch.tscircuit.com/components/list.json?search=USB4720",
+          "https://gct.co/connector/usb4720"
+        ],
+        "topic": "lifecycle"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "VBUS and GND pins named in the current rating",
+        "resolution": "The drawing's pin table governs the pinout: four VBUS and four GND contacts. The collective ratings apply to each group tied together on the board.",
+        "sources": [
+          "https://gct.co/files/drawings/usb4720.pdf",
+          "https://gct.co/files/specs/usb4720-spec.pdf"
+        ],
+        "values": [
+          "VBUS A4, A9, B4, B9 and GND A1, A12, B1, B12 (pin table)",
+          "VBUS \"i.e., pins A9, B9\" and GND \"i.e., pins A12, B12\" (specification §4.1, §6.1.4)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "mass",
+        "note": "GCT's drawing and specification state no mass; Rutronik gives none, and the DigiKey, Mouser, element14 and Newark product pages could not be read.",
+        "source": [
+          "https://gct.co/files/drawings/usb4720.pdf",
+          "https://gct.co/files/specs/usb4720-spec.pdf",
+          "https://www.rutronik24.com/product/gct/usb472003a/25198718.html"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "GCT links its 3D models from its product page, which answers every fetch with a Cloudflare challenge (HTTP 403), as do guessed STEP paths under gct.co/files/. SnapEDA and Ultra Librarian need a login and forbid redistribution. Geometry is generated from drawing USB4720 rev B (library/cad/py/catalog/gct-usb4720-03-a.py).",
+        "source": [
+          "https://gct.co/connector/usb4720",
+          "https://gct.co/files/drawings/usb4720.pdf"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "D+/D- contacts on both sides",
+        "reason": "The pin table gives a D+ and a D- contact on each side and the specification rotates the plug 180° in its durability test, but neither GCT source says how a USB 2.0 board wires them. Joining the pairs, so either plug orientation reaches the USB device, is USB Type-C practice and is not cited here.",
+        "source": [
+          "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)",
+          "https://gct.co/files/specs/usb4720-spec.pdf (§9 Group A-7)"
+        ],
+        "value": "the board joins A6 (Dp1) with B6 (Dp2) and A7 (Dn1) with B7 (Dn2)"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "grounding-tag designator",
+        "reason": "The drawing's pin table lists the 16 contacts and SHELL but not the two grounding tags, which the recommended layout gives two plated holes. A board needs a designator to bind them; TAG is this library's label, not GCT's.",
+        "source": [
+          "https://gct.co/files/drawings/usb4720.pdf (sheet 1 pin table: Pin, Signal, Mating Sequence)",
+          "https://www.digikey.se/en/product-highlight/g/gct/usb4720-and-usb4730-ip67-usb-type-c-connectors-for-usb-2-0"
+        ],
+        "value": "TAG, one ground leaf for both tags"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD body and internals",
+        "reason": "The drawing dimensions the outline (7.60 x 11.30 x 3.75), shell height (2.13 / 1.13 / 3.26), opening, tongue, gasket width and height, tail and leg positions, but not the shell wall, gasket thickness or vertical placement, cavity depth, wing or tail thickness or the tag length; the representative model needs single values, read from the drawing's views. The rear view's 0.60 and 0.75 leg dimensions are read as the same legs measured from the tail plane and from the wing.",
+        "source": "https://gct.co/files/drawings/usb4720.pdf",
+        "value": "shell a stadium 8.94 x 3.26 mm (0.30 mm wall around the 8.34 opening), Z -1.13 to 2.13 from the gasket to the body rear; gasket 1.40 mm thick with its top level with the shell (2.13), so 1.62 mm below the tail plane; cavity 4.30 mm deep; wings 0.30 mm thick, 0.15 mm above the tail plane; all four legs 0.60 mm below the tail plane; tails 0.10 mm thick, pair tails 0.25 mm wide and 0.10 mm apart in their 0.60 group; grounding tags Ø0.30 pins 0.60 mm below the tail plane"
+      },
+      "type": "assumption"
+    }
+  ],
+  "version": "1.0.0"
+}

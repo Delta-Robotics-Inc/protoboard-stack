@@ -1,0 +1,348 @@
+# Publishes a release of the stack when a tag v<version> is pushed. It is the
+# only way a version reaches npmjs, the Visual Studio Marketplace and Open VSX:
+# nobody publishes from a laptop or a branch.
+#
+#   check        the tag is a commit of main (or a release/* branch) and names
+#                the version every package and the extension share; the npm
+#                packages can be published from this repository; the changelog
+#                has the version's section; type-check and every test pass. Then
+#                each npm package is packed once (the tarballs that are published)
+#   vsix         the extension for each platform, built on a runner of that
+#                platform (scripts/package.mjs --target), carrying only that
+#                platform's native modules; its stack is unpacked and its CLI
+#                run there as a smoke test
+#   npm          each package published to npmjs with provenance, dependencies
+#                first; a version already there is skipped, so a failed run can
+#                be re-run
+#   extension    the per-platform packages published to the Marketplace (vsce)
+#                and to Open VSX (ovsx); duplicates are skipped. A prerelease
+#                tag is not listed there (the Marketplace takes x.y.z only)
+#   github       the GitHub release: the changelog's section, the .vsix files and
+#                their SHA-256 checksums
+#
+# npm: either of two setups, with no edit here.
+#   - npm trusted publishing (OIDC): on npmjs each package names this
+#     repository, this workflow file (release.yml) and the environment
+#     `release` as its trusted publisher. No secret. npm allows a trusted
+#     publisher only on a package that exists, so it is for every release after
+#     the first.
+#   - the NPM_TOKEN secret: a short-lived npm granular access token that may
+#     publish the @protoboardai packages (bypass 2FA). Used only while it is
+#     set, for the first release; delete the secret once the trusted publishers
+#     are configured.
+#
+# The Marketplace and Open VSX: the secrets VSCE_PAT (an Azure DevOps token of
+# the publisher `deltarobotics`, scope Marketplace: Manage) and OVSX_PAT (an
+# Open VSX token of the namespace `deltarobotics`).
+#
+# Run by hand (Actions > Release > Run workflow) to build and check everything
+# without a tag: the publish and release jobs are skipped.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One release at a time per tag, and a release that started is never cancelled.
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  NPM_CONFIG_PROGRESS: "false"
+  NPM_CONFIG_UPDATE_NOTIFIER: "false"
+
+jobs:
+  check:
+    name: Check, test, pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      dist_tag: ${{ steps.version.outputs.dist_tag }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.1
+        with:
+          path: protoboard-stack
+          fetch-depth: 0 # the ancestry check reads main
+          persist-credentials: false
+
+      # A release is a commit of main, or of a maintenance branch release/* (a patch of an older release).
+      - name: The tagged commit is in main or a release/* branch
+        if: github.event_name == 'push'
+        working-directory: protoboard-stack
+        run: |
+          git fetch --no-tags --prune "https://github.com/$GITHUB_REPOSITORY.git" '+refs/heads/main:refs/remotes/origin/main' '+refs/heads/release/*:refs/remotes/origin/release/*'
+          if git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "$GITHUB_REF_NAME ($GITHUB_SHA) is in main."
+            exit 0
+          fi
+          maintenance="$(git branch --remotes --contains "$GITHUB_SHA" --list 'origin/release/*')"
+          if [ -n "$maintenance" ]; then
+            echo "$GITHUB_REF_NAME ($GITHUB_SHA) is not in main; it is in:"
+            echo "$maintenance"
+            exit 0
+          fi
+          echo "::error::$GITHUB_REF_NAME ($GITHUB_SHA) is neither in main nor in a release/* branch. Merge first, then tag the merged commit."
+          exit 1
+
+      - name: The tag names the version of every package and the extension
+        id: version
+        working-directory: protoboard-stack
+        env:
+          TAG: ${{ github.event_name == 'push' && github.ref_name || '' }}
+        run: |
+          if [ -n "$TAG" ]; then version="$(node .github/scripts/release.mjs version --tag "$TAG")"; else version="$(node .github/scripts/release.mjs version)"; fi
+          echo "version=$version" >>"$GITHUB_OUTPUT"
+          echo "dist_tag=$(node .github/scripts/release.mjs dist-tag "$version")" >>"$GITHUB_OUTPUT"
+          echo "Version $version"
+
+      - name: The npm packages can be published from this repository
+        working-directory: protoboard-stack
+        run: node .github/scripts/release.mjs packages --repository "$GITHUB_REPOSITORY"
+
+      - name: The changelog has the version's section
+        working-directory: protoboard-stack
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: node .github/scripts/release.mjs notes "$VERSION" >"$RUNNER_TEMP/notes.md" && cat "$RUNNER_TEMP/notes.md"
+
+      - uses: ./protoboard-stack/.github/actions/workspace
+
+      - name: Type-check
+        working-directory: protoboard-stack
+        run: npm run typecheck
+      - name: Lints
+        working-directory: protoboard-stack
+        run: npm run lint:brand && npm run lint:scope && npm run lint:licence && npm run lint:alpha
+      - name: Tests
+        working-directory: protoboard-stack
+        env:
+          PROTOBOARD_PYTHON: ""
+        run: npm test
+
+      # The tarballs published are these: packed once, from the tested tree, with the CLI's build stamp.
+      - name: Pack the npm packages
+        working-directory: protoboard-stack
+        run: |
+          node .github/scripts/release.mjs stamp
+          mkdir -p "$RUNNER_TEMP/npm"
+          n=0
+          while read -r dir; do
+            n=$((n + 1))
+            file="$(cd "$dir" && npm pack --json --pack-destination "$RUNNER_TEMP/npm" | node -e 'console.log(JSON.parse(require("fs").readFileSync(0, "utf8"))[0].filename)')"
+            # the order to publish in: a numbered name keeps it
+            mv "$RUNNER_TEMP/npm/$file" "$RUNNER_TEMP/npm/$(printf '%02d' "$n")-$file"
+          done < <(node .github/scripts/release.mjs packages --repository "$GITHUB_REPOSITORY")
+          ls -l "$RUNNER_TEMP/npm"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: npm-packages
+          path: ${{ runner.temp }}/npm/*.tgz
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: release-notes
+          path: ${{ runner.temp }}/notes.md
+          if-no-files-found: error
+          retention-days: 30
+
+  vsix:
+    name: Extension (${{ matrix.target }})
+    needs: check
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { target: linux-x64, runner: ubuntu-latest, smoke: true }
+          - { target: linux-arm64, runner: ubuntu-24.04-arm, smoke: true }
+          - { target: darwin-x64, runner: macos-15-intel, smoke: true }
+          - { target: darwin-arm64, runner: macos-latest, smoke: true }
+          # package.mjs and build-stack.ts start npm, tsx and vsce as Node with their JavaScript entry points
+          # (scripts/npm-cli.mjs), never a .cmd file: they run on Windows (PB-1047)
+          - { target: win32-x64, runner: windows-latest, smoke: true }
+    steps:
+      - name: Git settings (no line-ending conversion, long paths)
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+          git config --global core.longpaths true
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.1
+        with:
+          path: protoboard-stack
+          persist-credentials: false
+      - uses: ./protoboard-stack/.github/actions/workspace
+
+      # scripts/package.mjs --target builds the shell, the minified bundle and the carried stack with only this
+      # platform's native modules, and packages it once, for this target (vsce package --target). Its last line is
+      # `vsix: <full path>`, a path every program here reads (Git Bash's /d/a/… is not one on Windows).
+      - name: Package the extension for ${{ matrix.target }}
+        working-directory: protoboard-stack/packages/vscode-protoboard
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          node scripts/package.mjs --target "$TARGET" | tee "$RUNNER_TEMP/package.log"
+          vsix="$(sed -n 's/^vsix: //p' "$RUNNER_TEMP/package.log" | tail -n 1 | tr -d '\r')"
+          version="$(node -p 'require("./package.json").version')"
+          case "$vsix" in
+            *"vscode-protoboard-$version-$TARGET.vsix") ;;
+            *) echo "::error::package.mjs named no vscode-protoboard-$version-$TARGET.vsix (got: $vsix)"; exit 1 ;;
+          esac
+          echo "VSIX=$vsix" >>"$GITHUB_ENV"
+          ls -l dist/*.vsix
+
+      - name: Smoke test, on ${{ matrix.target }} (the carried stack unpacks and its CLI runs)
+        if: matrix.smoke
+        # outside any project, with a Protoboard home of its own
+        working-directory: ${{ runner.temp }}
+        env:
+          PROTOBOARD_HOME: ${{ runner.temp }}/pb-home
+          CLI: ${{ github.workspace }}/protoboard-stack/packages/cli/bin/protoboard.mjs
+        run: |
+          stack="$(node "$CLI" stack unpack "$VSIX" --format json | node -e 'console.log(JSON.parse(require("fs").readFileSync(0, "utf8")).stack)')"
+          echo "unpacked into $stack"
+          carried="$(node -p 'require("node:path").join(process.argv[1], "node_modules", "@protoboardai", "cli", "bin", "protoboard.mjs")' "$stack")"
+          node "$carried" --version
+          node "$carried" init --list >/dev/null
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: vsix-${{ matrix.target }}
+          path: ${{ env.VSIX }}
+          if-no-files-found: error
+          retention-days: 30
+
+  npm:
+    name: Publish to npm
+    needs: [check, vsix]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing and provenance (OIDC)
+    steps:
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm 11.5.1 or later; Node 22 ships npm 10.
+      - name: npm new enough for trusted publishing
+        run: npm install --global npm@^11.5.1 && npm --version
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: npm-packages
+          path: npm
+      - name: Publish each package (dependencies first; a version already on npmjs is skipped)
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DIST_TAG: ${{ needs.check.outputs.dist_tag }}
+        run: |
+          # Only a secret that is set becomes the token. An empty NODE_AUTH_TOKEN would stand in for the identity
+          # trusted publishing gets from OIDC, so it is never exported empty.
+          if [ -n "$NPM_TOKEN" ]; then
+            export NODE_AUTH_TOKEN="$NPM_TOKEN"
+            echo "Publishing with the NPM_TOKEN secret (a first release). Delete it once each package has its trusted publisher."
+          else
+            unset NODE_AUTH_TOKEN
+            echo "No NPM_TOKEN secret: publishing with npm trusted publishing (OIDC)."
+          fi
+          for tgz in $(ls npm/*.tgz | sort); do
+            read -r name version < <(tar -xOzf "$tgz" package/package.json | node -e 'const p = JSON.parse(require("fs").readFileSync(0, "utf8")); console.log(p.name, p.version)')
+            # public reads, without the token file setup-node wrote
+            if [ "$(npm view --userconfig /dev/null "$name@$version" version 2>/dev/null || true)" = "$version" ]; then
+              echo "$name@$version is on npmjs already: skipped"
+              continue
+            fi
+            echo "::group::$name@$version (dist-tag $DIST_TAG)"
+            npm publish "$tgz" --access public --provenance --tag "$DIST_TAG"
+            echo "::endgroup::"
+          done
+
+  extension:
+    name: Publish the extension (Marketplace, Open VSX)
+    needs: [check, vsix]
+    # The Marketplace takes major.minor.patch only: a prerelease (1.2.0-rc.1) publishes to npm under `next` and
+    # attaches its .vsix files to its GitHub release, and is not listed
+    if: github.event_name == 'push' && needs.check.outputs.dist_tag == 'latest'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          pattern: vsix-*
+          path: vsix
+          merge-multiple: true
+      - name: The secrets are set
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          missing=""
+          [ -n "$VSCE_PAT" ] || missing="$missing VSCE_PAT"
+          [ -n "$OVSX_PAT" ] || missing="$missing OVSX_PAT"
+          if [ -n "$missing" ]; then echo "::error::missing secrets:$missing (see the comment at the top of release.yml)"; exit 1; fi
+          ls -l vsix
+      - name: Visual Studio Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx --yes @vscode/vsce@4.0.0 publish --skip-duplicate --packagePath vsix/*.vsix
+      - name: Open VSX
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: npx --yes ovsx@1.3.0 publish --skip-duplicate --packagePath vsix/*.vsix
+
+  github:
+    name: GitHub release
+    needs: [check, npm, extension]
+    if: ${{ !cancelled() && github.event_name == 'push' && needs.npm.result == 'success' && (needs.extension.result == 'success' || needs.extension.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # create the release
+    steps:
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          pattern: vsix-*
+          path: assets
+          merge-multiple: true
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: release-notes
+          path: notes
+      - name: Checksums
+        working-directory: assets
+        run: |
+          for f in *.vsix; do sha256sum "$f" >"$f.sha256"; done
+          sha256sum *.vsix >SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIST_TAG: ${{ needs.check.outputs.dist_tag }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "The GitHub release $GITHUB_REF_NAME exists; nothing to create (a re-run)."
+            exit 0
+          fi
+          flags=(--latest)
+          if [ "$DIST_TAG" = "next" ]; then flags=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$GITHUB_REF_NAME" --notes-file notes/notes.md "${flags[@]}" assets/*

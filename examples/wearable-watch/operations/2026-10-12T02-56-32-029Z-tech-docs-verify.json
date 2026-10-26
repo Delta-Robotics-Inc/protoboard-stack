@@ -1,0 +1,111 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs-verify",
+  "extension": {
+    "id": "@protoboardai/ext-docs",
+    "version": "0.1.5"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:baf37b339b9ad2407bd87829c3e4aa79ffbc1f638bb1f47cf461541d602b0877",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 155.0.8059.39 (/usr/bin/google-chrome)"
+    },
+    {
+      "id": "poppler",
+      "available": true,
+      "detail": "pdfinfo version 24.02.0"
+    }
+  ],
+  "startedAt": "2026-10-12T02:56:32.029Z",
+  "status": "succeeded",
+  "summary": "0 error(s), 0 warning(s), 12 info",
+  "outputs": [
+    {
+      "path": "docs/.review/verify-report.json",
+      "digest": "sha256:4be4af0eadc38494f8bbd565efdc8679dd0fbb119ca017d76ce4faaa6a1fcdc4",
+      "bytes": 2248,
+      "description": "verification report"
+    }
+  ],
+  "data": {
+    "findings": [
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "values",
+        "severity": "info",
+        "message": "577 bound values re-resolved against the model"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "images",
+        "severity": "info",
+        "message": "4 images checked"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "review",
+        "severity": "info",
+        "message": "26 page PNGs in docs/.review/wearable-watch-datasheet/ for the visual checklist"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "ProtoMono (licensed, not shipped) is not in PROTOBOARD_DOC_FONTS: display text is in Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-datasheet",
+        "check": "bom",
+        "severity": "info",
+        "message": "45 BOM lines match docs/wearable-watch-bom.json"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "values",
+        "severity": "info",
+        "message": "20 bound values re-resolved against the model"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "images",
+        "severity": "info",
+        "message": "27 images checked"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "review",
+        "severity": "info",
+        "message": "12 page PNGs in docs/.review/wearable-watch-assembly-guide/ for the visual checklist"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "ProtoMono (licensed, not shipped) is not in PROTOBOARD_DOC_FONTS: display text is in Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 12, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "wearable-watch-assembly-guide",
+        "check": "coverage",
+        "severity": "info",
+        "message": "7/7 mates, 8/8 hardware placements, 4/4 wiring links covered; 6 bodies placed by mates"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-12T02:56:37.708Z"
+}

@@ -1,0 +1,386 @@
+{
+  "schema": "protoboard.netlist/v0",
+  "nets": [
+    {
+      "id": "bl_pwm",
+      "pins": [
+        "q1:pin_1",
+        "r8:pin_1",
+        "u1:pin_44"
+      ]
+    },
+    {
+      "id": "btn1",
+      "pins": [
+        "sw1:pin_1",
+        "sw1:pin_3",
+        "u1:pin_50"
+      ]
+    },
+    {
+      "id": "btn2",
+      "pins": [
+        "sw2:pin_1",
+        "sw2:pin_3",
+        "u1:pin_56"
+      ]
+    },
+    {
+      "id": "cc1",
+      "pins": [
+        "j1:pin_a5",
+        "r1:pin_1"
+      ]
+    },
+    {
+      "id": "cc2",
+      "pins": [
+        "j1:pin_b5",
+        "r2:pin_1"
+      ]
+    },
+    {
+      "id": "chg_stat",
+      "pins": [
+        "r10:pin_2",
+        "r11:pin_1",
+        "u1:pin_24"
+      ]
+    },
+    {
+      "id": "fg_alrt",
+      "pins": [
+        "r7:pin_2",
+        "u1:pin_22",
+        "u5:pin_5"
+      ]
+    },
+    {
+      "id": "gnd",
+      "pins": [
+        "c10:pin_2",
+        "c11:pin_2",
+        "c12:pin_2",
+        "c13:pin_2",
+        "c14:pin_2",
+        "c15:pin_2",
+        "c16:pin_2",
+        "c17:pin_2",
+        "c18:pin_2",
+        "c19:pin_2",
+        "c1:pin_2",
+        "c20:pin_2",
+        "c2:pin_2",
+        "c3:pin_2",
+        "c4:pin_2",
+        "c5:pin_2",
+        "c6:pin_2",
+        "c7:pin_2",
+        "c8:pin_2",
+        "c9:pin_2",
+        "d1:pin_2",
+        "ds1:pin_1",
+        "ds1:pin_12",
+        "ds1:pin_5",
+        "ds1:pin_6",
+        "j1:pin_a1",
+        "j1:pin_a12",
+        "j1:pin_b1",
+        "j1:pin_b12",
+        "j1:shell",
+        "j3:pin_2",
+        "j5:pin_5",
+        "q1:pin_2",
+        "r11:pin_2",
+        "r1:pin_2",
+        "r2:pin_2",
+        "r3:pin_2",
+        "r8:pin_2",
+        "sw1:pin_2",
+        "sw2:pin_2",
+        "u1:pin_1",
+        "u1:pin_15",
+        "u1:pin_2",
+        "u1:pin_33",
+        "u1:pin_55",
+        "u2:pin_1",
+        "u2:pin_6",
+        "u2:pin_7",
+        "u3:pin_12",
+        "u3:pin_4",
+        "u4:pin_4",
+        "u4:pin_8",
+        "u5:ep",
+        "u5:pin_1",
+        "u5:pin_4",
+        "u5:pin_6",
+        "u6:pin_2",
+        "u7:pin_2",
+        "u8:pin_2"
+      ]
+    },
+    {
+      "id": "hap_en",
+      "pins": [
+        "u1:pin_43",
+        "u4:pin_5"
+      ]
+    },
+    {
+      "id": "hap_reg",
+      "pins": [
+        "c13:pin_1",
+        "u4:pin_1"
+      ]
+    },
+    {
+      "id": "hr_int",
+      "pins": [
+        "r6:pin_2",
+        "u1:pin_42",
+        "u3:pin_13"
+      ]
+    },
+    {
+      "id": "imu_int1",
+      "pins": [
+        "u1:pin_46",
+        "u2:pin_4"
+      ]
+    },
+    {
+      "id": "imu_int2",
+      "pins": [
+        "u1:pin_45",
+        "u2:pin_9"
+      ]
+    },
+    {
+      "id": "lcd_cs",
+      "pins": [
+        "ds1:pin_8",
+        "u1:pin_39"
+      ]
+    },
+    {
+      "id": "lcd_dc",
+      "pins": [
+        "ds1:pin_7",
+        "u1:pin_38"
+      ]
+    },
+    {
+      "id": "lcd_mosi",
+      "pins": [
+        "ds1:pin_10",
+        "u1:pin_36"
+      ]
+    },
+    {
+      "id": "lcd_rst",
+      "pins": [
+        "ds1:pin_11",
+        "u1:pin_41"
+      ]
+    },
+    {
+      "id": "lcd_sck",
+      "pins": [
+        "ds1:pin_9",
+        "u1:pin_37"
+      ]
+    },
+    {
+      "id": "led_a",
+      "pins": [
+        "ds1:pin_3",
+        "r9:pin_2"
+      ]
+    },
+    {
+      "id": "led_k",
+      "pins": [
+        "ds1:pin_2",
+        "q1:pin_3"
+      ]
+    },
+    {
+      "id": "lra_n",
+      "pins": [
+        "j4:pin_2",
+        "u4:pin_9"
+      ]
+    },
+    {
+      "id": "lra_p",
+      "pins": [
+        "j4:pin_1",
+        "u4:pin_7"
+      ]
+    },
+    {
+      "id": "nreset",
+      "pins": [
+        "j5:pin_4",
+        "u1:pin_40"
+      ]
+    },
+    {
+      "id": "prog",
+      "pins": [
+        "r3:pin_1",
+        "u6:pin_5"
+      ]
+    },
+    {
+      "id": "scl",
+      "pins": [
+        "r5:pin_2",
+        "u1:pin_49",
+        "u2:pin_13",
+        "u3:pin_2",
+        "u4:pin_2",
+        "u5:pin_7"
+      ]
+    },
+    {
+      "id": "sda",
+      "pins": [
+        "r4:pin_2",
+        "u1:pin_48",
+        "u2:pin_14",
+        "u3:pin_3",
+        "u4:pin_3",
+        "u5:pin_8"
+      ]
+    },
+    {
+      "id": "stat",
+      "pins": [
+        "r10:pin_1",
+        "u6:pin_1"
+      ]
+    },
+    {
+      "id": "swdclk",
+      "pins": [
+        "j5:pin_3",
+        "u1:pin_53"
+      ]
+    },
+    {
+      "id": "swdio",
+      "pins": [
+        "j5:pin_2",
+        "u1:pin_51"
+      ]
+    },
+    {
+      "id": "usb_dm",
+      "pins": [
+        "d1:pin_3",
+        "d1:pin_4",
+        "j1:pin_a7",
+        "j1:pin_b7",
+        "u1:pin_34"
+      ]
+    },
+    {
+      "id": "usb_dp",
+      "pins": [
+        "d1:pin_1",
+        "d1:pin_6",
+        "j1:pin_a6",
+        "j1:pin_b6",
+        "u1:pin_35"
+      ]
+    },
+    {
+      "id": "v1v8",
+      "pins": [
+        "c10:pin_1",
+        "c9:pin_1",
+        "u3:pin_11",
+        "u8:pin_5"
+      ]
+    },
+    {
+      "id": "v3v0",
+      "pins": [
+        "c17:pin_1",
+        "c18:pin_1",
+        "c1:pin_1",
+        "c20:pin_1",
+        "c2:pin_1",
+        "c7:pin_1",
+        "ds1:pin_4",
+        "j5:pin_1",
+        "r4:pin_1",
+        "r5:pin_1",
+        "r6:pin_1",
+        "r7:pin_1",
+        "u1:pin_28",
+        "u1:pin_30",
+        "u2:pin_12",
+        "u2:pin_5",
+        "u2:pin_8",
+        "u7:pin_5"
+      ]
+    },
+    {
+      "id": "vbat",
+      "pins": [
+        "c11:pin_1",
+        "c12:pin_1",
+        "c14:pin_1",
+        "c16:pin_1",
+        "c6:pin_1",
+        "c8:pin_1",
+        "j3:pin_1",
+        "r9:pin_1",
+        "u3:pin_10",
+        "u3:pin_9",
+        "u4:pin_10",
+        "u4:pin_6",
+        "u5:pin_2",
+        "u5:pin_3",
+        "u6:pin_3",
+        "u7:pin_1",
+        "u7:pin_3",
+        "u8:pin_1",
+        "u8:pin_3"
+      ]
+    },
+    {
+      "id": "vbus",
+      "pins": [
+        "c15:pin_1",
+        "c19:pin_1",
+        "c3:pin_1",
+        "d1:pin_5",
+        "j1:pin_a4",
+        "j1:pin_a9",
+        "j1:pin_b4",
+        "j1:pin_b9",
+        "u1:pin_32",
+        "u6:pin_4"
+      ]
+    },
+    {
+      "id": "xl1",
+      "pins": [
+        "c4:pin_1",
+        "u1:pin_17",
+        "y1:pin_1"
+      ]
+    },
+    {
+      "id": "xl2",
+      "pins": [
+        "c5:pin_1",
+        "u1:pin_18",
+        "y1:pin_2"
+      ]
+    }
+  ]
+}

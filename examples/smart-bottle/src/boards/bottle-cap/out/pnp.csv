@@ -1,0 +1,62 @@
+instance,x_mm,y_mm,rotation_deg,side,part,mpn,package,lcsc
+u1,22.8,0,270,top,espressif-esp32-c3-mini-1-h4x,ESP32-C3-MINI-1-H4X,"ESP32-C3-MINI-1 module, 53 pins",C41349510
+u2,0,-3,0,bottom,st-vl53l4cdv0dh-1,VL53L4CDV0DH/1,Optical LGA12,C3178291
+u3,2,6.5,0,top,ti-lp5024rsm,LP5024RSMR,VQFN-32,C427525
+u4,9,-12,0,top,ti-tps63020dsjr,TPS63020DSJR,VSON-14,C15483
+l1,9,-17.5,0,top,coilcraft-xfl4020-152me,XFL4020-152ME,XFL4020 4.0 x 4.0 mm SMD,
+u5,-8.5,21,0,top,microchip-mcp73831t-2aci-mc,MCP73831T-2ACI/MC,DFN-8,C411870
+u6,-12,14.5,0,top,adi-max17048g-t10,MAX17048G+T10,TDFN-8,C2682616
+j1,0,30.05,180,top,gct-usb4720-03-a,USB4720-03-A,"USB4720 (USB Type-C receptacle, USB 2.0, SMT mid-mount, IP67)",
+d9,0.2,24.5,0,top,st-usblc6-2sc6,USBLC6-2SC6,SOT23-6L,C7519
+sw1,0,-30.5,0,top,alps-skrtlae010,SKRTLAE010,"SMD side-push TACT switch, 4.5 × 3.4 mm, with guide bosses",C110293
+d1,-26.79,11.1,0,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+d2,-26.79,-11.1,90,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+d3,-11.1,-26.79,0,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+d4,11.1,-26.79,0,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+d5,26.79,-11.1,0,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+d6,26.79,11.1,0,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+d7,11.1,26.79,0,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+d8,-11.1,26.79,0,top,kingbright-aptf1616lseezgkqbkc,APTF1616LSEEZGKQBKC,"1.6 x 1.6 mm SMD LED, 4 castellated pads",C3019103
+jbat,16.75,-26.75,180,top,bottle-battery-pads,,Wire pads 2 x 2.0 mm,
+jprb,-21.4,11,0,top,bottle-probe-pads,,Wire pads 3 x 1.8 mm,
+tp_rxd,21.4,-9.6,0,top,bottle-test-pad,,Test pad 1.2 mm,
+tp_txd,23.8,-9.6,0,top,bottle-test-pad,,Test pad 1.2 mm,
+tp_boot,19,-9.6,0,top,bottle-test-pad,,Test pad 1.2 mm,
+tp_en,16.6,-9.6,0,top,bottle-test-pad,,Test pad 1.2 mm,
+tp_3v3,16.6,-12.6,0,top,bottle-test-pad,,Test pad 1.2 mm,
+tp_gnd,19,-12.4,0,top,bottle-test-pad,,Test pad 1.2 mm,
+r1,17.4,9,90,top,yageo-rc0402,RC0402FR-0710KL,0402,C60490
+r2,14.5,-4,0,top,yageo-rc0402,RC0402FR-0710KL,0402,C60490
+r3,14.5,-2.4,0,top,yageo-rc0402,RC0402FR-074K7L,0402,C105871
+r4,14.5,-0.8,0,top,yageo-rc0402,RC0402FR-074K7L,0402,C105871
+r5,14.5,4.8,0,top,yageo-rc0402,RC0402FR-0710KL,0402,C60490
+r6,14.5,3.2,0,top,yageo-rc0402,RC0402FR-0710KL,0402,C60490
+r7,-21.5,14,0,top,yageo-rc0402,RC0402FR-074K7L,0402,C105871
+r8,15.6,7,90,top,yageo-rc0402,RC0402FR-0710KL,0402,C60490
+r9,-3.6,11,90,top,yageo-rc0402,RC0402FR-07100KL,0402,C60491
+r10,-1.6,11,90,top,yageo-rc0402,RC0402FR-0714K7L,0402,C138055
+r11,5.2,-15,90,top,yageo-rc0402,RC0402FR-071ML,0402,C138033
+r12,3.6,-15,90,top,yageo-rc0402,RC0402FR-07180KL,0402,C138046
+r13,-8.5,17.6,0,top,yageo-rc0402,RC0402FR-073K3L,0402,C137992
+r14,-5.4,18.6,90,top,yageo-rc0402,RC0402FR-0768KL,0402,C137947
+r15,-5.4,16,90,top,yageo-rc0402,RC0402FR-07100KL,0402,C60491
+r16,-12,11.6,0,top,yageo-rc0402,RC0402FR-0710KL,0402,C60490
+r17,6,22,90,top,yageo-rc0402,RC0402FR-0768KL,0402,C137947
+r18,7.6,22,90,top,yageo-rc0402,RC0402FR-07100KL,0402,C60491
+r19,-3.4,25.6,90,top,yageo-rc0402,RC0402FR-075K1L,0402,C105872
+r20,3.4,25.6,90,top,yageo-rc0402,RC0402FR-075K1L,0402,C105872
+c1,21.4,9.4,0,top,murata-grm188,GRM188R61A106ME69D,0603,C90053
+c2,24,9.4,0,top,murata-grm155,GRM155R71C104KA88D,0402,C71629
+c3,19,9,90,top,murata-grm155,GRM155R61A105KE15D,0402,C76999
+c4,-1.2,-3,90,top,murata-grm188,GRM188R61A106ME69D,0603,C90053
+c5,1.2,-3,90,top,murata-grm155,GRM155R71C104KA88D,0402,C71629
+c6,3,11,90,top,murata-grm155,GRM155R61A105KE15D,0402,C76999
+c7,0.4,11,90,top,murata-grm155,GRM155R61A105KE15D,0402,C76999
+c8,4.6,-12,90,top,murata-grm188,GRM188R61A106ME69D,0603,C90053
+c9,6,-9,0,top,murata-grm155,GRM155R71C104KA88D,0402,C71629
+c10,13.2,-9,0,top,murata-grm188,GRM188R61A226ME15D,0603,C84419
+c11,13.2,-10.9,0,top,murata-grm188,GRM188R61A226ME15D,0603,C84419
+c12,13.2,-12.8,0,top,murata-grm188,GRM188R61A226ME15D,0603,C84419
+c13,-5,23.5,90,top,murata-grm188,GRM188R61E106MA73D,0603,C91606
+c14,-11.7,21,90,top,murata-grm188,GRM188R61A106ME69D,0603,C90053
+c15,-14.5,14.5,90,top,murata-grm155,GRM155R71C104KA88D,0402,C71629

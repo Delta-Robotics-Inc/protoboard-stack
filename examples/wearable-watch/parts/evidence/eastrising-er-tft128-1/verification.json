@@ -1,0 +1,29 @@
+{
+  "partId": "eastrising-er-tft128-1",
+  "recorded_at": "2026-10-03T12:38:18.485Z",
+  "audit": {
+    "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+    "checked": 19,
+    "confirmed": 19,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit; installed-state FPC drop changed from 4.4 to 4.65 mm for the watch's cell swelling allowance (contacts at x 15.41, z -4.78), CAD regenerated and part-verify re-run: 0 errors, 0 warnings",
+  "assumptions": [
+    "mass",
+    "CAD layer split",
+    "CAD tab and FPC neck outline",
+    "FPC alignment-hole position along the tail",
+    "CAD tail pad widening",
+    "CAD installed state"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "mass",
+    "layer stack split",
+    "tab and neck outline",
+    "SPI clock for the panel",
+    "alignment-hole position along the tail"
+  ],
+  "vocabulary_gaps": []
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-release",
+  "version": "0.2.0",
+  "description": "Releases: `protoboard release` refuses a project with check errors, stale outputs or uncommitted changes, then writes the Manufacturing Package (overview, per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan, manufacturing files, index.html) and a reproducible release manifest.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "release",
+      "summary": "Cut a release: choose the package units, clear every precondition (check errors, stale outputs, uncommitted changes), run `protoboard release`, and inspect the Manufacturing Package",
+      "path": "skills/release/SKILL.md"
+    }
+  ],
+  "tools": [
+    {
+      "id": "chrome",
+      "purpose": "A Chromium-family browser (Google Chrome, Chromium, Microsoft Edge or Brave), run headless: the package's documents are laid out, their figures drawn and the PDFs printed with it, through @protoboardai/ext-docs' renderer",
+      "probe": ["protoboard:browser"],
+      "install": "install Google Chrome, Chromium, Microsoft Edge or Brave (found where each platform installs them), or set CHROME to a browser's executable"
+    }
+  ],
+  "operations": [
+    {
+      "id": "release",
+      "summary": "Write the Manufacturing Package to release/<version>/ (units from release.units; one folder per unit) with its manifest, after checking the project is clean",
+      "entry": "./ops/release.ts#release",
+      "effect": "export",
+      "requires": ["chrome"],
+      "inputs": {
+        "version": { "description": "release version (default: the root module's version)" },
+        "allow-dirty": { "description": "release from uncommitted changes (true/false); recorded in the manifest", "default": "false" },
+        "check": { "description": "only run the preconditions and report (true/false); writes nothing", "default": "false" }
+      }
+    },
+    { "id": "package:spec", "summary": "Spec sheet: what the unit is, key figures, contents, interfaces (from the model)", "entry": "./ops/sections.ts#spec", "effect": "pure" },
+    { "id": "package:bom", "summary": "Bill of materials: the unit's module breakdown (bom.csv); the root also gets the whole-product ordering list (ordering-list.csv)", "entry": "./ops/sections.ts#bom", "effect": "pure" },
+    { "id": "package:work-order", "summary": "Work order: ordering checklist, fabrication orders per custom part, assembly operations from the model", "entry": "./ops/sections.ts#workOrder", "effect": "pure" },
+    { "id": "package:assembly", "summary": "Assembly guide: kit and one step per joint the unit makes", "entry": "./ops/sections.ts#assembly", "effect": "pure" },
+    { "id": "package:test-plan", "summary": "Test plan: first-article inspection, fits and joints, records to capture", "entry": "./ops/sections.ts#testPlan", "effect": "pure" }
+  ]
+}

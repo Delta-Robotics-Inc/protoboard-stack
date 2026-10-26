@@ -1,0 +1,194 @@
+{
+  "$comment": "Board-copper pads designed in this project (no maker, so no maker's land pattern): each entry's record cites the pad part that states the design. Every purchased part's land pattern comes from @protoboardai/ext-tscircuit's table, verified against the maker's recommended land pattern (circuit:check reports any that is not).",
+  "packages": [
+    {
+      "id": "watch-lead-pads-2p",
+      "match": {
+        "package": "Wire lead pads 2P",
+        "pin_count": 2
+      },
+      "pads": [
+        {
+          "pin": "1",
+          "x": -1,
+          "y": 0,
+          "w": 1.4,
+          "h": 1.8
+        },
+        {
+          "pin": "2",
+          "x": 1,
+          "y": 0,
+          "w": 1.4,
+          "h": 1.8
+        }
+      ],
+      "courtyard_mm": [
+        3.9,
+        2.3
+      ],
+      "paste": {
+        "margin_mm": 0,
+        "pins": {
+          "1": "none",
+          "2": "none"
+        }
+      },
+      "mask": {
+        "margin_mm": 0.05
+      },
+      "source": "Project pads (src/boards/watch-main/lands.uhd.ts, the cell and LRA lead pads): 1.4 x 1.8 mm pads 2.0 mm apart for tinned AWG30 leads (design choice; insulation 1.1 mm, conductor 0.30 mm)",
+      "verification": {
+        "document": "wearable-watch src/boards/watch-main/lands.uhd.ts, watch-cell-pads and watch-lra-pads",
+        "page": "-",
+        "figure": "the pad part's package fact and assumption trait",
+        "checked": "2026-10-03",
+        "pads": [
+          {
+            "pins": [
+              "1",
+              "2"
+            ],
+            "size": [
+              1.4,
+              1.8
+            ],
+            "pitch_mm": 2.0
+          }
+        ],
+        "courtyard": {
+          "size_mm": [
+            3.9,
+            2.3
+          ],
+          "basis": "0.25 mm beyond the pads"
+        },
+        "paste": {
+          "margin_mm": 0,
+          "none": [
+            "1",
+            "2"
+          ],
+          "basis": "no paste: hand-soldered leads and spring-probe test pads are bare copper (tinned by the finish)"
+        },
+        "mask": {
+          "margin_mm": 0.05,
+          "basis": "non-solder-mask-defined, 0.05 mm all round"
+        },
+        "notes": "1.4 × 1.8 mm pads at 2.0 mm (the parts' pitch_mm)"
+      }
+    },
+    {
+      "id": "watch-swd-pads-5p",
+      "match": {
+        "package": "SWD test pads 5P 1.27 mm",
+        "pin_count": 5
+      },
+      "pads": [
+        {
+          "pin": "1",
+          "x": -2.54,
+          "y": 0,
+          "w": 1.0,
+          "h": 1.0,
+          "shape": "pill"
+        },
+        {
+          "pin": "2",
+          "x": -1.27,
+          "y": 0,
+          "w": 1.0,
+          "h": 1.0,
+          "shape": "pill"
+        },
+        {
+          "pin": "3",
+          "x": 0.0,
+          "y": 0,
+          "w": 1.0,
+          "h": 1.0,
+          "shape": "pill"
+        },
+        {
+          "pin": "4",
+          "x": 1.27,
+          "y": 0,
+          "w": 1.0,
+          "h": 1.0,
+          "shape": "pill"
+        },
+        {
+          "pin": "5",
+          "x": 2.54,
+          "y": 0,
+          "w": 1.0,
+          "h": 1.0,
+          "shape": "pill"
+        }
+      ],
+      "courtyard_mm": [
+        6.6,
+        1.5
+      ],
+      "paste": {
+        "margin_mm": 0,
+        "pins": {
+          "1": "none",
+          "2": "none",
+          "3": "none",
+          "4": "none",
+          "5": "none"
+        }
+      },
+      "mask": {
+        "margin_mm": 0.05
+      },
+      "source": "Project pads (src/boards/watch-main/lands.uhd.ts watch-swd-pads): five Ø1.0 mm pads on 1.27 mm pitch for a spring-pin clip (design choice)",
+      "verification": {
+        "document": "wearable-watch src/boards/watch-main/lands.uhd.ts, watch-swd-pads",
+        "page": "-",
+        "figure": "the pad part's package fact and assumption trait",
+        "checked": "2026-10-03",
+        "pads": [
+          {
+            "pins": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "size": [
+              1.0,
+              1.0
+            ],
+            "pitch_mm": 1.27
+          }
+        ],
+        "courtyard": {
+          "size_mm": [
+            6.6,
+            1.5
+          ],
+          "basis": "0.25 mm beyond the pads"
+        },
+        "paste": {
+          "margin_mm": 0,
+          "none": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "basis": "no paste: hand-soldered leads and spring-probe test pads are bare copper (tinned by the finish)"
+        },
+        "mask": {
+          "margin_mm": 0.05,
+          "basis": "non-solder-mask-defined, 0.05 mm all round"
+        },
+        "notes": "Five Ø1.0 mm pads at 1.27 mm (the part's pitch_mm)"
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+Distributor E — Product detail
+URL: https://distributor-e.example/item/LDO3300-33SOT
+Read: 2026-09-28
+
+Manufacturer: ACME
+Manufacturer part number: LDO3300-33SOT
+Description: LDO regulator, 3.3 V, SOT-23-5, bulk (loose parts in a bag)
+Authorized: yes
+Stock: 900
+Pricing (USD): 1: 0.58, 100: 0.33

@@ -1,0 +1,323 @@
+{
+  "artifact": "gct-usb4105",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "d4b9544a04eddddcf0782e5e80b00e45e384e655ac546512245bba062cfd1407",
+  "units": "mm",
+  "volume_mm3": 120.027,
+  "bodies": {
+    "shell": 95.162,
+    "tongue": 21.594,
+    "stake_l_front": 0.523,
+    "stake_l_rear": 0.719,
+    "stake_r_front": 0.523,
+    "stake_r_rear": 0.719,
+    "locating_pegs": 0.353,
+    "tail_a1": 0.027,
+    "tail_b12": 0.027,
+    "tail_a4": 0.027,
+    "tail_b9": 0.027,
+    "tail_b8": 0.027,
+    "tail_a5": 0.027,
+    "tail_b7": 0.027,
+    "tail_a6": 0.027,
+    "tail_a7": 0.027,
+    "tail_b6": 0.027,
+    "tail_a8": 0.027,
+    "tail_b5": 0.027,
+    "tail_b4": 0.027,
+    "tail_a9": 0.027,
+    "tail_b1": 0.027,
+    "tail_a12": 0.027
+  },
+  "features": {
+    "usb_c": {
+      "area_mm2": 6.163,
+      "centroid": [
+        0.0,
+        0.0,
+        1.73
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        -1.0,
+        0.0
+      ]
+    },
+    "shell": {
+      "area_mm2": 1.14,
+      "centroid": [
+        0.0,
+        5.02,
+        -0.95
+      ],
+      "faces": 4,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "locating_pegs": {
+      "area_mm2": 2.827,
+      "centroid": [
+        0.0,
+        6.28,
+        -0.15
+      ],
+      "faces": 2,
+      "centres": [
+        [
+          -2.89,
+          6.28,
+          -0.15
+        ],
+        [
+          2.89,
+          6.28,
+          -0.15
+        ]
+      ],
+      "diameter_mm": 0.5
+    },
+    "pin_a1": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -3.325,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b12": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -3.075,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_a4": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -2.525,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b9": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -2.275,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b8": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -1.75,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_a5": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -1.25,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b7": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -0.75,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_a6": {
+      "area_mm2": 0.15,
+      "centroid": [
+        -0.25,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_a7": {
+      "area_mm2": 0.15,
+      "centroid": [
+        0.25,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b6": {
+      "area_mm2": 0.15,
+      "centroid": [
+        0.75,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_a8": {
+      "area_mm2": 0.15,
+      "centroid": [
+        1.25,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b5": {
+      "area_mm2": 0.15,
+      "centroid": [
+        1.75,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b4": {
+      "area_mm2": 0.15,
+      "centroid": [
+        2.275,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_a9": {
+      "area_mm2": 0.15,
+      "centroid": [
+        2.525,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_b1": {
+      "area_mm2": 0.15,
+      "centroid": [
+        3.075,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_a12": {
+      "area_mm2": 0.15,
+      "centroid": [
+        3.325,
+        7.355,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 3.54,
+      "centroid": [
+        0.0,
+        6.603,
+        -0.306
+      ],
+      "faces": 20,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

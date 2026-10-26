@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "m2-nylon-spacer-3mm",
+    "config": "parts/local/m2-nylon-spacer-3mm/cad.config.ts",
+    "configDigest": "sha256:cff8ca14e9bbb47035d0f3c9b2c23f8abeb9de5fa49e8dad7691aec2e6b6960f",
+    "moduleDigest": "sha256:ea5148af868c492b74288a2790bb704de4001753799b88767be364314c409d0b"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4cf82c4b20f0fb7448deee95078d3a145411d08f6b73cbf5b092b88450d6ac98",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:21:29.917Z",
+  "status": "succeeded",
+  "summary": "m2-nylon-spacer-3mm: body.step, body.glb, body.manifest.json in parts/local/m2-nylon-spacer-3mm/out (24.127 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/m2-nylon-spacer-3mm/out/body.step",
+      "digest": "sha256:81a171278207e660d1fe79a7bb67c398e0d3410f57d9849c3c92a5b41fdc90f6",
+      "bytes": 10802,
+      "description": "m2-nylon-spacer-3mm: nominal body"
+    },
+    {
+      "path": "parts/local/m2-nylon-spacer-3mm/out/body.glb",
+      "digest": "sha256:4fdb1874cf384e0a800b46392028a5aab10ca8f8a2ef74b62dc87f888d47241d",
+      "bytes": 15548,
+      "description": "m2-nylon-spacer-3mm: viewer mesh"
+    },
+    {
+      "path": "parts/local/m2-nylon-spacer-3mm/out/body.manifest.json",
+      "digest": "sha256:61baf9066555f565d2ac02f753ccbde94a8f1c63107a5f8158b04b0c21e5e7c3",
+      "bytes": 545,
+      "description": "m2-nylon-spacer-3mm: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "m2-nylon-spacer-3mm",
+    "out": "parts/local/m2-nylon-spacer-3mm/out",
+    "volume_mm3": 24.127,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:21:35.215Z"
+}

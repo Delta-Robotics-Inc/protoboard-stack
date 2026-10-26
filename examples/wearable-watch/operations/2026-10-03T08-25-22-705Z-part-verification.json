@@ -1,0 +1,52 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "esslinger-82-2225-spring-bar",
+    "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit (manifests identical); stage-2 audit done in the project"
+  },
+  "projectDigest": "sha256:c9dac17249dd39b3b83fc9ff8b28b7275e6b71eea4de1ea79c5956e529fa81ef",
+  "tools": [],
+  "startedAt": "2026-10-03T08:25:22.705Z",
+  "status": "succeeded",
+  "summary": "esslinger-82-2225-spring-bar: audit 9/9, 2 assumption(s), 4 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/esslinger-82-2225-spring-bar/verification.json",
+      "digest": "sha256:806e6d6739f845850f44d6a7e1d699b9b043c60281d91f157d9e4f2e208ac93d",
+      "bytes": 1180,
+      "description": "esslinger-82-2225-spring-bar: verification record"
+    }
+  ],
+  "data": {
+    "partId": "esslinger-82-2225-spring-bar",
+    "recorded_at": "2026-10-03T08:25:22.717Z",
+    "audit": {
+      "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+      "checked": 9,
+      "confirmed": 9,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit (manifests identical); stage-2 audit done in the project",
+    "assumptions": [
+      "end-feature dimensions",
+      "CAD state"
+    ],
+    "data_gaps": [
+      "manufacturer CAD",
+      "tip length, flange diameter and width, groove, shank diameter, tube wall",
+      "mass",
+      "stainless grade, spring force, operating temperature"
+    ],
+    "vocabulary_gaps": [
+      "No protocol fits a watch spring bar in a pair of lug holes or a strap tunnel over a bar. Shaft is a rotating drive (output/input) and BoltPattern a hole pattern for fasteners. Modelled as protocol 'custom', role 'peer', with parameters tip_diameter, lug_width and bar_diameter, as iso-4762-m3x30-socket-head-cap-screw does for its thread."
+    ]
+  },
+  "finishedAt": "2026-10-03T08:25:22.718Z"
+}

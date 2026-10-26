@@ -1,0 +1,117 @@
+{
+  "artifact": "body",
+  "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+  "toolVersion": "0.1.0",
+  "sourceDigest": "af0be81420a2bd3e7997c6e317d2b40e3003959b67df72731bdf29921957163f",
+  "units": "mm",
+  "coordinates": "assembly root (mm, Z up); glTF export in m, Y up",
+  "harness": "lra_leads",
+  "length_mm": 6,
+  "route_length_mm": 4.67,
+  "conductor_lengths_mm": [
+    7.92,
+    7.92
+  ],
+  "length_fit": {
+    "route_mm": 4.74,
+    "method": "shortest"
+  },
+  "bundle": {
+    "kind": "parallel",
+    "conductors": 2,
+    "conductor_od_mm": 0.6,
+    "bundle_od_mm": 1.05,
+    "twist_pitch_mm": null
+  },
+  "bend_radius_mm": {
+    "target": 4,
+    "minimum": 2.5,
+    "centreline": null,
+    "conductors": null,
+    "at_terminations": 0.9
+  },
+  "clearance_mm": {
+    "min_conductor_surface": null
+  },
+  "ends": {
+    "end_lra": {
+      "frame": {
+        "normal": [
+          0,
+          -1,
+          0
+        ],
+        "origin": [
+          10,
+          6.6,
+          9.93
+        ],
+        "xAxis": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "counterpart": "lra.leads",
+      "termination": "integral",
+      "link": "lra_wires"
+    },
+    "end_board": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "origin": [
+          10,
+          9,
+          7.08
+        ],
+        "xAxis": [
+          -1,
+          0,
+          0
+        ]
+      },
+      "counterpart": "board.lra_pads",
+      "termination": "solder",
+      "link": "lra_pads"
+    }
+  },
+  "features": {
+    "end_board": {
+      "area_mm2": 24.297,
+      "centroid": [
+        10,
+        8.79,
+        7.598
+      ],
+      "faces": 4
+    }
+  },
+  "step": "ok",
+  "route": [
+    [
+      10,
+      6.6,
+      9.93
+    ],
+    [
+      10,
+      8.05,
+      9.04
+    ],
+    [
+      10,
+      9,
+      7.08
+    ]
+  ],
+  "status": "ok",
+  "notes": [],
+  "exportedFrom": {
+    "file": "src/harnesses/watch-lra-leads/harness-cad/route.json",
+    "digest": "sha256:3ebb947e682cc516d1ee37dcc62d3f230b52dbfe95edda3e41da00ea3592c2ab"
+  }
+}

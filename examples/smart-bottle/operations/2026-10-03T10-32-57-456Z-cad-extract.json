@@ -1,0 +1,486 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:extract",
+  "extension": {
+    "id": "@protoboard/ext-enclosure-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "extract",
+    "provider": "@protoboard/ext-enclosure-cad",
+    "module": "bottle-cap-enclosure",
+    "config": "src/enclosures/bottle-cap/cad.config.ts",
+    "configDigest": "sha256:d5745536a5d5f6bbac9c47abf72df15992c8e635a5ac8fdf25dd66e64e2e084b",
+    "moduleDigest": "sha256:b1269639556e767cbf82e71b70df8014344dad5417ddcb1626b39c3dd9fb99dc"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:8c7fb66d92f84c75ba9d7eb8f4ec60a65b40279f359ec0b5c9ec6d3b3ffb9ecf",
+  "tools": [],
+  "startedAt": "2026-10-03T10:32:57.456Z",
+  "status": "succeeded",
+  "summary": "bottle-cap-enclosure: 17 frame(s), 10 artifact(s)",
+  "outputs": [],
+  "data": {
+    "frames": {
+      "board_mount": {
+        "origin": [
+          0,
+          0,
+          6.8
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          0.707,
+          0.707,
+          0
+        ]
+      },
+      "button": {
+        "origin": [
+          0,
+          -40,
+          9.1
+        ],
+        "normal": [
+          0,
+          -1,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led1": {
+        "origin": [
+          -26.79,
+          11.1,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led2": {
+        "origin": [
+          -26.79,
+          -11.1,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led3": {
+        "origin": [
+          -11.1,
+          -26.79,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led4": {
+        "origin": [
+          11.1,
+          -26.79,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led5": {
+        "origin": [
+          26.79,
+          -11.1,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led6": {
+        "origin": [
+          26.79,
+          11.1,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led7": {
+        "origin": [
+          11.1,
+          26.79,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "led8": {
+        "origin": [
+          -11.1,
+          26.79,
+          18.3
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "lid_joint": {
+        "origin": [
+          0,
+          0,
+          15.8
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "lid_seal": {
+        "origin": [
+          0,
+          0,
+          15.8
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "lip_seal": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "neck": {
+        "origin": [
+          0,
+          0,
+          -12
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "probe_seal": {
+        "origin": [
+          -20.5,
+          0,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "tof_window": {
+        "origin": [
+          2.535,
+          -18,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "usb_port": {
+        "origin": [
+          0,
+          40,
+          7.75
+        ],
+        "normal": [
+          0,
+          1,
+          0
+        ],
+        "xAxis": [
+          -1,
+          0,
+          0
+        ]
+      }
+    },
+    "artifacts": [
+      {
+        "id": "cad_source",
+        "name": "bottle-cap-enclosure build123d design",
+        "type": "cad",
+        "role": "source",
+        "format": "build123d",
+        "filePath": "src/enclosures/bottle-cap/build123d"
+      },
+      {
+        "id": "cad_step",
+        "name": "bottle-cap-enclosure body",
+        "type": "cad",
+        "role": "body",
+        "format": "step",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/body.step",
+        "provenance": {
+          "generatedFrom": "cad_source",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "cad_glb",
+        "name": "bottle-cap-enclosure body (GLB)",
+        "type": "cad",
+        "role": "body",
+        "format": "glb",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/body.glb",
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "cad_manifest",
+        "name": "bottle-cap-enclosure geometry manifest",
+        "type": "cad",
+        "format": "json",
+        "filePath": "src/enclosures/bottle-cap/out/body.manifest.json",
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "base_stl",
+        "name": "base (STL, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "stl",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/base.stl",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "base_3mf",
+        "name": "base (3MF, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "3mf",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/base.3mf",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "lid_stl",
+        "name": "lid (STL, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "stl",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/lid.stl",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "lid_3mf",
+        "name": "lid (3MF, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "3mf",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/lid.3mf",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "plunger_button_stl",
+        "name": "plunger_button (STL, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "stl",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/plunger_button.stl",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      },
+      {
+        "id": "plunger_button_3mf",
+        "name": "plunger_button (3MF, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "3mf",
+        "units": "mm",
+        "filePath": "src/enclosures/bottle-cap/out/plunger_button.3mf",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f397df969c80f169eb500774b0ce7e263df0b3186c39fd487c542d3ab9ab4bba"
+        }
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T10:32:57.472Z"
+}

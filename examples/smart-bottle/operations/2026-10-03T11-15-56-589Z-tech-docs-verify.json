@@ -1,0 +1,113 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs-verify",
+  "extension": {
+    "id": "@protoboard/ext-docs",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:12459fbe81ebf0c8044e8028b5684e6db3cff1395b0380e80d4b89f85cdceaf9",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    },
+    {
+      "id": "poppler",
+      "available": true,
+      "detail": "pdfinfo version 24.02.0"
+    }
+  ],
+  "startedAt": "2026-10-03T11:15:56.589Z",
+  "status": "failed",
+  "summary": "2 error(s), 0 warning(s), 10 info",
+  "outputs": [
+    {
+      "path": "docs/.review/verify-report.json",
+      "digest": "sha256:e05d6c57c27b75434613e5fa645b6489744b2a6610d175f2a95b89c9c8af2799",
+      "bytes": 2220,
+      "description": "verification report"
+    }
+  ],
+  "data": {
+    "findings": [
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "test:battery-life:summary[id=sleep_floor_uA].value [d0]: document shows \"53 μA\", model gives \"53 µA\"",
+        "page": 1
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "info",
+        "message": "458 bound values re-resolved against the model"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "images",
+        "severity": "info",
+        "message": "4 images checked"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "layout",
+        "severity": "error",
+        "message": "heading or keep-with-next block stranded at the end of the page (sec)",
+        "page": 9
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "review",
+        "severity": "info",
+        "message": "21 page PNGs in docs/.review/smart-bottle-datasheet/ for the visual checklist"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "bom",
+        "severity": "info",
+        "message": "39 BOM lines match docs/smart-bottle-bom.json"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "values",
+        "severity": "info",
+        "message": "45 bound values re-resolved against the model"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "images",
+        "severity": "info",
+        "message": "49 images checked"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "review",
+        "severity": "info",
+        "message": "10 page PNGs in docs/.review/smart-bottle-assembly-guide/ for the visual checklist"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 12, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "coverage",
+        "severity": "info",
+        "message": "2/2 mates, 8/8 hardware placements, 4/4 wiring links covered; 1 bodies placed by mates"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T11:16:01.302Z"
+}

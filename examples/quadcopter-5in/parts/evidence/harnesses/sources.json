@@ -1,0 +1,453 @@
+[
+  {
+    "id": "src_ardupilot",
+    "title": "ArduPilot - Magnetic Interference",
+    "url": "https://ardupilot.org/copter/docs/common-magnetic-interference.html",
+    "type": "documentation",
+    "authority": "secondary",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Keep the wires between the PDB, ESCs and battery as short as possible. ... Twist the wires between the PDB, ESC and battery and use grounded shielding where possible."
+    ],
+    "harnesses": [
+      "dolphinrc-xt60-battery-lead",
+      "meps-phase-leads-m1",
+      "meps-phase-leads-m2",
+      "meps-phase-leads-m3",
+      "meps-phase-leads-m4"
+    ]
+  },
+  {
+    "id": "src_cdn_shopify_com",
+    "title": "CNHL product image",
+    "url": "https://cdn.shopify.com/s/files/1/0633/0617/0582/products/1_fa00d43b-6b19-49a1-ae79-8e10c61125fa.jpg",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Image insets: 'XT60' (black XT60 housing) and '12AWG' (red/black leads)"
+    ],
+    "harnesses": [
+      "dolphinrc-xt60-battery-lead"
+    ]
+  },
+  {
+    "id": "src_chinahobbyline",
+    "title": "CNHL product page (local cnhl-product.txt)",
+    "url": "https://chinahobbyline.com/products/cnhl-black-series-1100mah-22-2v-6s-100c-lipo-battery-with-xt60-plug",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Size(1-5mm difference): 39.5X35X75mm; Approx Weight(±5g): 211g; Output Connector: XT60; Balance Connector: JST / XH; Wire (AWG): 12#"
+    ],
+    "harnesses": [
+      "dolphinrc-xt60-battery-lead"
+    ]
+  },
+  {
+    "id": "src_dl_djicdn_com",
+    "title": "DJI O4 Air Unit User Manual p.9-10 (local user_manual.txt, p-10.png) / DJI O4 manual p.6 dimension drawing (local p6-06.png)",
+    "url": "https://dl.djicdn.com/downloads/DJI_O4_Air_Unit_Series/UM/DJI_O4_Air_Unit_Series_User_Manual_v1.0_en.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "VCC Red Power (DJI O4 Air Unit: 3.7-13.2 V); GND Black Power GND; Receiver White UART_RX (Connects to flight controller OSD TX, 0-3.3 V); Transmitter Grey UART_TX (Connects to flight controller OSD RX); GND Brown Signal GND; S.Bus Yellow DJI HDL",
+      "Image: 3-in-1 cable 50.0 mm with plug housings both ends; camera coax 50.00/63.11; antenna 80.0 / 55.0 / 5.5"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable"
+    ]
+  },
+  {
+    "id": "src_dolphinrc",
+    "title": "DolphinRC F405 V3 stack review (local review.txt) / DolphinRC stack review (local review.txt)",
+    "url": "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "One 150 mm DJI O4 connector (6-pin) ... DJI Air Unit: Plug-and-play 6-pin connector",
+      "A 12 AWG red-and-black power lead (about 12 cm long) with an XT60 male plug already soldered on."
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable",
+      "dolphinrc-sh8-fc-esc-cable",
+      "dolphinrc-xt60-battery-lead"
+    ]
+  },
+  {
+    "id": "src_dolphinrc_2",
+    "title": "DolphinRC F405 V3 FC wiring image (local fc_wiring_zoom.png) / DolphinRC F405 V3 stack product page (local product.txt)",
+    "url": "https://dolphinrc.com/products/dolphinrc-f405-v3-50a-60a-stack",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Silkscreen at DJI socket: 10V G T5 R5 G Sbus",
+      "1x SH 1.0mm 50mm-length 8pin Cable(for FC-ESC connection) ... 1x DJI 6pin Cable(150mm) ... 1x Red&Black 12AWG 12cm Power Cable; 1x XT60 Male plug"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable",
+      "dolphinrc-sh8-fc-esc-cable",
+      "dolphinrc-xt60-battery-lead"
+    ]
+  },
+  {
+    "id": "src_flymod",
+    "title": "RP1 Receiver User Manual (local RP1_User_Manual.pdf / page-1.png)",
+    "url": "https://flymod.net/download/radiomaster_receiver_rp1_v2_manual",
+    "type": "documentation",
+    "authority": "reseller",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "U.FL / LED / 13mm / 11mm / RX TX 5V G / 65mm / 55mm; INCLUDES 1x RP1 ELRS 2.4ghz Receiver, 1x 65mm UFL 2.4Ghz T-Antenna, 1x User Manual Card, 4x Silicone wires"
+    ],
+    "harnesses": [
+      "radiomaster-rp1-crsf-wire"
+    ]
+  },
+  {
+    "id": "src_oscarliang",
+    "title": "Oscar Liang - BetaFPV Matrix 3in1 review",
+    "url": "https://oscarliang.com/betafpv-matrix-3in1-fc/",
+    "type": "documentation",
+    "authority": "secondary",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "The FC features an SH1.0 6-pin connector, making it plug-and-play with the DJI O4"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable"
+    ]
+  },
+  {
+    "id": "src_oscarliang_2",
+    "title": "Oscar Liang - How to Build an FPV Drone (O4 Pro)",
+    "url": "https://oscarliang.com/how-to-build-fpv-drone/",
+    "type": "documentation",
+    "authority": "secondary",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "twist your wires. This not only helps minimize electrical interference but also reduces slacks and gives your build a cleaner, more professional look."
+    ],
+    "harnesses": [
+      "dolphinrc-xt60-battery-lead",
+      "meps-phase-leads-m1",
+      "meps-phase-leads-m2",
+      "meps-phase-leads-m3",
+      "meps-phase-leads-m4"
+    ]
+  },
+  {
+    "id": "src_oscarliang_3",
+    "title": "Oscar Liang - DJI O4 Lite setup",
+    "url": "https://oscarliang.com/how-to-setup-dji-o4-lite/",
+    "type": "documentation",
+    "authority": "secondary",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "the coaxial cable/connectors are glued in place ... the short camera cable (only 5cm long) ... the U.FL connector could pop off in a crash"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable"
+    ]
+  },
+  {
+    "id": "src_oscarliang_4",
+    "title": "Oscar Liang - Wires and Connectors",
+    "url": "https://oscarliang.com/wires-connectors/",
+    "type": "documentation",
+    "authority": "secondary",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "If the wires are too long, you can twist them to keep them neat and tidy, which also help against interference. ... 18AWG-20AWG for ESC and Motor power wires ... I typically use 14 AWG wire for the XT60 battery lead."
+    ],
+    "harnesses": [
+      "dolphinrc-xt60-battery-lead",
+      "meps-phase-leads-m1",
+      "meps-phase-leads-m2",
+      "meps-phase-leads-m3",
+      "meps-phase-leads-m4"
+    ]
+  },
+  {
+    "id": "src_radiomasterrc",
+    "title": "RadioMaster RP1 V2 product page (product.json, local) / RadioMaster product photos RP1-V240123-2.jpg and RP1-V2-1000X1000-2.jpg",
+    "url": "https://radiomasterrc.com/products/rp1-expresslrs-2-4ghz-nano-receiver",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Package Includes: 1 * RP1 ExpressLRS 2.4ghz Nano Receiver, 1 * 65mm UFL 2.4Ghz T Antenna, 1 * User Manual, 1 * CRSF wire; Dimension: 13mm*11mm*3mm; Antenna: 65mm 2.4ghz T Antenna",
+      "Image: twisted 4-wire bundle (red/black/white/green) with bare tinned ends, next to the T-antenna and 3 foam pads; package photo shows the same bundle"
+    ],
+    "harnesses": [
+      "radiomaster-rp1-crsf-wire"
+    ]
+  },
+  {
+    "id": "src_store_dji_com",
+    "title": "DJI Store - Air Unit Series 3-in-1 Cable",
+    "url": "https://store.dji.com/product/dji-air-unit-series-3-in-1-cable",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Compatible: DJI O4 Air Unit Pro, DJI O4 Air Unit, DJI O3 Air Unit; Length: 100 mm (excluding connectors)"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable"
+    ]
+  },
+  {
+    "id": "src_dji",
+    "title": "DJI O4 FAQ (local faq.txt)",
+    "url": "https://www.dji.com/o4-air-unit/faq",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Shared accessories include: 3-in-1 cable*, ... Non-shared accessories include: camera module, image transmission module, ND filter set, camera coaxial cable."
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable"
+    ]
+  },
+  {
+    "id": "src_dji_2",
+    "title": "DJI O4 Air Unit specs (local specs.txt)",
+    "url": "https://www.dji.com/o4-air-unit/specs",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "DJI O4 Air Unit ... Coaxial Cable: 50 mm; 3-in-1 Cable: 50 mm; Antenna: 80 mm"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable"
+    ]
+  },
+  {
+    "id": "src_jst_mfg",
+    "title": "JST GH connector catalog",
+    "url": "https://www.jst-mfg.com/product/pdf/eng/eGH.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "GHR-06V-S: A 6.25, B 8.75; housing 4.15 x 5.7; Conductor size AWG #30 to AWG #26"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable",
+      "dolphinrc-sh8-fc-esc-cable",
+      "dolphinrc-xt60-battery-lead",
+      "matek-gh6p-gnss-lead"
+    ]
+  },
+  {
+    "id": "src_jst_mfg_2",
+    "title": "JST SH connector catalog",
+    "url": "https://www.jst-mfg.com/product/pdf/eng/eSH.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "SHR-06V-S: A 5.0, B 7.0 (without protrusions) / 9.0 (with); housing 2.8 x 5; Applicable wire AWG #32 to #28"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable",
+      "dolphinrc-sh8-fc-esc-cable",
+      "dolphinrc-xt60-battery-lead",
+      "matek-gh6p-gnss-lead"
+    ]
+  },
+  {
+    "id": "src_marutsu",
+    "title": "AMASS XT60H-M spec sheet (2025V0)",
+    "url": "https://www.marutsu.co.jp/contents/shop/marutsu/datasheet/XT60H-M.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Outline: 20.20±0.30 x 16.40±0.30, face 9.20±0.30; with rear cover 23.85±0.30; mated 32.30±0.50; mated with covers 39.70±0.50; rated 35A (12AWG)"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable",
+      "dolphinrc-sh8-fc-esc-cable",
+      "dolphinrc-xt60-battery-lead",
+      "matek-gh6p-gnss-lead"
+    ]
+  },
+  {
+    "id": "src_mateksys",
+    "title": "Matek M9N-5883 product page (local product.txt) / Matek product photo M9N-5883_3.jpg (local)",
+    "url": "https://www.mateksys.com/?portfolio=m9n-5883",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Includes 1x M9N-5883, 1x JST-GH-6P to JST-GH-6P 20cm silicon wire",
+      "Image: 6-wire flat silicone lead, red/yellow/blue/green/white/black, white GH housing"
+    ],
+    "harnesses": [
+      "matek-gh6p-gnss-lead"
+    ]
+  },
+  {
+    "id": "src_mepsking",
+    "title": "MEPS NEON 2207 motors + SZ5145 combo",
+    "url": "https://www.mepsking.shop/4pcs-neon-2207-fpv-motors-with-4pairs-sz5145-propellers.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "● Lead:20#150mm"
+    ],
+    "harnesses": [
+      "meps-phase-leads-m1",
+      "meps-phase-leads-m2",
+      "meps-phase-leads-m3",
+      "meps-phase-leads-m4"
+    ]
+  },
+  {
+    "id": "src_mepsking_2",
+    "title": "MEPS FAQ / MEPS NEON 2207 V2 product page, size chart image neon-2207-v2-motor-size-chart-pc.jpg (local copy) / MEPS NEON 2207 V2 spec table image neon-2207-v2-motor-specification-pc.jpg (local copy) / MEPS package photo meps-neon-2207-v2-motor-package.jpg (local copy)",
+    "url": "https://www.mepsking.shop/neon-2207-fpv-brushless-motor.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Lead Length 150mm | Heat Shrink Tubing Length 10mm | 3mm (bare tip)",
+      "Lead 150±2mm; Weight (incl. cable) 36±1g",
+      "Image: fluorescent-green motor with three loose white silicone leads, untwisted and unsleeved",
+      "A: Yes — the FPV motor is standard size, pre-tinned wires, beginner-friendly."
+    ],
+    "harnesses": [
+      "meps-phase-leads-m1",
+      "meps-phase-leads-m2",
+      "meps-phase-leads-m3",
+      "meps-phase-leads-m4"
+    ]
+  },
+  {
+    "id": "src_progressiverc",
+    "title": "Progressive RC extended 3-in-1 (aftermarket)",
+    "url": "https://www.progressiverc.com/products/extended-dji-o3-air-unit-3-in-1-cable",
+    "type": "documentation",
+    "authority": "reseller",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "300mm ... 30 AWG"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable"
+    ]
+  },
+  {
+    "id": "src_racedayquads",
+    "title": "RaceDayQuads RP1 V2 (reviewer)",
+    "url": "https://www.racedayquads.com/products/radiomaster-rp1-v2-2-4ghz-elrs-nano-receiver",
+    "type": "documentation",
+    "authority": "reseller",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "comes with a really durable antenna and four small lengths of silicone wire"
+    ],
+    "harnesses": [
+      "radiomaster-rp1-crsf-wire"
+    ]
+  },
+  {
+    "id": "src_shoptronica",
+    "title": "AMASS XT60PW-F/M datasheet",
+    "url": "https://www.shoptronica.com/ficheros/XT60PW.pdf",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Drawing: 15.5 / 8.4 face, contact spacing 7.2"
+    ],
+    "harnesses": [
+      "dji-o4-3in1-cable",
+      "dolphinrc-sh8-fc-esc-cable",
+      "dolphinrc-xt60-battery-lead",
+      "matek-gh6p-gnss-lead"
+    ]
+  },
+  {
+    "id": "src_toydronehq",
+    "title": "ToyDroneHQ reseller listing (conflicting)",
+    "url": "https://www.toydronehq.com/products/meps-neon-2207-fpv-motor-for-5-inch-freestyle-drone-1950kv-2050kv-2550kv/",
+    "type": "documentation",
+    "authority": "reseller",
+    "fetched_at": "2026-09-30",
+    "sha256": null,
+    "supports": [
+      "Lead: 24#150mm"
+    ],
+    "harnesses": [
+      "meps-phase-leads-m1",
+      "meps-phase-leads-m2",
+      "meps-phase-leads-m3",
+      "meps-phase-leads-m4"
+    ]
+  },
+  {
+    "id": "src_panasonic_ds",
+    "title": "Panasonic FR(-A) series datasheet (lead ø0.6, lead space 5.0, lead length drawing)",
+    "url": "https://industrial.panasonic.com/cdbs/www-data/pdf/RDF0000/ABA0000C1259.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-26T19:40:00Z",
+    "sha256": "47cf18461482e03270f72e475f855080e11e2154e3f343f735e5cb0e61e27df7",
+    "supports": [
+      "EEUFR1V471( ): lead ø0.6 mm, lead space F = 5.0 mm; dimension drawing lead lengths 14 min. / 3 min."
+    ],
+    "harnesses": [
+      "panasonic-eeu-fr1v471-leads"
+    ],
+    "note": "copy and extraction in parts/evidence/panasonic-eeu-fr1v471/"
+  },
+  {
+    "id": "src_dolphinrc_review_cap",
+    "title": "DolphinRC F405 V3 stack review (manufacturer blog)",
+    "url": "https://dolphinrc.com/blog/dolphinrc-f405-v3-50a-60a-stack-review",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-26",
+    "sha256": null,
+    "supports": [
+      "Power Pads (+ and –): Each side has a tiny hole to let you solder the capacitor directly down if you ever need to upgrade it."
+    ],
+    "harnesses": [
+      "panasonic-eeu-fr1v471-leads"
+    ]
+  }
+]

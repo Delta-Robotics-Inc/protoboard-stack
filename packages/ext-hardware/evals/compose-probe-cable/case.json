@@ -1,0 +1,160 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Compose the temperature probe's connection through its cable to the cap board",
+  "skills": [
+    "system-compose",
+    "harness-author"
+  ],
+  "tags": [
+    "system",
+    "compose"
+  ],
+  "requires": [
+    "python-build123d"
+  ],
+  "fixture": {
+    "from": "../../../../examples/smart-bottle",
+    "exclude": [
+      "release"
+    ],
+    "steps": [
+      {
+        "note": "the probe and its cable are instances of the system, but nothing connects them: both links removed",
+        "replace": {
+          "file": "src/bottle.uhd.ts",
+          "find": "    {\n      id: \"probe_wires\",\n      name: \"Probe cable leaves the probe\",\n      a: { child: \"probe\", interfaceId: \"wires\", compose: { p1: \"wire_vdd\", p2: \"wire_dq\", p3: \"wire_gnd\" } },\n      b: { child: \"probe_cable\", interfaceId: \"end_probe\" },\n    },\n    {\n      id: \"probe_pads\",\n      name: \"Probe cable on the probe pads\",\n      a: { child: \"probe_cable\", interfaceId: \"end_board\" },\n      b: { child: \"board\", interfaceId: \"probe_pads\", compose: { p1: \"probe_vdd\", p2: \"probe_dq\", p3: \"probe_gnd\" } },\n    },\n",
+          "with": "",
+          "count": 1
+        }
+      }
+    ]
+  },
+  "instruction": "In the smart bottle's system model (src/bottle.uhd.ts) the temperature probe (`probe`) and its cable (`probe_cable`) are instances but nothing connects them yet, and `npx protoboard check` has warnings about it. Compose the connection as docs/system.md describes: the probe's own wires through the probe cable to the cap board's probe pads. Done means: check reports no errors, no unpowered interface and nothing stale, and the probe's fault scenario in src/scenarios.ts (probe-dq-on-gnd-pad) is caught again by the system-compose scenarios script. The board, the harness modules, the parts and the scenarios are correct; do not change them. Say briefly what you connected and how you checked it.",
+  "tools": {
+    "read": true,
+    "edit": true,
+    "commands": [
+      "npx protoboard *",
+      "npx tsx node_modules/@protoboardai/ext-hardware/skills/*"
+    ]
+  },
+  "budget": {
+    "turns": 30,
+    "seconds": 900,
+    "usd": 4
+  },
+  "graders": [
+    {
+      "id": "probe-powered",
+      "kind": "fault",
+      "code": "UHD_UNPOWERED",
+      "seeded": [
+        "UHD_UNPOWERED",
+        "HARNESS_ROUTE_STALE"
+      ]
+    },
+    {
+      "id": "check-clean",
+      "kind": "check",
+      "maxErrors": 0,
+      "absent": [
+        "UHD_UNPOWERED",
+        "UHD_LINK_STATE",
+        "HARNESS_ROUTE_STALE",
+        "ENCLOSURE_STALE",
+        "PB_INVALID_ENDPOINT"
+      ],
+      "ran": [
+        "uhd/checkSystem",
+        "ext:@protoboardai/ext-harness-cad/routes"
+      ]
+    },
+    {
+      "id": "through-the-cable",
+      "kind": "text",
+      "file": "src/bottle.uhd.ts",
+      "matches": [
+        "child:\\s*\"probe\",\\s*interfaceId:\\s*\"wires\"",
+        "child:\\s*\"probe_cable\",\\s*interfaceId:\\s*\"end_probe\"",
+        "child:\\s*\"probe_cable\",\\s*interfaceId:\\s*\"end_board\"",
+        "child:\\s*\"board\",\\s*interfaceId:\\s*\"probe_pads\""
+      ],
+      "description": "probe wires → cable end_probe; cable end_board → board probe pads (not the probe straight to the board)"
+    },
+    {
+      "id": "scenario-link-kept",
+      "kind": "text",
+      "file": "src/bottle.uhd.ts",
+      "matches": [
+        "id:\\s*\"probe_pads\"[\\s\\S]{0,300}b:\\s*\\{\\s*child:\\s*\"board\",\\s*interfaceId:\\s*\"probe_pads\",\\s*compose"
+      ],
+      "description": "the probe-dq-on-gnd-pad scenario recomposes the link `probe_pads` on its board side: without it that scenario is no longer caught"
+    },
+    {
+      "id": "probe-scenario-caught",
+      "kind": "script",
+      "script": "skills/system-compose/scripts/scenarios.ts",
+      "args": [
+        "--json"
+      ],
+      "facts": [
+        {
+          "path": "[id=probe-dq-on-gnd-pad].ok",
+          "equals": true
+        },
+        {
+          "path": "[id=nominal].ok",
+          "equals": true
+        }
+      ],
+      "description": "what the instruction asks: the scenarios script catches the probe's fault again, and the nominal build is clean (not the exit code: cell-leads-reversed is missed on this stack, PB-869)"
+    },
+    {
+      "id": "board-untouched",
+      "kind": "digest",
+      "file": "src/boards/bottle-cap/bottle-cap.uhd.ts",
+      "changed": false
+    },
+    {
+      "id": "harnesses-untouched",
+      "kind": "digest",
+      "file": "src/harnesses/harnesses.uhd.ts",
+      "changed": false
+    },
+    {
+      "id": "scenarios-untouched",
+      "kind": "digest",
+      "file": "src/scenarios.ts",
+      "changed": false
+    },
+    {
+      "id": "probe-part-untouched",
+      "kind": "digest",
+      "file": "parts/local/adafruit-381-ds18b20-probe.uhd.ts",
+      "changed": false
+    }
+  ],
+  "solution": [
+    {
+      "protoboard": [
+        "check"
+      ]
+    },
+    {
+      "replace": {
+        "file": "src/bottle.uhd.ts",
+        "find": "      b: { child: \"board\", interfaceId: \"bat_pads\", compose: { p1: \"bat_pos\", p2: \"bat_neg\" } },\n    },\n",
+        "with": "      b: { child: \"board\", interfaceId: \"bat_pads\", compose: { p1: \"bat_pos\", p2: \"bat_neg\" } },\n    },\n    {\n      id: \"probe_wires\",\n      name: \"Probe cable leaves the probe\",\n      a: { child: \"probe\", interfaceId: \"wires\", compose: { p1: \"wire_vdd\", p2: \"wire_dq\", p3: \"wire_gnd\" } },\n      b: { child: \"probe_cable\", interfaceId: \"end_probe\" },\n    },\n    {\n      id: \"probe_pads\",\n      name: \"Probe cable on the probe pads\",\n      a: { child: \"probe_cable\", interfaceId: \"end_board\" },\n      b: { child: \"board\", interfaceId: \"probe_pads\", compose: { p1: \"probe_vdd\", p2: \"probe_dq\", p3: \"probe_gnd\" } },\n    },\n",
+        "count": 1
+      }
+    },
+    {
+      "protoboard": [
+        "check"
+      ]
+    },
+    {
+      "say": "Connected the probe through its cable: link probe_wires takes the probe's three wires (VDD, DQ, GND, composed from its wires bundle) to the cable's end_probe, and link probe_pads takes the cable's end_board to the board's probe pads (probe_vdd, probe_dq, probe_gnd). check: no errors, no UHD_UNPOWERED, the cable's route and the cap enclosure are current again; the probe-dq-on-gnd-pad scenario is caught again."
+    }
+  ]
+}

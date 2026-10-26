@@ -1,0 +1,69 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "matek-gh6p-gnss-lead",
+    "config": "src/harnesses/matek-gh6p-gnss-lead/cad.config.ts",
+    "configDigest": "sha256:f4d894ca1f703fac68a7fd1ba78a025fd78b4171aaca23575f14f85fa03b687d"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:03bd8a6dfd2b5cb78fd8b98cee829a24df4449d2b2882e2a7b1512e5451db0a0",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0"
+    }
+  ],
+  "startedAt": "2026-10-03T02:27:27.243Z",
+  "status": "succeeded",
+  "summary": "gnss_lead: body.glb, body.step and body.manifest.json in src/harnesses/matek-gh6p-gnss-lead/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/out/body.glb",
+      "digest": "sha256:05ac3fc0c7a3f46db0ccb15505f7cff4a7ad5d1f1c92adf558e9603f7fb3019c",
+      "bytes": 510412,
+      "description": "gnss_lead: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/out/body.step",
+      "digest": "sha256:10357b271cdef9fd4dc3a17349bc64f96a30f2da9cabd75d5fa0a149c3b88362",
+      "bytes": 4729767,
+      "description": "gnss_lead: swept solids"
+    },
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/out/body.manifest.json",
+      "digest": "sha256:e77aff666e236eb59a5509c8f7ce27839d582c51fead0b615574e2a2091adeca",
+      "bytes": 4697,
+      "description": "gnss_lead: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "matek-gh6p-gnss-lead",
+    "path": "gnss_lead",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 97,
+    "route_length_mm": 95.97,
+    "slack_mm": null,
+    "bend_mm": {
+      "target": 4.4,
+      "minimum": 2.75,
+      "centreline": 9.18,
+      "conductors": 1.31,
+      "at_terminations": 1.51
+    },
+    "clearance_mm": 0.08,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T02:27:32.924Z"
+}

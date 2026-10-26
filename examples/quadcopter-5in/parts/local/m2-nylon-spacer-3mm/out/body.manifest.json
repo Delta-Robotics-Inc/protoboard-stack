@@ -1,0 +1,18 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/hardware_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "d4ae6eaf8a2f166513486442105b5fe7bc41bd6f3a6315a55f104b02e5cd3fc7",
+  "units": "mm",
+  "volume_mm3": 20.522,
+  "bodies": {
+    "spacer": 20.522
+  },
+  "features": {},
+  "exportedFrom": {
+    "file": "parts/local/m2-nylon-spacer-3mm/frame-cad/params.json",
+    "digest": "sha256:8a8ef1b472fe61d92561b52d1ada4f09f6e2f54b9846812ca810782f339cf97b"
+  }
+}

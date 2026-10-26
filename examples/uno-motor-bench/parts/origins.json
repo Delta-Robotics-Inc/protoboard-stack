@@ -1,0 +1,215 @@
+{
+  "schema": "protoboard.origins/v0",
+  "definitions": {
+    "adafruit-1438-motor-shield-v2": {
+      "file": "parts/catalog/adafruit-1438-motor-shield-v2.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "adafruit-1438-motor-shield-v2",
+      "revision": 1,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:baba42b845d39c6d7066c04e44a973cd0917374bd074598e2ce01e2abc999caf",
+      "envelopeDigest": "sha256:22cbb0eb124909e8f6570576bb7907abb4eeb4db339650b19e2f59e8faf15c6f",
+      "retrievedAt": "2026-10-03T01:15:02.969Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/adafruit-1438-motor-0dd0",
+        "strip": "library/parts/adafruit-1438-motor-shield-v2/"
+      },
+      "files": {
+        "artifacts/cad/1438-Adafruit-MotorShield.step": "sha256:600a37b31421d17d8141c0bbef370992ce12716ddd24f7274d180ac75380504b",
+        "artifacts/cad/adafruit-1438-motor-shield-v2-vendor.manifest.json": "sha256:6f7a19b7e31867d5c4a51a1f569a6fd80276d4029f974c95b0c6911e74dd2f69",
+        "artifacts/cad/LICENSE-Adafruit_CAD_Parts.txt": "sha256:f60436644e066301d4c2e8f1f0674a157b1f60e4fd5586717b99dde255cc18cd",
+        "sources.json": "sha256:37dc593e85c2dc35cfc214e4c84cb627286929f028b125960bb6c2a4337acabd",
+        "verification.json": "sha256:3f9be3753629ae5280132088d1739e3aa3cab1b76a3bf6d6c5a3103260a5ddef"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "missingArtifacts": [
+        {
+          "artifactId": "cad_vendor_glb",
+          "path": "artifacts/cad/vendor/1438-Adafruit-MotorShield.glb",
+          "reason": "not distributed: the UHD repository does not track it (vendor CAD conversion or research file; redistribution not cleared)"
+        },
+        {
+          "artifactId": "cad_vendor_if_mount",
+          "path": "artifacts/cad/vendor/interfaces/mount.glb",
+          "reason": "not distributed: the UHD repository does not track it (vendor CAD conversion or research file; redistribution not cleared)"
+        },
+        {
+          "artifactId": "cad_vendor_if_MPOWER",
+          "path": "artifacts/cad/vendor/interfaces/MPOWER.glb",
+          "reason": "not distributed: the UHD repository does not track it (vendor CAD conversion or research file; redistribution not cleared)"
+        }
+      ],
+      "previous": {
+        "provider": "@deltarobotics/uhd library",
+        "revision": "a6fdbf3aa726443f61488828166e654787de8174",
+        "version": "0.2.0",
+        "digest": "sha256:baba42b845d39c6d7066c04e44a973cd0917374bd074598e2ce01e2abc999caf",
+        "retrievedAt": "2026-09-26T23:54:02.231Z"
+      },
+      "source": {
+        "entry": "adafruit-1438-motor-shield-v2.uhd.ts",
+        "export": "ADAFRUIT_1438_MOTOR_SHIELD_V2",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "adafruit-1438-motor-shield-v2.uhd.ts": "sha256:6dd9499cf3e9f06d05e71f075baf237f4656de97e068b801c40fbf66b02a67fd",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "adafruit-5396-vl53l4cd": {
+      "file": "parts/catalog/adafruit-5396-vl53l4cd.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "service": "http://localhost:8787",
+      "partId": "adafruit-5396-vl53l4cd",
+      "revision": 1,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:e64ea68291daa173cddb5ed8501f4486706b73a9804bf1c04e415798a53a9bf4",
+      "envelopeDigest": "sha256:65a5ad9d3a854490342187e9d03bef11a988546df4da99bf856ca8f7b4ee6ac8",
+      "retrievedAt": "2026-10-03T01:15:02.969Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/adafruit-5396-vl53l4cd",
+        "strip": "library/parts/adafruit-5396-vl53l4cd/"
+      },
+      "files": {
+        "artifacts/cad/5396-Adafruit-VL53L4CD.step": "sha256:cc5d1703c2866f5ae976983377cd6242deacab597ac12354c698209f2d79880f",
+        "artifacts/cad/adafruit-5396-vl53l4cd-vendor.manifest.json": "sha256:94705e071371940c208439bfacd90fa5db6b721db4c4c613e2ac4868bee24244",
+        "artifacts/cad/LICENSE-Adafruit_CAD_Parts.txt": "sha256:f60436644e066301d4c2e8f1f0674a157b1f60e4fd5586717b99dde255cc18cd",
+        "sources.json": "sha256:0ff4b4f60cba82d7a8bd359b023c71404802774475bbf448cbcc9878c6fc4875",
+        "verification.json": "sha256:49a7a8c1ce82d592b2f3feceac1de6d18ad46c7dbc7444e16219640748a907c1"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "missingArtifacts": [
+        {
+          "artifactId": "cad_vendor_glb",
+          "path": "artifacts/cad/vendor/5396-Adafruit-VL53L4CD.glb",
+          "reason": "not distributed: the UHD repository does not track it (vendor CAD conversion or research file; redistribution not cleared)"
+        },
+        {
+          "artifactId": "cad_vendor_if_mount",
+          "path": "artifacts/cad/vendor/interfaces/mount.glb",
+          "reason": "not distributed: the UHD repository does not track it (vendor CAD conversion or research file; redistribution not cleared)"
+        },
+        {
+          "artifactId": "cad_vendor_if_stemma_qt_1",
+          "path": "artifacts/cad/vendor/interfaces/stemma_qt_1.glb",
+          "reason": "not distributed: the UHD repository does not track it (vendor CAD conversion or research file; redistribution not cleared)"
+        },
+        {
+          "artifactId": "cad_vendor_if_stemma_qt_2",
+          "path": "artifacts/cad/vendor/interfaces/stemma_qt_2.glb",
+          "reason": "not distributed: the UHD repository does not track it (vendor CAD conversion or research file; redistribution not cleared)"
+        }
+      ],
+      "previous": {
+        "provider": "@deltarobotics/uhd library",
+        "revision": "a6fdbf3aa726443f61488828166e654787de8174",
+        "version": "0.2.0",
+        "digest": "sha256:e64ea68291daa173cddb5ed8501f4486706b73a9804bf1c04e415798a53a9bf4",
+        "retrievedAt": "2026-09-26T23:54:02.233Z"
+      },
+      "source": {
+        "entry": "adafruit-5396-vl53l4cd.uhd.ts",
+        "export": "ADAFRUIT_5396_VL53L4CD",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "adafruit-5396-vl53l4cd.uhd.ts": "sha256:a42a795617c571141b5859a74b93421a43d3cba0232fc6cd5b7342cf37e73389",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "arduino-uno-rev3": {
+      "file": "parts/catalog/arduino-uno-rev3.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8971",
+      "partId": "arduino-uno-rev3",
+      "revision": 3,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:a32f274df0a0a8192a7cda06991736c69f916e6791c64fd0bd74f6480985e1c6",
+      "envelopeDigest": "sha256:0e96da392baeaa1f95f945965017607a5248bfbb9c4fb4d76c31146e7b4a7206",
+      "retrievedAt": "2026-10-03T18:38:08.130Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/arduino-uno-rev3",
+        "strip": "library/parts/arduino-uno-rev3/"
+      },
+      "files": {
+        "library/cad/py/catalog/arduino-uno-rev3.py": "sha256:d014e8eda5b5d509fbddf5550ec552fd6acca673e41a242ba7dadf1de41ebbfe",
+        "artifacts/cad/arduino-uno-r3.glb": "sha256:25d268ed55ca5305989443576188dd3719a4e3dfa5d2b0aa0c650005986cee78",
+        "artifacts/cad/arduino-uno-r3.manifest.json": "sha256:9dd54a1a3478882494409673227614b4542c7e6f0915880890c3d9c38c91d720",
+        "artifacts/cad/arduino-uno-r3.step": "sha256:1bd83bd488f89a9da823b4a76f527fd47e7b7154da2dd473566d356a80c8a50d",
+        "artifacts/cad/interfaces/dc_jack.glb": "sha256:ddb95a0b3554e1ccd45f049ddbc3b5af8981460ed70075f2ca05c1b79c7bd795",
+        "artifacts/cad/interfaces/header_ad.glb": "sha256:941de48bf45dd9b9ff143455fdec0da248f2f41ccaeba5ba2351972d603d30ec",
+        "artifacts/cad/interfaces/header_ioh.glb": "sha256:1a0a923a7595f1dc66660abb8692f4b70f4cc4436e6044153aa9b1426de57efb",
+        "artifacts/cad/interfaces/header_iol.glb": "sha256:bf937721f6a3705ae1757d1ef466fc3270b198a9bbfad07db287c7bd69d2c006",
+        "artifacts/cad/interfaces/header_power.glb": "sha256:8ad26a01f42f6702bf1287378cede4fa8aec96397cf072519b2d755fa23885c6",
+        "artifacts/cad/interfaces/mount_all.glb": "sha256:e08728da826b40086dca853fdfe6ed45bc166be4db7864c51db7232b78b967b6",
+        "artifacts/cad/interfaces/mount.glb": "sha256:c2ec305a5d5853fc535c906981787fcbc12dd3d220ac309764eb5d99a87bfc82",
+        "artifacts/cad/interfaces/usb.glb": "sha256:58b945d96f8455101bece49a7b0752530ac522e677c2d42246d35d3a1c90167e",
+        "artifacts/thumbnail.png": "sha256:43672b6fa8b07c43d9c94da3728a71cd5529863fc4dd005ad2516247aeced27a",
+        "sources.json": "sha256:3c94687adc3163418c9cc9a5f330c3c3335b89bd4e65979f5ae3bdff54defd83",
+        "verification.json": "sha256:c78a83249809d455975020116feb0b007755485454f4cd0c7479ae0c2f2f7d22"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "library": "protoboard",
+        "revision": 1,
+        "digest": "sha256:c06acdc997b1b4129448c91b84b5d894de7d2a8b975baf0d206e4c55d193c946",
+        "envelopeDigest": "sha256:dc6f78c20db24a8c8307939cbc3eb6c606814b4382fa66c61952c146351d6182",
+        "retrievedAt": "2026-10-03T01:15:02.969Z"
+      },
+      "source": {
+        "entry": "arduino-uno-rev3.uhd.ts",
+        "export": "ARDUINO_UNO_REV3",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "arduino-uno-rev3.uhd.ts": "sha256:27f2386d703864a89923e554bef5193e79ab522b38a1d7eabe43abf00f58458c",
+          "cad/artifacts.ts": "sha256:43be8ce74bb25e25329181c229cccf23b4a1bd81c3f2d67df55bff7878ab78d3"
+        }
+      }
+    }
+  }
+}

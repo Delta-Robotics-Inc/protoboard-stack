@@ -1,0 +1,42 @@
+{
+  "name": "@protoboardai/cli",
+  "version": "0.2.0",
+  "description": "protoboard command-line interface",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/cli"
+  },
+  "type": "module",
+  "bin": {
+    "protoboard": "bin/protoboard.mjs",
+    "pb": "bin/protoboard.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "build-info.json",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@deltarobotics/uhd-viewer": "^0.2.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/ext-sourcing": "^0.2.0",
+    "@protoboardai/views": "^0.2.0",
+    "@protoboardai/web-viewer": "^0.2.0",
+    "meow": "^14.1.0",
+    "tsx": "^4.23.8",
+    "zod": "3.25.76"
+  }
+}

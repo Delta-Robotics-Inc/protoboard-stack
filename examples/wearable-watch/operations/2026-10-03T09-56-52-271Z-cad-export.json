@@ -1,0 +1,116 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-enclosure-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-enclosure-cad",
+    "module": "watch-case",
+    "config": "src/enclosures/watch-case/cad.config.ts",
+    "configDigest": "sha256:56644905ebf210462585bea9cad09c283b1ab599a8ccdac004a09b3210719583",
+    "moduleDigest": "sha256:6aa8be494010e7b4b1855b4b68c795213f3958797bfae31d9401cc92e9ff82ac"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:d2ae55c4a1eccced811a38c4edec97cdc7ac944344bd0443cd1b9246bfb9ce50",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T09:56:52.271Z",
+  "status": "succeeded",
+  "summary": "watch-case: body STEP/GLB/manifest and STL + 3MF for base, lid, plunger_button_1, plunger_button_2 in src/enclosures/watch-case/out/",
+  "outputs": [
+    {
+      "path": "src/enclosures/watch-case/out/body.step",
+      "digest": "sha256:6a844d479e1e7016ec5059112bdd3662fd83de33f928693f3df14e3390b5781c",
+      "bytes": 2118661,
+      "description": "watch-case: body.step"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/body.glb",
+      "digest": "sha256:18a2a6c41efd354a98091db193ad8b8611886ad1bb5c8ee9015a492bb6897c7b",
+      "bytes": 823980,
+      "description": "watch-case: body.glb"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/body.manifest.json",
+      "digest": "sha256:5cfeecf288c469e4c7a40f4b0b7c435d45faa6087b87628d06ad9cc8017e2125",
+      "bytes": 3479,
+      "description": "watch-case: body.manifest.json"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/section.svg",
+      "digest": "sha256:edc651393299749806c9e2ec8e72a774dd21ad7398f1c86c899f022f32452e68",
+      "bytes": 1269,
+      "description": "watch-case: section through the cavity"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/base.stl",
+      "digest": "sha256:27d29775fbaa9f043c384198004d22f589038eb76d37ff12422b1f6f86b427c2",
+      "bytes": 459984,
+      "description": "watch-case: base for printing (STL)"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/base.3mf",
+      "digest": "sha256:f9efa9b166b29f309e9e06969582729dd3e3b9c23685782e4371d9089d833946",
+      "bytes": 99085,
+      "description": "watch-case: base for printing (3MF)"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/lid.stl",
+      "digest": "sha256:29cc8dfa0f79676c0ee124b57313098af84b999cbd62a1f1edde03f8aa427538",
+      "bytes": 195584,
+      "description": "watch-case: lid for printing (STL)"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/lid.3mf",
+      "digest": "sha256:96487d8174a1389fc16dbcc3ec75a91cef1b5fea3f47becd2d0b1986dfaa4694",
+      "bytes": 40465,
+      "description": "watch-case: lid for printing (3MF)"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/plunger_button_1.stl",
+      "digest": "sha256:3ec6cc44636ef6364e60a370d71aeb04df029aba21e077d4736f449ce7e98935",
+      "bytes": 74284,
+      "description": "watch-case: plunger_button_1 for printing (STL)"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/plunger_button_1.3mf",
+      "digest": "sha256:3d9057aca30125cddf366b78de4f02d4f6662c798d92c4bf9d0f6efdd7d83ecc",
+      "bytes": 18237,
+      "description": "watch-case: plunger_button_1 for printing (3MF)"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/plunger_button_2.stl",
+      "digest": "sha256:9313d88ad31f017f1b09c74c27c8169d09c0c3ed6d778f30fc4c9c380183687c",
+      "bytes": 74284,
+      "description": "watch-case: plunger_button_2 for printing (STL)"
+    },
+    {
+      "path": "src/enclosures/watch-case/out/plunger_button_2.3mf",
+      "digest": "sha256:eeb3f4f216d43398109bcc972c716345ec5d37d24716e45b51141edfa4c46c6c",
+      "bytes": 18301,
+      "description": "watch-case: plunger_button_2 for printing (3MF)"
+    }
+  ],
+  "data": {
+    "parts": [
+      "base",
+      "lid",
+      "plunger_button_1",
+      "plunger_button_2"
+    ],
+    "rebuilt": false
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T09:56:54.820Z"
+}

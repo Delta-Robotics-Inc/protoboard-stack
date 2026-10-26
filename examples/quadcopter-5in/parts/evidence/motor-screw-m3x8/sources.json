@@ -1,0 +1,40 @@
+[
+  {
+    "id": "src_package_photo",
+    "title": "MEPS NEON 2207 V2 package contents photo (product page image)",
+    "url": "https://img-meps.mepsking.top/material/1/meps-neon-2207-v2-motor-package.jpg",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "0fb64d8a7856e285d699c98b2ef8c3d64229033136b75710abd6f6edca5301d5",
+    "supports": [
+      "eight M3 socket-head screws in two lengths, a flanged lock nut, a washer and an O-ring with each motor",
+      "lengths not stated"
+    ]
+  },
+  {
+    "id": "src_size_chart",
+    "title": "MEPS NEON 2207 V2 size chart (product page image)",
+    "url": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "20099aaacd47da38871e569afe9306b08c61ac3505c3bc5dbf5d888368cccf5e",
+    "supports": [
+      "4-M3 mounting holes on a Ø16 circle",
+      "M5 shaft thread, 8 mm"
+    ]
+  },
+  {
+    "id": "src_head_dims",
+    "title": "Westfield Fasteners WF2344 technical summary (ISO 4762 M3 head, used as the nominal head of the included screws)",
+    "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Stainless-Socket-Cap-Screw-M3x8mm.html",
+    "type": "documentation",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "07892d49a0f5aaea0ac369f1930612e85ad78cb8a00557204f05d976590d9e2a",
+    "supports": [
+      "ISO 4762 M3: dk max 5.5, k max 3.0"
+    ]
+  }
+]

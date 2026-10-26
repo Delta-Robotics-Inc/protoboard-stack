@@ -1,0 +1,2626 @@
+{
+  "schema": "protoboard.offers/v0",
+  "service": "http://localhost:8913",
+  "retrievedAt": "2026-10-03T14:23:02.016Z",
+  "parts": {
+    "adi-max17048g-t10": [
+      {
+        "mpn": "MAX17048G+T10",
+        "supplier": "LCSC",
+        "sku": "C2682616",
+        "url": "https://www.lcsc.com/product-detail/C2682616.html",
+        "unitPrice": 2.1956,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 2.1956
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 1.941
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 1.7604
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 1.5962
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 1.4024
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 1.3729
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 24523,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:23Z"
+      },
+      {
+        "mpn": "MAX17048G+T10",
+        "supplier": "JLCPCB",
+        "sku": "C2682616",
+        "url": "https://jlcpcb.com/partdetail/2777647-MAX17048GT10/C2682616",
+        "unitPrice": 2.1735,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 2.1735
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 1.9216
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 1.7427
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 1.5802
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 1.3884
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 1.3591
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 25230,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "adi-max30102efd": [
+      {
+        "mpn": "MAX30102EFD+T",
+        "supplier": "LCSC",
+        "sku": "C6454833",
+        "url": "https://www.lcsc.com/product-detail/C6454833.html",
+        "unitPrice": 14.7313,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 14.7313
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 14.1511
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 13.1482
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 12.2714
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 531,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:24Z"
+      },
+      {
+        "mpn": "MAX30102EFD+T",
+        "supplier": "JLCPCB",
+        "sku": "C6454833",
+        "url": "https://jlcpcb.com/partdetail/7407610-MAX30102EFDT/C6454833",
+        "unitPrice": 14.613,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 14.613
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 14.0376
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 13.0427
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 12.1729
+          },
+          {
+            "quantity": 102,
+            "unitPrice": 12.1729
+          },
+          {
+            "quantity": 104,
+            "unitPrice": 12.1729
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 531,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "alps-skrtlae010": [
+      {
+        "mpn": "SKRTLAE010",
+        "supplier": "LCSC",
+        "sku": "C110293",
+        "url": "https://www.lcsc.com/product-detail/C110293.html",
+        "unitPrice": 0.1433,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 5,
+            "unitPrice": 0.1433
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.1159
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.1022
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0919
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0778
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0737
+          }
+        ],
+        "minQuantity": 5,
+        "stock": 86945,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:26Z"
+      },
+      {
+        "mpn": "SKRTLAE010",
+        "supplier": "JLCPCB",
+        "sku": "C110293",
+        "url": "https://jlcpcb.com/partdetail/ALPSALPINE-SKRTLAE010/C110293",
+        "unitPrice": 0.1418,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.1418
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.1147
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.1012
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0909
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0769
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0729
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 87110,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "aos-ao3400a": [
+      {
+        "mpn": "AO3400A",
+        "supplier": "LCSC",
+        "sku": "C20917",
+        "url": "https://www.lcsc.com/product-detail/C20917.html",
+        "unitPrice": 0.0898,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 5,
+            "unitPrice": 0.0898
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0724
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.0634
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.056
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0534
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0517
+          }
+        ],
+        "minQuantity": 5,
+        "stock": 523250,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:27Z"
+      },
+      {
+        "mpn": "AO3400A",
+        "supplier": "JLCPCB",
+        "sku": "C20917",
+        "url": "https://jlcpcb.com/partdetail/Alpha_OmegaSemicon-AO3400A/C20917",
+        "unitPrice": 0.0888,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0888
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0716
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.0628
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0555
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0529
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0511
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 953841,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "bosch-bmi270": [
+      {
+        "mpn": "BMI270",
+        "supplier": "LCSC",
+        "sku": "C2836813",
+        "url": "https://www.lcsc.com/product-detail/C2836813.html",
+        "unitPrice": 2.8743,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 2.8743
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 2.5902
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 2.3898
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 1.498
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 1.4142
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 1.3797
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 1137,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:28Z"
+      },
+      {
+        "mpn": "BMI270",
+        "supplier": "JLCPCB",
+        "sku": "C2836813",
+        "url": "https://jlcpcb.com/partdetail/BoschSensortec-BMI270/C2836813",
+        "unitPrice": 2.8449,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 2.8449
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 2.5637
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 2.3654
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 1.4826
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 1.3997
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 1.3656
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 1137,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "epson-fc-135-32k768-12p5": [
+      {
+        "mpn": "Q13FC13500004",
+        "supplier": "LCSC",
+        "sku": "C32346",
+        "url": "https://www.lcsc.com/product-detail/C32346.html",
+        "unitPrice": 0.1733,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 5,
+            "unitPrice": 0.1733
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.1366
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.1187
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.1028
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.084
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0813
+          }
+        ],
+        "minQuantity": 5,
+        "stock": 349095,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:30Z"
+      },
+      {
+        "mpn": "Q13FC13500004",
+        "supplier": "JLCPCB",
+        "sku": "C32346",
+        "url": "https://jlcpcb.com/partdetail/SeikoEpson-Q13FC13500004/C32346",
+        "unitPrice": 0.1717,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.1717
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.1355
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.1176
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.1018
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0833
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0805
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 461790,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "gct-usb4105-gf-a": [
+      {
+        "mpn": "USB4105-GF-A",
+        "supplier": "LCSC",
+        "sku": "C3020560",
+        "url": "https://www.lcsc.com/product-detail/C3020560.html",
+        "unitPrice": 1.3092,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 1.3092
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 1.091
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.9696
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.8334
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.7744
+          },
+          {
+            "quantity": 800,
+            "unitPrice": 0.7465
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:32Z"
+      },
+      {
+        "mpn": "USB4105-GF-A",
+        "supplier": "JLCPCB",
+        "sku": "C3020560",
+        "url": "https://jlcpcb.com/partdetail/3542626-USB4105_GFA/C3020560",
+        "unitPrice": 1.2973,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 1.2973
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 1.0811
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.9608
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.8259
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.7674
+          },
+          {
+            "quantity": 800,
+            "unitPrice": 0.7397
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 678,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "iso-7045-m2x6-a2": [
+      {
+        "mpn": "WF34340",
+        "supplier": "Westfield Fasteners",
+        "sku": "WF34340",
+        "url": "https://www.westfieldfasteners.co.uk/A2_ScrewBolt_PoziPan_M2.html",
+        "unitPrice": 0.0605,
+        "currency": "GBP",
+        "priceBreaks": [
+          {
+            "quantity": 20,
+            "unitPrice": 0.0605
+          },
+          {
+            "quantity": 25,
+            "unitPrice": 0.0604
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0506
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.031
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 0.02125
+          },
+          {
+            "quantity": 250,
+            "unitPrice": 0.01928
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.01538
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.01094
+          }
+        ],
+        "minQuantity": 20,
+        "packaging": "sold in sale-quantity multiples",
+        "market": "UK",
+        "authorized": true,
+        "observedAt": "2026-10-03T14:06:43Z"
+      }
+    ],
+    "microchip-mcp73831t-2aci-ot": [
+      {
+        "mpn": "MCP73831T-2ACI/OT",
+        "supplier": "LCSC",
+        "sku": "C424093",
+        "url": "https://www.lcsc.com/product-detail/C424093.html",
+        "unitPrice": 0.7893,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.7893
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 0.6384
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.5629
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.489
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.4414
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.4185
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 8857,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:33Z"
+      },
+      {
+        "mpn": "MCP73831T-2ACI/OT",
+        "supplier": "JLCPCB",
+        "sku": "C424093",
+        "url": "https://jlcpcb.com/partdetail/MicrochipTech-MCP73831T_2ACIOT/C424093",
+        "unitPrice": 0.782,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.782
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 0.6324
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.5576
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.4845
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.4374
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.4146
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 8857,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "murata-grm155": [
+      {
+        "mpn": "GRM155R71C104KA88D",
+        "supplier": "LCSC",
+        "sku": "C71629",
+        "url": "https://www.lcsc.com/product-detail/C71629.html",
+        "unitPrice": 0.0052,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0052
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0047
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0045
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0043
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0042
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 985200,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:37Z"
+      },
+      {
+        "mpn": "GRM155R61A105KE15D",
+        "supplier": "LCSC",
+        "sku": "C76999",
+        "url": "https://www.lcsc.com/product-detail/C76999.html",
+        "unitPrice": 0.0146,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 50,
+            "unitPrice": 0.0146
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0118
+          },
+          {
+            "quantity": 1500,
+            "unitPrice": 0.0103
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0091
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0082
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0078
+          }
+        ],
+        "minQuantity": 50,
+        "stock": 198500,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:36Z"
+      },
+      {
+        "mpn": "GRM155R60J475ME47D",
+        "supplier": "LCSC",
+        "sku": "C82453",
+        "url": "https://www.lcsc.com/product-detail/C82453.html",
+        "unitPrice": 0.0189,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 50,
+            "unitPrice": 0.0189
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0145
+          },
+          {
+            "quantity": 1500,
+            "unitPrice": 0.0126
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0099
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0093
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0089
+          }
+        ],
+        "minQuantity": 50,
+        "stock": 499650,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:35Z"
+      },
+      {
+        "mpn": "GRM155R71C104KA88D",
+        "supplier": "JLCPCB",
+        "sku": "C71629",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM155R71C104KA88D/C71629",
+        "unitPrice": 0.0051,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0051
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0047
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0044
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0043
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0042
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0042
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 1101382,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "GRM155R61A105KE15D",
+        "supplier": "JLCPCB",
+        "sku": "C76999",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM155R61A105KE15D/C76999",
+        "unitPrice": 0.0145,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0145
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0117
+          },
+          {
+            "quantity": 1500,
+            "unitPrice": 0.0101
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0089
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0081
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0077
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 209648,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "GRM155R60J475ME47D",
+        "supplier": "JLCPCB",
+        "sku": "C82453",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM155R60J475ME47D/C82453",
+        "unitPrice": 0.0187,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0187
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0144
+          },
+          {
+            "quantity": 1500,
+            "unitPrice": 0.0125
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0098
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0092
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0088
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 503826,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "murata-grm188": [
+      {
+        "mpn": "GRM188R61E106MA73D",
+        "supplier": "LCSC",
+        "sku": "C91606",
+        "url": "https://www.lcsc.com/product-detail/C91606.html",
+        "unitPrice": 0.0875,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 5,
+            "unitPrice": 0.0875
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0626
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.0497
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0391
+          },
+          {
+            "quantity": 2500,
+            "unitPrice": 0.0354
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0329
+          }
+        ],
+        "minQuantity": 5,
+        "stock": 581240,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:45Z"
+      },
+      {
+        "mpn": "GRM188R61A226ME15D",
+        "supplier": "LCSC",
+        "sku": "C84419",
+        "url": "https://www.lcsc.com/product-detail/C84419.html",
+        "unitPrice": 0.092,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 5,
+            "unitPrice": 0.092
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0738
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.0644
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0567
+          },
+          {
+            "quantity": 2500,
+            "unitPrice": 0.054
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0522
+          }
+        ],
+        "minQuantity": 5,
+        "stock": 377045,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:44Z"
+      },
+      {
+        "mpn": "GRM188R61A106ME69D",
+        "supplier": "LCSC",
+        "sku": "C90053",
+        "url": "https://www.lcsc.com/product-detail/C90053.html",
+        "unitPrice": 0.0323,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 20,
+            "unitPrice": 0.0323
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 0.0267
+          },
+          {
+            "quantity": 600,
+            "unitPrice": 0.0242
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0213
+          },
+          {
+            "quantity": 8000,
+            "unitPrice": 0.0206
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0201
+          }
+        ],
+        "minQuantity": 20,
+        "stock": 111080,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:43Z"
+      },
+      {
+        "mpn": "GRM188R61A475KE15D",
+        "supplier": "LCSC",
+        "sku": "C71633",
+        "url": "https://www.lcsc.com/product-detail/C71633.html",
+        "unitPrice": 0.0313,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 20,
+            "unitPrice": 0.0313
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 0.0252
+          },
+          {
+            "quantity": 600,
+            "unitPrice": 0.0218
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0174
+          },
+          {
+            "quantity": 8000,
+            "unitPrice": 0.0157
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0147
+          }
+        ],
+        "minQuantity": 20,
+        "stock": 280000,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:41Z"
+      },
+      {
+        "mpn": "GRM188R61A106KE69D",
+        "supplier": "LCSC",
+        "sku": "C77044",
+        "url": "https://www.lcsc.com/product-detail/C77044.html",
+        "unitPrice": 0.0351,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 10,
+            "unitPrice": 0.0351
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.0282
+          },
+          {
+            "quantity": 300,
+            "unitPrice": 0.0246
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0217
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0206
+          },
+          {
+            "quantity": 8000,
+            "unitPrice": 0.0199
+          }
+        ],
+        "minQuantity": 10,
+        "stock": 200000,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:40Z"
+      },
+      {
+        "mpn": "GRM188R61E106MA73D",
+        "supplier": "JLCPCB",
+        "sku": "C91606",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM188R61E106MA73D/C91606",
+        "unitPrice": 0.0865,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0865
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.0618
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.0491
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0387
+          },
+          {
+            "quantity": 2500,
+            "unitPrice": 0.035
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0326
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 628135,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "GRM188R61A226ME15D",
+        "supplier": "JLCPCB",
+        "sku": "C84419",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM188R61A226ME15D/C84419",
+        "unitPrice": 0.0912,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0912
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.073
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.0638
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0561
+          },
+          {
+            "quantity": 2500,
+            "unitPrice": 0.0535
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0517
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 517594,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "GRM188R61A106ME69D",
+        "supplier": "JLCPCB",
+        "sku": "C90053",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM188R61A106ME69D/C90053",
+        "unitPrice": 0.0321,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0321
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 0.0264
+          },
+          {
+            "quantity": 600,
+            "unitPrice": 0.0239
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0212
+          },
+          {
+            "quantity": 8000,
+            "unitPrice": 0.0204
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0199
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 123373,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "GRM188R61A475KE15D",
+        "supplier": "JLCPCB",
+        "sku": "C71633",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM188R61A475KE15D/C71633",
+        "unitPrice": 0.0309,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0309
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 0.0249
+          },
+          {
+            "quantity": 600,
+            "unitPrice": 0.0215
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0173
+          },
+          {
+            "quantity": 8000,
+            "unitPrice": 0.0155
+          },
+          {
+            "quantity": 20000,
+            "unitPrice": 0.0146
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 295366,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "GRM188R61A106KE69D",
+        "supplier": "JLCPCB",
+        "sku": "C77044",
+        "url": "https://jlcpcb.com/partdetail/MurataElectronics-GRM188R61A106KE69D/C77044",
+        "unitPrice": 0.0348,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0348
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.0278
+          },
+          {
+            "quantity": 300,
+            "unitPrice": 0.0244
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0215
+          },
+          {
+            "quantity": 4000,
+            "unitPrice": 0.0204
+          },
+          {
+            "quantity": 8000,
+            "unitPrice": 0.0197
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 216891,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "raytac-mdbt50q-1mv2": [
+      {
+        "mpn": "MDBT50Q-1MV2",
+        "supplier": "LCSC",
+        "sku": "C5118826",
+        "url": "https://www.lcsc.com/product-detail/C5118826.html",
+        "unitPrice": 19.0971,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 19.0971
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 18.6021
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "packaging": "Tray",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:47Z"
+      },
+      {
+        "mpn": "MDBT50Q-1MV2",
+        "supplier": "JLCPCB",
+        "sku": "C5118826",
+        "url": "https://jlcpcb.com/partdetail/RAYTAC-MDBT50Q1MV2/C5118826",
+        "unitPrice": 18.9438,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 18.9438
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 18.4528
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 18.4528
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 18.4528
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 18.4528
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 18.4528
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "ruthex-rx-m2x4": [
+      {
+        "mpn": "GE-M2x04-001",
+        "supplier": "ruthex",
+        "sku": "GE-M2x04-001",
+        "url": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+        "unitPrice": 0.128429,
+        "currency": "EUR",
+        "priceBreaks": [
+          {
+            "quantity": 70,
+            "unitPrice": 0.128429
+          },
+          {
+            "quantity": 3500,
+            "unitPrice": 0.128429
+          }
+        ],
+        "minQuantity": 70,
+        "packaging": "1 PU = 70 pieces",
+        "market": "DE",
+        "authorized": true,
+        "observedAt": "2026-10-03T14:01:13Z"
+      }
+    ],
+    "st-usblc6-2sc6": [
+      {
+        "mpn": "USBLC6-2SC6",
+        "supplier": "LCSC",
+        "sku": "C7519",
+        "url": "https://www.lcsc.com/product-detail/C7519.html",
+        "unitPrice": 0.1784,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 5,
+            "unitPrice": 0.1784
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.1374
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.1173
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0994
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0945
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0915
+          }
+        ],
+        "minQuantity": 5,
+        "stock": 30075,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:48Z"
+      },
+      {
+        "mpn": "USBLC6-2SC6",
+        "supplier": "JLCPCB",
+        "sku": "C7519",
+        "url": "https://jlcpcb.com/partdetail/STMicroelectronics-USBLC62SC6/C7519",
+        "unitPrice": 0.1767,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.1767
+          },
+          {
+            "quantity": 50,
+            "unitPrice": 0.136
+          },
+          {
+            "quantity": 150,
+            "unitPrice": 0.1161
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.0984
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0935
+          },
+          {
+            "quantity": 6000,
+            "unitPrice": 0.0906
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 34063,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "ti-drv2605ldgs": [
+      {
+        "mpn": "DRV2605LDGSR",
+        "supplier": "LCSC",
+        "sku": "C527464",
+        "url": "https://www.lcsc.com/product-detail/C527464.html",
+        "unitPrice": 1.3896,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 1.3896
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 1.1399
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 1.0036
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.8591
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.7917
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.7605
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 653,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:49Z"
+      },
+      {
+        "mpn": "DRV2605LDGSR",
+        "supplier": "JLCPCB",
+        "sku": "C527464",
+        "url": "https://jlcpcb.com/partdetail/TexasInstruments-DRV2605LDGSR/C527464",
+        "unitPrice": 1.3754,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 1.3754
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 1.1283
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.9933
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.8503
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.7836
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.7527
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 653,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "ti-tps7a0218pdbv": [
+      {
+        "mpn": "TPS7A0218PDBVR",
+        "supplier": "LCSC",
+        "sku": "C3748843",
+        "url": "https://www.lcsc.com/product-detail/C3748843.html",
+        "unitPrice": 0.6339,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.6339
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 0.5108
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.4599
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.3942
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.3646
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.3482
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 3311,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:50Z"
+      },
+      {
+        "mpn": "TPS7A0218PDBVR",
+        "supplier": "JLCPCB",
+        "sku": "C3748843",
+        "url": "https://jlcpcb.com/partdetail/TexasInstruments-TPS7A0218PDBVR/C3748843",
+        "unitPrice": 0.6276,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.6276
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 0.5056
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.4552
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.3902
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.3609
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.3447
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 3311,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "ti-tps7a0230pdbv": [
+      {
+        "mpn": "TPS7A0230PDBVR",
+        "supplier": "LCSC",
+        "sku": "C3747031",
+        "url": "https://www.lcsc.com/product-detail/C3747031.html",
+        "unitPrice": 0.4515,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.4515
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 0.3563
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.3153
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.2447
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.2217
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.2085
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 37474,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:52Z"
+      },
+      {
+        "mpn": "TPS7A0230PDBVR",
+        "supplier": "JLCPCB",
+        "sku": "C3747031",
+        "url": "https://jlcpcb.com/partdetail/TexasInstruments-TPS7A0230PDBVR/C3747031",
+        "unitPrice": 0.4471,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.4471
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 0.3528
+          },
+          {
+            "quantity": 30,
+            "unitPrice": 0.3122
+          },
+          {
+            "quantity": 100,
+            "unitPrice": 0.2423
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 0.2195
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.2065
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 37474,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ],
+    "vybronics-vg0832012": [
+      {
+        "mpn": "VG0832012",
+        "supplier": "JLCPCB",
+        "sku": "C17285509",
+        "url": "https://jlcpcb.com/partdetail/18414654-VG0832012/C17285509",
+        "unitPrice": 5.9727,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 5.9727
+          },
+          {
+            "quantity": 10,
+            "unitPrice": 5.9727
+          },
+          {
+            "quantity": 12,
+            "unitPrice": 5.9727
+          },
+          {
+            "quantity": 200,
+            "unitPrice": 2.3833
+          },
+          {
+            "quantity": 500,
+            "unitPrice": 2.3036
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 2.3036
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 0,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "VG0832012",
+        "supplier": "Vybronics",
+        "url": "https://www.vybronics.com/coin-vibration-motors/lra/v-g0832012",
+        "stock": 1337,
+        "authorized": true,
+        "observedAt": "2026-10-03"
+      }
+    ],
+    "yageo-rc0402": [
+      {
+        "mpn": "RC0402FR-0768KL",
+        "supplier": "LCSC",
+        "sku": "C137947",
+        "url": "https://www.lcsc.com/product-detail/C137947.html",
+        "unitPrice": 0.0038,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0038
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0032
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0028
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0025
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 519100,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:13Z"
+      },
+      {
+        "mpn": "RC0402FR-073K3L",
+        "supplier": "LCSC",
+        "sku": "C137992",
+        "url": "https://www.lcsc.com/product-detail/C137992.html",
+        "unitPrice": 0.0034,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0034
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0023
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0021
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0017
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 1150800,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:10Z"
+      },
+      {
+        "mpn": "RC0402FR-071ML",
+        "supplier": "LCSC",
+        "sku": "C138033",
+        "url": "https://www.lcsc.com/product-detail/C138033.html",
+        "unitPrice": 0.0032,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0032
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0024
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.002
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0018
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0015
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 1809600,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:09Z"
+      },
+      {
+        "mpn": "RC0402FR-07180KL",
+        "supplier": "LCSC",
+        "sku": "C138046",
+        "url": "https://www.lcsc.com/product-detail/C138046.html",
+        "unitPrice": 0.0041,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0041
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0034
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.003
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0028
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0025
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 458100,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:08Z"
+      },
+      {
+        "mpn": "RC0402FR-0714K7L",
+        "supplier": "LCSC",
+        "sku": "C138055",
+        "url": "https://www.lcsc.com/product-detail/C138055.html",
+        "unitPrice": 0.0041,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0041
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0033
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.003
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0028
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0025
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 115000,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:06Z"
+      },
+      {
+        "mpn": "RC0402FR-075K1L",
+        "supplier": "LCSC",
+        "sku": "C105872",
+        "url": "https://www.lcsc.com/product-detail/C105872.html",
+        "unitPrice": 0.0025,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0025
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0019
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0013
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 2170000,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:05Z"
+      },
+      {
+        "mpn": "RC0402FR-074K7L",
+        "supplier": "LCSC",
+        "sku": "C105871",
+        "url": "https://www.lcsc.com/product-detail/C105871.html",
+        "unitPrice": 0.0029,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0029
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0022
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0019
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0017
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0015
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 7897700,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:02Z"
+      },
+      {
+        "mpn": "RC0402FR-0733RL",
+        "supplier": "LCSC",
+        "sku": "C138002",
+        "url": "https://www.lcsc.com/product-detail/C138002.html",
+        "unitPrice": 0.0036,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0036
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0029
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0026
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0024
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0021
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 7544400,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T14:00:00Z"
+      },
+      {
+        "mpn": "RC0402FR-0722KL",
+        "supplier": "LCSC",
+        "sku": "C82868",
+        "url": "https://www.lcsc.com/product-detail/C82868.html",
+        "unitPrice": 0.0027,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0021
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0018
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0014
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 1191300,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:58Z"
+      },
+      {
+        "mpn": "RC0402FR-0712KL",
+        "supplier": "LCSC",
+        "sku": "C114760",
+        "url": "https://www.lcsc.com/product-detail/C114760.html",
+        "unitPrice": 0.0027,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0021
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0018
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0017
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0015
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 1093300,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:57Z"
+      },
+      {
+        "mpn": "RC0402FR-0710KL",
+        "supplier": "LCSC",
+        "sku": "C60490",
+        "url": "https://www.lcsc.com/product-detail/C60490.html",
+        "unitPrice": 0.0023,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0023
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0019
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0014
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 5510600,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:56Z"
+      },
+      {
+        "mpn": "RC0402FR-07100KL",
+        "supplier": "LCSC",
+        "sku": "C60491",
+        "url": "https://www.lcsc.com/product-detail/C60491.html",
+        "unitPrice": 0.0023,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 100,
+            "unitPrice": 0.0023
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0019
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0013
+          }
+        ],
+        "minQuantity": 100,
+        "stock": 8343800,
+        "packaging": "Tape & Reel (TR)",
+        "market": "global (USD storefront)",
+        "observedAt": "2026-10-03T13:59:54Z"
+      },
+      {
+        "mpn": "RC0402FR-0768KL",
+        "supplier": "JLCPCB",
+        "sku": "C137947",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR0768KL/C137947",
+        "unitPrice": 0.0038,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0038
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0032
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0028
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0025
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0025
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 581518,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-073K3L",
+        "supplier": "JLCPCB",
+        "sku": "C137992",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR073K3L/C137992",
+        "unitPrice": 0.0034,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0034
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0026
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0022
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.002
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0016
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 1350514,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-071ML",
+        "supplier": "JLCPCB",
+        "sku": "C138033",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR071ML/C138033",
+        "unitPrice": 0.0031,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0031
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0024
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.002
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0018
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0015
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 1977760,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-07180KL",
+        "supplier": "JLCPCB",
+        "sku": "C138046",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR07180KL/C138046",
+        "unitPrice": 0.0041,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0041
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0033
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0029
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0028
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0025
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0025
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 494190,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-0714K7L",
+        "supplier": "JLCPCB",
+        "sku": "C138055",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR0714K7L/C138055",
+        "unitPrice": 0.004,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.004
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0033
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0029
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0025
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0025
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 115070,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-075K1L",
+        "supplier": "JLCPCB",
+        "sku": "C105872",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR075K1L/C105872",
+        "unitPrice": 0.0025,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0025
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0019
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0013
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0013
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 2322820,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-074K7L",
+        "supplier": "JLCPCB",
+        "sku": "C105871",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR074K7L/C105871",
+        "unitPrice": 0.0029,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0029
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0022
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0019
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0017
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0015
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 8864306,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-0733RL",
+        "supplier": "JLCPCB",
+        "sku": "C138002",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR0733RL/C138002",
+        "unitPrice": 0.0036,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0036
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0029
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0026
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0024
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0021
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0021
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 7791127,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-0722KL",
+        "supplier": "JLCPCB",
+        "sku": "C82868",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR0722KL/C82868",
+        "unitPrice": 0.0027,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0021
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0018
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0014
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0014
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 1229654,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-0712KL",
+        "supplier": "JLCPCB",
+        "sku": "C114760",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR0712KL/C114760",
+        "unitPrice": 0.0027,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0027
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0021
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0018
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0017
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0015
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 1131398,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-0710KL",
+        "supplier": "JLCPCB",
+        "sku": "C60490",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR0710KL/C60490",
+        "unitPrice": 0.0023,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0023
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0019
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0014
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0014
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 8715065,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      },
+      {
+        "mpn": "RC0402FR-07100KL",
+        "supplier": "JLCPCB",
+        "sku": "C60491",
+        "url": "https://jlcpcb.com/partdetail/YAGEO-RC0402FR07100KL/C60491",
+        "unitPrice": 0.0023,
+        "currency": "USD",
+        "priceBreaks": [
+          {
+            "quantity": 1,
+            "unitPrice": 0.0023
+          },
+          {
+            "quantity": 1000,
+            "unitPrice": 0.0018
+          },
+          {
+            "quantity": 3000,
+            "unitPrice": 0.0016
+          },
+          {
+            "quantity": 10000,
+            "unitPrice": 0.0015
+          },
+          {
+            "quantity": 50000,
+            "unitPrice": 0.0013
+          },
+          {
+            "quantity": 50200,
+            "unitPrice": 0.0013
+          }
+        ],
+        "minQuantity": 1,
+        "stock": 9054148,
+        "market": "global (USD)",
+        "observedAt": "2026-10-03T13:57:33Z"
+      }
+    ]
+  }
+}

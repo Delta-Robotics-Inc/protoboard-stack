@@ -1,0 +1,48 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "iso-4762-m3x8",
+    "independent": "true"
+  },
+  "projectDigest": "sha256:e816da550af4b11f6c69c6bbd4bd9457313781bc5f9cd32bce440fcb4520f187",
+  "tools": [],
+  "startedAt": "2026-10-03T18:29:17.598Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m3x8: audit 11/11 (independent), 1 assumption(s), 1 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/iso-4762-m3x8/verification.json",
+      "digest": "sha256:694a84ef30d273234c12a64cfa65a453a2eed0d6279545ebc075eafaaeaddfc3",
+      "bytes": 1142,
+      "description": "iso-4762-m3x8: verification record"
+    }
+  ],
+  "data": {
+    "partId": "iso-4762-m3x8",
+    "recorded_at": "2026-10-03T18:29:17.626Z",
+    "audit": {
+      "method": "independent stage-2 audit, 2026-10-03: re-fetched every cited source live (curl). Westfield and Ettinger HTML pages differ byte-wise from the pins (pages do on every request) and Ettinger's generated datasheet PDFs differ too, so facts were read from the live text; Westfield's DIN 985 PDF, DJI's O4 manual and MEPS's two images matched their pinned sha256 and were read from those bytes (the images visually). The generated bodies were measured with ext-parts scripts/audit/step_measure.py. Every sourced fact the part states was checked; these small parts state fewer than 12 sourced facts each, so the count includes the gap, assumption and CAD checks.",
+      "independent": true,
+      "auditor": "stage-2 agent of the PB-836 Matek track (p4cQuad worktree; did not author these parts)",
+      "checked": 11,
+      "confirmed": 11,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": null,
+    "assumptions": [
+      "length"
+    ],
+    "data_gaps": [
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T18:29:17.627Z"
+}

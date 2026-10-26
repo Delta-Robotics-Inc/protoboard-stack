@@ -1,0 +1,79 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "watch-lra-leads",
+    "config": "src/harnesses/watch-lra-leads/cad.config.ts",
+    "configDigest": "sha256:f253f769de50a87b89097522074d91dcb776c74f8c646302bc7aac198249c2af",
+    "moduleDigest": "sha256:cc510f358d293bd317d36d680ee749b0ee3be17e87cff452196b3f305a8821a7"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:861efe44fb45f8baa796418aa08c58b9fc0285c29908e59fb198ec29208a0ef9",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T11:46:16.736Z",
+  "status": "succeeded",
+  "summary": "lra_leads: warning (slack could not be laid clear: loop (not clear) (-0.17 mm worst clearance, 48.72 mm bend radius)); routed around the parts and 1 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/watch-lra-leads/harness-cad/route.json",
+      "digest": "sha256:a1566b336a5397cbb2198e6dca3f756d21cc73aa9428d7d0b931500c305a95e8",
+      "bytes": 5640,
+      "description": "lra_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        129,
+        122,
+        118
+      ],
+      "res_mm": 1,
+      "seconds": 0.9
+    },
+    "harnesses": [
+      {
+        "id": "watch-lra-leads",
+        "path": "lra_leads",
+        "status": "warning",
+        "notes": [
+          "slack could not be laid clear: loop (not clear) (-0.17 mm worst clearance, 48.72 mm bend radius)"
+        ],
+        "search_s": 0
+      }
+    ],
+    "context": [
+      {
+        "id": "watch-battery-leads",
+        "path": "battery_leads",
+        "status": "warning",
+        "notes": [
+          "slack could not be laid clear: service loop + loop (not clear) (0.55 mm worst clearance, 1.2 mm bend radius)"
+        ],
+        "search_s": 0.55
+      }
+    ],
+    "problems": [
+      "board/j3: no GLB body to route around (none declared)",
+      "board/j4: no GLB body to route around (none declared)"
+    ]
+  },
+  "finishedAt": "2026-10-03T11:46:24.114Z"
+}

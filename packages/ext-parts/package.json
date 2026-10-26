@@ -1,0 +1,37 @@
+{
+  "name": "@protoboardai/ext-parts",
+  "version": "0.2.0",
+  "description": "Protoboard extension: purchased-part research, authoring and verification (UHD), for project-researched parts and the cloud part library",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-parts"
+  },
+  "type": "module",
+  "exports": {
+    "./artifacts": "./lib/part-cad.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "protoboard-extension.json",
+    "lib",
+    "ops",
+    "scripts",
+    "skills",
+    "evals",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0"
+  }
+}

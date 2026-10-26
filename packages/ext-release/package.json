@@ -1,0 +1,43 @@
+{
+  "name": "@protoboardai/ext-release",
+  "version": "0.2.0",
+  "description": "Protoboard extension: `protoboard release` and the Manufacturing Package (per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan PDFs, manufacturing files, one navigable HTML and a reproducible release manifest)",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-release"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./lib/types.ts",
+    "./helpers": "./lib/helpers.ts",
+    "./testing": "./lib/testing.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "protoboard-extension.json",
+    "README.md",
+    "lib",
+    "ops",
+    "skills",
+    "evals",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@protoboardai/ext-docs": "^0.2.0",
+    "@protoboardai/ext-sourcing": "^0.2.0"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0"
+  }
+}

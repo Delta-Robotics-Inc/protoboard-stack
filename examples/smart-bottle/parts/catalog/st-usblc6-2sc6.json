@@ -1,0 +1,884 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "ST USBLC6-2 datasheet DS4260 Rev 6",
+      "type": "datasheet",
+      "url": "https://static.chipdip.ru/lib/697/DOC028697137.pdf"
+    },
+    {
+      "id": "art_datasheet_rev5",
+      "name": "ST USBLC6-2 datasheet Doc ID 11265 Rev 5 (LCSC copy)",
+      "type": "datasheet",
+      "url": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1810101111_STMicroelectronics-USBLC6-2SC6_C7519.pdf"
+    },
+    {
+      "id": "art_estore",
+      "name": "ST eStore USBLC6-2SC6",
+      "type": "documentation",
+      "url": "https://estore.st.com/en/usblc6-2sc6-cpn.html"
+    },
+    {
+      "filePath": "library/cad/py/catalog/st-usblc6-2sc6.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "st-usblc6-2sc6-sot23-6l generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/st-usblc6-2sc6/artifacts/cad/st-usblc6-2sc6-sot23-6l.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "st-usblc6-2sc6-sot23-6l (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/st-usblc6-2sc6/artifacts/cad/st-usblc6-2sc6-sot23-6l.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "st-usblc6-2sc6-sot23-6l (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/st-usblc6-2sc6/artifacts/cad/st-usblc6-2sc6-sot23-6l.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "st-usblc6-2sc6-sot23-6l feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/st-usblc6-2sc6/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "component.protection"
+  ],
+  "description": "STMicroelectronics USBLC6-2 very low capacitance ESD protection array in SOT23-6L: two protected data lines (I/O1 on pins 1/6, I/O2 on pins 3/4, flow-through) and VBUS (pin 5), rail-to-rail clamp topology. 3.5 pF max line capacitance, 150 nA max leakage at 5.25 V, 6 V min VBUS breakdown, 17 V max clamping at 5 A (8/20 us). IEC 61000-4-2 level 4 (15 kV air, 8 kV contact; 15 kV contact absolute rating). For USB 2.0 up to 480 Mb/s, Ethernet 10/100 and video lines.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "breakdown_V_min": 6,
+        "capacitance_pF": {
+          "at_VR_V": 1.65,
+          "io_gnd_matching": 0.015,
+          "io_gnd_max": 3.5,
+          "io_gnd_typ": 2.5,
+          "io_io_matching": 0.04,
+          "io_io_max": 1.7,
+          "io_io_typ": 1.2
+        },
+        "clamping_V_max": {
+          "at_1A_8_20us": 12,
+          "at_5A_8_20us": 17
+        },
+        "forward_voltage_V_max": 1.1,
+        "leakage_nA": {
+          "at_V": 5.25,
+          "max": 150,
+          "typ": 10
+        },
+        "protected_lines": 2,
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 2)",
+        "topology": "rail-to-rail steering diodes per I/O line plus a transil (VBUS to GND), monolithic"
+      },
+      "power_domains": [
+        {
+          "id": "vbus",
+          "name": "Protected supply rail (VBUS)",
+          "nominal_voltage_V": 5,
+          "voltage_range_V": [
+            0,
+            5.25
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 1.45,
+        "length": 2.9,
+        "width": 2.8
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "body_mm": "D 2.8-3.05 x E 1.5-1.75; lead span H 2.6-3.0; height A 0.9-1.45",
+        "dimensions_note": "length and width are ST's stated package size (body length x lead span); height is the Table 3 maximum",
+        "marking": "UL26 (may be rotated by 90 deg to show the assembly location)",
+        "mass_mg": 16.7,
+        "mounting_method": "surface_mount",
+        "packing": "tape and reel, 3000",
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 3, Table 6)"
+      },
+      "package": {
+        "exposed_pad": false,
+        "name": "SOT23-6L",
+        "pin_count": 6,
+        "pitch_mm": 0.95,
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (§3.1 Figure 18 and Table 3: D 2.8-3.05, E 1.5-1.75, H 2.6-3.0, A 0.9-1.45, e 0.95; Table 6: SOT23-6L); https://estore.st.com/en/usblc6-2sc6-cpn.html (Package Size 2.9 x 2.8 x 1.18)"
+      },
+      "weight_g": 0.0167
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "lead_solder_C": {
+          "at_mm": 5,
+          "duration_s": 10,
+          "temperature": 260
+        },
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 1)",
+        "storage_C": [
+          -55,
+          150
+        ],
+        "temperature_note": "The datasheet gives the operating junction range (Table 1); no ambient range."
+      },
+      "operating_temperature_C": [
+        -40,
+        125
+      ]
+    }
+  ],
+  "id": "st-usblc6-2sc6",
+  "interfaceGroups": [
+    {
+      "id": "io1_line",
+      "label": "I/O1 line (pins 1 and 6: D+in / D+out)",
+      "members": [
+        "pin_1",
+        "pin_6"
+      ],
+      "policy": "all_of"
+    },
+    {
+      "id": "io2_line",
+      "label": "I/O2 line (pins 3 and 4: D-in / D-out)",
+      "members": [
+        "pin_3",
+        "pin_4"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "capabilities": [
+        "esd_clamp"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                -1.175,
+                0.95,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "I/O1",
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "I/O1 (pin 1) — protected data line 1. D+in in the PSpice cell (Figure 15) and the layout figure (Figure 17); pin 6 is the same line's other end (D+out).",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover, Functional diagram (top view); §2.6 Figures 15, 17)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Clamp to GND (forward diode, VF 1.1 V max at 10 mA) and to the VBUS rail. VCL 12 V max at IPP 1 A and 17 V max at IPP 5 A (8/20 us, any I/O to GND). Line capacitance to GND 2.5 pF typ / 3.5 pF max, line to line 1.2 / 1.7 pF (VR 1.65 V), matching 0.015 / 0.04 pF. Leakage 150 nA max at 5.25 V. Suits USB 2.0 up to 480 Mb/s.",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 2; cover)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                -1.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "GND",
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GND (pin 2) — ground. Connect to the PCB ground plane with a track as short as possible (§2.3).",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover, Functional diagram (top view); §2.6 Figures 15, 17)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esd_clamp"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_3",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                -1.175,
+                -0.95,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_3",
+      "name": "I/O2",
+      "pin": 3,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "I/O2 (pin 3) — protected data line 2. D-in in the PSpice cell (Figure 15) and the layout figure (Figure 17); pin 4 is the same line's other end (D-out).",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover, Functional diagram (top view); §2.6 Figures 15, 17)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Clamp to GND (forward diode, VF 1.1 V max at 10 mA) and to the VBUS rail. VCL 12 V max at IPP 1 A and 17 V max at IPP 5 A (8/20 us, any I/O to GND). Line capacitance to GND 2.5 pF typ / 3.5 pF max, line to line 1.2 / 1.7 pF (VR 1.65 V), matching 0.015 / 0.04 pF. Leakage 150 nA max at 5.25 V. Suits USB 2.0 up to 480 Mb/s.",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 2; cover)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esd_clamp"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_4",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                1.175,
+                -0.95,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_4",
+      "name": "I/O2",
+      "pin": 4,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "I/O2 (pin 4) — protected data line 2. D-out in the PSpice cell (Figure 15) and the layout figure (Figure 17); pin 3 is the same line's other end (D-in).",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover, Functional diagram (top view); §2.6 Figures 15, 17)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Clamp to GND (forward diode, VF 1.1 V max at 10 mA) and to the VBUS rail. VCL 12 V max at IPP 1 A and 17 V max at IPP 5 A (8/20 us, any I/O to GND). Line capacitance to GND 2.5 pF typ / 3.5 pF max, line to line 1.2 / 1.7 pF (VR 1.65 V), matching 0.015 / 0.04 pF. Leakage 150 nA max at 5.25 V. Suits USB 2.0 up to 480 Mb/s.",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 2; cover)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_5",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                1.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_5",
+      "name": "VBUS",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.25
+          ],
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 1e-8
+        }
+      ],
+      "pin": 5,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VBUS (pin 5) — protected supply rail: upper rail of the I/O clamps and the 6 V breakdown to GND (Dzener in Figure 15). Connect to VCC (the USB VBUS) with a short track (§2.3); CBUS = 100 nF in Figure 17.",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover, Functional diagram (top view); §2.6 Figures 15, 17)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "esd_clamp"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_6",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                1.175,
+                0.95,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_6",
+      "name": "I/O1",
+      "pin": 6,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "I/O1 (pin 6) — protected data line 1. D+out in the PSpice cell (Figure 15) and the layout figure (Figure 17); pin 1 is the same line's other end (D+in).",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover, Functional diagram (top view); §2.6 Figures 15, 17)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Clamp to GND (forward diode, VF 1.1 V max at 10 mA) and to the VBUS rail. VCL 12 V max at IPP 1 A and 17 V max at IPP 5 A (8/20 us, any I/O to GND). Line capacitance to GND 2.5 pF typ / 3.5 pF max, line to line 1.2 / 1.7 pF (VR 1.65 V), matching 0.015 / 0.04 pF. Leakage 150 nA max at 5.25 V. Suits USB 2.0 up to 480 Mb/s.",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 2; cover)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_5",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                1.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.18,
+              "centroid": [
+                -1.175,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "vbus_clamp",
+      "name": "VBUS clamp (VBUS + GND)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            5.25
+          ],
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 1e-8
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "gnd": "pin_2",
+            "vbus": "pin_5"
+          },
+          "default_active": true,
+          "id": "vbus_gnd",
+          "label": "VBUS 5, GND 2"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "vbus",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Breakdown VBR 6 V min (IR 1 mA) between VBUS and GND. Leakage IRM 10 nA typ / 150 nA max at VRM = 5.25 V (25 C), rising with junction temperature (Figure 3). Decouple VBUS with 100 nF (CBUS, Figure 17).",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 2; Figure 3; Figure 17)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 1.08,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "SOT23-6L leads (SMD)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "sot23_6l",
+            "note": "6 gull-wing leads, pitch 0.95 mm (pins 1-3 span 1.9 mm), width 0.30-0.5, thickness 0.09-0.2, foot 0.3-0.6 mm; body 2.8-3.05 x 1.5-1.75 mm, span 2.6-3.0 mm, height 0.9-1.45 mm; no exposed pad. Lead solder temperature 260 C for 10 s.",
+            "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (§3.1 Table 3; Table 1)"
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "STMicroelectronics",
+  "name": "ST USBLC6-2SC6 USB ESD Protection (SOT23-6L)",
+  "part_number": "USBLC6-2SC6",
+  "tags": [
+    "usblc6-2",
+    "usblc6-2sc6",
+    "stmicroelectronics",
+    "st",
+    "esd",
+    "tvs",
+    "esd-protection",
+    "usb",
+    "usb-2.0",
+    "sot23-6l",
+    "ic"
+  ],
+  "traits": [
+    {
+      "params": {
+        "esd_iec_61000_4_2_air_kV": 15,
+        "esd_iec_61000_4_2_contact_kV": 15,
+        "esd_mil_std_883g_3015_7_kV": 25,
+        "junction_temperature_C": [
+          -40,
+          125
+        ],
+        "lead_solder_temperature_C": "260 for 10 s at 5 mm",
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 1)",
+        "storage_temperature_C": [
+          -55,
+          150
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "junction_temperature_C": [
+          -40,
+          125
+        ],
+        "note": "VBUS range is an assumption (see the assumption trait); electrical characteristics are at Tamb = 25 C.",
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 1, Table 2)",
+        "vbus_V": [
+          0,
+          5.25
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "clamping_V_max_at_5A": 17,
+        "crosstalk": "below -55 dB up to 240 MHz (§2.4)",
+        "data_rate": "USB 2.0 up to 480 Mb/s (high speed); USB 1.1 low and full speed; Ethernet 10/100 Mb/s",
+        "kind": "esd_protection",
+        "leakage_nA_max": 150,
+        "line_capacitance_pF_max": 3.5,
+        "protected_lines": 2,
+        "protects_vbus": true,
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover; Table 2; §2.4)",
+        "standards": "IEC 61000-4-2 level 4 (15 kV air, 8 kV contact), guaranteed at device level"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Place the device as close as possible to the disturbance source (generally the connector). Keep the tracks from the data lines to the I/O pins, from VCC to VBUS and from the GND plane to GND as short as possible: with 10 mm x 0.5 mm tracks (about 6 nH each) an 8 kV contact strike adds about 144 V per track to the clamping voltage (§2.2). Route each line through its pin pair (D+in pin 1 to D+out pin 6, D-in pin 3 to D-out pin 4) and decouple VBUS with 100 nF (Figure 17).",
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (§2.2, §2.3, Figure 17)",
+        "topic": "layout"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Order code USBLC6-2SC6: SOT23-6L, marking UL26, 16.7 mg, 3000 per reel; Active, Industrial grade, Ecopack2. USBLC6-2P6 (SOT-666, marking F) is the same function in another package and a separate part. LCSC C7519 is the ST device; other LCSC entries under the part number USBLC6-2SC6 (C2687116, C2827654, C5261088) state different capacitance, leakage and surge figures and are other makers' parts.",
+        "source": [
+          "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 6)",
+          "https://estore.st.com/en/usblc6-2sc6-cpn.html",
+          "https://jlcsearch.tscircuit.com/components/list.json?search=USBLC6-2SC6"
+        ],
+        "topic": "variant"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "contact discharge ESD",
+        "resolution": "Both hold: 8 kV contact is the level 4 test level the device is guaranteed to meet; 15 kV contact is its absolute rating. absolute_maximum carries 15 kV, performance carries the level 4 figures.",
+        "sources": [
+          "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+          "https://estore.st.com/en/usblc6-2sc6-cpn.html"
+        ],
+        "values": [
+          "15 kV (Table 1 absolute rating; eStore title '15kV contact ESD protection capability')",
+          "8 kV (cover: IEC 61000-4-2 level 4, contact discharge)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "SOT23-6L package dimensions",
+        "resolution": "Rev 6 (the later revision) used. A Rev 7 (December 2021) is named on st.com but could not be fetched.",
+        "sources": [
+          "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+          "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1810101111_STMicroelectronics-USBLC6-2SC6_C7519.pdf"
+        ],
+        "values": [
+          "Rev 6 Table 3: A1 0-0.15, b 0.30-0.5, L 0.3-0.6",
+          "Rev 5 Table 4: A1 0-0.10, b 0.35-0.50, L 0.10-0.60"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "VBUS working voltage",
+        "reason": "The datasheet states no recommended operating voltage. Leakage is specified at VRM = 5.25 V, which the Rev 4 change note ties to the USB standard, and VBR is 6 V min; 5.25 V is therefore the highest VBUS the stated figures cover.",
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 2; Table 7 Rev 4)",
+        "value": "0-5.25 V, nominal 5 V"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "internal I/O pin connection",
+        "note": "No pin-function table says whether pins 1 and 6 (both I/O1) and pins 3 and 4 (both I/O2) are bonded together. The PSpice cell (Figure 15) joins D+in to D+out through the line's series RI/O-LI/O, and Figure 17 routes the line in on one pin and out on the other. The interface groups ask for both pins of each line.",
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf (cover; Figures 15, 17)"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "thermal resistance",
+        "note": "Not stated in the datasheet or on the eStore page.",
+        "source": [
+          "https://static.chipdip.ru/lib/697/DOC028697137.pdf",
+          "https://estore.st.com/en/usblc6-2sc6-cpn.html"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "st.com (product page CAD resources and the datasheet) refused every fetch (HTTP/2 stream error or timeout), so ST's own models could not be reached; SnapEDA returns HTTP 403 and Ultra Librarian needs a login. Geometry is generated from datasheet Table 3 (library/cad/py/catalog/st-usblc6-2sc6.py).",
+        "source": "https://static.chipdip.ru/lib/697/DOC028697137.pdf"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "CAD package dimensions",
+        "reason": "Table 3 gives only min/max limits and no shoulder height or pin-1 mark size; the representative model needs single values. The 1.175 mm top agrees with the eStore package size (1.18).",
+        "source": [
+          "https://static.chipdip.ru/lib/697/DOC028697137.pdf (Table 3)",
+          "https://estore.st.com/en/usblc6-2sc6-cpn.html"
+        ],
+        "value": "midpoint of each Table 3 range (body 2.9 x 1.6, span 2.8, lead 0.4 wide x 0.15 thick, foot 0.45, standoff 0.075, body thickness 1.1 so the top is at 1.175 mm); lead shoulder top 0.6 mm; pin-1 dimple 0.4 mm"
+      },
+      "type": "assumption"
+    }
+  ],
+  "version": "1.0.0"
+}

@@ -1,0 +1,18 @@
+{
+  "artifact": "body",
+  "tool": "build123d",
+  "toolVersion": "0.13.0",
+  "generator": "@protoboardai/ext-frame-cad py/hardware_cad.py",
+  "params": "../frame-cad/params.json",
+  "sourceDigest": "5da2b44170b455d3481a634945c21d500babfa682c02212ce628b4db9392f6c3",
+  "units": "mm",
+  "volume_mm3": 178.953,
+  "bodies": {
+    "nut": 178.953
+  },
+  "features": {},
+  "exportedFrom": {
+    "file": "parts/local/meps-m5-flanged-lock-nut/frame-cad/params.json",
+    "digest": "sha256:ced286c765238685991788dfbb6baae8fffa023883f06411e65b37c44c4cbe7d"
+  }
+}

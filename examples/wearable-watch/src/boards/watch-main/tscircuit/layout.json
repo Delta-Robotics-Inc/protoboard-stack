@@ -1,0 +1,297 @@
+{
+  "$comment": "Provider-owned layout: positions for the parts circuit.config.ts does not fix (mm, board frame = case frame seen from the back cover). Hand-placed: the module's signal pads face -x, so the I2C devices sit left of it; the USB power path (D1, U6 and their capacitors) behind the receptacle; the LDOs and U3's capacitors around U3; the LRA lies on the back cover at x 5.7-14.5, y -13.5..7.2 (not on the board), so that region is kept free of parts; Q1 and the backlight resistor sit over the FPC land; R10/R11 (the STAT divider) between U6 and the module.",
+  "d1": {
+    "at": [
+      -9.75,
+      -0.2
+    ],
+    "rotation_deg": 0
+  },
+  "c19": {
+    "at": [
+      -10.3,
+      2.4
+    ],
+    "rotation_deg": 0
+  },
+  "r1": {
+    "at": [
+      -11.2,
+      4.3
+    ],
+    "rotation_deg": 90
+  },
+  "r2": {
+    "at": [
+      -9.8,
+      -6.4
+    ],
+    "rotation_deg": 0
+  },
+  "u6": {
+    "at": [
+      -8.0,
+      5.0
+    ],
+    "rotation_deg": 0
+  },
+  "c15": {
+    "at": [
+      -7.6,
+      2.6
+    ],
+    "rotation_deg": 0
+  },
+  "c16": {
+    "at": [
+      -8.0,
+      7.6
+    ],
+    "rotation_deg": 0
+  },
+  "r3": {
+    "at": [
+      -5.0,
+      5.6
+    ],
+    "rotation_deg": 90
+  },
+  "c1": {
+    "at": [
+      -2.5,
+      -1.85
+    ],
+    "rotation_deg": 0
+  },
+  "c2": {
+    "at": [
+      -2.2,
+      -0.3
+    ],
+    "rotation_deg": 0
+  },
+  "c3": {
+    "at": [
+      -4.8,
+      -1.0
+    ],
+    "rotation_deg": 90
+  },
+  "y1": {
+    "at": [
+      2.8,
+      -1.5
+    ],
+    "rotation_deg": 0
+  },
+  "c4": {
+    "at": [
+      1.0,
+      0.3
+    ],
+    "rotation_deg": 0
+  },
+  "c5": {
+    "at": [
+      4.6,
+      0.3
+    ],
+    "rotation_deg": 0
+  },
+  "c10": {
+    "at": [
+      0.0,
+      3.2
+    ],
+    "rotation_deg": 90
+  },
+  "c9": {
+    "at": [
+      0.0,
+      5.4
+    ],
+    "rotation_deg": 90
+  },
+  "c11": {
+    "at": [
+      3.0,
+      7.9
+    ],
+    "rotation_deg": 0
+  },
+  "r6": {
+    "at": [
+      6.4,
+      8.4
+    ],
+    "rotation_deg": 0
+  },
+  "u8": {
+    "at": [
+      -2.6,
+      9.9
+    ],
+    "rotation_deg": 0
+  },
+  "c8": {
+    "at": [
+      -2.6,
+      12.4
+    ],
+    "rotation_deg": 0
+  },
+  "u7": {
+    "at": [
+      2.6,
+      10.6
+    ],
+    "rotation_deg": 0
+  },
+  "c6": {
+    "at": [
+      2.6,
+      12.9
+    ],
+    "rotation_deg": 0
+  },
+  "c7": {
+    "at": [
+      5.3,
+      10.6
+    ],
+    "rotation_deg": 90
+  },
+  "j5": {
+    "at": [
+      -1.0,
+      16.0
+    ],
+    "rotation_deg": 0
+  },
+  "j4": {
+    "at": [
+      10.0,
+      9.0
+    ],
+    "rotation_deg": 180
+  },
+  "u4": {
+    "at": [
+      9.0,
+      13.0
+    ],
+    "rotation_deg": 0
+  },
+  "c12": {
+    "at": [
+      6.6,
+      15.6
+    ],
+    "rotation_deg": 0
+  },
+  "c13": {
+    "at": [
+      9.0,
+      15.6
+    ],
+    "rotation_deg": 0
+  },
+  "u2": {
+    "at": [
+      -9.4,
+      -12.6
+    ],
+    "rotation_deg": 0
+  },
+  "c17": {
+    "at": [
+      -8.8,
+      -15.0
+    ],
+    "rotation_deg": 0
+  },
+  "c18": {
+    "at": [
+      -6.9,
+      -12.6
+    ],
+    "rotation_deg": 90
+  },
+  "u5": {
+    "at": [
+      -8.6,
+      11.2
+    ],
+    "rotation_deg": 0
+  },
+  "c14": {
+    "at": [
+      -10.8,
+      11.2
+    ],
+    "rotation_deg": 90
+  },
+  "r7": {
+    "at": [
+      -6.6,
+      11.2
+    ],
+    "rotation_deg": 90
+  },
+  "r4": {
+    "at": [
+      -7.0,
+      -8.0
+    ],
+    "rotation_deg": 90
+  },
+  "r5": {
+    "at": [
+      -7.0,
+      -10.05
+    ],
+    "rotation_deg": 90
+  },
+  "q1": {
+    "at": [
+      16.8,
+      5.0
+    ],
+    "rotation_deg": 0
+  },
+  "r8": {
+    "at": [
+      16.8,
+      7.8
+    ],
+    "rotation_deg": 0
+  },
+  "r9": {
+    "at": [
+      16.8,
+      -5.0
+    ],
+    "rotation_deg": 0
+  },
+  "c20": {
+    "at": [
+      16.8,
+      -3.0
+    ],
+    "rotation_deg": 0
+  },
+  "r10": {
+    "at": [
+      -5.0,
+      3.1
+    ],
+    "rotation_deg": 90
+  },
+  "r11": {
+    "at": [
+      -3.85,
+      3.1
+    ],
+    "rotation_deg": 90
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Cut a release of the smart bottle after a generated file was edited by hand",
+  "skills": ["release", "circuit-board", "enclosure-cad"],
+  "tags": ["release", "package"],
+  "requires": ["chrome", "python-build123d", "tscircuit-node"],
+  "fixture": {
+    "from": "../../../../examples/smart-bottle",
+    "exclude": ["release"],
+    "operations": true,
+    "steps": [
+      { "note": "the seed: someone swapped the LED driver's MPN in the board's generated BOM", "replace": { "file": "src/boards/bottle-cap/out/bom.csv", "find": "LP5024RSMR", "with": "LP5024RSMT", "count": 1 } }
+    ]
+  },
+  "instruction": "Cut release 0.1.1 of the smart bottle with `npx protoboard release --version 0.1.1`: the Manufacturing Package for the cap board, the cap housing and final assembly. The design itself has not changed since 0.1.0 and must not change now: do not edit the UHD model, the parts or the module configs. Bring the project to a releasable state the way the release SOP says, cut the release, then check the package. Tell me what blocked the release and how you cleared it, and the package digest.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *"] },
+  "budget": { "turns": 40, "seconds": 1800, "usd": 6 },
+  "graders": [
+    {
+      "id": "package-written",
+      "kind": "files",
+      "exist": [
+        "release/0.1.1/index.html",
+        "release/0.1.1/manifest.json",
+        "release/0.1.1/00-overview.pdf",
+        "release/0.1.1/system/work-order.pdf",
+        "release/0.1.1/system/ordering-list.csv",
+        "release/0.1.1/units/board/work-order.pdf",
+        "release/0.1.1/units/board/test-plan.pdf",
+        "release/0.1.1/units/cap/work-order.pdf"
+      ]
+    },
+    { "id": "overview-pdf", "kind": "format", "file": "release/0.1.1/00-overview.pdf", "format": "pdf" },
+    { "id": "manifest", "kind": "facts", "file": "release/0.1.1/manifest.json", "facts": [{ "path": "schema", "equals": "protoboard.release/v0" }, { "path": "version", "equals": "0.1.1" }, { "path": "check.errors", "equals": 0 }, { "path": "packageDigest", "matches": "[0-9a-f]{12}" }] },
+    { "id": "bom-as-exported", "kind": "digest", "file": "src/boards/bottle-cap/out/bom.csv", "equals": "sha256:cb00f59c0ab4281cab665f65686972ba1b0ae99f6390a61e60c7e96ba11343b2", "description": "the board's BOM is what circuit:export writes, not the hand edit" },
+    { "id": "package-bom-mpn", "kind": "text", "file": "release/0.1.1/units/board/bom.csv", "matches": ["LP5024RSMR"], "notMatches": ["LP5024RSMT"] },
+    { "id": "blocker-named", "kind": "text", "matches": ["bom\\.csv", "(edit|chang|modif)"], "description": "the answer names the hand-edited BOM" },
+    { "id": "model-untouched", "kind": "digest", "file": "src/boards/bottle-cap/bottle-cap.uhd.ts", "changed": false },
+    { "id": "circuit-config-untouched", "kind": "digest", "file": "src/boards/bottle-cap/circuit.config.ts", "changed": false },
+    { "id": "cad-config-untouched", "kind": "digest", "file": "src/enclosures/bottle-cap/cad.config.ts", "changed": false },
+    { "id": "project-config-untouched", "kind": "digest", "file": "protoboard.config.ts", "changed": false },
+    {
+      "id": "inspection",
+      "kind": "rubric",
+      "files": ["release/0.1.1/manifest.json"],
+      "rubric": "The agent cut release 0.1.1 of the smart bottle after a hand edit to a generated file blocked it. 1. The answer says what blocked the release (the board's out/bom.csv changed after circuit:export wrote it) and that it was cleared by re-running the generating operation, not by editing the file or the records, and names any further stale output it had to regenerate. 2. The release was not forced (no --allow-dirty, no edited operation records). 3. The answer reports the package digest as the manifest shows it. 4. The answer reports what it inspected in the package (units, documents, warnings carried into the manifest) and states remaining warnings honestly rather than claiming a clean bill of health."
+    }
+  ],
+  "solution": [
+    { "protoboard": ["release", "--check", "--version", "0.1.1"], "expect": { "exit": 1 } },
+    { "protoboard": ["run", "circuit:export", "--module", "bottle-cap-board"], "expect": { "status": "succeeded" } },
+    { "note": "the enclosure is stale only when the re-exported board body differs from the one it was designed around; regenerating it is the SOP either way", "protoboard": ["release", "--check", "--version", "0.1.1"] },
+    { "note": "the cap is fitted to the board body: regenerated whether or not the re-export changed it (a re-export that is not reproducible makes it ENCLOSURE_STALE, PB-869)", "protoboard": ["run", "cad:generate", "--module", "bottle-cap-enclosure"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["run", "cad:export", "--module", "bottle-cap-enclosure"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["release", "--check", "--version", "0.1.1"] },
+    { "protoboard": ["release", "--version", "0.1.1"], "expect": { "status": "succeeded" } },
+    { "say": "protoboard check reported PB_OUTPUT_STALE and release --check refused: src/boards/bottle-cap/out/bom.csv was changed after circuit:export wrote it (LP5024RSMR edited to LP5024RSMT). I re-ran circuit:export for bottle-cap-board, which restored the BOM (the same inputs, so the same board.step and board.glb), then regenerated and exported the cap enclosure around the re-exported board (the release SOP: a board export can make its enclosure stale). release --check then passed and release 0.1.1 wrote 3 units, 16 documents; the manifest's packageDigest is in release/0.1.1/manifest.json. The manifest carries 3 warnings: two FW_STRAPPING_PIN on the I2C lines and ENCLOSURE_THIN_WALL." }
+  ]
+}

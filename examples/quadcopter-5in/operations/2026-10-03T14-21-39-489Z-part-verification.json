@@ -1,0 +1,49 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "motor-screw-m3x8",
+    "independent": "false"
+  },
+  "projectDigest": "sha256:42106405eceb25c1277b46a949fd65134d0f10a0928c271f068a4237aa204ddd",
+  "tools": [],
+  "startedAt": "2026-10-03T14:21:39.489Z",
+  "status": "succeeded",
+  "summary": "motor-screw-m3x8: audit 3/4 (self-audit), 1 assumption(s), 2 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/motor-screw-m3x8/verification.json",
+      "digest": "sha256:92a81bbe32aa95378df3e474444756798986a027f6fc555ed579b0028785214d",
+      "bytes": 690,
+      "description": "motor-screw-m3x8: verification record"
+    }
+  ],
+  "data": {
+    "partId": "motor-screw-m3x8",
+    "recorded_at": "2026-10-03T14:21:39.513Z",
+    "audit": {
+      "method": "self-audit: each fact re-read from the copies fetched on 2026-10-03 (sha256 in sources.json): the listing's technical summary or the maker's datasheet, product page or image",
+      "independent": false,
+      "auditor": "authoring agent (PB-836 session)",
+      "checked": 4,
+      "confirmed": 3,
+      "wrong": 0,
+      "unsupported": 1
+    },
+    "repairs": null,
+    "assumptions": [
+      "length"
+    ],
+    "data_gaps": [
+      "screw length 8 mm (not stated; chosen for the stack-up (assumption trait))",
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T14:21:39.513Z"
+}

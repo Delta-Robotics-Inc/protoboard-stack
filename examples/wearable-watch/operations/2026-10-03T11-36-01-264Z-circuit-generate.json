@@ -1,0 +1,63 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:5e364d2055ce57579dff0a6dc48b80709c409e33ba321a5536e162b57dc69b36",
+    "moduleDigest": "sha256:0a0bc0b81e422ba22cabe83fa75bc771b1a13076fc0419941e5f53515bcd1e9a"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:a632bf2d5b06a81ca931011b0d5ffe61991decf402196409372aaa890d17dee1",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T11:36:01.264Z",
+  "status": "succeeded",
+  "summary": "49 components (7 fixed, 42 layout), 37 nets → 159 traces, 128 vias in 74.7 s; 0 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/tscircuit/board.gen.tsx",
+      "digest": "sha256:b3e534f6a23a752631f94224a02a95e7cb2e743f4e4cc345f4734cb09f2da15b",
+      "bytes": 62988,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/circuit.json",
+      "digest": "sha256:add64780c0ee3bf6be416edfdc4f60dab52b391a2545afe34568f3d7a3e7d975",
+      "bytes": 1074733,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/build.json",
+      "digest": "sha256:5ca70ba908dab66786251d7b00a31c757bca75b6acb5d00c64fbe6adbc49467b",
+      "bytes": 18045,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 49,
+    "nets": 37,
+    "placement": {
+      "fixed": 7,
+      "layout": 42
+    },
+    "traces": 159,
+    "vias": 128,
+    "build_ms": 74730,
+    "errors": []
+  },
+  "finishedAt": "2026-10-03T11:37:16.087Z"
+}

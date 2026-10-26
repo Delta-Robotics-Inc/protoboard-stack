@@ -1,0 +1,135 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-parts",
+  "version": "0.2.0",
+  "description": "Purchased parts as datasheet-honest UHD definitions: research and cite the sources, author the ModuleDef, verify it automatically and by an independent audit, record the verification. Works on a project's parts (parts/local, parts/evidence) and on the cloud part library (library/parts).",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "uhd-authoring",
+      "summary": "UHD schema reference: model a module with UHD builders (interfaces, pin tables, buses, connectors, parameters, traits, package, geometry frames and refs); shipped by UHD",
+      "package": "@deltarobotics/uhd",
+      "path": "skills/uhd-authoring/SKILL.md"
+    },
+    {
+      "id": "uhd-part-research",
+      "summary": "Find and cite sources (datasheets, CAD) for a purchased part before modelling it",
+      "path": "skills/uhd-part-research/SKILL.md"
+    },
+    {
+      "id": "uhd-part-author",
+      "summary": "Write a datasheet-honest UHD module definition from researched sources",
+      "path": "skills/uhd-part-author/SKILL.md",
+      "verifiedBy": "uhd-part-verify"
+    },
+    {
+      "id": "uhd-part-verify",
+      "summary": "Automated part checks, then an independent audit against the cited sources; record the verification",
+      "path": "skills/uhd-part-verify/SKILL.md"
+    }
+  ],
+  "operations": [
+    {
+      "id": "part-verify",
+      "summary": "Automated checks for one local purchased part (metadata, citations, structure, parameters, vocabulary, connectors, pins, CAD) and pair DRC against mates; fails on any error",
+      "entry": "./ops/parts.ts#partVerify",
+      "effect": "pure",
+      "inputs": {
+        "part": {
+          "description": "the part's definition id",
+          "required": true
+        },
+        "mate": {
+          "description": "comma-separated ids of mating parts for pair DRC"
+        },
+        "all": {
+          "description": "true: pair DRC against every other definition, reporting the pairs that connect"
+        }
+      }
+    },
+    {
+      "id": "part-verification",
+      "summary": "Write parts/evidence/<id>/verification.json from the audit and gaps in .research/ and the part's assumption traits",
+      "entry": "./ops/parts.ts#partVerification",
+      "effect": "export",
+      "inputs": {
+        "part": {
+          "description": "the part's definition id",
+          "required": true
+        },
+        "repairs": {
+          "description": "what was fixed after the audit"
+        },
+        "independent": {
+          "description": "true when an agent that did not author the part ran the audit, false for a self-audit (or set independent in .research/audit.json)"
+        },
+        "auditor": {
+          "description": "who ran the audit (default: audit.json's auditor)"
+        },
+        "method": {
+          "description": "how the audit checked the sources (default: audit.json's method)"
+        }
+      }
+    }
+  ],
+  "tools": [
+    {
+      "id": "python-build123d",
+      "purpose": "Python with build123d (CAD kernel the project's part-body scripts run on)",
+      "probe": [
+        "sh",
+        "-c",
+        "exec \"${PROTOBOARD_PYTHON:-python3}\" -c 'import build123d; print(\"build123d \" + build123d.__version__)'"
+      ],
+      "install": "protoboard tools install cad (a project venv with these pins), or point PROTOBOARD_PYTHON at an interpreter with build123d==0.13.0",
+      "runtime": {
+        "id": "cad",
+        "kind": "python",
+        "packages": [
+          "build123d==0.13.0"
+        ],
+        "env": "PROTOBOARD_PYTHON",
+        "python": ">=3.11,<3.15"
+      }
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "cad",
+      "summary": "A project-researched part's body drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py): run, recorded and exported as STEP, GLB and a feature manifest",
+      "native": "part-cad",
+      "operations": {
+        "generate": {
+          "entry": "./ops/cad.ts#generate",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "Run the part's script and record its digest, build123d version and feature signatures in part-cad/source.json; returns the bound signatures that differ"
+        },
+        "export": {
+          "entry": "./ops/cad.ts#exportOutputs",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "Run the script again and write out/body.step, body.glb, body.manifest.json and out/interfaces/<id>.glb"
+        },
+        "extract": {
+          "entry": "./ops/cad.ts#extract",
+          "summary": "The part's CAD artifacts that exist (its frames are the author's, from the drawing)"
+        },
+        "check": {
+          "entry": "./ops/cad.ts#check",
+          "summary": "The script is the one generate ran, and out/ was exported from that run"
+        }
+      },
+      "constraints": {
+        "generator": {
+          "description": "file name of the build123d script in part-cad/ (required)"
+        }
+      }
+    }
+  ]
+}

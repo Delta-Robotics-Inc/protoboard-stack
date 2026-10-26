@@ -1,0 +1,9 @@
+{
+  "title": "A case whose tool is missing",
+  "fixture": { "from": "../fix-typo/fixture" },
+  "requires": ["never-there"],
+  "instruction": "Anything.",
+  "budget": { "turns": 1, "seconds": 10 },
+  "graders": [{ "kind": "check" }],
+  "solution": []
+}

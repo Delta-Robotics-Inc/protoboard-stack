@@ -1,0 +1,63 @@
+{
+  "artifact": "nalgene-32oz-wide-mouth",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "c7ccf578c86515f40c8d395d981f8106e70ffa3221b8022fa5dbbfa315701322",
+  "units": "mm",
+  "volume_mm3": 156820.789,
+  "bodies": {
+    "bottle": 156286.996,
+    "thread": 533.793
+  },
+  "features": {
+    "neck_thread": {
+      "area_mm2": 5151.434,
+      "centroid": [
+        0.0,
+        -2.131,
+        201.652
+      ],
+      "faces": 5
+    },
+    "lip_seal": {
+      "area_mm2": 661.188,
+      "centroid": [
+        0.0,
+        0.0,
+        209.37
+      ],
+      "faces": 2
+    },
+    "mouth": {
+      "area_mm2": 3057.554,
+      "centroid": [
+        0.0,
+        0.0,
+        199.368
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          0.0,
+          0.0,
+          199.368
+        ]
+      ],
+      "diameter_mm": 53.0
+    },
+    "base": {
+      "area_mm2": 5140.282,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

@@ -1,0 +1,117 @@
+/* Watch core board (test fixture): Zephyr 4.2.0 board devicetree, generated from the UHD model by @protoboardai/ext-zephyr. Do not edit. */
+/* WARNING: u2 (adi-max30102efd): no Zephyr driver in this provider's table; its node has no compatible, so the application finds it by the label u2 and drives it itself */
+/* WARNING: m1 (fx-gnss-uart) on uart0: no Zephyr driver in this provider's table; the application talks to uart0 directly */
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi> /* raytac-mdbt50q-1mv2: Nordic nRF52840 revision 2, aQFN-73 */
+#include "watch_core-pinctrl.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/display/panel.h>
+
+/ {
+	model = "Watch core board (test fixture)";
+	compatible = "protoboard,watch-core";
+
+	chosen {
+		zephyr,sram = &sram0; /* on-chip RAM */
+		zephyr,flash = &flash0; /* on-chip flash */
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		button_sw1: button_0 {
+			gpios = <&gpio1 11 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>; /* Side button: u1:pin_4 P1.11 */
+			label = "Side button";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	mipi_dbi_d1: mipi-dbi-d1 {
+		compatible = "zephyr,mipi-dbi-spi"; /* display on SPI with D/C (MIPI DBI type C, 4-wire) */
+		spi-dev = <&spi3>;
+		dc-gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>; /* Display D/C: u1:pin_45 P0.23 */
+		reset-gpios = <&gpio0 22 GPIO_ACTIVE_LOW>; /* Display RESET: u1:pin_46 P0.22 */
+		write-only; /* the panel has no MISO: it is written, never read */
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		d1: gc9x01x@0 {
+			compatible = "galaxycore,gc9x01x"; /* GC9A01 (GC9A01A) (eastrising-er-tft128-1) */
+			reg = <0>; /* chip select 0 of spi3 */
+			mipi-max-frequency = <32000000>; /* 32 MHz: the slower of the panel and spi3 */
+			pixel-format = <PANEL_PIXEL_FORMAT_RGB_565>; /* 65K colours */
+			width = <240>;
+			height = <240>;
+		};
+	};
+
+	zephyr,user {
+		u2-int-gpios = <&gpio0 15 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>; /* Heart-rate sensor INT: u1:pin_39 P0.15 */
+		u3-alrt-gpios = <&gpio0 16 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>; /* Fuel gauge ALRT: u1:pin_38 P0.16 */
+		u4-stat-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>; /* Charger STAT (through r3): u1:pin_3 P1.10, pulled down by r4 */
+		wakeup-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>, <&gpio0 16 GPIO_ACTIVE_LOW>; /* wake from System OFF: sw1, u3 (any nRF52840 GPIO can, through its SENSE level) */
+	};
+};
+
+&i2c0 {
+	compatible = "nordic,nrf-twim"; /* EasyDMA TWI master */
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_FAST>; /* 400 kHz: the slowest device allows 400 kHz */
+
+	u2: sensor-biometric@57 {
+		reg = <0x57>; /* I2C address 0x57 (adi-max30102efd) */
+	};
+
+	u3: fuel-gauge@36 {
+		compatible = "maxim,max17048"; /* Fuel gauge (adi-max17048g-t10) */
+		reg = <0x36>; /* I2C address 0x36 (adi-max17048g-t10) */
+	};
+
+	u5: haptics@5a {
+		compatible = "ti,drv2605"; /* Haptic driver (ti-drv2605ldgs) */
+		reg = <0x5a>; /* I2C address 0x5a (ti-drv2605ldgs) */
+		actuator-mode = "LRA"; /* firmware.config.ts */
+		en-gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>; /* Haptic driver EN: u1:pin_41 P0.17 */
+	};
+};
+
+&spi3 {
+	compatible = "nordic,nrf-spim"; /* EasyDMA SPI master */
+	status = "okay";
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>; /* d1 CS u1:pin_44 P0.20 */
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte"; /* EasyDMA UART */
+	status = "okay";
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+	current-speed = <9600>; /* m1 (GNSS) */
+};
+
+&reg1 {
+	regulator-initial-mode = <NRF5X_REG_MODE_DCDC>; /* REG1 DC/DC inductor is inside the module */
+};
+
+&gpiote {
+	status = "okay"; /* GPIO interrupts */
+};
+
+&gpio0 {
+	status = "okay"; /* used: P0.00, P0.01, P0.13, P0.14, P0.15, P0.16, P0.17, P0.19, P0.20, P0.21, P0.22, P0.23, P0.26, P0.27 */
+};
+
+&gpio1 {
+	status = "okay"; /* used: P1.10, P1.11 */
+};
+
+zephyr_udc0: &usbd {
+	status = "okay"; /* USB D+/D- wired to j1 */
+};

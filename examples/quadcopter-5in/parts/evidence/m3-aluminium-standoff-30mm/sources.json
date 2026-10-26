@@ -1,0 +1,29 @@
+[
+  {
+    "id": "src_supplier",
+    "title": "Ettinger 005.03.308 product page: Abstandsbolzen Aluminium passiviert I/I SW5,5x30, Gewinde M3x7 / M3x7",
+    "url": "https://www.ettinger.de/p/abstandsbolzen-aluminium-passiviert-i-i-sw5-5x30-gewinde-m3x7-m3x7/005.03.308",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "8044ecfe6327a216b54dcddd03b9e4fd90cb74ff73af6c4cf9bf80801018c232",
+    "supports": [
+      "hex standoff, female-female, 5.5 mm AF, 30 mm",
+      "pack of 100"
+    ]
+  },
+  {
+    "id": "src_datasheet",
+    "title": "Ettinger 005.03.308 Artikeldatenblatt (PDF)",
+    "url": "https://www.ettinger.de/product-datasheet/00b5b66f70a7b486195837da0e75aef6/create",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "f613478ce4a54a6dd1498d04372f297faefde0c5c98ca889aaccf324921ef64c",
+    "supports": [
+      "Gewinde M3 x 7 both ends, Länge 30 mm, SW 5.5",
+      "Aluminium 3.1655, passiviert",
+      "Gewicht 1.82 g"
+    ]
+  }
+]

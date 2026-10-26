@@ -1,0 +1,8 @@
+{
+  "$comment": "Occurrences of the old spelling kept on purpose (PB-913); scripts/check-brand-spelling.mjs fails on any other. Each entry says why.",
+  "entries": [
+    { "path": "scripts/check-brand-spelling.mjs", "reason": "the guard itself names the spelling it looks for" },
+    { "path": "packages/cli/test/brand-spelling.test.ts", "reason": "the guard's test plants the old spelling in a scratch repository" },
+    { "path": "packages/vscode-protoboard/test/themes.test.ts", "contains": "not.toContain(\"ProtoBoard\")", "reason": "asserts the extension manifest does not use the old spelling" }
+  ]
+}

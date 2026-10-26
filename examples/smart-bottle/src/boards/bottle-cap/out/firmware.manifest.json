@@ -1,0 +1,333 @@
+{
+  "schema": "protoboard.firmware/v0",
+  "module": "bottle-cap-board",
+  "provider": "@protoboardai/ext-esp-idf",
+  "framework": "esp-idf",
+  "frameworkVersion": "5.3.5",
+  "controller": {
+    "instance": "u1",
+    "part": "espressif-esp32-c3-mini-1-h4x"
+  },
+  "files": [
+    {
+      "path": "config/board_pins.h",
+      "digest": "sha256:9c16353b5efa414cec2799213bcd18cd02eda5c4d607276db81c47ce09ec9fae",
+      "role": "pins and peripherals header",
+      "lines": [
+        {
+          "line": 5,
+          "cites": [
+            "part:espressif-esp32-c3-mini-1-h4x:domains.electrical.metadata.soc"
+          ]
+        },
+        {
+          "line": 8,
+          "cites": [
+            "part:espressif-esp32-c3-mini-1-h4x:domains.electrical.metadata.soc"
+          ]
+        },
+        {
+          "line": 11,
+          "cites": [
+            "part:espressif-esp32-c3-mini-1-h4x:domains.electrical.metadata.peripherals",
+            "net:i2c_sda",
+            "pin:u1:pin_22",
+            "pin:u2:pin_9",
+            "net:i2c_scl",
+            "pin:u1:pin_5",
+            "pin:u2:pin_10"
+          ]
+        },
+        {
+          "line": 12,
+          "cites": [
+            "net:i2c_sda",
+            "pin:u1:pin_22",
+            "pin:u2:pin_9"
+          ]
+        },
+        {
+          "line": 13,
+          "cites": [
+            "net:i2c_scl",
+            "pin:u1:pin_5",
+            "pin:u2:pin_10"
+          ]
+        },
+        {
+          "line": 14,
+          "cites": [
+            "part:espressif-esp32-c3-mini-1-h4x:domains.electrical.metadata.peripherals",
+            "part:st-vl53l4cdv0dh-1:i2c.clock_freq",
+            "part:ti-lp5024rsm:i2c.clock_freq",
+            "part:adi-max17048g-t10:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 15,
+          "cites": [
+            "net:i2c_sda",
+            "net:i2c_scl"
+          ]
+        },
+        {
+          "line": 16,
+          "cites": [
+            "pin:u2:i2c",
+            "part:st-vl53l4cdv0dh-1:i2c.i2c_address",
+            "part:st-vl53l4cdv0dh-1:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 17,
+          "cites": [
+            "net:tof_xshut",
+            "pin:u1:pin_12",
+            "pin:u2:pin_5",
+            "pin:r5:pin_1"
+          ]
+        },
+        {
+          "line": 18,
+          "cites": [
+            "net:tof_xshut",
+            "pin:u1:pin_12",
+            "pin:u2:pin_5",
+            "pin:r5:pin_1"
+          ]
+        },
+        {
+          "line": 19,
+          "cites": [
+            "net:tof_int",
+            "pin:u1:pin_13",
+            "pin:u2:pin_7",
+            "pin:r6:pin_1"
+          ]
+        },
+        {
+          "line": 20,
+          "cites": [
+            "net:tof_int",
+            "pin:u1:pin_13",
+            "pin:u2:pin_7",
+            "pin:r6:pin_1"
+          ]
+        },
+        {
+          "line": 21,
+          "cites": [
+            "net:tof_int",
+            "pin:u1:pin_13",
+            "pin:u2:pin_7",
+            "pin:r6:pin_1"
+          ]
+        },
+        {
+          "line": 22,
+          "cites": [
+            "pin:u3:i2c",
+            "part:ti-lp5024rsm:i2c.i2c_address",
+            "part:ti-lp5024rsm:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 23,
+          "cites": [
+            "net:led_en",
+            "pin:u1:pin_19",
+            "pin:u3:pin_30",
+            "pin:r9:pin_1"
+          ]
+        },
+        {
+          "line": 24,
+          "cites": [
+            "net:led_en",
+            "pin:u1:pin_19",
+            "pin:u3:pin_30",
+            "pin:r9:pin_1"
+          ]
+        },
+        {
+          "line": 25,
+          "cites": [
+            "pin:u6:i2c",
+            "part:adi-max17048g-t10:i2c.i2c_address",
+            "part:adi-max17048g-t10:i2c.clock_freq"
+          ]
+        },
+        {
+          "line": 26,
+          "cites": [
+            "net:fg_alrt",
+            "pin:u1:pin_20",
+            "pin:u6:pin_5",
+            "pin:r16:pin_1"
+          ]
+        },
+        {
+          "line": 27,
+          "cites": [
+            "net:fg_alrt",
+            "pin:u1:pin_20",
+            "pin:u6:pin_5",
+            "pin:r16:pin_1"
+          ]
+        },
+        {
+          "line": 28,
+          "cites": [
+            "net:fg_alrt",
+            "pin:u1:pin_20",
+            "pin:u6:pin_5",
+            "pin:r16:pin_1"
+          ]
+        },
+        {
+          "line": 31,
+          "cites": [
+            "net:temp_dq",
+            "pin:u1:pin_18",
+            "pin:jprb:pad_dq"
+          ]
+        },
+        {
+          "line": 32,
+          "cites": [
+            "net:temp_dq",
+            "pin:u1:pin_18",
+            "pin:jprb:pad_dq"
+          ]
+        },
+        {
+          "line": 35,
+          "cites": [
+            "net:btn",
+            "pin:u1:pin_6",
+            "net:gnd",
+            "pin:r8:pin_1"
+          ]
+        },
+        {
+          "line": 36,
+          "cites": [
+            "net:btn",
+            "pin:u1:pin_6",
+            "net:gnd",
+            "pin:r8:pin_1"
+          ]
+        },
+        {
+          "line": 37,
+          "cites": [
+            "net:btn",
+            "pin:u1:pin_6",
+            "net:gnd",
+            "pin:r8:pin_1"
+          ]
+        },
+        {
+          "line": 40,
+          "cites": [
+            "net:chg_stat",
+            "net:chg_stat_5v",
+            "pin:r14:pin_2",
+            "pin:u1:pin_21",
+            "pin:u5:pin_5",
+            "pin:r15:pin_1"
+          ]
+        },
+        {
+          "line": 41,
+          "cites": [
+            "net:chg_stat",
+            "net:chg_stat_5v",
+            "pin:r14:pin_2",
+            "pin:u1:pin_21",
+            "pin:u5:pin_5",
+            "pin:r15:pin_1"
+          ]
+        },
+        {
+          "line": 42,
+          "cites": [
+            "net:chg_stat",
+            "net:chg_stat_5v",
+            "pin:r14:pin_2",
+            "pin:u1:pin_21",
+            "pin:u5:pin_5",
+            "pin:r15:pin_1"
+          ]
+        },
+        {
+          "line": 43,
+          "cites": [
+            "net:vbus_sense",
+            "pin:u1:pin_16",
+            "pin:r17:pin_1",
+            "net:vbus",
+            "pin:r18:pin_1"
+          ]
+        },
+        {
+          "line": 44,
+          "cites": [
+            "net:vbus_sense",
+            "pin:u1:pin_16",
+            "pin:r17:pin_1",
+            "net:vbus",
+            "pin:r18:pin_1"
+          ]
+        },
+        {
+          "line": 45,
+          "cites": [
+            "net:vbus_sense",
+            "pin:u1:pin_16",
+            "pin:r17:pin_1",
+            "net:vbus",
+            "pin:r18:pin_1"
+          ]
+        },
+        {
+          "line": 48,
+          "cites": [
+            "constraint:wake",
+            "net:btn",
+            "pin:u1:pin_6",
+            "net:gnd",
+            "pin:r8:pin_1"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "config/sdkconfig.defaults",
+      "digest": "sha256:4bb23ca8dce5089953370f0a56c170a07807a76709bc43d9cdeef59f3c011969",
+      "role": "sdkconfig defaults",
+      "lines": [
+        {
+          "line": 5,
+          "cites": [
+            "part:espressif-esp32-c3-mini-1-h4x:domains.electrical.metadata.soc"
+          ]
+        },
+        {
+          "line": 7,
+          "cites": [
+            "part:espressif-esp32-c3-mini-1-h4x:domains.electrical.metadata.memory.flash_MB"
+          ]
+        },
+        {
+          "line": 9,
+          "cites": [
+            "pin:u1:usb",
+            "net:usb_dm",
+            "net:usb_dp"
+          ]
+        }
+      ]
+    }
+  ]
+}

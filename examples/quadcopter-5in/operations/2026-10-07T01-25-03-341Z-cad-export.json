@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboardai/ext-frame-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboardai/ext-frame-cad",
+    "module": "m3-aluminium-standoff-30mm",
+    "config": "parts/local/m3-aluminium-standoff-30mm/cad.config.ts",
+    "configDigest": "sha256:204a545869760542081301e95cbaae9f804982c9327bd9c07ed2981eac7a73be",
+    "moduleDigest": "sha256:97a0e3ea7014c73bb3d946d8cda9fdd7ebfc43253e837156631cc0fcd9cb419d"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ee706bef3f8bd1d33b860cae803c8801b6e9cb10816c4b16b728174d063ce54f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:25:03.341Z",
+  "status": "succeeded",
+  "summary": "m3-aluminium-standoff-30mm: body.step, body.glb, body.manifest.json in parts/local/m3-aluminium-standoff-30mm/out (632.707 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/m3-aluminium-standoff-30mm/out/body.step",
+      "digest": "sha256:4742bff60720fa989b365e81f3282db4be62b86926a5360ffb6f419ac2624416",
+      "bytes": 28682,
+      "description": "m3-aluminium-standoff-30mm: nominal body"
+    },
+    {
+      "path": "parts/local/m3-aluminium-standoff-30mm/out/body.glb",
+      "digest": "sha256:0b31a9c84ecb2f2b52728fe85b15310f5160b264224b7baf872dbc47e3f31799",
+      "bytes": 12952,
+      "description": "m3-aluminium-standoff-30mm: viewer mesh"
+    },
+    {
+      "path": "parts/local/m3-aluminium-standoff-30mm/out/body.manifest.json",
+      "digest": "sha256:cc781858eaec71795e3e0e244013cb7dc1309a0606e323fb9a3fdc7fdd6f53d8",
+      "bytes": 558,
+      "description": "m3-aluminium-standoff-30mm: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "m3-aluminium-standoff-30mm",
+    "out": "parts/local/m3-aluminium-standoff-30mm/out",
+    "volume_mm3": 632.707,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-07T01:25:07.870Z"
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "m3-aluminium-standoff-30mm",
+    "independent": "false"
+  },
+  "projectDigest": "sha256:1cc7820df61023403a00e9f0557dce8531e0262175c91a7b1692f04861c5e07e",
+  "tools": [],
+  "startedAt": "2026-10-03T14:21:43.276Z",
+  "status": "succeeded",
+  "summary": "m3-aluminium-standoff-30mm: audit 3/3 (self-audit), 1 assumption(s), 1 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/m3-aluminium-standoff-30mm/verification.json",
+      "digest": "sha256:24b9996e7478a1753e247d11903f32392cd3ca7f2a0298068ad1c228704a2c9a",
+      "bytes": 623,
+      "description": "m3-aluminium-standoff-30mm: verification record"
+    }
+  ],
+  "data": {
+    "partId": "m3-aluminium-standoff-30mm",
+    "recorded_at": "2026-10-03T14:21:43.300Z",
+    "audit": {
+      "method": "self-audit: each fact re-read from the copies fetched on 2026-10-03 (sha256 in sources.json): the listing's technical summary or the maker's datasheet, product page or image",
+      "independent": false,
+      "auditor": "authoring agent (PB-836 session)",
+      "checked": 3,
+      "confirmed": 3,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": null,
+    "assumptions": [
+      "part choice"
+    ],
+    "data_gaps": [
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T14:21:43.301Z"
+}

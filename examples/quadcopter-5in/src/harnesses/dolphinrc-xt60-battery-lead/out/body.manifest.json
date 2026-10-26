@@ -1,0 +1,186 @@
+{
+  "artifact": "body",
+  "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+  "toolVersion": "0.1.0",
+  "sourceDigest": "822cc3a88397b1c24c40d612edb32f3a368612267b6de083896e513094ffaf8e",
+  "units": "mm",
+  "coordinates": "assembly root (mm, Z up); glTF export in m, Y up",
+  "harness": "xt60_lead",
+  "length_mm": 30,
+  "route_length_mm": 29.44,
+  "conductor_lengths_mm": [
+    38.14,
+    43.41
+  ],
+  "length_fit": {
+    "route_mm": 29.44,
+    "method": "shortest"
+  },
+  "bundle": {
+    "kind": "parallel",
+    "conductors": 2,
+    "conductor_od_mm": 3.4,
+    "bundle_od_mm": 4.12,
+    "twist_pitch_mm": null
+  },
+  "bend_radius_mm": {
+    "target": 13.6,
+    "minimum": 8.5,
+    "centreline": 35.07,
+    "conductors": 1.42,
+    "at_terminations": 3.4
+  },
+  "clearance_mm": {
+    "min_conductor_surface": 0.06
+  },
+  "ends": {
+    "end_battery": {
+      "frame": {
+        "normal": [
+          -1,
+          0,
+          0
+        ],
+        "origin": [
+          -64,
+          0,
+          19
+        ],
+        "xAxis": [
+          0,
+          1,
+          0
+        ]
+      },
+      "counterpart": "battery.xt60",
+      "termination": "plug",
+      "link": "battery_plug"
+    },
+    "end_esc": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "origin": [
+          -19.3,
+          0,
+          14.1
+        ],
+        "xAxis": [
+          0,
+          1,
+          0
+        ]
+      },
+      "counterpart": "stack.battery_pads",
+      "termination": "solder",
+      "link": "battery_pads"
+    }
+  },
+  "features": {
+    "end_battery": {
+      "area_mm2": 1336,
+      "centroid": [
+        -57.8,
+        0,
+        19
+      ],
+      "faces": 1
+    },
+    "end_esc": {
+      "area_mm2": 142.466,
+      "centroid": [
+        -19.643,
+        0.134,
+        15.226
+      ],
+      "faces": 4
+    }
+  },
+  "step": "ok",
+  "route": [
+    [
+      -47.7,
+      0,
+      19
+    ],
+    [
+      -45.6,
+      0,
+      19
+    ],
+    [
+      -43.5,
+      0.03,
+      18.93
+    ],
+    [
+      -41.46,
+      0.25,
+      18.48
+    ],
+    [
+      -39.41,
+      0.46,
+      18.05
+    ],
+    [
+      -37.35,
+      0.66,
+      17.73
+    ],
+    [
+      -35.26,
+      0.82,
+      17.49
+    ],
+    [
+      -33.17,
+      0.95,
+      17.31
+    ],
+    [
+      -31.08,
+      1.04,
+      17.17
+    ],
+    [
+      -28.98,
+      1.08,
+      17.02
+    ],
+    [
+      -26.88,
+      1.07,
+      16.84
+    ],
+    [
+      -24.79,
+      1.01,
+      16.62
+    ],
+    [
+      -22.72,
+      0.91,
+      16.3
+    ],
+    [
+      -20.88,
+      0.53,
+      15.37
+    ],
+    [
+      -19.3,
+      0,
+      14.1
+    ]
+  ],
+  "status": "ok",
+  "notes": [],
+  "exportedFrom": {
+    "file": "src/harnesses/dolphinrc-xt60-battery-lead/harness-cad/route.json",
+    "digest": "sha256:6d446a6a6c71ea3027864b9469d86649d2faf735bd3c4bf45addfa5ca4d5203b"
+  }
+}

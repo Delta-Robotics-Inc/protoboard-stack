@@ -1,0 +1,120 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "panasonic-eeu-fr1v471",
+  "manufacturer": "Panasonic Industry",
+  "mpn": "EEU-FR1V471",
+  "need": {
+    "quantity": 1,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "LCSC",
+      "supplier_sku": "C178715",
+      "mpn": "EEU-FR1V471",
+      "url": "https://www.lcsc.com/product-detail/C178715.html",
+      "as_of": "2026-10-03T13:59:22Z",
+      "via": "web",
+      "stock": 85,
+      "moq": 5,
+      "packaging": "Bag-packed",
+      "price_breaks": [
+        {
+          "quantity": 5,
+          "unit_price": 0.4628,
+          "currency": "USD"
+        },
+        {
+          "quantity": 50,
+          "unit_price": 0.3867,
+          "currency": "USD"
+        },
+        {
+          "quantity": 150,
+          "unit_price": 0.3542,
+          "currency": "USD"
+        },
+        {
+          "quantity": 500,
+          "unit_price": 0.2961,
+          "currency": "USD"
+        },
+        {
+          "quantity": 2500,
+          "unit_price": 0.278,
+          "currency": "USD"
+        },
+        {
+          "quantity": 5000,
+          "unit_price": 0.2672,
+          "currency": "USD"
+        }
+      ],
+      "market": "global (USD storefront)",
+      "note": "LCSC product page; brand listed as PANASONIC; full reel 200"
+    },
+    {
+      "supplier": "JLCPCB",
+      "supplier_sku": "C178715",
+      "mpn": "EEU-FR1V471",
+      "url": "https://jlcpcb.com/partdetail/PANASONIC-EEUFR1V471/C178715",
+      "as_of": "2026-10-03T13:57:33Z",
+      "via": "api",
+      "stock": 89,
+      "moq": 1,
+      "price_breaks": [
+        {
+          "quantity": 1,
+          "unit_price": 0.4616,
+          "currency": "USD"
+        },
+        {
+          "quantity": 50,
+          "unit_price": 0.3858,
+          "currency": "USD"
+        },
+        {
+          "quantity": 150,
+          "unit_price": 0.3533,
+          "currency": "USD"
+        },
+        {
+          "quantity": 500,
+          "unit_price": 0.2954,
+          "currency": "USD"
+        },
+        {
+          "quantity": 2500,
+          "unit_price": 0.2774,
+          "currency": "USD"
+        },
+        {
+          "quantity": 5000,
+          "unit_price": 0.2665,
+          "currency": "USD"
+        }
+      ],
+      "market": "global (USD)",
+      "note": "JLCPCB parts library (public parts search API, no login): prices for JLCPCB assembly and parts orders; library type 'expand'"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": true
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; listed"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

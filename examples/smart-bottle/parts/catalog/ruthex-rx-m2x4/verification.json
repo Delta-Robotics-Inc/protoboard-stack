@@ -1,0 +1,23 @@
+{
+  "partId": "ruthex-rx-m2x4",
+  "recorded_at": "2026-10-03T02:33:39.949Z",
+  "audit": {
+    "method": "independent stage-2 audit (skills/uhd-part-verify) found 4 problems, all repaired; the 21 facts were then re-checked by the author against the hashed ruthex product JSON, drawing and pack label. A fresh independent pass over the repaired part is still to do.",
+    "checked": 21,
+    "confirmed": 21,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": "Independent audit repairs: D3 hole and 5.0 mm (L + 1) hole depth cited from the ruthex drawing and pack label; D2 3.1 restated as the drawn pilot vs the STEP's Ø3.20; ruthex product JSON, drawing and pack label hashed as manufacturer sources",
+  "assumptions": [
+    "generated body"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "mass",
+    "brass alloy, pull-out force, torque-out, tightening torque, operating temperature, installation temperature"
+  ],
+  "vocabulary_gaps": [
+    "No protocol fits an internal thread or an insert melted into a plastic hole. Shaft is a rotating drive and BoltPattern a hole pattern on a plate. Both interfaces use protocol 'custom', role 'peer', as iso-10511-m3-nyloc-nut does for its thread (fastener_diameter + length)."
+  ]
+}

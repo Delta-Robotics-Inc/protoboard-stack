@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "bottle-battery-leads",
+    "config": "src/harnesses/bottle-battery-leads/cad.config.ts",
+    "configDigest": "sha256:d76499a166dc5e935da28304382ac95afcc99386d945f5cd184a97518c6edd53",
+    "moduleDigest": "sha256:90573fc40ed05f24a3d86b669f429d72ebd0456e7cf2a3efd49d04c56faf0609"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:181e38711a7eaa460caa0056dbf0e52e150ad1ad384a1b9465266928b16c3ae6",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T11:25:51.995Z",
+  "status": "succeeded",
+  "summary": "battery_leads: body.glb, body.step and body.manifest.json in src/harnesses/bottle-battery-leads/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.glb",
+      "digest": "sha256:9ddb6b5883e1d849c2e673127b8b40c2ebb773e72de3bee86ac78f246a24a94d",
+      "bytes": 41120,
+      "description": "battery_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.step",
+      "digest": "sha256:2bb1228d1aae3ac91b29564e658db9367d951c99e65c6cc0d33c630ef28050aa",
+      "bytes": 40862,
+      "description": "battery_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/bottle-battery-leads/out/body.manifest.json",
+      "digest": "sha256:26d9616f98840cfb903b0d4ba714eb6f3ac54f46f506657593606b4269dad443",
+      "bytes": 2184,
+      "description": "battery_leads: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "bottle-battery-leads",
+    "path": "battery_leads",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 9,
+    "route_length_mm": 7.81,
+    "slack_mm": null,
+    "bend_mm": {
+      "target": 4,
+      "minimum": 2.5,
+      "centreline": null,
+      "conductors": 3.45,
+      "at_terminations": 1.12
+    },
+    "clearance_mm": null,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T11:25:56.724Z"
+}

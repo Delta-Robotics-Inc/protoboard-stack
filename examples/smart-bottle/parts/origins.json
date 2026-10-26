@@ -1,0 +1,1099 @@
+{
+  "schema": "protoboard.origins/v0",
+  "definitions": {
+    "adi-max17048g-t10": {
+      "file": "parts/catalog/adi-max17048g-t10.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "adi-max17048g-t10",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:c93487bc5349c00869e79526c03aef0a5852bc13746c8275ad87abc45442c38e",
+      "envelopeDigest": "sha256:aa573f0988512188ececb468fd1633ffcd4bd9d143dc3f347ebdd7b4d8854053",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/adi-max17048g-t10",
+        "strip": "library/parts/adi-max17048g-t10/"
+      },
+      "files": {
+        "library/cad/py/catalog/adi-max17048g-t10.py": "sha256:650dc393c3d0f08e5f0bb05045117913fee62e27b5bee21245b961b611d3bd0d",
+        "artifacts/cad/adi-max17048-tdfn8.glb": "sha256:c622859b197041b0aa5acdf40034bef8771ea84921103f97108971420da9a009",
+        "artifacts/cad/adi-max17048-tdfn8.manifest.json": "sha256:cbb8f9adc49d5c3d82f2e6209c32f586ad075b4104f805f82d05f5296e4ac198",
+        "artifacts/cad/adi-max17048-tdfn8.step": "sha256:e76ffe574e421dbbceeaf493a2681417b27cec5d1636d887c033379482a67d49",
+        "artifacts/cad/interfaces/ep.glb": "sha256:afef8eb21a4e66ebf839ee72019793fe94fd078f0a723b4bec687e984c4d1b9a",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:304c899e1348f66bad101ecc939f04742040f866bc70d1a4bfea9c1173e3798f",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:79abfec1e7d1c7250526719aaec6d6fb0bf975a0c8816240ebec417f85b92dbb",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:8907bd9572b98e8f6898795590b5edac484fd76010dea15bd1d50e6a3cfdd207",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:fcb5b65aa3f22ad966f1aa873c9a8e7c27256682a9c233b5457c77700e48fc64",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:2c78a46a2ba7fca8707ebd5bc9f91179d63efe402339d0a2484992eb6a7b106b",
+        "artifacts/cad/interfaces/pin_4.glb": "sha256:d6b39a09fbf4ce4c21ba8311ffc0276db40179c850d6bfea0565b6b92ef2e426",
+        "artifacts/cad/interfaces/pin_5.glb": "sha256:c255c09d7d5c9f88d02917d4494120ee65d329ba7fe3bb227087423e4d18e1c8",
+        "artifacts/cad/interfaces/pin_6.glb": "sha256:cdf3eb194202e751360173016969f19b19249634c8e311bc9a76270a521b051d",
+        "artifacts/cad/interfaces/pin_7.glb": "sha256:7757ab01ebdb4d46887a982e6cea17cdf7689f5f1b6fd3de04d56308e0aef5c1",
+        "artifacts/cad/interfaces/pin_8.glb": "sha256:2222c837dafbc486df3de50db58e87c5cb516bf934162eaaa3e4fa2b31ac01e0",
+        "sources.json": "sha256:8795e1c06b8d27a53feb653ccb79d719eb48520290b2edeabdda0380c2f849d5"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        }
+      ],
+      "source": {
+        "entry": "adi-max17048g-t10.uhd.ts",
+        "export": "ADI_MAX17048G_T10",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "adi-max17048g-t10.uhd.ts": "sha256:0910abb73077744c22ffd9426c3cdd72f794f89e6bd5b60242459628e6c47171",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "alps-skrtlae010": {
+      "file": "parts/catalog/alps-skrtlae010.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "alps-skrtlae010",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:4ca975e5c79cb67520ec61b49463d852820638a30048a0ca0089de970aee66b1",
+      "envelopeDigest": "sha256:32b10179ca1d4333846026d31620c3d418a0ca86df5f7d8aa62ec105a9df78a4",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/alps-skrtlae010",
+        "strip": "library/parts/alps-skrtlae010/"
+      },
+      "files": {
+        "library/cad/py/catalog/alps-skrtlae010.py": "sha256:6df4da10b95983084f4af614742dc73fbe27c8c0cc6f77e6e4cef1ca8d29bbe2",
+        "artifacts/cad/alps-skrtlae010.glb": "sha256:a764ba393360998ff7b69c51f7e109e22325b2197f5dbf78b4037de28dc7439f",
+        "artifacts/cad/alps-skrtlae010.manifest.json": "sha256:210dc0435b23bd5b96720f9c5c5baaeac31ab8494f92c528373745ab98070a35",
+        "artifacts/cad/alps-skrtlae010.step": "sha256:5ecff4bedfb7470e11a551b69cc0cf807f3f06639d6dce65050d6345f58a03d3",
+        "artifacts/cad/interfaces/fixing_legs.glb": "sha256:97942f01a50c5dc113794be591614e817bd7250adb2e8c4d01c3adfa1bc46114",
+        "artifacts/cad/interfaces/guide_bosses.glb": "sha256:449a06a6c721168fd814b5305f343be021b119f9b01dd0f1b7416c119b10c7ca",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:6236e2acd2ecce6985f9e87e60e25186305f8bdd886130f906bb2ebe69136e03",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:e98fe5f6544b46ea0217a9cc26d258b492c10f2796bf30d0b77b8c8bfd163967",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:8bdf5c5b4bcf53aadd8e3700c29104598a05c5681ac7f2de4ec7dabd73012525",
+        "artifacts/cad/interfaces/stem_tip.glb": "sha256:06a5ebd4de6b72a2c0b1508c2950adaafc92d694418230a35685241092b2a0d5",
+        "sources.json": "sha256:4c59c8668ac3e383b67602e104e5b5f8fb1dfae56c2b6d95e97377d0b122379e",
+        "verification.json": "sha256:6da82d5d1b7bbe4bcba8d7a8331285e91ade8fc4bfbdb9e35b6030d679cf8fdb"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "alps-skrtlae010.uhd.ts",
+        "export": "ALPS_SKRTLAE010",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "alps-skrtlae010.uhd.ts": "sha256:25782623fbe2108b4c7c44a78eef6bec2ccfa9ffaa3cfc2cd016f8409136367a",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "as568-010-silicone": {
+      "file": "parts/catalog/as568-010-silicone.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "as568-010-silicone",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:6be32d244305120220fff7523e8d9b264d2e434a36b2f4fff7e542d98de76792",
+      "envelopeDigest": "sha256:0b9680d41dacf4dd28c2580874b00dc7a9c281ca465f1c2280b60d2764098284",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/as568-010-silicone",
+        "strip": "library/parts/as568-010-silicone/"
+      },
+      "files": {
+        "library/cad/py/catalog/as568-010-silicone.py": "sha256:ab18550791dba1bd0d2ea9505f599f30ef0b7354df45cfad558f180a5ea48ffa",
+        "artifacts/cad/as568-010-silicone.glb": "sha256:10c2c63f47d564b1ad1dc3a84f7d939e3162f98fdf861048b624f70419ac0a96",
+        "artifacts/cad/as568-010-silicone.manifest.json": "sha256:80540ea1a37cdbeb3a4a180b00f0330827de4bb3ef411e9100db036e95b9fa97",
+        "artifacts/cad/as568-010-silicone.step": "sha256:55cdcbbcfe57858eb53adaccde2a769427e9b02a32c8df58f0ebb50f92cad795",
+        "artifacts/cad/interfaces/bore.glb": "sha256:f5f839d469b3ce0b7470fc2929061314827732a483b0a74a302a5a5be02cbe02",
+        "artifacts/cad/interfaces/flank_a.glb": "sha256:8743a3d037ca77a2fd8ef87671726838ef65f887a68787e86b7ee2b72a0131bf",
+        "artifacts/cad/interfaces/flank_b.glb": "sha256:c6855011564ae01a09cbcf827647da7ae8d7236d9f34648502e95022da9107a1",
+        "artifacts/cad/interfaces/outer.glb": "sha256:947da437243ed5f525db998c59c04c400043645fd29fa909eb07c3f613ab914a",
+        "sources.json": "sha256:3f1d6c5bad651053bff654f936283fc365fb5e600e58a154cb2a95b9cb91a1bf",
+        "verification.json": "sha256:80b9e16df40da337f4ea6042b368f6c53be914049d051898e41e71c34666a763"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "as568-010-silicone.uhd.ts",
+        "export": "AS568_010_SILICONE",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "as568-010-silicone.uhd.ts": "sha256:963a58805a3c60680b250bce13c75131c74a6b853a23aff610bdb7a63a745173",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "as568-040-silicone": {
+      "file": "parts/catalog/as568-040-silicone.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "as568-040-silicone",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:3cad341340bb7a8602c56b569c3b90b2f1c1c59afa55840cae442f319b233248",
+      "envelopeDigest": "sha256:85b221ed2f84a4df98464fc57d209c900b4ea8fd1ccdd67fbb44ed946a5c216c",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/as568-040-silicone",
+        "strip": "library/parts/as568-040-silicone/"
+      },
+      "files": {
+        "library/cad/py/catalog/as568-040-silicone.py": "sha256:4b8ba2ff47801fe7f7ca2e894104b735cee3027ade3c9ba164b5d7b7d2ced94f",
+        "artifacts/cad/as568-040-silicone.glb": "sha256:584158bba6f75aeec9a914af4c7bf0e573e7099222ebd62f0e6a14ca80c32b88",
+        "artifacts/cad/as568-040-silicone.manifest.json": "sha256:2c22aaf91f8968068a48c03aa25d870cf26a7b2ad0b5a950bad1da538c099b13",
+        "artifacts/cad/as568-040-silicone.step": "sha256:cfe66312c6bcc834fd46fc411da77b15af386bde7c43e0c9f4797e88a3d1b815",
+        "artifacts/cad/interfaces/gland_face.glb": "sha256:415ca7ee8657429ea93c28b094f962f771f647414af52bcefb54c1b7db18e843",
+        "artifacts/cad/interfaces/inner_face.glb": "sha256:e65621e357621b0cf6f86b7bccff0b04fd6ac057aa9b1a97cefde746579c03d2",
+        "artifacts/cad/interfaces/outer_face.glb": "sha256:9f779656b5e58a0b99449988dbf8eb731003bb0aa51c2add53c45925c571bb79",
+        "artifacts/cad/interfaces/seal_face.glb": "sha256:3b27371ea596406d4eb56f3b0baa03fb51047aae58bb4cb0b3f14bf6d639ccaf",
+        "sources.json": "sha256:7b79c0b6ed8e4b3a51f9b689cb2d0ad7e389cb4c40be7ddb50a47cd0fb30d42a"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        }
+      ],
+      "source": {
+        "entry": "as568-040-silicone.uhd.ts",
+        "export": "AS568_040_SILICONE",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "as568-040-silicone.uhd.ts": "sha256:8ac3d243f316b31d73aab9d4759b8c55747e387e938d51b9e6beb877c9309439",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "as568-138-silicone": {
+      "file": "parts/catalog/as568-138-silicone.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "as568-138-silicone",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:588da7f5e513d62bf4f4cef55896d6499d9ae4371deb463ecf5bf5aa4de00f54",
+      "envelopeDigest": "sha256:957725ec05b4d11e679ca87a09a25e2da7ddec9f73b53a0ecef2fc637a9b2963",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/as568-138-silicone",
+        "strip": "library/parts/as568-138-silicone/"
+      },
+      "files": {
+        "library/cad/py/catalog/as568-138-silicone.py": "sha256:7b99d2b90d69a7b24cb5da4ee60cd551860514eaef61f109d6519c96615c2f88",
+        "artifacts/cad/as568-138-silicone.glb": "sha256:9fa2e32f4a0652de1b86abc06a2a54e658692dfd4c6e997b9a6ef01094acfcd9",
+        "artifacts/cad/as568-138-silicone.manifest.json": "sha256:642e0a6fc0d71db8b5f7782c5e47c0ecd421a6c9346590637bffe11bff5e62c8",
+        "artifacts/cad/as568-138-silicone.step": "sha256:61bda50d67ec3cd796660a95ec636b0379894db607dce821534755ad74ef3e12",
+        "artifacts/cad/interfaces/gland_face.glb": "sha256:a0f339600207c4825a50c724f398c5c4eca7cc9e606a5856710cbe33398a6e54",
+        "artifacts/cad/interfaces/inner_face.glb": "sha256:4fb65d829492bef20b242b016a5cd8b74ef7d7f0ed38d9c93336a464fa838155",
+        "artifacts/cad/interfaces/outer_face.glb": "sha256:3f30f5d77d177efa629e02e70544179868e2d83b140880e75b86aa0f1c93b408",
+        "artifacts/cad/interfaces/seal_face.glb": "sha256:6bb286c0c5c736ffecf0109ab5cce821a6fed4943e46b579a5909c294e9f2e11",
+        "sources.json": "sha256:e1273000da1f1f2f77853f119bd6b20ee790ac0050506adfcd7fa498a8a99a18",
+        "verification.json": "sha256:275cc225643af8c9b9e5d3eede04039e60deb888bada93b68f696ea845a59d32"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "as568-138-silicone.uhd.ts",
+        "export": "AS568_138_SILICONE",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "as568-138-silicone.uhd.ts": "sha256:2643aeafe099cc50c8e8961dbf1af882a445581f0dfab33a04a5c1d48d8d1f9a",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "coilcraft-xfl4020-152me": {
+      "file": "parts/catalog/coilcraft-xfl4020-152me.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "coilcraft-xfl4020-152me",
+      "revision": 4,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:da6325ccc7cba5697fdc5e5b459b1bd8448ea84d320602f99b399e3552c63f90",
+      "envelopeDigest": "sha256:1dfe84a365c727abccdc4951e8a469d40e83b4afebb731e86c7be1441ce1044f",
+      "retrievedAt": "2026-10-07T03:01:36.577Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/coilcraft-xfl4020-152me",
+        "strip": "library/parts/coilcraft-xfl4020-152me/"
+      },
+      "files": {
+        "library/cad/py/catalog/coilcraft-xfl4020-152me.py": "sha256:529223a22117baced0f5005bafa6849464eacdbbd78bc167c775a9a7e32a7a87",
+        "artifacts/cad/coilcraft-xfl4020-152me-4x4.glb": "sha256:859d52eb8dc3571872f9fa232fcd20cc3bf4e681840d064fd2fe0d5169af20ac",
+        "artifacts/cad/coilcraft-xfl4020-152me-4x4.manifest.json": "sha256:734a2aefaff7caa9b64f05dd769c0da0bfb4459f5ad1456deeafebe24cd95f40",
+        "artifacts/cad/coilcraft-xfl4020-152me-4x4.step": "sha256:380c3e36848a27990df4640ba2743649e3aa582f29937afdd8a5f783b71f3ee5",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:a5e688b17c55b7afe3eb7c0fed448ff0987108a5ecd02fbc46462a83023a4ea1",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:0ac14bf09b7b8d4efea4684405e430bb99c2ed1c5c958d178c55eba89d9757cc",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:d2a0814e56ddcfb90bf0afd24c6727e973772c3261584cd66104089bb2b4f60e",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:1fa730d4b5ad347a90586d3b0cf72d0199f27b009028cf96028a49fbdad08cf0",
+        "artifacts/cad/interfaces/start_mark.glb": "sha256:ac1632869b37651b781fefacfdb8fa6a38dcf76e83df4f664ce01fad5735c941",
+        "artifacts/cad/vendor/KICAD-LIBRARIES-LICENSE.md": "sha256:45d2bce75e5a4208f5afb01b8fb2c406e700371c4fe2b5f5cd5c443d46db4d8f",
+        "artifacts/cad/vendor/L_Coilcraft_XAL4020-XXX.step": "sha256:ccccee60d1c700cb295b890024e8da4e4d7507b6b69039c751b6dcc3e91bd3ee",
+        "artifacts/thumbnail.png": "sha256:148f38ba13c8ce0e32a4744520906e22050e9ddfea1c3a26761940b4ae7382f4",
+        "sources.json": "sha256:4abea66fe9a4f70d3d80c7a4120f59336cd458b34f08ae85fc092e9c498941a3",
+        "verification.json": "sha256:a493c2bd82f74aecf60b33e3fb1779a9f4abf768c4ef3c07979fd544012aab02"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "previous": {
+        "provider": "protoboard-cloud",
+        "library": "protoboard",
+        "revision": 2,
+        "digest": "sha256:5fca9390781cec5a96a2fa32ae14910a692df909b5c26a08430e5aa5075760ca",
+        "envelopeDigest": "sha256:f1f8e4c5c9fe165944b8302290cddc46065dc6a2d293e7e8d4f950e145dee337",
+        "retrievedAt": "2026-10-03T08:22:09.513Z"
+      }
+    },
+    "espressif-esp32-c3-mini-1-h4x": {
+      "file": "parts/catalog/espressif-esp32-c3-mini-1-h4x.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "espressif-esp32-c3-mini-1-h4x",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:6d2fd9322a77e02b95d904a2133a394ca249b7b640dfd4dbb1ed8d40ae37d8e1",
+      "envelopeDigest": "sha256:1387bf613387299b126ac8303549f9c444d274902a325f54eda08d0a8741d0b9",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/espressif-esp32-c3-8ee6",
+        "strip": "library/parts/espressif-esp32-c3-mini-1-h4x/"
+      },
+      "files": {
+        "library/cad/py/catalog/espressif-esp32-c3-mini-1-h4x.py": "sha256:b0d8abfa2743c9bfb86376df529de62a9fdc53334c3985db478cc9e01d31d962",
+        "artifacts/cad/espressif-esp32-c3-mini-1-h4x.glb": "sha256:292d8668a52ffc9c5d70b1b06d30de7da5317580bb28e85a5c2f1f86a92a4d89",
+        "artifacts/cad/espressif-esp32-c3-mini-1-h4x.manifest.json": "sha256:dcb238e927167daefbaa11ca68328108f7c0d5c0fb601d56d278f40599a41611",
+        "artifacts/cad/espressif-esp32-c3-mini-1-h4x.step": "sha256:ceb9160913168ec998e45ab68499e27a24c8c9314d0bd29b84ec048a343de78e",
+        "artifacts/cad/interfaces/antenna.glb": "sha256:37e7a1da10a51b19885c5815cb8374f3f3dd7e2ebc4407db05c0e462a02ee3b1",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:7421104d4e25ccf347b769e21ae8224390acfdb133c808b01b701b15c8770cd8",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:72b58d7d6df7d004e76712c22fddfac6ad2a6a2133351be10c322a8f9c67de20",
+        "artifacts/cad/interfaces/pin_10.glb": "sha256:10e02a8a4b4ab58669f56379c7db2775e5f3c1bd832c7d3ed23f224811033dfc",
+        "artifacts/cad/interfaces/pin_11.glb": "sha256:540777dfdc1030b7c411df89031be943431f7a5e8fa08efc037e39a1d5b0214e",
+        "artifacts/cad/interfaces/pin_12.glb": "sha256:860d9a4df97f56f494ab44e3105399177dab4cc341a78de8851f5908a66ff000",
+        "artifacts/cad/interfaces/pin_13.glb": "sha256:fda45d46c4335cd107676d32f580f5a96dcbf44c292bb0ee519ec7087a61e293",
+        "artifacts/cad/interfaces/pin_14.glb": "sha256:4d9855f8b48ab4c571ed507b38623efc488653799cba25d8f2f5f3602a193381",
+        "artifacts/cad/interfaces/pin_15.glb": "sha256:b33b5575a395d9b6232c6c09d861dbb789e278d46deb9eef880e2d792509c657",
+        "artifacts/cad/interfaces/pin_16.glb": "sha256:abe13e24854dd6fe391352d0e924d24bb51e1618528a0891b2cb6f4528f793a3",
+        "artifacts/cad/interfaces/pin_17.glb": "sha256:cb389a42e5b0cd4b748806e73b79bf4020bc617a61155a5bfd3bf372efcd0341",
+        "artifacts/cad/interfaces/pin_18.glb": "sha256:85d4332898f75b66fc0664da189e01db0ebc18cb37d522b69148cd52bcda8a88",
+        "artifacts/cad/interfaces/pin_19.glb": "sha256:05e80ba71c3e746362eb09f4fb461cb53cdeb48a6eb47df7e5afdbf7b33d95f0",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:61a303408d0a3a5a50f3e450ef71c0f27021c8269088c7a481e23c0bed47416b",
+        "artifacts/cad/interfaces/pin_20.glb": "sha256:9085d2c5f5f2511ae3d449a5a9c506d063c99564f835682abbf0b1f197783239",
+        "artifacts/cad/interfaces/pin_21.glb": "sha256:1c59c689b8c9e83ecba83b804ac7ddb6b2cfe97407246fa70919dff34c440103",
+        "artifacts/cad/interfaces/pin_22.glb": "sha256:e694304f4c848cffa17817e50c5604717c627e5c60c7268a96928fc56cbcf9c2",
+        "artifacts/cad/interfaces/pin_23.glb": "sha256:c8b1ab159d0661ac6b2c460794274cb59f72d1d3b086275a623fddc1e08ff4bb",
+        "artifacts/cad/interfaces/pin_24.glb": "sha256:f043d045c3d32b824a057238c7781ec24faeeb278c8a1c414da0d6530561a195",
+        "artifacts/cad/interfaces/pin_25.glb": "sha256:fba5e882fd93e1046b1e9488291b50a6ccab32f5ecd365ec37fbdfececde4a33",
+        "artifacts/cad/interfaces/pin_26.glb": "sha256:17a99bd67ccb1d629ec14f7568986567fa50c5b70145bfe7f06624cc26b8859c",
+        "artifacts/cad/interfaces/pin_27.glb": "sha256:6f9a60c2547eb336c1eae43e004f6485ff8cb628fbe069a5869aa00a8ef8a156",
+        "artifacts/cad/interfaces/pin_28.glb": "sha256:86d34fd8374932dfc71f0e15fc771980a5598d8701057888be72237f63fe667c",
+        "artifacts/cad/interfaces/pin_29.glb": "sha256:90382b71878dac94dc29148a8930b1e850a8edf11463a1dba1642cffd9ba2af1",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:076656fd75de55d9bd1e5c422289da29e500397cf64c0a6c627b1d01cf66bbad",
+        "artifacts/cad/interfaces/pin_30.glb": "sha256:cffb5b0d92cc58de8c7a31f6f88b556f8fe6f64592d50de14075617bf1ac07d8",
+        "artifacts/cad/interfaces/pin_31.glb": "sha256:f2f3319dfea0ab36378c956993a995b5bf08a1aba7cc3f41ed264f8004b43e1b",
+        "artifacts/cad/interfaces/pin_32.glb": "sha256:a019f18a426544f2f206f2fc06b6f26dcd7ae41e0cd96a85ac73d62fa0ae6c4b",
+        "artifacts/cad/interfaces/pin_33.glb": "sha256:cf9601325c9d885b84e1be02fe0e32707c4ff5c5192c8f9430a93e0a8699142a",
+        "artifacts/cad/interfaces/pin_34.glb": "sha256:77ca4bfbfd1cd9f4d132d9cede400b26a7707abe5f6a6867dad4d72093e468e9",
+        "artifacts/cad/interfaces/pin_35.glb": "sha256:fe44045e3b115bf0da8dda0ef5b31224cc6b5093dfef2e5c1b8902afc5883a73",
+        "artifacts/cad/interfaces/pin_36.glb": "sha256:2cb80b59111412479ffc63c188dd910d2731a3a8e73f4677fc3106b79d892fa3",
+        "artifacts/cad/interfaces/pin_37.glb": "sha256:9d0fa660c767242ebf782e16e536e1ffe6b20fa1f41f6c8b14f2442bcc2b4d9a",
+        "artifacts/cad/interfaces/pin_38.glb": "sha256:96b09839a2ec119f5a52f5b7eb9b558c8d95f95b015bc473209b6a37b15d6d16",
+        "artifacts/cad/interfaces/pin_39.glb": "sha256:e6686e788080051969b49ea3352e3ab561835e1b70b67aaf7888e053337bee53",
+        "artifacts/cad/interfaces/pin_4.glb": "sha256:fdd684439f3415f3a8095ebd686cc15933f20678d20fbc0f11ce11aab17a9ade",
+        "artifacts/cad/interfaces/pin_40.glb": "sha256:82e375fbe5295db8d8e6263f068c0208e34360d5955e7eb72a0333d8781622ff",
+        "artifacts/cad/interfaces/pin_41.glb": "sha256:8ed8d471ac14893b9be88f8ae4056cc9bdf55af8e72718c2d10e10cb22cc5e10",
+        "artifacts/cad/interfaces/pin_42.glb": "sha256:e9e5f5402a7c69b94f61c87a6848aa44f04506424ef291bc5fea2b4209dc1899",
+        "artifacts/cad/interfaces/pin_43.glb": "sha256:f6d13629bf105a8f456332cd267afc81511dc89c6a8aa87c1b4e4bdbda5fb1d4",
+        "artifacts/cad/interfaces/pin_44.glb": "sha256:cc90912b0acc9b0f8bd28dccc1da97f658d673e1f36200f62ad2353f34b71e4c",
+        "artifacts/cad/interfaces/pin_45.glb": "sha256:43d663375b1524755bf4089492f2670201bfc518369ebfd515f16a83f49ef676",
+        "artifacts/cad/interfaces/pin_46.glb": "sha256:8f0fc9ba1956b5fd2daf4772d3d1500acc7109c765a922bb54e8c1fb0bc9bebf",
+        "artifacts/cad/interfaces/pin_47.glb": "sha256:53577e7a18cda19684d809d6a564e8a142990464846067935d8653bba8bc8997",
+        "artifacts/cad/interfaces/pin_48.glb": "sha256:68afe4e7596b80dd5e25214449ea98627eee8140ce3f1715e16c00f1791d80c5",
+        "artifacts/cad/interfaces/pin_49.glb": "sha256:e731547484594a243fab6cbcf5c5dd3296e87a73f335703e708b1b7e6cf11980",
+        "artifacts/cad/interfaces/pin_5.glb": "sha256:1a54355a8a2a7de6313356cdbfcfdcc0339aa0f8ef6cef78825e9b9634766941",
+        "artifacts/cad/interfaces/pin_50.glb": "sha256:5ff07aee20160154392df56125cfcce2b8249abff52a247b5cc36696b90933b6",
+        "artifacts/cad/interfaces/pin_51.glb": "sha256:9b41372bd1c39886945d2d3807e3a35714487fb12234163d28ced7013a1633cb",
+        "artifacts/cad/interfaces/pin_52.glb": "sha256:629222fe20d597a4ba7d88b58af3a1e86168cf445c8c82d419b9da73c6bd3705",
+        "artifacts/cad/interfaces/pin_53.glb": "sha256:9090659ec728e822375919e1f26b55faad87a15b2559065b610aa20ad9a36cad",
+        "artifacts/cad/interfaces/pin_6.glb": "sha256:b06210f702cae2df9191a8ba4218b77802a7e0c15907b8b04311867cc52a53a3",
+        "artifacts/cad/interfaces/pin_7.glb": "sha256:546cf76b5a13e40e976a705e69dbd381a043f18af81bc6d60675e0e13a9fcc41",
+        "artifacts/cad/interfaces/pin_8.glb": "sha256:7490ef181db10fea308ec2b8211761635e0279b14dd01cb90ba5b1a8807f65f7",
+        "artifacts/cad/interfaces/pin_9.glb": "sha256:57ef4ab1cd86aed0efca1dd3b3a8e82add8b5552a587b2cc476c5be0ec01fbaa",
+        "sources.json": "sha256:ad0971600a362536086a2ecf2dd1851708427fff89e32323b0fd804c971f08ff",
+        "verification.json": "sha256:569ba148acb774c4b19eb905a3be1e6c6c905bf1a335bbbabf5c9812f0494508"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "espressif-esp32-c3-mini-1-h4x.uhd.ts",
+        "export": "ESPRESSIF_ESP32_C3_MINI_1_H4X",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "espressif-esp32-c3-mini-1-h4x.uhd.ts": "sha256:8fe92a5d1c86d9a002863c2a4929432abbf592b0c3991b949350455189d42848",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "gct-usb4720-03-a": {
+      "file": "parts/catalog/gct-usb4720-03-a.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "gct-usb4720-03-a",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:fe20956b434c3f060e3667d39bc79062bf454996e6146d33fbf805f73afb7d77",
+      "envelopeDigest": "sha256:8dbc2412f673828c627e82b6ca887ff4c6cae69ccd4208e6ac02756063b60d2e",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/gct-usb4720-03-a",
+        "strip": "library/parts/gct-usb4720-03-a/"
+      },
+      "files": {
+        "library/cad/py/catalog/gct-usb4720-03-a.py": "sha256:4fd4fa7684f82a79cbba62722492326a2ce84a8fdaae1c24df676d301a57e235",
+        "artifacts/cad/gct-usb4720.glb": "sha256:ba615ca8818e84261251441219dda93cf2614cd134d815032e82e6efb29cc383",
+        "artifacts/cad/gct-usb4720.manifest.json": "sha256:0cb11d8f385c124ea9364ce281ff405391743108ea5b79b68640a7c740da5fe2",
+        "artifacts/cad/gct-usb4720.step": "sha256:5eae241bcbdf9bb9e7788a2090b721bb209ad4c0c9755c9033ac88694f5233af",
+        "artifacts/cad/interfaces/ground_tags.glb": "sha256:1a8dac6be86df053e5d4ae9c1d21bd8e3b91d0a84328cb83a0cf401796118dc6",
+        "artifacts/cad/interfaces/panel_seal.glb": "sha256:f034dd9a13adc31c1137e3190b803c8dd2590d8d3a2c904f6b99e307c7beec60",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:15ecb94ed3079e288435e20b6104f87f5eb75e1e19c597d3d8d1915cdb2b640f",
+        "artifacts/cad/interfaces/pin_a1.glb": "sha256:9afcf7ccda7f79c9696970464c4a33a3d48c76cf0a126d21c602171eaeece36e",
+        "artifacts/cad/interfaces/pin_a12.glb": "sha256:8dc634401abcff13d97fbe307cc145e9988b02606f998dedd934fdf16e6ad24c",
+        "artifacts/cad/interfaces/pin_a4.glb": "sha256:5816315cbc745892fa3d293301c6e1cba4a8660b4ae61c6f81fe7922f827519e",
+        "artifacts/cad/interfaces/pin_a5.glb": "sha256:52588fe3d24389b57525964a3255dfcdc904899f33daa7b78f78481844d2bac4",
+        "artifacts/cad/interfaces/pin_a6.glb": "sha256:83385a9a0df2cd62d4898a8f9a96538f2345956fc604f04e1733c01f977d03ae",
+        "artifacts/cad/interfaces/pin_a7.glb": "sha256:5e5716a7f8f6863cb86a9efe936ed9c85d01d098402399564cb4751beb160953",
+        "artifacts/cad/interfaces/pin_a8.glb": "sha256:803f8b846b5bce544b1dbfe48468a9fe20c9221d249fc138e49968770e30255a",
+        "artifacts/cad/interfaces/pin_a9.glb": "sha256:4ca3d43064e8210d4c5b85e373680ebe9b8a8534cbf0579a0b96bde0f64c2539",
+        "artifacts/cad/interfaces/pin_b1.glb": "sha256:947bdc226517acfa943121f1b33c87108376fef00c6a345e0022d9d1aba8d55a",
+        "artifacts/cad/interfaces/pin_b12.glb": "sha256:ec6dae7dae3cabf03b1fdbb3c5c03bb35586732107b0f9d751751ee9357693b7",
+        "artifacts/cad/interfaces/pin_b4.glb": "sha256:e981741cd12dc6928458eda47d4b220226ce1157ba8797a807dbceccde0f6a6d",
+        "artifacts/cad/interfaces/pin_b5.glb": "sha256:6f425d8c3d50de6731418f876be1e9a718b432f1cc7115bb0e2b2c322409dce3",
+        "artifacts/cad/interfaces/pin_b6.glb": "sha256:157bd516c4d392089516b31bad3812a5299a1d33a0629c2c0502008038aa684b",
+        "artifacts/cad/interfaces/pin_b7.glb": "sha256:15bb631b0cf71d7c11f030292f6981fc9e72d3d5b09a1f16c0c4ddfb8c7021b6",
+        "artifacts/cad/interfaces/pin_b8.glb": "sha256:446c0bf7d697b6f78547485a654abe5bcc923e34f5b0d4132da17cecde691a61",
+        "artifacts/cad/interfaces/pin_b9.glb": "sha256:46e12485f20c3971d60d0aec3630cfdb26142163c4e06374990e5fa8592cc34d",
+        "artifacts/cad/interfaces/shell.glb": "sha256:56fc5364d0e9bc54a717bd24ff2c04510e7dd0b927e627f3af5b4bb5d3b828f9",
+        "artifacts/cad/interfaces/usb_c.glb": "sha256:af0aaf7f32d76d22e399be2ca842d28eed211d6bda3a7446bfcee8aff734ae90",
+        "sources.json": "sha256:6231d20a3e1a7148fd61933e64eb1e8b185bef4643555992ce8d64168b5eaf04",
+        "verification.json": "sha256:486646c1451a41db8a0908fb02ca78fa3e6e0a311ea61c0d4ef751fc8a93aa15"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "gct-usb4720-03-a.uhd.ts",
+        "export": "GCT_USB4720_03_A",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "gct-usb4720-03-a.uhd.ts": "sha256:9e337e3de2ca369a8185e1f62e1fe1fa6607b33037da7c6c2571dcc1c6c53689",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "iso-7045-m2x6-a2": {
+      "file": "parts/catalog/iso-7045-m2x6-a2.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "iso-7045-m2x6-a2",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:f309971b9bcd553b9ba741336015aba163537b195dbeaf0af576c5944c4e7725",
+      "envelopeDigest": "sha256:c95a3d389ad9d5f1092de2efed6bf61fe917564f5350094683c9f061fcc11884",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/iso-7045-m2x6-a2",
+        "strip": "library/parts/iso-7045-m2x6-a2/"
+      },
+      "files": {
+        "library/cad/py/catalog/iso-7045-m2x6-a2.py": "sha256:3759ab9787b4a50dfc8162515b2e964b9556517ca7fd32d3d10ce0c78eac414f",
+        "artifacts/cad/interfaces/drive.glb": "sha256:643461d3cb6461450e6e8a8aa9d384551cc251820a83cfafcdc496ae11e3f8a3",
+        "artifacts/cad/interfaces/head_bearing.glb": "sha256:9d2f5ea8793be1a67c297312e60d69750022bb263495ec1bda6cf1e442584b40",
+        "artifacts/cad/interfaces/thread.glb": "sha256:694a1fa78e0ecaf98bc765c0193d3cdb5f36ead40aaa3038287af56261fad978",
+        "artifacts/cad/iso-7045-m2x6.glb": "sha256:9dbeecf851007a1e33bd71b3d5c7b464a7203c5178dcac071c05c8b84832aa44",
+        "artifacts/cad/iso-7045-m2x6.manifest.json": "sha256:52defafa83f86b7372ed40a3148393518330570c77ff5f9b54664363854521e1",
+        "artifacts/cad/iso-7045-m2x6.step": "sha256:6161aaf4ce4edb714263d08f4ab4d38e3fcedd7e059c854ef8f54d8f698d848e",
+        "sources.json": "sha256:c4afb84a4f444be67280510abc525db099b013e271402f777841df40083d1b39",
+        "verification.json": "sha256:53e67a6a8eb1ebf641dec4c70f142070d7a414688795348c6b8c668badb3cb96"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "iso-7045-m2x6-a2.uhd.ts",
+        "export": "ISO_7045_M2X6_A2",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "iso-7045-m2x6-a2.uhd.ts": "sha256:7d9f2577162f5461d61bc7f2112e930f135d08b398373d0f4516991806493670",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "kingbright-aptf1616lseezgkqbkc": {
+      "file": "parts/catalog/kingbright-aptf1616lseezgkqbkc.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "kingbright-aptf1616lseezgkqbkc",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:0ec13a19fae88eb7a57aeaa3946174be3632809e4635009cc2fc68d39eb4b8bf",
+      "envelopeDigest": "sha256:65cf84620202ca5870c0868b33d0307c6c9cb18cbc6dc0e23ee809a4818b2cc6",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/kingbright-aptf1616-469b",
+        "strip": "library/parts/kingbright-aptf1616lseezgkqbkc/"
+      },
+      "files": {
+        "library/cad/py/catalog/kingbright-aptf1616lseezgkqbkc.py": "sha256:c09f646f908deeba36c4537d65c6395c4d9a4513e26ed07ec280774d11667fb6",
+        "artifacts/cad/interfaces/light_output.glb": "sha256:c618039f37f66bc96ca3f4dc576f7f507dbb94278e673b56f9a729e336fe9ff9",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:357a2f1d48fba5d9b4d6b38c5d12e8d2440c44eebf1213bc97bf298b31886115",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:5c6b93eea8a0b4379531ec8b70080459c563a0f8c71cf9ac5264219c2f672a04",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:327c92684fa9c43a50b80e9686426bcce46c795c8dc4181fc722f221f79281b0",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:7e51b5ba78649dedc277d31c27164cd039a8eddf950bfd4430ee1a13239387f1",
+        "artifacts/cad/interfaces/pin_4.glb": "sha256:21440aa7f32f111d258d0c0ac1c2ae658cdb4667610f2efffd42508fcd35b5bd",
+        "artifacts/cad/kingbright-aptf1616-smd-1616.glb": "sha256:cc01357ebafaeeeb77789a906882b33ebcf8ba83e73a8f2c13bc39d08c303f37",
+        "artifacts/cad/kingbright-aptf1616-smd-1616.manifest.json": "sha256:9faa57bf9f4324b1d9044a914e1758062d9c5dfc32d0e003b74a3c9f7ef9635c",
+        "artifacts/cad/kingbright-aptf1616-smd-1616.step": "sha256:e11b15f3adc7983f51a65139453feef8e9e1c59d4a436750ec9962990296a90a",
+        "sources.json": "sha256:ecaf3802bb14cf01b3b170fec6be341200fb3155398a82d7777765c859c1a2fb"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        }
+      ],
+      "source": {
+        "entry": "kingbright-aptf1616lseezgkqbkc.uhd.ts",
+        "export": "KINGBRIGHT_APTF1616LSEEZGKQBKC",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "kingbright-aptf1616lseezgkqbkc.uhd.ts": "sha256:d1d037bccedeead25fa430b4fe16998aebf84d491e8e2cba1ec7dba1f795bb9a",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "microchip-mcp73831t-2aci-mc": {
+      "file": "parts/catalog/microchip-mcp73831t-2aci-mc.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "microchip-mcp73831t-2aci-mc",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:a7ffa803257cd5bf6734ca4066242d730c26749b971eaba1a5bcfb472765aa9f",
+      "envelopeDigest": "sha256:56cff5d33f8a070f943ec54e423aaa21c96e283125607fd9ae3a4c4775561308",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/microchip-mcp73831t-500c",
+        "strip": "library/parts/microchip-mcp73831t-2aci-mc/"
+      },
+      "files": {
+        "library/cad/py/catalog/microchip-mcp73831t-2aci-mc.py": "sha256:790f45efae723879615fe18655bb42a0b9500d6170883189231555b1d0fa53fc",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:4b071a0f785b39e68e6ae9e357eed585be188bb671d57935cb94479c85dea57a",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:211cec407028d1220e3ea7f2e77cefc390b17cd07a0fd12cd3e254dea457e6cc",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:e0e236b83be68d11d36a86b9a14a5327105ecb22c34116245263776e4c6b1f71",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:8bddd460c8247071bc07b69449d51749ab51547b23b2b8f3d88dce47653d68ca",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:8f9fcaa42a18f05baf18f9f57bd523d9d2a015a904aeda1da1f5c7d2b38c8228",
+        "artifacts/cad/interfaces/pin_4.glb": "sha256:9c33e56b8349e2d94a2da33c2569b6f93bb113deecac707a5282581c49b6fced",
+        "artifacts/cad/interfaces/pin_5.glb": "sha256:c565f4000d460e8dbf566a47e13f5bf2e2a5f5ffebac26c835bec42870aa4ba5",
+        "artifacts/cad/interfaces/pin_6.glb": "sha256:a0eec7e52b151f4f1f450756d931c4101f816f2cf90383bfffd3d4c5eb57b292",
+        "artifacts/cad/interfaces/pin_7.glb": "sha256:fa53a60ed685b7cc0a536a790293cf22490ef35cff90552753a38fb063a5342d",
+        "artifacts/cad/interfaces/pin_8.glb": "sha256:13a952cb921ea77ee44f476cfafe3634bab7983c89b067ef32e4fedf648a92b1",
+        "artifacts/cad/interfaces/thermal_pad.glb": "sha256:85f76272c8f72fc0d8bee9bb028aca65e06e6d3a7dff658ec9fc3cde932712f1",
+        "artifacts/cad/microchip-mcp73831-dfn8-2x3.glb": "sha256:9c732ce4f2d746fa7177f75c56823118473c42d3d06d077c7881faf8c5dc259e",
+        "artifacts/cad/microchip-mcp73831-dfn8-2x3.manifest.json": "sha256:c803d512d30601d924aa7af0f7e2bcc67ff73f767a2e0dd22cdacc80be9a7458",
+        "artifacts/cad/microchip-mcp73831-dfn8-2x3.step": "sha256:a63e3e6b19e656a00701a01d7ecf69d6b0dd5dc7891546d946f63e6b6f3af0d5",
+        "sources.json": "sha256:7d90b13bcd2b2e661150ca4c9e70271cce352792c128a8f3df6aa020cb2fde84",
+        "verification.json": "sha256:82b2cd85608ae745049a7afd26cfec3aa9a5900d464ac5017a3d24a8279a045f"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "microchip-mcp73831t-2aci-mc.uhd.ts",
+        "export": "MICROCHIP_MCP73831T_2ACI_MC",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "microchip-mcp73831t-2aci-mc.uhd.ts": "sha256:23d26f72fd3cf647baecd683f412472206a89f399c2a2a8e2c8b2f63fbe22a50",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "murata-grm155": {
+      "file": "parts/catalog/murata-grm155.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "murata-grm155",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:56e1696542ac77118a406a750e4405e75653b0809463b708b9119f40ae0523fe",
+      "envelopeDigest": "sha256:d646ac1734d9dc5fc0d085b9dd3fb6a494b5a6180153455fe66d1de7b02248e7",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/murata-grm155",
+        "strip": "library/parts/murata-grm155/"
+      },
+      "files": {
+        "library/cad/py/catalog/murata-grm155.py": "sha256:28ae3820b4653705f97cb6e6243390039e2f90f86f9d7350e352abc11ecf46e7",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:d5941bba043d6388655c5378068d0436fa625e44bc96f4c3352b463244741576",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:3be6d5aa8959b702b1d90fe49fda62d2535c3fa386beb5858cc8eeff8f8f4262",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:9df619cd3eef462e746b90c0e44fa979f64a66a8774d2757e0984e9121a70f07",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:d672ea46d06cc172734523565b012eec83f376a6b338e944807e8d9504de5bd6",
+        "artifacts/cad/murata-grm155-1005.glb": "sha256:3915fe2e2dc1dc8f795474112b4109ce04a4196b0a8d17842edbc58df7955690",
+        "artifacts/cad/murata-grm155-1005.manifest.json": "sha256:d6881998d8461b45d05f349ef6f8503df4ecf977e5345a90b7a1f98b4c0d31c2",
+        "artifacts/cad/murata-grm155-1005.step": "sha256:e0b1e9f8b04848ae341275b3ddef977e655c0245088d58f21df7404ef0e79330",
+        "sources.json": "sha256:b0fc9b8b52a07ba3f0f5c2265ab11dc1f15dc71469d868b88845582abd2ee26a",
+        "verification.json": "sha256:7884613ed5fe5274698a2214a51d223353b590f31f6257eabf91c49834641225"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "murata-grm155.uhd.ts",
+        "export": "MURATA_GRM155",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "murata-grm155.uhd.ts": "sha256:08302583640a3fc66bb057b9d4f4107da210d4d87aa3534137c281d7128adaf9",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21",
+          "chip-passive.ts": "sha256:842c166e8ede0193fbc03fb42d9b4299315465d4e36492484ab033727475df30"
+        }
+      }
+    },
+    "murata-grm188": {
+      "file": "parts/catalog/murata-grm188.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "murata-grm188",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:ef76418d5f5f3f901135b21038854e24238aca655d7057a150f71f3a90f13898",
+      "envelopeDigest": "sha256:b1a8bd1005e935bc37d51c176aea6d4030edc23768d7b80cc5b0c6404dda8157",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/murata-grm188",
+        "strip": "library/parts/murata-grm188/"
+      },
+      "files": {
+        "library/cad/py/catalog/murata-grm188.py": "sha256:ae5f31a5897b83b49b76c24fe84817f21d659170b2278b3125509692fd53b3ec",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:16741b13ed4ed3a2eefa78ae021f2ca2611c3da91949d8b75afa0048e0041361",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:5ba1ae701db536070c83a330a61008bdd32bfc3bf92d2113fca674eee51fb77d",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:2f29433a76a4fb738fc7959c246228d1bf238fb8c6ae40104fa987c2cf6db6d2",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:7b54928c6701a649f5ae96767117c00d0e29f86f7e32de1720d8146c76c1f4c6",
+        "artifacts/cad/murata-grm188-1608.glb": "sha256:ebd82414b290bb6c54d0ddb1c8b10e1ad742bf619e4f2ad24bf406ccfe2d84c8",
+        "artifacts/cad/murata-grm188-1608.manifest.json": "sha256:c7bcd4961059c30a877dd53434b288e326f20732d80f4692a9ac9490bfb8791e",
+        "artifacts/cad/murata-grm188-1608.step": "sha256:b18db5461755c31e6bb37768a7c8ba006f955f8ffec6051dd139918326562018",
+        "sources.json": "sha256:05eb8e22647522466e21a362e0afbbf6bbd06a62b0a90373bad2108132d12b61",
+        "verification.json": "sha256:a3625c60491aecc14fa650e96a0b608746451daa4b9024ba42dc3d4b8b55721d"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "murata-grm188.uhd.ts",
+        "export": "MURATA_GRM188",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "murata-grm188.uhd.ts": "sha256:e57b6b773ee58666ddf40baa91fe38e4f6339c19ae137428271aecc717b3a3ed",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21",
+          "chip-passive.ts": "sha256:842c166e8ede0193fbc03fb42d9b4299315465d4e36492484ab033727475df30"
+        }
+      }
+    },
+    "ruthex-rx-m2x4": {
+      "file": "parts/catalog/ruthex-rx-m2x4.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "ruthex-rx-m2x4",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:cc6817b9a95d8148f018417eac91a0f2f5a547089acff456ada0fc4d1bc951c4",
+      "envelopeDigest": "sha256:cef77b207df60eb73bfe2488a468371d5f9a2f49f9ff40fc10182a86d6c7525d",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/ruthex-rx-m2x4",
+        "strip": "library/parts/ruthex-rx-m2x4/"
+      },
+      "files": {
+        "library/cad/py/catalog/ruthex-rx-m2x4.py": "sha256:925c62456b3fefd6ab0dd5856f47f88a747ccb365be6198648f315c0c15e8746",
+        "artifacts/cad/interfaces/entry_face.glb": "sha256:56bf3249a81c26f9d0d64f9ac50b3df1d46be723263f0cd458710bf175af6af3",
+        "artifacts/cad/interfaces/seat.glb": "sha256:0ffdd740342676b726d62da887b18ee26d97a5cab46b97f2297e7260b89f4b26",
+        "artifacts/cad/interfaces/thread.glb": "sha256:81633dffaf721be85ae84715b6763968ec51a800c3e32dfb045b418056fecbc8",
+        "artifacts/cad/ruthex-rx-m2x4.glb": "sha256:2649a8edc97141586fbf9c16ca2440acad149ff61302796f19776918e3a3c6c1",
+        "artifacts/cad/ruthex-rx-m2x4.manifest.json": "sha256:3e10d4cfe9ad4d8e83d7e809aa907b03848d5f7912ab0e7c6caaf109611f27c1",
+        "artifacts/cad/ruthex-rx-m2x4.step": "sha256:7f3c2e009f7600ca7890f52df8014b66774c60ec028127ced8fa05b2bc649940",
+        "sources.json": "sha256:a742b0873e013f1445bba1297a9a64b439609a7ac0e4d59e3d44b562ab06dd36",
+        "verification.json": "sha256:22324d6d2fa4ba40864e60afaef52ac3ba8f84779f071ccc7e398c6eeefcfe6f"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "ruthex-rx-m2x4.uhd.ts",
+        "export": "RUTHEX_RX_M2X4",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "ruthex-rx-m2x4.uhd.ts": "sha256:3df27952d1b311200eb6e567cd4c6ac3d1d6563190c905c3f6e0d5488bb2073b",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "st-usblc6-2sc6": {
+      "file": "parts/catalog/st-usblc6-2sc6.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "st-usblc6-2sc6",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:e0eee98724c1adf99d0f62043162f62f3b58c9b9eb4ae65ea9cc5400429adb4d",
+      "envelopeDigest": "sha256:4d184a646395e2c2bcc263e66c1828c7bd243c02785fd7253d9ab8d85ecd8a37",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/st-usblc6-2sc6",
+        "strip": "library/parts/st-usblc6-2sc6/"
+      },
+      "files": {
+        "library/cad/py/catalog/st-usblc6-2sc6.py": "sha256:084b0ed1afb4f52ba6011768aef13f42e3dd6cd9e4da4eed16e20cdb99f9c4ba",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:60fd673dcc10602456de33aa04b4e721dc560c1c478805121880aaf94ff26f66",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:143d4ccaf8ff84d7be4d64da0c920f66d1c0c6071dd1a7be0a9d15117308c83e",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:fb388a32881db3c75220243dc51368937d955ad7a5e78001941a11d757ce2f0c",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:fb0aa7f00967d0ff423608c40aac2825cac7a94b259a0c31986da829e2b69189",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:b1590ed50dd76d59136787278a43ed31b5dd53ec91e2032fcbf7b3d0ffa3ea1f",
+        "artifacts/cad/interfaces/pin_4.glb": "sha256:fa32ca2b03f8b379957fd54d78cc64c5dfa3ba3f3264ab3d538cd54b70b560c8",
+        "artifacts/cad/interfaces/pin_5.glb": "sha256:84b391a6b50f9c0b86efc7d9295da676dde08d12839e00db003d8041c6bff055",
+        "artifacts/cad/interfaces/pin_6.glb": "sha256:fb920a1759aca0112c768eb82ae01747b475cfe43ead6f6de98901f816c99de0",
+        "artifacts/cad/st-usblc6-2sc6-sot23-6l.glb": "sha256:24c4456926becf9d7bd34990e71643a688cae4eb15e0a9891d1e455648796718",
+        "artifacts/cad/st-usblc6-2sc6-sot23-6l.manifest.json": "sha256:95f21304d759f19b087a7e614f021939165812b92a96437138e4b76a8764d011",
+        "artifacts/cad/st-usblc6-2sc6-sot23-6l.step": "sha256:87b6f490470638e83ce498680169c4bb383ff2b48ec112c0d611861fb60b7fe2",
+        "sources.json": "sha256:e2a47f78d72f96770898d7bbb8f68c830adf7563a8624b98eb686fa906cc0796",
+        "verification.json": "sha256:d159159b1c828f556dc40a452de49a87618ff603b8b8f60a11d4fe53f071ad03"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "st-usblc6-2sc6.uhd.ts",
+        "export": "ST_USBLC6_2SC6",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "st-usblc6-2sc6.uhd.ts": "sha256:a11a99a889af9ccd7754503ee84b8822f692ccef7ed065576173bfd2802b2d46",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "st-vl53l4cdv0dh-1": {
+      "file": "parts/catalog/st-vl53l4cdv0dh-1.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "st-vl53l4cdv0dh-1",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:bd3688eeeb225629259f61447968651fb618658d1d809d195b416a51fa961e86",
+      "envelopeDigest": "sha256:697a211b85f96d027aad65f40050ed311bf2f1f3e3c287e7a7b7848be514edaf",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/st-vl53l4cdv0dh-1",
+        "strip": "library/parts/st-vl53l4cdv0dh-1/"
+      },
+      "files": {
+        "library/cad/py/catalog/st-vl53l4cdv0dh-1.py": "sha256:8dc1eb0991158bb95b9f002181744ae164c1d058f5a364609b692a04e8f8e22a",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:5b77718d6575a7b1e81475a053ec43d475f472e91ddcdac6d9428f0aa76ce2a8",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:3967f27bd8b4463336d24e3a247974ea6dfea3766169b7ebb80d1a882b432492",
+        "artifacts/cad/interfaces/pin_10.glb": "sha256:34c77e07e9389baf36aacfb2b218f8cedd92f4d926d904e4018f781ba45b479d",
+        "artifacts/cad/interfaces/pin_11.glb": "sha256:5276299fe2bd33bbd2b716b56a14271572db17af634aafa3dfb1284b633858fd",
+        "artifacts/cad/interfaces/pin_12.glb": "sha256:23c8632e3164bd193975e985a2d480a18011db479819ea4caf893ca803547a85",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:410a942fbd8f9aa9da80cd3fff7080bb4ffba424d5341c5e4abf415925571be8",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:f93501bcc70876d0742ca63adc57b0a90ba5f0c53e11883f8ab36f6fcf612b3c",
+        "artifacts/cad/interfaces/pin_4.glb": "sha256:40cee2e19bf000e6d833b5d04d32da89298f4b2cbee3d79e3d4acb675666bf6a",
+        "artifacts/cad/interfaces/pin_5.glb": "sha256:4fb5e591dc66673195cc48f7d11915786cec27bdf40f1b16eee5b63c7bf6bedf",
+        "artifacts/cad/interfaces/pin_6.glb": "sha256:1b563c1804e6123a1a8120b4101c29a91b73b97433a43fb73a1723472416aae1",
+        "artifacts/cad/interfaces/pin_7.glb": "sha256:3023eb989130c2db81da4a73622379e8caaface9ab5bed145ee148a0e8809b86",
+        "artifacts/cad/interfaces/pin_8.glb": "sha256:3e88e17f0900f29e79a5acbf5f121fbe7b11be9200a11da6001d97d0ec5a7d02",
+        "artifacts/cad/interfaces/pin_9.glb": "sha256:71b1eee17e072547b0fcdd000f487442027a3bfd2d365aa13c09d1579b586753",
+        "artifacts/cad/interfaces/rx_aperture.glb": "sha256:9d100e296700fc600550b846ed5a22731fff6a0dc7813e5c6723136c08b9b4b5",
+        "artifacts/cad/interfaces/tx_aperture.glb": "sha256:a81b45c8916d51e6a200dc04e63caa0d66daa8b42712d3ae54b0a4269531f7cc",
+        "artifacts/cad/st-vl53l4cd-optical-lga12.glb": "sha256:da6308c7cedef49790716242284fa549f8c5e0846891f59dd2507bdcabce429e",
+        "artifacts/cad/st-vl53l4cd-optical-lga12.manifest.json": "sha256:8a4515e3e85350f3e0b0dc11f58156281f417e09f3df2778b89e6fbd47b86db2",
+        "artifacts/cad/st-vl53l4cd-optical-lga12.step": "sha256:6f95b3c9ca25959514fd8c494af2930f261733a9226610741772b5a312619249",
+        "sources.json": "sha256:93a92c0f3c5e39f4e58e6c2d5bfdfa91dc47e12ddc2a69dfb5f2098b17204963"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        }
+      ],
+      "source": {
+        "entry": "st-vl53l4cdv0dh-1.uhd.ts",
+        "export": "ST_VL53L4CDV0DH_1",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "st-vl53l4cdv0dh-1.uhd.ts": "sha256:d21b9edd72f5a215793018f952b767ba99fbcde1701f09a49ea9419acc8ef416",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "ti-lp5024rsm": {
+      "file": "parts/catalog/ti-lp5024rsm.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "ti-lp5024rsm",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:3141097b0810d48f4099be1ade889639f8a3d9bcc5e44a89b2be63e73b692aa7",
+      "envelopeDigest": "sha256:73b0b46a8bc12d16639232ffb23f82d1ba32e248f94d9e59d5cdbb8e63718481",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/ti-lp5024rsm",
+        "strip": "library/parts/ti-lp5024rsm/"
+      },
+      "files": {
+        "library/cad/py/catalog/ti-lp5024rsm.py": "sha256:8792efd7ea8b88b4036a4fc945b7e930f2f5f0854469f00bd1702a20002f7838",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:9fe23952b1f45d20932c5ae34f689efb8c9df611091344d0ccee30ddf63b80b0",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:8a5c0d6ea0fded737b4f141b9d6bf5868a0150f9dcabd2c6ab1c3f9d5d734eae",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:506b8782d5db8598ce6fb8e4db8a613f86e65fcf97bfe007976f4cc17138c46b",
+        "artifacts/cad/interfaces/pin_10.glb": "sha256:63143b094ecd115bec0da949c3dc7826aeb459e69a6bf2d26e2293143ba30d32",
+        "artifacts/cad/interfaces/pin_11.glb": "sha256:6e43f6d211319814815611db8aecd7329b80cdc0a47228ed5a857979e999c0ec",
+        "artifacts/cad/interfaces/pin_12.glb": "sha256:60037e081f0939842a8fce6e28f8dceb06ca3bfb8fd7d16b99a343e02f457722",
+        "artifacts/cad/interfaces/pin_13.glb": "sha256:9af86e5d81633d0d060c0698205cc4fb390fd18071ace8426daffffecb20a7f0",
+        "artifacts/cad/interfaces/pin_14.glb": "sha256:b1135bc662dd01639c1967a69210275ab5825f30645a5b61db7fe2b101894952",
+        "artifacts/cad/interfaces/pin_15.glb": "sha256:7d97262914b3f47d8e76879d2c51241cd3389f59a9369509fe9d2964860bb2ab",
+        "artifacts/cad/interfaces/pin_16.glb": "sha256:0fb5fdf3284ad2d5ba5397f51b6a6095871aac0700625425e6999a40f2817aa4",
+        "artifacts/cad/interfaces/pin_17.glb": "sha256:fc40793f1adabc4498502db35eeef5a0689c32e8df90b9d899b46b1e64c540a4",
+        "artifacts/cad/interfaces/pin_18.glb": "sha256:e55a64f8194c0e4c6beabdb38ca4c3a553df69c1e0fb6a73455cb2c127775a96",
+        "artifacts/cad/interfaces/pin_19.glb": "sha256:c79f779e899ce039fe5e135da2e3f08d9f3f4fa40d9cef215ffcb5e576a47a9f",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:5d588133e47d7802e2f81627e0606939f95d1b2ab270012f178525ed0836a4ed",
+        "artifacts/cad/interfaces/pin_20.glb": "sha256:6759725583286415b42a2ffe8f733c493984cff5ad5819f30e12ba39183d9d2a",
+        "artifacts/cad/interfaces/pin_21.glb": "sha256:89a05f9d92cae446ce71296e8ce2d04b8cb18977fb69b24d30bf457dd9581399",
+        "artifacts/cad/interfaces/pin_22.glb": "sha256:ae387c44b3efbd49930db9ff41378cbb4c7b934f7d06d67e4d7d8340212e2bb5",
+        "artifacts/cad/interfaces/pin_23.glb": "sha256:5868bc799b4470917c34c68e501cfe5a97353b0f72d627b00e10d7b39f9af308",
+        "artifacts/cad/interfaces/pin_24.glb": "sha256:a4f02c84dfdf2e5bc06c3f79cc644509b2451b18bec30f14e046495e6f7ce066",
+        "artifacts/cad/interfaces/pin_25.glb": "sha256:ce9b00a0be200fe94bea07f11808ce37c4126a77e53c0ede55285d5309570e06",
+        "artifacts/cad/interfaces/pin_26.glb": "sha256:75a83e2b537c197097aa52f32978689a356877aa256b0c4636c3286358ab5d6e",
+        "artifacts/cad/interfaces/pin_27.glb": "sha256:be9cf2edd5fd236198769c7f45f4bc3a4c2fca5c87a66e4a13c1372ed65664d0",
+        "artifacts/cad/interfaces/pin_28.glb": "sha256:e63cb768c335498733236f1989a926f408d307800ee2bf31089df35be18aebb4",
+        "artifacts/cad/interfaces/pin_29.glb": "sha256:a32b76961ae7df8997e548a501feee793c1377c9c13bf709aa593d536b0fde43",
+        "artifacts/cad/interfaces/pin_3.glb": "sha256:d101f59d4f07f98f62b66d78efaacb2899360adc43511e52614d05bb0c364740",
+        "artifacts/cad/interfaces/pin_30.glb": "sha256:00fd393d20c7219093770f63905ffd21dd93135b713c549dc53c85f575f6b489",
+        "artifacts/cad/interfaces/pin_31.glb": "sha256:c8b0cbfd894b622cd12b380816cf17bdcc957cfdff9e8997fb84b899208c7dd6",
+        "artifacts/cad/interfaces/pin_32.glb": "sha256:c9ae03c10724ef90d8bc95c504d44e44ec51221ea8c6b652c1afdf7cfa1937e3",
+        "artifacts/cad/interfaces/pin_33.glb": "sha256:d4c7e5361e07fc48d78f7f3fca2a7558642b49419e8ac6676925ec0e9be104f6",
+        "artifacts/cad/interfaces/pin_4.glb": "sha256:40315988363579a81f3acb2d274f253db6489963dfa1486be85bfdcf484137e1",
+        "artifacts/cad/interfaces/pin_5.glb": "sha256:3265e3dbfdd658e142c36da758c86fbde2f4a4b744ec3ed6e94688923f187aec",
+        "artifacts/cad/interfaces/pin_6.glb": "sha256:6fd821f9321960f4e2d3ea8bbe83dcdd7eb09f2a1f35829f3ea787279be80561",
+        "artifacts/cad/interfaces/pin_7.glb": "sha256:4c3ef5f65c7306c8a8786e2af5a1e8d6c9de7f8adf752d96b2719d40dbc2c11a",
+        "artifacts/cad/interfaces/pin_8.glb": "sha256:6102d1f4f3b0362130f3f0f6d7b5ed94c2860680d79781bf7e02404bfef170ef",
+        "artifacts/cad/interfaces/pin_9.glb": "sha256:b3ad9b929f34c6fac5bc269c947513b58da89f02bdd89caa0a2ac5a8dd24f026",
+        "artifacts/cad/ti-lp5024-rsm32.glb": "sha256:7f44f7ff968150a80527d611bd263d09b93de5feaa52532ed6878adfdf68522a",
+        "artifacts/cad/ti-lp5024-rsm32.manifest.json": "sha256:dbabd0aea8dd7276120f10df53919a05ba06ed668679b32d89dc546b479ec2d3",
+        "artifacts/cad/ti-lp5024-rsm32.step": "sha256:525154b1d42c80f2ea0a4ba4326cee7d5ba33971656976cd64604f2bd2a11929",
+        "sources.json": "sha256:ceb4725fbbdc8ff92dec58822df46b79fac761e88d7f30b0297289a9f503a534"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        }
+      ],
+      "source": {
+        "entry": "ti-lp5024rsm.uhd.ts",
+        "export": "TI_LP5024RSM",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "ti-lp5024rsm.uhd.ts": "sha256:f87d8b40e2c90cf4f75075ac4b5808405f6cf77a0a9ef9f0843c81df61afa37b",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "ti-tps63020dsjr": {
+      "file": "parts/catalog/ti-tps63020dsjr.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "ti-tps63020dsjr",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:c2948d10627dbe41e3d5b42e50b90312c4ee58287d4d8a203d00710808aa1ac6",
+      "envelopeDigest": "sha256:5bb16dfe17f0347a3ba1ba3be640938c158615e5138b42165a676fe32f6db474",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/ti-tps63020dsjr",
+        "strip": "library/parts/ti-tps63020dsjr/"
+      },
+      "files": {
+        "library/cad/py/catalog/ti-tps63020dsjr.py": "sha256:b177f4ec876ea808965f9be36a76ff883036bfe4a19cc75bbe3aa00ac839f86c",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:b6317bab4d6a9be5c59220477f878fd2f6ee150f295757be77a384998a2fa054",
+        "artifacts/cad/interfaces/thermal_pad.glb": "sha256:4a5ccce73c225aaa0258f03d0ca040b0ab4d9ac20a58a06d30276a74803cbfb0",
+        "artifacts/cad/ti-tps63020-dsj14.glb": "sha256:43accc69ed0674f2b887e12e5dc1d517f76c5cb8517fc5a6a560983965eacf0f",
+        "artifacts/cad/ti-tps63020-dsj14.manifest.json": "sha256:181f6d343fce8e71dcb8e34ca8982a6fb64c2c2b0808363ce831dc8743f95e86",
+        "artifacts/cad/ti-tps63020-dsj14.step": "sha256:02b747716b9b342d52a9c750c045cb82603e4fa1b1287e6a087d8005bedab918",
+        "sources.json": "sha256:b74d6c535561656a3914ad2b34d69d67a1d2529183f4c55aaaefdf0622294baa",
+        "verification.json": "sha256:90813e1fa7d6c6024a7eba0f6006f45f6ae39e4bed5960ac84a1d0f1f009dcd2"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "ti-tps63020dsjr.uhd.ts",
+        "export": "TI_TPS63020DSJR",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "ti-tps63020dsjr.uhd.ts": "sha256:01d0aacf29eb056fbcc982ed1e0a7a7e97cb800234188cfe5d703f2a425f8ce3",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21"
+        }
+      }
+    },
+    "yageo-rc0402": {
+      "file": "parts/catalog/yageo-rc0402.json",
+      "tier": "catalog",
+      "provider": "protoboard-cloud",
+      "library": "protoboard",
+      "service": "http://localhost:8795",
+      "partId": "yageo-rc0402",
+      "revision": 2,
+      "uhdSchema": "0.2.0",
+      "digest": "sha256:d70ebaa9c304ce5ea1aa3a81714ef9116605f15c7e59a89f4f704db44eabaec8",
+      "envelopeDigest": "sha256:1ceeba902f6d62da04e3204abff30336e2f15e49c19c1ccc998e36f01b6ab94b",
+      "retrievedAt": "2026-10-03T08:22:09.513Z",
+      "artifactBase": {
+        "kind": "vendored",
+        "dir": "parts/catalog/yageo-rc0402",
+        "strip": "library/parts/yageo-rc0402/"
+      },
+      "files": {
+        "library/cad/py/catalog/yageo-rc0402.py": "sha256:fdecc07f3ae6cb38b4837922a8d8698df19938dad04c9cc4821c35814f6f0de1",
+        "artifacts/cad/interfaces/package_top.glb": "sha256:f6475472e4ebcda34b61fb2c6acdb7ec6a298eeb14dab8259c57bd0bb981314e",
+        "artifacts/cad/interfaces/pcb_mount.glb": "sha256:3be6d5aa8959b702b1d90fe49fda62d2535c3fa386beb5858cc8eeff8f8f4262",
+        "artifacts/cad/interfaces/pin_1.glb": "sha256:9df619cd3eef462e746b90c0e44fa979f64a66a8774d2757e0984e9121a70f07",
+        "artifacts/cad/interfaces/pin_2.glb": "sha256:d672ea46d06cc172734523565b012eec83f376a6b338e944807e8d9504de5bd6",
+        "artifacts/cad/yageo-rc0402.glb": "sha256:34563e4657f9e6d2cac291a9470d0ce1a4ac88c1094af8bbdad4e189eaedbd19",
+        "artifacts/cad/yageo-rc0402.manifest.json": "sha256:433bbbff3514faf450a5ec27299f76aab3149063727dd4e5ac090304b5b86a6e",
+        "artifacts/cad/yageo-rc0402.step": "sha256:2eae825f92a47818aa3a9895cfd0a06ca08dd24edcebf15237266469952206ec",
+        "sources.json": "sha256:6c8de9ef4a554443e5a07c0ea98ec85d2cfdc261b1667b0fb081ffc707b7b3c1",
+        "verification.json": "sha256:b7c5091f6f031e64609310721845e6db254ea6eec78188933fdc7c60fa344231"
+      },
+      "evidence": [
+        {
+          "kind": "sources",
+          "path": "sources.json"
+        },
+        {
+          "kind": "verification",
+          "path": "verification.json"
+        }
+      ],
+      "source": {
+        "entry": "yageo-rc0402.uhd.ts",
+        "export": "YAGEO_RC0402",
+        "requires": {
+          "uhd": "^0.2.0",
+          "typescript": "^7.0.2"
+        },
+        "files": {
+          "yageo-rc0402.uhd.ts": "sha256:8bcaafaead42aea64ddbac08957c7dbb65d7ff58bac013a5e6599ebbb724b1e9",
+          "cad/artifacts.ts": "sha256:7127a45e8539b1e6c601520dd52f5b480d3770a8756fbf95092ca17ea0522b21",
+          "chip-passive.ts": "sha256:842c166e8ede0193fbc03fb42d9b4299315465d4e36492484ab033727475df30"
+        }
+      }
+    }
+  }
+}

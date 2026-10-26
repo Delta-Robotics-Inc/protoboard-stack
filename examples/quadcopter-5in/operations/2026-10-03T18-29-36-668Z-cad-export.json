@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "dolphinrc-sh8-fc-esc-cable",
+    "config": "src/harnesses/dolphinrc-sh8-fc-esc-cable/cad.config.ts",
+    "configDigest": "sha256:5aeac23cbf01a132d85b0062b9ec254dae7641b8b4055e9d1a79067f45e57aa4",
+    "moduleDigest": "sha256:4c2dc82150cd47fc76e60a97491ea0422e88c89154c0920436ea3ef7bada966f"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:7be17e6a7f1cfcfbf16b4e71fd846ec4ef112b7523a3d9fc2419ab9a8ede02a7",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:29:36.668Z",
+  "status": "succeeded",
+  "summary": "stack/sh8_cable: body.glb, body.step and body.manifest.json in src/harnesses/dolphinrc-sh8-fc-esc-cable/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/dolphinrc-sh8-fc-esc-cable/out/body.glb",
+      "digest": "sha256:0ca8a8c7cc87af5fd3a1ec732bf4fbd610431d83cbf335614140572ee8844f3f",
+      "bytes": 307504,
+      "description": "stack/sh8_cable: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/dolphinrc-sh8-fc-esc-cable/out/body.step",
+      "digest": "sha256:71f2309db7ab293f9cb8e05667c8f8b7719960d2368654f09b0ea17498376fe7",
+      "bytes": 2718188,
+      "description": "stack/sh8_cable: swept solids"
+    },
+    {
+      "path": "src/harnesses/dolphinrc-sh8-fc-esc-cable/out/body.manifest.json",
+      "digest": "sha256:282b539c3c48aa1d68a12ee0c4e3092f60aad8bd3ea9154eb73e2bb578ce8218",
+      "bytes": 3774,
+      "description": "stack/sh8_cable: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "dolphinrc-sh8-fc-esc-cable",
+    "path": "stack/sh8_cable",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 50,
+    "route_length_mm": 49.86,
+    "slack_mm": 1.18,
+    "bend_mm": {
+      "target": 4,
+      "minimum": 2.5,
+      "centreline": 3.02,
+      "conductors": 1.16,
+      "at_terminations": 2.6
+    },
+    "clearance_mm": 4.51,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:29:41.688Z"
+}

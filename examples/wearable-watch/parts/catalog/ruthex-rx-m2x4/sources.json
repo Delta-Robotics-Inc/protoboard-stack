@@ -1,0 +1,162 @@
+[
+  {
+    "id": "src_product",
+    "title": "ruthex M2 thread insert - 70 pieces RX-M2x4 brass threaded bushings for 3D printed plastic parts (GE-M2x04-001)",
+    "url": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:20:00Z",
+    "sha256": null,
+    "supports": [
+      "identity: RX-M2x4, order no. (SKU) GE-M2x04-001, barcode (EAN) 4260528721122, 70 per pack",
+      "M2 internal thread, length 4.0 mm",
+      "lead-free, cadmium-free brass; RoHS and REACH",
+      "opposite spiral knurled surfaces",
+      "installed by heat (soldering iron) or ultrasound into blind or through holes",
+      "PLA, PETG, ABS, PP, PPS and other thermoplastics; reusable",
+      "link to the M2x4 STEP download"
+    ],
+    "note": "The HTML page got HTTP 429 on direct download, so this row is a text capture (.research/downloads/ruthex-product.txt). The same product's Shopify JSON (src_product_json) downloaded with HTTP 200 and is hashed."
+  },
+  {
+    "id": "src_product_json",
+    "title": "ruthex RX-M2x4 product data (Shopify product JSON of src_product)",
+    "url": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen.json",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T22:10:00Z",
+    "sha256": "776afd1e2778d36121db57e9b3a8e6eeba9aa3373bc7ee33c108cd480e5ad398",
+    "supports": [
+      "full product text (body_html) of src_product: M2 internal thread, length 4.0 mm, heat or ultrasound, blind and through holes, PLA/PETG/ABS/PP/PPS, reusable, lead- and cadmium-free brass, RoHS/REACH",
+      "variant SKU GE-M2x04-001, barcode 4260528721122, 70 per pack",
+      "variant shipping weight 15 g per 70-pack, packaging included (upper bound about 0.21 g per insert)",
+      "product images include the dimension drawing (src_drawing) and the pack label (src_pack_label)"
+    ],
+    "note": "Saved as .research/downloads/ruthex-product.json (HTTP 200)."
+  },
+  {
+    "id": "src_drawing",
+    "title": "ruthex thread insert dimension drawing and size table ('Größe', product image 1Tabelle.PT05)",
+    "url": "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/1Tabelle.PT05_eb2a30fa-5c34-46f8-b557-a6c432354560.jpg?v=1748341911",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T22:12:00Z",
+    "sha256": "c6c602253833d22ce923499ae7c338231006e39a1815b0641d6da090058348f0",
+    "supports": [
+      "M2 row: Ød1 3,6; Ød2 3,1; Ød3 3,2; L 4,0; W 1,3 (mm)",
+      "Ød1 is the insert's outer diameter at the entry end",
+      "Ød2 is the insert's far-end (pilot) diameter",
+      "Ød3 is the hole in the plastic part ('Plastic-Part (blind or through hole)')",
+      "min. w is the wall around the hole",
+      "blind-hole depth 'L + 1 mm min'"
+    ],
+    "note": "Listed in the product JSON's images (src_product). Image, read visually; saved as .research/downloads/ruthex-dimension-drawing.jpg. Decimal commas."
+  },
+  {
+    "id": "src_pack_label",
+    "title": "ruthex RX-M2x4.0 pack label (product image out-50xGE-M2x04-001)",
+    "url": "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/out-50xGE-M2x04-001.jpg?v=1784916330",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T22:12:00Z",
+    "sha256": "63b3185413ec36e37015311b1829a571189ced1c74e240c20e6fbcc4608bc487",
+    "supports": [
+      "insert Ø3.6, length 4.0, far end Ø3.1",
+      "hole Ø3.2, wall min. 1.3",
+      "hole depth 5.0 mm min",
+      "item no. GE-M2X04-001; Cd-free, Pb-free, RoHS"
+    ],
+    "note": "Listed in the product JSON's images (src_product). Image of the 50-pack offer showing the M2 pack label; saved as .research/downloads/ruthex-pack-label.jpg."
+  },
+  {
+    "id": "src_dimensions",
+    "title": "ruthex Threaded Insert M2 (70 pieces), M2x4, 3DJake (item RUT-GE-M2x04-001)",
+    "url": "https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-02T21:15:00Z",
+    "sha256": "1e3a80eac952251991468fa65622c25d0b28da15fd531a6fa3f3246c7cddfdff",
+    "supports": [
+      "cross-check of the ruthex table, M2: D1 3.6, D2 3.1, D3 3.2, L 4.0, W (min.) 1.3 (mm)",
+      "manufacturer no. GE-M2x04-001, EAN 4260528721122",
+      "brass; opposite spiral knurls; cadmium and lead-free",
+      "70 inserts with M2 female thread and a length of 4 mm"
+    ],
+    "note": "Distributor listing with the ruthex table as text. Used as a cross-check of src_drawing (the ruthex drawing and table image); its values agree."
+  },
+  {
+    "id": "src_cad_page",
+    "title": "ruthex CAD data (STEP downloads per insert size)",
+    "url": "https://www.ruthex.de/en/pages/cad-daten",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:22:00Z",
+    "sha256": null,
+    "supports": [
+      "STEP download for M2x4",
+      "no terms of use, licence or redistribution statement on the page"
+    ],
+    "note": "Text capture through a fetch tool (HTTP 429 on direct download), so no bytes were hashed."
+  },
+  {
+    "id": "src_cad",
+    "title": "ruthex RX-M2x4 STEP model",
+    "url": "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/ruthex_RX-M2x4.step?v=1621264078",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:18:00Z",
+    "sha256": "4fe0b584d0f9473ff9dc4afbf08bf6a3c951bf32e81e595a912bb1f1f71dd3ce",
+    "licence": "Not stated on the ruthex product or CAD data pages. ruthex's own Thingiverse upload of its insert STEP set (src_cad_thingiverse) is CC BY 4.0, but that copy was not downloaded and compared, so this file is not redistributed: kept in .research/cad/ and used as measured evidence for the generated body.",
+    "supports": [
+      "envelope Ø3.60 x 4.00 mm",
+      "thread: minor Ø1.623, major Ø2.074, pitch 0.4, through",
+      "upper knurl z 0-1.0 (12 teeth, crest Ø3.57, root Ø3.06, 50° twist), groove Ø3.03 z 1.0-1.6",
+      "lower knurl z 1.6-2.8 (12 teeth, crest Ø3.47, root Ø3.05, opposite twist), groove Ø2.90 z 2.8-3.4",
+      "pilot Ø3.20 z 3.4-3.9, chamfered to Ø3.0 at the far end",
+      "solid volume 20.95 mm³"
+    ],
+    "note": "STEP header: 'ruthex RX-M2x4 v0', 2020-12-11, Autodesk Translation Framework. Its coordinates put the entry face at z = 0 and the body at z -4..0. Measured with library/cad/py/vendor_step.py and build123d face queries."
+  },
+  {
+    "id": "src_cad_thingiverse",
+    "title": "ruthex Step-Data threaded inserts M2-M8 (Thingiverse thing:4682424, by ruthex)",
+    "url": "https://www.thingiverse.com/thing:4682424",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:25:00Z",
+    "sha256": "47c6c02c8289380d994802e0c627bbe834546fc2c8f5264b6f81af481f7159bc",
+    "licence": "CC BY 4.0 (http://creativecommons.org/licenses/by/4.0/, page metadata), author 'ruthex', published 2020-12-11. The files themselves need a login to download and were not fetched.",
+    "supports": [
+      "ruthex publishes STEP data for its M2-M8 inserts",
+      "licence of ruthex's published insert STEP set"
+    ],
+    "note": "sha256 is of the page HTML, not of a model file."
+  },
+  {
+    "id": "src_install_guide",
+    "title": "CNC Kitchen: Tips & Tricks for Heat-Set Inserts used in 3D printing (2021-10-01)",
+    "url": "https://www.cnckitchen.com/blog/tipps-amp-tricks-fr-gewindeeinstze-im-3d-druck-3awey",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-02T21:30:00Z",
+    "sha256": null,
+    "supports": [
+      "iron 10-20 °C above the print temperature: about 225 °C PLA, 245 °C PETG, 265 °C ABS",
+      "blind hole about 1 mm deeper than the insert (agrees with the ruthex drawing's L + 1 mm min)"
+    ],
+    "note": "General heat-set insert guidance from a maker of a different insert brand; not ruthex data. Used only for the iron temperature in a usage note."
+  },
+  {
+    "id": "src_density",
+    "title": "Engineering ToolBox: Metals and alloys densities",
+    "url": "https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-02T21:32:00Z",
+    "sha256": null,
+    "supports": [
+      "brass rolled and drawn 8430-8730 kg/m³; brass 60/40 8520 kg/m³"
+    ],
+    "note": "Density for mass from CAD volume; ruthex does not name the alloy."
+  }
+]

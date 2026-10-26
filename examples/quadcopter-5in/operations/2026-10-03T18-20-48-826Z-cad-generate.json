@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "meps-m5-flanged-lock-nut",
+    "config": "parts/local/meps-m5-flanged-lock-nut/cad.config.ts",
+    "configDigest": "sha256:d58861075cd75bfda362b463ea30c41563a08cb0bfd36dd621a4db2c2ab10531",
+    "moduleDigest": "sha256:22089610d7a655415414efd5980ddd452a59d742ea345abb86ee820a59ed45eb"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:83a9d628c2c4a9ca0bd3864e1443503749230cd30a179d7f6a90c181f0c40e66",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:20:48.826Z",
+  "status": "succeeded",
+  "summary": "meps-m5-flanged-lock-nut: nut parameters in parts/local/meps-m5-flanged-lock-nut/frame-cad; run cad:export for the body",
+  "outputs": [
+    {
+      "path": "parts/local/meps-m5-flanged-lock-nut/frame-cad/params.json",
+      "digest": "sha256:ced286c765238685991788dfbb6baae8fffa023883f06411e65b37c44c4cbe7d",
+      "bytes": 269,
+      "description": "meps-m5-flanged-lock-nut: generator parameters from its sizes"
+    }
+  ],
+  "data": {
+    "module": "meps-m5-flanged-lock-nut",
+    "kind": "nut",
+    "native": "parts/local/meps-m5-flanged-lock-nut/frame-cad",
+    "params": {
+      "schema": "protoboard.hardware-cad.params/v0",
+      "module": "meps-m5-flanged-lock-nut",
+      "name": "meps-m5-flanged-lock-nut",
+      "part": {
+        "kind": "nut",
+        "diameter": 5,
+        "length": 5,
+        "head_diameter": null,
+        "head_height": null,
+        "outer": 8
+      }
+    },
+    "generator": "@protoboard/ext-frame-cad/py/hardware_cad.py"
+  },
+  "finishedAt": "2026-10-03T18:20:51.212Z"
+}

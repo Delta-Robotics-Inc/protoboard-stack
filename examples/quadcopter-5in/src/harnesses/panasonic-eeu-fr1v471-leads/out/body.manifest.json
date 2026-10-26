@@ -1,0 +1,142 @@
+{
+  "artifact": "body",
+  "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+  "toolVersion": "0.1.0",
+  "sourceDigest": "e4609b1fe49a2972cd0d344177fcdc1f4b802169c40e47c5cdb0b5e069a246d6",
+  "units": "mm",
+  "coordinates": "assembly root (mm, Z up); glTF export in m, Y up",
+  "harness": "bulk_cap_leads",
+  "length_mm": 14,
+  "route_length_mm": 14.21,
+  "conductor_lengths_mm": [
+    29.38,
+    21.26
+  ],
+  "length_fit": {
+    "route_mm": 14.21,
+    "method": "shortest"
+  },
+  "bundle": {
+    "kind": "parallel",
+    "conductors": 2,
+    "conductor_od_mm": 0.6,
+    "bundle_od_mm": 1.2,
+    "twist_pitch_mm": null
+  },
+  "bend_radius_mm": {
+    "target": 4,
+    "minimum": 2.5,
+    "centreline": 23.33,
+    "conductors": 0.87,
+    "at_terminations": 1.34
+  },
+  "clearance_mm": {
+    "min_conductor_surface": 0.36
+  },
+  "ends": {
+    "end_cap": {
+      "frame": {
+        "normal": [
+          -1,
+          0,
+          0
+        ],
+        "origin": [
+          -25,
+          10,
+          19
+        ],
+        "xAxis": [
+          0,
+          -1,
+          0
+        ]
+      },
+      "counterpart": "bulk_cap.leads",
+      "termination": "integral",
+      "link": "bulk_cap_can"
+    },
+    "end_esc": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "origin": [
+          -19.3,
+          0,
+          14.1
+        ],
+        "xAxis": [
+          0,
+          1,
+          0
+        ]
+      },
+      "counterpart": "stack.cap_pads",
+      "termination": "solder",
+      "link": "bulk_cap_pads"
+    }
+  },
+  "features": {
+    "end_esc": {
+      "area_mm2": 14.977,
+      "centroid": [
+        -19.3,
+        0,
+        14.35
+      ],
+      "faces": 2
+    }
+  },
+  "step": "ok",
+  "route": [
+    [
+      -25,
+      10,
+      19
+    ],
+    [
+      -23.08,
+      9.42,
+      18.93
+    ],
+    [
+      -22.21,
+      7.62,
+      18.59
+    ],
+    [
+      -21.4,
+      5.81,
+      18.16
+    ],
+    [
+      -20.68,
+      4,
+      17.6
+    ],
+    [
+      -20.03,
+      2.21,
+      16.89
+    ],
+    [
+      -19.44,
+      0.46,
+      16.05
+    ],
+    [
+      -19.3,
+      0,
+      14.1
+    ]
+  ],
+  "status": "ok",
+  "notes": [],
+  "exportedFrom": {
+    "file": "src/harnesses/panasonic-eeu-fr1v471-leads/harness-cad/route.json",
+    "digest": "sha256:ebe04a6bcad60bb91f4927378627b8dfd4e6f859d60affae00e4ec519268bc17"
+  }
+}

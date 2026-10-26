@@ -1,0 +1,19 @@
+{
+  "name": "uno-motor-bench",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "protoboard check",
+    "build": "protoboard build",
+    "inspect": "protoboard inspect"
+  },
+  "dependencies": {
+    "@deltarobotics/uhd": "0.3.0",
+    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/ext-hardware": "^0.2.0"
+  },
+  "devDependencies": {
+    "@protoboardai/cli": "^0.2.0",
+    "typescript": "7.0.2"
+  }
+}

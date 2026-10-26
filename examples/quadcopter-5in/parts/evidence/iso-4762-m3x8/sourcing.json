@@ -1,0 +1,87 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "iso-4762-m3x8",
+  "manufacturer": "Generic (ISO 4762 / DIN 912)",
+  "mpn": "WF2344",
+  "need": {
+    "quantity": 10,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "Westfield Fasteners",
+      "supplier_sku": "WF2344",
+      "mpn": "WF2344",
+      "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Stainless-Socket-Cap-Screw-M3x8mm.html",
+      "as_of": "2026-10-03T14:06:59Z",
+      "via": "web",
+      "moq": 20,
+      "packaging": "sold in sale-quantity multiples",
+      "price_breaks": [
+        {
+          "quantity": 20,
+          "unit_price": 0.0855,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 25,
+          "unit_price": 0.0856,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 50,
+          "unit_price": 0.0574,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 100,
+          "unit_price": 0.0387,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 200,
+          "unit_price": 0.02925,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 250,
+          "unit_price": 0.0274,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 500,
+          "unit_price": 0.02364,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 1000,
+          "unit_price": 0.02057,
+          "currency": "GBP"
+        }
+      ],
+      "authorized": true,
+      "market": "UK",
+      "note": "page price calculator (public, no login): line totals ex VAT at each sale quantity tried (20 = GBP 1.71, 25 = GBP 2.14, 50 = GBP 2.87, 100 = GBP 3.87, 200 = GBP 5.85, 250 = GBP 6.85, 500 = GBP 11.82, 1000 = GBP 20.57); 'in stock'"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": false,
+      "note": "not listed (found through the JLCPCB search, which indexes LCSC codes)"
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; no listing with stock or a real price"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

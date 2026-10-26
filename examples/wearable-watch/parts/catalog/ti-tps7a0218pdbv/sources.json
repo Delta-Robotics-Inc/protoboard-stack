@@ -1,0 +1,65 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "TI TPS7A02 datasheet SBVS277C (rev. C, September 2022), with package option addendum, packaging information and DBV0005A outline (4214839/K 08/2024)",
+    "url": "https://www.ti.com/lit/ds/symlink/tps7a02.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:43:00Z",
+    "sha256": "ed213c153f1db84762558fcac2ff9752e322151a1d44672cf554988b860cebc8",
+    "supports": [
+      "Package Information: DBV (SOT-23, 5) body 2.90 mm x 1.60 mm",
+      "§5 Figure 5-2 and Table 5-1: DBV pinout IN 1, GND 2, EN 3, NC 4, OUT 5; NC has no internal connection; the thermal pad row applies to DQN only",
+      "§6.1 absolute maximum: VIN, VEN -0.3 to 6.5 V; VOUT -0.3 to min(VIN + 0.3, 5.5) V; output current internally limited; TJ -40 to 150 C; Tstg -65 to 150 C",
+      "§6.2 ESD: HBM ±1000 V, CDM ±500 V",
+      "§6.3 recommended operating: VIN 1.5-6.0 V, VEN 0-6.0 V, IOUT 0-200 mA, CIN 1 uF, COUT 1-22 uF (0.5 uF effective minimum), EN toggle 10 kHz max, TJ -40 to 125 C",
+      "§6.4 thermal information DBV: RthJA 181.9, RthJC(top) 53.0, RthJB 88.1, psiJT 27.1, psiJB 52.7 C/W",
+      "§6.5 electrical characteristics for VOUT >= 1.5 V: accuracy ±1 % at 25 C, ±1.5 % over TJ -40 to 125 C; line regulation 5 mV max; load regulation 20 typ / 38 max mV (-40 to 85 C), 50 mV max (-40 to 125 C); IGND 25 nA typ / 46 nA max at 25 C, 60 nA max -40 to 85 C; IGND(DO) 25 nA; ISHDN 3 nA typ / 10 nA max; ICL 240/450/750 mA (VOUT < 2.5 V, VIN = VOUT(nom) + VDO(max) + 1.0 V); ISC 65 mA; VDO for 1.8 V <= VOUT < 2.5 V at 200 mA: 400 mV max (-40 to 85 C), 450 mV max (-40 to 125 C); PSRR 55 dB at 1 kHz; UVLO 1.3 V rising / 1.12 V falling, 180 mV hysteresis; VEN(HI) 1.1 V min, VEN(LOW) 0.3 V max; IEN 10 nA; REN(PULLDOWN) 500 kOhm; RPULLDOWN 60 Ohm; TSD 170 / 145 C",
+      "§6.6 start-up time for 1.5 V < VOUT <= 3.0 V: 750 us typ, 1200 us max",
+      "§7.3.2 active discharge and reverse-current limit (5 % of rated current); §7.3.4 smart enable, connect EN to IN if independent control is not needed; §7.3.6 foldback current limit (VFOLDBACK 0.5 V)",
+      "§8.1.2 input and output capacitor requirements (X5R/X7R/C0G, up to 50 % derating, input capacitor needed above 0.5 Ohm source impedance); §8.4.1 layout guidelines",
+      "Table 9-1 device nomenclature: TPS7A02xx(x)Pyyyz, xx = nominal output voltage (18 = 1.8 V), P = active output discharge, yyy = package, R = reel (3000)",
+      "package option addendum: TPS7A0218PDBVR Active, Production, SOT-23 (DBV) 5, 3000 large T&R, RoHS, NIPDAU | SN, MSL Level-1-260C-UNLIM, -40 to 125 C, marking 21LF; TPS7A0218PDBVR.A and TPS7A0218PDBVRG4 same marking; TPS7A0218DBVR (no P, marking 2CDT) is a separate orderable",
+      "DBV0005A outline: body 2.75-3.05 x 1.45-1.75, span 2.6-3.0, pitch 0.95 (2X), 1.9 between pins 1 and 3, lead width 0.3-0.5, lead thickness 0.08-0.22, foot 0.3-0.6, standoff 0.00-0.15, height 0.90-1.45, body (1.1) reference, JEDEC MO-178"
+    ]
+  },
+  {
+    "id": "src_part_details",
+    "title": "TI TPS7A0218PDBVR part details page",
+    "url": "https://www.ti.com/product/TPS7A02/part-details/TPS7A0218PDBVR",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:43:00Z",
+    "sha256": "f7e320d70f320a8a934380775342ac5e8a305c1b08ad4d57341d61833ca28927",
+    "supports": [
+      "TPS7A0218PDBVR ACTIVE: 200mA, nanopower-IQ (25 nA), low-dropout (LDO) voltage regulator with enable | DBV | 5 | -40 to 125",
+      "same as TPS7A0218PDBVR.A; lead finish NiPdAu | Sn; MSL Level-1-260C-UNLIM; US ECCN EAR99; package SOT-23 (DBV) 5"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "TI TPS7A02 product folder (parametrics, package areas, 'CAD symbols, footprints & 3D models' links)",
+    "url": "https://www.ti.com/product/TPS7A02",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:43:00Z",
+    "sha256": "14fb1f66856f2ae1c6ee81f215870262c3d59eba197ef036a9cef1d3fabc112c",
+    "supports": [
+      "SOT-23 (DBV) 5: 8.12 mm² (2.9 mm x 2.8 mm) package area",
+      "CAD symbols, footprints & 3D models for SOT-23 (DBV) 5 offered only through Ultra Librarian"
+    ]
+  },
+  {
+    "id": "src_cad_ultralibrarian",
+    "title": "Ultra Librarian for TI: TPS7A02 5-SOT-23 (DBV) symbol, footprint and 3D model download page",
+    "url": "https://vendor.ultralibrarian.com/TI/embedded/?gpn=TPS7A02&package=DBV&pin=5",
+    "type": "cad",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:43:00Z",
+    "sha256": "9fdc76d3a87aececab8450f01d8055cf30a967dc0d88286d0912bc08b51045c4",
+    "licence": "Ultra Librarian End User Subscription Agreement (shown on the page): the content is owned by EMA or its licensors, and the user must 'take all reasonable steps and to exercise due diligence to protect the CONTENT and the accompanying materials from unauthorized reproduction, publication, or distribution'. Not redistributable; no STEP downloaded. The sha256 is of the download page, not of a model.",
+    "supports": [
+      "a STEP model exists only behind the Ultra Librarian terms; geometry is generated from the DBV0005A outline instead"
+    ]
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "module": "m3-aluminium-standoff-30mm",
+  "name": "m3-aluminium-standoff-30mm",
+  "part": {
+    "diameter": 3,
+    "head_diameter": null,
+    "head_height": null,
+    "kind": "standoff",
+    "length": 30,
+    "outer": 5.5
+  },
+  "schema": "protoboard.hardware-cad.params/v0"
+}

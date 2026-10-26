@@ -1,0 +1,213 @@
+{
+  "artifact": "body",
+  "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+  "toolVersion": "0.1.0",
+  "sourceDigest": "c29a459f6bcd4c9c8b8486fd7598ada9e39a917e7ec9c6d0e30992f3174ec5cc",
+  "units": "mm",
+  "coordinates": "assembly root (mm, Z up); glTF export in m, Y up",
+  "harness": "rx_wire",
+  "length_mm": 41,
+  "route_length_mm": 39.81,
+  "conductor_lengths_mm": [
+    43.82,
+    47.9,
+    49.28,
+    49.58
+  ],
+  "length_fit": {
+    "route_mm": 39.82,
+    "method": "shortest"
+  },
+  "bundle": {
+    "kind": "twisted",
+    "conductors": 4,
+    "conductor_od_mm": 1.1,
+    "bundle_od_mm": 2.66,
+    "twist_pitch_mm": 14
+  },
+  "bend_radius_mm": {
+    "target": 6.37,
+    "minimum": 3.98,
+    "centreline": 54.26,
+    "conductors": 1.41,
+    "at_terminations": 1.35
+  },
+  "clearance_mm": {
+    "min_conductor_surface": 0.06
+  },
+  "ends": {
+    "end_rx": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "origin": [
+          -46.6,
+          -16,
+          32.7
+        ],
+        "xAxis": [
+          0,
+          1,
+          0
+        ]
+      },
+      "counterpart": "receiver.rx_pads",
+      "termination": "solder",
+      "link": "rx_pads"
+    },
+    "end_fc": {
+      "frame": {
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "origin": [
+          -11.175,
+          -8.3,
+          24.099999999999998
+        ],
+        "xAxis": [
+          0.6163913590547137,
+          -0.7874399611923968,
+          0
+        ]
+      },
+      "counterpart": "stack.rx_fc_pads",
+      "termination": "solder",
+      "link": "rx_fc_pads"
+    }
+  },
+  "features": {
+    "end_rx": {
+      "area_mm2": 83.317,
+      "centroid": [
+        -46.364,
+        -16.001,
+        32.137
+      ],
+      "faces": 8
+    },
+    "end_fc": {
+      "area_mm2": 83.317,
+      "centroid": [
+        -11.218,
+        -8.256,
+        24.746
+      ],
+      "faces": 8
+    }
+  },
+  "step": "ok",
+  "route": [
+    [
+      -46.6,
+      -16,
+      32.7
+    ],
+    [
+      -44.99,
+      -16,
+      31.36
+    ],
+    [
+      -43.13,
+      -15.78,
+      30.52
+    ],
+    [
+      -41.12,
+      -15.35,
+      30.13
+    ],
+    [
+      -39.1,
+      -14.9,
+      29.81
+    ],
+    [
+      -37.07,
+      -14.43,
+      29.56
+    ],
+    [
+      -35.04,
+      -13.96,
+      29.36
+    ],
+    [
+      -33.01,
+      -13.47,
+      29.2
+    ],
+    [
+      -30.98,
+      -12.97,
+      29.07
+    ],
+    [
+      -28.95,
+      -12.46,
+      28.96
+    ],
+    [
+      -26.92,
+      -11.95,
+      28.85
+    ],
+    [
+      -24.89,
+      -11.45,
+      28.73
+    ],
+    [
+      -22.86,
+      -10.94,
+      28.6
+    ],
+    [
+      -20.83,
+      -10.43,
+      28.43
+    ],
+    [
+      -18.81,
+      -9.93,
+      28.22
+    ],
+    [
+      -16.79,
+      -9.44,
+      27.95
+    ],
+    [
+      -14.78,
+      -8.97,
+      27.62
+    ],
+    [
+      -12.78,
+      -8.5,
+      27.21
+    ],
+    [
+      -11.2,
+      -8.17,
+      26.14
+    ],
+    [
+      -11.18,
+      -8.3,
+      24.1
+    ]
+  ],
+  "status": "ok",
+  "notes": [],
+  "exportedFrom": {
+    "file": "src/harnesses/radiomaster-rp1-crsf-wire/harness-cad/route.json",
+    "digest": "sha256:84d88809c8266c57ea65bfa6c39112bff87e473b9e51e2f6e0e4bdf2c4a1f073"
+  }
+}

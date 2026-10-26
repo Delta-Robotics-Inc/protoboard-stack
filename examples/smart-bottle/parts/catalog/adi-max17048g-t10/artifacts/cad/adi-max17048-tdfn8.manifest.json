@@ -1,0 +1,176 @@
+{
+  "artifact": "adi-max17048-tdfn8",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "36e6ba598c0a9e89df94c30bbec89154180ccedc788b1e7da980ab8523e71ac3",
+  "units": "mm",
+  "volume_mm3": 2.948,
+  "bodies": {
+    "package": 2.918,
+    "lead_1": 0.002,
+    "lead_2": 0.002,
+    "lead_3": 0.002,
+    "lead_4": 0.002,
+    "lead_5": 0.002,
+    "lead_6": 0.002,
+    "lead_7": 0.002,
+    "lead_8": 0.002,
+    "exposed_pad": 0.019
+  },
+  "features": {
+    "package_top": {
+      "area_mm2": 3.929,
+      "centroid": [
+        0.013,
+        0.013,
+        0.75
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "pin_1": {
+      "area_mm2": 0.075,
+      "centroid": [
+        -0.75,
+        -0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.075,
+      "centroid": [
+        -0.25,
+        -0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_3": {
+      "area_mm2": 0.075,
+      "centroid": [
+        0.25,
+        -0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_4": {
+      "area_mm2": 0.075,
+      "centroid": [
+        0.75,
+        -0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_5": {
+      "area_mm2": 0.075,
+      "centroid": [
+        0.75,
+        0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_6": {
+      "area_mm2": 0.075,
+      "centroid": [
+        0.25,
+        0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_7": {
+      "area_mm2": 0.075,
+      "centroid": [
+        -0.25,
+        0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_8": {
+      "area_mm2": 0.075,
+      "centroid": [
+        -0.75,
+        0.85,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "ep": {
+      "area_mm2": 0.929,
+      "centroid": [
+        0.017,
+        0.011,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 1.529,
+      "centroid": [
+        0.011,
+        0.006,
+        0.0
+      ],
+      "faces": 9,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

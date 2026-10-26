@@ -1,0 +1,67 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "Maxim Integrated (Analog Devices) MAX30102 datasheet 19-7740 Rev 1 (10/18), 32 pages: distributor-hosted copy (MikroElektronika) of the ADI document",
+    "url": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:03:53Z",
+    "sha256": "252e039335aea4bf1dae577eada92fe2630bce123fde691a11b3d890bfd0b53c",
+    "note": "Manufacturer document (footer 19-7740; Rev 1; 10/18, PDF created 2018-11-05) served from a distributor host. The canonical copy, src_datasheet_adi, could not be fetched from this machine; this copy is the one read.",
+    "supports": [
+      "p.1 general description: 1.8 V VDD supply, separate 3.3 V LED supply, I2C-compatible interface, software shutdown; features: 5.6 x 3.3 x 1.55 mm 14-pin optical module with integrated cover glass, 0.7 uA shutdown typ, -40 to +85 C",
+      "p.2 absolute maximum ratings (VDD -0.3 to +2.2 V; GND to PGND -0.3 to +0.3 V; VLED+ to PGND -0.3 to +6.0 V; all other pins -0.3 to +6.0 V; +-20 mA continuous into any terminal; HBM 2.5 kV; latchup +-250 mA; 440 mW at 70 C derate 5.5 mW/C; junction +90 C; storage -40 to +105 C; reflow +260 C)",
+      "p.2 package information: 14 OESIP, package code F143A5MK+1, outline 21-1048, theta-JA 180 C/W, theta-JC 150 C/W",
+      "p.2 electrical characteristics: VDD 1.7/1.8/2.0 V; VLED+ 3.1/3.3/5.0 V; IDD 600 uA typ / 1200 uA max in SpO2 and HR mode and IR-only mode (PW 215 us, 50 sps); ISHDN 0.7 uA typ / 10 uA max",
+      "p.3 ADC 18 bits; ADC clock 10.32/10.48/10.64 MHz; integration time 69/118/215/411 us; cover glass hydrolytic resistance class HGB 1 (DIN ISO 719)",
+      "p.4 IR LED 870/880/900 nm, VF 1.4 V, 6.5 mW at 20 mA; red LED 650/660/670 nm, VF 2.1 V, 9.8 mW at 20 mA; photodetector 600-900 nm, radiant sensitive area 1.36 mm2 (1.38 x 0.98 mm); die temperature sensor +-1 C, -40 to 85 C, 29 ms; SCL/SDA VIH >= 0.7 x VDD, VIL <= 0.3 x VDD, hysteresis 0.2 V, leakage +-0.05/+-1 uA; SDA/INT VOL <= 0.2 V at 6 mA",
+      "p.5 I2C write address 0xAE, read 0xAF; fSCL 0-400 kHz; bus capacitance 400 pF max",
+      "p.8 pin configuration (pin 1/14 end SENSOR, pin 7/8 end LED) and pin description (N.C. 1, 5, 6, 7, 8, 14; SCL 2; SDA 3; PGND 4; VLED+ 9, 10; VDD 11; GND 12; INT 13)",
+      "p.9 sample rate 50-3200 sps; LED current 0-50 mA; pulse width 69-411 us; ADC full scale 2-16 uA",
+      "p.18-20 tables 4-8: mode control, ADC range, sample rate, pulse width, LED current (0x1F 6.2 mA, 0x3F 12.6 mA, 0xFF 51.0 mA typ)",
+      "p.28 power-up sequencing (VDD before VLED+; INT and I2C pins may be pulled up while unpowered); power-down tolerant of any sequence; SDA open-drain, pull-up > 500 ohm; SCL input only",
+      "p.29 table 17: 7-bit slave ID 0b1010111 (0x57)",
+      "p.31 typical application circuit (VLED+ +3.3 V 200 mA max with 10 uF + 0.1 uF; VDD +1.8 V 20 mA with 4.7 uF + 0.1 uF; 1 kohm pull-ups to VDDIO; N.C. pins not connected); ordering information MAX30102EFD+T, -40 to +85 C, 14-lead OESIP (0.8 mm pin pitch), + lead-free, T tape and reel",
+      "p.32 revision history: Rev 1 (10/18) updated pin description, pin configuration and absolute maximum ratings"
+    ]
+  },
+  {
+    "id": "src_datasheet_adi",
+    "title": "Analog Devices MAX30102 datasheet (canonical URL of 19-7740)",
+    "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX30102.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:01:47Z",
+    "sha256": null,
+    "note": "Not read: the fetch failed (curl: HTTP/2 stream INTERNAL_ERROR, then no response over HTTP/1.1 for 2+ minutes; the web fetcher timed out). Listed because the brief cites it [W6] and it is the document src_datasheet copies.",
+    "supports": []
+  },
+  {
+    "id": "src_datasheet_rev0",
+    "title": "Maxim Integrated MAX30102 datasheet 19-7740 Rev 0 (9/15), 35 pages, with package outline 21-1048 rev B and package land pattern 90-0602 rev A (pp.32-33): distributor-hosted copy (X-ON Electronics)",
+    "url": "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:08:52Z",
+    "sha256": "e41d1c2f5b91c92acf2a91bceaf1b298cf3c0978c400bd6aeae3a121e979715a",
+    "note": "Superseded revision, used only for the package outline drawing that Rev 1 omits (Rev 1 p.2 names the same outline 21-1048 and package code F143A5MK+1). Its pin 5/6 and VLED+ maximum differ from Rev 1 (source_discrepancy traits on the part).",
+    "supports": [
+      "p.32 package outline 21-1048 rev B 'PACKAGE OUTLINE, 14L OLGA, 3.3x5.6x1.55mm': A 1.45/1.55/1.65; A1 0.3 REF; A2 1.0 REF; A3 0.18/0.20/0.22; b 0.25/0.30/0.35; D 5.5/5.6/5.7; E 3.2/3.3/3.4; D1 4.8 BSC; E1 2.4 BSC; e 0.8 BSC; L 0.65/0.7/0.75; N 14",
+      "p.32 top view: two windows 1.97 wide (REF); window 1 2.75 long (REF) centred 0.822 from the body centre towards pin 1; window 2 1.094 long (REF) centred 1.64 from the body centre towards pin 7; 0.10 (REF) rim; pin 1 at the top-left corner",
+      "p.32 bottom view: pin 1 index mark dia 0.25 at 1.20 REF / 0.60 REF from the pin-1 corner edges; 2X dia 0.20 (REF) marks at +-1.10 across, 2.000 from the centre row towards pins 1/14",
+      "p.8 Rev 0 pin description: pins 5 R_DRV and 6 IR_DRV (Rev 1: N.C.)",
+      "p.2 Rev 0 VLED+ 3.1/3.3/5.25 V (Rev 1: 5.0 V maximum)"
+    ]
+  },
+  {
+    "id": "src_cad_search",
+    "title": "Manufacturer and distributor CAD model pages for MAX30102EFD+T (SnapEDA, Digi-Key, SamacSys component search engine, Mouser)",
+    "url": "https://www.snapeda.com/parts/MAX30102EFD+T/Analog%20Devices/view-part/",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:12:00Z",
+    "sha256": null,
+    "note": "No model downloaded: SnapEDA, Digi-Key and componentsearchengine.com returned HTTP 403, Mouser returned a bot-block page, and the ADI product page timed out. No CAD with redistributable terms was found.",
+    "supports": ["data_gap: manufacturer CAD"]
+  }
+]

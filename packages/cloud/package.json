@@ -1,0 +1,34 @@
+{
+  "name": "@protoboardai/cloud",
+  "version": "0.2.0",
+  "description": "Typed client of the Protoboard parts service (API v1) and of any uhd-library/v1 library: the part-revision envelope, verified downloads",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/cloud"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "exports": {
+    ".": "./src/client.ts",
+    "./client": "./src/client.ts",
+    "./envelope": "./src/envelope.ts"
+  },
+  "files": [
+    "src/client.ts",
+    "src/api.ts",
+    "src/envelope.ts",
+    "src/taxonomy.ts",
+    "src/kits.ts",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

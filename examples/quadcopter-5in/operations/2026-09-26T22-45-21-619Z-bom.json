@@ -1,0 +1,36 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "bom",
+  "extension": {
+    "id": "@protoboard/ext-hardware",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "out": "docs"
+  },
+  "projectDigest": "sha256:8d9d37a302f4c23d34299335fb52326e0767f5108482712ee584f3eec661baa5",
+  "tools": [],
+  "startedAt": "2026-09-26T22:45:21.619Z",
+  "status": "succeeded",
+  "summary": "27 lines, 93 items",
+  "outputs": [
+    {
+      "path": "docs/bom.md",
+      "digest": "sha256:5247761ed568231fc846f04d808f3fcd213ea783d916c73abe238f2a13b6a731",
+      "bytes": 4411,
+      "description": "BOM (markdown)"
+    },
+    {
+      "path": "docs/bom.json",
+      "digest": "sha256:8d1fd66a3e9c2e148b9e607aeb58ae221e0154a5ec421e3b489494f7cb39281b",
+      "bytes": 8524,
+      "description": "BOM (JSON)"
+    }
+  ],
+  "data": {
+    "lines": 27,
+    "items": 93
+  },
+  "finishedAt": "2026-09-26T22:45:21.633Z"
+}

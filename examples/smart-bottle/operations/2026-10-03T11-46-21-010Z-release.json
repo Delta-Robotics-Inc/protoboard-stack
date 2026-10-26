@@ -1,0 +1,683 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "release",
+  "extension": {
+    "id": "@protoboard/ext-release",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "allow-dirty": "false",
+    "check": "false"
+  },
+  "projectDigest": "sha256:181e38711a7eaa460caa0056dbf0e52e150ad1ad384a1b9465266928b16c3ae6",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T11:46:21.010Z",
+  "status": "succeeded",
+  "summary": "release/0.1.0: 3 unit(s), 16 documents (49 pages), 94 files; package 24fe34bf6a0d",
+  "outputs": [
+    {
+      "path": "release/0.1.0/00-overview.pdf",
+      "digest": "sha256:cdc94dd82a7ac09d47a86003c1308dc5515db61123e074f235507b8aadd61717",
+      "bytes": 271446,
+      "description": "overview, order of work, index and traceability"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Bold.ttf",
+      "digest": "sha256:fb8e3bd30f23195495f577c21919a4e56f74a204e8e895bbfc667da86e42b6dd",
+      "bytes": 43468,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Medium.ttf",
+      "digest": "sha256:f2f83fce1c8edbf8bc8e630aff724c80242d919319d1ea4c6ddf4a64c4f014ca",
+      "bytes": 43572,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-Regular.ttf",
+      "digest": "sha256:76b65c04b353e2e38f8b0f7fecad2d1820c902d2dde500f161d009a011a3b153",
+      "bytes": 43476,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/fonts/KodeMono-SemiBold.ttf",
+      "digest": "sha256:d41ea722f247efb86fce550219927d05afbb3432f59b34890801b719eabed349",
+      "bytes": 43564,
+      "description": "Kode Mono (SIL Open Font License)"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-01-board.png",
+      "digest": "sha256:49ff724d415890606c99b429fe002e8c97261e7049d91a9ec54ff4fd917cdbd2",
+      "bytes": 103755,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/ag-system-06-bottle.png",
+      "digest": "sha256:b738dd46cb605de9673b86113b7d8e0fd8876623e492f3132efa65e3beeb43aa",
+      "bytes": 71972,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-bottle-battery-leads.png",
+      "digest": "sha256:0b3490c2964ad7ab989bd72fd4edbf9243cb4267af84e2679abcbd9ae1adf4a1",
+      "bytes": 59782,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-bottle-cap-board.png",
+      "digest": "sha256:80dfd48e30670dcb4b94539fa54173fa5fdec7c8b3c65cc80abcf6f4150eb050",
+      "bytes": 124115,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-bottle-cap-enclosure.png",
+      "digest": "sha256:cc0aa0b0d0423b7bc1190c17c7effa818a02e48e183c2fb31a0bbc86a6cc5ef2",
+      "bytes": 71017,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/made-bottle-probe-cable.png",
+      "digest": "sha256:0ae9271f3b6f2b27b586f68101483e2043b3dc4a442e0d1752b139cb920cff7d",
+      "bytes": 60629,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-adafruit-381-ds18b20-probe.png",
+      "digest": "sha256:ed47e4fc3f5966db6f0dcec99107fa661d294fc2325530ea12a0eba6b1dc5f5e",
+      "bytes": 6410,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-adi-max17048g-t10.png",
+      "digest": "sha256:4885e390d51589cb3fa4a27149abe3235251385d7230b628f5a12bf7b1a4ae9a",
+      "bytes": 10155,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-alps-skrtlae010.png",
+      "digest": "sha256:676a8bf47af011cea319d9c7c284f3cd1a946a640d854e1febf8b986e9c8af3a",
+      "bytes": 14050,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-as568-010-silicone.png",
+      "digest": "sha256:bec8541d718ebf75ae8c3d0b3d01ec43addf7a5638fec4525ecf341aedd063ce",
+      "bytes": 24973,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-as568-040-silicone.png",
+      "digest": "sha256:548ada1c067d774129adfa4d330b2aa9775f7436760d43fe2a4d712146e701fc",
+      "bytes": 14531,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-as568-138-silicone.png",
+      "digest": "sha256:19d894cdaa63d6b675596e249de52252f81623f457078abea10ed4a08ea1b98c",
+      "bytes": 17216,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-bottle-battery-leads.png",
+      "digest": "sha256:4bdb27c68e1cdcffaab7c1e2c0726345038c1b23a74c60c78949d769f25fad22",
+      "bytes": 21882,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-bottle-probe-cable.png",
+      "digest": "sha256:9870f575cbe3c8ff4279c72e6965bb6939b3ec04dc3dc403be27640961c86b85",
+      "bytes": 27774,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-coilcraft-xfl4020-152me.png",
+      "digest": "sha256:f64ad9b723637f9f83ec0a374811b5d9d76c65b1ba7dc36458b5ef41ca48ba2e",
+      "bytes": 10027,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-espressif-esp32-c3-mini-1-h4x.png",
+      "digest": "sha256:39dea1add30c8331087f914633faa567c726d062a2545464dab02436c83fe503",
+      "bytes": 11016,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-gct-usb4720-03-a.png",
+      "digest": "sha256:20cbd17490cc5345ace495f3482dd3346fe767c003114acac57de41f6dce7cea",
+      "bytes": 21062,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-iso-7045-m2x6-a2.png",
+      "digest": "sha256:265108f151f9db36900a49725558cf3ccd07881e2ea244ac6babb273102630b4",
+      "bytes": 9676,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-kingbright-aptf1616lseezgkqbkc.png",
+      "digest": "sha256:25e542aae80aa78ee2a8dfc8c450e327ed40a8045451453d925166828a631eb6",
+      "bytes": 11239,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-lipol-lp503450.png",
+      "digest": "sha256:690a980675a09ac5db16f1dc5519ae3ea45286eb77c950c644cd3a3d2131f7e5",
+      "bytes": 9529,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-microchip-mcp73831t-2aci-mc.png",
+      "digest": "sha256:926711452486d736bef4ab3da2bd15e9caf4847348b8aa41e48d6b4d135fdd3f",
+      "bytes": 10042,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-murata-grm155.png",
+      "digest": "sha256:879fbdedcf79b18c22783271f80a8efe8bc061741b44c76b32ca71d4852d6a6d",
+      "bytes": 8693,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-murata-grm188.png",
+      "digest": "sha256:34ee4869f75753e6481f4cdb3e7b1509693f39435c2b42ac180ba609f1328c65",
+      "bytes": 8724,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-nalgene-32oz-wide-mouth.png",
+      "digest": "sha256:cc214b245e07dd3e0656c82141fb1ddc7dddd5cc13536671e12dbe22b5ad8d17",
+      "bytes": 13261,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ruthex-rx-m2x4.png",
+      "digest": "sha256:4df93ba6e6a01c8c9ab4061c95389c4abecb5e6192a4f3aed31437dbe297940e",
+      "bytes": 35731,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-st-usblc6-2sc6.png",
+      "digest": "sha256:8cc5e723b883bb3056b0f3954e22faea4cc16ac4827927e105317745f6606b7d",
+      "bytes": 13596,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-st-vl53l4cdv0dh-1.png",
+      "digest": "sha256:48c61597b1f8ff5066ecffa614935707f85ab61c5f2cca351b7bd2e7f3504859",
+      "bytes": 9906,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ti-lp5024rsm.png",
+      "digest": "sha256:8b8f049d9965b5753b8542c8e9e28b94fd663abe69cc620c97d1b16928fc1fb7",
+      "bytes": 10107,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-ti-tps63020dsjr.png",
+      "digest": "sha256:e34594736b0b5320b447426816b7a4452aaa71808c1dd1c0382fcf0b73a2cb8c",
+      "bytes": 9136,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/part-yageo-rc0402.png",
+      "digest": "sha256:84555ebbe3d2d5bb09b2bd7b9b16dfdc5b62ab48d226f61cb5513b7639380714",
+      "bytes": 8906,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-cap.png",
+      "digest": "sha256:2a22453d957570aba152f78f64425fcec42613fdb443346131b432e197c98784",
+      "bytes": 104070,
+      "description": "assembled unit, line art from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-system.png",
+      "digest": "sha256:5f1e3d3464458ea5b99793e500f0b4801c58d96e0b8f9a3e01d2b8deacddb92c",
+      "bytes": 82540,
+      "description": "assembled unit, line art from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/assets/images/unit-thumb-cap.png",
+      "digest": "sha256:74c571c6de1dfa71567750870c2155a86a8bbe3299e8cc664ddf64e79a0bf0dd",
+      "bytes": 14036,
+      "description": "figure rendered from the model's CAD"
+    },
+    {
+      "path": "release/0.1.0/index.html",
+      "digest": "sha256:8faa449d304dd48eb2120c4ea8e52d938a398a3298b135b595ce555dc6768389",
+      "bytes": 212865,
+      "description": "the whole package, by unit and by section"
+    },
+    {
+      "path": "release/0.1.0/system/assembly-guide.pdf",
+      "digest": "sha256:59103a7802bbb7492196d8ec4c2da88cb7baf3118612c581b72fd6a95b30e6d4",
+      "bytes": 333883,
+      "description": "Assembly guide"
+    },
+    {
+      "path": "release/0.1.0/system/bom.csv",
+      "digest": "sha256:b6c3a1abd1a62d69aead63c067baa23a5d5f500aad5d34ad9b633e6b12c29d83",
+      "bytes": 2643,
+      "description": "module breakdown of one build"
+    },
+    {
+      "path": "release/0.1.0/system/bom.pdf",
+      "digest": "sha256:06c95a4adfc279b65f0514ee834371ef382108218e00ec44350c7c30ee7a2ce3",
+      "bytes": 156810,
+      "description": "Bill of materials"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/bottle-battery-leads/bottle-battery-leads.glb",
+      "digest": "sha256:9ddb6b5883e1d849c2e673127b8b40c2ebb773e72de3bee86ac78f246a24a94d",
+      "bytes": 41120,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/bottle-battery-leads/bottle-battery-leads.step",
+      "digest": "sha256:2bb1228d1aae3ac91b29564e658db9367d951c99e65c6cc0d33c630ef28050aa",
+      "bytes": 40862,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/bottle-battery-leads/cut-list.csv",
+      "digest": "sha256:755da9f41f86ec3eb750946c24a2beb825e20d3926130cd7644bb89dcb230a37",
+      "bytes": 298,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/bottle-probe-cable/bottle-probe-cable.glb",
+      "digest": "sha256:2b315b63a30461d4e84447d05cfbc24eb2c41d2106bf13381d331f4df2b76564",
+      "bytes": 78012,
+      "description": "routed harness (GLB)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/bottle-probe-cable/bottle-probe-cable.step",
+      "digest": "sha256:f446dfdfd91e5232961888de1b8a13197abcdf809199958bf82d76c6c1e23aed",
+      "bytes": 1321915,
+      "description": "routed harness (STEP)"
+    },
+    {
+      "path": "release/0.1.0/system/files/harnesses/bottle-probe-cable/cut-list.csv",
+      "digest": "sha256:b2a969ade0a290681d8a83a32ce9771619757480afe27d7bbbc38df81568d42e",
+      "bytes": 513,
+      "description": "cut list (from the model)"
+    },
+    {
+      "path": "release/0.1.0/system/files/model/uhd-bundle.json",
+      "digest": "sha256:bd0ce49250883160b502fadb9448fecb01e6dec50d80fd761354b854a637bb9d",
+      "bytes": 1328459,
+      "description": "UHD bundle of the released system"
+    },
+    {
+      "path": "release/0.1.0/system/files/test/test-record.csv",
+      "digest": "sha256:95471dfc2e8aea05a44d942d26db4c8f875b6de1bb503a7f2e84509c371ff15b",
+      "bytes": 9929,
+      "description": "test record to fill in, one row per check"
+    },
+    {
+      "path": "release/0.1.0/system/ordering-list.csv",
+      "digest": "sha256:93c97e4e32d1d8b4607b33333ca0f59f03b60b0b3aa5168cdf3c76778b89b9e1",
+      "bytes": 11328,
+      "description": "whole-product ordering list"
+    },
+    {
+      "path": "release/0.1.0/system/spec-sheet.pdf",
+      "digest": "sha256:44c6887bd0aa9b2bb19646f1d136769a81033ab9cc69fd121f659c4662788a2d",
+      "bytes": 186600,
+      "description": "Spec sheet"
+    },
+    {
+      "path": "release/0.1.0/system/test-plan.pdf",
+      "digest": "sha256:0837d918c8a98482d3a656dfbb232da870565ee76e658ce800dc57809745794f",
+      "bytes": 170171,
+      "description": "Test and validation plan"
+    },
+    {
+      "path": "release/0.1.0/system/work-order.pdf",
+      "digest": "sha256:6664d0c4b06ff87db8788a634d907351ea61483899a080892860826a1d8bda7e",
+      "bytes": 197390,
+      "description": "Work order"
+    },
+    {
+      "path": "release/0.1.0/units/board/assembly-guide.pdf",
+      "digest": "sha256:0ea9c19fa1f0ee896911a0414ec7ddfc62660ee3aa3b93d66761094437437831",
+      "bytes": 121958,
+      "description": "Assembly guide"
+    },
+    {
+      "path": "release/0.1.0/units/board/bom.csv",
+      "digest": "sha256:ed65a123bc6b3d6bb00722fd9a19e6cc97cc3c7401aff948e6199dfc27e81f27",
+      "bytes": 8904,
+      "description": "module breakdown of one build"
+    },
+    {
+      "path": "release/0.1.0/units/board/bom.pdf",
+      "digest": "sha256:5007da3ae6663a04d66971e47359a2355bdfaedad94bd288733283527ca8a40a",
+      "bytes": 157657,
+      "description": "Bill of materials"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/board.glb",
+      "digest": "sha256:60e629ed21a162680194942844179bfd5bda01a598729cda891e67b93308cafe",
+      "bytes": 943076,
+      "description": "board body (GLB)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/board.step",
+      "digest": "sha256:10862120ab3e5d82ef7128f598835ddf7c30577fa46f4b61cb01a0bc5aac7305",
+      "bytes": 4488872,
+      "description": "board body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/bom.csv",
+      "digest": "sha256:449ce5a13c35f192821ed88755f63f2b64f11736f3cbd958aef162dedf889149",
+      "bytes": 5471,
+      "description": "board BOM (UHD instance keys)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/B_Cu.gbr",
+      "digest": "sha256:7cfc7321938241a75573d063877d59fb564005dfe7c7780a74bd9b222a236095",
+      "bytes": 18800,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/B_Mask.gbr",
+      "digest": "sha256:7f80f3a35f8e8c827bdf77f1f12b53d5338b32e1c3a1e74514f56d559baf2945",
+      "bytes": 2200,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/B_Paste.gbr",
+      "digest": "sha256:4851b7890253330fba5a64c3f151ddd8f3ba1408e65444a69892c965d953b908",
+      "bytes": 2056,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/B_SilkScreen.gbr",
+      "digest": "sha256:7a0f37e80d016ac76fcf1a50b76f602a109ac22307f0596c56f8921751a9fe72",
+      "bytes": 1697,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/Edge_Cuts.gbr",
+      "digest": "sha256:0c17f19c1cf264f095aa656ff2e961aaa01381ae0b8eada41c95d0005e1a1ab2",
+      "bytes": 3319,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/F_Cu.gbr",
+      "digest": "sha256:56e6d06f399153432c7b5610b3f0b3c64390e9b0410e405009c820693f0dcce8",
+      "bytes": 71186,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/F_Mask.gbr",
+      "digest": "sha256:ba346a8e8cb8cb493d82251bc7f1324a4fdf58c0a05a77efe0cbb682278d173d",
+      "bytes": 12566,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/F_Paste.gbr",
+      "digest": "sha256:3e1b850a155baa460b888f0388e51cb1675f644ffa6f8ad3b6e3d42b6f4a7c89",
+      "bytes": 10622,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/F_SilkScreen.gbr",
+      "digest": "sha256:ee68cb8f936b2e16c75263771e5b92c707512c1e9827c5c86cf3be0bd4cbbbc6",
+      "bytes": 51563,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/In1_Cu.gbr",
+      "digest": "sha256:d78136075116222597611254efd08ec5b1f03bd55f08571111cf75a3fc2fe965",
+      "bytes": 16514,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/In2_Cu.gbr",
+      "digest": "sha256:32ded3bfe3485d02481d2db5442c295e1e231e1c42f14386f316d6f9edcea498",
+      "bytes": 18293,
+      "description": "Gerber layer"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/drill-L1-L4.drl",
+      "digest": "sha256:e98fbf5268bfd58c5c0f2211305345dee4321d2d85056f134a31bf7fb72ffb0d",
+      "bytes": 3279,
+      "description": "Excellon drill"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/gerber/drill_npth.drl",
+      "digest": "sha256:fca16aef09d438eaedab3327e36e2f32b058126fd8d9660ed7b71798c2549ab0",
+      "bytes": 320,
+      "description": "Excellon drill"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/boards/bottle-cap-board/pnp.csv",
+      "digest": "sha256:064da7b3006479aedca06d4c36b68a81c91fee3fbe85bc85a1a41d6d3863512a",
+      "bytes": 4080,
+      "description": "pick-and-place"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/mechanical/bottle-cap-board/board.step",
+      "digest": "sha256:10862120ab3e5d82ef7128f598835ddf7c30577fa46f4b61cb01a0bc5aac7305",
+      "bytes": 4488872,
+      "description": "body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/units/board/files/test/test-record.csv",
+      "digest": "sha256:d23ae4c96411faf98c34ee14a615fb72d289653e7e509c8575a80ea8b000ed3a",
+      "bytes": 1491,
+      "description": "test record to fill in, one row per check"
+    },
+    {
+      "path": "release/0.1.0/units/board/spec-sheet.pdf",
+      "digest": "sha256:1bb7e5dff3c8b083742a477c46c492b6edfbe56cdc002413e97f7fff89aa3d1f",
+      "bytes": 234015,
+      "description": "Spec sheet"
+    },
+    {
+      "path": "release/0.1.0/units/board/test-plan.pdf",
+      "digest": "sha256:60ca531d26584c610c034778825d73cd27afe7664dffafbfdb83b84ad770f5f7",
+      "bytes": 55020,
+      "description": "Test and validation plan"
+    },
+    {
+      "path": "release/0.1.0/units/board/work-order.pdf",
+      "digest": "sha256:04d5228c801cf4dc63491115b58c325da02f9feb3cea8e98593f82bfbe27a766",
+      "bytes": 134931,
+      "description": "Work order"
+    },
+    {
+      "path": "release/0.1.0/units/cap/assembly-guide.pdf",
+      "digest": "sha256:3df9eed9f023db6a62120a701465c52fa72c3e55890f4779f569ad45e83ea020",
+      "bytes": 21697,
+      "description": "Assembly guide"
+    },
+    {
+      "path": "release/0.1.0/units/cap/bom.csv",
+      "digest": "sha256:92650b87218330284835497725a7715cb6b96cd599b58b3f2ccf112ed229c12e",
+      "bytes": 116,
+      "description": "module breakdown of one build"
+    },
+    {
+      "path": "release/0.1.0/units/cap/bom.pdf",
+      "digest": "sha256:874645dd9d888a8cd743c87e6579b5c0a4d842d8687c4c5f1d481828be7ae354",
+      "bytes": 21548,
+      "description": "Bill of materials"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/mechanical/bottle-cap-enclosure/base.3mf",
+      "digest": "sha256:dde0bbfd325b635c7aac3b85abdcfdfd39151a7d5a2c62e0fe3d48c1736737ee",
+      "bytes": 216478,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/mechanical/bottle-cap-enclosure/base.stl",
+      "digest": "sha256:ce545b7b353e91349835f250ba8ca78dd1dffff7fc0d3a7679152f99d9c02ee9",
+      "bytes": 1009484,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/mechanical/bottle-cap-enclosure/bottle-cap-enclosure.step",
+      "digest": "sha256:bc5a879322460a3b264baefafde0296042e3e69d023baad6615bc50ead2a9cb8",
+      "bytes": 2278395,
+      "description": "body (STEP)"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/mechanical/bottle-cap-enclosure/lid.3mf",
+      "digest": "sha256:76ed51a3359d690270ccdc04b93f2715d4d499c54763714ce8e24a784201072d",
+      "bytes": 106358,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/mechanical/bottle-cap-enclosure/lid.stl",
+      "digest": "sha256:75dbecf809fb858ff717daf01bbda29253d20724893cf3020f641a0d7de89f46",
+      "bytes": 534284,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/mechanical/bottle-cap-enclosure/plunger_button.3mf",
+      "digest": "sha256:d3351cfb3bacb937fdcc0ebca1fb0d8b3704422d7abc1212c43df377be5f5f00",
+      "bytes": 15316,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/mechanical/bottle-cap-enclosure/plunger_button.stl",
+      "digest": "sha256:6de6111ee6084a119d5a4f809bce0446e3049a37e0014edddee728b9b9122c49",
+      "bytes": 74284,
+      "description": "print file"
+    },
+    {
+      "path": "release/0.1.0/units/cap/files/test/test-record.csv",
+      "digest": "sha256:ec1622727893c33b1d45074fae039e820831255de987922b78dc81b489962325",
+      "bytes": 1244,
+      "description": "test record to fill in, one row per check"
+    },
+    {
+      "path": "release/0.1.0/units/cap/spec-sheet.pdf",
+      "digest": "sha256:0564533cb4a3259e709bfbe3936b63f12c606c08ebd898391ca4230cc4526b99",
+      "bytes": 187039,
+      "description": "Spec sheet"
+    },
+    {
+      "path": "release/0.1.0/units/cap/test-plan.pdf",
+      "digest": "sha256:0c7c95aa1c55e9ac89bcd6b08d4067d870db5904cec8e1ac09ac36d849430005",
+      "bytes": 53688,
+      "description": "Test and validation plan"
+    },
+    {
+      "path": "release/0.1.0/units/cap/work-order.pdf",
+      "digest": "sha256:6960668c98d24b9f65e7b431e9c90709a5d1502129237ae8de0bac2620d7d7c1",
+      "bytes": 52938,
+      "description": "Work order"
+    },
+    {
+      "path": "release/0.1.0/manifest.json",
+      "digest": "sha256:adf2809f3a1aa4c3e71bdea30ab94b1f55f8ba9de60b6ab16c6784c3668d1b58",
+      "bytes": 56702,
+      "description": "release manifest"
+    }
+  ],
+  "data": {
+    "status": "succeeded",
+    "summary": "release/0.1.0: 3 unit(s), 16 documents (49 pages), 94 files; package 24fe34bf6a0d",
+    "diagnostics": [],
+    "version": "0.1.0",
+    "dir": "release/0.1.0",
+    "units": [
+      {
+        "id": "board",
+        "folder": "units/board",
+        "perProduct": 1
+      },
+      {
+        "id": "cap",
+        "folder": "units/cap",
+        "perProduct": 1
+      },
+      {
+        "id": "system",
+        "folder": "system",
+        "perProduct": 1
+      }
+    ],
+    "documents": [
+      {
+        "path": "00-overview.pdf",
+        "pages": 6
+      },
+      {
+        "path": "units/board/spec-sheet.pdf",
+        "pages": 4
+      },
+      {
+        "path": "units/board/bom.pdf",
+        "pages": 2
+      },
+      {
+        "path": "units/board/work-order.pdf",
+        "pages": 3
+      },
+      {
+        "path": "units/board/assembly-guide.pdf",
+        "pages": 1
+      },
+      {
+        "path": "units/board/test-plan.pdf",
+        "pages": 2
+      },
+      {
+        "path": "units/cap/spec-sheet.pdf",
+        "pages": 3
+      },
+      {
+        "path": "units/cap/bom.pdf",
+        "pages": 1
+      },
+      {
+        "path": "units/cap/work-order.pdf",
+        "pages": 2
+      },
+      {
+        "path": "units/cap/assembly-guide.pdf",
+        "pages": 1
+      },
+      {
+        "path": "units/cap/test-plan.pdf",
+        "pages": 2
+      },
+      {
+        "path": "system/spec-sheet.pdf",
+        "pages": 3
+      },
+      {
+        "path": "system/bom.pdf",
+        "pages": 3
+      },
+      {
+        "path": "system/work-order.pdf",
+        "pages": 5
+      },
+      {
+        "path": "system/assembly-guide.pdf",
+        "pages": 5
+      },
+      {
+        "path": "system/test-plan.pdf",
+        "pages": 6
+      }
+    ],
+    "packageDigest": "sha256:24fe34bf6a0de72eab80262caa992378e9423465284562930660d059b062ac90",
+    "manifestDigest": "sha256:adf2809f3a1aa4c3e71bdea30ab94b1f55f8ba9de60b6ab16c6784c3668d1b58"
+  },
+  "finishedAt": "2026-10-03T11:46:35.180Z"
+}

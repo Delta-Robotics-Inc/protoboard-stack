@@ -1,0 +1,66 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/circuit.config.ts",
+    "configDigest": "sha256:e79eaedb7200f1b9837e5dcd74ecca0c5c1e7c9413ead84aecd2409e55ea9473",
+    "moduleDigest": "sha256:b1744f10834176b01b730aa672b08162342f4623b8e7ce4709e3fb51c25808a7"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:9f83567188486543778f68dc7bc6b3abc941b71fc74fc339b804bf6d57cee33c",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T11:14:29.777Z",
+  "status": "succeeded",
+  "summary": "49 components (7 fixed, 42 layout), 37 nets → 159 traces, 136 vias in 70.7 s; 2 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/tscircuit/board.gen.tsx",
+      "digest": "sha256:5b39f1e34225c5348d716e6eda22d534bd852742530beade33d15058a97a3a90",
+      "bytes": 57874,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/circuit.json",
+      "digest": "sha256:1e137c8acb2f5379a054e37a18761f12cb5a8cce973fb9bd84c984e90c06ff23",
+      "bytes": 1106767,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/watch-main/tscircuit/build.json",
+      "digest": "sha256:387bfd740b9b192a8520a9108d4afba0046dfec34912cd055269811125fbebff",
+      "bytes": 18045,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 49,
+    "nets": 37,
+    "placement": {
+      "fixed": 7,
+      "layout": 42
+    },
+    "traces": 159,
+    "vias": 136,
+    "build_ms": 70700,
+    "errors": [
+      "pcb_placement_error: Copper pour pcb_copper_pour_0 violates copper-to-board-edge clearance (measured 0.200mm, required 0.300mm)",
+      "pcb_placement_error: Copper pour pcb_copper_pour_3 violates copper-to-board-edge clearance (measured 0.200mm, required 0.300mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T11:15:40.556Z"
+}

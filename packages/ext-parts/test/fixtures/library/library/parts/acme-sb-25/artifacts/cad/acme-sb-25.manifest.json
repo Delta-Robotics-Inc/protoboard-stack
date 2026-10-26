@@ -1,0 +1,14 @@
+{
+  "artifact": "acme-sb-25",
+  "tool": "fixture",
+  "units": "mm",
+  "features": {
+    "mount": {
+      "area_mm2": 120.637,
+      "centroid": [0, 0, 1.5],
+      "faces": 4,
+      "centres": [[-10, -10, 0], [10, -10, 0], [10, 10, 0], [-10, 10, 0]],
+      "diameter_mm": 3.2
+    }
+  }
+}

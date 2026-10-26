@@ -1,0 +1,371 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:extract",
+  "extension": {
+    "id": "@protoboard/ext-enclosure-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "extract",
+    "provider": "@protoboard/ext-enclosure-cad",
+    "module": "watch-case",
+    "config": "src/enclosures/watch-case/cad.config.ts",
+    "configDigest": "sha256:56644905ebf210462585bea9cad09c283b1ab599a8ccdac004a09b3210719583",
+    "moduleDigest": "sha256:6aa8be494010e7b4b1855b4b68c795213f3958797bfae31d9401cc92e9ff82ac"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:d2ae55c4a1eccced811a38c4edec97cdc7ac944344bd0443cd1b9246bfb9ce50",
+  "tools": [],
+  "startedAt": "2026-10-03T09:56:58.242Z",
+  "status": "succeeded",
+  "summary": "watch-case: 8 frame(s), 12 artifact(s)",
+  "outputs": [],
+  "data": {
+    "frames": {
+      "back_joint": {
+        "origin": [
+          0.5,
+          0,
+          10.39
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "button_1": {
+        "origin": [
+          -18.865,
+          11.18,
+          8.53
+        ],
+        "normal": [
+          -0.866,
+          0.5,
+          0
+        ],
+        "xAxis": [
+          -0.5,
+          -0.866,
+          0
+        ]
+      },
+      "button_2": {
+        "origin": [
+          -18.865,
+          -11.18,
+          8.53
+        ],
+        "normal": [
+          -0.866,
+          -0.5,
+          0
+        ],
+        "xAxis": [
+          0.5,
+          -0.866,
+          0
+        ]
+      },
+      "display_window": {
+        "origin": [
+          0,
+          0,
+          -1.55
+        ],
+        "normal": [
+          0,
+          0,
+          -1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "hr_window": {
+        "origin": [
+          3,
+          4.822,
+          11.69
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "lugs_12": {
+        "origin": [
+          0.5,
+          25.11,
+          0.45
+        ],
+        "normal": [
+          0,
+          1,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "lugs_6": {
+        "origin": [
+          0.5,
+          -25.11,
+          0.45
+        ],
+        "normal": [
+          0,
+          -1,
+          0
+        ],
+        "xAxis": [
+          1,
+          0,
+          0
+        ]
+      },
+      "usb_opening": {
+        "origin": [
+          -21.86,
+          0,
+          8.56
+        ],
+        "normal": [
+          -1,
+          0,
+          0
+        ],
+        "xAxis": [
+          0,
+          -1,
+          0
+        ]
+      }
+    },
+    "artifacts": [
+      {
+        "id": "cad_source",
+        "name": "watch-case build123d design",
+        "type": "cad",
+        "role": "source",
+        "format": "build123d",
+        "filePath": "src/enclosures/watch-case/build123d"
+      },
+      {
+        "id": "cad_step",
+        "name": "watch-case body",
+        "type": "cad",
+        "role": "body",
+        "format": "step",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/body.step",
+        "provenance": {
+          "generatedFrom": "cad_source",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "cad_glb",
+        "name": "watch-case body (GLB)",
+        "type": "cad",
+        "role": "body",
+        "format": "glb",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/body.glb",
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "cad_manifest",
+        "name": "watch-case geometry manifest",
+        "type": "cad",
+        "format": "json",
+        "filePath": "src/enclosures/watch-case/out/body.manifest.json",
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "base_stl",
+        "name": "base (STL, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "stl",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/base.stl",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "base_3mf",
+        "name": "base (3MF, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "3mf",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/base.3mf",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "lid_stl",
+        "name": "lid (STL, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "stl",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/lid.stl",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "lid_3mf",
+        "name": "lid (3MF, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "3mf",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/lid.3mf",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "plunger_button_1_stl",
+        "name": "plunger_button_1 (STL, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "stl",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/plunger_button_1.stl",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "plunger_button_1_3mf",
+        "name": "plunger_button_1 (3MF, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "3mf",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/plunger_button_1.3mf",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "plunger_button_2_stl",
+        "name": "plunger_button_2 (STL, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "stl",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/plunger_button_2.stl",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      },
+      {
+        "id": "plunger_button_2_3mf",
+        "name": "plunger_button_2 (3MF, for printing)",
+        "type": "cad",
+        "role": "body",
+        "format": "3mf",
+        "units": "mm",
+        "filePath": "src/enclosures/watch-case/out/plunger_button_2.3mf",
+        "tags": [
+          "manufacturing",
+          "print"
+        ],
+        "provenance": {
+          "generatedFrom": "cad_step",
+          "tool": "build123d",
+          "toolVersion": "0.13.0",
+          "sourceDigest": "f4f2a1f5ebe9c86054eac8500d2ffdf82bf8091f6d46c240e369faf3e77bab9e"
+        }
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T09:56:58.258Z"
+}

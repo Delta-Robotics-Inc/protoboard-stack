@@ -1,0 +1,54 @@
+{
+  "name": "@protoboardai/web-viewer",
+  "version": "0.2.0",
+  "description": "Protoboard's shells over the viewer stack: the browser shell (`protoboard dev`: the Protoboard theme, view tabs from the view registry, its own inspector, hierarchy and DRC) and the VS Code shell (one viewer editor tab: VS Code's theme, no inspector or DRC of its own)",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/web-viewer"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json",
+    "./vscode": "./src/vscode/index.ts",
+    "./vscode/protocol": "./src/vscode/protocol.ts"
+  },
+  "files": [
+    "src",
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vite build && vite build -c vite.vscode.config.ts",
+    "prepack": "npm run build",
+    "build:vscode": "vite build -c vite.vscode.config.ts"
+  },
+  "dependencies": {
+    "@deltarobotics/uhd-viewer": "^0.2.0",
+    "@protoboardai/views": "^0.2.0",
+    "@radix-ui/react-scroll-area": "^1.2.18",
+    "@xyflow/react": "^12.12.0",
+    "lucide-react": "^1.48.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.1"
+  }
+}

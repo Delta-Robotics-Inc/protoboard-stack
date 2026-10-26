@@ -1,0 +1,49 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "dolphinrc-m3-grommet-esc",
+    "independent": "true"
+  },
+  "projectDigest": "sha256:96dff6062190234f5f3c48cfb013c9c157025fa4a3fe40e0714f223e17138f60",
+  "tools": [],
+  "startedAt": "2026-10-03T18:29:05.320Z",
+  "status": "succeeded",
+  "summary": "dolphinrc-m3-grommet-esc: audit 11/11 (independent), 1 assumption(s), 2 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/dolphinrc-m3-grommet-esc/verification.json",
+      "digest": "sha256:48cfa2e5b6f5b205278185b81f297aa02fdb81e5f336ae8df545c14b004632ef",
+      "bytes": 1243,
+      "description": "dolphinrc-m3-grommet-esc: verification record"
+    }
+  ],
+  "data": {
+    "partId": "dolphinrc-m3-grommet-esc",
+    "recorded_at": "2026-10-03T18:29:05.350Z",
+    "audit": {
+      "method": "independent stage-2 audit, 2026-10-03: re-fetched every cited source live (curl). Westfield and Ettinger HTML pages differ byte-wise from the pins (pages do on every request) and Ettinger's generated datasheet PDFs differ too, so facts were read from the live text; Westfield's DIN 985 PDF, DJI's O4 manual and MEPS's two images matched their pinned sha256 and were read from those bytes (the images visually). The generated bodies were measured with ext-parts scripts/audit/step_measure.py. Every sourced fact the part states was checked; these small parts state fewer than 12 sourced facts each, so the count includes the gap, assumption and CAD checks.",
+      "independent": true,
+      "auditor": "stage-2 agent of the PB-836 Matek track (p4cQuad worktree; did not author these parts)",
+      "checked": 11,
+      "confirmed": 11,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": null,
+    "assumptions": [
+      "part choice"
+    ],
+    "data_gaps": [
+      "grommet height 4 mm and outer Ø8.1 mm (only 'M3*8.1mm' is stated (data_gap))",
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T18:29:05.350Z"
+}

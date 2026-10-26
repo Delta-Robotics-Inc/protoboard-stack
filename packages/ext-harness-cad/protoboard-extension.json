@@ -1,0 +1,106 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-harness-cad",
+  "version": "0.2.0",
+  "description": "Routed wire-harness CAD (a provider of the cad capability): each cable's 3D geometry (conductors swept along an obstacle-free route, twisted where the cable is, connector housings and solder joints) generated from the assembled UHD model and bound to the frames its ends land on.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "harness-cad",
+      "summary": "Generate and bind a wire harness's routed 3D geometry from the assembled model; read the route report (length fit, bend radius, clearance) and fix what it finds",
+      "path": "skills/harness-cad/SKILL.md"
+    }
+  ],
+  "tools": [
+    {
+      "id": "python-build123d",
+      "purpose": "Python with build123d, numpy and scipy (voxel routing, sweeps, STEP/GLB export)",
+      "probe": [
+        "sh",
+        "-c",
+        "exec \"${PROTOBOARD_PYTHON:-python3}\" -c 'import build123d, numpy, scipy; print(\"build123d \" + build123d.__version__)'"
+      ],
+      "install": "protoboard tools install cad (a project venv with these pins), or point PROTOBOARD_PYTHON at an interpreter with build123d==0.13.0 numpy==2.5.3 scipy==1.18.1",
+      "runtime": {
+        "id": "cad",
+        "kind": "python",
+        "packages": [
+          "build123d==0.13.0",
+          "numpy==2.5.3",
+          "scipy==1.18.1"
+        ],
+        "env": "PROTOBOARD_PYTHON",
+        "python": ">=3.11,<3.15"
+      }
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "cad",
+      "summary": "Routed wire harnesses: an obstacle-free route through the assembled model, swept conductors, plug housings and solder joints (build123d)",
+      "native": "harness-cad",
+      "operations": {
+        "generate": {
+          "entry": "./ops/cad.ts#generate",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "Route the harness through the assembled model, around the cables routed before it in the system's order, and write harness-cad/route.json (conductor paths, length fit, bend limits, clearance)"
+        },
+        "export": {
+          "entry": "./ops/cad.ts#exportOutputs",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "Build the bodies from harness-cad/route.json and write out/body.glb, body.step and body.manifest.json (end frames, lengths, bend radii, clearance)"
+        },
+        "extract": {
+          "entry": "./ops/cad.ts#extract",
+          "summary": "The end frames the route was generated for, and the harness's artifacts"
+        },
+        "check": {
+          "entry": "./ops/cad.ts#check",
+          "summary": "The route is not older than the model, the export not older than the route; the cable fits its length, routed clear, and every end still meets its part"
+        }
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "harness-cad",
+      "summary": "Alias of cad:generate then cad:export for every wire harness (or the named ones), each bound by its cad.config.ts, in one routing run",
+      "entry": "./ops/harness-cad.ts#harnessCad",
+      "effect": "export",
+      "requires": [
+        "python-build123d"
+      ],
+      "inputs": {
+        "harness": {
+          "description": "comma-separated harness definition ids or instance paths (default: every wire harness with a cable_build trait)"
+        }
+      }
+    },
+    {
+      "id": "package:work-order",
+      "summary": "Manufacturing Package: preparation of each routed cable in its unit's work order (cut length, strip, conductors, lay, bend radius, terminations)",
+      "entry": "./ops/package.ts#workOrder",
+      "effect": "pure"
+    },
+    {
+      "id": "package:test-plan",
+      "summary": "Manufacturing Package: routing checks of each cable (bend radius, clearance, slack)",
+      "entry": "./ops/package.ts#testPlan",
+      "effect": "pure"
+    }
+  ],
+  "checks": [
+    {
+      "id": "routes",
+      "summary": "Wire harnesses that no cad.config.ts binds to a cad provider (each bound harness's route report is its cad:check)",
+      "entry": "./checks/routes.ts#routes"
+    }
+  ]
+}

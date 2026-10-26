@@ -1,0 +1,36 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "A rough draft is the concept level: three to six blocks, and a question before going deeper",
+  "skills": ["build-a-project", "system-compose"],
+  "tags": ["system", "concept", "scoping"],
+  "fixture": { "from": "fixture" },
+  "instruction": "I have an idea for a product (docs/brief.md). Give me a rough draft of it in this Protoboard project so I can look at it as a diagram: the top-level module is `trail-light` (export TRAIL_LIGHT in src/trail-light.uhd.ts, as protoboard.config.ts expects). There is no network and no parts service. Follow the stack's build-a-project SOP. End by telling me what the draft shows and what you assumed.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *"] },
+  "budget": { "turns": 30, "seconds": 900, "usd": 4 },
+  "graders": [
+    { "id": "root-composed", "kind": "fault", "code": "PB_ROOT_NOT_FOUND" },
+    { "id": "check-clean", "kind": "check", "maxErrors": 0, "absent": ["PB_INVALID_ENDPOINT", "PB_UNRESOLVED_DEFINITION"], "ran": ["uhd/checkSystem"] },
+    {
+      "id": "three-to-six-blocks",
+      "kind": "facts",
+      "definition": "trail-light",
+      "description": "The concept level: 3 to 6 top-level capability blocks, connected",
+      "facts": [{ "path": "children.2.id" }, { "path": "children.6", "exists": false }, { "path": "links.1.id" }]
+    },
+    { "id": "nothing-deeper", "kind": "files", "absent": ["src/boards", "src/harnesses", "src/enclosures", "docs/sourcing", "parts/local", "release"] },
+    { "id": "asks-before-going-deeper", "kind": "text", "matches": ["\\?", "deeper|next level|go further|break (it|them|each)|inside each"] },
+    { "id": "brief-untouched", "kind": "digest", "file": "docs/brief.md", "changed": false },
+    {
+      "id": "plain-and-honest",
+      "kind": "rubric",
+      "files": ["src/trail-light.uhd.ts"],
+      "rubric": "The person asked for a rough draft of a clip-on trail light from a four-line idea. 1. The model is a concept: three to six top-level blocks named for what they do (power, control, light, button, housing or similar), each with only the interfaces that join it to the others, and the links between them; no real part numbers, no circuit boards, no component-level detail, no file or folder per board. 2. Each block says it is a placeholder with no part chosen. 3. The final answer describes the draft in plain words with any abbreviation spelled out, states what was assumed (for example a single lithium cell, a supply voltage) as assumptions, and asks whether to go a level deeper instead of going there. 4. It does not claim the design is verified, sourced or ready to build."
+    }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "write": { "file": "src/trail-light.uhd.ts", "from": "solution/trail-light.uhd.ts" } },
+    { "protoboard": ["check"] },
+    { "say": "Here is the rough draft, at concept level: four blocks in src/trail-light.uhd.ts. Power (a rechargeable cell and its charging from a phone charger) supplies Control and Light; Button tells Control when it is pressed; Control tells Light how bright to be. Every block is a placeholder: no part is chosen and no circuit board is drawn. Assumed, not decided: one lithium cell and a low-voltage controller. The housing and the clip are not in the draft yet. check: 0 errors. Do you want me to go a level deeper and break each block into what is inside it?" }
+  ]
+}

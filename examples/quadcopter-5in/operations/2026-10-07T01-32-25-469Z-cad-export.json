@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "radiomaster-rp1-crsf-wire",
+    "config": "src/harnesses/radiomaster-rp1-crsf-wire/cad.config.ts",
+    "configDigest": "sha256:41adfa7c8d568f3432b9c5cb72d5ea4c33ca3fd67768659b591933d31c1f7e24",
+    "moduleDigest": "sha256:30a58cb87e1b0886023d9ecb6f4c85edc9b37af55e9cf5831667eb873d8fc19b"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:89b8212a38dd8538fa8e12019ae9b9c58066449153cc8e3ae83a8ed438877c21",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:32:25.469Z",
+  "status": "succeeded",
+  "summary": "rx_wire: body.glb, body.step and body.manifest.json in src/harnesses/radiomaster-rp1-crsf-wire/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/radiomaster-rp1-crsf-wire/out/body.glb",
+      "digest": "sha256:bb871ceb0a2a2327bb656ead439ec0b9492b977a75d7967f014f7d34c7224570",
+      "bytes": 222744,
+      "description": "rx_wire: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/radiomaster-rp1-crsf-wire/out/body.step",
+      "digest": "sha256:52a78be0f684316cfc371bce4cdf5d025c0528ebc3786ae623a75c7163948259",
+      "bytes": 2044119,
+      "description": "rx_wire: swept solids"
+    },
+    {
+      "path": "src/harnesses/radiomaster-rp1-crsf-wire/out/body.manifest.json",
+      "digest": "sha256:93f96b40899ef1abc3c6dbb98eec10bf39d112cd42f1ce7058eada197df258e1",
+      "bytes": 3238,
+      "description": "rx_wire: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "radiomaster-rp1-crsf-wire",
+    "path": "rx_wire",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 41,
+    "route_length_mm": 39.81,
+    "slack_mm": null,
+    "bend_mm": {
+      "target": 6.37,
+      "minimum": 3.98,
+      "centreline": 54.26,
+      "conductors": 1.41,
+      "at_terminations": 1.35
+    },
+    "clearance_mm": 0.06,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-07T01:32:30.194Z"
+}

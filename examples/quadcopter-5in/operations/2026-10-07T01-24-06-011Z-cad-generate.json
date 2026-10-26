@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-frame-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-frame-cad",
+    "module": "iso-10511-m2-nyloc-nut",
+    "config": "parts/local/iso-10511-m2-nyloc-nut/cad.config.ts",
+    "configDigest": "sha256:22c012a41396a6a6c782956e88334844bdec334b8f56d85ff94f0c0fb9f10214",
+    "moduleDigest": "sha256:4b4c55cf78ae903e966e103cf3f4d0ac48241fb26db8a43dd624bcc41ee8b4b9"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ee706bef3f8bd1d33b860cae803c8801b6e9cb10816c4b16b728174d063ce54f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:24:06.011Z",
+  "status": "succeeded",
+  "summary": "iso-10511-m2-nyloc-nut: nut parameters in parts/local/iso-10511-m2-nyloc-nut/frame-cad; run cad:export for the body",
+  "outputs": [
+    {
+      "path": "parts/local/iso-10511-m2-nyloc-nut/frame-cad/params.json",
+      "digest": "sha256:f150ae3766eee80d9329b46c81817d8b48536acbda32337947786ae28715b2f2",
+      "bytes": 267,
+      "description": "iso-10511-m2-nyloc-nut: generator parameters from its sizes"
+    }
+  ],
+  "data": {
+    "module": "iso-10511-m2-nyloc-nut",
+    "kind": "nut",
+    "native": "parts/local/iso-10511-m2-nyloc-nut/frame-cad",
+    "params": {
+      "schema": "protoboard.hardware-cad.params/v0",
+      "module": "iso-10511-m2-nyloc-nut",
+      "name": "iso-10511-m2-nyloc-nut",
+      "part": {
+        "kind": "nut",
+        "diameter": 2,
+        "length": 2.8,
+        "head_diameter": null,
+        "head_height": null,
+        "outer": 4
+      }
+    },
+    "generator": "@protoboardai/ext-frame-cad/py/hardware_cad.py"
+  },
+  "finishedAt": "2026-10-07T01:24:08.254Z"
+}

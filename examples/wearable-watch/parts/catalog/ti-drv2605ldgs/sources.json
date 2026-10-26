@@ -1,0 +1,69 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "TI DRV2605L 2- to 5.2-V Haptic Driver for LRA and ERM with Effect Library and Smart-Loop Architecture, datasheet SLOS854D (May 2014, rev. March 2018), with package option addendum (10-Nov-2025), packaging materials (5-Nov-2024) and DGS0010A package outline (4221984/A 05/2015)",
+    "url": "https://www.ti.com/lit/ds/symlink/drv2605l.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:01:00Z",
+    "sha256": "0597de48de2dd1d08d3d2a801ced819c1c756f152916367608b9146c927bb290",
+    "supports": [
+      "section 5 DGS 10-pin VSSOP pin configuration and pin functions (REG 1, SCL 2, SDA 3, IN/TRIG 4, EN 5, VDD/NC 6, OUT+ 7, GND 8, OUT- 9, VDD 10)",
+      "6.1 absolute maximum ratings (VDD -0.3 to 5.5 V; EN/SDA/SCL/IN/TRIG -0.3 to VDD + 0.3 V; TA -40 to 85 C; TJ -40 to 150 C; Tstg -65 to 150 C)",
+      "6.2 ESD ratings (VSSOP: HBM +-500 V OUT+/OUT-, +-1000 V other pins; CDM +-250 V)",
+      "6.3 recommended operating conditions (VDD 2-5.2 V; PWM input 10-250 kHz; load >= 8 ohm at VDD 5.2 V; VIL <= 0.5 V, VIH >= 1.3 V; analog input 0-1.8 V; LRA 125-300 Hz)",
+      "6.4 thermal information (YZF DSBGA only)",
+      "6.5 electrical characteristics (V(REG) 1.83 V; EN pull-down 2 Mohm; shutdown 4/7 uA; standby 4.1/7 uA; quiescent 0.5/0.65 mA; SDA VOL 0.4 V at 4 mA; ZO(SD) 15 kohm; over-current load threshold 4 ohm; average battery current 2.4/3.5 mA)",
+      "6.6 timing requirements (SCL up to 400 kHz)",
+      "6.7 switching characteristics (start-up 0.7 ms from GO, 1.5 ms from EN; PWM output 19.5/20.5/21.5 kHz)",
+      "8.3.12 protection (thermal shutdown, actuator over-current latch, REG over-current limit)",
+      "8.4.1 operation below 2 V not recommended; 5.5 V absolute maximum; EN behaviour",
+      "8.5.2.2 overdrive clamp (output cannot exceed VDD)",
+      "8.5.3 I2C (7-bit address 0x5A; 1.8-V thresholds, VDD-tolerant; pull-ups 660 ohm-4.7 kohm; SDA/SCL must not exceed VDD)",
+      "Table 32 recommended external components (C(VDD) 1 uF, C(REG) 1 uF, C(IN) 1 uF optional, R(PU) 2.2 kohm); 9.2.2.2 capacitor selection (0.1 uF X5R/X7R near VDD, 1 uF on REG)",
+      "11.1 layout guidelines (VDD and REG capacitors close to the pins)",
+      "package option addendum: DRV2605LDGSR active, VSSOP (DGS) 10, 2500 large T&R, NIPDAUAG | SN, MSL Level-2-260C-1 YEAR, -40 to 85 C, marking 05L; DRV2605L-Q1 is a separate automotive version",
+      "DGS0010A package outline: body 2.9-3.1 x 2.9-3.1 mm, span 4.75-5.05 mm, pitch 0.5 mm, lead width 0.17-0.27, lead thickness 0.13-0.23, foot 0.4-0.7, standoff 0.05-0.15, 1.1 mm max height, JEDEC MO-187 variation BA, no exposed pad"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "TI DRV2605L product folder (status, parametrics, package areas, CAD/CAE links to Ultra Librarian)",
+    "url": "https://www.ti.com/product/DRV2605L",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:02:00Z",
+    "sha256": "4f8f7045d18441ce2307a4f75f8d60e22a71e68adfa576764b389d78dca67f2f",
+    "supports": [
+      "status ACTIVE",
+      "Vs 2-5.2 V, operating temperature -40 to 85 C, shutdown current 4 uA, start-up 0.7 ms",
+      "VSSOP (DGS) 10: 14.7 mm2 (3 mm x 4.9 mm)",
+      "CAD symbols, footprints & 3D models: VSSOP (DGS) 10 -> Ultra Librarian only"
+    ]
+  },
+  {
+    "id": "src_part_details",
+    "title": "TI DRV2605LDGSR part details page",
+    "url": "https://www.ti.com/product/DRV2605L/part-details/DRV2605LDGSR",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:02:00Z",
+    "sha256": "8807460f46a78290d9f64cb6f9d345f81121b582b9a5e5f69aef9697c8febb97",
+    "supports": [
+      "identity: DRV2605LDGSR ACTIVE, VSSOP (DGS) 10, -40 to 85 C, 2,500 large T&R",
+      "DRV2605LDGST is the same device on a 250-unit small reel",
+      "lead finish NiPdAuAg | Sn, MSL Level-2-260C-1 YEAR"
+    ]
+  },
+  {
+    "id": "src_cad_ultralibrarian",
+    "title": "Ultra Librarian for TI: DRV2605LDGSR 10-VSSOP (DGS0010A) symbol, footprint and 3D model download page",
+    "url": "https://vendor.ultralibrarian.com/TI/embedded/?gpn=DRV2605L&package=DGS&pin=10",
+    "type": "cad",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:03:00Z",
+    "sha256": "895a062b14359915f29e991ed691323a1fe36a1e26f0fa6a9d08507223b4f70f",
+    "licence": "Ultra Librarian End User Subscription Agreement (shown on the page): a nonexclusive, nontransferable right to download and use the content, and the user must 'protect the CONTENT ... from unauthorized reproduction, publication, or distribution'. Not redistributable; no STEP downloaded. The sha256 is of the download page, not of a model.",
+    "supports": ["a STEP model exists only behind the Ultra Librarian terms; geometry is generated from the DGS0010A outline instead"]
+  }
+]

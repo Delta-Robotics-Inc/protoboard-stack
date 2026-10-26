@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "matek-gh6p-gnss-lead",
+    "config": "src/harnesses/matek-gh6p-gnss-lead/cad.config.ts",
+    "configDigest": "sha256:f4d894ca1f703fac68a7fd1ba78a025fd78b4171aaca23575f14f85fa03b687d",
+    "moduleDigest": "sha256:35f632cd99a249cd708f9196bb725308dcb8829e44194d8fc1513602e154bdd7"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4d52cfd50c4ba4509b2089eeed8bf12bdd95f986c4a2b7d1f12027971646afd2",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T15:16:10.490Z",
+  "status": "succeeded",
+  "summary": "gnss_lead: body.glb, body.step and body.manifest.json in src/harnesses/matek-gh6p-gnss-lead/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/out/body.glb",
+      "digest": "sha256:e3b4d69344fc4f3664357258cd7b1cdb15360087acdc7c58e6f4d2d00e0905b0",
+      "bytes": 523372,
+      "description": "gnss_lead: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/out/body.step",
+      "digest": "sha256:8eee8ed9360332a8123326772ff41266ee1cb3c7c80132976ba729a01b6b6d20",
+      "bytes": 4906784,
+      "description": "gnss_lead: swept solids"
+    },
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/out/body.manifest.json",
+      "digest": "sha256:35ea15bd76f578509f4ccb6c09bcc621caf04788b23ca6c81646a23b543c49c9",
+      "bytes": 4913,
+      "description": "gnss_lead: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "matek-gh6p-gnss-lead",
+    "path": "gnss_lead",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 97,
+    "route_length_mm": 96.83,
+    "slack_mm": 7.07,
+    "bend_mm": {
+      "target": 4.4,
+      "minimum": 2.75,
+      "centreline": 6.1,
+      "conductors": 0.76,
+      "at_terminations": 1.45
+    },
+    "clearance_mm": 0.11,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T15:16:16.029Z"
+}

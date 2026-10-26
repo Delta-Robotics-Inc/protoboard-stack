@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "iso-4762-m2x5",
+    "config": "parts/local/iso-4762-m2x5/cad.config.ts",
+    "configDigest": "sha256:d4c8ea2afb688712d35c5a104d0ba6792cd029319bf1161b43da40eef2de263b",
+    "moduleDigest": "sha256:bfb258eb0eb7c06040fc229269baa511d44463b3841216349e37a9ae4df9e42a"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:7be17e6a7f1cfcfbf16b4e71fd846ec4ef112b7523a3d9fc2419ab9a8ede02a7",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:26:50.913Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m2x5: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m2x5/out (34.333 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/iso-4762-m2x5/out/body.step",
+      "digest": "sha256:dadf53b7c360c2c5ab5bcae37c9bc325229bb182a0d3af8a737d5372b704f71a",
+      "bytes": 32519,
+      "description": "iso-4762-m2x5: nominal body"
+    },
+    {
+      "path": "parts/local/iso-4762-m2x5/out/body.glb",
+      "digest": "sha256:17baa660976b40057d3838ffe86138d47b12e51d522b4c72fb182520d750f653",
+      "bytes": 21012,
+      "description": "iso-4762-m2x5: viewer mesh"
+    },
+    {
+      "path": "parts/local/iso-4762-m2x5/out/body.manifest.json",
+      "digest": "sha256:ac4cdf33aedfda0cd84ce9ffbb191f21ff2a81eb8770bbc0b7fc6a4d93483fc0",
+      "bytes": 538,
+      "description": "iso-4762-m2x5: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "iso-4762-m2x5",
+    "out": "parts/local/iso-4762-m2x5/out",
+    "volume_mm3": 34.333,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:26:55.975Z"
+}

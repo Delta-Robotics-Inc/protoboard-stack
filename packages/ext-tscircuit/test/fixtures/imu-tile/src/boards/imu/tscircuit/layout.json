@@ -1,0 +1,136 @@
+{
+  "$comment": "Provider-owned layout (TEST FIXTURE): positions for the parts circuit.config.ts does not fix, mm, board frame. Hand-placed because tscircuit's packer cannot fit 22 parts into the 30 mm circle unaided; chosen to route cleanly, decoupling distances not reviewed.",
+  "u1": {
+    "at": [
+      -4,
+      2
+    ],
+    "rotation_deg": 0
+  },
+  "u3": {
+    "at": [
+      6,
+      -3.5
+    ],
+    "rotation_deg": 0
+  },
+  "l1": {
+    "at": [
+      6.5,
+      -8.8
+    ],
+    "rotation_deg": 0
+  },
+  "c1": {
+    "at": [
+      2,
+      -3.5
+    ],
+    "rotation_deg": 90
+  },
+  "c2": {
+    "at": [
+      2,
+      -6
+    ],
+    "rotation_deg": 90
+  },
+  "c3": {
+    "at": [
+      4.3,
+      0.3
+    ],
+    "rotation_deg": 90
+  },
+  "c4": {
+    "at": [
+      6.5,
+      0.3
+    ],
+    "rotation_deg": 90
+  },
+  "c5": {
+    "at": [
+      8.7,
+      0.3
+    ],
+    "rotation_deg": 90
+  },
+  "r1": {
+    "at": [
+      10.5,
+      -2.5
+    ],
+    "rotation_deg": 90
+  },
+  "r2": {
+    "at": [
+      12,
+      -2.5
+    ],
+    "rotation_deg": 90
+  },
+  "c6": {
+    "at": [
+      0.9,
+      -1.0
+    ],
+    "rotation_deg": 90
+  },
+  "c7": {
+    "at": [
+      -4.2,
+      7.2
+    ],
+    "rotation_deg": 0
+  },
+  "c8": {
+    "at": [
+      -2.2,
+      7.2
+    ],
+    "rotation_deg": 0
+  },
+  "c9": {
+    "at": [
+      -6.7,
+      -3.5
+    ],
+    "rotation_deg": 0
+  },
+  "c10": {
+    "at": [
+      -4.5,
+      -3.5
+    ],
+    "rotation_deg": 0
+  },
+  "c11": {
+    "at": [
+      8.5,
+      5
+    ],
+    "rotation_deg": 90
+  },
+  "c12": {
+    "at": [
+      8.5,
+      7
+    ],
+    "rotation_deg": 90
+  },
+  "r3": {
+    "at": [
+      1.8,
+      3
+    ],
+    "rotation_deg": 90
+  },
+  "r4": {
+    "at": [
+      1.8,
+      5
+    ],
+    "rotation_deg": 90
+  }
+}

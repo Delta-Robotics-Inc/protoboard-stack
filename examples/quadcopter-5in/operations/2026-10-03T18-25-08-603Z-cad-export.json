@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "meps-phase-leads-m3",
+    "config": "src/harnesses/meps-phase-leads-m3/cad.config.ts",
+    "configDigest": "sha256:51f25dc8532b785d490473ef3992b09d375dc2dc5504d71c925a82a3554be999",
+    "moduleDigest": "sha256:749631ad55e59c56ce8d54b3cb1e5c38cfd6b3a91da763a3c0349dbe7b9ed42b"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4cf82c4b20f0fb7448deee95078d3a145411d08f6b73cbf5b092b88450d6ac98",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:25:08.603Z",
+  "status": "succeeded",
+  "summary": "arm_rl_leads: body.glb, body.step and body.manifest.json in src/harnesses/meps-phase-leads-m3/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/meps-phase-leads-m3/out/body.glb",
+      "digest": "sha256:3bea52fcfd626874ac45ce7d5e0c6d4ef03cfa7e861c47bb3fe5a36604aaaa63",
+      "bytes": 205408,
+      "description": "arm_rl_leads: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/meps-phase-leads-m3/out/body.step",
+      "digest": "sha256:c58ecbd8d6d2d5a9b91bd8433569179e6b1dd03bcff7a5b94ead6abd6f3f386b",
+      "bytes": 2348441,
+      "description": "arm_rl_leads: swept solids"
+    },
+    {
+      "path": "src/harnesses/meps-phase-leads-m3/out/body.manifest.json",
+      "digest": "sha256:4365b045a744f12248cff53d5ac5f8e66c79310131de1cb2e4baae0e6ed89a27",
+      "bytes": 4236,
+      "description": "arm_rl_leads: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "meps-phase-leads-m3",
+    "path": "arm_rl_leads",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 78,
+    "route_length_mm": 77.9,
+    "slack_mm": 8.12,
+    "bend_mm": {
+      "target": 8.79,
+      "minimum": 5.49,
+      "centreline": 8.45,
+      "conductors": 1.79,
+      "at_terminations": 2.06
+    },
+    "clearance_mm": 1.07,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:25:14.355Z"
+}

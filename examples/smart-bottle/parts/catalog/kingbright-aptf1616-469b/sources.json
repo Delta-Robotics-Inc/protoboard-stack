@@ -1,0 +1,70 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "Kingbright APTF1616LSEEZGKQBKC 1.6 x 1.6 mm Full-Color Surface Mount LED, spec DSAO4453 / 1203013691 Rev V.9B (2025-03-19)",
+    "url": "https://www.kingbrightusa.com/images/catalog/SPEC/APTF1616LSEEZGKQBKC.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:38:00Z",
+    "sha256": "70d08345f8ebe563347ddc787c0de80b7f6465f51b8ce70fdb16ddcb73b51ba6",
+    "supports": [
+      "p.1 Descriptions: Hyper Red AlGaInP on GaAs, Green InGaN on sapphire, Blue InGaN; ESD-sensitive handling",
+      "p.1 Features: 1.6 x 1.6 mm SMD LED, 0.7 mm thickness; 2000 pcs / reel; MSL 3; halogen-free; RoHS",
+      "p.1 Package dimensions (top, side, bottom views): body 1.6 x 1.6, height 0.7, substrate 0.25, lens 1.2 at the base and 1.1 at the top; pads 0.35 x 0.65 at the four corners with edge castellations; pad pitch 0.85 along each side; pin numbers 1-4; central polarity mark on the underside; notes: dimensions in mm, tolerance +-0.2 unless noted, single mounting surface",
+      "p.1 Circuit diagram: pin 1 common to the three chips (anode), pin 2 Red, pin 3 Green, pin 4 Blue (cathodes)",
+      "p.1 Selection guide: Iv at 2 mA min/typ Red 6/15, Green 30/80, Blue 6/14 mcd; water clear lens; viewing angle 2theta1/2 130 deg",
+      "p.2 Electrical / optical characteristics at TA = 25 C (IF = 2 mA): lambda peak 630/515/460 nm, lambda dom 621/525/465 nm, bandwidth 20/35/25 nm, VF typ 1.8/2.65/2.65 V and max 2.1/3.1/3.1 V (+-0.1 V), IR at VR 5 V max 10/50/50 uA, temperature coefficients of lambda and VF",
+      "p.2 Absolute maximum ratings at TA = 25 C: PD 75/102.5/120 mW, VR 5 V, Tj 115 C, Top -40 to +85 C, Tstg -40 to +85 C, IF 30/25/30 mA, IFP 195/150/150 mA (1/10 duty, 0.1 ms), ESD HBM 3000/450/250 V, RthJA 780/790/790 C/W, RthJS 640/650/650 C/W (FR4, pad >= 16 mm2 per pad)",
+      "p.3 Technical data: relative intensity vs wavelength, spatial distribution, IF-VF, Iv-IF, forward current derating and Iv-temperature curves per colour",
+      "p.4 Reflow soldering profile for lead-free SMD process: 260 C max for 10 s max, above 255 C 30 s max, above 217 C 60-150 s, pre-heat 150-200 C 60-120 s, ramp 3 C/s up and 6 C/s down max; reflow passes 2 max; reflow only",
+      "p.4 Precautionary note 5: contents may not be reproduced or re-transmitted without permission"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "Kingbright USA product page APTF1616LSEEZGKQBKC",
+    "url": "https://www.kingbrightusa.com/product.asp?catalog_name=LED&product_id=APTF1616LSEEZGKQBKC",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:40:00Z",
+    "sha256": "116813ed726d6df8f2ded6e944b8efdebef49c8bdd03bee68e466bdbf638f3a8",
+    "supports": [
+      "description '1.6X1.6MM LOW CURRENT RGB SMD LED'; emitting colour Red / Green / Blue; material AlGaInP, InGaN, InGaN; water clear lens",
+      "wavelength 621/525/465 nm; Iv min/typ 6/15, 30/80, 6/14 mcd at 2 mA; viewing angle 130",
+      "features: 1.6 x 1.6 x 0.7 mm (L x W x H) SMT LED; 2000 pcs / reel; MSL 3; 'Common cathode version is available upon request'",
+      "links the datasheet and the 3D spec page (kcpn3d.asp); 'In case of discrepancy, dimensions in Datasheet supersede 3D spec'",
+      "distributor stock 336032 pcs on the fetch date (orderable; no lifecycle field)"
+    ]
+  },
+  {
+    "id": "src_cad",
+    "title": "Kingbright APTF1616 STEP 3D spec (SolidWorks 2008 export), from the 3D spec page https://www.kingbrightusa.com/kcpn3d.asp?PN=APTF1616LSEEZGKQBKC",
+    "url": "https://www.kingbrightusa.com/images/catalog/3D/STEP/APTF1616.STEP",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:41:00Z",
+    "sha256": "a439644d5916a9ef3dd84bde075d1c9ccef111e101809441e252e7454ebc8700",
+    "licence": "No licence stated on the 3D spec download page (it says only 'Lens colors in 3D files are for display purpose only' and 'In case of discrepancy, dimensions in Datasheet supersede 3D spec'); the datasheet's precautionary note 5 says its contents may not be reproduced or re-transmitted without permission. Not redistributed: kept in .research/cad/ as evidence, and the committed body is generated from the datasheet.",
+    "supports": [
+      "Y-up model, 11 solids: substrate 1.6 x 1.6 x 0.25; lens 1.2 x 1.6 at the base, 1.1 x 1.6 at the top, 0.45 tall (overall 0.70)",
+      "underside pads 0.35 x 0.65 at x = +-(0.45..0.80), centres +-0.425 along the side (pitch 0.85), 0.05 in from the end edges; top-side pad metal 0.275 wide",
+      "edge castellations dia 0.26, through the substrate, centred on each pad",
+      "underside polarity metal strip about 0.55 wide along the full length, not a terminal",
+      "agrees with the datasheet package drawing in every dimension checked"
+    ]
+  },
+  {
+    "id": "src_jlc",
+    "title": "JLCPCB/LCSC catalog record C3019103 through jlcsearch (unofficial mirror; distributor data)",
+    "url": "https://jlcsearch.tscircuit.com/components/list.json?search=C3019103",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T02:39:00Z",
+    "sha256": "196f5b2f37e95cf15d0d8b9022ccb37b1b1a741babaae327c23e5ef81b81cd59",
+    "supports": [
+      "LCSC C3019103 = APTF1616LSEEZGKQBKC, package 'SMD-4P,1.6x1.6mm', category RGB LEDs",
+      "'Common Anode'; -40 to +85 C; 0.7 x 1.6 x 1.6 mm; 120 deg; VF R 1.8-2.1, G/B 2.65-3.1 V; Iv R 15, G 50, B 14 mcd; ESD R 3000, G 450, B 250 V; PD R 75, G 102.5, B 120 mW",
+      "stock 305 on the fetch date"
+    ]
+  }
+]

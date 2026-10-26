@@ -1,0 +1,13 @@
+{
+  "$comment": "Occurrences kept on purpose in the delivered material (product owners' decision, 2026-10-08); scripts/check-alpha-superseded.mjs fails on any other, and on an entry that keeps nothing. Each entry says why. Two kinds: the warning that Protoboard is not the alpha web app (the one mention of the alpha an agent should read, for the transition), and the same words meaning something else.",
+  "entries": [
+    {"path":"packages/core/templates/_agents/common.md","contains":"first). A server named **protoboard** whose tools are `list_boards`,","reason":"the agent warning, in every project's AGENTS.md (PB-1018): a server named protoboard with the alpha's board tools is not this project's server"},
+    {"path":"packages/core/templates/_agents/common.md","contains":"`open_board` or `connect_board` is the retired Protoboard web app (the","reason":"the agent warning, second line: those tools are the retired web app's"},
+    {"path":"packages/core/templates/_agents/common.md","contains":"alpha), not this: do not use it for this project.","reason":"the agent warning, third line: do not use it"},
+    {"path":"packages/cli/src/agents.ts","contains":"the alpha web app's); it is left as it is","reason":"the agent warning, in protoboard agents: the server named protoboard in an agent's file is another one (the alpha web app's) and is left alone (PB-1018)"},
+    {"path":"packages/cli/src/mcp/instructions.ts","contains":"This is NOT the Protoboard alpha web app.","reason":"the agent warning: the MCP server's instructions say this is not the alpha web app, and that there is no browser board to look for"},
+    {"path":"packages/cli/src/mcp/server.ts","contains":"Do not look for a Protoboard web app: there is none to use here.","reason":"the agent warning, in the MCP server's start-a-project prompt"},
+    {"path":"packages/ext-tscircuit/lib/land-patterns.ts","contains":"Alpha & Omega","reason":"a manufacturer: Alpha & Omega Semiconductor (the AO3400A's SOT23 land pattern and its package outline document)"},
+    {"path":"packages/core/templates/wearable/files/src/boards/main/circuit.config.ts","contains":"Math.","reason":"a maths variable: alpha is the half angle of the round board's chord (the template's source file is delivered whole, so its code is read as text)"}
+  ]
+}

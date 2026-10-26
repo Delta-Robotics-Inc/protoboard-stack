@@ -1,0 +1,36 @@
+import { defineConfig } from "@protoboardai/core";
+
+export default defineConfig({
+  name: "{{id}}",
+  // the root system (src/system.uhd.ts) and every local definition: the main board
+  // (src/boards/main, with its pads, circuit.config.ts and firmware.config.ts), the housing
+  // (src/enclosures, with a cad.config.ts naming @protoboardai/ext-enclosure-cad), the
+  // harnesses (src/harnesses) and purchased parts researched here (parts/local: the
+  // cell, evidence in parts/evidence/)
+  root: { source: "src/system.uhd.ts", export: "{{CONST}}" },
+  sources: ["src/**/*.uhd.ts", "parts/local/**/*.uhd.ts"],
+  // purchased parts from the Protoboard Cloud parts catalog (`protoboard parts add`),
+  // pinned in parts/origins.json with their files under parts/catalog/<id>/
+  catalog: "parts/catalog",
+  {{cloud}}
+  // installed npm packages with a protoboard-extension.json. The capability providers
+  // (tscircuit, esp-idf, enclosure-cad, harness-cad, frame-cad) are also selected by the
+  // modules' own configs; listing them here makes their skills and checks visible to `doctor`.
+  extensions: [
+    "@protoboardai/ext-hardware",
+    "@protoboardai/ext-parts",
+    "@protoboardai/ext-sourcing",
+    "@protoboardai/ext-tscircuit",
+    "@protoboardai/ext-esp-idf",
+    "@protoboardai/ext-enclosure-cad",
+    "@protoboardai/ext-harness-cad",
+    "@protoboardai/ext-frame-cad",
+    "@protoboardai/ext-docs",
+    "@protoboardai/ext-release",
+  ],
+  // `protoboard release`: the Manufacturing Package gets a folder per unit. The main board
+  // is fabricated, assembled and brought up on the bench on its own; everything else is final assembly.
+  release: {
+    units: ["board"],
+  },
+});

@@ -1,0 +1,7 @@
+{
+  "name": "@fixtures/fake-firmware",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TEST FIXTURE: a fake firmware provider (one config file citing the board's links). Not a real firmware framework.",
+  "type": "module"
+}

@@ -1,0 +1,1226 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs-verify",
+  "extension": {
+    "id": "@protoboard/ext-docs",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:e14f84b0b2d582f84cf9df8a610681fa8be9dd2fb9c84c35af772b9bd2e41eff",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    },
+    {
+      "id": "poppler",
+      "available": true,
+      "detail": "pdfinfo version 24.02.0"
+    }
+  ],
+  "startedAt": "2026-10-03T12:29:55.773Z",
+  "status": "failed",
+  "summary": "161 error(s), 0 warning(s), 10 info",
+  "outputs": [
+    {
+      "path": "docs/.review/verify-report.json",
+      "digest": "sha256:594a4a9ac083a88334e78d7f41497666c27f76734dc85e44e336d84eaa147209",
+      "bytes": 36407,
+      "description": "verification report"
+    }
+  ],
+  "data": {
+    "findings": [
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].name: document shows \"Bottle cap housing\", model gives \"Coilcraft XFL4020-152ME 1.5 μH Power Inductor\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].value: document shows \"—\", model gives \"1.5 μH ±20 %\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].value: status in document \"gap\", model now \"model\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].manufacturer: document shows \"—\", model gives \"Coilcraft\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].manufacturer: status in document \"gap\", model now \"model\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].partNumber: document shows \"—\", model gives \"XFL4020-152ME\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].partNumber: status in document \"gap\", model now \"model\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].assumptions: document shows \"0\", model gives \"2\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=6].openGaps: document shows \"0\", model gives \"2\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=7].name: document shows \"Coilcraft XFL4020-152ME 1.5 μH Power Inductor\", model gives \"Espressif ESP32-C3-MINI-1-H4X module (PCB antenna, 4 MB flash)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=7].manufacturer: document shows \"Coilcraft\", model gives \"Espressif Systems\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=7].partNumber: document shows \"XFL4020-152ME\", model gives \"ESP32-C3-MINI-1-H4X\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=7].verification: document shows \"—\", model gives \"audited 23/25\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=7].verification: status in document \"gap\", model now \"model\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=7].assumptions: document shows \"2\", model gives \"3\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=7].openGaps: document shows \"2\", model gives \"5\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=8].name: document shows \"Espressif ESP32-C3-MINI-1-H4X module (PCB antenna, 4 MB flash)\", model gives \"GCT USB4720-03-A USB-C receptacle (USB 2.0, IP67, mid-mount)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=8].manufacturer: document shows \"Espressif Systems\", model gives \"GCT\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=8].partNumber: document shows \"ESP32-C3-MINI-1-H4X\", model gives \"USB4720-03-A\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=8].verification: document shows \"audited 23/25\", model gives \"audited 18/18\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].name: document shows \"GCT USB4720-03-A USB-C receptacle (USB 2.0, IP67, mid-mount)\", model gives \"Kingbright APTF1616LSEEZGKQBKC RGB LED (1.6 x 1.6 mm, common anode)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].manufacturer: document shows \"GCT\", model gives \"Kingbright\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].partNumber: document shows \"USB4720-03-A\", model gives \"APTF1616LSEEZGKQBKC\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].quantity: document shows \"1\", model gives \"8\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].verification: document shows \"audited 18/18\", model gives \"—\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].verification: status in document \"model\", model now \"gap\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].assumptions: document shows \"3\", model gives \"1\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=9].openGaps: document shows \"5\", model gives \"3\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].name: document shows \"Kingbright APTF1616LSEEZGKQBKC RGB LED (1.6 x 1.6 mm, common anode)\", model gives \"LP503450 1000 mAh 3.7 V LiPo with PCM\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].manufacturer: document shows \"Kingbright\", model gives \"LiPoly Batteries Co., Ltd. (polybattery.com)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].partNumber: document shows \"APTF1616LSEEZGKQBKC\", model gives \"LP503450\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].quantity: document shows \"8\", model gives \"1\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].verification: document shows \"—\", model gives \"audited 16/16\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].verification: status in document \"gap\", model now \"model\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].assumptions: document shows \"1\", model gives \"4\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].openGaps: document shows \"3\", model gives \"6\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].name: document shows \"LP503450 1000 mAh 3.7 V LiPo with PCM\", model gives \"M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].manufacturer: document shows \"LiPoly Batteries Co., Ltd. (polybattery.com)\", model gives \"Generic (ISO 7045 / DIN 7985 Z)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].partNumber: document shows \"LP503450\", model gives \"SPP-M2-6-A2\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].quantity: document shows \"1\", model gives \"10\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].verification: document shows \"audited 16/16\", model gives \"not audited\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].assumptions: document shows \"4\", model gives \"2\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].openGaps: document shows \"6\", model gives \"4\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=12].name: document shows \"M2 x 6 mm Pozi pan head screw, ISO 7045 / DIN 7985 Z, A2 stainless\", model gives \"Microchip MCP73831 Li-ion charger, 4.20 V (2x3 DFN-8)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=12].manufacturer: document shows \"Generic (ISO 7045 / DIN 7985 Z)\", model gives \"Microchip Technology\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=12].partNumber: document shows \"SPP-M2-6-A2\", model gives \"MCP73831T-2ACI/MC\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=12].quantity: document shows \"10\", model gives \"1\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=12].assumptions: document shows \"2\", model gives \"3\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=12].openGaps: document shows \"4\", model gives \"5\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].name: document shows \"Microchip MCP73831 Li-ion charger, 4.20 V (2x3 DFN-8)\", model gives \"Murata GRM155 MLCC (1005M / 0402, X5R / X7R)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].value: document shows \"—\", model gives \"1 μF ±10 %\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].value: status in document \"gap\", model now \"model\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].manufacturer: document shows \"Microchip Technology\", model gives \"Murata\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].partNumber: document shows \"MCP73831T-2ACI/MC\", model gives \"GRM155R61A105KE15D\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].quantity: document shows \"1\", model gives \"3\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].verification: document shows \"not audited\", model gives \"audited 10/10\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].assumptions: document shows \"3\", model gives \"2\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=13].openGaps: document shows \"5\", model gives \"3\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=14].value: document shows \"1 μF ±10 %\", model gives \"100 nF ±10 %\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=14].partNumber: document shows \"GRM155R61A105KE15D\", model gives \"GRM155R71C104KA88D\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=14].quantity: document shows \"3\", model gives \"4\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=15].name: document shows \"Murata GRM155 MLCC (1005M / 0402, X5R / X7R)\", model gives \"Murata GRM188 MLCC (1608M / 0603, X5R / X7R)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=15].value: document shows \"100 nF ±10 %\", model gives \"10 μF ±20 %\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=15].partNumber: document shows \"GRM155R71C104KA88D\", model gives \"GRM188R61A106ME69D\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=15].verification: document shows \"audited 10/10\", model gives \"audited 8/8\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=16].value: document shows \"10 μF ±20 %\", model gives \"22 μF ±20 %\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=16].partNumber: document shows \"GRM188R61A106ME69D\", model gives \"GRM188R61A226ME15D\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=16].quantity: document shows \"4\", model gives \"3\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=17].value: document shows \"22 μF ±20 %\", model gives \"10 μF ±20 %\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=17].partNumber: document shows \"GRM188R61A226ME15D\", model gives \"GRM188R61E106MA73D\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=17].quantity: document shows \"3\", model gives \"1\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=18].name: document shows \"Murata GRM188 MLCC (1608M / 0603, X5R / X7R)\", model gives \"Nalgene 32oz Wide Mouth Bottle, Tritan Renew\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=18].manufacturer: document shows \"Murata\", model gives \"Nalgene\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=18].partNumber: document shows \"GRM188R61E106MA73D\", model gives \"2020-3732 (Clear; most colours 2020-xx32, gray-black 682021-0333)\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=18].verification: document shows \"audited 8/8\", model gives \"not audited\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=18].assumptions: document shows \"2\", model gives \"7\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=18].openGaps: document shows \"3\", model gives \"5\"",
+        "page": 10
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=19].name: document shows \"Nalgene 32oz Wide Mouth Bottle, Tritan Renew\", model gives \"O-ring AS568-040, silicone 70A (72.75 x 1.78 mm)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=19].manufacturer: document shows \"Nalgene\", model gives \"Generic (SAE AS568)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=19].partNumber: document shows \"2020-3732 (Clear; most colours 2020-xx32, gray-black 682021-0333)\", model gives \"S1000-040 (Marco Sealing Solutions, AS568-040 silicone 70A, FDA)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=19].verification: document shows \"not audited\", model gives \"—\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=19].verification: status in document \"model\", model now \"gap\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=19].assumptions: document shows \"7\", model gives \"2\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=19].openGaps: document shows \"5\", model gives \"2\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].name: document shows \"O-ring AS568-040, silicone 70A (72.75 x 1.78 mm)\", model gives \"ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].manufacturer: document shows \"Generic (SAE AS568)\", model gives \"ruthex\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].partNumber: document shows \"S1000-040 (Marco Sealing Solutions, AS568-040 silicone 70A, FDA)\", model gives \"GE-M2x04-001\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].quantity: document shows \"1\", model gives \"10\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].verification: document shows \"—\", model gives \"audited 21/21\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].verification: status in document \"gap\", model now \"model\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].assumptions: document shows \"2\", model gives \"1\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].openGaps: document shows \"2\", model gives \"3\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=21].name: document shows \"ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm\", model gives \"ST USBLC6-2SC6 USB ESD Protection (SOT23-6L)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=21].manufacturer: document shows \"ruthex\", model gives \"STMicroelectronics\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=21].partNumber: document shows \"GE-M2x04-001\", model gives \"USBLC6-2SC6\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=21].quantity: document shows \"10\", model gives \"1\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=21].verification: document shows \"audited 21/21\", model gives \"not audited\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=21].assumptions: document shows \"1\", model gives \"2\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=21].openGaps: document shows \"3\", model gives \"5\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=22].name: document shows \"ST USBLC6-2SC6 USB ESD Protection (SOT23-6L)\", model gives \"ST VL53L4CD time-of-flight sensor (VL53L4CDV0DH/1, Optical LGA12)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=22].partNumber: document shows \"USBLC6-2SC6\", model gives \"VL53L4CDV0DH/1\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=22].verification: document shows \"not audited\", model gives \"—\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=22].verification: status in document \"model\", model now \"gap\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=22].openGaps: document shows \"5\", model gives \"3\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=23].name: document shows \"ST VL53L4CD time-of-flight sensor (VL53L4CDV0DH/1, Optical LGA12)\", model gives \"TI LP5024 24-channel I2C RGB LED driver (VQFN-32)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=23].manufacturer: document shows \"STMicroelectronics\", model gives \"Texas Instruments\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=23].partNumber: document shows \"VL53L4CDV0DH/1\", model gives \"LP5024RSMR\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=24].name: document shows \"TI LP5024 24-channel I2C RGB LED driver (VQFN-32)\", model gives \"TI TPS63020DSJR buck-boost converter\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=24].partNumber: document shows \"LP5024RSMR\", model gives \"TPS63020DSJR\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=24].verification: document shows \"—\", model gives \"audited 20/20\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=24].verification: status in document \"gap\", model now \"model\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=24].openGaps: document shows \"3\", model gives \"2\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=25].name: document shows \"TI TPS63020DSJR buck-boost converter\", model gives \"Yageo RC0402 Chip Resistor (RC_L, 0402)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=25].value: document shows \"—\", model gives \"100 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=25].value: status in document \"gap\", model now \"model\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=25].manufacturer: document shows \"Texas Instruments\", model gives \"Yageo\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=25].partNumber: document shows \"TPS63020DSJR\", model gives \"RC0402FR-07100KL\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=25].quantity: document shows \"1\", model gives \"3\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=25].verification: document shows \"audited 20/20\", model gives \"audited 9/9\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=26].value: document shows \"100 k ohm ±1 %\", model gives \"10 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=26].partNumber: document shows \"RC0402FR-07100KL\", model gives \"RC0402FR-0710KL\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=26].quantity: document shows \"4\", model gives \"6\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=27].value: document shows \"10 k ohm ±1 %\", model gives \"14.7 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=27].partNumber: document shows \"RC0402FR-0710KL\", model gives \"RC0402FR-0714K7L\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=27].quantity: document shows \"6\", model gives \"1\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=28].value: document shows \"14.7 k ohm ±1 %\", model gives \"180 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=28].partNumber: document shows \"RC0402FR-0714K7L\", model gives \"RC0402FR-07180KL\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=29].value: document shows \"180 k ohm ±1 %\", model gives \"1 M ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=29].partNumber: document shows \"RC0402FR-07180KL\", model gives \"RC0402FR-071ML\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=30].value: document shows \"1 M ohm ±1 %\", model gives \"3.3 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=30].partNumber: document shows \"RC0402FR-071ML\", model gives \"RC0402FR-073K3L\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=31].value: document shows \"3.3 k ohm ±1 %\", model gives \"4.7 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=31].partNumber: document shows \"RC0402FR-073K3L\", model gives \"RC0402FR-074K7L\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=31].quantity: document shows \"1\", model gives \"3\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=32].value: document shows \"47 k ohm ±1 %\", model gives \"5.1 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=32].partNumber: document shows \"RC0402FR-0747KL\", model gives \"RC0402FR-075K1L\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=32].quantity: document shows \"1\", model gives \"2\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=33].value: document shows \"4.7 k ohm ±1 %\", model gives \"68 k ohm ±1 %\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=33].partNumber: document shows \"RC0402FR-074K7L\", model gives \"RC0402FR-0768KL\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=33].quantity: document shows \"3\", model gives \"2\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].name: document shows \"Yageo RC0402 Chip Resistor (RC_L, 0402)\", model gives \"Cell lead pads (2 × Ø2.0 mm)\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].manufacturer: document shows \"Yageo\", model gives \"—\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].manufacturer: status in document \"model\", model now \"gap\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].quantity: document shows \"2\", model gives \"1\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].verification: document shows \"audited 9/9\", model gives \"—\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].verification: status in document \"model\", model now \"gap\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].assumptions: document shows \"2\", model gives \"1\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=34].openGaps: document shows \"2\", model gives \"0\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=35].name: document shows \"Cell lead pads (2 × Ø2.0 mm)\", model gives \"Cell leads\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=35].manufacturer: document shows \"—\", model gives \"LiPoly Batteries Co., Ltd.\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=35].manufacturer: status in document \"gap\", model now \"model\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=36].name: document shows \"Cell leads\", model gives \"Probe cable\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=36].manufacturer: document shows \"LiPoly Batteries Co., Ltd.\", model gives \"Adafruit Industries\"",
+        "page": 11
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=37].name: document shows \"Probe cable\", model gives \"Probe wire pads (3 × Ø1.8 mm)\"",
+        "page": 12
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=37].manufacturer: document shows \"Adafruit Industries\", model gives \"—\"",
+        "page": 12
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=37].manufacturer: status in document \"model\", model now \"gap\"",
+        "page": 12
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=38].name: document shows \"Probe wire pads (3 × Ø1.8 mm)\", model gives \"Test pad (Ø1.2 mm)\"",
+        "page": 12
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=38].quantity: document shows \"1\", model gives \"6\"",
+        "page": 12
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "values",
+        "severity": "info",
+        "message": "471 bound values re-resolved against the model"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "images",
+        "severity": "info",
+        "message": "4 images checked"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "review",
+        "severity": "info",
+        "message": "20 page PNGs in docs/.review/smart-bottle-datasheet/ for the visual checklist"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "smart-bottle-datasheet",
+        "check": "bom",
+        "severity": "info",
+        "message": "38 BOM lines match docs/smart-bottle-bom.json"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=10].quantity: document shows \"8\", model gives \"1\"",
+        "page": 3
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=11].quantity: document shows \"1\", model gives \"10\"",
+        "page": 3
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "values",
+        "severity": "error",
+        "message": "sys:bom[line=20].quantity: document shows \"1\", model gives \"10\"",
+        "page": 3
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "values",
+        "severity": "info",
+        "message": "16 bound values re-resolved against the model"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "images",
+        "severity": "info",
+        "message": "24 images checked"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "review",
+        "severity": "info",
+        "message": "9 page PNGs in docs/.review/smart-bottle-assembly-guide/ for the visual checklist"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 12, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "smart-bottle-assembly-guide",
+        "check": "coverage",
+        "severity": "info",
+        "message": "2/2 mates, 4/4 hardware placements, 4/4 wiring links covered; 2 bodies placed by mates"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T12:30:01.744Z"
+}

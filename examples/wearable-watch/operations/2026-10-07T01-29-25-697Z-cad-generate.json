@@ -1,0 +1,77 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "watch-lra-leads",
+    "config": "src/harnesses/watch-lra-leads/cad.config.ts",
+    "configDigest": "sha256:2fad9c0b5b1c3721e9312482fb4498e6172bccc5dc8670823cdb9965113cc82b",
+    "moduleDigest": "sha256:e175aa8c7be20dbbbc8fab4348e1380e566463d42faf48a71c32367cde5305ce"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:c97634102180a8152768a34240e86ce6dec3e6bb41375d9e3fc671b45e47f1c5",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:29:25.697Z",
+  "status": "succeeded",
+  "summary": "lra_leads: ok; routed around the parts and 1 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/watch-lra-leads/harness-cad/route.json",
+      "digest": "sha256:3ebb947e682cc516d1ee37dcc62d3f230b52dbfe95edda3e41da00ea3592c2ab",
+      "bytes": 3853,
+      "description": "lra_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboardai/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        129,
+        122,
+        118
+      ],
+      "res_mm": 1,
+      "seconds": 1
+    },
+    "harnesses": [
+      {
+        "id": "watch-lra-leads",
+        "path": "lra_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0
+      }
+    ],
+    "context": [
+      {
+        "id": "watch-battery-leads",
+        "path": "battery_leads",
+        "status": "warning",
+        "notes": [
+          "slack could not be laid clear: loop (not clear) (-0.15 mm worst clearance, 0.92 mm bend radius)"
+        ],
+        "search_s": 0
+      }
+    ],
+    "problems": [
+      "board/j3: no GLB body to route around (none declared)",
+      "board/j4: no GLB body to route around (none declared)"
+    ]
+  },
+  "finishedAt": "2026-10-07T01:29:30.686Z"
+}

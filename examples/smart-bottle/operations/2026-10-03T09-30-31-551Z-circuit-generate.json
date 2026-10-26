@@ -1,0 +1,67 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/circuit.config.ts",
+    "configDigest": "sha256:f01364e8470267c6a67304ae3b3b8e20f0eca86290d368c75eb821d87137ebb6",
+    "moduleDigest": "sha256:90a06bf1cecda46bab8b53909320db552a7d4b57f4b2d18ad8030058731d2899"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:f5320d4a9bf123e60a6bd93eac60be4370f30daed7a44f24e244a29e6576cac5",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T09:30:31.551Z",
+  "status": "succeeded",
+  "summary": "61 components (14 fixed, 47 layout), 53 nets → 201 traces, 158 vias in 219.9 s; 3 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/tscircuit/board.gen.tsx",
+      "digest": "sha256:1ff391404600894a2267ec0b78d68458842af8798ff9deece2006e4c2f59631c",
+      "bytes": 70941,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/circuit.json",
+      "digest": "sha256:84ab49435694711a124f6939d4453115f14934743bfee905bbce2f36c6f656af",
+      "bytes": 1310993,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/build.json",
+      "digest": "sha256:537258dc53eb7b5dd5764917544a8ae98f4004660be92585b77d92da72b1aa0b",
+      "bytes": 22096,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 61,
+    "nets": 53,
+    "placement": {
+      "fixed": 14,
+      "layout": 47
+    },
+    "traces": 201,
+    "vias": 158,
+    "build_ms": 219874,
+    "errors": [
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_91] and pad pcb_port[.d2 > .Green__InGaN__cathode] are too close (clearance: 0.08mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_152] and pad pcb_port[.u1 > .GND__EPAD_] are too close (clearance: 0mm, minimum: 0.1mm)",
+      "pcb_placement_error: Via hole at (1.84mm, 5.43mm) overlaps SMD pad u3.GND__exposed_thermal_pad_ at (2.00mm, 6.50mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T09:34:11.534Z"
+}

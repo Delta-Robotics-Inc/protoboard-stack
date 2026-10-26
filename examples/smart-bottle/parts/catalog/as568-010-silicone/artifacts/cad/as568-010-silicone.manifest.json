@@ -1,0 +1,49 @@
+{
+  "artifact": "as568-010-silicone",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "829d86c2fa43d774a56bd00e491db94f249286366203c3f1c897805793c2a052",
+  "units": "mm",
+  "volume_mm3": 61.369,
+  "bodies": {
+    "o_ring": 61.369
+  },
+  "features": {
+    "bore": {
+      "area_mm2": 27.439,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1
+    },
+    "outer": {
+      "area_mm2": 41.515,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1
+    },
+    "flank_a": {
+      "area_mm2": 34.477,
+      "centroid": [
+        0.0,
+        0.0,
+        0.801
+      ],
+      "faces": 1
+    },
+    "flank_b": {
+      "area_mm2": 34.477,
+      "centroid": [
+        0.0,
+        0.0,
+        -0.801
+      ],
+      "faces": 1
+    }
+  }
+}

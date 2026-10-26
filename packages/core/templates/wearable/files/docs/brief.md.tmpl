@@ -1,0 +1,16 @@
+# {{name}}: brief
+
+Requirements and acceptance targets. Cite a source for every number; say how
+each requirement will be shown (check, test, inspection).
+
+| ID | Requirement | Target | Shown by |
+| --- | --- | --- | --- |
+| R1 | Radio | Bluetooth LE (template: nRF52840 in the Raytac MDBT50Q-1MV2) | `protoboard check`; bench test |
+| R2 | Battery | 1-cell LiPo, charged from USB-C (template: 200 mAh LP402030, 83 mA charge) | `protoboard check` (UHD power links); charge test |
+| R3 | Battery life | _e.g. 5 days typical use_ | a power budget from the parts' currents (see wearable-watch's src/power-budget.ts) |
+| R4 | Size | _e.g. case at most 46 mm across, 13.5 mm thick_ | case CAD (`run cad:generate`) |
+
+The template's starting system covers R1 and R2. The wearable-watch reference
+project shows a complete product: display, IMU, heart rate, haptics, fuel
+gauge, buttons, a printed case, routed leads, Zephyr board files, technical
+documents and a release.

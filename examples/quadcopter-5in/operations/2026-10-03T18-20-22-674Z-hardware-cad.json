@@ -1,0 +1,403 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "hardware-cad",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:83a9d628c2c4a9ca0bd3864e1443503749230cd30a179d7f6a90c181f0c40e66",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:20:22.674Z",
+  "status": "succeeded",
+  "summary": "12 hardware bodies; volumes unchanged",
+  "outputs": [],
+  "data": {
+    "modules": [
+      {
+        "module": "dolphinrc-m3-grommet-esc",
+        "kind": "spacer",
+        "dir": "parts/local/dolphinrc-m3-grommet-esc",
+        "out": "parts/local/dolphinrc-m3-grommet-esc/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 169.803,
+        "previousVolume_mm3": 169.803
+      },
+      {
+        "module": "dolphinrc-m3-grommet-fc",
+        "kind": "spacer",
+        "dir": "parts/local/dolphinrc-m3-grommet-fc",
+        "out": "parts/local/dolphinrc-m3-grommet-fc/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 164.745,
+        "previousVolume_mm3": 164.745
+      },
+      {
+        "module": "iso-10511-m2-nyloc-nut",
+        "kind": "nut",
+        "dir": "parts/local/iso-10511-m2-nyloc-nut",
+        "out": "parts/local/iso-10511-m2-nyloc-nut/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 30.001,
+        "previousVolume_mm3": 30.001
+      },
+      {
+        "module": "iso-4762-m2x12",
+        "kind": "screw",
+        "dir": "parts/local/iso-4762-m2x12",
+        "out": "parts/local/iso-4762-m2x12/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 54.18,
+        "previousVolume_mm3": 54.18
+      },
+      {
+        "module": "iso-4762-m2x18",
+        "kind": "screw",
+        "dir": "parts/local/iso-4762-m2x18",
+        "out": "parts/local/iso-4762-m2x18/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 71.192,
+        "previousVolume_mm3": 71.192
+      },
+      {
+        "module": "iso-4762-m2x5",
+        "kind": "screw",
+        "dir": "parts/local/iso-4762-m2x5",
+        "out": "parts/local/iso-4762-m2x5/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 34.333,
+        "previousVolume_mm3": 34.333
+      },
+      {
+        "module": "iso-4762-m3x8",
+        "kind": "screw",
+        "dir": "parts/local/iso-4762-m3x8",
+        "out": "parts/local/iso-4762-m3x8/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 113.787,
+        "previousVolume_mm3": 113.787
+      },
+      {
+        "module": "m2-nylon-spacer-3mm",
+        "kind": "spacer",
+        "dir": "parts/local/m2-nylon-spacer-3mm",
+        "out": "parts/local/m2-nylon-spacer-3mm/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 24.127,
+        "previousVolume_mm3": 24.127
+      },
+      {
+        "module": "m2-nylon-spacer-5mm",
+        "kind": "spacer",
+        "dir": "parts/local/m2-nylon-spacer-5mm",
+        "out": "parts/local/m2-nylon-spacer-5mm/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 40.212,
+        "previousVolume_mm3": 40.212
+      },
+      {
+        "module": "m3-aluminium-standoff-30mm",
+        "kind": "standoff",
+        "dir": "parts/local/m3-aluminium-standoff-30mm",
+        "out": "parts/local/m3-aluminium-standoff-30mm/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 632.707,
+        "previousVolume_mm3": 632.707
+      },
+      {
+        "module": "meps-m5-flanged-lock-nut",
+        "kind": "nut",
+        "dir": "parts/local/meps-m5-flanged-lock-nut",
+        "out": "parts/local/meps-m5-flanged-lock-nut/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 178.953,
+        "previousVolume_mm3": 178.953
+      },
+      {
+        "module": "motor-screw-m3x8",
+        "kind": "screw",
+        "dir": "parts/local/motor-screw-m3x8",
+        "out": "parts/local/motor-screw-m3x8/out",
+        "toolVersion": "0.13.0",
+        "volume_mm3": 113.787,
+        "previousVolume_mm3": 113.787
+      }
+    ],
+    "generator": "@protoboard/ext-frame-cad/py/hardware_cad.py",
+    "steps": [
+      {
+        "module": "dolphinrc-m3-grommet-esc",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "dolphinrc-m3-grommet-esc: spacer parameters in parts/local/dolphinrc-m3-grommet-esc/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-25-239Z-cad-generate.json",
+        "outputs": [
+          "parts/local/dolphinrc-m3-grommet-esc/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "dolphinrc-m3-grommet-fc",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "dolphinrc-m3-grommet-fc: spacer parameters in parts/local/dolphinrc-m3-grommet-fc/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-27-673Z-cad-generate.json",
+        "outputs": [
+          "parts/local/dolphinrc-m3-grommet-fc/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "iso-10511-m2-nyloc-nut",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "iso-10511-m2-nyloc-nut: nut parameters in parts/local/iso-10511-m2-nyloc-nut/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-30-020Z-cad-generate.json",
+        "outputs": [
+          "parts/local/iso-10511-m2-nyloc-nut/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m2x12",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "iso-4762-m2x12: screw parameters in parts/local/iso-4762-m2x12/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-32-332Z-cad-generate.json",
+        "outputs": [
+          "parts/local/iso-4762-m2x12/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m2x18",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "iso-4762-m2x18: screw parameters in parts/local/iso-4762-m2x18/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-34-650Z-cad-generate.json",
+        "outputs": [
+          "parts/local/iso-4762-m2x18/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m2x5",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "iso-4762-m2x5: screw parameters in parts/local/iso-4762-m2x5/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-36-997Z-cad-generate.json",
+        "outputs": [
+          "parts/local/iso-4762-m2x5/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m3x8",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "iso-4762-m3x8: screw parameters in parts/local/iso-4762-m3x8/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-39-370Z-cad-generate.json",
+        "outputs": [
+          "parts/local/iso-4762-m3x8/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "m2-nylon-spacer-3mm",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "m2-nylon-spacer-3mm: spacer parameters in parts/local/m2-nylon-spacer-3mm/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-41-880Z-cad-generate.json",
+        "outputs": [
+          "parts/local/m2-nylon-spacer-3mm/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "m2-nylon-spacer-5mm",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "m2-nylon-spacer-5mm: spacer parameters in parts/local/m2-nylon-spacer-5mm/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-44-215Z-cad-generate.json",
+        "outputs": [
+          "parts/local/m2-nylon-spacer-5mm/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "m3-aluminium-standoff-30mm",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "m3-aluminium-standoff-30mm: standoff parameters in parts/local/m3-aluminium-standoff-30mm/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-46-516Z-cad-generate.json",
+        "outputs": [
+          "parts/local/m3-aluminium-standoff-30mm/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "meps-m5-flanged-lock-nut",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "meps-m5-flanged-lock-nut: nut parameters in parts/local/meps-m5-flanged-lock-nut/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-48-826Z-cad-generate.json",
+        "outputs": [
+          "parts/local/meps-m5-flanged-lock-nut/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "motor-screw-m3x8",
+        "operation": "cad:generate",
+        "status": "succeeded",
+        "summary": "motor-screw-m3x8: screw parameters in parts/local/motor-screw-m3x8/frame-cad; run cad:export for the body",
+        "record": "operations/2026-10-03T18-20-51-213Z-cad-generate.json",
+        "outputs": [
+          "parts/local/motor-screw-m3x8/frame-cad/params.json"
+        ]
+      },
+      {
+        "module": "dolphinrc-m3-grommet-esc",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "dolphinrc-m3-grommet-esc: body.step, body.glb, body.manifest.json in parts/local/dolphinrc-m3-grommet-esc/out (169.803 mm³)",
+        "record": "operations/2026-10-03T18-20-53-702Z-cad-export.json",
+        "outputs": [
+          "parts/local/dolphinrc-m3-grommet-esc/out/body.step",
+          "parts/local/dolphinrc-m3-grommet-esc/out/body.glb",
+          "parts/local/dolphinrc-m3-grommet-esc/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "dolphinrc-m3-grommet-fc",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "dolphinrc-m3-grommet-fc: body.step, body.glb, body.manifest.json in parts/local/dolphinrc-m3-grommet-fc/out (164.745 mm³)",
+        "record": "operations/2026-10-03T18-20-58-707Z-cad-export.json",
+        "outputs": [
+          "parts/local/dolphinrc-m3-grommet-fc/out/body.step",
+          "parts/local/dolphinrc-m3-grommet-fc/out/body.glb",
+          "parts/local/dolphinrc-m3-grommet-fc/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "iso-10511-m2-nyloc-nut",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "iso-10511-m2-nyloc-nut: body.step, body.glb, body.manifest.json in parts/local/iso-10511-m2-nyloc-nut/out (30.001 mm³)",
+        "record": "operations/2026-10-03T18-21-03-664Z-cad-export.json",
+        "outputs": [
+          "parts/local/iso-10511-m2-nyloc-nut/out/body.step",
+          "parts/local/iso-10511-m2-nyloc-nut/out/body.glb",
+          "parts/local/iso-10511-m2-nyloc-nut/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m2x12",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "iso-4762-m2x12: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m2x12/out (54.18 mm³)",
+        "record": "operations/2026-10-03T18-21-08-335Z-cad-export.json",
+        "outputs": [
+          "parts/local/iso-4762-m2x12/out/body.step",
+          "parts/local/iso-4762-m2x12/out/body.glb",
+          "parts/local/iso-4762-m2x12/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m2x18",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "iso-4762-m2x18: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m2x18/out (71.192 mm³)",
+        "record": "operations/2026-10-03T18-21-13-006Z-cad-export.json",
+        "outputs": [
+          "parts/local/iso-4762-m2x18/out/body.step",
+          "parts/local/iso-4762-m2x18/out/body.glb",
+          "parts/local/iso-4762-m2x18/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m2x5",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "iso-4762-m2x5: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m2x5/out (34.333 mm³)",
+        "record": "operations/2026-10-03T18-21-18-505Z-cad-export.json",
+        "outputs": [
+          "parts/local/iso-4762-m2x5/out/body.step",
+          "parts/local/iso-4762-m2x5/out/body.glb",
+          "parts/local/iso-4762-m2x5/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "iso-4762-m3x8",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "iso-4762-m3x8: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m3x8/out (113.787 mm³)",
+        "record": "operations/2026-10-03T18-21-23-791Z-cad-export.json",
+        "outputs": [
+          "parts/local/iso-4762-m3x8/out/body.step",
+          "parts/local/iso-4762-m3x8/out/body.glb",
+          "parts/local/iso-4762-m3x8/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "m2-nylon-spacer-3mm",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "m2-nylon-spacer-3mm: body.step, body.glb, body.manifest.json in parts/local/m2-nylon-spacer-3mm/out (24.127 mm³)",
+        "record": "operations/2026-10-03T18-21-29-917Z-cad-export.json",
+        "outputs": [
+          "parts/local/m2-nylon-spacer-3mm/out/body.step",
+          "parts/local/m2-nylon-spacer-3mm/out/body.glb",
+          "parts/local/m2-nylon-spacer-3mm/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "m2-nylon-spacer-5mm",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "m2-nylon-spacer-5mm: body.step, body.glb, body.manifest.json in parts/local/m2-nylon-spacer-5mm/out (40.212 mm³)",
+        "record": "operations/2026-10-03T18-21-35-215Z-cad-export.json",
+        "outputs": [
+          "parts/local/m2-nylon-spacer-5mm/out/body.step",
+          "parts/local/m2-nylon-spacer-5mm/out/body.glb",
+          "parts/local/m2-nylon-spacer-5mm/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "m3-aluminium-standoff-30mm",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "m3-aluminium-standoff-30mm: body.step, body.glb, body.manifest.json in parts/local/m3-aluminium-standoff-30mm/out (632.707 mm³)",
+        "record": "operations/2026-10-03T18-21-39-997Z-cad-export.json",
+        "outputs": [
+          "parts/local/m3-aluminium-standoff-30mm/out/body.step",
+          "parts/local/m3-aluminium-standoff-30mm/out/body.glb",
+          "parts/local/m3-aluminium-standoff-30mm/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "meps-m5-flanged-lock-nut",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "meps-m5-flanged-lock-nut: body.step, body.glb, body.manifest.json in parts/local/meps-m5-flanged-lock-nut/out (178.953 mm³)",
+        "record": "operations/2026-10-03T18-21-44-676Z-cad-export.json",
+        "outputs": [
+          "parts/local/meps-m5-flanged-lock-nut/out/body.step",
+          "parts/local/meps-m5-flanged-lock-nut/out/body.glb",
+          "parts/local/meps-m5-flanged-lock-nut/out/body.manifest.json"
+        ]
+      },
+      {
+        "module": "motor-screw-m3x8",
+        "operation": "cad:export",
+        "status": "succeeded",
+        "summary": "motor-screw-m3x8: body.step, body.glb, body.manifest.json in parts/local/motor-screw-m3x8/out (113.787 mm³)",
+        "record": "operations/2026-10-03T18-21-49-554Z-cad-export.json",
+        "outputs": [
+          "parts/local/motor-screw-m3x8/out/body.step",
+          "parts/local/motor-screw-m3x8/out/body.glb",
+          "parts/local/motor-screw-m3x8/out/body.manifest.json"
+        ]
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T18:21:54.607Z"
+}

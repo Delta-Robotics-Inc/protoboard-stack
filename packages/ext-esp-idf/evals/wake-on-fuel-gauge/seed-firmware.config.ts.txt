@@ -1,0 +1,16 @@
+import { defineCapabilityConfig } from "@protoboardai/core";
+
+/**
+ * The cap board's firmware configuration provider: ESP-IDF 5.3 for the
+ * ESP32-C3-MINI-1 (board_pins.h and sdkconfig.defaults in esp-idf/, standard
+ * outputs in out/config/ and out/firmware.manifest.json).
+ *
+ * Wake from Deep-sleep: the button (sw1), and the fuel gauge's ALRT (u6) so
+ * the cap can flash a low-battery warning without waiting for the next timer
+ * wake. The console is USB Serial/JTAG (the default: GPIO18/19 reach the
+ * USB-C receptacle).
+ */
+export default defineCapabilityConfig({
+  provider: "@protoboardai/ext-esp-idf",
+  constraints: { wake: ["sw1", "u6"] },
+});

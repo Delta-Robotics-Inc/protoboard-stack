@@ -1,0 +1,29 @@
+{
+  "partId": "lipol-lp402030",
+  "recorded_at": "2026-10-03T08:25:22.458Z",
+  "audit": {
+    "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+    "checked": 14,
+    "confirmed": 14,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": "Moved into the wearable-watch project (parts/local) from the parts workspace (commit 9a80317); categories updated to the UHD taxonomy 1.0.0; CAD regenerated in the project with parts/local/cadkit (manifests identical); stage-2 audit done in the project",
+  "assumptions": [
+    "length includes the PCM",
+    "lead side and order",
+    "generated lead geometry"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "lead position and order on the end face",
+    "lead strip length and conductor size",
+    "PCM zone geometry",
+    "pulse discharge current, swelling allowance, self-discharge",
+    "PCM release values"
+  ],
+  "vocabulary_gaps": [
+    "No battery builder: the + lead is both a discharge output and a charge input. Modelled as one power leaf with roles output and input plus two composites (battery_out PowerOut, charge_in PowerIn) over the same leads.",
+    "No pocket or adhesive-mount builder; mount_face uses mechanical_connection / mounting_point as vybronics-vg0832012 does."
+  ]
+}

@@ -1,0 +1,127 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "ESP32-C3-MINI-1 & MINI-1U Datasheet v2.2",
+    "url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:20:00Z",
+    "sha256": "de7361381348d82a1abd337f10170be7a420675987568f71fe3c5b100deed270",
+    "supports": [
+      "Table 1-1 variants: H4X 4 MB flash, -40 to 105 C, chip revision v1.1, Recommended; 13.2 x 16.6 x 2.4 mm",
+      "§1.1 features: RISC-V 160 MHz, 400 KB SRAM, Wi-Fi 802.11 b/g/n, Bluetooth 5 LE, 15 GPIO, 40 MHz crystal, PCB antenna",
+      "§3 Figure 3-1 pin layout (top view) and Table 3-1 pin definitions (53 pins)",
+      "§4 strapping pins GPIO2/8/9, Tables 4-1, 4-3; §4.3 power-up and reset timing",
+      "§5.2 peripherals (UART 5 Mbps, SPI2, I2C, I2S, USB Serial/JTAG, TWAI, LED PWM, RMT, SAR ADC)",
+      "Table 6-1 absolute maximum VDD33 -0.3 to 3.6 V",
+      "Table 6-2 recommended VDD33 3.0/3.3/3.6 V, IVDD >= 0.5 A, TA -40 to 105 C (105 C version)",
+      "Table 6-3 DC characteristics (VIH, VIL, IOH 40 mA, IOL 28 mA, 45 kOhm pulls)",
+      "Tables 6-4 to 6-7 current consumption",
+      "§7 RF characteristics (TX power, RX sensitivity, BLE)",
+      "§8 module schematic (EPAD = pin 49, 499 Ohm series on U0TXD, ESD diode on VDD33)",
+      "§9 peripheral schematic notes (EN RC 10 kOhm / 1 uF; EPAD soldering optional)",
+      "§10.1 Figure 10-1 module dimensions (13.2 x 16.6 x 2.4, PCB 0.8, shield 11.95 x 9.95 at 0.62 mm, pad positions, centre pad 5.4 mm)",
+      "§11.1 Figure 11-1 recommended land pattern (48 x 0.4 x 0.8 pads, 4 x 0.7 corner pads, 0.8 pitch); links to STEP",
+      "§12 MSL 3, ESD HBM 2000 V / CDM 500 V, reflow 235-250 C peak"
+    ]
+  },
+  {
+    "id": "src_chip_datasheet",
+    "title": "ESP32-C3 Series Datasheet v2.4",
+    "url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:20:00Z",
+    "sha256": "833fc000b4b3c3d39c496fcbd597fed5806956503ce7390b19cc8ae82f19f968",
+    "supports": [
+      "Table 2-1 pin overview: GPIO0-5 powered by VDD3P3_RTC (RTC IO), GPIO9 WPU at reset, GPIO19 USB_PU, U0RXD/U0TXD WPU; default drive strengths",
+      "§2.3.4 / Table 2-7 peripheral pin assignment: GPIO matrix, USB Serial/JTAG only on GPIO18/19, D-/D+ swappable",
+      "§4.1.3.1 IO MUX and GPIO matrix: any peripheral output to any IO; interrupts on inputs; hold state"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "Espressif modules product page (ESP32-C3 module table)",
+    "url": "https://www.espressif.com/en/products/modules/esp32-c3",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:20:00Z",
+    "sha256": "619bbfd05badb6a339c7cdf85ad92b6d9e93087eb1d21ba49c2a123d80a2b26b",
+    "supports": [
+      "ESP32-C3-MINI-1-H4X listed as an orderable variant",
+      "13.2 x 16.6 x 2.4 mm, PCB antenna, 15 GPIO, 400 KB RAM",
+      "3D model download ESP32-C3-MINI-1 3D Model.STEP"
+    ]
+  },
+  {
+    "id": "src_sleep_modes",
+    "title": "ESP-IDF v5.3.5 ESP32-C3 Sleep Modes",
+    "url": "https://docs.espressif.com/projects/esp-idf/en/v5.3.5/esp32c3/api-reference/system/sleep_modes.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:20:00Z",
+    "sha256": "cba19cf0fc26a4d3e802049672df8c493ab55bee39ccc624a459e5a3265335ba",
+    "supports": [
+      "IOs powered by VDD3P3_RTC can wake the chip from Deep-sleep (esp_deep_sleep_enable_gpio_wakeup)",
+      "In Deep-sleep digital GPIOs (GPIO6-21) are high impedance; RTC GPIOs (GPIO0-5) high impedance or held",
+      "any IO can wake from Light-sleep"
+    ]
+  },
+  {
+    "id": "src_hw_guidelines",
+    "title": "ESP Hardware Design Guidelines, ESP32-C3 PCB Layout Design",
+    "url": "https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/pcb-layout-design.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:20:00Z",
+    "sha256": "e33b44bd6bbcd7bce3f29183588c7549f95d5dc55181738b1b184ea771ca5a90",
+    "supports": [
+      "module placement: antenna feed point at the board edge, antenna beyond the edge or base board cut away below it",
+      "not in the board centre with a hollowed-out clearance",
+      "at least 15 mm clearance around the PCB antenna inside the housing"
+    ]
+  },
+  {
+    "id": "src_errata",
+    "title": "ESP32-C3 Series SoC Errata (latest), Errata Summary",
+    "url": "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/02-errata-summary/index.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:10:00Z",
+    "sha256": "6b1ab9e79399dc2813839a97f743efaee0c5cfb8dc81a752d732912e6f3b262a",
+    "supports": [
+      "Table 4: ADC-183 'The Digital Controller (DMA) of SAR ADC2 Cannot Work' affects v0.0, v0.1, v0.2, v0.3, v0.4 and v1.1",
+      "Table 4 lists no other ADC2 erratum; it says nothing about ADC2 oneshot reads"
+    ]
+  },
+  {
+    "id": "src_errata_adc183",
+    "title": "ESP32-C3 Series SoC Errata (latest), [ADC-183] The Digital Controller (DMA) of SAR ADC2 Cannot Work",
+    "url": "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/03-errata-description/shared/sar-adc-adc2-not-work.html",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:10:00Z",
+    "sha256": "5bd0c55fe54f4ecdfe98bc13e330713843f595c731bb8ef90aa2b50a18da1640",
+    "supports": [
+      "affected revisions v0.0-v1.1; the DIG ADC2 controller may receive a false sampling enable signal and enter an inoperative state",
+      "workaround: use SAR ADC1; no fix scheduled",
+      "says nothing about ADC2 oneshot reads"
+    ]
+  },
+  {
+    "id": "src_cad",
+    "title": "Espressif ESP32-C3-MINI-1 STEP model (2021-09-03)",
+    "url": "https://www.espressif.com/sites/default/files/3dmodel/ESP32-C3-MINI-1_20210903_0.STEP",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T21:20:00Z",
+    "sha256": "a4ed075447476cb39cbee4f5889f163ff8abae111efcf27c3559b8dafa1085aa",
+    "licence": "Not stated on the download or the product page. The datasheet that links it (§11.1) carries Espressif's Disclaimer and Copyright Notice: \"No licenses express or implied, by estoppel or otherwise, to any intellectual property rights are granted herein\" and \"All rights reserved\". Not redistributed; used only to measure.",
+    "supports": [
+      "solder_pad component: 61 pad faces (48 x 0.4 x 0.8 mm, 4 x 0.7 x 0.7 mm corner pads, 9 x 1.45 mm centre squares, one chamfered 0.6 mm), 0.8 mm pitch, centres listed in the CAD script",
+      "overall 13.2 x 16.6 x 2.4 mm; PCB 0.8 mm; shield 11.95 x 9.95 x 1.6 mm",
+      "antenna sub-model in y 11.13-16.29 mm from the pad-end edge",
+      "The product page's 'ESP32-C3-MINI-1 3D Model.STEP' link serves a byte-identical file (same sha256), per the independent stage-2 audit"
+    ]
+  }
+]

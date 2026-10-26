@@ -1,0 +1,69 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "watch-battery-leads",
+    "config": "src/harnesses/watch-battery-leads/cad.config.ts",
+    "configDigest": "sha256:539b23ccc1d3e863d0166001ca4506267d1f690dcb8a33469dc60ef4b021d749",
+    "moduleDigest": "sha256:7e5d08ff6285401f272d45ef164eb6c08215444a0d39ffae9a531a70fe9e6009"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4c7751d9be649a3905ca08dd9618c3a64717c47124f97cbb82fb815017d176fb",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T11:44:08.939Z",
+  "status": "succeeded",
+  "summary": "battery_leads: warning (slack could not be laid clear: bow (not clear) (0.48 mm worst clearance, 1.18 mm bend radius)); routed around the parts",
+  "outputs": [
+    {
+      "path": "src/harnesses/watch-battery-leads/harness-cad/route.json",
+      "digest": "sha256:7bf56cc611f544f044c8f41bc92bb82133fc0b327f417edf5f5d389db2703ce1",
+      "bytes": 8504,
+      "description": "battery_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        129,
+        122,
+        118
+      ],
+      "res_mm": 1,
+      "seconds": 0.8
+    },
+    "harnesses": [
+      {
+        "id": "watch-battery-leads",
+        "path": "battery_leads",
+        "status": "warning",
+        "notes": [
+          "slack could not be laid clear: bow (not clear) (0.48 mm worst clearance, 1.18 mm bend radius)"
+        ],
+        "search_s": 0.59
+      }
+    ],
+    "context": [],
+    "problems": [
+      "board/j3: no GLB body to route around (none declared)",
+      "board/j4: no GLB body to route around (none declared)"
+    ]
+  },
+  "finishedAt": "2026-10-03T11:44:14.937Z"
+}

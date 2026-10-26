@@ -1,0 +1,84 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "firmware:generate",
+  "extension": {
+    "id": "@protoboard/ext-zephyr",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "firmware",
+    "operation": "generate",
+    "provider": "@protoboard/ext-zephyr",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/firmware.config.ts",
+    "configDigest": "sha256:dedcf898950240a4176b24e1185386c75c934be55d36a2d462d194773197035e",
+    "moduleDigest": "sha256:b1744f10834176b01b730aa672b08162342f4623b8e7ce4709e3fb51c25808a7"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:2c1cbbad4db3691cd57a1961ca75fe31a6f205754a909953351146d72ff1757c",
+  "tools": [],
+  "startedAt": "2026-10-03T11:24:49.497Z",
+  "status": "succeeded",
+  "summary": "zephyr configuration for u1 (raytac-mdbt50q-1mv2): 6 files, 84 cited settings, 2 bus(es), 3 GPIO(s), 2 warning(s)",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/zephyr/boards/protoboard/wearable_watch/board.yml",
+      "digest": "sha256:e55da58fe69d151f55f3c15610ddcb3b4e59ca4563c252c8b7b3071ae38a20fe",
+      "bytes": 224,
+      "description": "board metadata"
+    },
+    {
+      "path": "src/boards/watch-main/zephyr/boards/protoboard/wearable_watch/Kconfig.wearable_watch",
+      "digest": "sha256:6e982a654e7ce73c4c63aba873ba923858dc7a043870bff0ebbcf0a7417dd9fc",
+      "bytes": 205,
+      "description": "board Kconfig"
+    },
+    {
+      "path": "src/boards/watch-main/zephyr/boards/protoboard/wearable_watch/wearable_watch_defconfig",
+      "digest": "sha256:8d8f2ef24e3286211f66d8c60a3148d5ff607f8d3b495fdefe1ce89322dd8f25",
+      "bytes": 297,
+      "description": "board defconfig"
+    },
+    {
+      "path": "src/boards/watch-main/zephyr/boards/protoboard/wearable_watch/wearable_watch.dts",
+      "digest": "sha256:61a13fbae254aabb029d19d4de1fc7e5d53151ba1847dc398b1db4b286506f7f",
+      "bytes": 4359,
+      "description": "board devicetree"
+    },
+    {
+      "path": "src/boards/watch-main/zephyr/boards/protoboard/wearable_watch/wearable_watch-pinctrl.dtsi",
+      "digest": "sha256:a69f8775610c83cccdff4ddd9f5687e48c83825c032e4cc8573d1008af5c6b8f",
+      "bytes": 1014,
+      "description": "pin assignment"
+    },
+    {
+      "path": "src/boards/watch-main/zephyr/firmware.conf",
+      "digest": "sha256:fb1dc3b03ebbfc0667ebe575a752231f5784619c9521c7b67ac1c1b1d71fd98a",
+      "bytes": 793,
+      "description": "Kconfig fragment: subsystems for the board's devices"
+    },
+    {
+      "path": "src/boards/watch-main/zephyr/protoboard.lines.json",
+      "digest": "sha256:5d22e80c94f80491de3fe60baad4c0a6aad521f90f0da74f7bfa27640c734f46",
+      "bytes": 16104,
+      "description": "line → UHD fact index"
+    }
+  ],
+  "data": {
+    "files": [
+      "boards/protoboard/wearable_watch/board.yml",
+      "boards/protoboard/wearable_watch/Kconfig.wearable_watch",
+      "boards/protoboard/wearable_watch/wearable_watch_defconfig",
+      "boards/protoboard/wearable_watch/wearable_watch.dts",
+      "boards/protoboard/wearable_watch/wearable_watch-pinctrl.dtsi",
+      "firmware.conf"
+    ],
+    "warnings": [
+      "u2 (bosch-bmi270): no Zephyr driver in this provider's table; its node has no compatible, so the application finds it by the label u2 and drives it itself",
+      "u3 (adi-max30102efd): no Zephyr driver in this provider's table; its node has no compatible, so the application finds it by the label u3 and drives it itself"
+    ],
+    "findings": []
+  },
+  "finishedAt": "2026-10-03T11:24:49.518Z"
+}

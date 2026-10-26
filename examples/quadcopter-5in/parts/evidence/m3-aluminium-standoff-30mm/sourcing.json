@@ -1,0 +1,52 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "m3-aluminium-standoff-30mm",
+  "manufacturer": "Ettinger",
+  "mpn": "005.03.308",
+  "need": {
+    "quantity": 100,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "ETTINGER",
+      "supplier_sku": "005.03.308",
+      "url": "https://www.ettinger.de/p/abstandsbolzen-aluminium-passiviert-i-i-sw5-5x30-gewinde-m3x7-m3x7/005.03.308",
+      "as_of": "2026-10-03",
+      "moq": 100,
+      "packaging": "Verpackungseinheit 100 STK",
+      "price_breaks": [
+        {
+          "quantity": 100,
+          "unit_price": 0.969,
+          "currency": "EUR"
+        }
+      ],
+      "authorized": true,
+      "market": "DE",
+      "note": "EUR 96.90 per 100 pcs excl. VAT (guest price); 'Sofort verfügbar'",
+      "mpn": "005.03.308",
+      "via": "web"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": false,
+      "note": "not listed (found through the JLCPCB search, which indexes LCSC codes)"
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; no listing with stock or a real price"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

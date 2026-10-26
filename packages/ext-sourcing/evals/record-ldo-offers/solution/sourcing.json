@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "acme-ldo3300-33",
+  "manufacturer": "ACME",
+  "mpn": "LDO3300-33SOT-TR",
+  "need": { "quantity": 44, "note": "2 per node × 20 nodes + 4 spares (docs/brief.md)" },
+  "offers": [
+    {
+      "supplier": "Distributor A",
+      "supplier_sku": "123-LDO3300-33SOT-TR-CT",
+      "mpn": "LDO3300-33SOT-TR",
+      "url": "https://distributor-a.example/product/123-LDO3300-33SOT-TR-CT",
+      "as_of": "2026-09-28",
+      "via": "web",
+      "authorized": true,
+      "stock": 4210,
+      "moq": 1,
+      "packaging": "cut tape",
+      "price_breaks": [
+        { "quantity": 1, "unit_price": 0.62, "currency": "USD" },
+        { "quantity": 10, "unit_price": 0.48, "currency": "USD" },
+        { "quantity": 100, "unit_price": 0.35, "currency": "USD" }
+      ]
+    },
+    {
+      "supplier": "Distributor B",
+      "mpn": "LDO3300-33SOT-TR",
+      "url": "https://distributor-b.example/p/LDO3300-33SOT-TR",
+      "as_of": "2026-09-28",
+      "via": "web",
+      "authorized": true,
+      "stock": 0,
+      "lead_time_weeks": 16,
+      "packaging": "tape and reel (cut tape available)",
+      "price_breaks": [{ "quantity": 1, "unit_price": 0.66, "currency": "USD" }]
+    },
+    {
+      "supplier": "Marketplace C",
+      "mpn": "LDO3300-33SOT-TR",
+      "url": "https://marketplace-c.example/item/88310",
+      "as_of": "2026-09-28",
+      "via": "web",
+      "authorized": false,
+      "stock": 300,
+      "price_breaks": [{ "quantity": 1, "unit_price": 0.25, "currency": "USD" }],
+      "notes": "independent seller, not an ACME distributor"
+    }
+  ],
+  "lifecycle": {
+    "status": "active",
+    "source": "https://acme.example/products/ldo3300",
+    "as_of": "2026-09-28",
+    "notes": "Manufacturer product page: Production status Active; no PCN listed"
+  },
+  "alternates": [
+    {
+      "mpn": "LDO3300-33SOT",
+      "manufacturer": "ACME",
+      "relation": "family-variant",
+      "differences": "Same die and package, bulk packaging instead of tape and reel; Distributor E (authorized) lists 900 in stock on 2026-09-28 at 0.58 / 0.33 USD (1 / 100)",
+      "evidence": "inputs/distributor-e.txt"
+    }
+  ],
+  "capability": [
+    { "source": "Distributor A (web page, saved)", "available": true, "used": true },
+    { "source": "Distributor B (web page, saved)", "available": true, "used": true },
+    { "source": "Marketplace C (web page, saved)", "available": true, "used": true },
+    { "source": "Distributor E (web page, saved)", "available": true, "used": true },
+    { "source": "Supplier APIs", "available": false, "used": false, "note": "no network access in this task" }
+  ]
+}

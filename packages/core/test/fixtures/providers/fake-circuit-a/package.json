@@ -1,0 +1,7 @@
+{
+  "name": "@fixtures/fake-circuit-a",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TEST FIXTURE: a fake circuit provider (JSON native design, metric outputs). Not a real PCB tool.",
+  "type": "module"
+}

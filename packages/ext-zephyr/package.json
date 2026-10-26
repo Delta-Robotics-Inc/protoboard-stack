@@ -1,0 +1,33 @@
+{
+  "name": "@protoboardai/ext-zephyr",
+  "version": "0.2.0",
+  "description": "Protoboard firmware provider: Zephyr board definitions (devicetree, pinctrl, Kconfig) for nRF52840 modules, from UHD boards",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-zephyr"
+  },
+  "type": "module",
+  "files": [
+    "protoboard-extension.json",
+    "ops",
+    "lib",
+    "skills",
+    "evals",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0"
+  }
+}

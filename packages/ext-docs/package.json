@@ -1,0 +1,53 @@
+{
+  "name": "@protoboardai/ext-docs",
+  "version": "0.2.0",
+  "description": "Protoboard extension: technical documents (datasheet, assembly guide) generated from a project's UHD model, with every value a query into the model, figures rendered from its CAD, and a verifier",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-docs"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./lib/types.ts",
+    "./html": "./lib/html.ts",
+    "./blocks": "./lib/blocks.ts",
+    "./build": "./lib/build.ts",
+    "./model": "./lib/model.ts",
+    "./figures": "./lib/figures.ts",
+    "./renderer": "./lib/render/renderer.ts",
+    "./plan": "./lib/package/plan.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "protoboard-extension.json",
+    "lib",
+    "fonts",
+    "ops",
+    "skills",
+    "evals",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0",
+    "@protoboardai/ext-release": "^0.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@protoboardai/ext-release": {
+      "optional": true
+    }
+  }
+}

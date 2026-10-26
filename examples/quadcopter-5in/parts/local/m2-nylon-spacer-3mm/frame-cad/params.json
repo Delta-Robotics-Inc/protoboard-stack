@@ -1,0 +1,14 @@
+{
+  "module": "m2-nylon-spacer-3mm",
+  "name": "m2-nylon-spacer-3mm",
+  "part": {
+    "bore": 2.7,
+    "diameter": 2,
+    "head_diameter": null,
+    "head_height": null,
+    "kind": "spacer",
+    "length": 3,
+    "outer": 4
+  },
+  "schema": "protoboard.hardware-cad.params/v0"
+}

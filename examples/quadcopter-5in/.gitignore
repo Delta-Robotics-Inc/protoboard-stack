@@ -1,0 +1,18 @@
+# What `protoboard init` ignores in a new project, so a copy of this example
+# outside the stack's workspace is a clean git work tree after `npm install`
+# (the workspace's own .gitignore covers these paths inside it).
+node_modules/
+build/
+__pycache__/
+*.log
+.protoboard/build/
+.protoboard/cache/
+.protoboard/local/
+.protoboard/tools/
+.protoboard/evals/
+# research working files: downloads, parsed text, notes
+parts/evidence/*/.research/
+# skills copied from the installed extensions (npm run skills:export)
+.claude/skills/
+# the Manufacturing Package (protoboard release): rebuilt from the committed project
+release/

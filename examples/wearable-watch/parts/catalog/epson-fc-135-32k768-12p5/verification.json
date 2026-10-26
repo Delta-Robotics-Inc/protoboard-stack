@@ -1,0 +1,23 @@
+{
+  "partId": "epson-fc-135-32k768-12p5",
+  "recorded_at": "2026-10-03T02:14:56.199Z",
+  "audit": {
+    "method": "independent agent re-fetched cited sources (skills/uhd-part-verify stage 2)",
+    "checked": 35,
+    "confirmed": 32,
+    "wrong": 3,
+    "unsupported": 0
+  },
+  "repairs": "1: from the independent audit: packing corrected to 12 mm tape, 4.0 mm pocket pitch, 180 mm reel (data sheet [10]); the temperature note gives -169 x10^-6 at -40 C and -144 x10^-6 at +85 C (B max, Ti 25); the CAD end metallization moved from a central end strip into the corner castellation linings, 0.35 high, matching the end and side views of [7], with the model inside the 3.2 x 1.5 x 0.9 outline; gaps.json aligned with the data_gap traits. All 3 wrong facts fixed; verify-part PASS 0 errors, 0 warnings",
+  "assumptions": [
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "package code",
+    "thermal resistance"
+  ],
+  "vocabulary_gaps": [
+    "PassiveTrait.kind is resistor | capacitor | inductor | ferrite_bead; there is no crystal. The part uses pinTable passive terminals (pin_1, pin_2), category passive.crystal and a performance trait (kind: crystal) for frequency, CL, ESR, C0, C1, drive level. A board-level check for load capacitors against CL would need a crystal kind or a crystal trait."
+  ]
+}

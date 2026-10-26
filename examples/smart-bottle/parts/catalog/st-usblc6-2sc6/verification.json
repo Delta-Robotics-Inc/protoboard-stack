@@ -1,0 +1,18 @@
+{
+  "partId": "st-usblc6-2sc6",
+  "recorded_at": "2026-10-03T01:54:02.347Z",
+  "audit": null,
+  "repairs": "none: verify-part passed on the first run",
+  "assumptions": [
+    "VBUS working voltage",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "datasheet revision",
+    "VBUS working voltage",
+    "internal I/O pin connection",
+    "thermal resistance"
+  ],
+  "vocabulary_gaps": []
+}

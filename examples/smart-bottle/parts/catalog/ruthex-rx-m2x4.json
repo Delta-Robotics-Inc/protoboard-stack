@@ -1,0 +1,460 @@
+{
+  "artifacts": [
+    {
+      "id": "art_product_page",
+      "name": "ruthex RX-M2x4 product page",
+      "type": "documentation",
+      "url": "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen"
+    },
+    {
+      "id": "art_drawing",
+      "name": "ruthex insert dimension drawing and size table",
+      "type": "datasheet",
+      "url": "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/1Tabelle.PT05_eb2a30fa-5c34-46f8-b557-a6c432354560.jpg?v=1748341911"
+    },
+    {
+      "id": "art_dimensions",
+      "name": "3DJake ruthex M2 insert listing (dimension table, cross-check)",
+      "type": "documentation",
+      "url": "https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces"
+    },
+    {
+      "id": "art_vendor_step",
+      "name": "ruthex RX-M2x4 STEP (not redistributed)",
+      "type": "cad",
+      "url": "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/ruthex_RX-M2x4.step?v=1621264078"
+    },
+    {
+      "filePath": "library/cad/py/catalog/ruthex-rx-m2x4.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "ruthex-rx-m2x4 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/ruthex-rx-m2x4/artifacts/cad/ruthex-rx-m2x4.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "ruthex-rx-m2x4 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/ruthex-rx-m2x4/artifacts/cad/ruthex-rx-m2x4.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "ruthex-rx-m2x4 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/ruthex-rx-m2x4/artifacts/cad/ruthex-rx-m2x4.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "ruthex-rx-m2x4 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/ruthex-rx-m2x4/artifacts/cad/interfaces/thread.glb",
+      "format": "glb",
+      "id": "cad_if_thread",
+      "interfaceId": "thread",
+      "name": "thread geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/ruthex-rx-m2x4/artifacts/cad/interfaces/seat.glb",
+      "format": "glb",
+      "id": "cad_if_seat",
+      "interfaceId": "seat",
+      "name": "seat geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/ruthex-rx-m2x4/artifacts/cad/interfaces/entry_face.glb",
+      "format": "glb",
+      "id": "cad_if_entry_face",
+      "interfaceId": "entry_face",
+      "name": "entry_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "mechanical.fastener.insert"
+  ],
+  "description": "Brass thread insert RX-M2x4 for 3D-printed thermoplastic parts, set by heat (soldering iron) or ultrasound into blind or through holes. M2 internal thread, length 4.0 mm, outer Ø3.6 mm (D1) with opposed spiral knurls, far-end pilot Ø3.1 mm (D2), for a Ø3.2 mm hole (D3) at least 5.0 mm deep (L + 1) with a 1.3 mm minimum wall. Lead-free, cadmium-free brass. Sold 70 per pack (GE-M2x04-001). Used 4 per wearable watch and 6 per smart-bottle cap with M2 x 6 screws.",
+  "domains": [
+    {
+      "dimensions_mm": {
+        "height": 4,
+        "length": 3.6,
+        "width": 3.6
+      },
+      "domain": "mechanical",
+      "material": {
+        "assumption": "ruthex names no alloy; 8.5 g/cm³ is within the table's rolled-and-drawn brass range (8.43-8.73) and near 60/40 brass (8.52). The CAD body is the generated nominal shape (19.23 mm³, plain Ø2.0 bore), about 8 % less than the ruthex STEP's 20.95 mm³ with its thread form, so the computed mass (≈ 0.16 g) is about 0.02 g low. Sanity check: ruthex lists a 15 g shipping weight per 70-pack, packaging included, so at most about 0.21 g per insert.",
+        "density_g_cm3": 8.5,
+        "name": "Brass (lead-free, cadmium-free; alloy not stated)",
+        "source": "https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html"
+      },
+      "metadata": {
+        "d1_outer_mm": 3.6,
+        "d2_mm": 3.1,
+        "d3_hole_mm": 3.2,
+        "ean": "4260528721122",
+        "hole_depth_min_mm": 5,
+        "knurl": "opposed spiral knurls, two bands",
+        "length_l_mm": 4,
+        "material": "brass, lead-free and cadmium-free (RoHS, REACH)",
+        "pack_quantity": 70,
+        "pack_shipping_weight_g": 15,
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/1Tabelle.PT05_eb2a30fa-5c34-46f8-b557-a6c432354560.jpg?v=1748341911",
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/out-50xGE-M2x04-001.jpg?v=1784916330",
+          "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen.json",
+          "https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces",
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/ruthex_RX-M2x4.step?v=1621264078"
+        ],
+        "thread": "M2 (pitch 0.4 from the ruthex STEP)",
+        "wall_min_w_mm": 1.3
+      }
+    }
+  ],
+  "id": "ruthex-rx-m2x4",
+  "interfaces": [
+    {
+      "capabilities": [
+        "fastener",
+        "internal_thread"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "thread",
+            "signature": {
+              "area_mm2": 24.662,
+              "centroid": [
+                0,
+                0,
+                2.037
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_thread",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "thread",
+      "name": "M2 internal thread",
+      "parameters": [
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 2
+        },
+        {
+          "id": "length",
+          "unit": "mm",
+          "value": 4
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "metric_thread_internal",
+            "gender": "female",
+            "note": "M2 internal thread through the full 4.0 mm length (pitch 0.4, coarse, measured from the ruthex STEP). `length` is the insert length L. The screw enters at the entry face (frame origin), which is left flush with the host part's surface. Mates with an M2 screw such as iso-7045-m2x6-a2; thread engagement is the screw length past the clamped part, up to 4.0 mm."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "Thread size M2; L 4.0 (mm). 'RX-M2x4 with a M2 internal thread and one Length of 4.0 mm.'",
+            "source": [
+              "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+              "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/1Tabelle.PT05_eb2a30fa-5c34-46f8-b557-a6c432354560.jpg?v=1748341911",
+              "https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "heat_set_insert",
+        "thermoplastic_host"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "seat",
+            "signature": {
+              "area_mm2": 5.027,
+              "centroid": [
+                0,
+                0,
+                3.65
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "entry_face",
+            "signature": {
+              "area_mm2": 5.16,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_seat",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "seat",
+      "name": "Knurled body in a Ø3.2 mm hole",
+      "parameters": [
+        {
+          "id": "hole_diameter",
+          "unit": "mm",
+          "value": 3.2
+        },
+        {
+          "id": "hole_depth_min",
+          "unit": "mm",
+          "value": 5
+        },
+        {
+          "id": "outer_diameter",
+          "unit": "mm",
+          "value": 3.6
+        },
+        {
+          "id": "wall_thickness_min",
+          "unit": "mm",
+          "value": 1.3
+        },
+        {
+          "id": "insert_length",
+          "unit": "mm",
+          "value": 4
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "ruthex size table, M2: Ød1 3.6 (outer), Ød2 3.1 (far-end pilot), Ød3 3.2 (hole in the plastic part, blind or through), L 4.0, W 1.3 (min. wall around the hole) (mm). Blind-hole depth L + 1 mm min; the M2 pack label gives 5.0 mm min. Opposite spiral knurled surfaces. Inserted by heat or ultrasound into blind and through holes in PLA, PETG, ABS, PP, PPS and other thermoplastics.",
+            "source": [
+              "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/1Tabelle.PT05_eb2a30fa-5c34-46f8-b557-a6c432354560.jpg?v=1748341911",
+              "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/out-50xGE-M2x04-001.jpg?v=1784916330",
+              "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+              "https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "ruthex",
+  "name": "ruthex RX-M2x4 brass heat-set insert, M2 x 4.0 mm",
+  "part_number": "GE-M2x04-001",
+  "tags": [
+    "fastener",
+    "insert",
+    "heat-set-insert",
+    "threaded-insert",
+    "m2",
+    "brass",
+    "3d-printing"
+  ],
+  "traits": [
+    {
+      "params": {
+        "fastener_type": "heat-set threaded insert for thermoplastics",
+        "installation": "heat (soldering iron) or ultrasound; blind or through holes; reusable (can be removed and reinserted)",
+        "kind": "fastener",
+        "length_mm": 4,
+        "material": "brass",
+        "source": [
+          "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+          "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen.json",
+          "https://www.3djake.com/ruthex/threaded-insert-m2-70-pieces"
+        ],
+        "thread": "M2"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Host design: Ø3.2 mm hole (D3) with at least 1.3 mm of wall around it (W min), blind or through. ruthex gives the blind-hole depth as L + 1 mm min, 5.0 mm for this insert. ruthex gives no iron temperature; general heat-set guidance from CNC Kitchen (a different insert maker) is an iron 10-20 °C above the print temperature (about 245 °C for PETG). Set the insert with its entry face flush with the host face. With an M2 x 6 screw, a clamped part thinner than 2.0 mm lets the screw pass the insert's far end, which needs that clearance below it.",
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/1Tabelle.PT05_eb2a30fa-5c34-46f8-b557-a6c432354560.jpg?v=1748341911",
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/out-50xGE-M2x04-001.jpg?v=1784916330",
+          "https://www.ruthex.de/en/products/ruthex-gewindeeinsatz-m2-70-stuck-rx-m2x4-messing-gewindebuchsen",
+          "https://www.cnckitchen.com/blog/tipps-amp-tricks-fr-gewindeeinstze-im-3d-druck-3awey"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Wearable watch: 4 inserts for the back cover fastening. Smart bottle: 6 inserts for the cap lid, on a 76 mm circle (the brief's assumption). Both with iso-7045-m2x6-a2 screws.",
+        "quantity_bottle": 6,
+        "quantity_watch": 4
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "D2",
+        "resolution": "D2 3.1 is recorded as the drawn pilot diameter (metadata.d2_mm and the seat trait). The generated body uses Ø3.20, as in the STEP, because the STEP is ruthex's own 3D model of this insert and gives the whole profile the body is built from, while the drawing gives one nominal value; Ø3.1 sits between the STEP's Ø3.20 pilot and its Ø3.0 end chamfer. The 0.1 mm does not change the host design, which uses D3.",
+        "sources": [
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/1Tabelle.PT05_eb2a30fa-5c34-46f8-b557-a6c432354560.jpg?v=1748341911",
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/out-50xGE-M2x04-001.jpg?v=1784916330",
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/ruthex_RX-M2x4.step?v=1621264078"
+        ],
+        "values": [
+          "D2 3.1 mm (the far-end pilot, ruthex drawing and pack label)",
+          "pilot Ø3.20 in the ruthex STEP (z 3.4-3.9, chamfered to Ø3.0 at the far end)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "ruthex publishes a STEP (src_cad, from the product page and the CAD data page), but neither page states terms. ruthex's Thingiverse upload of its insert STEP set (thing:4682424) is CC BY 4.0, but its files need a login and were not compared, so the STEP was used as measured evidence only. Generated body: library/cad/py/catalog/ruthex-rx-m2x4.py.",
+        "source": [
+          "https://cdn.shopify.com/s/files/1/0567/7019/9760/files/ruthex_RX-M2x4.step?v=1621264078",
+          "https://www.ruthex.de/en/pages/cad-daten",
+          "https://www.thingiverse.com/thing:4682424"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "generated body",
+        "reason": "Tooth count, crest and root diameters and twist rates are measured from the ruthex STEP; the tooth shape is simplified. The bore is nominal M2 (the STEP's thread runs Ø1.62 minor to Ø2.07 major) so a modelled screw shank fits it, as the library's nut does.",
+        "value": "12-tooth knurl bands with a 4° flat crest and a V root at a constant twist (upper -50° over 1.0 mm, lower +40° over 0.9 mm, then a plain cone); plain Ø2.0 bore with no thread form"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "fields": [
+          "mass",
+          "brass alloy",
+          "pull-out force",
+          "torque-out",
+          "tightening torque",
+          "operating temperature",
+          "installation temperature"
+        ],
+        "note": "Not stated by ruthex or on the 3DJake listing (a 3DJake customer question about the weight is unanswered; the ruthex 15 g per 70-pack is a shipping weight with packaging)."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

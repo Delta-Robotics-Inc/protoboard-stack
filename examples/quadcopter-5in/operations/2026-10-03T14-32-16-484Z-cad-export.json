@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "motor-screw-m3x8",
+    "config": "parts/local/motor-screw-m3x8/cad.config.ts",
+    "configDigest": "sha256:86b69a1e3f40be14d99f2234d885d2d5da56740bfb3b6a0c9c6bc39745458fce",
+    "moduleDigest": "sha256:40f20de15bb6910a3e932214b1319d07d2218b3719826bd9b4a09e5813b259a6"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:fc12584971d5ab4f40f39d01a08ac49c8ca6e12242baf558e466155d62577a2f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:32:16.484Z",
+  "status": "succeeded",
+  "summary": "motor-screw-m3x8: body.step, body.glb, body.manifest.json in parts/local/motor-screw-m3x8/out (113.787 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/motor-screw-m3x8/out/body.step",
+      "digest": "sha256:a3f42fcf40dc6eb9b67c0ac6374c6bf98b947cdce1f6ede094188fa4e15db7d5",
+      "bytes": 32507,
+      "description": "motor-screw-m3x8: nominal body"
+    },
+    {
+      "path": "parts/local/motor-screw-m3x8/out/body.glb",
+      "digest": "sha256:787f0be10b5397658b5e6a27aa5d1ca2eac7056a6cf0f651fc4b0c07256afa71",
+      "bytes": 21092,
+      "description": "motor-screw-m3x8: viewer mesh"
+    },
+    {
+      "path": "parts/local/motor-screw-m3x8/out/body.manifest.json",
+      "digest": "sha256:a06385b82c89000cb0513a010f5985c09f0ac27befe38d6c42ba65a7b136559d",
+      "bytes": 543,
+      "description": "motor-screw-m3x8: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "motor-screw-m3x8",
+    "out": "parts/local/motor-screw-m3x8/out",
+    "volume_mm3": 113.787,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T14:32:23.022Z"
+}

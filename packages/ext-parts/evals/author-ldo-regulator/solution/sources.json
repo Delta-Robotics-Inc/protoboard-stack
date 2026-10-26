@@ -1,0 +1,44 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "ACME LDO3300 Series datasheet, Rev. 3, March 2026 (fictional; eval fixture inputs/ldo3300-datasheet.txt)",
+    "url": "https://acme.example/ldo3300.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-26T10:00:00Z",
+    "sha256": null,
+    "supports": [
+      "identity and ordering code LDO3300-33SOT-TR (§2)",
+      "pin table (§3)",
+      "absolute maximum ratings and recommended operating conditions (§4, §5)",
+      "electrical characteristics of the 3.3 V version (§6)",
+      "package SOT-23-5, 2.9 × 1.6 mm, 1.1 mm max, 0.95 mm pitch (§7)"
+    ]
+  },
+  {
+    "id": "src_cad_step",
+    "title": "ACME SOT-23-5 3D model (STEP), manufacturer download",
+    "url": "https://acme.example/cad/LDO3300-SOT-23-5.step",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-26T10:05:00Z",
+    "sha256": "9ebd51c6762c47d77be43394fc0346ea989ec4ec4eef71ecc92725809dabd604",
+    "licence": "ACME CAD terms (https://acme.example/cad-terms): may be used and redistributed, unmodified, in designs that use ACME parts",
+    "supports": [
+      "package body geometry"
+    ]
+  },
+  {
+    "id": "src_cad_glb",
+    "title": "ACME SOT-23-5 3D model (GLB), manufacturer download",
+    "url": "https://acme.example/cad/LDO3300-SOT-23-5.glb",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-09-26T10:05:00Z",
+    "sha256": "3f058ee740c15184b0ee21e40f2c2fcb1bd3fabbfcd172d3e12ea2f5d0a3574b",
+    "licence": "ACME CAD terms (https://acme.example/cad-terms): may be used and redistributed, unmodified, in designs that use ACME parts",
+    "supports": [
+      "package body geometry"
+    ]
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Update the flight-controller configuration after the GPS moved to UART3",
+  "skills": ["firmware-config"],
+  "tags": ["firmware"],
+  "fixture": {
+    "from": "../../../../examples/quadcopter-5in",
+    "exclude": ["docs"],
+    "steps": [
+      {
+        "note": "the model change: the GNSS lead's UART wires are soldered to the UART3 pads (the configuration still says UART1)",
+        "replace": { "file": "src/quadcopter.uhd.ts", "find": "p2: \"fc:uart1_tx\", p3: \"fc:uart1_rx\"", "with": "p2: \"fc:uart3_tx\", p3: \"fc:uart3_rx\"", "count": 1 }
+      }
+    ]
+  },
+  "instruction": "We re-soldered the GPS lead to the flight controller's UART3 pads, and the model (src/quadcopter.uhd.ts) already says so. Bring the flight controller's Betaflight configuration in firmware/ up to date with the model, and tell me which serial port lines changed.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *"] },
+  "budget": { "turns": 15, "seconds": 600, "usd": 2 },
+  "graders": [
+    { "id": "check-clean", "kind": "check", "maxErrors": 0 },
+    { "id": "gps-on-uart3", "kind": "text", "file": "firmware/betaflight/cli.txt", "matches": ["serial UART3 2 115200", "set gps_provider = UBLOX"], "notMatches": ["serial UART1 2 "] },
+    { "id": "rest-unchanged", "kind": "text", "file": "firmware/betaflight/cli.txt", "matches": ["serial UART2 64 115200 57600 0 115200", "serial UART5 131073 ", "set motor_pwm_protocol = DSHOT600"] },
+    { "id": "reference-generated", "kind": "operation", "run": ["betaflight-cli", "--input", "out=firmware/betaflight/regenerated.txt"], "status": "succeeded", "weight": 0, "description": "the generator's output for the model, as the reference for the next grader" },
+    { "id": "matches-generator", "kind": "digest", "file": "firmware/betaflight/cli.txt", "sameAs": "firmware/betaflight/regenerated.txt", "description": "cli.txt is exactly what the generator makes from the model: regenerated, not patched by hand" },
+    { "id": "answer", "kind": "text", "matches": ["UART3", "UART1"] },
+    { "id": "model-untouched", "kind": "digest", "file": "src/quadcopter.uhd.ts", "changed": false }
+  ],
+  "solution": [
+    { "protoboard": ["run", "betaflight-cli"], "expect": { "status": "succeeded" } },
+    { "say": "Regenerated firmware/betaflight/cli.txt from the model (run betaflight-cli): the GPS serial line moved from `serial UART1 2 …` to `serial UART3 2 115200 115200 0 115200`; UART1 is now unused. The receiver (UART2) and DJI MSP (UART5) lines are unchanged." }
+  ]
+}

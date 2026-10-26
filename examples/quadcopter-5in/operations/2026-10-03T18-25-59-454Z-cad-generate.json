@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "iso-4762-m2x18",
+    "config": "parts/local/iso-4762-m2x18/cad.config.ts",
+    "configDigest": "sha256:30fe672c5573f2ff69d28c292184a881d6dbf015be49b03e050287f208ea860b",
+    "moduleDigest": "sha256:4fce443421a81c9a600e7442e8fc211dcc03a25d044aee67d2f20b5462e631c4"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:3a9633607d9f4b5eb0a035d4992390b5e0ed35f7111c860d7ae7d0c5b52d5855",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:25:59.454Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m2x18: screw parameters in parts/local/iso-4762-m2x18/frame-cad; run cad:export for the body",
+  "outputs": [
+    {
+      "path": "parts/local/iso-4762-m2x18/frame-cad/params.json",
+      "digest": "sha256:5195a33759b0de44c973da0438c5b042ca986207e25ea6462187adea928a1f36",
+      "bytes": 251,
+      "description": "iso-4762-m2x18: generator parameters from its sizes"
+    }
+  ],
+  "data": {
+    "module": "iso-4762-m2x18",
+    "kind": "screw",
+    "native": "parts/local/iso-4762-m2x18/frame-cad",
+    "params": {
+      "schema": "protoboard.hardware-cad.params/v0",
+      "module": "iso-4762-m2x18",
+      "name": "iso-4762-m2x18",
+      "part": {
+        "kind": "screw",
+        "diameter": 2,
+        "length": 18,
+        "head_diameter": 3.8,
+        "head_height": 2,
+        "outer": null
+      }
+    },
+    "generator": "@protoboard/ext-frame-cad/py/hardware_cad.py"
+  },
+  "finishedAt": "2026-10-03T18:26:02.046Z"
+}

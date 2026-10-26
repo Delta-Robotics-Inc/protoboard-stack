@@ -1,0 +1,7 @@
+{
+  "name": "@fixtures/fake-circuit-b",
+  "version": "0.2.0",
+  "private": true,
+  "description": "TEST FIXTURE: a fake circuit provider (line-based native design, inch outputs). Not a real PCB tool.",
+  "type": "module"
+}

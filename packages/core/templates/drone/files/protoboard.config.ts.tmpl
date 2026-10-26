@@ -1,0 +1,32 @@
+import { defineConfig } from "@protoboardai/core";
+
+export default defineConfig({
+  name: "{{id}}",
+  // the root system (src/system.uhd.ts) and every local definition: modules designed
+  // here (src/modules: sub-assemblies, frames and plates with a cad.config.ts naming
+  // @protoboardai/ext-frame-cad), harnesses (src/harnesses) and purchased parts researched
+  // here (parts/local, evidence in parts/evidence/<id>/)
+  root: { source: "src/system.uhd.ts", export: "{{CONST}}" },
+  sources: ["src/**/*.uhd.ts", "parts/local/**/*.uhd.ts"],
+  // purchased parts from the Protoboard Cloud parts catalog (`protoboard parts add`),
+  // pinned in parts/origins.json with their files under parts/catalog/<id>/
+  catalog: "parts/catalog",
+  {{cloud}}
+  // installed npm packages with a protoboard-extension.json: their skills, checks,
+  // operations and capability providers (`protoboard doctor`, `protoboard skills`)
+  extensions: [
+    "@protoboardai/ext-hardware",
+    "@protoboardai/ext-parts",
+    "@protoboardai/ext-sourcing",
+    "@protoboardai/ext-docs",
+    "@protoboardai/ext-drone",
+    "@protoboardai/ext-frame-cad",
+    "@protoboardai/ext-harness-cad",
+    "@protoboardai/ext-release",
+  ],
+  // `protoboard release`: the Manufacturing Package gets a folder per unit. The flight
+  // stack is built and bench-tested on its own; everything else is final assembly.
+  release: {
+    units: ["stack"],
+  },
+});

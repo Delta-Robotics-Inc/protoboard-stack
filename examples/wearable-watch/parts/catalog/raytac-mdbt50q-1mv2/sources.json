@@ -1,0 +1,90 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "Raytac MDBT50Q-1MV2 / MDBT50Q-P1MV2 approval sheet, Version L (2023-05-24)",
+    "url": "https://www.raytac.com/download/index.php?index_id=43",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:03:00Z",
+    "sha256": "61fec8c0c9f8c33175be2237a8ebba73c6cfc0a3572fe3835fd341079c103d03",
+    "supports": [
+      "identity, order codes MD-240A3-007 (tray) / MD-240A3-007R (reel) (§4.3)",
+      "PCB size L 15.5 x W 10.5 (-0.15/+0.2) x H 2.05 mm, top/bottom/pin views (§2.1)",
+      "61 pads 0.6 x 0.4 mm, pad centre coordinates (§2.2 recommended solder pad layout, top view)",
+      "RF keep-out: no ground in any layer under the antenna, 3.8 mm antenna area; top-layer no-ground 1.6 x 1.2 mm at 2.95 mm (§2.3)",
+      "pin assignment table pins 1-61 with names, functions, standard-drive low-frequency pins (§2.5)",
+      "low-frequency I/O definition: up to 10 kHz; SPI, I2C, UART, PWM are not low frequency (§2.6)",
+      "32 MHz crystal and REG1 DC/DC inductor inside the module (§3, §8)",
+      "unit weight 0.68 g (+-0.02 g) for MDBT50Q-1MV2 (§4)",
+      "absolute maximum ratings and operating conditions copied from nRF52840 PS v1.7 (§5.1, §5.2)",
+      "power management sleep currents (§5.3.11)",
+      "reference circuits: normal voltage input on VDD+VDDH with DCCH unconnected (§8.3), VDDH supply above 3.6 V (§8.1, §8.2), USB powered (§8.4), USB disabled leave D+/D- NC (§8.5)",
+      "factory firmware: Raytac test code, LDO mode, needs external 32.768 kHz crystal (§8 notes)",
+      "features: BLE 5 / 802.15.4, -95 dBm (1 Mbps) and -103 dBm (125 kbps) sensitivity, +8 to -20 dBm TX, 1 MB flash / 256 kB RAM, 48 GPIO, supply 1.7-5.5 V (§1.2)",
+      "working distance over 550 / 300 / 150 m at 125 kbps / 1 / 2 Mbps; operating -40 to 85 C (cover page)"
+    ]
+  },
+  {
+    "id": "src_datasheet_k",
+    "title": "Raytac MDBT50Q-1MV2 / MDBT50Q-P1MV2 approval sheet, Version K (2022-07-01), SparkFun-hosted copy (the copy the project brief read)",
+    "url": "https://cdn.sparkfun.com/assets/4/7/4/3/8/_nRF52840__MDBT50Q-1MV2___MDBT50Q-P1MV2_Ver.K_spec.pdf",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T01:01:00Z",
+    "sha256": "90524218074c7003969b7fc264d46d1a5123f52674e47881c224b3698cd87f4b",
+    "supports": [
+      "same pin table and pad coordinates as Version L (§2.2, §2.5; Version L only redrew Chapter 2)",
+      "side view: overall 2.05 mm to the antenna, 2.0 mm to the shield (§2.1)"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "Raytac MDBT50Q-1MV2 product page",
+    "url": "https://www.raytac.com/product/ins.php?index_id=24",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:01:00Z",
+    "sha256": "bc312a76f36511155e2269769912e76035002d5ad009f6d1674e363c2afc4049",
+    "supports": [
+      "nRF52840 revision 2 IC, chip antenna, 48 GPIO, 1 MB flash / 256 kB RAM",
+      "dimension 10.5 x 15.5 x 2.05 mm",
+      "certifications FCC, IC, CE, Telec (MIC), KC, SRRC, NCC, RCM, WPC; Bluetooth 5.4/5.2/5.1/5 specification certified",
+      "interfaces SPI, UART, I2C, I2S, PWM, ADC, NFC, USB"
+    ]
+  },
+  {
+    "id": "src_nordic_ps",
+    "title": "Nordic Semiconductor nRF52840 Product Specification v1.11 (4413_417, 2024-10-01), Digi-Key-hosted copy (docs.nordicsemi.com returned a Cloudflare challenge)",
+    "url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/6469/NRF52840-DK.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:05:00Z",
+    "sha256": "6e5950cc7e8272d1803279b8cfe3a6ea2c48be46735db3bc3b0a351e3665ecdf",
+    "supports": [
+      "normal voltage mode (supply on VDD and VDDH shorted) and high voltage mode (supply on VDDH only) (§5.3.1)",
+      "regulator operating conditions VDD 1.7/3.0/3.6 V, VDDH 2.5/3.7/5.5 V, VBUS 4.35/5/5.5 V, CVDD 2.7-5.5 uF (§5.3.8.1, §5.3.8.5)",
+      "REG0 output 1.8-3.3 V on VDD in high voltage mode; external draw 25 mA (<= 4 dBm TX), 5 mA (> 4 dBm), 1 mA in System OFF (§5.3.1.3, §5.3.8.2)",
+      "GPIO high level equals VDD (normal mode) or REGOUT0 (high voltage mode) (§5.3.1.2)",
+      "GPIO electrical specification: VIH 0.7 VDD, VIL 0.3 VDD, standard drive 2 mA typ, high drive 10 mA typ, pull resistors 13 kOhm (§6.9.3.1)",
+      "any pin can be mapped to a peripheral (§6.9 GPIO feature list)",
+      "SPIM up to 32 Mbps on SPIM3, SPIM0-2 not above 8 Mbps (§6.25); TWIM 100-400 kbps (§6.31); UARTE up to 1 Mbaud (§6.34)",
+      "sleep and radio currents: ION_RAMON_RTC 3.16 uA, ION_RAMON_GPIOTEPORT 2.36 uA, IRADIO_TX0 16.40 mA (+8 dBm), TX1 6.40 mA (0 dBm), RX0 6.26 mA (§5.2.1)",
+      "USB operating conditions VBUS 4.35-5.5 V (§5.3.8.5); USB active 2.4 mA from VBUS (§5.2.1.10); USBD is a full-speed device controller (§6.35)",
+      "LFXO load capacitance up to 12.5 pF (§5.4.2.4)"
+    ]
+  },
+  {
+    "id": "src_design_guide",
+    "title": "Raytac MDBT50Q & MDBT50Q-P & MDBT50Q-U Footprint_Design Guide (230606) archive: 2D drawing MDBT50Q_v1.1-230606.pdf and STEP 'MDBT50Q 3D Drawing_20180620.stp'",
+    "url": "https://www.raytac.com/document/act.php?act=1&index_id=30",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T01:05:00Z",
+    "sha256": "7ff6f11d0185a9db73c7140a4fe7e70b31615539916e60d5c27af8178f9f9fc2",
+    "licence": "No licence or terms stated: the download page (https://www.raytac.com/document/index.php?index_m_id=12) shows only the site footer 'Copyright © 2018 Raytac Corporation', and the archive holds no licence file. Not redistributed: the STEP is used only as measurement evidence and the committed body is generated.",
+    "supports": [
+      "2D drawing v1.1 (2023-06-06): shielding case 9.7 x 11.1 mm, overall 10.5 x 15.5 (+0.2/-0.15) x 2.05 mm, 2.0 mm to the shield",
+      "STEP (2018-06-20, single solid, no pads): PCB 10.5 x 15.5 x 0.8 mm; shield 9.5 x 10.9 x 1.2 mm; chip antenna 8.0 x 1.0 x 1.25 mm, centre offset +0.368 mm in x, 0.617-1.617 mm from the antenna-end edge; 1.9 x 0.5 mm oval slot through the PCB"
+    ]
+  }
+]

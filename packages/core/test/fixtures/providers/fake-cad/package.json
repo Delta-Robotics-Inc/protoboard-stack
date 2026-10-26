@@ -1,0 +1,7 @@
+{
+  "name": "@fixtures/fake-cad",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TEST FIXTURE: a fake cad provider (box enclosures). Not a real CAD tool.",
+  "type": "module"
+}

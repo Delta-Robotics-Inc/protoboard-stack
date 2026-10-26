@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "protoboard": {
+      "command": "/old/place/protoboard-mcp",
+      "args": [],
+      "disabled": false,
+      "autoApprove": ["project_status", "project_check"]
+    },
+    "local-server": {
+      "command": "node",
+      "args": ["/path/to/server.js"],
+      "env": { "API_KEY": "your_api_key" },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

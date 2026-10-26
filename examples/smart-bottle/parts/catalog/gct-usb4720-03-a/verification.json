@@ -1,0 +1,27 @@
+{
+  "partId": "gct-usb4720-03-a",
+  "recorded_at": "2026-10-03T03:09:27.737Z",
+  "audit": {
+    "method": "self-audit by the authoring agent against the downloaded sources (no independent stage-2 agent was available); record-verification.ts writes the independent-agent wording by default",
+    "checked": 18,
+    "confirmed": 18,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": null,
+  "assumptions": [
+    "D+/D- contacts on both sides",
+    "grounding-tag designator",
+    "CAD body and internals"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "mass",
+    "receptacle internals",
+    "lifecycle and stock",
+    "grounding tag designator"
+  ],
+  "vocabulary_gaps": [
+    "No protocol for a gasket face that seals against an enclosure wall around an opening. Modelled as mechanical `custom` (peer) with capabilities panel_face_seal and ip67, as the probe part does for its rod-seal surface."
+  ]
+}

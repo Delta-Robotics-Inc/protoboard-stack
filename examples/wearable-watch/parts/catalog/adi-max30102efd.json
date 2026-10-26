@@ -1,0 +1,1817 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "MAX30102 datasheet 19-7740 Rev 1 (copy read)",
+      "type": "datasheet",
+      "url": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf"
+    },
+    {
+      "id": "art_datasheet_adi",
+      "name": "MAX30102 datasheet (canonical ADI URL)",
+      "type": "datasheet",
+      "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX30102.pdf"
+    },
+    {
+      "id": "art_datasheet_rev0",
+      "name": "MAX30102 datasheet 19-7740 Rev 0 with outline 21-1048",
+      "type": "datasheet",
+      "url": "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf"
+    },
+    {
+      "filePath": "library/cad/py/catalog/adi-max30102efd.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "adi-max30102-oesip14 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/adi-max30102efd/artifacts/cad/adi-max30102-oesip14.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "adi-max30102-oesip14 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/adi-max30102efd/artifacts/cad/adi-max30102-oesip14.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "adi-max30102-oesip14 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adi-max30102efd/artifacts/cad/adi-max30102-oesip14.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "adi-max30102-oesip14 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/adi-max30102efd/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adi-max30102efd/artifacts/cad/interfaces/sensor_window.glb",
+      "format": "glb",
+      "id": "cad_if_sensor_window",
+      "interfaceId": "sensor_window",
+      "name": "sensor_window geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/adi-max30102efd/artifacts/cad/interfaces/led_window.glb",
+      "format": "glb",
+      "id": "cad_if_led_window",
+      "interfaceId": "led_window",
+      "name": "led_window geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "sensor.biometric"
+  ],
+  "description": "Analog Devices (Maxim) MAX30102 integrated pulse-oximetry and heart-rate optical module in a 14-pin OESIP, 5.6 x 3.3 x 1.55 mm with integrated cover glass: red (660 nm) and IR (880 nm) LEDs, photodetector, ambient light cancellation, 18-bit ADC at 50-3200 sps, 32-sample FIFO, die temperature sensor. VDD 1.7-2.0 V, VLED+ 3.1-5.0 V, I2C target at fixed address 0x57 (400 kHz), active-low open-drain interrupt, 0.7 uA shutdown.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "adc_clock_MHz": [
+          10.32,
+          10.48,
+          10.64
+        ],
+        "logic_levels": {
+          "hysteresis_V": 0.2,
+          "scl_sda_vih_min": "0.7 VDD",
+          "scl_sda_vil_max": "0.3 VDD",
+          "sda_int_vol_max_V": 0.2,
+          "vol_condition": "ISINK 6 mA"
+        },
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.2-4)",
+        "supply_current_uA": {
+          "condition": "typ/max, PW 215 us, 50 sps",
+          "ir_only_mode": [
+            600,
+            1200
+          ],
+          "shutdown": [
+            0.7,
+            10
+          ],
+          "spo2_hr_mode": [
+            600,
+            1200
+          ]
+        }
+      },
+      "power_domains": [
+        {
+          "id": "vdd",
+          "name": "Analog supply (VDD)",
+          "nominal_voltage_V": 1.8,
+          "voltage_range_V": [
+            1.7,
+            2
+          ]
+        },
+        {
+          "id": "vled",
+          "name": "LED supply (VLED+)",
+          "nominal_voltage_V": 3.3,
+          "voltage_range_V": [
+            3.1,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 1.55,
+        "length": 5.6,
+        "width": 3.3
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "cover_glass": "integrated; hydrolytic resistance class HGB 1 (DIN ISO 719)",
+        "dimensions_note": "length along the pin columns (D), width across them (E), height to the top of the cover glass (A); CAD x is E and y is D",
+        "mounting_method": "surface_mount",
+        "source": [
+          "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.1, 3)",
+          "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf (19-7740 Rev 0 p.32, outline 21-1048 rev B, table)"
+        ]
+      },
+      "package": {
+        "code": "F143A5MK+1 (outline 21-1048)",
+        "exposed_pad": false,
+        "name": "OESIP-14",
+        "pin_count": 14,
+        "pitch_mm": 0.8,
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.1: 5.6mm x 3.3mm x 1.55mm 14-Pin Optical Module; p.2 Package Information: 14 OESIP, F143A5MK+1, outline 21-1048; p.31: 14-Lead OESIP (0.8mm Pin Pitch)); https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf (19-7740 Rev 0 p.32, outline 21-1048 rev B, D 5.6, E 3.3, A 1.55 nominal, e 0.8 BSC, N 14)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "junction_max_C": 90,
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.2)",
+        "storage_C": [
+          -40,
+          105
+        ],
+        "theta_ja_C_per_W": 180,
+        "theta_jc_C_per_W": 150
+      },
+      "operating_temperature_C": [
+        -40,
+        85
+      ]
+    }
+  ],
+  "id": "adi-max30102efd",
+  "interfaceGroups": [
+    {
+      "id": "required_supply_pins",
+      "label": "VDD (11), GND (12), VLED+ (9, 10), PGND (4)",
+      "members": [
+        "pin_11",
+        "pin_12",
+        "pin_9",
+        "pin_10",
+        "pin_4"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                2.4,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "N.C.",
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "No Connection. Connect to PCB pad for mechanical stability.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                1.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "SCL",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SCL — I2C Clock Input",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "open_drain"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_3",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                0.8,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_3",
+      "name": "SDA",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 3,
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SDA — I2C Data, Bidirectional (Open-Drain)",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_4",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_4",
+      "name": "PGND",
+      "pin": 4,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "PGND — Power Ground of the LED Driver Blocks",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_5",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                -0.8,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_5",
+      "name": "N.C.",
+      "pin": 5,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "No Connection. Connect to PCB pad for mechanical stability.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_6",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                -1.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_6",
+      "name": "N.C.",
+      "pin": 6,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "No Connection. Connect to PCB pad for mechanical stability.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_7",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                -2.4,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_7",
+      "name": "N.C.",
+      "pin": 7,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "No Connection. Connect to PCB pad for mechanical stability.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_8",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                -2.4,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_8",
+      "name": "N.C.",
+      "pin": 8,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "No Connection. Connect to PCB pad for mechanical stability.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_9",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                -1.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_9",
+      "name": "VLED+",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3.1,
+            5
+          ],
+          "unit": "V",
+          "value": 3.3
+        }
+      ],
+      "pin": 9,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VLED+ — LED Power Supply (anode connection). Use a bypass capacitor to PGND for best performance.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_10",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                -0.8,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_10",
+      "name": "VLED+",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3.1,
+            5
+          ],
+          "unit": "V",
+          "value": 3.3
+        }
+      ],
+      "pin": 10,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VLED+ — LED Power Supply (anode connection). Use a bypass capacitor to PGND for best performance.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_11",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_11",
+      "name": "VDD",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.7,
+            2
+          ],
+          "unit": "V",
+          "value": 1.8
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.0012
+        }
+      ],
+      "pin": 11,
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "VDD — Analog Power Supply Input. Use a bypass capacitor to GND for best performance.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_12",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                0.8,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_12",
+      "name": "GND",
+      "pin": 12,
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "GND — Analog Ground",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "open_drain",
+        "active_low"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_13",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                1.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_13",
+      "name": "INT",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            0,
+            6
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": 13,
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "INT — Active-Low Interrupt (Open-Drain). Connect to an external voltage with a pullup resistor.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Pulled low while an enabled interrupt is pending (FIFO almost full, new sample ready, ambient light cancellation overflow, die temperature ready) and on power-up (PWR_RDY, which cannot be disabled); cleared by reading the Interrupt Status registers 0x00-0x01. VOL <= 0.2 V at 6 mA. Needs an external pull-up (1 kohm to VDDIO in the application circuit).",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.4, 12-13, 31)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_14",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                2.4,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_14",
+      "name": "N.C.",
+      "pin": 14,
+      "protocols": [
+        {
+          "roles": [
+            "no_connect"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "No Connection. Connect to PCB pad for mechanical stability.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Description)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_3",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                0.8,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                1.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c",
+      "name": "I2C (target)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            0,
+            400000
+          ],
+          "unit": "Hz"
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 87
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "pin_2",
+            "sda": "pin_3"
+          },
+          "id": "i2c_default",
+          "label": "I2C (target)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "7-bit address 0x57, fixed (slave ID 0b1010111; 0xAE write / 0xAF read). SCL 0-400 kHz, bus capacitance <= 400 pF. VIH >= 0.7 x VDD, VIL <= 0.3 x VDD, so the bus may be pulled up above VDD (6.0 V absolute maximum). SDA is open-drain and needs a pull-up (typically > 500 ohm); SCL is input only. Series resistors are optional. FIFO_DATA reads do not auto-increment the register pointer.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.2, 4-5, 28-29 Table 17)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_11",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_12",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                0.8,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "core_supply",
+      "name": "Core supply (VDD + GND)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            1.7,
+            2
+          ],
+          "unit": "V",
+          "value": 1.8
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.0012
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "gnd": "pin_12",
+            "vdd": "pin_11"
+          },
+          "default_active": true,
+          "id": "vdd_pins",
+          "label": "VDD 11, GND 12"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "vdd",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "gnd",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "VDD 1.7-2.0 V (1.8 V typical); 2.2 V absolute maximum. IDD 600 uA typ / 1200 uA max in SpO2 and HR mode (also IR-only mode) at PW 215 us, 50 sps; shutdown (MODE 0x80) 0.7 uA typ / 10 uA max. Application circuit: +1.8 V rail sized 20 mA, 4.7 uF + 0.1 uF to GND. Power VDD before VLED+.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.2, p.28, p.31)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_9",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                -1.6,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_10",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                1.2,
+                -0.8,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_4",
+            "signature": {
+              "area_mm2": 0.21,
+              "centroid": [
+                -1.2,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "led_supply",
+      "name": "LED supply (VLED+ + PGND)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            3.1,
+            5
+          ],
+          "unit": "V",
+          "value": 3.3
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "pgnd": "pin_4",
+            "vled_a": "pin_9",
+            "vled_b": "pin_10"
+          },
+          "default_active": true,
+          "id": "vled_pins",
+          "label": "VLED+ 9/10, PGND 4"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "slots": [
+        {
+          "id": "vled_a",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "vled_b",
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          },
+          "required": true
+        },
+        {
+          "id": "pgnd",
+          "match": {
+            "capability": "ground",
+            "protocol": "power",
+            "role": "ground"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "VLED+ 3.1-5.0 V (3.3 V typical); 6.0 V absolute maximum to PGND. The LED drivers sink a programmed pulse current, 0-50 mA (Table 8: 0x1F 6.2 mA, 0x3F 12.6 mA, 0x7F 25.4 mA, 0xFF 51.0 mA typical; actual current varies widely with trimming), one LED per time slot, pulse width 69-411 us at 50-3200 sps; average current = pulse current x pulse width x sample rate per active LED. Application circuit: +3.3 V rail sized 200 mA max, 10 uF + 0.1 uF to PGND. GND to PGND within +-0.3 V.",
+            "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.2, 9, 18-20 Tables 6-8, p.31)"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 2.94,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "OESIP-14 pads (SMD)",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "oesip_14",
+            "note": "14 pads on the underside in two columns of 7, pitch 0.8 mm (D1 4.8 BSC), column centres 2.4 mm apart (E1 BSC); pad 0.25-0.35 x 0.65-0.75 mm (b x L); no exposed pad. Body 5.5-5.7 x 3.2-3.4 mm, 1.45-1.65 mm tall. Solder the N.C. pads too (mechanical stability).",
+            "source": [
+              "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf (19-7740 Rev 0 p.32, outline 21-1048 rev B, D, E, A, b, L, e, D1, E1)",
+              "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8)"
+            ]
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "optical_aperture"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0.822,
+            1.55
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "sensor_window",
+            "signature": {
+              "area_mm2": 5.417,
+              "centroid": [
+                0,
+                0.822,
+                1.55
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_sensor_window",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "sensor_window",
+      "name": "Photodetector aperture",
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Photodetector aperture (the pin 1/14 end is labelled SENSOR). Photodiode 600-900 nm, radiant sensitive area 1.36 mm² (1.38 x 0.98 mm). Window 1.97 x 2.75 (REF), centred 0.822 mm from the body centre towards pins 1/14 mm in the top face (cover glass). Face it towards the skin through a clear enclosure window, with an opaque barrier between the two apertures to stop LED-to-photodiode crosstalk.",
+            "source": [
+              "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf (19-7740 Rev 0 p.32, outline 21-1048 rev B, top view)",
+              "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Configuration)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "optical_aperture"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            -1.64,
+            1.55
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "led_window",
+            "signature": {
+              "area_mm2": 2.155,
+              "centroid": [
+                0,
+                -1.64,
+                1.55
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_led_window",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "led_window",
+      "name": "LED aperture",
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Red (660 nm) and IR (880 nm) LED aperture (the pin 7/8 end is labelled LED). Window 1.97 x 1.094 (REF), centred 1.64 mm from the body centre towards pins 7/8 mm in the top face (cover glass). Face it towards the skin through a clear enclosure window, with an opaque barrier between the two apertures to stop LED-to-photodiode crosstalk.",
+            "source": [
+              "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf (19-7740 Rev 0 p.32, outline 21-1048 rev B, top view)",
+              "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.8 Pin Configuration)"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Analog Devices (Maxim Integrated)",
+  "name": "ADI MAX30102 pulse oximeter / heart-rate module (OESIP-14)",
+  "part_number": "MAX30102EFD+T",
+  "tags": [
+    "max30102",
+    "analog-devices",
+    "maxim",
+    "pulse-oximeter",
+    "spo2",
+    "heart-rate",
+    "ppg",
+    "optical-sensor",
+    "i2c",
+    "oesip-14",
+    "ic",
+    "wearable"
+  ],
+  "traits": [
+    {
+      "params": {
+        "i2c_clock_kHz": [
+          0,
+          400
+        ],
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.2, 5)",
+        "temperature_C": [
+          -40,
+          85
+        ],
+        "vdd_V": [
+          1.7,
+          2
+        ],
+        "vled_V": [
+          3.1,
+          5
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "continuous_power_mW": "440 at +70 C (derate 5.5 mW/C above +70 C)",
+        "esd": "HBM 2.5 kV; latchup immunity +-250 mA",
+        "gnd_to_pgnd_V": [
+          -0.3,
+          0.3
+        ],
+        "junction_temperature_C": 90,
+        "other_pins_V": [
+          -0.3,
+          6
+        ],
+        "reflow_C": 260,
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.2 Absolute Maximum Ratings)",
+        "storage_temperature_C": [
+          -40,
+          105
+        ],
+        "terminal_current_mA": 20,
+        "vdd_V": [
+          -0.3,
+          2.2
+        ],
+        "vled_to_pgnd_V": [
+          -0.3,
+          6
+        ]
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "adc_bits": 18,
+        "adc_full_scale_nA": [
+          2048,
+          4096,
+          8192,
+          16384
+        ],
+        "ambient_light_cancellation_uA": 200,
+        "die_temperature": {
+          "accuracy_C": 1,
+          "acquisition_ms": 29,
+          "range_C": [
+            -40,
+            85
+          ],
+          "resolution_C": 0.0625
+        },
+        "fifo_samples": 32,
+        "function": "pulse oximetry (SpO2) and heart rate (photoplethysmography)",
+        "ir_led": {
+          "at": "20 mA, 25 C",
+          "fwhm_nm": 30,
+          "peak_nm": [
+            870,
+            880,
+            900
+          ],
+          "radiant_power_mW": 6.5,
+          "vf_V": 1.4
+        },
+        "kind": "optical_sensor",
+        "led_current_mA": [
+          0,
+          51
+        ],
+        "modes": "heart rate (red only, MODE 010), SpO2 (red and IR, MODE 011), multi-LED (MODE 111)",
+        "photodetector": {
+          "sensitive_area_mm": [
+            1.38,
+            0.98
+          ],
+          "sensitive_area_mm2": 1.36,
+          "spectral_range_nm": [
+            600,
+            900
+          ]
+        },
+        "pulse_width_us": [
+          69,
+          118,
+          215,
+          411
+        ],
+        "red_led": {
+          "at": "20 mA, 25 C",
+          "fwhm_nm": 20,
+          "peak_nm": [
+            650,
+            660,
+            670
+          ],
+          "radiant_power_mW": 9.8,
+          "vf_V": 2.1
+        },
+        "sample_rate_sps": [
+          50,
+          100,
+          200,
+          400,
+          800,
+          1000,
+          1600,
+          3200
+        ],
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, pp.3-4, 9, 18-20 Tables 4-8, p.26)"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Power VDD first, then VLED+; SDA, SCL and INT may be pulled up while the supplies are off. A PWR_RDY interrupt signals readiness after power-up; read the interrupt status to clear it. Power-down tolerates any sequence. SHDN keeps the registers and lets both rails stay powered.",
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.18 Mode Configuration, p.28 Power Sequencing)"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "MAX30102EFD+T is the only orderable code in the datasheet: -40 to +85 C, 14-lead OESIP, + = lead-free/RoHS, T = tape and reel.",
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.31 Ordering Information)",
+        "topic": "variant"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "pins 5 and 6",
+        "resolution": "Rev 1, the current revision: its revision history lists the pin description and pin configuration as updated. Pins 5 and 6 are nc leaves.",
+        "sources": [
+          "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf",
+          "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf"
+        ],
+        "values": [
+          "R_DRV (5) and IR_DRV (6), red / IR LED driver (Rev 0, 9/15)",
+          "N.C. (Rev 1, 10/18)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "VLED+ maximum",
+        "resolution": "5.0 V (Rev 1).",
+        "sources": [
+          "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf",
+          "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf"
+        ],
+        "values": [
+          "5.25 V (Rev 0)",
+          "5.0 V (Rev 1)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "maximum LED current",
+        "resolution": "Both recorded: Table 8 values are typical and vary with trimming; led_current_mA uses the Table 8 maximum.",
+        "sources": [
+          "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf"
+        ],
+        "values": [
+          "0 to 50 mA programmable (p.9 LED Driver)",
+          "51.0 mA typical at LEDx_PA = 0xFF (Table 8)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "SDA, SCL, INT voltage",
+        "reason": "The datasheet states no recommended operating maximum for these pins, only the 6.0 V absolute maximum for all other pins (p.2), and allows pull-ups to an external voltage (p.28). 6.0 V is used as the ceiling for net checks; keep pull-ups well below it (the application circuit uses VDDIO).",
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf (19-7740 Rev 1, p.2, p.28, p.31)",
+        "value": "0-6.0 V"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD cover glass and windows",
+        "reason": "Outline 21-1048 gives A 1.55 and A3 0.20 but the 0.10 rim, the (0.05) side-view step and the rounded window corners only as reference marks without full dimensions, and no pad thickness.",
+        "source": "https://xonstorage.z8.web.core.windows.net/pdf/maxim_max30102efdt_apr22_xonlink.pdf",
+        "value": "housing 3.3 x 5.6 x 1.35 mm; cover glass 3.1 x 5.4 x 0.20 mm (0.10 rim inset) on top; windows modelled square-cornered; pads 0.02 mm thick, flush with the seating plane"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "No redistributable model found: the ADI product page timed out from the research machine; SnapEDA, Digi-Key and componentsearchengine.com returned HTTP 403, and Mouser served a bot-block page. Geometry is generated from outline 21-1048 (library/cad/py/catalog/adi-max30102efd.py).",
+        "source": "https://www.snapeda.com/parts/MAX30102EFD+T/Analog%20Devices/view-part/"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "lifecycle status",
+        "note": "Not confirmed: the ADI product page and distributor pages could not be read (brief OQ-W8).",
+        "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX30102.pdf"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "mass",
+        "note": "Neither datasheet revision states a mass.",
+        "source": "https://download.mikroe.com/documents/datasheets/MAX30102_datasheet.pdf"
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

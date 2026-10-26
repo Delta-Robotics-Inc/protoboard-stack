@@ -1,0 +1,80 @@
+{
+  "$comment": "TEST FIXTURE: each LED channel has a frame (led1, led2); its parts are placed in the channel's own coordinates.",
+  "u1": {
+    "at": [
+      0,
+      2
+    ],
+    "rotation_deg": 0
+  },
+  "led1": {
+    "at": [
+      -9,
+      -7
+    ],
+    "rotation_deg": 0
+  },
+  "led2": {
+    "at": [
+      9,
+      -5
+    ],
+    "rotation_deg": 180
+  },
+  "led1/q1": {
+    "at": [
+      0,
+      0
+    ],
+    "rotation_deg": 0
+  },
+  "led1/d1": {
+    "at": [
+      0,
+      4
+    ],
+    "rotation_deg": 90
+  },
+  "led1/r1": {
+    "at": [
+      2.5,
+      4
+    ],
+    "rotation_deg": 90
+  },
+  "led1/r2": {
+    "at": [
+      -3.5,
+      0
+    ],
+    "rotation_deg": 90
+  },
+  "led2/q1": {
+    "at": [
+      0,
+      0
+    ],
+    "rotation_deg": 0
+  },
+  "led2/d1": {
+    "at": [
+      0,
+      4
+    ],
+    "rotation_deg": 90
+  },
+  "led2/r1": {
+    "at": [
+      2.5,
+      4
+    ],
+    "rotation_deg": 90
+  },
+  "led2/r2": {
+    "at": [
+      -3.5,
+      0
+    ],
+    "rotation_deg": 90
+  }
+}

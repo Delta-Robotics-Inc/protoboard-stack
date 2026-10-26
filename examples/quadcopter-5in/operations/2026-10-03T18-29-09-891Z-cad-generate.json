@@ -1,0 +1,53 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "dolphinrc-sh8-fc-esc-cable",
+    "config": "src/harnesses/dolphinrc-sh8-fc-esc-cable/cad.config.ts",
+    "configDigest": "sha256:5aeac23cbf01a132d85b0062b9ec254dae7641b8b4055e9d1a79067f45e57aa4",
+    "moduleDigest": "sha256:4c2dc82150cd47fc76e60a97491ea0422e88c89154c0920436ea3ef7bada966f"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:96dff6062190234f5f3c48cfb013c9c157025fa4a3fe40e0714f223e17138f60",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:29:09.891Z",
+  "status": "succeeded",
+  "summary": "stack/sh8_cable: ok; routed in one run with 9 other cable(s) (run harness-cad)",
+  "outputs": [
+    {
+      "path": "src/harnesses/dolphinrc-sh8-fc-esc-cable/harness-cad/route.json",
+      "digest": "sha256:b90ff72ae57c2da086d78b50f53d4072203ee9465dea2ff4b5cf390b47263e4b",
+      "bytes": 66090,
+      "description": "stack/sh8_cable: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "harnesses": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 1.23
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-03T18:29:12.750Z"
+}

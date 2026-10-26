@@ -1,0 +1,86 @@
+[
+  {
+    "id": "src_parker_handbook",
+    "title": "Parker O-Ring Handbook, Catalog ORD 5700A/US (2001 edition)",
+    "url": "https://www.macroseal.com/pdf/Parker%20O-rings.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:10:00Z",
+    "sha256": "bf13089d83b657136627c5232e76eedfcfb75a80eedaa27a490b2568f99bcabc",
+    "supports": [
+      "AS568A size table (Section IX, p. 9-2): 2-040 = AS568 dash -040, nominal 2 7/8 x 3 x 1/16 in; ID 2.864 +/- .020 in (72,75 +/- 0,51 mm); W .070 +/- .003 in (1,78 +/- 0,08 mm); volume .0355 in3",
+      "AS568 table note (b): dimensions are for standard (AN) shrinkage materials only",
+      "Design Chart 4-2 (p. 4-14), face seal glands for .070 cross sections (004-050): gland depth .050-.054 in, squeeze .013-.023 in (19-32 %), groove width .101-.107 in for liquids and .084-.089 in for vacuum and gases, groove radius .005-.015 in, surface finish 32 RMS for liquids and 16 for vacuum and gases",
+      "Section 4.3: for external (inward) pressure dimension the face groove by its inside diameter = mean O-ring ID, tolerance plus 1 % but not more than +.060 in; for internal pressure by its outside diameter = mean O-ring OD",
+      "Section 4.3: rectangular face grooves need inside corner radii of at least three times the cross section",
+      "Section 2.2.17 (p. 2-9): silicones have relatively low tensile strength and poor tear and wear resistance; good heat resistance up to 232 C and cold flexibility down to -59 C; resistant to engine and transmission oil (e.g. ASTM oil No. 1); not compatible with superheated water steam over 121 C, acids and alkalis, low molecular weight chlorinated hydrocarbons (trichloroethylene), aromatic mineral oil, hydrocarbon based fuels, aromatic hydrocarbons (benzene, toluene). The silicone section runs from the left column of p. 2-9 into its right column; the list at the top of p. 2-10 belongs to 2.2.18 SBR",
+      "Table 10-7 (p. 10-17): Parker silicone S0604-70 is shrinkage class I; Dimensions From Standard Tooling (p. 10-18): 2-040 class I ID 2.847 +/- .023 in",
+      "Elastic drive belt compound data (p. 3-26): S0604-70 specific gravity 1.43"
+    ],
+    "note": "Parker Hannifin O-Ring Division's own handbook, used as the published AS568 size and gland reference (SAE AS568 itself is a paid standard and was not read). The official PDF is offered at https://discover.parker.com/Parker-ORing-Handbook-ORD-5700 behind a request form; this is the same Parker catalog as hosted by a distributor (Macro Seal), so the bytes are Parker's but the host is not. Newer editions exist; the AS568 dash -040 dimensions are unchanged across the three size charts read (src_arc_chart, src_handbook_chart)."
+  },
+  {
+    "id": "src_marco_product",
+    "title": "Marco Sealing Solutions: S1000-040 O-ring, AS568-040, silicone 70 durometer, orange, FDA",
+    "url": "https://www.marcorubber.com/product/S1000-040",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:05:00Z",
+    "sha256": "b8e3422682c912ca3b7a75bb18219605cac2b09c38a490a1d7e90039bb3ab53a",
+    "supports": [
+      "purchasable part number S1000-040 = AS568-040 in compound S1000",
+      "size code 040; cross section 0.070 in (1.78 mm); inside diameter 2.864 in (72.75 mm); outside diameter 3.004 in (76.31 mm)",
+      "material silicone (VMQ, SIL), hardness 70 Shore A, colour orange",
+      "high temp 400 F (205 C), low temp -75 F (-60 C)",
+      "compound S1000 compliant to FDA 21 CFR 177.2600 for food and beverage contact"
+    ],
+    "note": "Marco Sealing Solutions (formerly Marco Rubber & Plastics) is the seller of record that defines compound S1000 and part number S1000-040; the moulder is not named. Chosen as a documented representative supplier because the bottle brief allows any AS568 supplier. Marked manufacturer authority on that basis. Stock and price shown on the page were not used."
+  },
+  {
+    "id": "src_marco_datasheet",
+    "title": "Marco S1000 material summary: 70 durometer, orange, FDA compliant to 21 CFR 177.2600 (Revision 1, 04-2021)",
+    "url": "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T03:08:00Z",
+    "sha256": "c749e78cec57a6fb44c159778c15a572e9189c9119916b43e3975a323c6074cc",
+    "supports": [
+      "S1000 is a 70A silicone, FDA compliant to 21 CFR 177.2600",
+      "service temperature -75 to 400 F; cure system peroxide",
+      "spec ASTM D2000 M7GE705 A19 B37 EA14 EO16 EO36 F19",
+      "hardness 70 +/- 5 Shore A (typical 68); tensile 725 psi min (typical 899); elongation 150 % min (typical 219)",
+      "compression set B37 (22 h at 175 C): 30 % max, typical 12 %. The datasheet prints 'ASTM D 325 Method B'; the part reads it as ASTM D395 Method B, the compression-set method that ASTM D2000 suffix B37 calls up",
+      "water resistance EA14 (70 h at 100 C): hardness change +/- 5 (typical -2), volume change +/- 5 % (typical 3 %)",
+      "low temperature F19: non-brittle after 3 min at -55 C, pass",
+      "silicones are seal materials for static applications"
+    ],
+    "note": "No specific gravity is given, so the mass uses Parker's S0604-70 value (assumption on the part)."
+  },
+  {
+    "id": "src_arc_chart",
+    "title": "American Rubber Corp: AS568 O-ring size chart",
+    "url": "https://www.americanrubbercorp.com/products/standard-o-rings/as568-o-ring-size-chart/",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-03T03:00:00Z",
+    "sha256": "d1487f67055a79b29bd5a977dd431b01e5342e351ead3f33e28b28e83b932f73",
+    "supports": [
+      "dash 040: nominal 1/16 x 2-7/8 x 3 in; CS 0.07 in (1.78 mm); ID 2.864 +/- .020 in (72.75 +/- .51 mm)"
+    ],
+    "note": "Corroborates the Parker table; cited by the bottle brief (B23)."
+  },
+  {
+    "id": "src_handbook_chart",
+    "title": "O-Ring Handbook (oringhandbook.com): AS568 O-ring size chart",
+    "url": "https://oringhandbook.com/as568-o-ring-size-chart/",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-03T03:00:00Z",
+    "sha256": "412efa6391f9c2ae9b48fc71712f130d7fe8300f4a4f6bc4956fc21eea12636c",
+    "supports": [
+      "AS568-040: nominal ID 2-7/8 in, nominal CS 1/16 in; ID 2.864 +/- .020 in, CS 0.070 +/- .003 in, OD 3.004 in; ID 72.75 +/- 0.51 mm, CS 1.78 +/- 0.08 mm, OD 76.31 mm",
+      "OD = ID + 2 x CS; tolerances are the AS568 limits for standard (AN) shrinkage compounds"
+    ],
+    "note": "The bottle brief's size reference (B23). Corroboration only."
+  }
+]

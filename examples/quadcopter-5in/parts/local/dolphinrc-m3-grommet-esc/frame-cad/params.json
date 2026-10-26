@@ -1,0 +1,13 @@
+{
+  "module": "dolphinrc-m3-grommet-esc",
+  "name": "dolphinrc-m3-grommet-esc",
+  "part": {
+    "diameter": 3,
+    "head_diameter": null,
+    "head_height": null,
+    "kind": "spacer",
+    "length": 4,
+    "outer": 8.1
+  },
+  "schema": "protoboard.hardware-cad.params/v0"
+}

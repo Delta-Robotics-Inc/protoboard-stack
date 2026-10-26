@@ -1,0 +1,53 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "nalgene-32oz-wide-mouth",
+    "repairs": "categories moved to the UHD taxonomy 1.0.0 (hardware -> mechanical.enclosure) when vendored into smart-bottle; part-verify re-run clean"
+  },
+  "projectDigest": "sha256:56ca3b6be82540a59e7351f775b991773eae9f0368448a271b3bfbf1e58a0d91",
+  "tools": [],
+  "startedAt": "2026-10-03T08:23:09.794Z",
+  "status": "succeeded",
+  "summary": "nalgene-32oz-wide-mouth: audit none, 7 assumption(s), 5 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/nalgene-32oz-wide-mouth/verification.json",
+      "digest": "sha256:22a3982e62af0d4923ee4514f7076db24b3fa1d9dcb8c864ff1cc99528f189a7",
+      "bytes": 955,
+      "description": "nalgene-32oz-wide-mouth: verification record"
+    }
+  ],
+  "data": {
+    "partId": "nalgene-32oz-wide-mouth",
+    "recorded_at": "2026-10-03T08:23:09.806Z",
+    "audit": null,
+    "repairs": "categories moved to the UHD taxonomy 1.0.0 (hardware -> mechanical.enclosure) when vendored into smart-bottle; part-verify re-run clean",
+    "assumptions": [
+      "neck finish of the consumer bottle",
+      "finish height H",
+      "inner neck (bore) diameter",
+      "thread start, turns and profile",
+      "lip, neck, shoulder and wall",
+      "height datum",
+      "closing torque"
+    ],
+    "data_gaps": [
+      "manufacturer CAD",
+      "neck finish of the consumer bottle",
+      "inner neck diameter",
+      "minimum temperature",
+      "lip / neck / shoulder geometry"
+    ],
+    "vocabulary_gaps": [
+      "No threaded-joint or closure-finish protocol exists (same gap as the fasteners' 'fastener / threaded joint protocol'); modelled as custom peer with a connector trait.",
+      "No seal protocol; the lip is custom peer with capability face_seal_land."
+    ]
+  },
+  "finishedAt": "2026-10-03T08:23:09.807Z"
+}

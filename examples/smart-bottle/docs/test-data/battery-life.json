@@ -1,0 +1,121 @@
+{
+  "$schema": "uhd-test-data/1",
+  "status": "standin",
+  "subject": {
+    "system": "smart-bottle",
+    "modules": [
+      "lipol-lp503450",
+      "espressif-esp32-c3-mini-1-h4x",
+      "ti-tps63020dsjr"
+    ]
+  },
+  "id": "battery-life",
+  "title": "Battery-life estimate by use profile",
+  "conditions": [
+    {
+      "name": "Capacity",
+      "value": 1000,
+      "unit": "mAh"
+    },
+    {
+      "name": "Usable fraction (assumed)",
+      "value": 85,
+      "unit": "%"
+    },
+    {
+      "name": "Sleep floor at the cell",
+      "value": 53,
+      "unit": "µA"
+    }
+  ],
+  "provenance": {
+    "method": "Stand-in: days = usable capacity ÷ daily charge (sleep floor + samples + syncs + reminders), scripts/power-budget.ts; method and assumptions in docs/power-budget.md.",
+    "derivedFrom": [
+      "def:lipol-lp503450",
+      "def:espressif-esp32-c3-mini-1-h4x",
+      "def:st-vl53l4cdv0dh-1",
+      "def:adafruit-381-ds18b20-probe",
+      "def:ti-tps63020dsjr",
+      "def:adi-max17048g-t10",
+      "def:ti-lp5024rsm",
+      "def:bottle-cap-board"
+    ],
+    "assumptions": [
+      "usable capacity 85 % of rated; VBAT 3.7 V; buck-boost efficiency 90 % active, 70 % asleep",
+      "sample: awake 0.3 s at 25 mA, 3 ranges of 0.05 s, a 0.75 s conversion",
+      "sync: 4 s at 120 mA; reminder: 3 s, 3 mA per LED",
+      "self-discharge of the cell not stated by the maker, not included"
+    ],
+    "generator": "examples/smart-bottle/scripts/power-budget.ts"
+  },
+  "columns": [
+    {
+      "id": "profile",
+      "label": "Profile",
+      "unit": ""
+    },
+    {
+      "id": "mah_per_day",
+      "label": "Daily charge",
+      "unit": "mAh"
+    },
+    {
+      "id": "days",
+      "label": "Battery life",
+      "unit": "d"
+    }
+  ],
+  "rows": [
+    [
+      "baseline: samples every 5 min, 4 syncs",
+      3.14,
+      271
+    ],
+    [
+      "samples every minute, 4 syncs",
+      6.95,
+      122
+    ],
+    [
+      "samples every 5 min, hourly sync",
+      5.78,
+      147
+    ],
+    [
+      "target: samples every minute, hourly sync",
+      9.6,
+      89
+    ],
+    [
+      "target with poor Wi-Fi (20 s per sync)",
+      22.28,
+      38
+    ]
+  ],
+  "summary": [
+    {
+      "id": "target_days",
+      "label": "Target profile (minute samples, hourly sync)",
+      "value": 89,
+      "unit": "d"
+    },
+    {
+      "id": "baseline_days",
+      "label": "Baseline (5 min samples, 4 syncs)",
+      "value": 271,
+      "unit": "d"
+    },
+    {
+      "id": "sleep_floor_uA",
+      "label": "Sleep floor",
+      "value": 53,
+      "unit": "µA"
+    },
+    {
+      "id": "charge_h",
+      "label": "Charge from empty (constant current and taper)",
+      "value": 4,
+      "unit": "h"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "meps-phase-leads-m3",
+    "config": "src/harnesses/meps-phase-leads-m3/cad.config.ts",
+    "configDigest": "sha256:fb76738e436e48f442d38d8c1c8f4360c91ee36f86a3560fd80be800292e07d3",
+    "moduleDigest": "sha256:ed7579adc4ff053af7d81f58dc8b8a8e7c2a9c96a38a69016677b64973426dea"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:89b8212a38dd8538fa8e12019ae9b9c58066449153cc8e3ae83a8ed438877c21",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:29:09.589Z",
+  "status": "succeeded",
+  "summary": "arm_rl_leads: ok; routed around the parts and 7 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/meps-phase-leads-m3/harness-cad/route.json",
+      "digest": "sha256:0f4d9caea5ac87c8e2bff410450cd57cf2ecb8cd7e07a875a331703e2a0fab65",
+      "bytes": 46664,
+      "description": "arm_rl_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboardai/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        313,
+        313,
+        144
+      ],
+      "res_mm": 1,
+      "seconds": 5
+    },
+    "harnesses": [
+      {
+        "id": "meps-phase-leads-m3",
+        "path": "arm_rl_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 1.18
+      }
+    ],
+    "context": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.93
+      },
+      {
+        "id": "dji-o4-3in1-cable",
+        "path": "dji_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 3.89
+      },
+      {
+        "id": "panasonic-eeu-fr1v471-leads",
+        "path": "bulk_cap_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.01
+      },
+      {
+        "id": "dolphinrc-xt60-battery-lead",
+        "path": "xt60_lead",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.04
+      },
+      {
+        "id": "matek-gh6p-gnss-lead",
+        "path": "gnss_lead",
+        "status": "ok",
+        "notes": [],
+        "search_s": 5.09
+      },
+      {
+        "id": "meps-phase-leads-m2",
+        "path": "arm_fr_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 1.23
+      },
+      {
+        "id": "meps-phase-leads-m1",
+        "path": "arm_rr_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 1.21
+      }
+    ],
+    "problems": []
+  },
+  "finishedAt": "2026-10-07T01:29:58.117Z"
+}

@@ -1,0 +1,13 @@
+{
+  "module": "meps-m5-flanged-lock-nut",
+  "name": "meps-m5-flanged-lock-nut",
+  "part": {
+    "diameter": 5,
+    "head_diameter": null,
+    "head_height": null,
+    "kind": "nut",
+    "length": 5,
+    "outer": 8
+  },
+  "schema": "protoboard.hardware-cad.params/v0"
+}

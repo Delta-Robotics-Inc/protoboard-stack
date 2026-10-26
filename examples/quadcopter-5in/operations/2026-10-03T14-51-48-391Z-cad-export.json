@@ -1,0 +1,71 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "dolphinrc-xt60-battery-lead",
+    "config": "src/harnesses/dolphinrc-xt60-battery-lead/cad.config.ts",
+    "configDigest": "sha256:b35ac304d2eb9199b4e374a7e92b33b15a2009b4340c3a6b73f29210f76b7930",
+    "moduleDigest": "sha256:a5f19b03582e400eaaa299f30e162d0d86228f682059f0eb91ab093f3ccd9d70"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:da4b668ffe2e8d10d98fb8655d8f81ef26e9d4cd5c8867eebd3350d2b1693e4a",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:51:48.391Z",
+  "status": "succeeded",
+  "summary": "xt60_lead: body.glb, body.step and body.manifest.json in src/harnesses/dolphinrc-xt60-battery-lead/out",
+  "outputs": [
+    {
+      "path": "src/harnesses/dolphinrc-xt60-battery-lead/out/body.glb",
+      "digest": "sha256:237d072e964c044aecc8841776ebed73cc11feea2e699bfca9d539123d091921",
+      "bytes": 81200,
+      "description": "xt60_lead: viewer mesh"
+    },
+    {
+      "path": "src/harnesses/dolphinrc-xt60-battery-lead/out/body.step",
+      "digest": "sha256:a53f79775104468b58a0b3d2fcbf567e2a7d5517be1c57694ca776729fb16b64",
+      "bytes": 617811,
+      "description": "xt60_lead: swept solids"
+    },
+    {
+      "path": "src/harnesses/dolphinrc-xt60-battery-lead/out/body.manifest.json",
+      "digest": "sha256:ced054f1bcb2eaa4efd88e5ee4200424b6172f0b31efd14e905d0dd2104fc977",
+      "bytes": 2870,
+      "description": "xt60_lead: route manifest (end frames, lengths, bends, clearance)"
+    }
+  ],
+  "data": {
+    "id": "dolphinrc-xt60-battery-lead",
+    "path": "xt60_lead",
+    "status": "ok",
+    "notes": [],
+    "length_mm": 30,
+    "route_length_mm": 29.44,
+    "slack_mm": null,
+    "bend_mm": {
+      "target": 13.6,
+      "minimum": 8.5,
+      "centreline": 35.07,
+      "conductors": 1.42,
+      "at_terminations": 3.4
+    },
+    "clearance_mm": 0.06,
+    "step": "ok"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T14:51:55.192Z"
+}

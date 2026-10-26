@@ -1,0 +1,264 @@
+{
+  "artifact": "body",
+  "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+  "toolVersion": "0.1.0",
+  "sourceDigest": "7f8f5d3c46ca4f75e9a7618e5363c2df701e82b0dde4d07e20f37e0513da99ab",
+  "units": "mm",
+  "coordinates": "assembly root (mm, Z up); glTF export in m, Y up",
+  "harness": "stack/sh8_cable",
+  "length_mm": 50,
+  "route_length_mm": 49.86,
+  "conductor_lengths_mm": [
+    52.19,
+    51.64,
+    51.85,
+    52.6,
+    53.78,
+    55.27,
+    57.02,
+    59.04
+  ],
+  "length_fit": {
+    "route_mm": 14.76,
+    "method": "service loop + bow",
+    "shape": "U",
+    "apex_mm": [
+      [
+        30.2,
+        15.2,
+        29.7
+      ],
+      [
+        35.8,
+        15.2,
+        22.9
+      ]
+    ],
+    "leg_mm": 17.5,
+    "bend_mm": 3.53,
+    "slack_mm": 1.18,
+    "amplitude_mm": 3.57,
+    "window_mm": [
+      14.6,
+      34.2
+    ],
+    "worst_clearance_mm": 2.31
+  },
+  "bundle": {
+    "kind": "parallel",
+    "conductors": 8,
+    "conductor_od_mm": 0.95,
+    "bundle_od_mm": 4.64,
+    "twist_pitch_mm": null
+  },
+  "bend_radius_mm": {
+    "target": 4,
+    "minimum": 2.5,
+    "centreline": 3.02,
+    "conductors": 1.16,
+    "at_terminations": 2.6
+  },
+  "clearance_mm": {
+    "min_conductor_surface": 4.51
+  },
+  "ends": {
+    "end_fc": {
+      "frame": {
+        "normal": [
+          -1,
+          0,
+          0
+        ],
+        "origin": [
+          17.7,
+          0,
+          20.75
+        ],
+        "xAxis": [
+          0,
+          1,
+          0
+        ]
+      },
+      "counterpart": "stack/fc.esc_socket",
+      "termination": "plug",
+      "link": "stack/fc_esc_plug_fc"
+    },
+    "end_esc": {
+      "frame": {
+        "normal": [
+          -1,
+          0,
+          0
+        ],
+        "origin": [
+          22.2,
+          0,
+          15.25
+        ],
+        "xAxis": [
+          0,
+          1,
+          0
+        ]
+      },
+      "counterpart": "stack/esc.fc_socket",
+      "termination": "plug",
+      "link": "stack/fc_esc_plug_esc"
+    }
+  },
+  "features": {
+    "end_fc": {
+      "area_mm2": 184,
+      "centroid": [
+        18.4,
+        0,
+        20.75
+      ],
+      "faces": 1
+    },
+    "end_esc": {
+      "area_mm2": 184,
+      "centroid": [
+        22.9,
+        0,
+        15.25
+      ],
+      "faces": 1
+    }
+  },
+  "step": "ok",
+  "route": [
+    [
+      20.9,
+      0,
+      20.75
+    ],
+    [
+      22.98,
+      0,
+      20.75
+    ],
+    [
+      24.96,
+      0.45,
+      21.02
+    ],
+    [
+      26.26,
+      1.81,
+      21.84
+    ],
+    [
+      27.08,
+      3.43,
+      22.84
+    ],
+    [
+      27.6,
+      5.2,
+      23.79
+    ],
+    [
+      28.01,
+      6.98,
+      24.77
+    ],
+    [
+      28.5,
+      8.68,
+      25.87
+    ],
+    [
+      29.23,
+      10.16,
+      27.12
+    ],
+    [
+      30.38,
+      11.43,
+      28.28
+    ],
+    [
+      32.1,
+      12.38,
+      28.88
+    ],
+    [
+      34.07,
+      12.92,
+      28.6
+    ],
+    [
+      35.79,
+      13.12,
+      27.5
+    ],
+    [
+      36.56,
+      12.94,
+      25.63
+    ],
+    [
+      36.35,
+      12.4,
+      23.65
+    ],
+    [
+      35.58,
+      11.49,
+      21.96
+    ],
+    [
+      34.55,
+      10.22,
+      20.69
+    ],
+    [
+      33.59,
+      8.68,
+      19.67
+    ],
+    [
+      32.94,
+      6.95,
+      18.73
+    ],
+    [
+      32.44,
+      5.15,
+      17.83
+    ],
+    [
+      31.83,
+      3.36,
+      16.96
+    ],
+    [
+      30.88,
+      1.72,
+      16.13
+    ],
+    [
+      29.49,
+      0.38,
+      15.44
+    ],
+    [
+      27.48,
+      0,
+      15.25
+    ],
+    [
+      25.4,
+      0,
+      15.25
+    ]
+  ],
+  "status": "ok",
+  "notes": [],
+  "exportedFrom": {
+    "file": "src/harnesses/dolphinrc-sh8-fc-esc-cable/harness-cad/route.json",
+    "digest": "sha256:b90ff72ae57c2da086d78b50f53d4072203ee9465dea2ff4b5cf390b47263e4b"
+  }
+}

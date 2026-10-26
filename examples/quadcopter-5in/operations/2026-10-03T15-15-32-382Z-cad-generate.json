@@ -1,0 +1,95 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-harness-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-harness-cad",
+    "module": "matek-gh6p-gnss-lead",
+    "config": "src/harnesses/matek-gh6p-gnss-lead/cad.config.ts",
+    "configDigest": "sha256:f4d894ca1f703fac68a7fd1ba78a025fd78b4171aaca23575f14f85fa03b687d",
+    "moduleDigest": "sha256:35f632cd99a249cd708f9196bb725308dcb8829e44194d8fc1513602e154bdd7"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4d52cfd50c4ba4509b2089eeed8bf12bdd95f986c4a2b7d1f12027971646afd2",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T15:15:32.382Z",
+  "status": "succeeded",
+  "summary": "gnss_lead: ok; routed around the parts and 4 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/matek-gh6p-gnss-lead/harness-cad/route.json",
+      "digest": "sha256:616ba97dd74ac3ff98f52415a63eb310c43d4c5a7b9cdf2940f406cde86e6eb9",
+      "bytes": 108143,
+      "description": "gnss_lead: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboard/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        313,
+        313,
+        144
+      ],
+      "res_mm": 1,
+      "seconds": 5
+    },
+    "harnesses": [
+      {
+        "id": "matek-gh6p-gnss-lead",
+        "path": "gnss_lead",
+        "status": "ok",
+        "notes": [],
+        "search_s": 4.39
+      }
+    ],
+    "context": [
+      {
+        "id": "dolphinrc-sh8-fc-esc-cable",
+        "path": "stack/sh8_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.98
+      },
+      {
+        "id": "dji-o4-3in1-cable",
+        "path": "dji_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 4.06
+      },
+      {
+        "id": "panasonic-eeu-fr1v471-leads",
+        "path": "bulk_cap_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.01
+      },
+      {
+        "id": "dolphinrc-xt60-battery-lead",
+        "path": "xt60_lead",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.04
+      }
+    ],
+    "problems": [
+      "gnss: no GLB body to route around (library/parts/matek-m9n-5883/artifacts/cad/vendor/M9N-5883.glb)"
+    ]
+  },
+  "finishedAt": "2026-10-03T15:16:09.635Z"
+}

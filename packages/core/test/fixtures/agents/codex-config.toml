@@ -1,0 +1,14 @@
+# Codex configuration
+model = "gpt-5.5"
+approval_policy = "on-request"   # ask before running
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+env_vars = ["LOCAL_TOKEN"]
+
+[mcp_servers.context7.env]
+MY_ENV_VAR = "MY_ENV_VALUE"
+
+[projects."/home/you/work/thing"]
+trust_level = "trusted"

@@ -1,0 +1,1537 @@
+{
+  "schema": "protoboard.eval-scorecard/v0",
+  "runId": "2026-10-03T18-52-06-174Z",
+  "startedAt": "2026-10-03T18:52:06.174Z",
+  "finishedAt": "2026-10-03T19:06:43.210Z",
+  "host": {
+    "id": "claude-code",
+    "version": "2.1.288 (Claude Code)"
+  },
+  "judge": "claude-code",
+  "skills": "exported",
+  "jobs": 4,
+  "trialsPerCase": 3,
+  "framework": "0.1.0",
+  "environment": {
+    "node": "v24.14.1",
+    "platform": "linux"
+  },
+  "cases": [
+    {
+      "key": "@protoboard/ext-docs/build-datasheet",
+      "id": "build-datasheet",
+      "extension": "@protoboard/ext-docs",
+      "title": "Build and verify the quadcopter's datasheet",
+      "skills": [
+        "uhd-tech-docs",
+        "uhd-tech-docs-verify"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 20,
+        "seconds": 900,
+        "usd": 3
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 74728,
+            "turns": 23,
+            "costUsd": 0.4689,
+            "model": "claude-opus-5-5",
+            "answer": "The datasheet is built and passes verification against the model: 0 errors, 0 warnings, 698 bound values re-resolved, and 43 BOM lines match.\n\n- **docId:** `UHD-QUAD5-DS` (Rev A, dated 2026-10-03)\n- **All-up mass:** 587.2 g in the specifications table, shown as 587 g on the cover.\n\nThe mass figure is marked as an assumption in the datasheet, for two reasons:\n\n- **CAD-derived share:** 154.4 g of it is computed from CAD volume and assumed material density (frame, top plate, fasteners) rather than stated weights.\n- **Parts left out:** 17 parts with no mass in the model are excluded — the cables and leads, the bulk capacitor, and the assembly materials. The stand-in performance section uses 607 g, which adds an assumed 20 g for those parts.\n\nThe performance charts and summary (hover current, flight time, thrust-to-weight, ESC temperature) are stand-in data derived from the model, watermarked \"not measured\", until measured test files replace them.\n\nI ran the build with `only=datasheet`, and the assembly guide's HTML, PDF and values file are byte-identical to before, as is `docs/quadcopter-5in-bom.json`. The build did rewrite the shared figures in `docs/images/` and the stand-in files in `docs/test-data/`, which I did not compare against their previous contents. `docs/docspec.ts` already existed and I did not change it.\n\nI looked at 4 of the 21 page renders (cover, specifications, mass budget, performance) and they were clean; the other 17 pages passed the automated layout and typography checks but I did not review them by eye.\n\nFiles are in `docs/`:\n- quadcopter-5in-datasheet.html\n- quadcopter-5in-datasheet.pdf\n- quadcopter-5in-datasheet.values.json",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "files",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 present, 0 absent"
+            },
+            {
+              "id": "pdf-complete",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "docs/quadcopter-5in-datasheet.pdf is valid pdf"
+            },
+            {
+              "id": "verified",
+              "kind": "operation",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "succeeded: 0 error(s), 0 warning(s), 5 info"
+            },
+            {
+              "id": "bound-values",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "5 fact(s) hold"
+            },
+            {
+              "id": "answer",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "assembly-guide-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "docs/quadcopter-5in-assembly-guide.pdf sha256:c81e21353e15…"
+            },
+            {
+              "id": "reads-well",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "fail",
+              "score": 0.6,
+              "detail": "claude-code: 0.60 — Three of the five criteria are met; criteria 1 and 3 are unmet, both because of the same BOM \"gap\" entries.\n\n**Criterion 1 (status on every value; derived values name formula and inputs) — unmet.** Every entry has a status, and every `derived` entry (and the assumption-status mass entries) carries a formula and inputs. However, many BOM entries use the status `gap`, which is not in the allowed set of source, derived, model, assumption, measured or stand-in. Examples are `sys:bom[line=1].manufacturer`, `sys:bom[line=1].verification`, and the verification fields of lines 28–33 and 38–43.\n\n**Criterion 2 (units present and SI or conventional) — met, with defects.** The displayed text carries conventional units throughout: V, mAh, A, g, kg, mm, W, Wh, °C, min. The `unit` metadata is wrong or missing in a few places:\n- Motor KV is shown as \"1950 rpm/V\" but has unit \"V\".\n- Baud rate is shown as \"420 000 Bd\" but has unit \"Hz\".\n- Total thrust is shown as \"6.3 kg\" and \"6.34 kg\" but has unit \"g\".\n- Peak current (171.9 A), latency (20 ms) and the supply-budget W values have no `unit` field; the unit appears only in the text and the format hint.\n- The rpm table cells have no unit at all.\n\n**Criterion 3 (no placeholder values) — unmet.** About 25 bound values have the text \"—\", which is an empty placeholder. These are the manufacturer and verification fields for BOM lines 1, 2, 7, 9, 24 and 27, and the verification fields for lines 28–33 and 38–43. They are honestly labelled as gaps, but they are still empty values bound into the datasheet.\n\n**Criterion 4 (stand-in test data labelled as such) — met.** All `test:*` values (hover current, throttle sweep, thrust-to-weight, flight time, ESC temperature) have status `standin`. None is labelled measured.\n\n**Criterion 5 (key buyer figures present) — met.**\n- All-up mass: 587 g / 587.2 g.\n- Battery voltage: 22.2 V.\n- Battery capacity: 1100 mAh.\n- Full-throttle thrust: 6.3 kg.\n- Peak current: 171.9 A total, 42.97 A per motor."
+            }
+          ],
+          "score": 0.943,
+          "passed": false,
+          "transcript": "ext-docs--build-datasheet/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 116868,
+            "turns": 43,
+            "costUsd": 0.7364,
+            "model": "claude-opus-5-5",
+            "answer": "The datasheet is built and passes the automated verifier with 0 errors and 0 warnings (698 bound values re-resolved against the model, 43 BOM lines matched). I also looked at all 21 page renders.\n\n- **All-up mass:** 587 g on the cover, 587.2 g in the specifications table. It is marked as an assumption: 154.4 g of it comes from CAD volume × assumed material density, and 17 parts with no mass in the model (cables, bulk capacitor, consumables) are not counted.\n- **docId:** `UHD-QUAD5-DS`, Rev A, dated 2026-10-03. The doc spec's `docId` is `UHD-QUAD5`; the generator adds the `-DS` suffix.\n\nThe files are `docs/quadcopter-5in-datasheet.html`, `.pdf` and `.values.json`. I built with `only=datasheet` and did not edit `docs/docspec.ts`; the three assembly-guide files keep their earlier timestamps. The run did rewrite the shared outputs (`docs/quadcopter-5in-bom.json`, `docs/images/`, the stand-in files in `docs/test-data/`), and I have no before/after checksum to confirm those are byte-identical.\n\nThings in the document you should know about, none of which the verifier flags:\n\n- **Pinout and architecture are incomplete.** The \"Interfaces and pinout\" table (page 7) lists only the DJI socket, and the architecture figure (page 2) shows only the DJI and FC–ESC cables, with the battery and its lead drawn unconnected. The soldered-pad links (receiver on UART2, GNSS on UART1/I2C1, battery pads, motor pads) and the motors, receiver and GNSS are missing from both. This looks like the generator not following those links through the stack's pads; it is not something the doc spec controls, and I did not change the generator.\n- **One fault scenario does not look caught.** On the design-checks page, `short-gps-screws` (M2 × 10 on the GPS) shows 0 errors and only the same propulsion-current warning as the nominal build. `AGENTS.md` says each scenario must be caught; I did not run the separate scenarios script.\n- **A second, different weight appears.** The performance summary shows \"All-up weight (estimate) 607 g\", marked stand-in: it is the 587.2 g plus an assumed 20 g for the unweighed parts.\n- **All performance charts are stand-in data**, watermarked \"not measured\"; the thrust table is the maker's, taken with a different propeller than the one fitted.\n- **Nominal build warning:** four motors can peak at 171.9 A, above the pack's 110 A continuous rating but within its 220 A burst rating.\n- **Gaps left as \"—\":** 24 values the model does not state, all BOM manufacturer or verification fields for consumables, the custom plates and the included cables.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "files",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 present, 0 absent"
+            },
+            {
+              "id": "pdf-complete",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "docs/quadcopter-5in-datasheet.pdf is valid pdf"
+            },
+            {
+              "id": "verified",
+              "kind": "operation",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "succeeded: 0 error(s), 0 warning(s), 5 info"
+            },
+            {
+              "id": "bound-values",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "5 fact(s) hold"
+            },
+            {
+              "id": "answer",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "assembly-guide-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "docs/quadcopter-5in-assembly-guide.pdf sha256:c81e21353e15…"
+            },
+            {
+              "id": "reads-well",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "fail",
+              "score": 0.6,
+              "detail": "claude-code: 0.60 — 3 of 5 criteria met, judged from the values file shown.\n\n**Unmet**\n\n- **Criterion 1 (status on every value):** 24 values carry `\"status\": \"gap\"`, which is not one of the allowed statuses (source, derived, model, assumption, measured, stand-in). These are the BOM manufacturer and verification fields for consumables, custom plates and included cables, e.g. `sys:bom[line=1].manufacturer`. The second half of the criterion is satisfied: every `derived` value names a formula and inputs, as do the derived mass values marked `assumption`.\n- **Criterion 3 (no placeholders):** the same 24 values have the text \"—\", which is an empty placeholder. The agent's own summary confirms \"Gaps left as '—': 24 values the model does not state\".\n\n**Met**\n\n- **Criterion 2 (units):** displayed values carry conventional units (V, mAh, A, g, kg, mm, W, Wh, °C, min), so I passed it. It is a marginal pass, because the `unit` metadata is wrong or missing in places:\n  - `kv_rpm_per_V` shows \"1950 rpm/V\" but has `unit: \"V\"`.\n  - Baud rate shows \"420 000 Bd\" but has `unit: \"Hz\"`.\n  - Total thrust shows \"6.3 kg\" and \"6.34 kg\" but has `unit: \"g\"`.\n  - Peak current \"171.9 A\" has no `unit` field; the unit appears only in the format hint and the text.\n- **Criterion 4 (stand-in labelling):** all `test:*` values (hover current, throttle sweep, thrust-to-weight, flight time, ESC temperature) have status `standin`; none is labelled measured.\n- **Criterion 5 (key buyer figures):** all present.\n  - All-up mass: 587 g / 587.2 g.\n  - Battery voltage: 22.2 V.\n  - Battery capacity: 1100 mAh.\n  - Full-throttle thrust: 6.3 kg.\n  - Peak current: 171.9 A total, 42.97 A per motor."
+            }
+          ],
+          "score": 0.943,
+          "passed": false,
+          "transcript": "ext-docs--build-datasheet/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 72702,
+            "turns": 22,
+            "costUsd": 0.4636,
+            "model": "claude-opus-5-5",
+            "answer": "The datasheet is built and verified against the model: `npx protoboard run tech-docs-verify --input only=datasheet` finished with 0 errors and 0 warnings, re-resolving 698 bound values.\n\n- **All-up mass:** 587 g on the cover (587.2 g in the Power table).\n- **docId:** `UHD-QUAD5-DS`, revision A, dated 2026-10-03. The doc spec's base id is `UHD-QUAD5`; the builder adds the `-DS` suffix for the datasheet.\n\nThings to know about the mass figure:\n\n- **It is marked as an assumption.** 154.4 g of it is CAD volume times assumed material density (frame, top plate, hardware) rather than a cited weight.\n- **It excludes 17 parts with no mass in the model.** These are the cables and leads, the bulk capacitor, and the assembly materials (solder, flux, threadlocker, sleeve, tape, ties).\n- **The performance summary shows a second figure, 607 g.** That is a stand-in estimate: the 587.2 g plus an assumed 20 g for those 17 parts. It is watermarked as stand-in data, not measured.\n\nWhat changed:\n\n- **New:** `docs/quadcopter-5in-datasheet.html`, `.pdf` (21 pages) and `.values.json`.\n- **Assembly guide:** the HTML, PDF and values file are byte-identical to before (checksums match before and after); I built with `--input only=datasheet`.\n- **Rewritten by the build:** the shared `docs/quadcopter-5in-bom.json` (checksum unchanged), `docs/images/` and the stand-in files in `docs/test-data/`. I did not checksum the images or test data beforehand, so I can't confirm those are unchanged.\n- **Review output:** `docs/.review/` holds the verifier report and page renders.\n\nI did not edit `docs/docspec.ts` or the model.\n\nThe visual review is partial: I looked at 3 of the 21 page renders (cover, mechanical, performance), and those were clean. The other 18 pages passed the automated layout, image and typography checks but I have not looked at them.\n\n`npx protoboard check` has 0 errors and 4 warnings: three for the Matek GNSS vendor CAD not being in the checkout, and one that the four motors' combined peak of 171.9 A exceeds the battery's 110 A continuous rating (within its 220 A burst).",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "files",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "3 present, 0 absent"
+            },
+            {
+              "id": "pdf-complete",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "docs/quadcopter-5in-datasheet.pdf is valid pdf"
+            },
+            {
+              "id": "verified",
+              "kind": "operation",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "succeeded: 0 error(s), 0 warning(s), 5 info"
+            },
+            {
+              "id": "bound-values",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "5 fact(s) hold"
+            },
+            {
+              "id": "answer",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "assembly-guide-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "docs/quadcopter-5in-assembly-guide.pdf sha256:c81e21353e15…"
+            },
+            {
+              "id": "reads-well",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "fail",
+              "score": 0.5,
+              "detail": "claude-code: 0.50 — Two of five criteria are met, two are unmet, and one is half met (2.5/5).\n\n**1. Status on every value, derived values name formula and inputs — UNMET.** Every entry has a status, and every `derived` entry (and the assumption-status mass entries) carries a formula and inputs. But 21 BOM entries (`sys:bom[line=N].manufacturer` / `.verification` on lines 1, 2, 7, 9, 24, 27–33, 38–43) use status `gap`, which is not one of the allowed statuses (source, derived, model, assumption, measured, stand-in).\n\n**2. Units present and SI or conventional — PARTIAL (half credit).** The displayed text carries conventional units throughout (V, mAh, A, g, kg, mm, W, Wh, °C, min). The `unit` metadata is wrong or inconsistent in several places:\n- `kv_rpm_per_V` shows \"1950 rpm/V\" but records unit `V`.\n- The CRSF baud rate shows \"420 000 Bd\" but records unit `Hz`.\n- Total thrust shows \"6.3 kg\" and \"6.34 kg\" but records unit `g`.\n- The thrust-table rpm values have no unit in either the text or a `unit` field.\n- Several values (peak current 171.9 A, latency, bitrate, density, BEC W) carry the unit only in the `f` format string, with no `unit` field.\n\n**3. No placeholder values — UNMET.** The same 21 `gap` entries have the text \"—\", which is an empty placeholder (manufacturer on the six consumables lines; verification on those plus the custom frame, top plate and all cable/lead lines).\n\n**4. Stand-in test data labelled as such — MET.** All `test:*` entries (hover current, throttle sweep, thrust-to-weight, flight time, ESC temperature) have status `standin` and point to `docs/test-data/*.json`. None is labelled measured.\n\n**5. Key buyer figures present — MET.**\n- **All-up mass:** 587 g / 587.2 g, with the 17 excluded parts and the 154.4 g assumed share noted.\n- **Battery:** 22.2 V, 1100 mAh.\n- **Thrust:** 6.3 kg total at full throttle, plus the per-motor thrust tables.\n- **Peak current:** 171.9 A total, 42.97 A per motor."
+            }
+          ],
+          "score": 0.929,
+          "passed": false,
+          "transcript": "ext-docs--build-datasheet/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 432,
+        "steps": [
+          {
+            "step": "remove docs/quadcopter-5in-datasheet.html",
+            "ms": 1,
+            "ok": true
+          },
+          {
+            "step": "remove docs/quadcopter-5in-datasheet.pdf",
+            "ms": 0,
+            "ok": true
+          },
+          {
+            "step": "remove docs/quadcopter-5in-datasheet.values.json",
+            "ms": 0,
+            "ok": true
+          }
+        ]
+      },
+      "passRate": 0,
+      "meanScore": 0.938,
+      "meanDurationMs": 88099,
+      "meanTurns": 29.3,
+      "costUsd": 1.6689
+    },
+    {
+      "key": "@protoboard/ext-hardware/compose-probe-cable",
+      "id": "compose-probe-cable",
+      "extension": "@protoboard/ext-hardware",
+      "title": "Compose the temperature probe's connection through its cable to the cap board",
+      "skills": [
+        "system-compose",
+        "harness-author"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 30,
+        "seconds": 900,
+        "usd": 4
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 119669,
+            "turns": 18,
+            "costUsd": 0.5388,
+            "model": "claude-opus-5-5",
+            "answer": "The probe is now connected and `npx protoboard check` is clean, but I could not run the system-compose scenarios script: this session refused that command every time I tried. The \"caught again by the script\" criterion is therefore not confirmed by the script itself.\n\n**What I connected** (two links in `src/bottle.uhd.ts`, nothing else changed):\n- **`probe_wires`**: the probe's own wires to the cable's probe end, composed in the cable's order (VDD, DQ, GND).\n- **`probe_pads`**: the cable's board end to the board's pads `probe_vdd`, `probe_dq`, `probe_gnd`.\n\nI composed the probe's wires in the link rather than using its ready-made `wire_ends` connector, because that connector is in the order VDD, GND, DQ. Linked straight through to the cable, it would have put the probe's ground wire on the DQ conductor.\n\n**How I checked it:**\n- **Check:** `npx protoboard check` gives 0 errors and 2 warnings, both the expected `FW_STRAPPING_PIN` ones. The `UHD_UNPOWERED` warning on `probe:wire_vdd` and the stale warnings (`ENCLOSURE_STALE`, both `HARNESS_ROUTE_STALE`) are gone, with no regeneration needed.\n- **Fault scenario, by substitute:** I temporarily applied the same swap the `probe-dq-on-gnd-pad` scenario makes (`p2: probe_gnd`, `p3: probe_dq` on `probe_pads`) and ran check. It reported two `UHD_LINK_STATE` errors, which is the code the scenario expects: `probe:wire_dq ↔ board:probe_gnd` and `probe:wire_gnd ↔ board:probe_dq`. I then restored the correct wiring and re-ran check to the clean result above.\n\nTo close the remaining criterion, run this in the project folder:\n\n`npx tsx ../../node_modules/@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts`",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "probe-powered",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_UNPOWERED fixed"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s)"
+            },
+            {
+              "id": "through-the-cable",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/bottle.uhd.ts: text holds"
+            },
+            {
+              "id": "scenario-link-kept",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/bottle.uhd.ts: text holds"
+            },
+            {
+              "id": "probe-scenario-caught",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 1, 2 fact(s) hold"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:6eb987cba9b9…"
+            },
+            {
+              "id": "probe-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/local/adafruit-381-ds18b20-probe.uhd.ts sha256:b7a7f01aec56…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--compose-probe-cable/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 199122,
+            "turns": 41,
+            "costUsd": 1.1749,
+            "model": "claude-opus-5-5",
+            "answer": "The probe is now connected through its cable to the board's probe pads, and `probe-dq-on-gnd-pad` is caught again. One thing is not clean: the scenarios script still exits 1 because `cell-leads-reversed` is MISSED, which it also was before my change.\n\n## What I connected\nTwo links added to `src/bottle.uhd.ts`, following the same pattern as the cell leads:\n\n- **`probe_wires`**: the probe's own wires onto the cable's `end_probe`, composed by name as `wire_vdd`, `wire_dq`, `wire_gnd`.\n- **`probe_pads`**: the cable's `end_board` onto the board's pads, composed as `probe_vdd`, `probe_dq`, `probe_gnd`.\n\nI composed the probe end by name rather than linking the probe's `wire_ends` connector directly. That connector lists its wires as VDD, GND, DQ, while the cable's positions are VDD, DQ, GND, so a position-for-position link would have crossed DQ and GND. The link ids and the wire order match what the cable's existing route was generated for, so nothing needed regenerating.\n\n## How I checked it\n- **`npx protoboard check`**: 0 errors and 2 warnings, both the expected strapping-pin ones. The unpowered warning on `probe:wire_vdd`, the stale enclosure warning and the two stale probe-cable route warnings are gone, and every validator ran.\n- **Scenarios script**: `probe-dq-on-gnd-pad` is caught with two `UHD_LINK_STATE` errors (DQ wire on the GND pad, GND wire on the DQ pad). The nominal build raises nothing, and the two board faults and the boss-circle fault are caught.\n\nI ran the scenarios script as `node_modules/@protoboard/...` from the project folder; the `../../node_modules/...` path in `AGENTS.md` was denied by the permission mode.\n\n## The remaining miss\n`cell-leads-reversed` raises no diagnostic at all. I confirmed it predates my change by running the scenarios with my two links commented out, where it was MISSED as well; the links are restored.\n\nThe likely cause, from reading UHD's link derivation rather than from a test: with the leads swapped, the cell's `battery_out` composite gets compared against a lone board pad, and that comparison reports nothing. If so, the fix belongs in the cell part, the pads or UHD itself, all of which you told me to leave alone, so I stopped there.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "probe-powered",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_UNPOWERED fixed"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s)"
+            },
+            {
+              "id": "through-the-cable",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/bottle.uhd.ts: text holds"
+            },
+            {
+              "id": "scenario-link-kept",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/bottle.uhd.ts: text holds"
+            },
+            {
+              "id": "probe-scenario-caught",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 1, 2 fact(s) hold"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:6eb987cba9b9…"
+            },
+            {
+              "id": "probe-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/local/adafruit-381-ds18b20-probe.uhd.ts sha256:b7a7f01aec56…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--compose-probe-cable/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 114313,
+            "turns": 16,
+            "costUsd": 0.6295,
+            "model": "claude-opus-5-5",
+            "answer": "The probe is now connected through its cable to the board's probe pads, and `npx protoboard check` is back to 0 errors and the 2 expected strapping-pin warnings. I could not run the system-compose scenarios script itself: the command was denied in this session, so that last step of \"done\" is not confirmed by the script.\n\n**What I connected** (two links in `src/bottle.uhd.ts`, alongside the cell's):\n\n- **`probe_wires`**: the probe's own wires to the cable's `end_probe`, composed by signal as VDD, DQ, GND (`wire_vdd`, `wire_dq`, `wire_gnd`).\n- **`probe_pads`**: the cable's `end_board` to the board's pads, composed as `probe_vdd`, `probe_dq`, `probe_gnd`.\n\nI did not use the probe's ready-made `wire_ends` composite, because it lists the wires as VDD, GND, DQ while the cable's positions are VDD, DQ, GND. Linking it straight through would have crossed DQ and GND.\n\nThe link ids and compose names match what the existing cable route was generated for, so nothing needed regenerating and no other file changed.\n\n**How I checked it:**\n\n- **Check:** the unpowered-interface warning on `probe:wire_vdd`, the stale-enclosure warning and both stale-route warnings on the probe cable are gone.\n- **Fault scenario:** as a substitute for the script, I temporarily made the same swap `probe-dq-on-gnd-pad` applies (p2 to `probe_gnd`, p3 to `probe_dq`) and ran check. It raised two `UHD_LINK_STATE` errors, the code the scenario expects. I then restored the wiring and re-ran check to the clean result above.\n\nTo close the remaining gap, run `npx tsx ../../node_modules/@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts` in the project folder; it also covers the other five scenarios, which I did not exercise.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "probe-powered",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_UNPOWERED fixed"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s)"
+            },
+            {
+              "id": "through-the-cable",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/bottle.uhd.ts: text holds"
+            },
+            {
+              "id": "scenario-link-kept",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/bottle.uhd.ts: text holds"
+            },
+            {
+              "id": "probe-scenario-caught",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 1, 2 fact(s) hold"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:6eb987cba9b9…"
+            },
+            {
+              "id": "probe-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/local/adafruit-381-ds18b20-probe.uhd.ts sha256:b7a7f01aec56…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--compose-probe-cable/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 325,
+        "steps": [
+          {
+            "step": "replace in src/bottle.uhd.ts",
+            "ms": 0,
+            "ok": true
+          }
+        ],
+        "seeded": [
+          "UHD_UNPOWERED",
+          "HARNESS_ROUTE_STALE"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 144368,
+      "meanTurns": 25,
+      "costUsd": 2.3432
+    },
+    {
+      "key": "@protoboard/ext-hardware/find-reversed-cell-leads",
+      "id": "find-reversed-cell-leads",
+      "extension": "@protoboard/ext-hardware",
+      "title": "Find the cell leads soldered the wrong way round, a fault check does not name",
+      "skills": [
+        "system-compose",
+        "system-review",
+        "harness-author"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 30,
+        "seconds": 900,
+        "usd": 4
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 40608,
+            "turns": 9,
+            "costUsd": 0.2748,
+            "model": "claude-opus-5-5",
+            "answer": "The cell's leads were modelled reversed at the board: the `bat_pads` link in `src/bottle.uhd.ts` put the red (+) lead on the BAT- pad and the black (-) lead on BAT+. I swapped the composition back to `{ p1: \"bat_pos\", p2: \"bat_neg\" }`.\n\nI found it by reading the link compositions against the harness, whose conductors run straight through with pins `[\"+\", \"-\"]`. The broken line was identical to the `cell-leads-reversed` fault in `src/scenarios.ts`.\n\n`npx protoboard check` did not flag the reversal as an error. It showed only an extra `HARNESS_ROUTE_STALE` warning on `battery_leads`. After the fix, check is back to the expected 0 errors and 2 warnings, and that stale-route warning is gone.\n\nI could not run the fault-scenarios script: the command was denied in this session, so the scenarios are unconfirmed after the change. Nothing else was edited or regenerated.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "leads-restored",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 1, 3 fact(s) hold"
+            },
+            {
+              "id": "route-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/bottle-battery-leads/out/body.manifest.json sha256:823604162ab7…"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:6eb987cba9b9…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--find-reversed-cell-leads/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 38390,
+            "turns": 8,
+            "costUsd": 0.2441,
+            "model": "claude-opus-5-5",
+            "answer": "The fault was reversed polarity on the cell leads: the `bat_pads` link in `src/bottle.uhd.ts` composed the board's BAT pads as `{ p1: \"bat_neg\", p2: \"bat_pos\" }`, so the cell's red (+) lead landed on BAT- and the black (-) lead on BAT+. I changed it to `{ p1: \"bat_pos\", p2: \"bat_neg\" }`.\n\nI found it by reading the link against the harness, whose conductors run straight through with pins `[\"+\", \"-\"]`. `npx protoboard check` also hinted at it with a `HARNESS_ROUTE_STALE` warning on `battery_leads`, and the model matched the reversed-leads scenario in `src/scenarios.ts` exactly.\n\nAfter the fix, `check` gives 0 errors and the 2 expected strapping-pin warnings, and the stale-route warning is gone. I could not run the fault scenarios script (permission denied), so that pass is unconfirmed. Nothing else was changed.\n\nThe bench wiring presumably still matches the old model, so the cap itself needs the leads resoldered red to BAT+ and black to BAT- before it will power on.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "leads-restored",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 1, 3 fact(s) hold"
+            },
+            {
+              "id": "route-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/bottle-battery-leads/out/body.manifest.json sha256:823604162ab7…"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:6eb987cba9b9…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--find-reversed-cell-leads/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 34378,
+            "turns": 7,
+            "costUsd": 0.2229,
+            "model": "claude-opus-5-5",
+            "answer": "The cell's leads were modelled reversed at the board: the `bat_pads` link in `src/bottle.uhd.ts` composed the cable's \"+\" conductor (red) onto the BAT- pad and \"-\" (black) onto BAT+, so the cell was connected backwards. I swapped it back to `{ p1: \"bat_pos\", p2: \"bat_neg\" }`.\n\nI found it by reading the link compositions against the harness's pin order (`[\"+\", \"-\"]`, straight through) and the board's `bat_pos`/`bat_neg` exports. The reversed mapping was also exactly the fault that `src/scenarios.ts` injects as a must-catch scenario, and `protoboard check` was showing an extra `HARNESS_ROUTE_STALE` warning on `battery_leads` (\"generated for a different ends\").\n\nAfter the fix, `npx protoboard check` is back to the expected 0 errors and 2 warnings (the two documented strapping-pin ones), with the stale-route warning gone. I could not run the fault-scenarios script — the command was denied in this session — so that check is still outstanding. Nothing else was changed.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "fault-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 2 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "leads-restored",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 1, 3 fact(s) hold"
+            },
+            {
+              "id": "route-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/bottle-battery-leads/out/body.manifest.json sha256:823604162ab7…"
+            },
+            {
+              "id": "board-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:a87d99f23a71…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:6eb987cba9b9…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--find-reversed-cell-leads/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 209,
+        "steps": [
+          {
+            "step": "replace in src/bottle.uhd.ts",
+            "ms": 1,
+            "ok": true
+          }
+        ],
+        "seeded": [
+          "HARNESS_ROUTE_STALE"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 37792,
+      "meanTurns": 8,
+      "costUsd": 0.7418
+    },
+    {
+      "key": "@protoboard/ext-hardware/fix-two-wiring-faults",
+      "id": "fix-two-wiring-faults",
+      "extension": "@protoboard/ext-hardware",
+      "title": "Find and fix two wiring faults at once: the O4 powered from the pack, and the GNSS RX and TX swapped",
+      "skills": [
+        "system-compose",
+        "system-review",
+        "harness-author"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 30,
+        "seconds": 900,
+        "usd": 4
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 42195,
+            "turns": 9,
+            "costUsd": 0.2894,
+            "model": "claude-opus-5-5",
+            "answer": "There were two wiring faults in `src/quadcopter.uhd.ts`. Both are fixed, and `npx protoboard check` now reports 0 errors. I could not run the fault scenarios script (permission denied), so that confirmation is missing.\n\n- **O4 power lead on the battery:** the model fed the O4's VCC straight from the battery (18–25.2 V on a 3.7–13.2 V input) through an extra `video_power` link, and left pin 1 out of the DJI socket link. I removed that link and restored the full six-pin `dji_fc` connection, so the O4 is powered from the FC's 10 V BEC through the 3-in-1 cable again.\n- **GNSS UART not crossed:** the re-soldered GNSS lead was modelled RX-to-RX and TX-to-TX on UART1. I swapped the two pads in `gnss_pads` so the GNSS RX wire lands on TX1 and the GNSS TX wire on RX1, as the lead's own note specifies. This also cleared the stale-route warning on the GNSS lead.\n\nThe four remaining warnings are not from the repair: three vendor CAD files for the M9N that the catalog does not distribute, and the motor peak current exceeding the pack's continuous rating.\n\nIf the bench really is wired the way the model said, the quad itself needs correcting before power-up: the O4 would see pack voltage and the GNSS would not talk.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "o4-power-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "gnss-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "wired-as-designed",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "6 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 1 fact(s) hold"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:4e4f57c4440f…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:75e05d524a61…"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19…"
+            },
+            {
+              "id": "o4-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dji-o4-air-unit.json sha256:023a507b0cf3…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-two-wiring-faults/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 45195,
+            "turns": 13,
+            "costUsd": 0.3652,
+            "model": "claude-opus-5-5",
+            "answer": "`npx protoboard check` now reports 0 errors after two fixes in `src/quadcopter.uhd.ts`. I could not run the fault-scenario script (the command was denied), so the scenarios are unconfirmed against the fixed model.\n\n**Fault 1 — O4 powered from raw 6S.** The model had the O4's VCC taken straight from the battery (`video_power`: `battery_out` → `video.vcc`, 18–25.2 V), with pin 1 dropped from the DJI plug. The O4 only accepts 3.7–13.2 V. I removed the `video_power` link and restored `dji_fc` as a full six-position mate, so VCC comes from the FC's 10 V BEC through the 3-in-1 cable.\n\n**Fault 2 — GNSS RX/TX swapped at the FC pads.** The `gnss_pads` link soldered the lead's RX wire (GNSS RX) to the FC's RX1 and its TX wire to TX1, so neither side could hear the other. I swapped them so that GNSS RX lands on TX1 and GNSS TX on RX1, as the lead's own usage note specifies.\n\nThe `HARNESS_ROUTE_STALE` warning on the GNSS lead also cleared with the second fix. The four remaining warnings are three vendor CAD files the catalog does not distribute for the M9N, and the motor peak current exceeding the pack's continuous rating.\n\nIf the bench really was wired the way the model had it, both faults exist on the physical quad: the O4 lead must go back to the 10 V BEC before a pack is connected, and the GNSS RX/TX wires need swapping on the FC pads.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "o4-power-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "gnss-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "wired-as-designed",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "6 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 1 fact(s) hold"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:4e4f57c4440f…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:75e05d524a61…"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19…"
+            },
+            {
+              "id": "o4-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dji-o4-air-unit.json sha256:023a507b0cf3…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-two-wiring-faults/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 38012,
+            "turns": 11,
+            "costUsd": 0.3372,
+            "model": "claude-opus-5-5",
+            "answer": "`npx protoboard check` now reports 0 errors; there were two wiring faults, both in `src/quadcopter.uhd.ts`, and both are fixed. I could not run the fault-scenario script (the command was denied), so the scenarios are not re-verified.\n\n## The faults\n\n1. **GNSS lead RX/TX swapped at the flight controller.** The soldered end of the GNSS lead had the GNSS RX wire on the FC's RX1 pad and the GNSS TX wire on TX1, so neither side could hear the other. I crossed them back: GNSS RX on TX1, GNSS TX on RX1, as the lead's own usage note specifies.\n\n2. **DJI O4 powered straight from the 6S pack.** The model had the O4's VCC wire taken off the DJI plug and linked to the battery output (18–25.2 V), outside the O4's 3.7–13.2 V input range. I removed that `video_power` link and restored the full six-position mating of the DJI socket, so VCC again comes from the FC's 10 V BEC through the 3-in-1 cable.\n\nIf the model really was updated to match the bench, the quad itself has both faults. Do not connect a battery until the O4's red wire is back on the 10 V pin of the DJI plug and the GNSS RX/TX wires are swapped at the FC pads.\n\n## Remaining warnings\n\nFour warnings remain, none caused by the repair edits:\n- **Missing vendor CAD (3 warnings):** the Matek M9N-5883 vendor CAD files are not distributed with the catalog revision.\n- **Propulsion current:** the four motors can peak at 171.88 A, above the pack's 110 A continuous rating but within its 220 A burst rating.\n\nThe stale-route warning on the GNSS lead cleared with the RX/TX fix, so no CAD regeneration was needed.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "o4-power-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "gnss-fixed-and-named",
+              "kind": "fault",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "UHD_LINK_STATE fixed and caught"
+            },
+            {
+              "id": "check-clean",
+              "kind": "check",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "0 error(s), 4 warning(s); 2 diagnostic match(es) hold"
+            },
+            {
+              "id": "wired-as-designed",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "6 fact(s) hold"
+            },
+            {
+              "id": "scenarios-hold",
+              "kind": "script",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "@protoboard/ext-hardware/skills/system-compose/scripts/scenarios.ts exit 0, 1 fact(s) hold"
+            },
+            {
+              "id": "harnesses-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/harnesses/harnesses.uhd.ts sha256:4e4f57c4440f…"
+            },
+            {
+              "id": "scenarios-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/scenarios.ts sha256:75e05d524a61…"
+            },
+            {
+              "id": "gnss-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/matek-m9n-5883.json sha256:a15051fbec19…"
+            },
+            {
+              "id": "o4-part-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "parts/catalog/dji-o4-air-unit.json sha256:023a507b0cf3…"
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-hardware--fix-two-wiring-faults/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 86,
+        "steps": [
+          {
+            "step": "replace in src/quadcopter.uhd.ts",
+            "ms": 0,
+            "ok": true
+          },
+          {
+            "step": "replace in src/quadcopter.uhd.ts",
+            "ms": 1,
+            "ok": true
+          }
+        ],
+        "seeded": [
+          "UHD_LINK_STATE"
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 41801,
+      "meanTurns": 11,
+      "costUsd": 0.9918
+    },
+    {
+      "key": "@protoboard/ext-release/release-after-hand-edit",
+      "id": "release-after-hand-edit",
+      "extension": "@protoboard/ext-release",
+      "title": "Cut a release of the smart bottle after a generated file was edited by hand",
+      "skills": [
+        "release",
+        "circuit-board",
+        "enclosure-cad"
+      ],
+      "status": "ran",
+      "budget": {
+        "turns": 40,
+        "seconds": 1800,
+        "usd": 6
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "host": {
+            "durationMs": 103407,
+            "turns": 20,
+            "costUsd": 0.5164,
+            "model": "claude-opus-5-5",
+            "answer": "Release 0.1.1 is cut, at `release/0.1.1/`.\n\n**Package digest:** `sha256:be10e60cb9dc1a37482c145226a8ca6b71998f46da6d7d141ac940561c4c56ff`\n(manifest digest `sha256:783009b0c3a5edaca2bb8b33e26d90958965d7576c1ef45dadaaca7b2cafab24`)\n\n## What blocked it\n\n`release --check` refused with one `REL_STALE` problem: `src/boards/bottle-cap/out/bom.csv` had been changed by hand after the last `circuit:export` wrote it.\n\nThe edit was on the LED driver line (`u3`): its part number had been changed from `LP5024RSMR` to `LP5024RSMT`. The model, the catalog part and the recorded offer (JLCPCB C427525) all say `LP5024RSMR`.\n\n## How I cleared it\n\n- **Re-ran the export:** `npx protoboard run circuit:export --module bottle-cap-board`, as the SOP says for an edited generated file. This rewrote the BOM from the model, which put `u3` back to `LP5024RSMR`. I did not re-route the board or touch the model, parts or configs.\n- **Re-checked:** `protoboard check` gives 0 errors and 2 warnings (the expected ESP32 strapping-pin warnings on the I2C lines), and `release --check` then reported no blocking problems.\n- **Released:** `npx protoboard release --version 0.1.1` succeeded with no diagnostics: 3 units (`board`, `cap`, `system`), 16 documents (48 pages), 99 files.\n\nThe project is not a git repository, so there was no uncommitted-changes check to clear; the manifest records `source: null` rather than a commit.\n\n## Package check\n\n- **Hand edit is gone:** the board BOM, pick-and-place file, unit BOM and ordering list all carry `LP5024RSMR`.\n- **Board work order:** I read all three pages. It has the ordering checklist, the fab order with the three fabrication notes, 17 of 17 land patterns verified, and operations ending in bring-up tests BU-1 to BU-11.\n- **Ordering list:** one line has no offer recorded, the Coilcraft XFL4020-152ME inductor, so supplier, lead time and minimum order show as \"unknown\" for it. Most other lines have a supplier but an unknown lead time.\n- **Not done:** I only paged through the board work order; the other 15 documents were not read, and I did not rebuild to compare manifests for reproducibility.\n\n## For you to decide\n\nWhoever edited the BOM may have wanted the `RSMT` ordering variant of the LED driver. If so, that is a part or offer change for the next version; 0.1.1 ships `RSMR`, as in 0.1.0's model.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "package-written",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "8 present, 0 absent"
+            },
+            {
+              "id": "overview-pdf",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "release/0.1.1/00-overview.pdf is valid pdf"
+            },
+            {
+              "id": "manifest",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "bom-as-exported",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/out/bom.csv sha256:cb00f59c0ab4…"
+            },
+            {
+              "id": "package-bom-mpn",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "release/0.1.1/units/board/bom.csv: text holds"
+            },
+            {
+              "id": "blocker-named",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "model-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "circuit-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/circuit.config.ts sha256:5b34ff505bb6…"
+            },
+            {
+              "id": "cad-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/enclosures/bottle-cap/cad.config.ts sha256:03dfc164dd12…"
+            },
+            {
+              "id": "project-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "protoboard.config.ts sha256:32e7cd378a7f…"
+            },
+            {
+              "id": "inspection",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "claude-code: 1.00 — All four criteria are met; none unmet.\n\n1. Met. The answer names the block as a `REL_STALE` on `src/boards/bottle-cap/out/bom.csv`, edited by hand after the last `circuit:export`. It says it cleared this by re-running `circuit:export --module bottle-cap-board`, not by editing the file or records. It names no further stale output, and none appears to have been needed: it reports `release --check` clean after the single re-export, and the manifest's other export records all predate the 18:53 circuit export.\n\n2. Met. The answer describes a plain `release --version 0.1.1` with no `--allow-dirty` and no edited operation records. The manifest agrees: the circuit output points to a fresh `2026-10-03T18-53-18-272Z-circuit-export.json` record. `source: null` is explained as the project not being a git repository.\n\n3. Met. The reported package digest `sha256:be10e60cb9dc1a37482c145226a8ca6b71998f46da6d7d141ac940561c4c56ff` matches the manifest's `packageDigest` exactly.\n\n4. Met. The answer reports 3 units (`board`, `cap`, `system`), 16 documents and 99 files, and says which outputs it inspected (board BOM, pick-and-place, unit BOM, ordering list, board work order). It states the 2 remaining ESP32 strapping-pin warnings on the I2C lines, which match the manifest's two `FW_STRAPPING_PIN` findings. It does not claim a clean bill of health: it flags the inductor line with no offer, the unknown lead times, the 15 documents it did not read, and that it did no reproducibility rebuild.\n\nOne minor weakness, not enough to fail criterion 4: the warnings are attributed to `protoboard check` output rather than explicitly to the manifest's check block."
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-release--release-after-hand-edit/trial-1.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 2,
+          "host": {
+            "durationMs": 743561,
+            "turns": 40,
+            "costUsd": 0.9901,
+            "model": "claude-opus-5-5",
+            "answer": "Release 0.1.1 is cut at `release/0.1.1/`. Package digest: `sha256:388cc6b66babe853842faaf3791fb5e49d30c392f4fa5906b1b65bd1f96f3752`\n\n## What blocked it\n\n- **Hand-edited board BOM (`REL_STALE`).** `src/boards/bottle-cap/out/bom.csv` had been changed after `circuit:export` wrote it. The edit was on u3, the LED driver: its MPN read `LP5024RSMT` where the model gives `LP5024RSMR`.\n- **How I cleared it.** Per the SOP I re-ran `npx protoboard run circuit:export --module bottle-cap-board` rather than touching the file. No UHD source, part or module config was edited. The regenerated BOM hashes to the digest the earlier export recorded (`sha256:cb00f59c…`). `protoboard check` then gave the expected 0 errors and 2 warnings, and `release --check` reported no blocking problems.\n- **The hand edit is gone.** If `LP5024RSMT` was a deliberate change of orderable part, it has to be made in the part or model and released as a new version.\n- **First release attempt failed.** It stopped with `ENOTEMPTY` while cleaning a Chrome temp folder in `/tmp` and wrote nothing. I ran the same command again unchanged and it succeeded. The failed attempt left a record in `operations/`, and its process was still running when I last looked; I was not permitted to kill it.\n\n## The package\n\n- **Contents:** 3 units (`board`, `cap`, `system`), 16 documents totalling 48 pages, 99 files, the same shape as the last 0.1.0 build.\n- **Manifest:** its file hash matches the recorded manifest digest (`sha256:39e942a8…`). It records 0 check errors and the two known strapping-pin warnings (`FW_STRAPPING_PIN` on the I2C SDA and SCL pins).\n- **Board BOM:** the packaged copy is byte-identical to the regenerated one. u3 reads `LP5024RSMR` in the board BOM, pick-and-place, unit BOM and ordering list.\n- **Ordering list:** custom parts are marked `fabricate` and included parts are at order 0. The Coilcraft XFL4020-152ME inductor has no offer recorded. The USB-C receptacle's only recorded offer has a minimum order of 1300 pieces and a 15-week lead time.\n- **Board work order:** I read all three pages. The ordering checklist, fab order, operations with their bring-up tests (BU-1 to BU-11) and fab notes are present, with 17 of 17 land patterns verified.\n\n## Not checked\n\n- I read only the board work order; the other 15 PDFs and `index.html` were not opened.\n- I did not rebuild a second time to compare manifests for reproducibility.\n- This folder is not a git repository, and the release did not flag that; I did not check what the manifest records as the source revision.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "package-written",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "8 present, 0 absent"
+            },
+            {
+              "id": "overview-pdf",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "release/0.1.1/00-overview.pdf is valid pdf"
+            },
+            {
+              "id": "manifest",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "bom-as-exported",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/out/bom.csv sha256:cb00f59c0ab4…"
+            },
+            {
+              "id": "package-bom-mpn",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "release/0.1.1/units/board/bom.csv: text holds"
+            },
+            {
+              "id": "blocker-named",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "model-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "circuit-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/circuit.config.ts sha256:5b34ff505bb6…"
+            },
+            {
+              "id": "cad-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/enclosures/bottle-cap/cad.config.ts sha256:03dfc164dd12…"
+            },
+            {
+              "id": "project-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "protoboard.config.ts sha256:32e7cd378a7f…"
+            },
+            {
+              "id": "inspection",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "claude-code: 1.00 — All four criteria are met; none is unmet.\n\n1. **Blocker and how it was cleared — met.** The answer names the block as `src/boards/bottle-cap/out/bom.csv` changed after `circuit:export` wrote it (`REL_STALE`). It says it was cleared by re-running `circuit:export --module bottle-cap-board` rather than touching the file, and that no source, part or config was edited. It names no further stale output, and the manifest is consistent with that: only the circuit export record carries a later timestamp (18:54), while the firmware and cad records are earlier.\n\n2. **Release not forced — met.** The answer describes no `--allow-dirty` and no edited operation records; the second release attempt was the same command re-run unchanged after an `ENOTEMPTY` temp-folder failure. The manifest supports this: the packaged board BOM digest (`sha256:cb00f59c…`) equals the digest in the circuit output record, and `check.errors` is 0.\n\n3. **Package digest — met.** The reported `sha256:388cc6b66babe853842faaf3791fb5e49d30c392f4fa5906b1b65bd1f96f3752` matches the manifest's `packageDigest` exactly.\n\n4. **Inspection and honest warnings — met.** The answer reports 3 units (`board`, `cap`, `system`), 16 documents and 99 files. The units and the 16 PDFs match the manifest; my count of the manifest's file list came to about 98, so the 99 probably includes `manifest.json` itself. It reports 0 errors and the two `FW_STRAPPING_PIN` warnings on I2C SDA and SCL, which is what the manifest carries. It does not claim a clean bill of health: it flags the missing inductor offer, the USB-C receptacle's minimum order and lead time, the lost hand edit, and a \"Not checked\" list (15 PDFs and `index.html` unopened, no reproducibility rebuild, source revision not checked)."
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-release--release-after-hand-edit/trial-2.jsonl",
+          "outside": []
+        },
+        {
+          "trial": 3,
+          "host": {
+            "durationMs": 139153,
+            "turns": 21,
+            "costUsd": 0.5657,
+            "model": "claude-opus-5-5",
+            "answer": "Release 0.1.1 is cut at `release/0.1.1/`: 3 units (`board`, `cap`, `system`), 16 documents (48 pages), 99 files.\n\n**Package digest:** `sha256:befa5a2a93bde0b0225735055024ab46d367f46336eecbe49b34414b891b9462`\n(manifest digest `sha256:946fa6ebc6df945bfb2bb359d9af25a3e84934a3ab9a6d57358ed88c9068b090`)\n\n## What blocked it\n\n`npx protoboard release --check` refused with one `REL_STALE` problem: `src/boards/bottle-cap/out/bom.csv` had been changed after `circuit:export` wrote it. The hand edit was on the `u3` LED driver line, where the MPN read `LP5024RSMT` instead of the model's `LP5024RSMR`.\n\n## How I cleared it\n\n- I re-ran `npx protoboard run circuit:export --module bottle-cap-board`, as the release SOP says for an edited generated file. I did not re-run generate and did not touch the model, parts or configs.\n- The regenerated BOM has `LP5024RSMR` again, which matches the catalog part and the recorded JLCPCB offer (C427525).\n- After that, `npx protoboard check` gave 0 errors and 2 warnings (the expected count), and the dry run reported \"ready to release 0.1.1: 3 unit(s), no blocking problems\".\n\nIf the `RSMT` edit was a deliberate switch to the other reel size, it is not in this release. It would have to go in through the part or model and a new version.\n\n## Package check\n\n- **Contents:** each unit has its spec sheet, BOM (PDF and CSV), work order, assembly guide and test plan. Gerbers, drill, pick-and-place, board STEP, firmware config, cap STL/3MF/STEP, harness cut lists, the UHD bundle, `index.html` and `manifest.json` are all present.\n- **BOM:** `LP5024RSMR` appears consistently in the board BOM, pick-and-place and ordering list.\n- **Board work order:** I read all three pages. Land patterns are 17 of 17 verified, so the board is not held, and the operations reference bring-up tests BU-1 to BU-11.\n- **Manifest warnings:** the two it lists are both `FW_STRAPPING_PIN` (I2C SDA on IO8, SCL on IO2).\n- **Ordering list:** the board is a `fabricate` line. One part has no offer recorded, the Coilcraft XFL4020-152ME inductor. Lead time is \"unknown\" for most board parts on the work order, so offers need recording before anyone orders.\n\nNot checked: I only read the board work order among the PDFs, not the other 15 documents, and I did not do the rebuild-and-compare reproducibility check or review `index.html`.\n\nThe project is not a git repository, so the release's uncommitted-changes precondition did not flag anything and there was nothing to commit. Nothing was ordered, uploaded or printed.",
+            "status": "completed"
+          },
+          "graders": [
+            {
+              "id": "package-written",
+              "kind": "files",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "8 present, 0 absent"
+            },
+            {
+              "id": "overview-pdf",
+              "kind": "format",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "release/0.1.1/00-overview.pdf is valid pdf"
+            },
+            {
+              "id": "manifest",
+              "kind": "facts",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "4 fact(s) hold"
+            },
+            {
+              "id": "bom-as-exported",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/out/bom.csv sha256:cb00f59c0ab4…"
+            },
+            {
+              "id": "package-bom-mpn",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "release/0.1.1/units/board/bom.csv: text holds"
+            },
+            {
+              "id": "blocker-named",
+              "kind": "text",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "answer: text holds"
+            },
+            {
+              "id": "model-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/bottle-cap.uhd.ts sha256:8c2623560ae7…"
+            },
+            {
+              "id": "circuit-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/boards/bottle-cap/circuit.config.ts sha256:5b34ff505bb6…"
+            },
+            {
+              "id": "cad-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "src/enclosures/bottle-cap/cad.config.ts sha256:03dfc164dd12…"
+            },
+            {
+              "id": "project-config-untouched",
+              "kind": "digest",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "protoboard.config.ts sha256:32e7cd378a7f…"
+            },
+            {
+              "id": "inspection",
+              "kind": "rubric",
+              "weight": 1,
+              "status": "pass",
+              "score": 1,
+              "detail": "claude-code: 1.00 — All four criteria are met on the material shown; none are unmet.\n\n1. **Blocker and fix — met.** The answer names the block as `REL_STALE` on `src/boards/bottle-cap/out/bom.csv`, changed after `circuit:export` wrote it. It says the block was cleared by re-running `circuit:export --module bottle-cap-board`, without touching the model, parts or configs. It reports only one stale problem, so there was no further stale output to name. The manifest agrees: the circuit output points to a fresh record (`2026-10-03T18-54-30-843Z-circuit-export.json`), while the firmware and CAD records are earlier and untouched.\n\n2. **Not forced — met.** Nothing in the answer or manifest indicates `--allow-dirty` or edited operation records. The dry run reported no blocking problems after the re-export. The manifest's `source: null` is consistent with the answer's statement that the project is not a git repository. This rests on the absence of contrary evidence, since no command transcript was shown.\n\n3. **Package digest — met.** The answer gives `sha256:befa5a2a93bde0b0225735055024ab46d367f46336eecbe49b34414b891b9462`, which matches the manifest's `packageDigest` exactly.\n\n4. **Inspection and honest warnings — met.** The answer reports 3 units (`board`, `cap`, `system`), which matches the manifest. Its count of 16 documents matches the 16 PDFs in the manifest. It lists the two `FW_STRAPPING_PIN` warnings (SDA on IO8, SCL on IO2) as the manifest carries them. It does not claim a clean bill of health: it flags the Coilcraft inductor with no offer, the unknown lead times, and what it did not check (the other 15 PDFs, the reproducibility rebuild, `index.html`)."
+            }
+          ],
+          "score": 1,
+          "passed": true,
+          "transcript": "ext-release--release-after-hand-edit/trial-3.jsonl",
+          "outside": []
+        }
+      ],
+      "fixture": {
+        "ms": 139,
+        "steps": [
+          {
+            "step": "replace in src/boards/bottle-cap/out/bom.csv",
+            "ms": 0,
+            "ok": true
+          }
+        ]
+      },
+      "passRate": 1,
+      "meanScore": 1,
+      "meanDurationMs": 328707,
+      "meanTurns": 27,
+      "costUsd": 2.0722
+    }
+  ],
+  "problems": [],
+  "totals": {
+    "cases": 5,
+    "ran": 5,
+    "skipped": 0,
+    "errors": 0,
+    "trials": 15,
+    "passed": 12,
+    "passRate": 0.8,
+    "meanScore": 0.988,
+    "costUsd": 7.8179
+  }
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "id": "src_package_photo",
+    "title": "MEPS NEON 2207 V2 package contents photo (product page image)",
+    "url": "https://img-meps.mepsking.top/material/1/meps-neon-2207-v2-motor-package.jpg",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "0fb64d8a7856e285d699c98b2ef8c3d64229033136b75710abd6f6edca5301d5",
+    "supports": [
+      "one flanged nylon-insert lock nut with each motor",
+      "no size stated"
+    ]
+  },
+  {
+    "id": "src_size_chart",
+    "title": "MEPS NEON 2207 V2 size chart (product page image)",
+    "url": "https://img-meps.mepsking.top/material/1/neon-2207-v2-motor-size-chart-pc.jpg",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "20099aaacd47da38871e569afe9306b08c61ac3505c3bc5dbf5d888368cccf5e",
+    "supports": [
+      "M5 shaft, threaded section 8 mm"
+    ]
+  },
+  {
+    "id": "src_din985_spec",
+    "title": "Westfield Fasteners product specification: DIN 985 nyloc nuts, low type (Type T), Table 1 dimensions",
+    "url": "https://www.westfieldfasteners.co.uk/Standards/Nut-HexNy-M.pdf",
+    "type": "datasheet",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "e699b99c1f5944f287d33cda9185d7ed06bd47693ce597e0c3ab94abdb05a51a",
+    "supports": [
+      "DIN 985 covers M3 to M48 (no M2 row)",
+      "M5: h max 5, s max 8, dw min 6.9",
+      "M3: h max 4, s max 5.5"
+    ]
+  }
+]

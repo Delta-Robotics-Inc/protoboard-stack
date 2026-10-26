@@ -1,0 +1,6 @@
+﻿{
+  "theme": "Default",
+  "mcpServers": {
+    "github": { "command": "gh-mcp", "args": [] }
+  }
+}

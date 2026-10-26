@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "m3-aluminium-standoff-30mm",
+    "config": "parts/local/m3-aluminium-standoff-30mm/cad.config.ts",
+    "configDigest": "sha256:0540ba21c99ae1342ac84a01a42fa328e009df75cc66bd88efdc2926239de496",
+    "moduleDigest": "sha256:bca561caf4ec952fdd7aad4186b3acecd4648e75f2e3ba5f816c264d83709c08"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:fc12584971d5ab4f40f39d01a08ac49c8ca6e12242baf558e466155d62577a2f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:31:49.300Z",
+  "status": "succeeded",
+  "summary": "m3-aluminium-standoff-30mm: body.step, body.glb, body.manifest.json in parts/local/m3-aluminium-standoff-30mm/out (632.707 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/m3-aluminium-standoff-30mm/out/body.step",
+      "digest": "sha256:4742bff60720fa989b365e81f3282db4be62b86926a5360ffb6f419ac2624416",
+      "bytes": 28682,
+      "description": "m3-aluminium-standoff-30mm: nominal body"
+    },
+    {
+      "path": "parts/local/m3-aluminium-standoff-30mm/out/body.glb",
+      "digest": "sha256:0b31a9c84ecb2f2b52728fe85b15310f5160b264224b7baf872dbc47e3f31799",
+      "bytes": 12952,
+      "description": "m3-aluminium-standoff-30mm: viewer mesh"
+    },
+    {
+      "path": "parts/local/m3-aluminium-standoff-30mm/out/body.manifest.json",
+      "digest": "sha256:5d822dfc228a16dc018611db3d48101709653ad3a058fd38c3b33e89ea618488",
+      "bytes": 556,
+      "description": "m3-aluminium-standoff-30mm: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "m3-aluminium-standoff-30mm",
+    "out": "parts/local/m3-aluminium-standoff-30mm/out",
+    "volume_mm3": 632.707,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T14:31:56.195Z"
+}

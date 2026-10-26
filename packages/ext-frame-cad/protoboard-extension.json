@@ -1,0 +1,187 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-frame-cad",
+  "version": "0.2.0",
+  "description": "Custom structure and hardware CAD: plates generated from a module's UHD bolt patterns and frames, and nominal fastener bodies from their sizes, both as a provider of the cad capability (build123d), with STEP/GLB/DXF exports, feature manifests, frame and staleness checks and explicit re-binding.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "frame-cad",
+      "summary": "Generate a custom structure's CAD from its UHD interfaces, keep geometry bindings honest, re-bind after changes, and export for manufacturing (DXF/STEP for CNC carbon)",
+      "path": "skills/frame-cad/SKILL.md",
+      "verifiedBy": "frame-cad-verify"
+    },
+    {
+      "id": "frame-cad-verify",
+      "summary": "Verify a generated structure before cutting: bindings, reproducibility, placement, DXF manufacturability (edge distance, webs, bit limits)",
+      "path": "skills/frame-cad-verify/SKILL.md"
+    }
+  ],
+  "tools": [
+    {
+      "id": "python-build123d",
+      "purpose": "Python with build123d (CAD kernel for the plate generator)",
+      "probe": [
+        "sh",
+        "-c",
+        "exec \"${PROTOBOARD_PYTHON:-python3}\" -c 'import build123d; print(\"build123d \" + build123d.__version__)'"
+      ],
+      "install": "protoboard tools install cad (a project venv with these pins), or point PROTOBOARD_PYTHON at an interpreter with build123d==0.13.0",
+      "runtime": {
+        "id": "cad",
+        "kind": "python",
+        "packages": [
+          "build123d==0.13.0"
+        ],
+        "env": "PROTOBOARD_PYTHON",
+        "python": ">=3.11,<3.15"
+      }
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "cad",
+      "summary": "Plates (frames, top plates, brackets) from a module's UHD bolt patterns and frames, and nominal mounting-hardware bodies (screws, nuts, standoffs, spacers) from their sizes, with build123d; DXF cutting profiles for plates",
+      "native": "frame-cad",
+      "operations": {
+        "generate": {
+          "entry": "./ops/cad.ts#generate",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "Write the generator parameters from the module's interfaces and constraints (frame-cad/params.json), run the generator and keep the frames it measured (frame-cad/frames.json); returns the signatures and any bindings that changed"
+        },
+        "export": {
+          "entry": "./ops/cad.ts#exportOutputs",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "Rebuild the body from frame-cad/params.json and write out/body.step, body.glb, body.manifest.json, body.dxf and out/interfaces/<id>.glb"
+        },
+        "extract": {
+          "entry": "./ops/cad.ts#extract",
+          "summary": "The generated interface frames and the module's artifacts (re-bind them with frame-cad-rebind)"
+        },
+        "check": {
+          "entry": "./ops/cad.ts#check",
+          "summary": "Interface frames match the generated frames; the design is not stale against the interfaces and constraints; out/ was exported from the current design"
+        }
+      },
+      "constraints": {
+        "margin_mm": {
+          "description": "outline margin around core holes and clamps (default 3)"
+        },
+        "corner_radius_mm": {
+          "description": "vertical edge fillet (default 1.5)"
+        },
+        "arm_width_mm": {
+          "description": "arm to each raised pad (default 14)"
+        },
+        "arm_slot_width_mm": {
+          "description": "lightening slot down each arm; 0 = none (default 5)"
+        },
+        "hub_extra_mm": {
+          "description": "hub disc radius beyond the pad (default 1)"
+        },
+        "pad_margin_mm": {
+          "description": "pad radius beyond the pattern (default 3)"
+        },
+        "pad_height_mm": {
+          "description": "raised pad height above the plate top (default 0.5)"
+        },
+        "pad_center_relief_mm": {
+          "description": "centre hole in circle pads (default 3.5)"
+        },
+        "hole_clearance_mm": {
+          "description": "radial clearance over the fastener (default 0.1)"
+        },
+        "clamp_wall_mm": {
+          "description": "side-clamp plate thickness (default 2)"
+        },
+        "clamp_margin_mm": {
+          "description": "side-clamp plate margin (default 4)"
+        },
+        "clamp_height_mm": {
+          "description": "side-clamp frame origin height above the plate top (default: from the frame)"
+        },
+        "pads": {
+          "description": "interface ids that are raised pads (default: circle patterns facing up)"
+        },
+        "outline_mm": {
+          "description": "explicit plate outline { x: [min, max], y: [min, max] } (default: hull of the patterns)"
+        },
+        "slots_mm": {
+          "description": "rectangular cut-outs [{ center: [x, y], size: [w, h] }]"
+        }
+      }
+    }
+  ],
+  "operations": [
+    {
+      "id": "frame-cad",
+      "summary": "Alias of cad:generate then cad:export for every plate module (or the named ones), each bound by its cad.config.ts; returns the new signatures and any stale bindings",
+      "entry": "./ops/frame-cad.ts#frameCad",
+      "effect": "export",
+      "requires": [
+        "python-build123d"
+      ],
+      "inputs": {
+        "module": {
+          "description": "comma-separated module ids (default: every local plate module, i.e. mechanical metadata plate_thickness_mm)"
+        }
+      }
+    },
+    {
+      "id": "frame-cad-rebind",
+      "summary": "Copy the exported signatures (out/body.manifest.json) and generated frame origins (frame-cad/frames.json) into the module source (explicit re-binding after a reviewed change); prints every change",
+      "entry": "./ops/rebind.ts#rebind",
+      "effect": "export",
+      "inputs": {
+        "module": {
+          "description": "comma-separated module ids (default: every plate module with generated CAD)"
+        }
+      }
+    },
+    {
+      "id": "hardware-cad",
+      "summary": "Alias of cad:generate then cad:export for every mounting-hardware module (screws, nuts, standoffs, spacers; or the named ones), each bound by its cad.config.ts: nominal STEP, GLB and manifest with volume from its UHD sizes; returns each volume and the one it replaces",
+      "entry": "./ops/hardware-cad.ts#hardwareCad",
+      "effect": "export",
+      "requires": [
+        "python-build123d"
+      ],
+      "inputs": {
+        "module": {
+          "description": "comma-separated module ids (default: every local hardware module used, i.e. tagged fastener and screw, nut, standoff or spacer)"
+        }
+      }
+    },
+    {
+      "id": "package:work-order",
+      "summary": "Manufacturing Package: the cut order of each plate in its unit's work order (process, material, stock, quantities by DXF layer, hole sizes, router bit, edge finish)",
+      "entry": "./ops/package.ts#workOrder",
+      "effect": "pure"
+    },
+    {
+      "id": "package:test-plan",
+      "summary": "Manufacturing Package: inspection of what the cut order asks for (hole sizes, edges, edge distance)",
+      "entry": "./ops/package.ts#testPlan",
+      "effect": "pure"
+    }
+  ],
+  "checks": [
+    {
+      "id": "frames",
+      "summary": "Plate modules that no cad.config.ts binds to this provider (each bound module's frames and staleness are its cad:check)",
+      "entry": "./checks/frames.ts#frames"
+    },
+    {
+      "id": "hardware",
+      "summary": "Mounting-hardware modules that no cad.config.ts binds to this provider (each bound module's stale sizes and export are its cad:check)",
+      "entry": "./checks/hardware.ts#hardware"
+    }
+  ]
+}

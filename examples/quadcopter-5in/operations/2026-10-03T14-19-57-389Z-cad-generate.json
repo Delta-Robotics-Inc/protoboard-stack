@@ -1,0 +1,79 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboard/ext-parts",
+    "module": "panasonic-eeu-fr1v471",
+    "config": "parts/local/panasonic-eeu-fr1v471/cad.config.ts",
+    "configDigest": "sha256:258c1a48e89d3172f9561acac2f926136ebf9db8da4d1d408980c7f6e83192ae",
+    "moduleDigest": "sha256:2f2669d935d3650feb357480597988a0b5bb6fcf05a5d8141150dbda7bd05e94"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:135ae555f166f811adc3322669e4612abe96d7e78e97b13b5d519121a4239e47",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:19:57.389Z",
+  "status": "succeeded",
+  "summary": "panasonic-eeu-fr1v471: 2 features from parts/local/panasonic-eeu-fr1v471/part-cad/bulk_capacitor.py; every bound signature matches",
+  "outputs": [
+    {
+      "path": "parts/local/panasonic-eeu-fr1v471/part-cad/source.json",
+      "digest": "sha256:8152dc417d6a5b09438f474f50510ce5e029a402981e7ee4eff7a1cc41fb8ad5",
+      "bytes": 706,
+      "description": "panasonic-eeu-fr1v471: what parts/local/panasonic-eeu-fr1v471/part-cad/bulk_capacitor.py generated"
+    }
+  ],
+  "data": {
+    "schema": "protoboard.part-cad.source/v0",
+    "module": "panasonic-eeu-fr1v471",
+    "generator": "parts/local/panasonic-eeu-fr1v471/part-cad/bulk_capacitor.py",
+    "generatorDigest": "sha256:f3b7accc66cf52155e2992cf3d46f723022241f5cc450a08b8386b8c7735ce2f",
+    "toolVersion": "0.13.0",
+    "volume_mm3": 1254.841,
+    "features": {
+      "pos": {
+        "area_mm2": 0.283,
+        "centroid": [
+          2.5,
+          0,
+          -1
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          -1
+        ]
+      },
+      "neg": {
+        "area_mm2": 0.283,
+        "centroid": [
+          -2.5,
+          0,
+          -1
+        ],
+        "faces": 1,
+        "normal": [
+          0,
+          0,
+          -1
+        ]
+      }
+    },
+    "rebind": []
+  },
+  "finishedAt": "2026-10-03T14:20:02.545Z"
+}

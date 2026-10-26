@@ -1,0 +1,53 @@
+{
+  "artifact": "iso-7045-m2x6",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "224395b5a15735d2f52aa4ce1c2c3f4b6e01fe203add84e03becb0067918ef65",
+  "units": "mm",
+  "volume_mm3": 34.155,
+  "bodies": {
+    "screw": 34.155
+  },
+  "features": {
+    "thread": {
+      "area_mm2": 37.699,
+      "centroid": [
+        0.0,
+        0.0,
+        3.0
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          0.0,
+          0.0,
+          3.0
+        ]
+      ],
+      "diameter_mm": 2.0
+    },
+    "head_bearing": {
+      "area_mm2": 9.425,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "drive": {
+      "area_mm2": 11.744,
+      "centroid": [
+        0.0,
+        0.0,
+        -0.934
+      ],
+      "faces": 13
+    }
+  }
+}

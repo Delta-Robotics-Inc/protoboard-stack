@@ -1,0 +1,263 @@
+{
+  "artifacts": [
+    {
+      "id": "art_product_page",
+      "name": "Westfield WF2352 M3x30 A2 socket head cap screw",
+      "type": "documentation",
+      "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Allen-Screw-M3x30-A2-Stainless.html"
+    },
+    {
+      "id": "art_spec",
+      "name": "Westfield socket head cap screw specification (DIN 912 / ISO 4762)",
+      "type": "datasheet",
+      "url": "https://www.westfieldfasteners.co.uk/Datasheets/ScrewBolt_SHCap_M.pdf"
+    },
+    {
+      "filePath": "library/cad/py/parts.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "iso-4762-m3x30 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/iso-4762-m3x30.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "iso-4762-m3x30 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/iso-4762-m3x30.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "iso-4762-m3x30 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/iso-4762-m3x30.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "iso-4762-m3x30 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/iso-4762-m3x30-socket-head-cap-screw/artifacts/cad/interfaces/thread.glb",
+      "format": "glb",
+      "id": "cad_if_thread",
+      "interfaceId": "thread",
+      "name": "thread geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "mechanical.fastener.screw"
+  ],
+  "description": "ISO 4762 (DIN 912) socket head cap screw, M3 x 0.5 x 30 mm, A2 stainless steel. Head Ø5.5 mm max x 3.0 mm max, 2.5 mm hex socket, 18 mm minimum thread length. Used 4 per quadcopter flight stack (frame plate + ESC + FC on 30.5 x 30.5 mm).",
+  "domains": [
+    {
+      "dimensions_mm": {
+        "height": 5.5,
+        "length": 33,
+        "width": 5.5
+      },
+      "domain": "mechanical",
+      "material": {
+        "assumption": "The CAD body is library/cad/py/parts.py's nominal ISO 4762 shape (plain shank, no thread form), not a measured part; Westfield states no weight.",
+        "density_g_cm3": 8,
+        "name": "A2 (304 / 1.4301) stainless steel",
+        "source": "https://www.thyssenkrupp-materials.co.uk/stainless-steel-304-14301.html"
+      },
+      "metadata": {
+        "dimensions_note": "Envelope = 30 mm length + 3.0 mm max head height; width = 5.5 mm max head diameter.",
+        "head_diameter_max_mm": 5.5,
+        "head_height_max_mm": 3,
+        "hex_socket_mm": 2.5,
+        "material": "A2 stainless steel",
+        "min_thread_length_mm": 18,
+        "nominal_length_mm": 30,
+        "socket_depth_mm": 1.3,
+        "source": [
+          "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Allen-Screw-M3x30-A2-Stainless.html",
+          "https://www.westfieldfasteners.co.uk/Datasheets/ScrewBolt_SHCap_M.pdf"
+        ],
+        "standard": "ISO 4762 (DIN 912)",
+        "thread": "M3 x 0.5"
+      }
+    }
+  ],
+  "id": "iso-4762-m3x30-socket-head-cap-screw",
+  "interfaces": [
+    {
+      "capabilities": [
+        "fastener",
+        "external_thread"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "thread",
+            "signature": {
+              "area_mm2": 282.743,
+              "centroid": [
+                0,
+                0,
+                15
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_thread",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "thread",
+      "name": "M3 x 0.5 external thread, 30 mm",
+      "parameters": [
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 3
+        },
+        {
+          "id": "length",
+          "unit": "mm",
+          "value": 30
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "metric_thread_external",
+            "gender": "male",
+            "note": "M3 x 0.5 coarse thread; nominal length 30 mm measured under the head; minimum thread length b = 18 mm (so up to 12 mm of the shank next to the head may be unthreaded). Mates with an M3 nut (iso-10511-m3-nyloc-nut) or a tapped M3 hole; passes Φ3.4 spacers and Φ4 grommeted board holes."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "d M3, thread pitch 0.50, dk max 5.5, k max 3.0, s (drive) 2.5, b (min thread length) 18, t (recess depth) 1.3; all dimensions in mm. Standard ISO 4762 (DIN 912). Material A2 Stainless Steel.",
+            "source": [
+              "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Allen-Screw-M3x30-A2-Stainless.html",
+              "https://www.westfieldfasteners.co.uk/Datasheets/ScrewBolt_SHCap_M.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Generic (ISO 4762 / DIN 912)",
+  "name": "M3 x 30 mm socket head cap screw, ISO 4762, A2 stainless",
+  "part_number": "WF2352",
+  "tags": [
+    "standard-part",
+    "fastener",
+    "screw",
+    "socket-head-cap-screw",
+    "m3",
+    "iso-4762",
+    "din-912",
+    "stainless",
+    "fpv-stack"
+  ],
+  "traits": [
+    {
+      "params": {
+        "fastener_type": "socket head cap screw",
+        "kind": "fastener",
+        "length_mm": 30,
+        "material": "A2 stainless steel",
+        "source": [
+          "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Allen-Screw-M3x30-A2-Stainless.html",
+          "https://www.westfieldfasteners.co.uk/Datasheets/ScrewBolt_SHCap_M.pdf"
+        ],
+        "standard": "ISO 4762 (DIN 912)",
+        "thread": "M3 x 0.5"
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "5-inch quadcopter flight stack, per post (4 posts on the 30.5 x 30.5 mm pattern), bottom to top: this screw inserted from under the frame bottom plate (5.0 mm) → ettinger-005-83-060 spacer (6.0 mm) → AM32 ESC in its M3x8.1 grommet (4.0 mm clamped, assumed) → spacer (6.0 mm) → F405 V3 FC in its M3x8 grommet (4.0 mm clamped, assumed) → iso-10511 nyloc nut (4.0 mm max). Stack below nut = 5 + 6 + 4 + 6 + 4 = 25.0 mm; nut top at 29.0 mm; screw 30 mm → 1.0 mm (2 pitches) protrudes past the nylon insert. The nut sits 25–29 mm from the head, inside the threaded zone (≥ 30 − 18 = 12 mm from the head). If the grommets clamp thicker than ~4.25 mm each (the nylon insert would no longer fully engage), use M3 x 35. Per stack: 4 screws, 8 spacers, 4 nyloc nuts.",
+        "quantity_per_stack": 4,
+        "source": [
+          "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/Socket-Head-Cap-Allen-Screw-M3x30-A2-Stainless.html",
+          "https://www.westfieldfasteners.co.uk/Datasheets/ScrewBolt_SHCap_M.pdf"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "stack-up inputs",
+        "reason": "The frame is custom with no CAD or plate thickness yet (quadcopter-5in-frame data_gap). DolphinRC gives the grommets only as 'M3*8mm' (FC) and 'M3*8.1mm' (ESC) with no height drawing, so the clamped board+grommet height is estimated.",
+        "value": "bottom plate 5.0 mm carbon; grommeted board clamp height 4.0 mm each (ESC and FC)"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "fields": [
+          "mass",
+          "operating temperature",
+          "tightening torque"
+        ],
+        "note": "Not stated in the Westfield sources."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "lipol-lp402030",
+  "manufacturer": "LiPol Battery Co., Ltd.",
+  "mpn": "LP402030",
+  "need": {
+    "quantity": 1,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "LiPol Battery Co., Ltd.",
+      "url": "https://li-polymer-battery.com/3-7v-rechargeable-li-polymer-battery-lp402030-200mah-with-pcm-and-wires/",
+      "as_of": "2026-10-03",
+      "moq": 5,
+      "price_breaks": [],
+      "authorized": true,
+      "note": "manufacturer page states 'For small samples, we support MOQ 5 pieces'; no price is published (quote on request)",
+      "mpn": "LP402030",
+      "via": "web"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": false,
+      "note": "not listed (found through the JLCPCB search, which indexes LCSC codes)"
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; no listing with stock or a real price"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

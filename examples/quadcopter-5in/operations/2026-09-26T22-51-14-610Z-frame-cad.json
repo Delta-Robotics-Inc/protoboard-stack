@@ -1,0 +1,482 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "frame-cad",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:38e21c49a797f6add852732bfd3fc308b93d695f841fd3a8d2280b15856d5270",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0"
+    }
+  ],
+  "startedAt": "2026-09-26T22:51:14.610Z",
+  "status": "succeeded",
+  "summary": "quadcopter-5in-frame (8 features), quadcopter-5in-top-plate (2 features); all bindings still match",
+  "outputs": [
+    {
+      "path": "src/modules/frame/cad/quadcopter-5in-frame.params.json",
+      "digest": "sha256:7cd9ddcfa86f2e76a5d86e0c41609c61c49da79d5dbeae75870ab2f0df11112d",
+      "bytes": 5363,
+      "description": "quadcopter-5in-frame: generator parameters from its interfaces"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/camera_mount.glb",
+      "digest": "sha256:65b6d981748a5fc7cf7cc3a666d5d363bbaded7b3ccf2d008f9d1ef942bcf164",
+      "bytes": 87008,
+      "description": "quadcopter-5in-frame: interfaces/camera_mount.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/motor_mount_fl.glb",
+      "digest": "sha256:42b7232f6c3aa91dbc5c2b8f5dac301a642794433bffe9ab2e1006a04d863332",
+      "bytes": 120144,
+      "description": "quadcopter-5in-frame: interfaces/motor_mount_fl.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/motor_mount_fr.glb",
+      "digest": "sha256:71cffafcc5cdbb3a822e60b0452f42481071b5b5116eeb62ae052f41c8fa5dd1",
+      "bytes": 120164,
+      "description": "quadcopter-5in-frame: interfaces/motor_mount_fr.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/motor_mount_rl.glb",
+      "digest": "sha256:20a1c1afe76017bba1365a0ea79c2d98644c973c0f6c390bc55141727592e7a8",
+      "bytes": 120160,
+      "description": "quadcopter-5in-frame: interfaces/motor_mount_rl.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/motor_mount_rr.glb",
+      "digest": "sha256:52246da390cb22bde7aa1f4785d1af39df5c9516da61a55a06e8499e8ad7829b",
+      "bytes": 120180,
+      "description": "quadcopter-5in-frame: interfaces/motor_mount_rr.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/stack_mount.glb",
+      "digest": "sha256:8ada2daf316c91353eb0ec879e25557688878df64d954a017c935216792f4aa6",
+      "bytes": 162572,
+      "description": "quadcopter-5in-frame: interfaces/stack_mount.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/standoff_mount.glb",
+      "digest": "sha256:39253587d59acefd5c419609d541ecf7e38aa61bc377e0ad303154a89d3c2ff9",
+      "bytes": 162488,
+      "description": "quadcopter-5in-frame: interfaces/standoff_mount.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/interfaces/vtx_mount.glb",
+      "digest": "sha256:99380c0e2bddad7313142b1a44c84d13d96924ce2b02c402fab8f59726442d54",
+      "bytes": 162704,
+      "description": "quadcopter-5in-frame: interfaces/vtx_mount.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/quadcopter-5in-frame.dxf",
+      "digest": "sha256:61743dd701e44f7916232a0e577d67a51bc22c51a0f7b5b990288897e343c0b4",
+      "bytes": 28615,
+      "description": "quadcopter-5in-frame: quadcopter-5in-frame.dxf"
+    },
+    {
+      "path": "src/modules/frame/cad/quadcopter-5in-frame.frames.json",
+      "digest": "sha256:30e48a36696fdea261fc7790ad332bc5062cebe471b007a8a6002e8bb7a23d27",
+      "bytes": 1588,
+      "description": "quadcopter-5in-frame: quadcopter-5in-frame.frames.json"
+    },
+    {
+      "path": "src/modules/frame/cad/quadcopter-5in-frame.glb",
+      "digest": "sha256:5e47f5a765a02a28b604a1742c30d856a054a18d9b53a460455f6e98d17c5e93",
+      "bytes": 812320,
+      "description": "quadcopter-5in-frame: quadcopter-5in-frame.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/quadcopter-5in-frame.manifest.json",
+      "digest": "sha256:e988d587b6513a7983e5bf08e7c76f3a77aaab20f9c7ae234b9b334b1bf7fbfa",
+      "bytes": 2115,
+      "description": "quadcopter-5in-frame: quadcopter-5in-frame.manifest.json"
+    },
+    {
+      "path": "src/modules/frame/cad/quadcopter-5in-frame.step",
+      "digest": "sha256:d03fc3f25858f3c3bc04f5356053d9c041a716bbce4631d84e03bc5a44b37cce",
+      "bytes": 802732,
+      "description": "quadcopter-5in-frame: quadcopter-5in-frame.step"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/quadcopter-5in-top-plate.params.json",
+      "digest": "sha256:3df3ec0080dccb207502a4ce16754fa8bfe07d65f9eee6418a09cc5adb46d1bd",
+      "bytes": 2051,
+      "description": "quadcopter-5in-top-plate: generator parameters from its interfaces"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/interfaces/gps_mount.glb",
+      "digest": "sha256:cc63c856c41e8dd5bcd73df265be6fd2eb2dffafd533cb9a774c7078a1821b2b",
+      "bytes": 162876,
+      "description": "quadcopter-5in-top-plate: interfaces/gps_mount.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/interfaces/standoff_mount.glb",
+      "digest": "sha256:ee1930ca6f0b4821749bc48e9a12f0d6ab246373811a34b969c9eef8b1d2de4c",
+      "bytes": 162552,
+      "description": "quadcopter-5in-top-plate: interfaces/standoff_mount.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/quadcopter-5in-top-plate.dxf",
+      "digest": "sha256:67fd22fe5d5bd26f5683e77079e794cb9f1f79723226c76b35d05dfbb291ce7a",
+      "bytes": 18148,
+      "description": "quadcopter-5in-top-plate: quadcopter-5in-top-plate.dxf"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/quadcopter-5in-top-plate.frames.json",
+      "digest": "sha256:75d90ec8bd8080476c19d294a1a080c1215303b26b933408e495f686cc6bdce1",
+      "bytes": 396,
+      "description": "quadcopter-5in-top-plate: quadcopter-5in-top-plate.frames.json"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/quadcopter-5in-top-plate.glb",
+      "digest": "sha256:3be1583a67f2d676baa9de230f85aa94e4d0bb75568ec4f16fa023a3f4979b60",
+      "bytes": 164940,
+      "description": "quadcopter-5in-top-plate: quadcopter-5in-top-plate.glb"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/quadcopter-5in-top-plate.manifest.json",
+      "digest": "sha256:d3677258c4d3779a8097cfd306e64ba0c02736e143be770d23ae82af8083c2e6",
+      "bytes": 824,
+      "description": "quadcopter-5in-top-plate: quadcopter-5in-top-plate.manifest.json"
+    },
+    {
+      "path": "src/modules/frame/cad/top-plate/quadcopter-5in-top-plate.step",
+      "digest": "sha256:1edc07b694b891b0ae0fac7423a163b8097a79b54ac957e6b5e1114aa5c15362",
+      "bytes": 175975,
+      "description": "quadcopter-5in-top-plate: quadcopter-5in-top-plate.step"
+    }
+  ],
+  "data": {
+    "modules": [
+      {
+        "module": "quadcopter-5in-frame",
+        "dir": "src/modules/frame/cad",
+        "name": "quadcopter-5in-frame",
+        "artifactsDeclared": true,
+        "toolVersion": "0.13.0",
+        "sourceDigest": "7cddbd18103ae866d1e75b36835ee303d2c0b6788eca140fd229d008f63cf3b8",
+        "features": {
+          "stack_mount": {
+            "area_mm2": 201.062,
+            "centroid": [
+              0,
+              0,
+              2.5
+            ],
+            "faces": 4
+          },
+          "standoff_mount": {
+            "area_mm2": 201.062,
+            "centroid": [
+              0,
+              0,
+              2.5
+            ],
+            "faces": 4
+          },
+          "vtx_mount": {
+            "area_mm2": 138.23,
+            "centroid": [
+              -45,
+              0,
+              2.5
+            ],
+            "faces": 4
+          },
+          "motor_mount_fl": {
+            "area_mm2": 309.478,
+            "centroid": [
+              79.55,
+              79.55,
+              5.5
+            ],
+            "faces": 1,
+            "normal": [
+              0,
+              0,
+              1
+            ]
+          },
+          "motor_mount_fr": {
+            "area_mm2": 309.478,
+            "centroid": [
+              79.55,
+              -79.55,
+              5.5
+            ],
+            "faces": 1,
+            "normal": [
+              0,
+              0,
+              1
+            ]
+          },
+          "motor_mount_rl": {
+            "area_mm2": 309.478,
+            "centroid": [
+              -79.55,
+              79.55,
+              5.5
+            ],
+            "faces": 1,
+            "normal": [
+              0,
+              0,
+              1
+            ]
+          },
+          "motor_mount_rr": {
+            "area_mm2": 309.478,
+            "centroid": [
+              -79.55,
+              -79.55,
+              5.5
+            ],
+            "faces": 1,
+            "normal": [
+              0,
+              0,
+              1
+            ]
+          },
+          "camera_mount": {
+            "area_mm2": 864.795,
+            "centroid": [
+              50,
+              0,
+              16.018
+            ],
+            "faces": 2
+          }
+        },
+        "frames": {
+          "stack_mount": {
+            "origin": [
+              0,
+              0,
+              5
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 90
+          },
+          "motor_mount_fl": {
+            "origin": [
+              79.55,
+              79.55,
+              5.5
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 90
+          },
+          "motor_mount_fr": {
+            "origin": [
+              79.55,
+              -79.55,
+              5.5
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 90
+          },
+          "motor_mount_rl": {
+            "origin": [
+              -79.55,
+              79.55,
+              5.5
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 90
+          },
+          "motor_mount_rr": {
+            "origin": [
+              -79.55,
+              -79.55,
+              5.5
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 90
+          },
+          "camera_mount": {
+            "origin": [
+              50,
+              0,
+              15
+            ],
+            "normal": [
+              0,
+              -1,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ]
+          },
+          "standoff_mount": {
+            "origin": [
+              0,
+              0,
+              5
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 180
+          },
+          "vtx_mount": {
+            "origin": [
+              -45,
+              0,
+              5
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 90
+          }
+        },
+        "rebind": {
+          "signatures": [],
+          "frames": []
+        }
+      },
+      {
+        "module": "quadcopter-5in-top-plate",
+        "dir": "src/modules/frame/cad/top-plate",
+        "name": "quadcopter-5in-top-plate",
+        "artifactsDeclared": true,
+        "toolVersion": "0.13.0",
+        "sourceDigest": "cbbd7dc349272a54b21103a27d97c38ace19c468307f998c66f97c607b1bd272",
+        "features": {
+          "standoff_mount": {
+            "area_mm2": 80.425,
+            "centroid": [
+              0,
+              0,
+              1
+            ],
+            "faces": 4
+          },
+          "gps_mount": {
+            "area_mm2": 55.292,
+            "centroid": [
+              -52,
+              0,
+              1
+            ],
+            "faces": 4
+          }
+        },
+        "frames": {
+          "standoff_mount": {
+            "origin": [
+              0,
+              0,
+              0
+            ],
+            "normal": [
+              0,
+              0,
+              -1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 180
+          },
+          "gps_mount": {
+            "origin": [
+              -52,
+              0,
+              2
+            ],
+            "normal": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ],
+            "symmetryDeg": 90
+          }
+        },
+        "rebind": {
+          "signatures": [],
+          "frames": []
+        }
+      }
+    ],
+    "generator": "@protoboard/ext-frame-cad/py/frame_cad.py"
+  },
+  "finishedAt": "2026-09-26T22:51:22.892Z"
+}

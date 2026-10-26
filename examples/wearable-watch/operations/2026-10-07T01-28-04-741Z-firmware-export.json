@@ -1,0 +1,70 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "firmware:export",
+  "extension": {
+    "id": "@protoboardai/ext-zephyr",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "firmware",
+    "operation": "export",
+    "provider": "@protoboardai/ext-zephyr",
+    "module": "watch-main-board",
+    "config": "src/boards/watch-main/firmware.config.ts",
+    "configDigest": "sha256:f313ea780c7f82ea9f602c2291d64b16bf292dfd5c7c60a5e3e68c25c4dcaf7f",
+    "moduleDigest": "sha256:4e0455c291f5bd899885f3122599be2493b43bd1dcb8ac2b8eb6352c49401e4d"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:b732e79679f44da19ebcda879b109a0acf0612c1643d917f2b0f7901c6aabce2",
+  "tools": [],
+  "startedAt": "2026-10-07T01:28:04.741Z",
+  "status": "succeeded",
+  "summary": "6 files in src/boards/watch-main/out/config/ and firmware.manifest.json",
+  "outputs": [
+    {
+      "path": "src/boards/watch-main/out/config/boards/protoboard/wearable_watch/board.yml",
+      "digest": "sha256:f1c7fa4081d5a81a344d2caf45fd120e1a5fe26f665d6b5c29f2497da7155f4c",
+      "bytes": 226,
+      "description": "board metadata"
+    },
+    {
+      "path": "src/boards/watch-main/out/config/boards/protoboard/wearable_watch/Kconfig.wearable_watch",
+      "digest": "sha256:620ed331007facd06ef5b6fd8287d7d2408c4a993641a140dafb03c08cd3e3a1",
+      "bytes": 207,
+      "description": "board Kconfig"
+    },
+    {
+      "path": "src/boards/watch-main/out/config/boards/protoboard/wearable_watch/wearable_watch_defconfig",
+      "digest": "sha256:d236d3f05807d9d07a06705a869136de125baa161b7434b0d10e07fad7e4b709",
+      "bytes": 299,
+      "description": "board defconfig"
+    },
+    {
+      "path": "src/boards/watch-main/out/config/boards/protoboard/wearable_watch/wearable_watch.dts",
+      "digest": "sha256:801b7ee594bdfd5c720eeba212a7d6453cf0816a828da162c4f3731feb6717ed",
+      "bytes": 4485,
+      "description": "board devicetree"
+    },
+    {
+      "path": "src/boards/watch-main/out/config/boards/protoboard/wearable_watch/wearable_watch-pinctrl.dtsi",
+      "digest": "sha256:a69f8775610c83cccdff4ddd9f5687e48c83825c032e4cc8573d1008af5c6b8f",
+      "bytes": 1014,
+      "description": "pin assignment"
+    },
+    {
+      "path": "src/boards/watch-main/out/config/firmware.conf",
+      "digest": "sha256:f378ef4ad196f26ced4bd83d77d357081ce225176c36768e92602090478a3895",
+      "bytes": 795,
+      "description": "Kconfig fragment: subsystems for the board's devices"
+    },
+    {
+      "path": "src/boards/watch-main/out/firmware.manifest.json",
+      "digest": "sha256:7f2f99e4bf3f92a4b17f947e5b9b6308b24444f1527b7e91182d82276bdbf2e4",
+      "bytes": 16413,
+      "description": "firmware manifest"
+    }
+  ],
+  "diagnostics": [],
+  "finishedAt": "2026-10-07T01:28:04.766Z"
+}

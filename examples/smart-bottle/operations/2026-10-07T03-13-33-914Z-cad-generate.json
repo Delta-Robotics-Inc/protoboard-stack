@@ -1,0 +1,75 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:generate",
+  "extension": {
+    "id": "@protoboardai/ext-harness-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "generate",
+    "provider": "@protoboardai/ext-harness-cad",
+    "module": "bottle-battery-leads",
+    "config": "src/harnesses/bottle-battery-leads/cad.config.ts",
+    "configDigest": "sha256:9d6767fe34bef7ecdaceca4f24037e1ba69578e1fab48f91039ce13a23dad967",
+    "moduleDigest": "sha256:5bd9c4f93f75829f2621c524f2085081c8a99bddd43e917033abcc4ba8e58d84"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:cad3e743edb7594bd37eecc8fbd3d9a3a2283c73caae5dd9606a0f7eb13b956e",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T03:13:33.914Z",
+  "status": "succeeded",
+  "summary": "battery_leads: ok; routed around the parts and 1 cable(s) routed before it",
+  "outputs": [
+    {
+      "path": "src/harnesses/bottle-battery-leads/harness-cad/route.json",
+      "digest": "sha256:e3e275dc545b526a26ea9021c7c11b976535856f6cf0043aef6811167eee7227",
+      "bytes": 5393,
+      "description": "battery_leads: route (native design)"
+    }
+  ],
+  "data": {
+    "generator": "@protoboardai/ext-harness-cad/py/harness_cad.py",
+    "tool": "protoboard ext-harness-cad (py/harness_cad.py)",
+    "map": {
+      "shape": [
+        155,
+        149,
+        294
+      ],
+      "res_mm": 1,
+      "seconds": 3
+    },
+    "harnesses": [
+      {
+        "id": "bottle-battery-leads",
+        "path": "battery_leads",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0
+      }
+    ],
+    "context": [
+      {
+        "id": "bottle-probe-cable",
+        "path": "probe_cable",
+        "status": "ok",
+        "notes": [],
+        "search_s": 0.03
+      }
+    ],
+    "problems": [
+      "board/jbat: no GLB body to route around (none declared)",
+      "board/jprb: no GLB body to route around (none declared)"
+    ]
+  },
+  "finishedAt": "2026-10-07T03:13:40.503Z"
+}

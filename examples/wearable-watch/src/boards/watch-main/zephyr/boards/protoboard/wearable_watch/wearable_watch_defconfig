@@ -1,0 +1,8 @@
+# Generated from the UHD model by @protoboardai/ext-zephyr. Do not edit.
+
+# Arm Cortex-M4 with FPU, 64 MHz: memory protection unit
+CONFIG_ARM_MPU=y
+# the board uses GPIOs
+CONFIG_GPIO=y
+# 32.768 kHz crystal y1 (epson-fc-135-32k768-12p5) on P0.00/XL1, P0.01/XL2
+CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y

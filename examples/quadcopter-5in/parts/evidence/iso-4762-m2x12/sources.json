@@ -1,0 +1,15 @@
+[
+  {
+    "id": "src_supplier",
+    "title": "Westfield Fasteners WF2332: 304 DIN 912 Cap Screw M2 x 12mm (listing and technical summary)",
+    "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/304-DIN-912-Cap-Screw-M2x12mm.html",
+    "type": "documentation",
+    "authority": "supplier",
+    "fetched_at": "2026-10-03T14:16:18Z",
+    "sha256": "bd31e6d97487617efe2d4c424311d46ac001773ef7b42c2e6b3c98123b5b4e0a",
+    "supports": [
+      "M2 x 12 mm, 304 (A2) stainless, ISO 4762 (DIN 912)",
+      "dk max 3.8, k max 2.0, drive 1.5, b min 16, pitch 0.40"
+    ]
+  }
+]

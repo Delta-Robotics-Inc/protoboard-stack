@@ -1,0 +1,274 @@
+# The stack on Linux, macOS and Windows, for every pull request and every push
+# to main. This repository is checked out as protoboard-stack/, with UHD and the
+# UHD viewer beside it from their public repositories at pinned tags
+# (.github/actions/workspace/action.yml). No secret is read: fork pull
+# requests run the same jobs.
+#
+#   linux    the whole suite: type-check, the lints, every test, the eval cases
+#            (scripted host), and check and build on every example
+#   macos    the tests of what differs on a Mac (Python and browser lookups, the
+#            dev server and the viewer's connection), the templates in a path
+#            with spaces, an example, and the extension's integration test in
+#            a real VS Code
+#   windows  the same for Windows (the sign-in link's opener, the PATH entry),
+#            from Git Bash and from PowerShell; the whole suite reports there
+#            without failing the run until it passes once (docs/ci.md)
+#
+# Run by hand (Actions > CI > Run workflow) with `cad` to add the Python CAD
+# steps: build123d installed, the CAD generator tests, `tools install cad`
+# and `doctor` on an example.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      cad:
+        description: Also run the Python CAD steps (installs build123d; adds a few minutes)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# One run per branch: a later push cancels the run before it. Fork pull
+# requests group by their own repository.
+concurrency:
+  group: ci-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  NPM_CONFIG_PROGRESS: "false"
+  NPM_CONFIG_UPDATE_NOTIFIER: "false"
+
+jobs:
+  linux:
+    name: Linux (type-check, lints, every test, evals, examples)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.1
+        with:
+          path: protoboard-stack
+          persist-credentials: false
+      - uses: ./protoboard-stack/.github/actions/workspace
+
+      - name: Python with build123d (CAD steps only)
+        if: ${{ inputs.cad }}
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        with:
+          python-version: "3.12"
+      - name: Install build123d and scipy (CAD steps only)
+        if: ${{ inputs.cad }}
+        run: |
+          python -m venv "$RUNNER_TEMP/venv-cad"
+          "$RUNNER_TEMP/venv-cad/bin/pip" install --quiet build123d==0.13.0 numpy==2.5.3 scipy==1.18.1
+          echo "PROTOBOARD_PYTHON=$RUNNER_TEMP/venv-cad/bin/python" >>"$GITHUB_ENV"
+      # The CAD tests run when PROTOBOARD_PYTHON names a Python with build123d; an empty value turns their
+      # fallbacks off, so they run only when asked for (packages/core/test/cad-python.ts).
+      - name: No CAD Python unless asked for
+        if: ${{ !inputs.cad }}
+        run: echo "PROTOBOARD_PYTHON=" >>"$GITHUB_ENV"
+
+      - name: Type-check
+        working-directory: protoboard-stack
+        run: npm run typecheck
+      - name: Lints (brand spelling, npm scope, licence files, nothing presents the older web app)
+        working-directory: protoboard-stack
+        run: |
+          npm run lint:brand
+          npm run lint:scope
+          npm run lint:licence
+          npm run lint:alpha
+      - name: Tests
+        working-directory: protoboard-stack
+        env:
+          # the eval cases run once, in the next step
+          PROTOBOARD_SKIP_EVAL_CASES: "1"
+        run: npm test
+      - name: Eval cases (scripted host)
+        working-directory: protoboard-stack
+        run: |
+          status=0
+          node packages/cli/bin/protoboard.mjs evals --ci --cwd . || status=$?
+          if [ -f .protoboard/evals/latest.md ]; then cat .protoboard/evals/latest.md >>"$GITHUB_STEP_SUMMARY"; fi
+          exit "$status"
+      - name: check and build every example
+        working-directory: protoboard-stack
+        run: |
+          for config in examples/*/protoboard.config.ts; do
+            ex="$(dirname "$config")"
+            echo "::group::$ex"
+            node packages/cli/bin/protoboard.mjs check --cwd "$ex"
+            node packages/cli/bin/protoboard.mjs build --cwd "$ex"
+            echo "::endgroup::"
+          done
+      - name: tools install cad, then doctor (CAD steps only)
+        if: ${{ inputs.cad }}
+        working-directory: protoboard-stack/examples/quadcopter-5in
+        run: |
+          node ../../packages/cli/bin/protoboard.mjs tools install cad --python "$PROTOBOARD_PYTHON"
+          node ../../packages/cli/bin/protoboard.mjs doctor
+
+  macos:
+    name: macOS (Mac-specific tests, templates, integration test)
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.1
+        with:
+          path: protoboard-stack
+          persist-credentials: false
+      - uses: ./protoboard-stack/.github/actions/workspace
+
+      - name: What this Mac gives the stack
+        working-directory: protoboard-stack
+        run: node scripts/macos/probe.mjs
+
+      - name: Unit tests (viewer connection, Python selection, browser lookup, dev server, agents, setup)
+        working-directory: protoboard-stack
+        run: >
+          npx vitest run
+          packages/vscode-protoboard/test/devlink.test.ts
+          packages/vscode-protoboard/test/dev.test.ts
+          packages/core/test/python.test.ts
+          packages/core/test/browser.test.ts
+          packages/core/test/tools.test.ts
+          packages/core/test/agents.test.ts
+          packages/cli/test/dev.test.ts
+          packages/cli/test/setup.test.ts
+
+      - name: init, check and build on every template in a path with spaces
+        working-directory: protoboard-stack
+        run: node scripts/windows/template-project.mjs
+
+      - name: check and build (the quadcopter example)
+        working-directory: protoboard-stack/examples/quadcopter-5in
+        run: |
+          node ../../packages/cli/bin/protoboard.mjs check
+          node ../../packages/cli/bin/protoboard.mjs build
+
+      - name: tools install cad, doctor, then check and build with CAD (CAD steps only)
+        if: ${{ inputs.cad }}
+        working-directory: protoboard-stack/examples/smart-bottle
+        run: |
+          brew install poppler
+          node ../../packages/cli/bin/protoboard.mjs tools install cad
+          node ../../packages/cli/bin/protoboard.mjs doctor
+          node ../../packages/cli/bin/protoboard.mjs check
+          node ../../packages/cli/bin/protoboard.mjs build
+
+      - name: The extension's integration test, VS Code stable
+        working-directory: protoboard-stack/packages/vscode-protoboard
+        env:
+          PROTOBOARD_TEST_LOGS: ${{ runner.temp }}/vscode-logs
+        run: npm run test:integration
+
+      - name: Keep VS Code's logs and the extension's log
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: macos-vscode-logs
+          path: ${{ runner.temp }}/vscode-logs
+          if-no-files-found: ignore
+          retention-days: 14
+
+  windows:
+    name: Windows (Windows-specific tests, templates, integration test)
+    runs-on: windows-latest
+    timeout-minutes: 100
+    steps:
+      # Before any checkout: files arrive as they are in the repository (LF; vendored parts are pinned by
+      # digest), and paths longer than 260 characters are allowed.
+      - name: Git settings for Windows (no line-ending conversion, long paths)
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+          git config --global core.longpaths true
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.1
+        with:
+          path: protoboard-stack
+          persist-credentials: false
+      - uses: ./protoboard-stack/.github/actions/workspace
+        id: workspace
+
+      - name: The CLI starts (Git Bash)
+        working-directory: protoboard-stack
+        run: |
+          node packages/cli/bin/protoboard.mjs --version
+          node packages/cli/bin/protoboard.mjs init --list
+      - name: The CLI starts (PowerShell)
+        shell: pwsh
+        working-directory: protoboard-stack
+        run: |
+          node packages/cli/bin/protoboard.mjs --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node packages/cli/bin/protoboard.mjs doctor
+          exit $LASTEXITCODE
+
+      # The suites of the agents' set-up and of `protoboard setup` assume a POSIX file system in their fixtures
+      # (docs/ci.md, "Windows"): they are in the whole suite below, which reports, until they run here.
+      - name: Unit tests (sign-in link, PATH entry)
+        working-directory: protoboard-stack
+        run: >
+          npx vitest run
+          packages/cli/test/open-url.test.ts
+          packages/core/test/path-setup.test.ts
+
+      - name: init, check and build on every template in a path with spaces (Git Bash)
+        working-directory: protoboard-stack
+        run: node scripts/windows/template-project.mjs
+      - name: init, check and build on a template in a path with spaces (PowerShell)
+        shell: pwsh
+        working-directory: protoboard-stack
+        run: |
+          node scripts/windows/template-project.mjs drone
+          exit $LASTEXITCODE
+
+      - name: check and build (the quadcopter example)
+        working-directory: protoboard-stack/examples/quadcopter-5in
+        run: |
+          node ../../packages/cli/bin/protoboard.mjs check
+          node ../../packages/cli/bin/protoboard.mjs build
+
+      # Known to fail on one path comparison (docs/ci.md, "Windows"): it reports, and does not fail the run,
+      # until that is fixed. Then remove continue-on-error.
+      - name: The extension's integration test, VS Code stable (reports)
+        continue-on-error: true
+        working-directory: protoboard-stack/packages/vscode-protoboard
+        env:
+          PROTOBOARD_TEST_LOGS: ${{ runner.temp }}/vscode-logs
+        run: npm run test:integration
+
+      # Everything else, on main and by hand only. Until it has passed on Windows once it reports and does not
+      # fail the run: read its summary, fix or file what it finds, then remove continue-on-error.
+      - name: The whole test suite (reports)
+        id: suite
+        if: ${{ !cancelled() && steps.workspace.outcome == 'success' && (github.ref_name == 'main' || github.event_name == 'workflow_dispatch') }}
+        continue-on-error: true
+        timeout-minutes: 45
+        working-directory: protoboard-stack
+        env:
+          PROTOBOARD_SKIP_EVAL_CASES: "1"
+        run: npx vitest run --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/vitest.json"
+      - name: The whole test suite, as a summary
+        if: ${{ !cancelled() && steps.suite.outcome != 'skipped' }}
+        working-directory: protoboard-stack
+        run: node scripts/windows/suite-summary.mjs "$RUNNER_TEMP/vitest.json" >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Keep VS Code's logs, the extension's log and the suite's results
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: windows-logs
+          path: |
+            ${{ runner.temp }}/vscode-logs
+            ${{ runner.temp }}/vitest.json
+          if-no-files-found: ignore
+          retention-days: 14

@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-parts",
+    "module": "panasonic-eeu-fr1v471",
+    "config": "parts/local/panasonic-eeu-fr1v471/cad.config.ts",
+    "configDigest": "sha256:258c1a48e89d3172f9561acac2f926136ebf9db8da4d1d408980c7f6e83192ae",
+    "moduleDigest": "sha256:2f2669d935d3650feb357480597988a0b5bb6fcf05a5d8141150dbda7bd05e94"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:b4f7eec33a23177f9143fa0f7cadb59092c52bc090720c305a92c0a80c31e5d6",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:20:03.439Z",
+  "status": "succeeded",
+  "summary": "panasonic-eeu-fr1v471: body.step, body.glb, body.manifest.json in parts/local/panasonic-eeu-fr1v471/out",
+  "outputs": [
+    {
+      "path": "parts/local/panasonic-eeu-fr1v471/out/body.step",
+      "digest": "sha256:af5e9069aba510ff55fa7b25ebf47b0cc530fbaacead995182a912c88f515b72",
+      "bytes": 21230,
+      "description": "panasonic-eeu-fr1v471: body with one named sub-shape per interface feature"
+    },
+    {
+      "path": "parts/local/panasonic-eeu-fr1v471/out/body.glb",
+      "digest": "sha256:027371573f3ef1258ec9a9a508cab89f3699695d3e67b52095cd49ed314f1dc7",
+      "bytes": 47092,
+      "description": "panasonic-eeu-fr1v471: viewer mesh"
+    },
+    {
+      "path": "parts/local/panasonic-eeu-fr1v471/out/body.manifest.json",
+      "digest": "sha256:6fcc2eb189d10a81cc85f9f2f4e832b20f367e01df4195637a48428e571845eb",
+      "bytes": 865,
+      "description": "panasonic-eeu-fr1v471: geometry manifest (features that carry interfaces, volume)"
+    }
+  ],
+  "data": {
+    "module": "panasonic-eeu-fr1v471",
+    "out": "parts/local/panasonic-eeu-fr1v471/out",
+    "volume_mm3": 1254.841,
+    "interfaces": []
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T14:20:08.660Z"
+}

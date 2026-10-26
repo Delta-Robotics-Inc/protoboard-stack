@@ -1,0 +1,92 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "release",
+  "extension": {
+    "id": "@protoboard/ext-release",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "allow-dirty": "true",
+    "check": "false"
+  },
+  "projectDigest": "sha256:fc12584971d5ab4f40f39d01a08ac49c8ca6e12242baf558e466155d62577a2f",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T14:29:38.043Z",
+  "status": "failed",
+  "summary": "release refused: 12 problem(s); first: dolphinrc-m3-grommet-esc has no recorded cad:export (parts/local/dolphinrc-m3-grommet-esc/out/ cannot be traced to a run); run `protoboard run cad:export --module dolphinrc-m3-grommet-esc`",
+  "outputs": [],
+  "data": {
+    "status": "failed",
+    "summary": "release refused: 12 problem(s); first: dolphinrc-m3-grommet-esc has no recorded cad:export (parts/local/dolphinrc-m3-grommet-esc/out/ cannot be traced to a run); run `protoboard run cad:export --module dolphinrc-m3-grommet-esc`",
+    "diagnostics": [
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "dolphinrc-m3-grommet-esc has no recorded cad:export (parts/local/dolphinrc-m3-grommet-esc/out/ cannot be traced to a run); run `protoboard run cad:export --module dolphinrc-m3-grommet-esc`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "dolphinrc-m3-grommet-fc has no recorded cad:export (parts/local/dolphinrc-m3-grommet-fc/out/ cannot be traced to a run); run `protoboard run cad:export --module dolphinrc-m3-grommet-fc`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "iso-10511-m2-nyloc-nut has no recorded cad:export (parts/local/iso-10511-m2-nyloc-nut/out/ cannot be traced to a run); run `protoboard run cad:export --module iso-10511-m2-nyloc-nut`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "iso-4762-m2x12 has no recorded cad:export (parts/local/iso-4762-m2x12/out/ cannot be traced to a run); run `protoboard run cad:export --module iso-4762-m2x12`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "iso-4762-m2x18 has no recorded cad:export (parts/local/iso-4762-m2x18/out/ cannot be traced to a run); run `protoboard run cad:export --module iso-4762-m2x18`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "iso-4762-m2x5 has no recorded cad:export (parts/local/iso-4762-m2x5/out/ cannot be traced to a run); run `protoboard run cad:export --module iso-4762-m2x5`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "iso-4762-m3x8 has no recorded cad:export (parts/local/iso-4762-m3x8/out/ cannot be traced to a run); run `protoboard run cad:export --module iso-4762-m3x8`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "m2-nylon-spacer-3mm has no recorded cad:export (parts/local/m2-nylon-spacer-3mm/out/ cannot be traced to a run); run `protoboard run cad:export --module m2-nylon-spacer-3mm`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "m2-nylon-spacer-5mm has no recorded cad:export (parts/local/m2-nylon-spacer-5mm/out/ cannot be traced to a run); run `protoboard run cad:export --module m2-nylon-spacer-5mm`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "m3-aluminium-standoff-30mm has no recorded cad:export (parts/local/m3-aluminium-standoff-30mm/out/ cannot be traced to a run); run `protoboard run cad:export --module m3-aluminium-standoff-30mm`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "meps-m5-flanged-lock-nut has no recorded cad:export (parts/local/meps-m5-flanged-lock-nut/out/ cannot be traced to a run); run `protoboard run cad:export --module meps-m5-flanged-lock-nut`"
+      },
+      {
+        "code": "REL_STALE",
+        "severity": "error",
+        "message": "motor-screw-m3x8 has no recorded cad:export (parts/local/motor-screw-m3x8/out/ cannot be traced to a run); run `protoboard run cad:export --module motor-screw-m3x8`"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-03T14:29:38.319Z"
+}

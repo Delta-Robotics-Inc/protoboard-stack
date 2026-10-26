@@ -1,0 +1,36 @@
+{
+  "title": "Wearable: BLE board on a LiPo cell",
+  "description": "The core of a BLE wearable: a main board with the Raytac MDBT50Q-1MV2 (nRF52840), a 3.0 V LDO, an MCP73831 charger from USB-C and SWD pads, on a 200 mAh LP402030 cell (a project-researched part) by its own leads. PCB by tscircuit, Zephyr board files, and an enclosure folder for the case.",
+  "derivedFrom": "examples/wearable-watch",
+  "extensions": [
+    "@protoboardai/ext-hardware",
+    "@protoboardai/ext-parts",
+    "@protoboardai/ext-sourcing",
+    "@protoboardai/ext-tscircuit",
+    "@protoboardai/ext-zephyr",
+    "@protoboardai/ext-enclosure-cad",
+    "@protoboardai/ext-harness-cad",
+    "@protoboardai/ext-docs",
+    "@protoboardai/ext-release"
+  ],
+  "dependencies": [
+    "@protoboardai/ext-frame-cad"
+  ],
+  "catalogParts": [
+    "raytac-mdbt50q-1mv2@3",
+    "microchip-mcp73831t-2aci-ot@3",
+    "ti-tps7a0230pdbv@3",
+    "gct-usb4105-gf-a@3",
+    "st-usblc6-2sc6@3",
+    "murata-grm155@3",
+    "murata-grm188@3",
+    "yageo-rc0402@3"
+  ],
+  "overrides": {
+    "circuit-json": "0.0.510",
+    "@tscircuit/pcb-trace-linter": "https://codeload.github.com/tscircuit/pcb-trace-linter/tar.gz/4c035f9d40ffb03ba547a08975b5e64b20371123"
+  },
+  "npmrc": {
+    "legacy-peer-deps": "true"
+  }
+}

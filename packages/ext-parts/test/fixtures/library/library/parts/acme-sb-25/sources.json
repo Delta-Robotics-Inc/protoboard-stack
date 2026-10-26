@@ -1,0 +1,12 @@
+[
+  {
+    "id": "src_drawing",
+    "title": "ACME SB-25 drawing (fixture)",
+    "url": "https://example.com/acme-sb-25.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T00:00:00Z",
+    "sha256": null,
+    "supports": ["mounting pattern", "dimensions", "operating temperature"]
+  }
+]

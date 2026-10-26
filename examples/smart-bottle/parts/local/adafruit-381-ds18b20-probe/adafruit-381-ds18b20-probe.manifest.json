@@ -1,0 +1,104 @@
+{
+  "artifact": "adafruit-381-ds18b20-probe",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "3ac256aec1669a0218b52c753451264b208219197bcb16b7497eb7bbdf299795",
+  "units": "mm",
+  "volume_mm3": 1040.566,
+  "bodies": {
+    "stainless_tube": 848.23,
+    "heat_shrink_sleeve": 187.035,
+    "wire_red": 1.767,
+    "wire_blue_or_black": 1.767,
+    "wire_yellow_or_white": 1.767
+  },
+  "features": {
+    "tube": {
+      "area_mm2": 565.487,
+      "centroid": [
+        0.0,
+        0.0,
+        15.0
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          0.0,
+          0.0,
+          15.0
+        ]
+      ],
+      "diameter_mm": 6.0
+    },
+    "tube_tip": {
+      "area_mm2": 28.274,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "cable_exit": {
+      "area_mm2": 31.172,
+      "centroid": [
+        0.0,
+        0.0,
+        36.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "wire_vdd": {
+      "area_mm2": 1.767,
+      "centroid": [
+        0.0,
+        0.9,
+        37.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "wire_gnd": {
+      "area_mm2": 1.767,
+      "centroid": [
+        -0.779,
+        -0.45,
+        37.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "wire_dq": {
+      "area_mm2": 1.767,
+      "centroid": [
+        0.779,
+        -0.45,
+        37.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

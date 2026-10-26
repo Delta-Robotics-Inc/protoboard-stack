@@ -1,0 +1,46 @@
+/* The web shell's stylesheet: Tailwind 4 utilities over the viewer's token
+ * theme (the same names as the viewer's own components), no Preflight (the
+ * viewer's rules set their own base). */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "@deltarobotics/uhd-viewer/tailwind-theme.css";
+@source "./";
+@source "../../views/src";
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+}
+
+/* the parts views' controls start bare (no Preflight): utilities draw them */
+@layer base {
+  .pb-parts,
+  .pb-parts :where(*, ::before, ::after) {
+    box-sizing: border-box;
+  }
+  .pb-parts :where(button, input, select, textarea) {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0 solid;
+    padding: 0;
+    margin: 0;
+  }
+  .pb-parts :where(h1, h2, h3, p, ul, ol) {
+    margin: 0;
+    padding: 0;
+  }
+  .pb-parts :where(ul, ol) {
+    list-style: none;
+  }
+  .pb-parts :where(img, svg) {
+    display: block;
+  }
+  .pb-parts :where(code) {
+    font-family: var(--uhd-font-mono);
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "lipol-lp503450",
+    "repairs": "none; re-verified with part-verify when vendored into smart-bottle (0 errors, 0 warnings)"
+  },
+  "projectDigest": "sha256:56ca3b6be82540a59e7351f775b991773eae9f0368448a271b3bfbf1e58a0d91",
+  "tools": [],
+  "startedAt": "2026-10-03T08:23:10.388Z",
+  "status": "succeeded",
+  "summary": "lipol-lp503450: audit 16/16, 4 assumption(s), 6 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/lipol-lp503450/verification.json",
+      "digest": "sha256:375169f251812b5d9988545d9668541ac148f878d64a31f856f282f19a7e5992",
+      "bytes": 781,
+      "description": "lipol-lp503450: verification record"
+    }
+  ],
+  "data": {
+    "partId": "lipol-lp503450",
+    "recorded_at": "2026-10-03T08:23:10.401Z",
+    "audit": {
+      "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+      "checked": 16,
+      "confirmed": 16,
+      "wrong": 0,
+      "unsupported": 0
+    },
+    "repairs": "none; re-verified with part-verify when vendored into smart-bottle (0 errors, 0 warnings)",
+    "assumptions": [
+      "charge and discharge temperature",
+      "length includes the PCM",
+      "lead side and order",
+      "lead wire and length"
+    ],
+    "data_gaps": [
+      "manufacturer datasheet / drawing",
+      "manufacturer CAD",
+      "temperature ranges",
+      "PCM thresholds",
+      "lead gauge, length, strip length, position",
+      "pulse discharge, swelling allowance, self-discharge"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T08:23:10.402Z"
+}

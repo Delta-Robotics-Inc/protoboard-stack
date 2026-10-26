@@ -1,0 +1,35 @@
+{
+  "title": "IoT: Wi-Fi/BLE board on a LiPo cell",
+  "description": "The core of a battery-powered connected device: a main board with the ESP32-C3-MINI-1 (Wi-Fi + BLE), a TPS63020 3V3 buck-boost, an MCP73831 charger and IP67 USB-C, on a 1000 mAh LP503450 cell (a project-researched part) by its own leads. PCB by tscircuit, ESP-IDF pin header and sdkconfig, and an enclosure folder for the housing.",
+  "derivedFrom": "examples/smart-bottle",
+  "extensions": [
+    "@protoboardai/ext-hardware",
+    "@protoboardai/ext-parts",
+    "@protoboardai/ext-sourcing",
+    "@protoboardai/ext-tscircuit",
+    "@protoboardai/ext-esp-idf",
+    "@protoboardai/ext-enclosure-cad",
+    "@protoboardai/ext-harness-cad",
+    "@protoboardai/ext-frame-cad",
+    "@protoboardai/ext-docs",
+    "@protoboardai/ext-release"
+  ],
+  "catalogParts": [
+    "espressif-esp32-c3-mini-1-h4x@3",
+    "ti-tps63020dsjr@3",
+    "coilcraft-xfl4020-152me@3",
+    "microchip-mcp73831t-2aci-mc@3",
+    "gct-usb4720-03-a@3",
+    "st-usblc6-2sc6@3",
+    "murata-grm155@3",
+    "murata-grm188@3",
+    "yageo-rc0402@3"
+  ],
+  "overrides": {
+    "circuit-json": "0.0.510",
+    "@tscircuit/pcb-trace-linter": "https://codeload.github.com/tscircuit/pcb-trace-linter/tar.gz/4c035f9d40ffb03ba547a08975b5e64b20371123"
+  },
+  "npmrc": {
+    "legacy-peer-deps": "true"
+  }
+}

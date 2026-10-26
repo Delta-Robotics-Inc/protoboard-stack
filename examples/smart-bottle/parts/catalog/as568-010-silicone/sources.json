@@ -1,0 +1,118 @@
+[
+  {
+    "id": "src_parker",
+    "title": "Parker O-Ring Handbook, catalog ORD 5700A/US (2001 edition)",
+    "url": "http://robots.engin.umich.edu/uploads/ORD5700.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T22:05:00Z",
+    "sha256": "bf13089d83b657136627c5232e76eedfcfb75a80eedaa27a490b2568f99bcabc",
+    "supports": [
+      "Sizes, 'Parker Series 2-XXX O-Ring Sizes' (PDF p. 227): 2-010 = AS 568A -010, nominal 1/4 x 3/8 x 1/16 in; actual ID .239 +-.005 in, W .070 +-.003 in; basic volume .0037 cu in; metric ID 6,07 +-0,13, W 1,78 +-0,08 mm",
+      "Design Chart 4-1, Industrial Static Seal Glands (p. 4-5, PDF p. 88), sizes 004-050: gland depth L .050-.052 in, squeeze .015-.023 in (22-32 %), diametral clearance .002-.005 in, groove width G .093-.098 in (no Parbak), groove radius .005-.015 in; note (c): reduce maximum diametral clearance 50 % with silicone or fluorosilicone O-rings",
+      "Design Table 4-1, gland dimensions for industrial static seals (p. 4-6, PDF p. 89), 2-010: mean OD (ref) .379; male gland bore A .375 +.002, groove B-1 .275; female gland tube OD B .250 +.000/-.002, groove A-1 .350, throat D .252 (groove width from Design Chart 4-1)",
+      "2.2.17 Silicone Rubber (VMQ) (p. 2-9, PDF p. 21): low tensile strength, poor tear and wear resistance; heat resistance to 232 C, cold flexibility to -59 C; physiologically neutral; compatible with water",
+      "3.1.5 Lubrication (PDF p. 53): Super-O-Lube is a high-viscosity silicone oil usable on all rubber polymers, including silicones, which 'require special consideration'"
+    ],
+    "note": "Parker publishes the handbook (current edition at https://discover.parker.com/Parker-ORing-Handbook-ORD-5700, which needs a form); the copy read is the 2001 edition hosted by the University of Michigan. The AS568 size row and gland tables are the parts used. Saved as .research/downloads/parker-ord5700a.pdf."
+  },
+  {
+    "id": "src_apple",
+    "title": "Apple Rubber, AS568 Standard O-Rings Quick Reference Chart",
+    "url": "https://www.applerubber.com/src/pdf/as568-standard-size-o-rings.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T22:05:00Z",
+    "sha256": "23d3fbaa360410ef5b663a9b07b7092bb6c2fc3ac94575f4a5279eb8a38dc01c",
+    "supports": [
+      "AS568 is the SAE Aerospace size standard; -010 ID .239 +-.005 in, CS .070 +-.003 in, nominal 1/4 ID x 3/8 OD x 1/16 CS",
+      "OD is for reference only; O-rings are specified by ID and cross-section",
+      "standard durometer 70 Shore A, tolerance +-5",
+      "O-Ring Gland Design for Static Seals, CS .070: radial gland depth .050-.055 in, radial squeeze .012-.023 in (18-32 %), axial gland depth .049-.054 in, diametrical clearance .004 in max, groove width .105 in (no backup ring), groove radius .005-.015 in"
+    ],
+    "note": "O-ring manufacturer's chart. Saved as .research/downloads/applerubber-as568.pdf."
+  },
+  {
+    "id": "src_chart",
+    "title": "The O-Ring Handbook (oringhandbook.com): AS568 O-Ring Size Chart",
+    "url": "https://oringhandbook.com/as568-o-ring-size-chart/",
+    "type": "documentation",
+    "authority": "community",
+    "fetched_at": "2026-10-02T22:00:00Z",
+    "sha256": "3fea83cb22222c620705d8435dce4ff8bc0a639ebd0d72e854f13751d22bd374",
+    "supports": [
+      "-010 row: ID 0.239 +-.005 in, CS 0.070 +-.003 in, OD 0.379 in; ID 6.07 +-0.13 mm, CS 1.78 +-0.08 mm, OD 9.63 mm"
+    ],
+    "note": "The chart the smart-bottle brief cites as [B23]. Used as a cross-check of src_parker and src_apple, whose values it matches. Saved as .research/downloads/oringhandbook-chart.html."
+  },
+  {
+    "id": "src_product",
+    "title": "The O-Ring Store: AS568-010 S70 FDA Silicone (VMQ) 70 Duro O-Ring [S70010]",
+    "url": "https://www.theoringstore.com/store/index.php?main_page=product_info&products_id=4728",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-02T22:08:00Z",
+    "sha256": "390e73856ae3398000c1d7d5a95b0eb172d274083e0116c2f0227eed5eba2fc5",
+    "supports": [
+      "identity: model S70010, AS568-010, silicone (VMQ) 70 durometer, FDA",
+      "1/4 in ID x 3/8 in OD x 1/16 in CS, brick red",
+      "operating temperature: heat resistance up to approximately 400 F (204 C), cold flexibility down to approximately -75 F (-59 C)",
+      "moderate water resistance; compatible with beer, coffee, whiskey and milk",
+      "minimum order quantity 100; links the compound data sheet (src_compound)"
+    ],
+    "note": "The supplier SKU recorded as part_number. ISO 9001 distributor. Saved as .research/downloads/theoringstore-s70010.html (text in theoringstore-s70010.txt)."
+  },
+  {
+    "id": "src_compound",
+    "title": "The O-Ring Store: FDA Silicone 70 Durometer O-Ring product data sheet, compound TORS VMQ-70 (legacy S70), Revision A",
+    "url": "https://www.theoringstore.com/store/pdfs/VMQ-S70-O-RingDataSheet.pdf",
+    "type": "datasheet",
+    "authority": "distributor",
+    "fetched_at": "2026-10-02T22:12:00Z",
+    "sha256": "0e7e26c86215f2d2e3c5ba18f2e6453845229860bd5dc3cc999652dcedeea570",
+    "supports": [
+      "compound TORS VMQ-70 (legacy S70): methyl vinyl siloxane, ISO 1629 VMQ; 70 +-5 Shore A; compression or transfer moulded",
+      "FDA compliant to 21 CFR 177.2600",
+      "colour not specified on the compound record (confirm on order)",
+      "specific gravity 1.38 (ASTM D297-13)",
+      "compression set 15 % (22 h at 175 C); water 70 h at 100 C: -2 Shore A, +3 % volume; brittleness pass at -55 C",
+      "service temperature -80 F to +400 F (-62 C to +204 C) continuous dry air; in hot water below +212 F (+100 C)",
+      "static compound only; poor abrasion and cut resistance; high gas permeability",
+      "static squeeze 15-30 %, stretch on installation under 5 %, gland fill 65-85 %, static surface finish 16-32 microinch Ra, deburr and chamfer lead-ins",
+      "never use silicone grease as an installation lubricant (swells this compound); use a compatible FDA-grade lubricant"
+    ],
+    "note": "The seller's own compound data sheet for src_product. Saved as .research/downloads/tors-vmq-s70-datasheet.pdf."
+  },
+  {
+    "id": "src_alt_product",
+    "title": "Marco Sealing Solutions: S1000-010, AS568-010 O-ring, silicone 70A, orange, FDA",
+    "url": "https://www.marcorubber.com/product/S1000-010",
+    "type": "documentation",
+    "authority": "distributor",
+    "fetched_at": "2026-10-02T22:10:00Z",
+    "sha256": "66b63b6cc8a926c756f57eb094159fafc8f0080276d339de7349c3a60fa76890",
+    "supports": [
+      "second source: S1000-010, AS568-010, compound S1000, silicone (VMQ), 70 Shore A, orange",
+      "compliant to FDA 21 CFR 177.2600 for food and beverage contact",
+      "cross section 0.070 in (1.78 mm), ID 0.239 in (6.07 mm), OD 0.379 in (9.63 mm)",
+      "high temp 400 F (205 C), low temp -75 F (-60 C)"
+    ],
+    "note": "Alternate supplier for the same size and grade. Saved as .research/downloads/marco-s1000-010.html."
+  },
+  {
+    "id": "src_alt_compound",
+    "title": "Marco Sealing Solutions: S1000 material summary, 70 durometer, orange, FDA compliant to 21 CFR 177.2600 (Revision 1, 04-2021)",
+    "url": "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T22:14:00Z",
+    "sha256": "c749e78cec57a6fb44c159778c15a572e9189c9119916b43e3975a323c6074cc",
+    "supports": [
+      "S1000: 70A silicone, FDA 21 CFR 177.2600, peroxide cure, ASTM D2000 M7GE705 A19 B37 EA14 EO16 EO36 F19",
+      "service temperature -75 F to 400 F; silicones are for static applications",
+      "hardness 70 +-5 (typ 68) Shore A; tensile 725 psi min (typ 899); elongation 150 % min (typ 219)",
+      "compression set 30 % max (typ 12) at 22 h, 175 C; water 70 h at 100 C: hardness +-5 (typ -2), volume +-5 % (typ +3)"
+    ],
+    "note": "Marco's own compound sheet (Marco moulds to its compound numbers), so authority manufacturer for the compound. Saved as .research/downloads/marco-s1000-datasheet.pdf."
+  }
+]

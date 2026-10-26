@@ -1,0 +1,67 @@
+ACME Semiconductor                                       LDO3300 Series
+300 mA Low-Dropout Linear Regulator                      Rev. 3, March 2026
+https://acme.example/ldo3300.pdf
+
+==== Page 1 ====
+
+1 Features
+- Input voltage range: 2.5 V to 6.0 V
+- Fixed output voltages: 1.8 V, 2.5 V, 3.3 V
+- Output current: 300 mA
+- Dropout voltage: 180 mV typical at 300 mA (3.3 V version)
+- Output accuracy: ±1.5 % at 25 °C
+- Quiescent current: 45 µA typical
+- Active-high enable with internal 2 MΩ pull-down
+- Stable with a 1 µF ceramic output capacitor
+- Thermal shutdown and current limit
+- Junction temperature range: -40 °C to +125 °C
+- Package: SOT-23-5
+
+2 Ordering information
+  Part number          Output   Package    Packing
+  LDO3300-18SOT-TR     1.8 V    SOT-23-5   Tape and reel, 3000
+  LDO3300-25SOT-TR     2.5 V    SOT-23-5   Tape and reel, 3000
+  LDO3300-33SOT-TR     3.3 V    SOT-23-5   Tape and reel, 3000
+  LDO3300-33SOT        3.3 V    SOT-23-5   Bulk
+
+==== Page 2 ====
+
+3 Pin configuration and functions (SOT-23-5, top view)
+
+  Pin   Name   I/O   Description
+  1     VIN    I     Input supply. Bypass with 1 µF to GND.
+  2     GND    —     Ground.
+  3     EN     I     Enable. High = on (> 1.2 V), low = off (< 0.4 V).
+                     Internal 2 MΩ pull-down. Do not leave floating in noisy
+                     environments.
+  4     NC     —     No internal connection. Leave open or connect to GND.
+  5     VOUT   O     Regulated output. Bypass with ≥ 1 µF ceramic to GND.
+
+4 Absolute maximum ratings
+  VIN, EN to GND ................................. -0.3 V to 6.5 V
+  VOUT to GND .................................... -0.3 V to VIN + 0.3 V
+  Junction temperature ........................... +150 °C
+  Storage temperature ............................ -65 °C to +150 °C
+
+5 Recommended operating conditions
+  VIN ............................................ 2.5 V to 6.0 V
+  EN ............................................. 0 V to VIN
+  Output current ................................. 0 mA to 300 mA
+  Junction temperature ........................... -40 °C to +125 °C
+
+==== Page 3 ====
+
+6 Electrical characteristics (3.3 V version)
+  VIN = 4.3 V, IOUT = 1 mA, CIN = COUT = 1 µF, TJ = 25 °C unless noted.
+
+  Parameter                     Conditions             Min     Typ     Max    Unit
+  Output voltage                                       3.250   3.300   3.350  V
+  Dropout voltage               IOUT = 300 mA                  180     260    mV
+  Quiescent current             IOUT = 0 mA                    45      70     µA
+  Shutdown current              EN = 0 V                       0.1     1      µA
+  Current limit                                        350     450            mA
+  EN high threshold                                    1.2                    V
+  EN low threshold                                                     0.4    V
+  Thermal shutdown                                             160            °C
+
+7 Package: SOT-23-5, 2.9 mm × 1.6 mm body, 1.1 mm max height, 0.95 mm pitch.

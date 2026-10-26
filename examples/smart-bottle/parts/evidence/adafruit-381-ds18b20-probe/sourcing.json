@@ -1,0 +1,61 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "adafruit-381-ds18b20-probe",
+  "manufacturer": "Adafruit Industries",
+  "mpn": "381 (ADA381)",
+  "need": {
+    "quantity": 1,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "Adafruit",
+      "supplier_sku": "381",
+      "url": "https://www.adafruit.com/product/381",
+      "as_of": "2026-10-03",
+      "via": "api",
+      "moq": 1,
+      "price_breaks": [
+        {
+          "quantity": 1,
+          "unit_price": 9.95,
+          "currency": "USD"
+        },
+        {
+          "quantity": 10,
+          "unit_price": 8.96,
+          "currency": "USD"
+        },
+        {
+          "quantity": 100,
+          "unit_price": 7.96,
+          "currency": "USD"
+        }
+      ],
+      "authorized": true,
+      "market": "US",
+      "note": "Adafruit public product API (/api/product/381): 'in stock'; mpn ADA381",
+      "mpn": "381 (ADA381)"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": false,
+      "note": "not listed (found through the JLCPCB search, which indexes LCSC codes)"
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; no listing with stock or a real price"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

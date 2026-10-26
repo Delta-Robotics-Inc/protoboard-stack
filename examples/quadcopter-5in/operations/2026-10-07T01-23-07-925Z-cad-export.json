@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboardai/ext-frame-cad",
+    "version": "0.1.1"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboardai/ext-frame-cad",
+    "module": "iso-4762-m2x5",
+    "config": "parts/local/iso-4762-m2x5/cad.config.ts",
+    "configDigest": "sha256:686f2d3b970b2aafd4476e7c54b9c05d8b50891aa1758350a1668ef1b33dfe3b",
+    "moduleDigest": "sha256:80c5b5d773e053deac9ff2a9f14593142c19bcc24b76176d8cb187e68f377e75"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:ee706bef3f8bd1d33b860cae803c8801b6e9cb10816c4b16b728174d063ce54f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-07T01:23:07.925Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m2x5: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m2x5/out (34.333 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/iso-4762-m2x5/out/body.step",
+      "digest": "sha256:dadf53b7c360c2c5ab5bcae37c9bc325229bb182a0d3af8a737d5372b704f71a",
+      "bytes": 32519,
+      "description": "iso-4762-m2x5: nominal body"
+    },
+    {
+      "path": "parts/local/iso-4762-m2x5/out/body.glb",
+      "digest": "sha256:17baa660976b40057d3838ffe86138d47b12e51d522b4c72fb182520d750f653",
+      "bytes": 21012,
+      "description": "iso-4762-m2x5: viewer mesh"
+    },
+    {
+      "path": "parts/local/iso-4762-m2x5/out/body.manifest.json",
+      "digest": "sha256:c94114d5d5e6579d76d1c609d1fc66fa21edd3397e4e61b9102a01feb1abae28",
+      "bytes": 540,
+      "description": "iso-4762-m2x5: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "iso-4762-m2x5",
+    "out": "parts/local/iso-4762-m2x5/out",
+    "volume_mm3": 34.333,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-07T01:23:12.359Z"
+}

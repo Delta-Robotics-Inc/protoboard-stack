@@ -1,0 +1,21 @@
+{
+  "partId": "microchip-mcp73831t-2aci-mc",
+  "recorded_at": "2026-10-03T03:01:10.474Z",
+  "audit": null,
+  "repairs": null,
+  "assumptions": [
+    "doubled VDD and VBAT pins",
+    "VBAT voltage lower bound",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "exposed pad nominal size",
+    "doubled VDD / VBAT pins",
+    "PROG logic-high threshold",
+    "VBAT minimum voltage"
+  ],
+  "vocabulary_gaps": [
+    "VBAT is a charge output that shares the cell terminal with the battery's own output. UHD power roles are input/output/ground only; a board net joining the cell (PowerOut) and VBAT (PowerOut) will be reported by the net rule as two drivers. Modelled as power output with capability battery_charge, as on microchip-mcp73831t-2aci-ot; a charge-port role (or a battery charge-input interface) is needed."
+  ]
+}

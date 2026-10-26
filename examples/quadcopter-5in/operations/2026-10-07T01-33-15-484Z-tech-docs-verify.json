@@ -1,0 +1,99 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs-verify",
+  "extension": {
+    "id": "@protoboardai/ext-docs",
+    "version": "0.1.1"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:89b8212a38dd8538fa8e12019ae9b9c58066449153cc8e3ae83a8ed438877c21",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 155.0.8059.39"
+    },
+    {
+      "id": "poppler",
+      "available": true,
+      "detail": "pdfinfo version 24.02.0"
+    }
+  ],
+  "startedAt": "2026-10-07T01:33:15.484Z",
+  "status": "succeeded",
+  "summary": "0 error(s), 0 warning(s), 10 info",
+  "outputs": [
+    {
+      "path": "docs/.review/verify-report.json",
+      "digest": "sha256:309243ebe6b417b145d0d85e84a4d784d59bddc6fd11687cdd1a939a3d35a41a",
+      "bytes": 1836,
+      "description": "verification report"
+    }
+  ],
+  "data": {
+    "findings": [
+      {
+        "doc": "quadcopter-5in-datasheet",
+        "check": "values",
+        "severity": "info",
+        "message": "698 bound values re-resolved against the model"
+      },
+      {
+        "doc": "quadcopter-5in-datasheet",
+        "check": "images",
+        "severity": "info",
+        "message": "4 images checked"
+      },
+      {
+        "doc": "quadcopter-5in-datasheet",
+        "check": "review",
+        "severity": "info",
+        "message": "21 page PNGs in docs/.review/quadcopter-5in-datasheet/ for the visual checklist"
+      },
+      {
+        "doc": "quadcopter-5in-datasheet",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "quadcopter-5in-datasheet",
+        "check": "bom",
+        "severity": "info",
+        "message": "43 BOM lines match docs/quadcopter-5in-bom.json"
+      },
+      {
+        "doc": "quadcopter-5in-assembly-guide",
+        "check": "values",
+        "severity": "info",
+        "message": "78 bound values re-resolved against the model"
+      },
+      {
+        "doc": "quadcopter-5in-assembly-guide",
+        "check": "images",
+        "severity": "info",
+        "message": "80 images checked"
+      },
+      {
+        "doc": "quadcopter-5in-assembly-guide",
+        "check": "review",
+        "severity": "info",
+        "message": "20 page PNGs in docs/.review/quadcopter-5in-assembly-guide/ for the visual checklist"
+      },
+      {
+        "doc": "quadcopter-5in-assembly-guide",
+        "check": "typography",
+        "severity": "info",
+        "message": "text sizes 5.5, 5.8, 6.4, 6.9, 7.6, 8.6, 12, 13.5, 15, 25 pt; fonts ProtoMono, Kode Mono"
+      },
+      {
+        "doc": "quadcopter-5in-assembly-guide",
+        "check": "coverage",
+        "severity": "info",
+        "message": "14/14 mates, 84/84 hardware placements, 20/20 wiring links covered; 14 bodies placed by mates"
+      }
+    ]
+  },
+  "finishedAt": "2026-10-07T01:33:22.234Z"
+}

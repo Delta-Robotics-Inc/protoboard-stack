@@ -1,0 +1,59 @@
+Protoboard Stack: @protoboardai/ext-tscircuit
+Copyright 2026 Delta Robotics, Inc.
+
+This product includes software developed at Delta Robotics, Inc.
+(https://deltaroboticsinc.com).
+
+Licensed under the Apache License, Version 2.0 (the "License").
+See the LICENSE file in this package for full terms.
+
+"Protoboard", the Protoboard logo and the "0" mark are trademarks of
+Delta Robotics, Inc. The License grants no rights to them (section 6);
+see TRADEMARKS.md in the Protoboard Stack repository
+(https://github.com/Delta-Robotics-Inc/protoboard-stack).
+
+This package contains work derived from third-party open-source projects.
+Those derivations and their obligations are listed below.
+
+
+Third-party attributions
+------------------------
+
+1. American-Embedded/kistack
+   https://github.com/American-Embedded/kistack
+   License: MIT (full text below)
+   Copyright 2026 American Embedded, LLC
+   Source commit: 8494dbde095669df081950cbb6b24d08a21e25b0
+
+   Two agent skills shipped with @protoboardai/ext-tscircuit are derived
+   in-house from kistack. They were rewritten for the Protoboard locked-board
+   workflow; no text was copied verbatim.
+
+   - packages/ext-tscircuit/skills/kicad-layout-review/SKILL.md
+     derived from kistack skills/pcb and skills/layout
+   - packages/ext-tscircuit/skills/kicad-cli/SKILL.md
+     derived from kistack skills/export (and the layer-inspection idea of
+     skills/gerbers)
+
+   Not copied or derived: the American Embedded logo (its licence forbids
+   reproduction without written permission); kistack's
+   skills/export/references/ (pages of the KiCad manual, which carries
+   KiCad's own documentation licence); skills/export/scripts/; and the
+   skills that depend on hosted or proprietary services or on share-alike
+   libraries (the bom skill's Zenode API and pcbparts.dev servers, the
+   symbol skill's easyeda2kicad, the footprint skill's KiCad library
+   generators). The KiCad libraries (CC-BY-SA) are not bundled.
+
+
+kistack licence (full text, as published at the source commit)
+--------------------------------------------------------------
+
+Copyright 2026 American Embedded, LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+The American Embedded logo may not be reproduced without express written permission.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

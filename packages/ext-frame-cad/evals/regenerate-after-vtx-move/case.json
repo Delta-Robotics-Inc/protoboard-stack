@@ -1,0 +1,175 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Regenerate the frame's CAD after the transmission module mount moved 5 mm back",
+  "skills": [
+    "frame-cad",
+    "frame-cad-verify"
+  ],
+  "tags": [
+    "cad",
+    "regenerate"
+  ],
+  "requires": [
+    "python-build123d"
+  ],
+  "fixture": {
+    "from": "../../../../examples/quadcopter-5in",
+    "exclude": [
+      "docs"
+    ],
+    "steps": [
+      {
+        "note": "the design change: the DJI O4 transmission module mount moves from x = -45 to x = -50 mm",
+        "replace": {
+          "file": "src/modules/frame/frame.uhd.ts",
+          "find": "frame: { origin: [-45.0, 0, 5], normal: [0, 0, 1], xAxis: [1, 0, 0], symmetryDeg: 90 },",
+          "with": "frame: { origin: [-50.0, 0, 5], normal: [0, 0, 1], xAxis: [1, 0, 0], symmetryDeg: 90 },",
+          "count": 1
+        }
+      }
+    ]
+  },
+  "instruction": "We moved the frame's transmission-module mount (vtx_mount) 5 mm towards the rear, to x = -50 mm, in src/modules/frame/frame.uhd.ts. Bring the frame's CAD up to date with that change so that `npx protoboard check` reports no errors and nothing stale for the frame. Keep the new position. The DJI cable will be re-routed separately; leave the harnesses alone.",
+  "tools": {
+    "read": true,
+    "edit": true,
+    "commands": [
+      "npx protoboard *"
+    ]
+  },
+  "budget": {
+    "turns": 25,
+    "seconds": 900,
+    "usd": 3
+  },
+  "graders": [
+    {
+      "id": "mismatch-fixed",
+      "kind": "fault",
+      "code": "FRAME_CAD_FRAME_MISMATCH",
+      "seeded": [
+        "FRAME_CAD_FRAME_MISMATCH",
+        "FRAME_CAD_STALE"
+      ]
+    },
+    {
+      "id": "frame-current",
+      "kind": "check",
+      "maxErrors": 0,
+      "absent": [
+        "FRAME_CAD_STALE",
+        "FRAME_CAD_EXPORT_STALE",
+        "UHD_GEOMETRY_BINDING"
+      ],
+      "ran": [
+        "ext:@protoboardai/ext-frame-cad/cad:check",
+        "uhd/geometryBindings"
+      ]
+    },
+    {
+      "id": "frame-outputs-valid",
+      "kind": "outputs",
+      "module": "quadcopter-5in-frame"
+    },
+    {
+      "id": "step-regenerated",
+      "kind": "digest",
+      "file": "src/modules/frame/out/body.step",
+      "changed": true
+    },
+    {
+      "id": "dxf-valid",
+      "kind": "format",
+      "file": "src/modules/frame/out/body.dxf",
+      "format": "dxf"
+    },
+    {
+      "id": "position-kept",
+      "kind": "text",
+      "file": "src/modules/frame/frame.uhd.ts",
+      "matches": [
+        "vtx_mount: \\{\\s*frame: \\{ origin: \\[-50(\\.0)?, 0, 5(\\.0)?\\]"
+      ],
+      "description": "the model keeps the moved mount (reverting the move would also clear the check)"
+    },
+    {
+      "id": "generated-at-new-position",
+      "kind": "facts",
+      "file": "src/modules/frame/frame-cad/frames.json",
+      "facts": [
+        {
+          "path": "vtx_mount.origin",
+          "approx": [
+            -50,
+            0,
+            5
+          ],
+          "tolerance": 0.01
+        }
+      ]
+    },
+    {
+      "id": "top-plate-untouched",
+      "kind": "digest",
+      "file": "src/modules/top-plate/out/body.step",
+      "changed": false
+    },
+    {
+      "id": "harness-untouched",
+      "kind": "digest",
+      "file": "src/harnesses/dji-o4-3in1-cable/out/body.glb",
+      "changed": false
+    }
+  ],
+  "solution": [
+    {
+      "protoboard": [
+        "check"
+      ],
+      "expect": {
+        "exit": 1
+      }
+    },
+    {
+      "protoboard": [
+        "run",
+        "cad:generate",
+        "--module",
+        "quadcopter-5in-frame"
+      ],
+      "expect": {
+        "status": "succeeded"
+      }
+    },
+    {
+      "protoboard": [
+        "run",
+        "cad:export",
+        "--module",
+        "quadcopter-5in-frame"
+      ],
+      "expect": {
+        "status": "succeeded"
+      }
+    },
+    {
+      "protoboard": [
+        "run",
+        "frame-cad-rebind",
+        "--input",
+        "module=quadcopter-5in-frame"
+      ],
+      "expect": {
+        "status": "succeeded"
+      }
+    },
+    {
+      "protoboard": [
+        "check"
+      ]
+    },
+    {
+      "say": "Regenerated and exported the frame (cad:generate, cad:export) and re-bound the vtx_mount feature to the new plate (frame-cad-rebind); check reports no frame errors."
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "LiPol Battery Co., Ltd. LP402030 200mAh 3.7V with PCM specification and drawing (1 page, drawing FD_2030_40, orig. 28.06.2021)",
+    "url": "https://www.li-polymer-battery.com/wp-content/uploads/2021/06/LP402030-Datasheet.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:00:00Z",
+    "sha256": "95d6e69e5f0c192fe3bc4c112de0cd67eeae3c5a889d929240b282bb91adeaf6",
+    "supports": [
+      "identity: 'Lithium Polymer Battery Pack LP402030 200mAh 3.7V with Protection Circuit Module (PCM)', manufactured by LiPol Battery Co., Ltd - China; drawing FD_2030_40, sheet 3, orig. 28.06.2021",
+      "Mechanical Characteristics: cell LP402030; PCM yes; NTC no; configuration 1S1P; weight appr. 4.0 g",
+      "Electrical Specification: rated capacity 200 mAh min, 200 mAh typ; nominal voltage 3.7 V; watt-hour rating 0.74 Wh; max. operating voltage range 2.75 V to 4.20 V; max. charge voltage 4.2 V +-50 mV; max. charge current 100 mA; max. continuous discharge current 200 mA; discharge cut off 2.75 V; internal impedance <500 mOhm; expected cycle life 500 cycles >= 80 % @ (0.5C/0.5C) @ 23+-5 C",
+      "Cell Protection: overcharge detection 4.275 +-50 mV (0.7 to 1.3 s delay, release 4.275 V +-50 mV); overdischarge detection 2.75 V +-50 mV (14 to 26 ms delay, resume 2.50 V +-50 mV); overcurrent detection 1 A to 2.5 A (8 to 16 ms delay)",
+      "Ambient Conditions: charge 0 to +45 C; discharge -20 to +60 C; storage 1 year at -20 to +30 C >70 %, 3 months at -20 to +45 C >70 %, 1 month at -20 to +60 C >70 %; humidity 65 +-20 %RH",
+      "Environmental and Safety: meets the Battery Directives; battery parts IEC 62133 and RoHS compliant",
+      "drawing: thickness 4.0 +-0.3, width 20 +-0.5, length 30 +-1.0 (the 30 dimension runs to the end of the PCM zone), lead length 50 +-3.0 beyond the body end; general tolerances +-0.1 up to 6, +-0.2 over 6 up to 30, +-0.3 over 30 up to 100",
+      "drawing parts list: 10 LP402030 cell; 20 PCM (3.2mm); 30 double-sided adhesive tape; 40 kapton adhesive tape (PCM wrap and 2x tab patches); 50 wire red (+) AWG30 UL1007; 60 wire black (-) AWG30 UL1007",
+      "drawing views: tabs and PCM at one short end, '-' and '+' tab marks on the face, both leads leaving the PCM end face next to the '+' side edge, red outermost (assembled isometric view); lead ends drawn stripped, strip length not dimensioned",
+      "circuit diagram: cell -> PCM -> '-' and '+' output terminals (two of four PCM nodes used)"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "LiPol Battery 3.7V Rechargeable Li Polymer Battery LP402030 200mAh With PCM and Wires (product page)",
+    "url": "https://li-polymer-battery.com/3-7v-rechargeable-li-polymer-battery-lp402030-200mah-with-pcm-and-wires/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:00:00Z",
+    "sha256": "09a778ac8d43cc3e885384742c4a39da22ba3cee4a8fa3b9ed2f7e49d4402dec",
+    "supports": [
+      "part number LP402030 (402030); lithium polymer, 1S1P; 200 mAh, 3.7 V, 0.74 Wh; weight appr. 4.0 g; PCM yes; NTC no; wires yes; dimension 4.0 x 20 x 30 mm",
+      "max. operating voltage range 2.75 V to 4.2 V; max. charging voltage 4.2 V +-50 mV; max. charging current 100 mA; max. continuous discharge current 200 mA",
+      "options: 'can come with a protection circuit board, 10K NTC, 50mm & 100mm, or customized length of wires, connectors'; MOQ 5 pieces",
+      "links the datasheet (src_datasheet); no CAD download on the page",
+      "LiPolBattery Co., Ltd (site home page: 'We are LiPolBattery Co., Ltd, established in 1997'), same company as the datasheet"
+    ]
+  },
+  {
+    "id": "src_size_table",
+    "title": "LiPol Battery LP502025 product page with the standard-cell size table (row LP402030 3.7V 200mAh 4.0 20 30)",
+    "url": "https://li-polymer-battery.com/li-polymer-battery-lp502025-3-7v-200mah/",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-03T02:00:00Z",
+    "sha256": "bf6bfa2d3c57233f0917fb1e720539d751450f8920016dc3b4a2a8b285d314cf",
+    "supports": [
+      "size table row: LP402030, 3.7V 200mAh, thickness 4.0, width 20, length 30 (mm)",
+      "corroborates the 4.0 x 20 x 30 size code naming (thickness, width, length)"
+    ]
+  },
+  {
+    "id": "src_wire_wontex",
+    "title": "Wontex UL 1007 hook-up wire data sheet (third-party wire maker; style data, not LiPol's wire)",
+    "url": "https://www.wontex.com/pdfdownload/UL%201007%20HOOK%20UP%20WIRE.pdf",
+    "type": "datasheet",
+    "authority": "community",
+    "fetched_at": "2026-10-03T02:00:00Z",
+    "sha256": "8cd0aa847c3b8a44708a15fbb8ea71cbff44db13be480cd986aeefc8e3de4023",
+    "supports": [
+      "UL 1007, 30 AWG: stranding 7/38, conductor 0.30 mm, insulation 0.38 mm, overall diameter 1.09 +-0.08 mm; PVC insulation; tinned annealed stranded copper; 80 C rated (UL 1007)",
+      "used only as the basis for the assumed lead insulation and conductor diameters in the generated CAD"
+    ]
+  },
+  {
+    "id": "src_wire_cnctech",
+    "title": "CNC Tech UL Style 1007 hook-up wire specification (third-party wire maker; corroboration)",
+    "url": "https://www.cnctech.us/pdfs/1007-XX-1-2000-0XX-1-TS_.pdf",
+    "type": "datasheet",
+    "authority": "community",
+    "fetched_at": "2026-10-03T02:00:00Z",
+    "sha256": "7dbafb68e488048594df3b053d2c6e9d4b1abb14431a3413889ab6d6f2277a35",
+    "supports": [
+      "UL 1007, 30 AWG: 7/0.102 stranding, insulation 0.41 mm, overall 1.13 (+-0.10) mm",
+      "corroborates the ~1.1 mm overall diameter of a 30 AWG UL 1007 lead"
+    ]
+  }
+]

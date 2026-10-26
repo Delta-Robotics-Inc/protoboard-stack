@@ -1,0 +1,65 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-hardware",
+  "version": "0.2.0",
+  "description": "General hardware engineering: system composition and review, harnesses and fastener stack-ups, test and measurement, BOM export, evidence coverage. Releases are @protoboardai/ext-release.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "build-a-project",
+      "summary": "Start here: the top-level SOP from an idea or a brief to a release, one level of detail at a time (concept of 3 to 6 blocks, blocks, parts, definitions verified, schematic and PCB), asking before each level deeper — sourcing, parts by tier, system and harnesses, boards, enclosures and structures, harness CAD, checks, firmware, documents, Manufacturing Package, evals — delegating to each extension's SOP",
+      "path": "skills/build-a-project/SKILL.md"
+    },
+    {
+      "id": "system-compose",
+      "summary": "Brief → requirements → module selection → UHD system (links, harnesses, mates) → fault scenarios → the protoboard check loop, with every diagnostic code explained",
+      "path": "skills/system-compose/SKILL.md",
+      "verifiedBy": "system-review"
+    },
+    {
+      "id": "system-review",
+      "summary": "Independent review of a composed system against its brief: requirement trace, link and harness justification, diagnostic dispositions, scenario coverage",
+      "path": "skills/system-review/SKILL.md"
+    },
+    {
+      "id": "harness-author",
+      "summary": "Wire harnesses (conductors, lengths, gauges, connectors) and fastener stacks (stack-up arithmetic, supplier-cited hardware, nut engagement, torque)",
+      "path": "skills/harness-author/SKILL.md",
+      "verifiedBy": "harness-verify"
+    },
+    {
+      "id": "harness-verify",
+      "summary": "Independently re-derive every stack-up, thread engagement, torque and cable fact from the sources",
+      "path": "skills/harness-verify/SKILL.md"
+    },
+    {
+      "id": "test-and-measure",
+      "summary": "Test plan from requirements and the model, procedures, and measured test-data files (status standin|measured) that replace stand-in data in the documents",
+      "path": "skills/test-and-measure/SKILL.md"
+    }
+  ],
+  "operations": [
+    {
+      "id": "bom",
+      "summary": "Write the bill of materials (quantities multiplied through the instance tree, with origins) to docs/bom.md and docs/bom.json",
+      "entry": "./ops/bom.ts#bom",
+      "effect": "export",
+      "inputs": {
+        "out": {
+          "description": "output folder, project-relative",
+          "default": "docs"
+        }
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "evidence",
+      "summary": "Every purchased part used has cited sources and a recorded verification",
+      "entry": "./checks/evidence.ts#evidence"
+    }
+  ]
+}

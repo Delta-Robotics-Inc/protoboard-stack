@@ -1,0 +1,20 @@
+{
+  "numStartups": 412,
+  "installMethod": "native",
+  "mcpServers": {
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp"
+    }
+  },
+  "projects": {
+    "/home/you/work/thing": {
+      "allowedTools": [],
+      "mcpServers": {
+        "local-only": { "type": "stdio", "command": "node", "args": ["server.js"], "env": {} }
+      },
+      "hasTrustDialogAccepted": true
+    }
+  },
+  "oauthAccount": { "emailAddress": "you@example.com" }
+}

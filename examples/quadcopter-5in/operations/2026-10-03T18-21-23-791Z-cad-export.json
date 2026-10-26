@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "iso-4762-m3x8",
+    "config": "parts/local/iso-4762-m3x8/cad.config.ts",
+    "configDigest": "sha256:5111a1b88734a02e73673365ca9cc87e4e65b44839bbcfe18d76e1ff1583c159",
+    "moduleDigest": "sha256:369616e91e84dc656de73f71b8e2d5a6f01ce8f756b61a4604836ceb6e18f698"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:4cf82c4b20f0fb7448deee95078d3a145411d08f6b73cbf5b092b88450d6ac98",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T18:21:23.791Z",
+  "status": "succeeded",
+  "summary": "iso-4762-m3x8: body.step, body.glb, body.manifest.json in parts/local/iso-4762-m3x8/out (113.787 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/iso-4762-m3x8/out/body.step",
+      "digest": "sha256:74d0c615bb4535d6899882e177c9f3df9111361713c8bf63409cb86d049c111c",
+      "bytes": 32498,
+      "description": "iso-4762-m3x8: nominal body"
+    },
+    {
+      "path": "parts/local/iso-4762-m3x8/out/body.glb",
+      "digest": "sha256:7a48a990750778f98bae97eebd1bace57d540fae292e0599b502a3540c447ed5",
+      "bytes": 21088,
+      "description": "iso-4762-m3x8: viewer mesh"
+    },
+    {
+      "path": "parts/local/iso-4762-m3x8/out/body.manifest.json",
+      "digest": "sha256:47a45e73becb0329e083655c2cadf1515528b680811699aa017271ad442cd001",
+      "bytes": 540,
+      "description": "iso-4762-m3x8: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "iso-4762-m3x8",
+    "out": "parts/local/iso-4762-m3x8/out",
+    "volume_mm3": 113.787,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T18:21:29.917Z"
+}

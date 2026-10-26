@@ -1,0 +1,349 @@
+{
+  "interfaces": [
+    {
+      "fastener_d": 3,
+      "height": 0,
+      "hole_count": 4,
+      "holes": [
+        [
+          -15.25,
+          -15.25
+        ],
+        [
+          15.25,
+          -15.25
+        ],
+        [
+          15.25,
+          15.25
+        ],
+        [
+          -15.25,
+          15.25
+        ]
+      ],
+      "id": "stack_mount",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "placement": "holes_top",
+      "shape": "square",
+      "spacing": 30.5,
+      "spacing_y": null,
+      "symmetry": 90,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 3,
+      "height": 0.5,
+      "hole_count": 4,
+      "holes": [
+        [
+          87.55,
+          79.55
+        ],
+        [
+          79.55,
+          87.55
+        ],
+        [
+          71.55,
+          79.55
+        ],
+        [
+          79.55,
+          71.55
+        ]
+      ],
+      "id": "motor_mount_fl",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        79.55,
+        79.55
+      ],
+      "placement": "pad",
+      "shape": "circle",
+      "spacing": 16,
+      "spacing_y": null,
+      "symmetry": 90,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 3,
+      "height": 0.5,
+      "hole_count": 4,
+      "holes": [
+        [
+          87.55,
+          -79.55
+        ],
+        [
+          79.55,
+          -71.55
+        ],
+        [
+          71.55,
+          -79.55
+        ],
+        [
+          79.55,
+          -87.55
+        ]
+      ],
+      "id": "motor_mount_fr",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        79.55,
+        -79.55
+      ],
+      "placement": "pad",
+      "shape": "circle",
+      "spacing": 16,
+      "spacing_y": null,
+      "symmetry": 90,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 3,
+      "height": 0.5,
+      "hole_count": 4,
+      "holes": [
+        [
+          -71.55,
+          79.55
+        ],
+        [
+          -79.55,
+          87.55
+        ],
+        [
+          -87.55,
+          79.55
+        ],
+        [
+          -79.55,
+          71.55
+        ]
+      ],
+      "id": "motor_mount_rl",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        -79.55,
+        79.55
+      ],
+      "placement": "pad",
+      "shape": "circle",
+      "spacing": 16,
+      "spacing_y": null,
+      "symmetry": 90,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 3,
+      "height": 0.5,
+      "hole_count": 4,
+      "holes": [
+        [
+          -71.55,
+          -79.55
+        ],
+        [
+          -79.55,
+          -71.55
+        ],
+        [
+          -87.55,
+          -79.55
+        ],
+        [
+          -79.55,
+          -87.55
+        ]
+      ],
+      "id": "motor_mount_rr",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        -79.55,
+        -79.55
+      ],
+      "placement": "pad",
+      "shape": "circle",
+      "spacing": 16,
+      "spacing_y": null,
+      "symmetry": 90,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 2,
+      "height": 10,
+      "hole_count": 4,
+      "holes": [],
+      "id": "camera_mount",
+      "normal": [
+        0,
+        -1,
+        0
+      ],
+      "origin": [
+        50,
+        0
+      ],
+      "placement": "clamp",
+      "shape": "rectangle",
+      "spacing": 16,
+      "spacing_y": 14,
+      "symmetry": null,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 3,
+      "height": 0,
+      "hole_count": 4,
+      "holes": [
+        [
+          -28,
+          -24
+        ],
+        [
+          28,
+          -24
+        ],
+        [
+          28,
+          24
+        ],
+        [
+          -28,
+          24
+        ]
+      ],
+      "id": "standoff_mount",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "placement": "holes_top",
+      "shape": "rectangle",
+      "spacing": 56,
+      "spacing_y": 48,
+      "symmetry": 180,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "fastener_d": 2,
+      "height": 0,
+      "hole_count": 4,
+      "holes": [
+        [
+          -57.75,
+          -12.75
+        ],
+        [
+          -32.25,
+          -12.75
+        ],
+        [
+          -32.25,
+          12.75
+        ],
+        [
+          -57.75,
+          12.75
+        ]
+      ],
+      "id": "vtx_mount",
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "origin": [
+        -45,
+        0
+      ],
+      "placement": "holes_top",
+      "shape": "square",
+      "spacing": 25.5,
+      "spacing_y": null,
+      "symmetry": 90,
+      "x_axis": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "module": "quadcopter-5in-frame",
+  "name": "quadcopter-5in-frame",
+  "plate": {
+    "arm_slot_width": 5,
+    "arm_width": 14,
+    "clamp_margin": 4,
+    "clamp_wall": 2,
+    "corner_radius": 1.5,
+    "hole_clearance": 0.1,
+    "hub_extra": 1,
+    "margin": 3,
+    "outline": null,
+    "pad_center_relief": 3.5,
+    "pad_margin": 3,
+    "slots": [],
+    "thickness": 5
+  },
+  "schema": "protoboard.frame-cad.params/v0"
+}

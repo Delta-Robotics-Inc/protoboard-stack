@@ -1,0 +1,9 @@
+ACME — LDO3300 series product page
+URL: https://acme.example/products/ldo3300
+Read: 2026-09-28
+
+Production status: Active
+Ordering codes:
+  LDO3300-33SOT-TR   3.3 V, SOT-23-5, tape and reel (3000)
+  LDO3300-33SOT      3.3 V, SOT-23-5, bulk
+No product change notices (PCN) listed.

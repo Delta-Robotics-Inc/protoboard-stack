@@ -1,0 +1,65 @@
+{
+  "name": "protoboard-stack",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git"
+  },
+  "description": "Protoboard Stack: hardware project framework (core), CLI, and reference projects",
+  "type": "module",
+  "workspaces": [
+    "packages/cloud",
+    "packages/core",
+    "packages/cli",
+    "packages/views",
+    "packages/web-viewer",
+    "packages/ext-hardware",
+    "packages/ext-drone",
+    "packages/ext-frame-cad",
+    "packages/ext-harness-cad",
+    "packages/ext-enclosure-cad",
+    "packages/ext-sourcing",
+    "packages/ext-parts",
+    "packages/ext-docs",
+    "packages/ext-tscircuit",
+    "packages/ext-release",
+    "packages/ext-zephyr",
+    "packages/ext-esp-idf",
+    "examples/quadcopter-5in",
+    "examples/uno-motor-bench",
+    "examples/wearable-watch",
+    "examples/smart-bottle"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "pb": "node packages/cli/bin/protoboard.mjs",
+    "build": "node scripts/build-web-viewer.mjs --force",
+    "postinstall": "node scripts/build-web-viewer.mjs",
+    "typecheck": "tsc --noEmit -p packages/core && tsc --noEmit -p packages/cli && tsc --noEmit -p packages/views && tsc --noEmit -p packages/web-viewer && tsc --noEmit -p packages/ext-hardware && tsc --noEmit -p packages/ext-drone && tsc --noEmit -p packages/ext-frame-cad && tsc --noEmit -p packages/ext-harness-cad && tsc --noEmit -p packages/ext-enclosure-cad && tsc --noEmit -p packages/ext-sourcing && tsc --noEmit -p packages/ext-parts && tsc --noEmit -p packages/ext-docs && tsc --noEmit -p packages/ext-tscircuit && tsc --noEmit -p packages/ext-release && tsc --noEmit -p packages/ext-zephyr && tsc --noEmit -p packages/ext-esp-idf && tsc --noEmit -p examples/quadcopter-5in && tsc --noEmit -p examples/wearable-watch && tsc --noEmit -p examples/smart-bottle",
+    "test": "vitest run",
+    "lint:brand": "node scripts/check-brand-spelling.mjs",
+    "lint:scope": "node scripts/check-npm-scope.mjs",
+    "lint:alpha": "node scripts/check-alpha-superseded.mjs",
+    "lint:licence": "node scripts/check-licence-files.mjs",
+    "templates:parts": "node scripts/templates-parts.mjs"
+  },
+  "devDependencies": {
+    "@deltarobotics/uhd": "file:../uhd",
+    "@deltarobotics/uhd-viewer": "file:../uhd-viewer",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.18",
+    "tsx": "^4.23.8",
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "@deltarobotics/uhd": "file:../uhd",
+    "@deltarobotics/uhd-viewer": "file:../uhd-viewer",
+    "@tscircuit/pcb-trace-linter": "https://codeload.github.com/tscircuit/pcb-trace-linter/tar.gz/4c035f9d40ffb03ba547a08975b5e64b20371123"
+  }
+}

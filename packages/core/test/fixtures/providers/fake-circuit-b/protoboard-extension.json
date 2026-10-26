@@ -1,0 +1,24 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@fixtures/fake-circuit-b",
+  "version": "0.2.0",
+  "description": "TEST FIXTURE: fake circuit provider B. Native design is a line-based text file; exports inch Gerber with Protel extensions, an .xln drill file and minimal bodies. Not a real PCB tool.",
+  "compatibility": { "protoboard": "^0.2.0" },
+  "capabilities": [
+    {
+      "id": "circuit",
+      "summary": "Fake: grid placement in a text design file",
+      "operations": {
+        "generate": "./ops.ts#generate",
+        "export": "./ops.ts#exportOutputs",
+        "extract": "./ops.ts#extract",
+        "check": "./ops.ts#check"
+      },
+      "constraints": {
+        "width_mm": { "description": "board width limit" },
+        "height_mm": { "description": "board height limit" },
+        "layers": { "description": "copper layer count" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "cad:export",
+  "extension": {
+    "id": "@protoboard/ext-frame-cad",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "cad",
+    "operation": "export",
+    "provider": "@protoboard/ext-frame-cad",
+    "module": "meps-m5-flanged-lock-nut",
+    "config": "parts/local/meps-m5-flanged-lock-nut/cad.config.ts",
+    "configDigest": "sha256:d58861075cd75bfda362b463ea30c41563a08cb0bfd36dd621a4db2c2ab10531",
+    "moduleDigest": "sha256:22089610d7a655415414efd5980ddd452a59d742ea345abb86ee820a59ed45eb"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:fc12584971d5ab4f40f39d01a08ac49c8ca6e12242baf558e466155d62577a2f",
+  "tools": [
+    {
+      "id": "python-build123d",
+      "available": true,
+      "detail": "build123d 0.13.0",
+      "source": "environment"
+    }
+  ],
+  "startedAt": "2026-10-03T14:32:03.848Z",
+  "status": "succeeded",
+  "summary": "meps-m5-flanged-lock-nut: body.step, body.glb, body.manifest.json in parts/local/meps-m5-flanged-lock-nut/out (178.953 mm³)",
+  "outputs": [
+    {
+      "path": "parts/local/meps-m5-flanged-lock-nut/out/body.step",
+      "digest": "sha256:eb32b0fc592086cc5d6c9dfae61f942f617765126215285ac18578a803fca15a",
+      "bytes": 28563,
+      "description": "meps-m5-flanged-lock-nut: nominal body"
+    },
+    {
+      "path": "parts/local/meps-m5-flanged-lock-nut/out/body.glb",
+      "digest": "sha256:aca5b89c7a1311816f937381c18a355ca44f1dab742b7fdaa6a27f123517f2f2",
+      "bytes": 12912,
+      "description": "meps-m5-flanged-lock-nut: viewer mesh"
+    },
+    {
+      "path": "parts/local/meps-m5-flanged-lock-nut/out/body.manifest.json",
+      "digest": "sha256:6108ecfc9566b97de805abfe2cb639633f3a1afc22a79fa706b5d946224117de",
+      "bytes": 549,
+      "description": "meps-m5-flanged-lock-nut: geometry manifest (volume)"
+    }
+  ],
+  "data": {
+    "module": "meps-m5-flanged-lock-nut",
+    "out": "parts/local/meps-m5-flanged-lock-nut/out",
+    "volume_mm3": 178.953,
+    "previousVolume_mm3": null,
+    "toolVersion": "0.13.0"
+  },
+  "diagnostics": [],
+  "finishedAt": "2026-10-03T14:32:10.604Z"
+}

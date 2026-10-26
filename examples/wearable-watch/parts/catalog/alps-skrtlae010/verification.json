@@ -1,0 +1,19 @@
+{
+  "partId": "alps-skrtlae010",
+  "recorded_at": "2026-10-03T01:58:24.456Z",
+  "audit": null,
+  "repairs": "1 repair: independent audit, 5 items (usage-note citations for assembly, plunger, circuit; product-surface wording; riser dimension acknowledged)",
+  "assumptions": [
+    "typical wiring",
+    "terminal 1 position",
+    "CAD dimensions not on the drawing"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "mass",
+    "terminal thickness and riser shape"
+  ],
+  "vocabulary_gaps": [
+    "No builder for a pressed actuator. The stem is a mechanical `custom` interface (role input, capability push_actuator) with a frame on the stem tip, so an enclosure plunger (role output) can be placed against it. Converge with any later actuator/keytop vocabulary."
+  ]
+}

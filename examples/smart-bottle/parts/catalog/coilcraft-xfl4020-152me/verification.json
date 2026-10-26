@@ -1,0 +1,25 @@
+{
+  "partId": "coilcraft-xfl4020-152me",
+  "recorded_at": "2026-10-04T02:53:55.436Z",
+  "audit": {
+    "method": "verify-part --refetch (datasheet, TI datasheet and jlcsearch rows match; product page and SnapEDA unpinned); read the pinned datasheet with pdftotext and re-read the 745-3 drawing visually (rendered page 3); read the XFL4020-152 product page live in Chrome (scripted fetch gets HTTP 403); measured the generated STEP with step_measure.py (envelope, section z=0.05 through the terminals). Research this auditor added (not independently reviewed): found the free Coilcraft XFL4020 STEP behind the product page's 3D Model button and read it in the browser (point extents only; not stored, coilcraft.com blocks scripted downloads), the 3D ContentCentral and SamacSys links, and the KiCad XAL4020 model and licence (downloaded, sha256 pinned, measured).",
+    "independent": true,
+    "auditor": "stage-2 audit agent for the final-audits C track (faC, branch mark/final-audits-c); did not author the part; made only the repairs and evidence additions listed in this audit",
+    "checked": 17,
+    "confirmed": 16,
+    "wrong": 1,
+    "unsupported": 0
+  },
+  "repairs": "data_gap manufacturer CAD was wrong: the product page links a free Coilcraft XFL4020 STEP (and 3D ContentCentral); recorded as links with terms (not stored: coilcraft.com blocks scripted downloads), plus the SamacSys link; the KiCad XAL4020 envelope model and licence stored under artifacts/cad/vendor/ as evidence; header, note and sources updated",
+  "assumptions": [
+    "terminal designators",
+    "CAD package dimensions"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "terminal designators",
+    "body corner radius, marking bar size",
+    "thermal resistance"
+  ],
+  "vocabulary_gaps": []
+}

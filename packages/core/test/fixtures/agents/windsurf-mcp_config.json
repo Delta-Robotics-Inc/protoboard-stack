@@ -1,0 +1,9 @@
+{
+    "mcpServers": {
+        "example": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-example"],
+            "env": { "VARIABLE_NAME": "value" }
+        }
+    }
+}

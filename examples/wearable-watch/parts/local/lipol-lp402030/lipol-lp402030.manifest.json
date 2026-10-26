@@ -1,0 +1,66 @@
+{
+  "artifact": "lipol-lp402030",
+  "tool": "build123d (representative geometry from datasheet dimensions, parts/local/cadkit/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "a1054df38da75851dc9c0dcffc3d90d183ad2536620a1634223a2082bc346b53",
+  "units": "mm",
+  "volume_mm3": 2401.021,
+  "bodies": {
+    "pouch_cell": 2144.0,
+    "pcm_zone": 256.0,
+    "lead_red": 0.475,
+    "lead_black": 0.475,
+    "lead_red_stripped": 0.035,
+    "lead_black_stripped": 0.035
+  },
+  "features": {
+    "mount_face": {
+      "area_mm2": 600.0,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 2,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "lead_pos": {
+      "area_mm2": 0.471,
+      "centroid": [
+        15.75,
+        9.0,
+        2.0
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          15.75,
+          9.0,
+          2.0
+        ]
+      ],
+      "diameter_mm": 0.3
+    },
+    "lead_neg": {
+      "area_mm2": 0.471,
+      "centroid": [
+        15.75,
+        6.8,
+        2.0
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          15.75,
+          6.8,
+          2.0
+        ]
+      ],
+      "diameter_mm": 0.3
+    }
+  }
+}

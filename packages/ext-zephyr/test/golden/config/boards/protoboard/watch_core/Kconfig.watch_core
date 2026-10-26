@@ -1,0 +1,5 @@
+# Generated from the UHD model by @protoboardai/ext-zephyr. Do not edit.
+
+config BOARD_WATCH_CORE
+	# Nordic nRF52840 revision 2, aQFN-73 (SOC_NRF52840_QIAA: the aQFN73 package)
+	select SOC_NRF52840_QIAA

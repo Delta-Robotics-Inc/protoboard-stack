@@ -1,0 +1,332 @@
+{
+  "$comment": "Provider-owned layout of the cap board: positions (mm, board frame) for the parts circuit.config.ts does not fix. Hand-placed by function (LED driver at the centre, buck-boost lower right, charger and fuel gauge upper left, module support by its pads); not a reviewed layout.",
+  "u3": {
+    "at": [
+      2,
+      6.5
+    ],
+    "rotation_deg": 0
+  },
+  "r10": {
+    "at": [
+      -1.6,
+      11.0
+    ],
+    "rotation_deg": 90
+  },
+  "r9": {
+    "at": [
+      -3.6,
+      11.0
+    ],
+    "rotation_deg": 90
+  },
+  "c6": {
+    "at": [
+      3.0,
+      11.0
+    ],
+    "rotation_deg": 90
+  },
+  "c7": {
+    "at": [
+      0.4,
+      11.0
+    ],
+    "rotation_deg": 90
+  },
+  "u4": {
+    "at": [
+      9,
+      -12
+    ],
+    "rotation_deg": 0
+  },
+  "l1": {
+    "at": [
+      9,
+      -17.5
+    ],
+    "rotation_deg": 0
+  },
+  "c8": {
+    "at": [
+      4.6,
+      -12
+    ],
+    "rotation_deg": 90
+  },
+  "c9": {
+    "at": [
+      6.0,
+      -9.0
+    ],
+    "rotation_deg": 0
+  },
+  "c10": {
+    "at": [
+      13.2,
+      -9.0
+    ],
+    "rotation_deg": 0
+  },
+  "c11": {
+    "at": [
+      13.2,
+      -10.9
+    ],
+    "rotation_deg": 0
+  },
+  "c12": {
+    "at": [
+      13.2,
+      -12.8
+    ],
+    "rotation_deg": 0
+  },
+  "r11": {
+    "at": [
+      5.2,
+      -15.0
+    ],
+    "rotation_deg": 90
+  },
+  "r12": {
+    "at": [
+      3.6,
+      -15.0
+    ],
+    "rotation_deg": 90
+  },
+  "c4": {
+    "at": [
+      -1.2,
+      -3.0
+    ],
+    "rotation_deg": 90
+  },
+  "c5": {
+    "at": [
+      1.2,
+      -3.0
+    ],
+    "rotation_deg": 90
+  },
+  "r5": {
+    "at": [
+      14.5,
+      4.8
+    ],
+    "rotation_deg": 0
+  },
+  "r6": {
+    "at": [
+      14.5,
+      3.2
+    ],
+    "rotation_deg": 0
+  },
+  "d9": {
+    "at": [
+      0.2,
+      24.5
+    ],
+    "rotation_deg": 0
+  },
+  "r19": {
+    "at": [
+      -3.4,
+      25.6
+    ],
+    "rotation_deg": 90
+  },
+  "r20": {
+    "at": [
+      3.4,
+      25.6
+    ],
+    "rotation_deg": 90
+  },
+  "r17": {
+    "at": [
+      6.0,
+      22.0
+    ],
+    "rotation_deg": 90
+  },
+  "r18": {
+    "at": [
+      7.6,
+      22.0
+    ],
+    "rotation_deg": 90
+  },
+  "u5": {
+    "at": [
+      -8.5,
+      21.0
+    ],
+    "rotation_deg": 0
+  },
+  "c13": {
+    "at": [
+      -5.0,
+      23.5
+    ],
+    "rotation_deg": 90
+  },
+  "c14": {
+    "at": [
+      -11.7,
+      21.0
+    ],
+    "rotation_deg": 90
+  },
+  "r13": {
+    "at": [
+      -8.5,
+      17.6
+    ],
+    "rotation_deg": 0
+  },
+  "r14": {
+    "at": [
+      -5.4,
+      18.6
+    ],
+    "rotation_deg": 90
+  },
+  "r15": {
+    "at": [
+      -5.4,
+      16.0
+    ],
+    "rotation_deg": 90
+  },
+  "u6": {
+    "at": [
+      -12.0,
+      14.5
+    ],
+    "rotation_deg": 0
+  },
+  "c15": {
+    "at": [
+      -14.5,
+      14.5
+    ],
+    "rotation_deg": 90
+  },
+  "r16": {
+    "at": [
+      -12.0,
+      11.6
+    ],
+    "rotation_deg": 0
+  },
+  "c1": {
+    "at": [
+      21.4,
+      9.4
+    ],
+    "rotation_deg": 0
+  },
+  "c2": {
+    "at": [
+      24.0,
+      9.4
+    ],
+    "rotation_deg": 0
+  },
+  "r1": {
+    "at": [
+      17.4,
+      9.0
+    ],
+    "rotation_deg": 90
+  },
+  "c3": {
+    "at": [
+      19.0,
+      9.0
+    ],
+    "rotation_deg": 90
+  },
+  "r2": {
+    "at": [
+      14.5,
+      -4.0
+    ],
+    "rotation_deg": 0
+  },
+  "r3": {
+    "at": [
+      14.5,
+      -2.4
+    ],
+    "rotation_deg": 0
+  },
+  "r4": {
+    "at": [
+      14.5,
+      -0.8
+    ],
+    "rotation_deg": 0
+  },
+  "r8": {
+    "at": [
+      15.6,
+      7.0
+    ],
+    "rotation_deg": 90
+  },
+  "r7": {
+    "at": [
+      -21.5,
+      14.0
+    ],
+    "rotation_deg": 0
+  },
+  "tp_rxd": {
+    "at": [
+      21.4,
+      -9.6
+    ],
+    "rotation_deg": 0
+  },
+  "tp_txd": {
+    "at": [
+      23.8,
+      -9.6
+    ],
+    "rotation_deg": 0
+  },
+  "tp_boot": {
+    "at": [
+      19.0,
+      -9.6
+    ],
+    "rotation_deg": 0
+  },
+  "tp_en": {
+    "at": [
+      16.6,
+      -9.6
+    ],
+    "rotation_deg": 0
+  },
+  "tp_3v3": {
+    "at": [
+      16.6,
+      -12.6
+    ],
+    "rotation_deg": 0
+  },
+  "tp_gnd": {
+    "at": [
+      19.0,
+      -12.4
+    ],
+    "rotation_deg": 0
+  }
+}

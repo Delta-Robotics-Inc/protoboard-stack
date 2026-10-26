@@ -1,0 +1,63 @@
+/**
+ * {{name}}: the root system (from the Protoboard drone template, derived from
+ * the quadcopter-5in reference project).
+ *
+ * A 6S flight stack on the bench: the DolphinRC F405 V3 + AM32 60A stack
+ * (src/modules/stack.uhd.ts), the CNHL 1100 mAh 6S pack on the stack's XT60
+ * lead, and the RadioMaster RP1 V2 receiver on UART2. Children are catalog
+ * parts (parts/catalog, pinned in parts/origins.json), modules designed here
+ * (src/modules) and harnesses (src/harnesses). `protoboard check` resolves them
+ * and runs link DRC, the system rules and the extensions' checks.
+ *
+ * Next: a frame (src/modules/frame/, @protoboardai/ext-frame-cad), motors and
+ * propellers on the ESC's motor pads, video and GNSS. The quadcopter-5in
+ * reference project shows each of them; the build-a-project skill
+ * (@protoboardai/ext-hardware) gives the order of work.
+ */
+import type { ModuleDef } from "@deltarobotics/uhd";
+
+export const {{CONST}}: ModuleDef = {
+  id: "{{id}}",
+  name: "{{name}}",
+  kind: "module",
+  version: "0.1.0",
+  description: "6S multirotor flight stack: DolphinRC F405 V3 + AM32 60A, CNHL 1100 mAh 6S pack, RadioMaster RP1 V2 ELRS receiver.",
+  tags: ["drone", "multirotor"],
+  display: { icon: "plane" },
+  interfaces: [],
+  children: [
+    { id: "stack", moduleDefId: "dolphinrc-f405-v3-stack", name: "FC + ESC stack" },
+    { id: "battery", moduleDefId: "cnhl-black-series-1100mah-6s-100c", name: "6S battery" },
+    { id: "receiver", moduleDefId: "radiomaster-rp1-v2-elrs-2g4", name: "ELRS receiver" },
+    // harnesses carrying links
+    { id: "xt60_lead", moduleDefId: "dolphinrc-xt60-battery-lead", name: "XT60 battery lead" },
+    { id: "rx_wire", moduleDefId: "radiomaster-rp1-crsf-wire", name: "Receiver wires" },
+  ],
+  links: [
+    // Power: the pack's XT60 into the lead, the lead soldered to the ESC pads
+    // (a link-scoped composition: the ESC has no connector there). UHD derives
+    // battery_out -> bat_in and battery_gnd -> bat_neg through the lead.
+    { id: "battery_plug", name: "XT60", a: { child: "battery", interfaceId: "xt60" }, b: { child: "xt60_lead", interfaceId: "end_battery" } },
+    {
+      id: "battery_pads",
+      name: "ESC battery pads",
+      a: { child: "xt60_lead", interfaceId: "end_esc" },
+      b: { child: "stack", interfaceId: "battery_pads", compose: { p1: "bat_in", p2: "bat_neg" } },
+    },
+    // Receiver: its four included wires, soldered at both ends: CRSF on UART2
+    // (receiver TX -> RX2, RX -> TX2), 5 V BEC, GND. Derived: UART2 <-> CRSF,
+    // 5 V -> VCC, GND.
+    {
+      id: "rx_pads",
+      name: "Receiver pads",
+      a: { child: "receiver", interfaceId: "rx_pads", compose: { p1: "crsf_tx", p2: "crsf_rx", p3: "vcc_5v", p4: "gnd" } },
+      b: { child: "rx_wire", interfaceId: "end_rx" },
+    },
+    {
+      id: "rx_fc_pads",
+      name: "Receiver wires on the FC",
+      a: { child: "rx_wire", interfaceId: "end_fc" },
+      b: { child: "stack", interfaceId: "rx_fc_pads", compose: { p1: "fc:uart2_rx", p2: "fc:uart2_tx", p3: "bec_5v", p4: "gnd" } },
+    },
+  ],
+};

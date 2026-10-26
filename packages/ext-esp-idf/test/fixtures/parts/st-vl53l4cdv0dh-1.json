@@ -1,0 +1,995 @@
+{
+  "id": "st-vl53l4cdv0dh-1",
+  "name": "ST VL53L4CD time-of-flight sensor (VL53L4CDV0DH/1, Optical LGA12)",
+  "version": "1.0.0",
+  "manufacturer": "STMicroelectronics",
+  "part_number": "VL53L4CDV0DH/1",
+  "description": "ST VL53L4CD time-of-flight high accuracy proximity sensor, bare module in Optical LGA12 4.4 x 2.4 x 1 mm (order code with protective liner): 940 nm Class 1 VCSEL and SPAD collector, 0-1200 mm with full FoV (1300 mm typical at 50 % detection, white target), linear from 1 mm, 18 deg diagonal FoV, up to 100 Hz, on-chip processing. Single 2.6-3.5 V supply (2.8 V nominal), 22 mA typical while ranging, 5 uA hardware standby; I2C target at 0x29 up to 1 MHz; open-drain interrupt (GPIO1) and active-low XSHUT.",
+  "tags": [
+    "vl53l4cd",
+    "st",
+    "stmicroelectronics",
+    "tof",
+    "time-of-flight",
+    "distance",
+    "proximity",
+    "liquid-level",
+    "i2c",
+    "0x29",
+    "interrupt",
+    "xshut",
+    "lga-12",
+    "ic"
+  ],
+  "categories": [
+    "sensor.distance"
+  ],
+  "interfaces": [
+    {
+      "id": "pin_1",
+      "name": "AVDDVCSEL",
+      "pin": 1,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 2.8,
+          "range": [
+            2.6,
+            3.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "AVDDVCSEL — Supply. VCSEL supply, to be connected to main supply.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_2",
+      "name": "AVSSVCSEL",
+      "pin": 2,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "ground"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ground"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "AVSSVCSEL — VCSEL ground, to be connected to main ground. AVSSVCSEL and GND are ground pins and can be connected together in the application schematics.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_3",
+      "name": "GND",
+      "pin": 3,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "ground"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ground"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "GND — Ground. To be connected to main ground.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_4",
+      "name": "GND2",
+      "pin": 4,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "ground"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ground"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "GND2 — Ground. To be connected to main ground. GND2, GND3 and GND4 are standard pins that are forced to the ground domain in the application schematics to avoid possible instabilities if set to other states.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_5",
+      "name": "XSHUT",
+      "pin": 5,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "shutdown",
+        "active_low"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            1.6,
+            3.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "XSHUT — Digital input. Xshutdown pin, active low.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Low = HW STANDBY (no I2C communication); raise XSHUT only when AVDD is on, and the firmware boots within tBOOT 1.2 ms max. XSHUT must always be driven to avoid leakage current; fit a pull-up (10 kOhm recommended) if the host state is not known. Tied to AVDD through the pull-up, the device boots straight to SW STANDBY.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.4, §2.7, Table 12 note 1)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_6",
+      "name": "GND3",
+      "pin": 6,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "ground"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ground"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "GND3 — Ground. To be connected to main ground. GND2, GND3 and GND4 are standard pins that are forced to the ground domain in the application schematics to avoid possible instabilities if set to other states.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_7",
+      "name": "GPIO1",
+      "pin": 7,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "output"
+          ]
+        },
+        {
+          "type": "interrupt",
+          "roles": [
+            "output"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "open_drain",
+        "active_low"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            1.6,
+            3.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "GPIO1 — Digital output. Interrupt output. Open drain output.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        },
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Driven low when a ranging result is available; the driver clears it when the host reads the result, and ranging holds until it is cleared. ST strongly recommends this hardware interrupt over polling. Pull-up 10 kOhm to IOVDD recommended; leave unconnected if not used. VOL <= 0.4 V at 4 mA; VIH >= 0.7 IOVDD, VIL <= 0.3 IOVDD.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.4, §2.9, Table 15)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_8",
+      "name": "DNC",
+      "pin": 8,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "no_connect"
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "DNC — Digital input. Do not connect, must be left floating.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_9",
+      "name": "SDA",
+      "pin": 9,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "i2c_sda",
+        "open_drain"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            1.6,
+            3.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "SDA — Digital input/output. I²C serial data.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_10",
+      "name": "SCL",
+      "pin": 10,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "digital",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "capabilities": [
+        "digital_io",
+        "i2c_scl"
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "range": [
+            1.6,
+            3.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "SCL — Digital input. I²C serial clock input.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_11",
+      "name": "AVDD",
+      "pin": 11,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 2.8,
+          "range": [
+            2.6,
+            3.5
+          ]
+        }
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "AVDD — Supply. Supply, to be connected to main supply.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pin_12",
+      "name": "GND4",
+      "pin": 12,
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "ground"
+          ]
+        }
+      ],
+      "capabilities": [
+        "ground"
+      ],
+      "traits": [
+        {
+          "type": "pin_functions",
+          "params": {
+            "description": "GND4 — Ground. To be connected to main ground. GND2, GND3 and GND4 are standard pins that are forced to the ground domain in the application schematics to avoid possible instabilities if set to other states.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §1.3 Figure 2, Table 2)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "i2c",
+      "name": "I2C (target)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "i2c",
+          "roles": [
+            "slave"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "unit": "Hz",
+          "range": [
+            0,
+            1000000
+          ]
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 41
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "required": true,
+          "match": {
+            "protocol": "i2c",
+            "role": "data",
+            "capability": "i2c_sda"
+          }
+        },
+        {
+          "id": "scl",
+          "required": true,
+          "match": {
+            "protocol": "i2c",
+            "role": "clock",
+            "capability": "i2c_scl"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "i2c_default",
+          "label": "I2C (target)",
+          "bindings": {
+            "sda": "pin_9",
+            "scl": "pin_10"
+          }
+        }
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Default address 0x52 write / 0x53 read in ST's 8-bit form (0b0101001 + R/W, 7-bit 0x29). Fast mode (400 kHz) and fast mode plus (1 MHz); 16-bit register index, auto-increment, 8/16/32-bit accesses MSB first. Pull-ups on the host, once per bus: fast mode 3.6 kOhm (CL <= 90 pF), 2.4 k (<= 140 pF), 1.2 k (<= 270 pF), 0.8 k (<= 400 pF); fast mode plus 1.5 k + 100 Ohm series ... 0.3 k + 50 Ohm (Tables 3-4, given for AVDD 1.8-2.8 V). SDA input/output capacitance 10 pF max, SCL 4 pF max. VIH 1.12-3.5 V, VIL -0.5-0.6 V, VOL 0.4 V at 4 mA. Model_ID register 0x010F reads 0xEB.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Table 1, §1.4 Tables 3-4, §3, Figure 10, Tables 5-7, Table 15)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "supply",
+      "name": "Supply (AVDD + AVDDVCSEL, GND + AVSSVCSEL)",
+      "domain": "electrical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "power",
+          "roles": [
+            "input"
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 2.8,
+          "range": [
+            2.6,
+            3.5
+          ]
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.022
+        }
+      ],
+      "slots": [
+        {
+          "id": "avdd",
+          "required": true,
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          }
+        },
+        {
+          "id": "avddvcsel",
+          "required": true,
+          "match": {
+            "protocol": "power",
+            "role": "input"
+          }
+        },
+        {
+          "id": "gnd",
+          "required": true,
+          "match": {
+            "protocol": "power",
+            "role": "ground",
+            "capability": "ground"
+          }
+        },
+        {
+          "id": "avssvcsel",
+          "required": true,
+          "match": {
+            "protocol": "power",
+            "role": "ground",
+            "capability": "ground"
+          }
+        }
+      ],
+      "profiles": [
+        {
+          "id": "supply_pins",
+          "label": "AVDD 11, AVDDVCSEL 1, GND 3, AVSSVCSEL 2",
+          "default_active": true,
+          "bindings": {
+            "avdd": "pin_11",
+            "avddvcsel": "pin_1",
+            "gnd": "pin_3",
+            "avssvcsel": "pin_2"
+          }
+        }
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "Single 2.8 V supply nominal (2.6-3.5 V) on AVDD and AVDDVCSEL. Current at 23 C, 2.8 V, AVDD + AVDDVCSEL: HW standby 3/5/7 uA, SW standby 4/6/9 uA (min/typ/max); active ranging average 22 mA typ / 24 mA max with default driver settings; peak (with VCSEL) up to 40 mA. Ultralow power detection mode down to 55 uA (AN5870). Decouple with 100 nF + 4.7 uF from AVDD to GND as close as possible to the sensor (AVDDVCSEL/AVSSVCSEL pins). No supply sequencing requirement.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Features, §1.4 Figure 3, §5.2, Table 14, §6.6)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pcb_mount",
+      "name": "Optical LGA12 pads (SMD)",
+      "domain": "mechanical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "mechanical_connection",
+          "roles": [
+            "mounting_point"
+          ]
+        }
+      ],
+      "capabilities": [
+        "surface_mount"
+      ],
+      "traits": [
+        {
+          "type": "connector",
+          "params": {
+            "connector_type": "optical_lga12",
+            "note": "12 pads 0.50 mm square on the underside in a 5 x 3 grid at 0.80 mm pitch (both ways), the centre three positions empty; pad 1 has a 0.08 x 0.25 mm extension as the pin-1 mark. Body 4.40 x 2.40 mm (+-0.05), 1.00 mm (+0.05/-0.10) tall, substrate 0.31 mm. Reflowable: MSL 3, peak 240 C recommended / 260 C max, three passes max, dry (convection) reflow only, no-wash process. Maximum compressive load 25 N.",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Figures 17, 19; §11.3-11.5)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rx_aperture",
+      "name": "Rx (collector) aperture",
+      "domain": "mechanical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "peer"
+          ]
+        }
+      ],
+      "capabilities": [
+        "optical_aperture"
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "SPAD collector opening, dia 0.20 mm (0.201 on the second cap supplier), 0.665 mm from the short edge on the pins 5-7 end, on the long centreline. Exclusion cone 25 deg full angle: dia 0.22 at the cap top, 1.55 mm at 3 mm above it. Detection volume 22 deg at 100 mm, 18 deg at 1000 mm (Table 18). Face the target through a cover window; the window opening must be equal to or wider than the exclusion cone. With a cover glass, run crosstalk calibration as well as offset calibration (UM2931).",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Figures 17, 18, 21; §2.3; §8)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tx_aperture",
+      "name": "Tx (VCSEL emitter) aperture",
+      "domain": "mechanical",
+      "exposed": true,
+      "default_active": true,
+      "protocols": [
+        {
+          "type": "custom",
+          "roles": [
+            "peer"
+          ]
+        }
+      ],
+      "capabilities": [
+        "optical_aperture"
+      ],
+      "traits": [
+        {
+          "type": "usage_note",
+          "params": {
+            "note": "940 nm VCSEL opening, dia 0.40 mm, 3.00 mm from the Rx aperture on the pin 1 end. Exclusion cone 29 deg full angle: dia 0.38 at the cap top, 1.93 mm at 3 mm above it. Field of illumination 16 x 16 deg (1/e²). Face the target through a cover window; the window opening must be equal to or wider than the exclusion cone. With a cover glass, run crosstalk calibration as well as offset calibration (UM2931).",
+            "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Figures 17, 18, 21; §2.3; §8)"
+          }
+        }
+      ]
+    }
+  ],
+  "interfaceGroups": [
+    {
+      "id": "required_supply_pins",
+      "label": "AVDD (11), AVDDVCSEL (1), GND (3), AVSSVCSEL (2), GND2-4 (4, 6, 12)",
+      "members": [
+        "pin_11",
+        "pin_1",
+        "pin_3",
+        "pin_2",
+        "pin_4",
+        "pin_6",
+        "pin_12"
+      ],
+      "policy": "all_of"
+    }
+  ],
+  "domains": [
+    {
+      "domain": "electrical",
+      "power_domains": [
+        {
+          "id": "avdd",
+          "name": "AVDD / AVDDVCSEL",
+          "nominal_voltage_V": 2.8,
+          "voltage_range_V": [
+            2.6,
+            3.5
+          ],
+          "max_current_mA": 40
+        }
+      ],
+      "metadata": {
+        "iovdd_V": {
+          "min": 1.6,
+          "typ": "1.8 / 2.8",
+          "max": 3.5,
+          "note": "I/O level set by the pull-ups; I/Os failsafe, no diode to AVDD"
+        },
+        "supply_current": {
+          "hw_standby_uA": [
+            3,
+            5,
+            7
+          ],
+          "sw_standby_uA": [
+            4,
+            6,
+            9
+          ],
+          "ranging_avg_mA": {
+            "typ": 22,
+            "max": 24
+          },
+          "peak_mA": 40,
+          "ulp_mode_uA": 55,
+          "condition": "23 C, 2.8 V, AVDD + AVDDVCSEL"
+        },
+        "logic_levels": {
+          "i2c": {
+            "vil_V": [
+              -0.5,
+              0.6
+            ],
+            "vih_V": [
+              1.12,
+              3.5
+            ],
+            "vol_max_V": 0.4,
+            "at": "4 mA"
+          },
+          "gpio1": {
+            "vil_max": "0.3 IOVDD",
+            "vih_min": "0.7 IOVDD",
+            "vol_max_V": 0.4,
+            "voh_min": "IOVDD - 0.4 V",
+            "at": "4 mA"
+          }
+        },
+        "boot_time_ms_max": 1.2,
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Tables 12, 14, 15; §2.7; §6.6)"
+      }
+    },
+    {
+      "domain": "mechanical",
+      "dimensions_mm": {
+        "length": 4.4,
+        "width": 2.4,
+        "height": 1
+      },
+      "package": {
+        "name": "Optical LGA12",
+        "pin_count": 12,
+        "pitch_mm": 0.8,
+        "exposed_pad": false,
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Table 1: Package Optical LGA12, Size 4.4 x 2.4 x 1 mm; Figures 17, 19: 4.40 x 2.40, height 1 +0.05/-0.10, 12 pads 0.50 square at 0.80 pitch)"
+      },
+      "metadata": {
+        "dimensions_note": "length along the 5-pad rows (CAD x), width across them (CAD y), height to the cap top without the liner; 1.05 mm with the protective liner (Figure 20)",
+        "substrate_thickness_mm": 0.31,
+        "apertures_mm": {
+          "rx": {
+            "x": -1.535,
+            "y": 0,
+            "dia": 0.2
+          },
+          "tx": {
+            "x": 1.465,
+            "y": 0,
+            "dia": 0.4
+          },
+          "frame": "body centre, top view, pin 1 at +x/-y"
+        },
+        "liner_mm": {
+          "length": 4,
+          "width": 2.92,
+          "thickness": 0.05,
+          "corner_radius": 0.2
+        },
+        "max_compressive_load_N": 25,
+        "moisture_sensitivity_level": 3,
+        "mounting_method": "surface_mount",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Figures 17-21; §11.3-11.4)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "operating_temperature_C": [
+        -30,
+        85
+      ],
+      "metadata": {
+        "storage_C": [
+          -40,
+          125
+        ],
+        "reflow_peak_C": {
+          "recommended": 240,
+          "max": 260
+        },
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Tables 9, 10, 19)"
+      }
+    }
+  ],
+  "traits": [
+    {
+      "type": "operating_conditions",
+      "params": {
+        "avdd_V": [
+          2.6,
+          3.5
+        ],
+        "iovdd_V": [
+          1.6,
+          3.5
+        ],
+        "temperature_C": [
+          -30,
+          85
+        ],
+        "i2c_clock_kHz": [
+          0,
+          1000
+        ],
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Tables 5, 10, 12)"
+      }
+    },
+    {
+      "type": "absolute_maximum",
+      "params": {
+        "avdd_scl_sda_xshut_gpio1_V": [
+          -0.5,
+          3.6
+        ],
+        "storage_temperature_C": [
+          -40,
+          125
+        ],
+        "esd": "HBM +-2 kV (JS-001-2012); CDM +-500 V (JESD22-C101)",
+        "compressive_load_N": 25,
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Tables 9, 11, 13; §11.3)"
+      }
+    },
+    {
+      "type": "performance",
+      "params": {
+        "kind": "distance_sensor",
+        "emitter": "940 nm VCSEL, Class 1 (IEC 60825-1:2014)",
+        "range_mm": "0 to 1200 mm with full FoV; minimum detection 0 mm, linear from 1 mm",
+        "max_range_33ms_mm": {
+          "white_88": {
+            "indoor": "1200 @ 90 % / 1300 @ 50 % detection",
+            "outdoor_overcast": "550 @ 90 % / 600 @ 50 %"
+          },
+          "grey_17": {
+            "indoor": "450 @ 90 % / 475 @ 50 %",
+            "outdoor_overcast": "400 @ 90 % / 450 @ 50 %"
+          }
+        },
+        "accuracy_33ms": {
+          "white_88_indoor": "+-7 mm (1-100 mm), +-8 mm (101-200 mm), +-3 % (> 200 mm)",
+          "grey_17_indoor": "+-6 mm, +-8 mm, +-4 %",
+          "outdoor_overcast": "+-7 to 9 mm below 200 mm, +-8 % above"
+        },
+        "fov_deg": 18,
+        "detection_volume_deg": {
+          "at_100mm": 22,
+          "at_1000mm": 18
+        },
+        "collector_exclusion_cone_deg": 25,
+        "foi_deg": [
+          16,
+          16
+        ],
+        "max_ranging_frequency_Hz": 100,
+        "conditions": "full FoV target, 2.8 V, 23 C, no cover glass, default driver settings",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Features, §6.2-6.3, Tables 16-18, §8, §9)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "note": "Control through ST's ultra lite driver (ULD, UM2931): the register map is not published. Calibrate offset in every application and crosstalk when a cover glass is used. Ranging drifts with temperature as an offset; run the driver's temperature update when the temperature changes. ST lists liquid level measurement as an application (STSW-IMG039 example code).",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Description, Applications, §2.1-2.3, §6.5)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "topic": "variant and liner",
+        "note": "VL53L4CDV0DH/1 = Optical LGA12 with liner, tape and reel, MOQ 4500; VL53L4CDV9DH/1 is the same without liner. The protective liner (4 x 2.92 x 0.05 mm, 1.05 mm overall) withstands reflow at 260 C and must be removed during assembly, just before mounting the cover glass.",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Table 20, Figure 20, §10.4)"
+      }
+    },
+    {
+      "type": "usage_note",
+      "params": {
+        "topic": "laser safety and handling",
+        "note": "Class 1 laser product: do not increase the output power or focus the beam with optics. Handle with ESD-safe non-marring tweezers in a clean process until the cover glass is fitted; reject any part that has been dropped. Optical part, not sealed: dry reflow only (no vapour phase) and no-wash assembly.",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, §9, §11.1-11.2, §11.5)"
+      }
+    },
+    {
+      "type": "source_discrepancy",
+      "params": {
+        "field": "Rx aperture diameter",
+        "values": [
+          "0.20 +-0.02 mm (cap 8575850, Figure 18)",
+          "0.201 +-0.015 mm (cap DM00418317, Figure 18)",
+          "0.22 mm (Rx exclusion cone at datum A, Figure 21)"
+        ],
+        "sources": [
+          "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf"
+        ],
+        "resolution": "Two cap suppliers, identical for the customer (§7); 0.22 mm is the exclusion cone, not the hole. CAD uses 0.20 mm."
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "CAD cap and apertures",
+        "value": "cap 4.40 x 2.40 mm like the substrate, z 0.31-1.00; side recesses, 0.035 mm marks and draft not modelled; each aperture a 0.05 mm deep disc flush with the cap top",
+        "reason": "Figures 17-18 dimension the outline, aperture positions and diameters but not the cap's recess depth or the depth of the aperture to the lens.",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Figures 17-18)"
+      }
+    },
+    {
+      "type": "assumption",
+      "params": {
+        "field": "CAD pads",
+        "value": "0.02 mm thick, inside the substrate, faces on the seating plane",
+        "reason": "Figure 19 gives the pad size and positions but no pad thickness.",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf (DS13812 Rev 8, Figure 19)"
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "No redistributable model found: st.com (product page CAD resources) refused every fetch from the research machine on 2026-10-03 (HTTP/2 error, then timeouts); the STEP on Ultra Librarian needs an account and its End User Subscription Agreement forbids publishing it in a library for distribution; the Mouser page timed out. Geometry is generated from DS13812 Rev 8 Figures 17-21 (library/cad/py/catalog/st-vl53l4cdv0dh-1.py).",
+        "source": "https://app.ultralibrarian.com/details/872f5a58-6c94-11ec-9033-0a34d6323d74/STMicroelectronics/VL53L4CDV0DH-1"
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "field": "mass",
+        "note": "DS13812 Rev 8 states no mass.",
+        "source": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf"
+      }
+    },
+    {
+      "type": "data_gap",
+      "params": {
+        "field": "lifecycle status",
+        "note": "Not confirmed from ST: the product page could not be read. Ultra Librarian shows it as Active.",
+        "source": "https://app.ultralibrarian.com/details/872f5a58-6c94-11ec-9033-0a34d6323d74/STMicroelectronics/VL53L4CDV0DH-1"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "VL53L4CD datasheet DS13812 Rev 8",
+      "type": "datasheet",
+      "url": "https://www.st.com/resource/en/datasheet/vl53l4cd.pdf"
+    }
+  ]
+}

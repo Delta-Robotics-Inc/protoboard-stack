@@ -1,0 +1,58 @@
+{
+  "artifact": "lipol-lp503450",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "5a7c87faac6c4017d1f4afba1b70a14155cbf0fe97e4a8dc508067488a95bf43",
+  "units": "mm",
+  "volume_mm3": 8502.545,
+  "bodies": {
+    "pouch_cell": 7650.0,
+    "pcm_zone": 850.0,
+    "lead_red": 1.272,
+    "lead_black": 1.272
+  },
+  "features": {
+    "mount_face": {
+      "area_mm2": 1700.0,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 2,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "lead_pos": {
+      "area_mm2": 0.636,
+      "centroid": [
+        27.0,
+        15.5,
+        2.5
+      ],
+      "faces": 1,
+      "normal": [
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    "lead_neg": {
+      "area_mm2": 0.636,
+      "centroid": [
+        27.0,
+        13.0,
+        2.5
+      ],
+      "faces": 1,
+      "normal": [
+        1.0,
+        0.0,
+        0.0
+      ]
+    }
+  }
+}

@@ -1,0 +1,390 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "tech-docs",
+  "extension": {
+    "id": "@protoboard/ext-docs",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "pdf": "true",
+    "standins": "true"
+  },
+  "projectDigest": "sha256:9c37cc86ddfdacbadf3d7602a5b0f36bf39d159f4544a3630493c1ee2fb997ab",
+  "tools": [
+    {
+      "id": "chrome",
+      "available": true,
+      "detail": "Google Chrome 154.0.8037.57"
+    }
+  ],
+  "startedAt": "2026-10-03T12:49:55.083Z",
+  "status": "succeeded",
+  "summary": "datasheet: 25 pages, 550 bound values; assembly: 13 pages, 49 bound values",
+  "outputs": [
+    {
+      "path": "docs/wearable-watch-datasheet.html",
+      "digest": "sha256:e67f8ef79124e51f633bbf0fea6fdb6213fe3ca5f3fb662a9ea48088b4d8e317",
+      "bytes": 253739,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/wearable-watch-datasheet.values.json",
+      "digest": "sha256:da318b6be1f8aa76d29bfeb10b422a96270ed8b03597452a0aac318382cadc75",
+      "bytes": 90847,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/wearable-watch-datasheet.pdf",
+      "digest": "sha256:d9c9087dc0197f46df41b270af0edd760a8d4db0cf6804838d45f503b07fec68",
+      "bytes": 1189830,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/wearable-watch-assembly-guide.html",
+      "digest": "sha256:dcdc7d94d147af5135c68957c27cb71d6241c22a4ab55a38c17ffcf278ff243d",
+      "bytes": 76819,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/wearable-watch-assembly-guide.values.json",
+      "digest": "sha256:79968516f3331fb096069004364d9ea80c0d563724726a3cfc0900c1d2164134",
+      "bytes": 5923,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/wearable-watch-assembly-guide.pdf",
+      "digest": "sha256:6b20dbe62bbffe00ae7c10ca060e8fa23de3f6064072006412e338af4a0b8dae",
+      "bytes": 958684,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/wearable-watch-bom.json",
+      "digest": "sha256:a0ce5e5fe012fa11ef4736680e8ef3c8b39488624611a2f8826824c09858e7b6",
+      "bytes": 18014,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-hero.png",
+      "digest": "sha256:c490f54e04c51589abbfd5088ee392ebd894f8203fe6ee535e8444d777996fe5",
+      "bytes": 193081,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-01-covers.png",
+      "digest": "sha256:6367af9ab4a35d314cf5a8be46eb2b47229543634aaf6ab940281d33afb13dcb",
+      "bytes": 95618,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-03-board.png",
+      "digest": "sha256:fc6c26c5fd1c69dc1adff59f49e471d2082d04026fe472324517bd39b2265f63",
+      "bytes": 133238,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-04-lra.png",
+      "digest": "sha256:41896890a40142605abaee7ac9419fbadf4d357f6ee8c6b95a057ae905d4cd63",
+      "bytes": 97741,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-05-lra.png",
+      "digest": "sha256:1dc1356a84826f8ed4e4c164a75839b9103328067d9c6a54a955c039e849d0e1",
+      "bytes": 88686,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-06-close.png",
+      "digest": "sha256:f68ccf24c9231575632c8cd4ce4466ea835b2c20ed96f68b629b6e357696991e",
+      "bytes": 114697,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-06-strap.png",
+      "digest": "sha256:7d01659d5974b9f60f343542840d01c4c51d7ad58489ca246dda5b3f8413be95",
+      "bytes": 123646,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ag-step-07-strap.png",
+      "digest": "sha256:d481df534e26ca9605caea2d25f129b3d1d5f24ba7957e2fbb1277441c12e14d",
+      "bytes": 113341,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-hero.png",
+      "digest": "sha256:b61e31f5076887c543ccf6b6a090cff48d991ca88a1c320e4b5a7710be58af2e",
+      "bytes": 162033,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-interfaces.png",
+      "digest": "sha256:96812480fb912131d02dc47c96ea22965b5ab59624d819c521ba02c92ba0ba53",
+      "bytes": 85706,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-side.png",
+      "digest": "sha256:6811ed25a3db22281a600b3486b102e246f5a929a6dec85e952c879bcba188e6",
+      "bytes": 31354,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/ds-top.png",
+      "digest": "sha256:434f22060db13fb369f5e86fb67b7711a25bbd8225decea226d99041bfbec9b6",
+      "bytes": 98559,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-adi-max17048g-t10.png",
+      "digest": "sha256:4885e390d51589cb3fa4a27149abe3235251385d7230b628f5a12bf7b1a4ae9a",
+      "bytes": 10155,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-adi-max30102efd.png",
+      "digest": "sha256:e7c9df23ae8353e642347d2961753d8125b3f892f7407a107b15975e21caf606",
+      "bytes": 14107,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-alps-skrtlae010.png",
+      "digest": "sha256:676a8bf47af011cea319d9c7c284f3cd1a946a640d854e1febf8b986e9c8af3a",
+      "bytes": 14050,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-aos-ao3400a.png",
+      "digest": "sha256:dca37a09ba229271d12438e2abac057f35a97179f749f051b5031814b83fd73f",
+      "bytes": 11363,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-bosch-bmi270.png",
+      "digest": "sha256:8eeeeac442c78a50a0a44cf57023b044f959f3b7cec6be7e3ebb39bf7f66bb80",
+      "bytes": 9302,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-eastrising-er-tft128-1.png",
+      "digest": "sha256:f2657ca7241dc7c871cece5da715c22860f15f8e69973debe8c24e65cabff1b0",
+      "bytes": 13944,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-epson-fc-135-32k768-12p5.png",
+      "digest": "sha256:7c0cc0890ea656fdf87bd4eb0f6cf83c0c42d50955b409eef13a397eaf921f46",
+      "bytes": 11675,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-esslinger-82-2225-spring-bar.png",
+      "digest": "sha256:a58467a2d3b46bdd8f1a2e7b231cab1f1f57aa99ac437aea031a7a2f0212c3b7",
+      "bytes": 12862,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-gct-usb4105-gf-a.png",
+      "digest": "sha256:77d32687f27fb099e9a2f85e4fe8b41f676a7637e62d5fc88bf30497f122e9c7",
+      "bytes": 11714,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-iso-7045-m2x6-a2.png",
+      "digest": "sha256:265108f151f9db36900a49725558cf3ccd07881e2ea244ac6babb273102630b4",
+      "bytes": 9676,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-lipol-lp402030.png",
+      "digest": "sha256:161331339b6b6c0c3c2f4b790e8e10065036dd6a5d24f04e0ac6e820cda49226",
+      "bytes": 9924,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-microchip-mcp73831t-2aci-ot.png",
+      "digest": "sha256:20a5f5a917e83cbd373a2c20bda744431b627875b9c42d565402587f9c38cf35",
+      "bytes": 12059,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-murata-grm155.png",
+      "digest": "sha256:879fbdedcf79b18c22783271f80a8efe8bc061741b44c76b32ca71d4852d6a6d",
+      "bytes": 8693,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-murata-grm1555c1h200ja01.png",
+      "digest": "sha256:879fbdedcf79b18c22783271f80a8efe8bc061741b44c76b32ca71d4852d6a6d",
+      "bytes": 8693,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-murata-grm188.png",
+      "digest": "sha256:34ee4869f75753e6481f4cdb3e7b1509693f39435c2b42ac180ba609f1328c65",
+      "bytes": 8724,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-raytac-mdbt50q-1mv2.png",
+      "digest": "sha256:fdcfe7179c963e5f173bc7412893845c803b8d77d20e313ff84c9bbab9696c22",
+      "bytes": 11504,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ruthex-rx-m2x4.png",
+      "digest": "sha256:4df93ba6e6a01c8c9ab4061c95389c4abecb5e6192a4f3aed31437dbe297940e",
+      "bytes": 35731,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-st-usblc6-2sc6.png",
+      "digest": "sha256:8cc5e723b883bb3056b0f3954e22faea4cc16ac4827927e105317745f6606b7d",
+      "bytes": 13596,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ti-drv2605ldgs.png",
+      "digest": "sha256:add19a28560d5581c579bcf9ebb4566fe261b1d305eee0c2e2fc20c11977fffc",
+      "bytes": 13233,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ti-tps7a0218pdbv.png",
+      "digest": "sha256:da245e415289b3518ebed851e207c3af599e1770937edf0cd6083e0d47108bdc",
+      "bytes": 12447,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-ti-tps7a0230pdbv.png",
+      "digest": "sha256:da245e415289b3518ebed851e207c3af599e1770937edf0cd6083e0d47108bdc",
+      "bytes": 12447,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-vybronics-vg0832012.png",
+      "digest": "sha256:a1043f108e04cfd42ccc7bffdf63acf14647b2b165cb2cb5701c3ae728a5b2e0",
+      "bytes": 11885,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-watch-battery-leads.png",
+      "digest": "sha256:4555f939d7d5d91c998c2fb17e46edcf9434b07116ab29c7e554955c03652a85",
+      "bytes": 35610,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-watch-case.png",
+      "digest": "sha256:2371a3a89f9cdd5a9f1efaac18948e08da1631a95ed7d823123007e3189a7e54",
+      "bytes": 13829,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-watch-display-lens.png",
+      "digest": "sha256:9a1e17faef3ee0512ceb8f75fa8446d538e1fdc764d5cd5aad9c5935c695cf18",
+      "bytes": 9455,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-watch-hr-cover.png",
+      "digest": "sha256:abeab6746f633ec3a9ec128cba0f8f4c498f93e1a82c2d7cae9c739512e70c2a",
+      "bytes": 9039,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-watch-lra-leads.png",
+      "digest": "sha256:e0927dbe8898f8ca8e438dcaec396e74100182df7e16b6be1ecd1a926d517b11",
+      "bytes": 38471,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-watch-main-board.png",
+      "digest": "sha256:b374d24fe92a45a9ca02cc2c8d3a03db7468099cfd9a52fabb29f28973dbf321",
+      "bytes": 26791,
+      "description": "technical document"
+    },
+    {
+      "path": "docs/images/part-yageo-rc0402.png",
+      "digest": "sha256:84555ebbe3d2d5bb09b2bd7b9b16dfdc5b62ab48d226f61cb5513b7639380714",
+      "bytes": 8906,
+      "description": "technical document"
+    }
+  ],
+  "data": {
+    "docs": [
+      {
+        "type": "datasheet",
+        "html": "docs/wearable-watch-datasheet.html",
+        "pdf": "docs/wearable-watch-datasheet.pdf",
+        "values": "docs/wearable-watch-datasheet.values.json",
+        "pages": 25,
+        "overflow": [],
+        "boundValues": 550
+      },
+      {
+        "type": "assembly",
+        "html": "docs/wearable-watch-assembly-guide.html",
+        "pdf": "docs/wearable-watch-assembly-guide.pdf",
+        "values": "docs/wearable-watch-assembly-guide.values.json",
+        "pages": 13,
+        "overflow": [],
+        "boundValues": 49
+      }
+    ],
+    "files": [
+      "docs/wearable-watch-bom.json",
+      "docs/images/ag-hero.png",
+      "docs/images/ag-step-01-covers.png",
+      "docs/images/ag-step-03-board.png",
+      "docs/images/ag-step-04-lra.png",
+      "docs/images/ag-step-05-lra.png",
+      "docs/images/ag-step-06-close.png",
+      "docs/images/ag-step-06-strap.png",
+      "docs/images/ag-step-07-strap.png",
+      "docs/images/ds-hero.png",
+      "docs/images/ds-interfaces.png",
+      "docs/images/ds-side.png",
+      "docs/images/ds-top.png",
+      "docs/images/part-adi-max17048g-t10.png",
+      "docs/images/part-adi-max30102efd.png",
+      "docs/images/part-alps-skrtlae010.png",
+      "docs/images/part-aos-ao3400a.png",
+      "docs/images/part-bosch-bmi270.png",
+      "docs/images/part-eastrising-er-tft128-1.png",
+      "docs/images/part-epson-fc-135-32k768-12p5.png",
+      "docs/images/part-esslinger-82-2225-spring-bar.png",
+      "docs/images/part-gct-usb4105-gf-a.png",
+      "docs/images/part-iso-7045-m2x6-a2.png",
+      "docs/images/part-lipol-lp402030.png",
+      "docs/images/part-microchip-mcp73831t-2aci-ot.png",
+      "docs/images/part-murata-grm155.png",
+      "docs/images/part-murata-grm1555c1h200ja01.png",
+      "docs/images/part-murata-grm188.png",
+      "docs/images/part-raytac-mdbt50q-1mv2.png",
+      "docs/images/part-ruthex-rx-m2x4.png",
+      "docs/images/part-st-usblc6-2sc6.png",
+      "docs/images/part-ti-drv2605ldgs.png",
+      "docs/images/part-ti-tps7a0218pdbv.png",
+      "docs/images/part-ti-tps7a0230pdbv.png",
+      "docs/images/part-vybronics-vg0832012.png",
+      "docs/images/part-watch-battery-leads.png",
+      "docs/images/part-watch-case.png",
+      "docs/images/part-watch-display-lens.png",
+      "docs/images/part-watch-hr-cover.png",
+      "docs/images/part-watch-lra-leads.png",
+      "docs/images/part-watch-main-board.png",
+      "docs/images/part-yageo-rc0402.png"
+    ],
+    "standins": {
+      "written": [],
+      "kept": []
+    },
+    "figures": {
+      "rendered": 16,
+      "reused": 41
+    },
+    "fonts": true
+  },
+  "finishedAt": "2026-10-03T12:50:17.413Z"
+}

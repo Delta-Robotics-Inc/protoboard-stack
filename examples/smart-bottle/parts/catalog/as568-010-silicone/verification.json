@@ -1,0 +1,24 @@
+{
+  "partId": "as568-010-silicone",
+  "recorded_at": "2026-10-03T03:22:48.355Z",
+  "audit": {
+    "method": "author self-check, not an independent stage-2 audit: the 17 facts were re-read in the hashed downloads (Parker ORD 5700A, Apple Rubber chart, O-Ring Store product page and compound sheet, Marco page and S1000 sheet). A fresh independent pass is still to do.",
+    "checked": 17,
+    "confirmed": 17,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": null,
+  "assumptions": [
+    "generated body"
+  ],
+  "data_gaps": [
+    "manufacturer CAD",
+    "mass",
+    "SAE AS568 standard text",
+    "tensile strength (TORS VMQ-70)"
+  ],
+  "vocabulary_gaps": [
+    "No protocol for an O-ring's ID or OD sealing on a rod, bore or gland groove. Modelled as mechanical `custom` (peer) interfaces `bore` (capabilities o_ring_id, rod_seal, static_seal) and `gland` (o_ring_gland, static_seal), with inner_diameter / outer_diameter / cross_section parameters, like the probe's `tube` (rod_seal_surface) and the fasteners. A seal protocol (ring vs gland roles, squeeze and fill checks against a gland's depth and width) would let DRC check the cap's groove."
+  ]
+}

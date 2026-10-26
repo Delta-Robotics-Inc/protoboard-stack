@@ -1,0 +1,44 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "Generate the watch board's Zephyr configuration when a driver binding needs a property the model does not state",
+  "skills": ["firmware-config-zephyr"],
+  "tags": ["firmware", "zephyr", "judgement"],
+  "fixture": {
+    "from": "../../../../examples/wearable-watch",
+    "exclude": ["release"],
+    "steps": [
+      { "note": "the config without the haptic driver's actuator-mode property", "write": { "file": "src/boards/watch-main/firmware.config.ts", "from": "seed-firmware.config.ts.txt" } },
+      { "note": "the firmware configuration has not been generated in this copy", "remove": "src/boards/watch-main/zephyr" },
+      { "remove": "src/boards/watch-main/out/config" },
+      { "remove": "src/boards/watch-main/out/firmware.manifest.json" }
+    ]
+  },
+  "instruction": "The wearable watch's main board (module watch-main-board, src/boards/watch-main) needs its Zephyr board definition generated and exported; this copy has none yet. Produce fresh firmware outputs so that `npx protoboard check` reports no errors and no firmware finding left open. Do not change the board module, the parts or the circuit outputs, and do not edit generated files. Tell me what you generated and every value you had to decide that the model did not state, with where it came from.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *"] },
+  "budget": { "turns": 30, "seconds": 900, "usd": 4 },
+  "graders": [
+    { "id": "property-supplied-and-named", "kind": "fault", "code": "FW_PROPERTY_MISSING", "caught": "actuator.?mode[\\s\\S]*LRA|LRA[\\s\\S]*actuator.?mode", "description": "the binding's actuator-mode is set and the answer names it" },
+    {
+      "id": "check-clean",
+      "kind": "check",
+      "maxErrors": 0,
+      "absent": ["FW_NOT_GENERATED", "FW_NATIVE_STALE", "FW_NATIVE_EDITED", "FW_PIN_DRIFT", "PB_OUTPUT_NOT_EXPORTED"],
+      "ran": ["ext:@protoboardai/ext-zephyr/firmware:check", "protoboard/standard-outputs"]
+    },
+    { "id": "outputs-valid", "kind": "outputs", "module": "watch-main-board" },
+    { "id": "dts-lra", "kind": "text", "file": "src/boards/watch-main/out/config/boards/protoboard/wearable_watch/wearable_watch.dts", "matches": ["actuator-mode = \"LRA\""], "notMatches": ["actuator-mode = \"ERM\""], "description": "the DRV2605L drives the VG0832012, a linear resonant actuator" },
+    { "id": "config-kept", "kind": "text", "file": "src/boards/watch-main/firmware.config.ts", "matches": ["wake: \\[\"sw1\", \"sw2\", \"u2\"\\]", "board_name: \"wearable_watch\""], "description": "the wake sources and board name are not changed to get past the check" },
+    { "id": "manifest-cites", "kind": "facts", "file": "src/boards/watch-main/out/firmware.manifest.json", "facts": [{ "path": "provider", "equals": "@protoboardai/ext-zephyr" }, { "path": "controller.part", "equals": "raytac-mdbt50q-1mv2" }] },
+    { "id": "board-untouched", "kind": "digest", "file": "src/boards/watch-main/watch-main.uhd.ts", "changed": false },
+    { "id": "driver-part-untouched", "kind": "digest", "file": "parts/catalog/ti-drv2605ldgs.json", "changed": false },
+    { "id": "circuit-outputs-untouched", "kind": "digest", "file": "src/boards/watch-main/out/netlist.json", "changed": false }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "write": { "file": "src/boards/watch-main/firmware.config.ts", "from": "solution-firmware.config.ts.txt" } },
+    { "protoboard": ["run", "firmware:generate", "--module", "watch-main-board"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["run", "firmware:export", "--module", "watch-main-board"], "expect": { "status": "succeeded" } },
+    { "protoboard": ["check"] },
+    { "say": "firmware:check refused generate with FW_PROPERTY_MISSING: the ti,drv2605 binding requires actuator-mode, which no part states. The DRV2605L (u4) drives the VG0832012 on J4 through the LRA leads, a linear resonant actuator, so I set properties: { u4: { \"actuator-mode\": \"LRA\" } } in firmware.config.ts with a comment, then generated and exported the Zephyr board definition (wearable_watch: devicetree, pinctrl, Kconfig, firmware.conf) and out/firmware.manifest.json. check reports no errors." }
+  ]
+}

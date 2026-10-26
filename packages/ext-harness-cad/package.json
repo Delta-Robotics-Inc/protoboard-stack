@@ -1,0 +1,45 @@
+{
+  "name": "@protoboardai/ext-harness-cad",
+  "version": "0.2.0",
+  "description": "Protoboard extension: routed 3D geometry for wire harnesses, generated from the assembled UHD model (obstacle-aware routing, swept conductors, connector and solder bodies) with build123d; a provider of the cad capability",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-harness-cad"
+  },
+  "type": "module",
+  "exports": {
+    "./artifacts": "./lib/artifacts.ts",
+    "./job": "./lib/job.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "protoboard-extension.json",
+    "py",
+    "lib",
+    "ops",
+    "checks",
+    "skills",
+    "evals",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0",
+    "@protoboardai/ext-release": "^0.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@protoboardai/ext-release": {
+      "optional": true
+    }
+  }
+}

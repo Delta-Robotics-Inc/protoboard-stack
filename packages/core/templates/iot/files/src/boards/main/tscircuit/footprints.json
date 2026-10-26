@@ -1,0 +1,151 @@
+{
+  "$comment": "Board-copper pads designed in this project (no maker, so no maker's land pattern): each entry's record cites the pad part that states the design. Every purchased part's land pattern comes from @protoboardai/ext-tscircuit's table, verified against the maker's recommended land pattern (circuit:check reports any that is not).",
+  "packages": [
+    {
+      "id": "battery-pads",
+      "match": {
+        "package": "Wire pads 2 x 2.0 mm",
+        "pin_count": 2
+      },
+      "pads": [
+        {
+          "pin": "1",
+          "x": -1.75,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "shape": "pill"
+        },
+        {
+          "pin": "2",
+          "x": 1.75,
+          "y": 0,
+          "w": 2,
+          "h": 2,
+          "shape": "pill"
+        }
+      ],
+      "courtyard_mm": [
+        6,
+        2.5
+      ],
+      "paste": {
+        "margin_mm": 0,
+        "pins": {
+          "1": "none",
+          "2": "none"
+        }
+      },
+      "mask": {
+        "margin_mm": 0.05
+      },
+      "source": "Project pads (src/boards/main/pads.uhd.ts battery-pads): Ø2.0 mm, 3.5 mm apart (design choice)",
+      "verification": {
+        "document": "src/boards/main/pads.uhd.ts, battery-pads",
+        "page": "-",
+        "figure": "the pad part's package fact and assumption trait",
+        "checked": "2026-10-03",
+        "pads": [
+          {
+            "pins": [
+              "1",
+              "2"
+            ],
+            "size": [
+              2,
+              2
+            ],
+            "pitch_mm": 3.5
+          }
+        ],
+        "courtyard": {
+          "size_mm": [
+            6,
+            2.5
+          ],
+          "basis": "0.25 mm beyond the pads"
+        },
+        "paste": {
+          "margin_mm": 0,
+          "none": [
+            "1",
+            "2"
+          ],
+          "basis": "no paste: hand-soldered leads and spring-probe test pads are bare copper (tinned by the finish)"
+        },
+        "mask": {
+          "margin_mm": 0.05,
+          "basis": "non-solder-mask-defined, 0.05 mm all round"
+        },
+        "notes": "Ø2.0 mm round pads 3.5 mm apart along X, BAT+ at -X (the part's frames)"
+      }
+    },
+    {
+      "id": "test-pad",
+      "match": {
+        "package": "Test pad 1.2 mm",
+        "pin_count": 1
+      },
+      "pads": [
+        {
+          "pin": "1",
+          "x": 0,
+          "y": 0,
+          "w": 1.2,
+          "h": 1.2,
+          "shape": "pill"
+        }
+      ],
+      "courtyard_mm": [
+        1.7,
+        1.7
+      ],
+      "paste": {
+        "margin_mm": 0,
+        "pins": {
+          "1": "none"
+        }
+      },
+      "mask": {
+        "margin_mm": 0.05
+      },
+      "source": "Project test pad (src/boards/main/pads.uhd.ts test-pad): Ø1.2 mm (design choice)",
+      "verification": {
+        "document": "src/boards/main/pads.uhd.ts, test-pad",
+        "page": "-",
+        "figure": "the pad part's package fact and assumption trait",
+        "checked": "2026-10-03",
+        "pads": [
+          {
+            "pins": [
+              "1"
+            ],
+            "size": [
+              1.2,
+              1.2
+            ]
+          }
+        ],
+        "courtyard": {
+          "size_mm": [
+            1.7,
+            1.7
+          ],
+          "basis": "0.25 mm beyond the pads"
+        },
+        "paste": {
+          "margin_mm": 0,
+          "none": [
+            "1"
+          ],
+          "basis": "no paste: hand-soldered leads and spring-probe test pads are bare copper (tinned by the finish)"
+        },
+        "mask": {
+          "margin_mm": 0.05,
+          "basis": "non-solder-mask-defined, 0.05 mm all round"
+        },
+        "notes": "Ø1.2 mm round pad for a spring probe"
+      }
+    }
+  ]
+}

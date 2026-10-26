@@ -1,0 +1,16 @@
+# {{name}}: brief
+
+Requirements and acceptance targets for the aircraft. Cite a source for every
+number; say how each requirement will be shown (check, test, inspection).
+
+| ID | Requirement | Target | Shown by |
+| --- | --- | --- | --- |
+| R1 | Battery | 6S LiPo, XT60 (template: CNHL 1100 mAh 100C) | `protoboard check` (UHD power links) |
+| R2 | Control link | ExpressLRS 2.4 GHz, CRSF on a flight-controller UART (template: RP1 V2 on UART2) | `protoboard check`; bench test |
+| R3 | Size class | _e.g. 5-inch props, 220-240 mm motor-to-motor_ | frame CAD (`run frame-cad`) |
+| R4 | Failsafe | _motors stop within 2 s of link loss_ | bench test, props off |
+
+The template's starting system covers R1 and R2 on the bench. The
+quadcopter-5in reference project shows a complete aircraft: frame and top
+plate, motors and propellers, video, GNSS, fastener stacks, routed cables,
+technical documents and a release.

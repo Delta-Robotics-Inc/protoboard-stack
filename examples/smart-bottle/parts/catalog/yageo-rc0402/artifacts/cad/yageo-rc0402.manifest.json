@@ -1,0 +1,71 @@
+{
+  "artifact": "yageo-rc0402",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "75077f85c94c60612b3de7d920cb1ba210808f740fc6f3acd19bc0fd3892804f",
+  "units": "mm",
+  "volume_mm3": 0.175,
+  "bodies": {
+    "ceramic_substrate": 0.087,
+    "termination_1": 0.044,
+    "termination_2": 0.044
+  },
+  "features": {
+    "pin_1": {
+      "area_mm2": 0.125,
+      "centroid": [
+        -0.375,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pin_2": {
+      "area_mm2": 0.125,
+      "centroid": [
+        0.375,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "pcb_mount": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 2,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    "package_top": {
+      "area_mm2": 0.25,
+      "centroid": [
+        0.0,
+        0.0,
+        0.35
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  }
+}

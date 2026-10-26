@@ -1,0 +1,92 @@
+{
+  "schema": "protoboard.sourcing/v0",
+  "part": "iso-4762-m2x12",
+  "manufacturer": "Generic (ISO 4762 / DIN 912)",
+  "mpn": "WF2332",
+  "need": {
+    "quantity": 6,
+    "note": "the release 0.1.0 ordering list's order quantity (build + spares)"
+  },
+  "offers": [
+    {
+      "supplier": "Westfield Fasteners",
+      "supplier_sku": "WF2332",
+      "mpn": "WF2332",
+      "url": "https://www.westfieldfasteners.co.uk/Bolts-Screws-Metric/304-DIN-912-Cap-Screw-M2x12mm.html",
+      "as_of": "2026-10-03T14:07:14Z",
+      "via": "web",
+      "moq": 10,
+      "packaging": "sold in sale-quantity multiples",
+      "price_breaks": [
+        {
+          "quantity": 10,
+          "unit_price": 0.126,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 20,
+          "unit_price": 0.1215,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 25,
+          "unit_price": 0.1032,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 50,
+          "unit_price": 0.0654,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 100,
+          "unit_price": 0.0465,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 200,
+          "unit_price": 0.0372,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 250,
+          "unit_price": 0.03528,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 500,
+          "unit_price": 0.0288,
+          "currency": "GBP"
+        },
+        {
+          "quantity": 1000,
+          "unit_price": 0.02689,
+          "currency": "GBP"
+        }
+      ],
+      "authorized": true,
+      "market": "UK",
+      "note": "page price calculator (public, no login): line totals ex VAT at each sale quantity tried (10 = GBP 1.26, 20 = GBP 2.43, 25 = GBP 2.58, 50 = GBP 3.27, 100 = GBP 4.65, 200 = GBP 7.44, 250 = GBP 8.82, 500 = GBP 14.40, 1000 = GBP 26.89); 'in stock'"
+    }
+  ],
+  "capability": [
+    {
+      "source": "LCSC product pages (www.lcsc.com/product-detail/<code>.html)",
+      "available": true,
+      "used": false,
+      "note": "not listed (found through the JLCPCB search, which indexes LCSC codes)"
+    },
+    {
+      "source": "JLCPCB public parts search API (no login)",
+      "available": true,
+      "used": true,
+      "note": "every MPN searched; no listing with stock or a real price"
+    },
+    {
+      "source": "DigiKey and Mouser product pages",
+      "available": false,
+      "used": false,
+      "note": "both refuse automated reads (HTTP 403 / timeout) on 2026-10-03; no supplier API keys are configured here"
+    }
+  ]
+}

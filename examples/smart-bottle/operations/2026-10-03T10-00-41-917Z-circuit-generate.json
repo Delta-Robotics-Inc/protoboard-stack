@@ -1,0 +1,86 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "circuit:generate",
+  "extension": {
+    "id": "@protoboard/ext-tscircuit",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "id": "circuit",
+    "operation": "generate",
+    "provider": "@protoboard/ext-tscircuit",
+    "module": "bottle-cap-board",
+    "config": "src/boards/bottle-cap/circuit.config.ts",
+    "configDigest": "sha256:f221657a790cf1239f4c95892046596d1ebbe8ac60d4112057f5f0e6b89c8d20",
+    "moduleDigest": "sha256:90a06bf1cecda46bab8b53909320db552a7d4b57f4b2d18ad8030058731d2899"
+  },
+  "effect": "export",
+  "inputs": {},
+  "projectDigest": "sha256:3ba63bf8132bb5da2763e667f584fb31b553ff26ee8af89735ac7e55663a8c75",
+  "tools": [
+    {
+      "id": "tscircuit-node",
+      "available": true,
+      "detail": "tscircuit @tscircuit/core 0.0.2056, converters pinned, Node v24.14.1"
+    }
+  ],
+  "startedAt": "2026-10-03T10:00:41.917Z",
+  "status": "succeeded",
+  "summary": "61 components (14 fixed, 47 layout), 53 nets → 201 traces, 180 vias in 179.8 s; 22 tscircuit error(s)",
+  "outputs": [
+    {
+      "path": "src/boards/bottle-cap/tscircuit/board.gen.tsx",
+      "digest": "sha256:bc72a66022836bee579263200f4ef41bb3e54ea949a2e25589577f3223c4911e",
+      "bytes": 70949,
+      "description": "generated tscircuit source (rewritten by generate)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/circuit.json",
+      "digest": "sha256:e2241b5a52073c532600833b4ba0929f70e5f26d4575ca9ed92513f1f6554cb1",
+      "bytes": 1158041,
+      "description": "built board (tscircuit circuit JSON)"
+    },
+    {
+      "path": "src/boards/bottle-cap/tscircuit/build.json",
+      "digest": "sha256:86fca814b8cfb28db6c749cda06a48ba50f2a8324b97cd77a231a4c214b553d3",
+      "bytes": 22284,
+      "description": "build record: name map, digests, versions"
+    }
+  ],
+  "data": {
+    "components": 61,
+    "nets": 53,
+    "placement": {
+      "fixed": 14,
+      "layout": 47
+    },
+    "traces": 201,
+    "vias": 180,
+    "build_ms": 179785,
+    "errors": [
+      "pcb_trace_error: PCB trace trace[.d5 > port.pin4, .u3 > port.pin15] is too close to trace[.c9 > port.neg, .u3 > port.pin33] (gap: 0.092mm)",
+      "pcb_trace_error: PCB trace trace[.c9 > port.neg, .u3 > port.pin33] overlaps with pcb_smtpad \"pcb_port[.u3 > .OUT14]\" (accidental contact)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_108] and trace trace[.d5 > port.pin2, .u3 > port.pin13] are too close (clearance: 0.029mm, minimum: 0.1mm)",
+      "pcb_via_trace_clearance_error: Via pcb_via[#pcb_via_108] and trace trace[.c9 > port.neg, .u3 > port.pin33] are too close (clearance: 0.024mm, minimum: 0.1mm)",
+      "pcb_pad_pad_clearance_error: Via pcb_via[#pcb_via_60] and pad pcb_port[.j1 > .SBU1] are too close (clearance: 0.038mm, minimum: 0.1mm)",
+      "pcb_trace_error: Trace too close to board edge (0.158mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.054mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.158mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.124mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.000mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.000mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.124mm < 0.225mm required, margin: 0.15mm)",
+      "pcb_trace_error: Trace too close to board edge (0.230mm < 0.275mm required, margin: 0.15mm)",
+      "pcb_placement_error: Via pcb_via_50 violates copper-to-board-edge clearance (measured 0.000mm, required 0.150mm)"
+    ]
+  },
+  "finishedAt": "2026-10-03T10:03:41.790Z"
+}

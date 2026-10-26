@@ -1,0 +1,3528 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "Arduino UNO R3 datasheet",
+      "type": "datasheet",
+      "url": "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+    },
+    {
+      "id": "art_pinout",
+      "name": "Arduino UNO R3 full pinout",
+      "type": "documentation",
+      "url": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+    },
+    {
+      "id": "art_schematic",
+      "name": "Arduino UNO R3 schematic",
+      "type": "schematic",
+      "url": "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf"
+    },
+    {
+      "id": "art_cad_files",
+      "name": "Arduino UNO R3 Eagle CAD files (CC BY-SA 4.0)",
+      "type": "pcb",
+      "url": "https://docs.arduino.cc/static/6bb7a3ca51ebee82a252f60c0b418787/A000066-cad-files.zip"
+    },
+    {
+      "id": "art_product",
+      "name": "Arduino UNO R3 documentation",
+      "type": "documentation",
+      "url": "https://docs.arduino.cc/hardware/uno-rev3/"
+    },
+    {
+      "filePath": "library/cad/py/catalog/arduino-uno-rev3.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "arduino-uno-r3 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/arduino-uno-r3.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "arduino-uno-r3 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/arduino-uno-r3.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "arduino-uno-r3 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/arduino-uno-r3.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "arduino-uno-r3 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/interfaces/mount.glb",
+      "format": "glb",
+      "id": "cad_if_mount",
+      "interfaceId": "mount",
+      "name": "mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/interfaces/usb.glb",
+      "format": "glb",
+      "id": "cad_if_usb",
+      "interfaceId": "usb",
+      "name": "usb geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/interfaces/dc_jack.glb",
+      "format": "glb",
+      "id": "cad_if_dc_jack",
+      "interfaceId": "dc_jack",
+      "name": "dc_jack geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/interfaces/header_iol.glb",
+      "format": "glb",
+      "id": "cad_if_header_iol",
+      "interfaceId": "header_iol",
+      "name": "header_iol geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/interfaces/header_ioh.glb",
+      "format": "glb",
+      "id": "cad_if_header_ioh",
+      "interfaceId": "header_ioh",
+      "name": "header_ioh geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/interfaces/header_power.glb",
+      "format": "glb",
+      "id": "cad_if_header_power",
+      "interfaceId": "header_power",
+      "name": "header_power geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/arduino-uno-rev3/artifacts/cad/interfaces/header_ad.glb",
+      "format": "glb",
+      "id": "cad_if_header_ad",
+      "interfaceId": "header_ad",
+      "name": "header_ad geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "microcontroller.arduino",
+    "microcontroller.development_board"
+  ],
+  "description": "ATmega328P (16 MHz, socketed) board with 14 digital I/O (6 PWM), 6 analog inputs, 5 V logic, ATmega16U2 USB-B bridge, 2.1 x 5.5 mm DC jack (VIN 6-20 V), 3.3 V / 5 V outputs, shield headers and ICSP. 68.6 x 53.3 mm, 4 x Ø3.2 mm holes (irregular).",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "clock_hz": 16000000,
+        "mcu": "ATmega328P-PU",
+        "regulator_5v": "NCP1117ST50T3G",
+        "source": [
+          "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf",
+          "https://docs.arduino.cc/hardware/uno-rev3/"
+        ],
+        "usb_bridge": "ATmega16U2",
+        "usb_fuse": "MF-MSMF050-2 500 mA"
+      },
+      "power_domains": [
+        {
+          "id": "vin",
+          "name": "VIN / DC jack",
+          "voltage_range_V": [
+            6,
+            20
+          ]
+        },
+        {
+          "id": "5v",
+          "name": "+5V (regulator or USB)",
+          "voltage_range_V": [
+            5,
+            5
+          ]
+        },
+        {
+          "id": "3v3",
+          "name": "+3V3",
+          "voltage_range_V": [
+            3.3,
+            3.3
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "length": 68.58,
+        "width": 53.34
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "header_height_mm": 8.5,
+        "hole_diameter_mm": 3.2,
+        "holes": [
+          [
+            13.97,
+            2.54
+          ],
+          [
+            15.24,
+            50.8
+          ],
+          [
+            66.04,
+            7.62
+          ],
+          [
+            66.04,
+            35.56
+          ]
+        ],
+        "source": [
+          "https://docs.arduino.cc/static/6bb7a3ca51ebee82a252f60c0b418787/A000066-cad-files.zip",
+          "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+        ]
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "note": "Conservative thermal limits for the whole board",
+        "operating_C": [
+          -40,
+          85
+        ],
+        "source": "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+      }
+    }
+  ],
+  "id": "arduino-uno-rev3",
+  "interfaceGroups": [
+    {
+      "id": "janalog",
+      "label": "JANALOG (POWER + A0-A5)",
+      "members": [
+        "ioref",
+        "reset",
+        "3v3",
+        "5v",
+        "gnd_1",
+        "gnd_2",
+        "vin",
+        "a0",
+        "a1",
+        "a2",
+        "a3",
+        "a4",
+        "a5"
+      ],
+      "policy": "any_of"
+    },
+    {
+      "id": "jdigital",
+      "label": "JDIGITAL (D0-D13, GND, AREF, SDA, SCL)",
+      "members": [
+        "d0",
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d5",
+        "d6",
+        "d7",
+        "d8",
+        "d9",
+        "d10",
+        "d11",
+        "d12",
+        "d13",
+        "gnd_3",
+        "aref",
+        "sda",
+        "scl"
+      ],
+      "policy": "any_of"
+    }
+  ],
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_power",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                2.54,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_power",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "ioref",
+      "name": "IOREF",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        }
+      ],
+      "pin": "JANALOG-2",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Reference for digital logic V - connected to 5V",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "reset"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_power",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                2.54,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_power",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "reset",
+      "name": "RESET",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        }
+      ],
+      "pin": "JANALOG-3",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Reset",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Active-low reset of the ATmega328P (PC6/RESET), shared with the reset button.",
+            "source": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_power",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                2.54,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_power",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "3v3",
+      "name": "+3V3",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 3.3
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.05
+        }
+      ],
+      "pin": "JANALOG-4",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "+3V3 Power Rail",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "MAXIMUM current per +3.3V pin is 50mA.",
+            "source": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_power",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                2.54,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_power",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "5v",
+      "name": "+5V",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        }
+      ],
+      "pin": "JANALOG-5",
+      "protocols": [
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "+5V Power Rail",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "5 V from the NCP1117ST50T3G regulator (VIN) or from USB (after the 500 mA polyfuse), selected automatically. No current budget is stated.",
+            "source": [
+              "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf",
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_power",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                2.54,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_power",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gnd_1",
+      "name": "GND",
+      "pin": "JANALOG-6",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_power",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                2.54,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_power",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gnd_2",
+      "name": "GND",
+      "pin": "JANALOG-7",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_power",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                2.54,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_power",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "vin",
+      "name": "VIN",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            20
+          ],
+          "unit": "V"
+        }
+      ],
+      "pin": "JANALOG-8",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Voltage Input",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "field": "VIN range",
+            "resolution": "Arduino's 6-20 V used; 7-12 V is not stated in the current Arduino sources.",
+            "sources": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf",
+              "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/arduino-uno-rev3/definition.json"
+            ],
+            "values": [
+              "6-20 V (datasheet 'Maximum input voltage from VIN pad'; pinout 'VIN 6-20V input')",
+              "7-12 V (ProtoPart)"
+            ]
+          },
+          "type": "source_discrepancy"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "analog_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ad",
+            "signature": {
+              "area_mm2": 38.71,
+              "centroid": [
+                22.86,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ad",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "a0",
+      "name": "A0",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JANALOG-9",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 0 /GPIO (ADC[0], PC0, D14)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "analog_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ad",
+            "signature": {
+              "area_mm2": 38.71,
+              "centroid": [
+                22.86,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ad",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "a1",
+      "name": "A1",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JANALOG-10",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 1 /GPIO (ADC[1], PC1, D15)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "analog_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ad",
+            "signature": {
+              "area_mm2": 38.71,
+              "centroid": [
+                22.86,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ad",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "a2",
+      "name": "A2",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JANALOG-11",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 2 /GPIO (ADC[2], PC2, D16)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "analog_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ad",
+            "signature": {
+              "area_mm2": 38.71,
+              "centroid": [
+                22.86,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ad",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "a3",
+      "name": "A3",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JANALOG-12",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 3 /GPIO (ADC[3], PC3, D17)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "analog_in",
+        "i2c_sda"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ad",
+            "signature": {
+              "area_mm2": 38.71,
+              "centroid": [
+                22.86,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ad",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "a4",
+      "name": "A4/SDA",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JANALOG-13",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 4/I2C Data line (ADC[4], PC4, D18)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "analog_in",
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ad",
+            "signature": {
+              "area_mm2": 38.71,
+              "centroid": [
+                22.86,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ad",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "a5",
+      "name": "A5/SCL",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JANALOG-14",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 5/I2C Clock line (ADC[5], PC5, D19)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d0",
+      "name": "D0/RX",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-1",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 0/GPIO (PD0, RXD)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d1",
+      "name": "D1/TX",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-2",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 1/GPIO (PD1, TXD)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d2",
+      "name": "D2",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-3",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 2/GPIO (PD2, INT[0])",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "External interrupt INT0.",
+            "source": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "pwm_out",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d3",
+      "name": "~D3",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-4",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 3/GPIO (PD3, INT[1], OC2B PWM)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "External interrupt INT1; PWM (OC2B).",
+            "source": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d4",
+      "name": "D4",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-5",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 4/GPIO (PD4)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "pwm_out",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d5",
+      "name": "~D5",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-6",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 5/GPIO (PD5, OC0B PWM)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "pwm_out",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d6",
+      "name": "~D6",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-7",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 6/GPIO (PD6, OC0A PWM)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d7",
+      "name": "D7",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-8",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 7/GPIO (PD7)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d8",
+      "name": "D8",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-9",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 8/GPIO (PB0)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "pwm_out",
+        "interrupt"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d9",
+      "name": "~D9",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-10",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Digital pin 9/GPIO (PB1, OC1A PWM)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "pwm_out",
+        "interrupt",
+        "spi_ss"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d10",
+      "name": "~D10/SS",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-11",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SPI Chip Select (D10, PB2, OC1B PWM)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "pwm_out",
+        "interrupt",
+        "spi_mosi"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d11",
+      "name": "~D11/COPI",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-12",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "output"
+          ],
+          "type": "pwm"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SPI1 Main Out Secondary In (D11, PB3, OC2A PWM)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "spi_miso"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d12",
+      "name": "D12/CIPO",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-13",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SPI Main In Secondary Out (D12, PB4)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "spi_sck"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "d13",
+      "name": "D13/SCK",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-14",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "SPI serial clock output (D13, PB5, LED_BUILTIN)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "LED_BUILTIN is on D13 (PB5).",
+            "source": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gnd_3",
+      "name": "GND",
+      "pin": "JDIGITAL-15",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Ground",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "analog_reference"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "aref",
+      "name": "AREF",
+      "pin": "JDIGITAL-16",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "analog"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog reference voltage",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "i2c_sda"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "sda",
+      "name": "SDA",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-17",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 4/I2C Data line (duplicated)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Same net as A4 (PC4).",
+            "source": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io",
+        "interrupt",
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "scl",
+      "name": "SCL",
+      "parameters": [
+        {
+          "id": "voltage",
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "drive_current",
+          "unit": "mA",
+          "value": 20
+        }
+      ],
+      "pin": "JDIGITAL-18",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "interrupt"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Analog input 5/I2C Clock line (duplicated)",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "note": "Same net as A5 (PC5).",
+            "source": "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "usb_5v_in"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            -1,
+            0,
+            0
+          ],
+          "origin": [
+            -40.64,
+            11.43,
+            7.05
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "usb",
+            "signature": {
+              "area_mm2": 130.8,
+              "centroid": [
+                -40.64,
+                11.43,
+                7.05
+              ],
+              "normal": [
+                -1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_usb",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "usb",
+      "name": "USB-B (ATmega16U2 bridge, 5 V power)",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4.5,
+            5.5
+          ],
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "max_current",
+          "unit": "A",
+          "value": 0.5
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "device"
+          ],
+          "type": "usb"
+        },
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "usb_b",
+            "gender": "receptacle",
+            "note": "X2 USB B Connector (datasheet topology). Programming and power; ATmega16U2 USB-to-serial bridge on UART0.",
+            "source": "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "VUSBMax 5.5 V (datasheet). USB supply passes a 500 mA resettable fuse (MF-MSMF050-2); max_current 0.5 A is that fuse rating. The lower bound of 4.5 V is an assumption (see module assumption trait).",
+            "source": [
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            -1,
+            0,
+            0
+          ],
+          "origin": [
+            -36.09,
+            -18.288,
+            7.1
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "dc_jack",
+            "signature": {
+              "area_mm2": 99,
+              "centroid": [
+                -36.09,
+                -18.288,
+                7.1
+              ],
+              "normal": [
+                -1,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_dc_jack",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "dc_jack",
+      "name": "DC power jack 2.1 x 5.5 mm",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            6,
+            20
+          ],
+          "unit": "V"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "barrel_2_1x5_5mm",
+            "gender": "receptacle",
+            "note": "X1 Power jack 2.1x5.5mm (datasheet topology).",
+            "source": "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "note": "Feeds VIN through the D1 rectifier (schematic), so the VIN 6-20 V limits apply.",
+            "source": [
+              "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf",
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_iol",
+            "signature": {
+              "area_mm2": 51.613,
+              "centroid": [
+                20.32,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_iol",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "uart0",
+      "name": "Serial (D0 RX / D1 TX)",
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "d0",
+            "tx": "d1"
+          },
+          "id": "uart0_default",
+          "label": "Serial (D0 RX / D1 TX)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "host",
+            "device"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "Shared with the ATmega16U2 USB bridge (RX/TX LEDs on its PD4/PD5).",
+            "source": [
+              "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf",
+              "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf"
+            ]
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ad",
+            "signature": {
+              "area_mm2": 38.71,
+              "centroid": [
+                22.86,
+                -24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c",
+      "max_instances": 1,
+      "name": "I2C (A4 SDA / A5 SCL)",
+      "parameters": [],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "a5",
+            "sda": "a4"
+          },
+          "id": "i2c_default",
+          "label": "I2C (A4 SDA / A5 SCL)"
+        },
+        {
+          "bindings": {
+            "scl": "scl",
+            "sda": "sda"
+          },
+          "default_active": false,
+          "id": "i2c_dup_header",
+          "label": "Duplicated SDA/SCL pins by AREF"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "master",
+            "slave"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "header_ioh",
+            "signature": {
+              "area_mm2": 64.516,
+              "centroid": [
+                -4.064,
+                24.13,
+                10.1
+              ],
+              "normal": [
+                0,
+                0,
+                1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_header_ioh",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "spi",
+      "name": "SPI (D11 COPI, D12 CIPO, D13 SCK, D10 SS)",
+      "profiles": [
+        {
+          "bindings": {
+            "miso": "d12",
+            "mosi": "d11",
+            "sck": "d13",
+            "ss": "d10"
+          },
+          "id": "spi_default",
+          "label": "SPI (D11 COPI, D12 CIPO, D13 SCK, D10 SS)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "master",
+            "slave"
+          ],
+          "type": "spi"
+        }
+      ],
+      "slots": [
+        {
+          "id": "mosi",
+          "match": {
+            "capability": "spi_mosi",
+            "protocol": "spi",
+            "role": "data_out"
+          },
+          "required": true
+        },
+        {
+          "id": "miso",
+          "match": {
+            "capability": "spi_miso",
+            "protocol": "spi",
+            "role": "data_in"
+          },
+          "required": true
+        },
+        {
+          "id": "sck",
+          "match": {
+            "capability": "spi_sck",
+            "protocol": "spi",
+            "role": "clock"
+          },
+          "required": true
+        },
+        {
+          "id": "ss",
+          "match": {
+            "capability": "spi_ss",
+            "protocol": "spi",
+            "role": "select"
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            5.715,
+            -7.62,
+            1.6
+          ],
+          "xAxis": [
+            0.844509,
+            0.535542,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "mount",
+            "signature": {
+              "area_mm2": 32.17,
+              "centroid": [
+                5.715,
+                -7.62,
+                0.8
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "mount",
+      "name": "Mounting holes, top (UNO R3 shield diagonal pair, 61.657 mm)",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 61.657
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 2
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 3
+        },
+        {
+          "id": "hole_spacing_y",
+          "unit": "mm",
+          "value": 0
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "structure"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "M3",
+            "note": "UNO R3 shield convention (shared with adafruit-1438-motor-shield-v2 and adafruit-1411-16ch-pwm-servo-shield): 2-hole pattern on the diagonal pair (13.97, 2.54) and (66.04, 35.56) mm in the Eagle board (origin = board lower-left, USB/jack edge at x = 0), 61.657 mm apart, as a rectangle with spacingYmm 0; frame origin at the pair midpoint (40.005, 19.05) on the board top, normal +Z toward a stacked shield, xAxis from (13.97, 2.54) toward (66.04, 35.56). Role structure: a shield (role component) stacks onto it; the same holes mounted onto standoffs are `mount_bottom`. The other two Ø3.2 holes are at (15.24, 50.8) and (66.04, 7.62) mm. All 4 x Ø3.20 mm (datasheet 5.4).",
+            "shape": "rectangle",
+            "threaded": false
+          },
+          "type": "bolt_pattern"
+        },
+        {
+          "params": {
+            "field": "modelled mounting holes",
+            "reason": "The 4 holes contain no square or rectangle. Library convention for UNO R3 boards and shields: the diagonal pair present on every UNO R3 shield is the pattern, so a shield's mount frame coincides with the UNO's. The holes (15.24, 50.8) and (66.04, 7.62) are listed in the note and in the CAD feature mount_all.",
+            "source": [
+              "https://docs.arduino.cc/static/6bb7a3ca51ebee82a252f60c0b418787/A000066-cad-files.zip",
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+            ],
+            "value": "2 of 4: the diagonal pair (13.97, 2.54) / (66.04, 35.56), a rectangle 61.657 x 0 mm"
+          },
+          "type": "assumption"
+        },
+        {
+          "params": {
+            "field": "mounting hole positions",
+            "resolution": "Arduino board file and datasheet drawing used.",
+            "sources": [
+              "https://docs.arduino.cc/static/6bb7a3ca51ebee82a252f60c0b418787/A000066-cad-files.zip",
+              "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+              "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/arduino-uno-rev3/definition.json"
+            ],
+            "values": [
+              "(13.97, 2.54) (15.24, 50.8) (66.04, 7.62) (66.04, 35.56), Ø3.2 (Arduino .brd, datasheet 5.4)",
+              "rectangle (3.2, 3.2) (65.4, 3.2) (3.2, 50.2) (65.4, 50.2) (ProtoPart)"
+            ]
+          },
+          "type": "source_discrepancy"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            5.715,
+            -7.62,
+            0
+          ],
+          "xAxis": [
+            0.844509,
+            0.535542,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "mount",
+            "signature": {
+              "area_mm2": 32.17,
+              "centroid": [
+                5.715,
+                -7.62,
+                0.8
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "mount_bottom",
+      "name": "Mounting holes, bottom (same diagonal pair, onto standoffs)",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 61.657
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 2
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 3
+        },
+        {
+          "id": "hole_spacing_y",
+          "unit": "mm",
+          "value": 0
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "component"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "M3",
+            "note": "Same Ø3.2 diagonal pair (13.97, 2.54) / (66.04, 35.56) as `mount`, framed on the board bottom (normal -Z) for mounting the UNO onto standoffs; see `mount` for the other two holes.",
+            "shape": "rectangle",
+            "threaded": false
+          },
+          "type": "bolt_pattern"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Arduino",
+  "name": "Arduino UNO R3",
+  "part_number": "A000066",
+  "tags": [
+    "arduino",
+    "uno",
+    "atmega328p",
+    "microcontroller",
+    "5v-logic",
+    "shield",
+    "dev-board"
+  ],
+  "traits": [
+    {
+      "params": {
+        "note": "Conservative thermal limits for the whole board; EEPROM, regulator and oscillator may misbehave at the extremes.",
+        "source": "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+        "temperature_C": [
+          -40,
+          85
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "note": "5 V logic: do not drive the I/O above 5 V; 3.3 V peripherals may need level shifting. Max 20 mA per I/O pin, 50 mA on the 3.3 V pin.",
+        "source": [
+          "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf",
+          "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "I/O current and power-source rules",
+        "resolution": "Arduino pinout and schematic used.",
+        "sources": [
+          "https://docs.arduino.cc/resources/pinouts/A000066-full-pinout.pdf",
+          "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf",
+          "https://github.com/Delta-Robotics-Inc/ProtoPart/blob/main/protoparts/arduino-uno-rev3/definition.json"
+        ],
+        "values": [
+          "20 mA per I/O pin; USB and VIN switched automatically (LMV358 + FDN340P)",
+          "40 mA per I/O pin; 'USB and external power should not be used simultaneously' (ProtoPart)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "field": "5 V regulator",
+        "resolution": "Recorded only; both are 1117-type 5 V LDOs and no rating depends on it here.",
+        "sources": [
+          "https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf",
+          "https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf",
+          "https://docs.arduino.cc/static/6bb7a3ca51ebee82a252f60c0b418787/A000066-cad-files.zip"
+        ],
+        "values": [
+          "SPX1117M3-L-5 (datasheet topology table)",
+          "NCP1117ST50T3G (schematic and board file)"
+        ]
+      },
+      "type": "source_discrepancy"
+    },
+    {
+      "params": {
+        "fields": [
+          "maximum power consumption (datasheet 'xx mA')",
+          "5V pin current budget",
+          "weight"
+        ],
+        "note": "Not stated in the Arduino sources (ProtoPart's 25 g is unverified)."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "No STEP: the docs.arduino.cc CAD download (A000066-cad-files.zip, CC BY-SA 4.0) holds only the Eagle .brd/.sch. Geometry is generated from the .brd outline, holes and component positions.",
+        "source": [
+          "https://docs.arduino.cc/hardware/uno-rev3/",
+          "https://docs.arduino.cc/static/6bb7a3ca51ebee82a252f60c0b418787/A000066-cad-files.zip"
+        ]
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "generated geometry and USB lower bound",
+        "reason": "Arduino gives positions but not connector body sizes, PCB thickness, or a minimum USB voltage.",
+        "value": "1.6 mm PCB; chamfered 1 mm corners; USB-B body 16 x 12 x 10.9 mm, DC jack 14.2 x 9 x 11 mm; USB supply lower bound 4.5 V"
+      },
+      "type": "assumption"
+    }
+  ],
+  "version": "1.0.0"
+}

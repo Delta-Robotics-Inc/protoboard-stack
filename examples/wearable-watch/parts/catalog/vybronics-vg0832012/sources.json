@@ -1,0 +1,62 @@
+[
+  {
+    "id": "src_datasheet",
+    "title": "Vybronics VG0832012 LRA coin vibration motor product specification, version A/1 (2020-07-01), 11 pages",
+    "url": "https://vybronics.hk/wp-content/uploads/datasheet-files/Vybronics-VG0832012-datasheet.pdf",
+    "type": "datasheet",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:20:00Z",
+    "sha256": "b594dddafee4f7f13187d1d521808ebf0c55eca9826fbe4ccadcc16418e0edf9",
+    "supports": [
+      "p.4 §1 model name standard: VG0832, size spec Φ8, 3.2t, linear vibration motor",
+      "p.4 §2 standard operating condition: rated 1.8 Vrms AC sine; operating 0.1-1.85 Vrms AC; Z-axis vibration; rated frequency 235 Hz; operating -20 to +60 C, 65+-20 %RH; storage -30 to +70 C",
+      "p.5 §3 standard testing condition: 25+-3 C, 45-85 %RH, 1.8+-0.05 Vrms AC sine, 235+-5 Hz",
+      "p.5 §4 electrical characteristics: rated current max 80 mArms; acceleration 1.0-1.8 G (100 g dummy jig); resistance 22.5 ohm +-10 %; frequency 235+-5 Hz; rise time max 50 ms (0-50 %); fall time max 80 ms (100-50 %); weight 1.0+-0.1 g; noise max 50 dB(A) at 10 cm; insulation min 10 Mohm at 100 V DC between case and lead wire or PCB",
+      "p.6 Figure 1 acceleration vs frequency on a dummy jig: 1.8 Vrms 80 mArms, 1.5 Vrms 70 mArms, 1.0 Vrms 50 mArms, 0.5 Vrms 30 mArms; peaks at about 235 Hz",
+      "p.7-8 §5 reliability tests (storage -30/+70 C 168 h; 55 C 95 %RH 120 h; thermal shock -40/+85 C 15 cycles; 1.5 m drop on a 150 g jig; 10-55 Hz 1.5 mm vibration; 500,000-cycle life at 1.8 Vrms 235 Hz, 2 s on / 1 s off)",
+      "p.9 §6 cautions: max 0.5 kgf pressing force; keep out of liquids, high temperature/humidity, corrosive gases and magnetic fields; rated voltage and frequency may change to suit customer assembly; RoHS 2.0, REACH, halogen-free",
+      "p.10 §7 outline view: body Φ8+-0.1 x 3.25+-0.1; lead exit tab 5.6 from the body centre; leads 10+-2 beyond it, strip 1.5+-0.5, wires tinned; UL3302 AWG32 leads; UV adhesive over the lead exit, 1.8 max high, 2.1 max beyond the body edge, 2.4 max across both leads; '+' polarity red, '-' polarity blue",
+      "p.11 §8 packaging: 100 pcs per tray, 1000 per inner box, 4000 per outer box"
+    ]
+  },
+  {
+    "id": "src_product",
+    "title": "Vybronics LRA Coin Vibration Motor VG0832012 product page (old p/n G0832012)",
+    "url": "https://www.vybronics.com/coin-vibration-motors/lra/v-g0832012",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:20:00Z",
+    "sha256": "ed12e052c9d236a0012bbe6baa0838ca7cefef2ae217577ebee2d87f9bb57058",
+    "supports": [
+      "model VG0832012, old p/n G0832012; headline 8 mm x 3.2 mm, 1.8 Vrms, 235 Hz, LRA Z axis",
+      "Z-axis vibration, perpendicular to its largest surface; marketed for wearables",
+      "'it draws only 19 ma @ 0.6 V while producing a G force of 0.55'",
+      "no double-stick tape on the bottom; VG0832013D has it; rubber foam pads, custom lead lengths and connectors available",
+      "summary table: diameter 8.0 mm, thickness 3.25 mm, rated 1.8 Vrms, operating 0.1-1.85 Vrms, rated current max 80 mA, typical current 58 mA, rise max 50 ms, fall max 80 ms (at 50 % of max G), resonant frequency 235 Hz, vibration force 1.00 Grms",
+      "packaging: plastic tray, 100 per tray, 4000 per master box; ECCN EAR99; HTS 8501.10.4020; country of origin China",
+      "datasheet link (same file on vybronics.com, identical sha256) and a 3D file link (src_cad)",
+      "datasheet page images 0005-4.jpg (identical electrical table) and 0010 drawing"
+    ]
+  },
+  {
+    "id": "src_cad",
+    "title": "Vybronics VG0832012 3D file (RAR archive linked as 'CAD' on the product page)",
+    "url": "https://www.vybronics.com/wp-content/uploads/cad-files/Vybronics-VG0832012-3D-file.rar",
+    "type": "cad",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:30:00Z",
+    "sha256": "53264bd842f3de34e5bfd8afeb11699703797e5b0b35fb697a28a8d544bfe524",
+    "licence": "Not stated on the download link or the product page; the site's Terms and Conditions say its content 'are and will remain the exclusive property of the Company and its licensors'. Not redistributed and not used: geometry is generated from the src_datasheet outline view. The RAR v5 archive was not extracted (no RAR tool in this environment).",
+    "supports": ["existence of manufacturer CAD (not inspected)"]
+  },
+  {
+    "id": "src_terms",
+    "title": "Vybronics Terms and Conditions (Intellectual Property section)",
+    "url": "https://www.vybronics.com/terms-and-conditions",
+    "type": "documentation",
+    "authority": "manufacturer",
+    "fetched_at": "2026-10-02T20:30:00Z",
+    "sha256": "974a7ef5c24b491c979e7fa18574475c9f2300a30cad14e779e60f76239d9762",
+    "supports": ["site content is the exclusive property of the Company and its licensors; no redistribution licence for downloads"]
+  }
+]

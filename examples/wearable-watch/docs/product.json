@@ -1,0 +1,54 @@
+{
+  "schema": "protoboard.product/v0",
+  "summary": "A small, open, fully described smartwatch: a round colour display, motion and heart-rate sensing, haptic alerts and Bluetooth LE to a phone.",
+  "features": [
+    "A 1.28-inch round 240×240 colour display",
+    "Step counting, wrist-raise wake and heart rate on demand",
+    "Haptic alerts, and two buttons on the case side",
+    "Bluetooth LE to a phone",
+    "A 200 mAh LiPo cell charged from USB-C; target of 5 days or more of typical use",
+    "A printed case for a standard 22 mm two-piece strap; splash resistant, no ingress rating claimed"
+  ],
+  "functions": [
+    {
+      "id": "F1",
+      "text": "Show time, notifications and sensor readings on a 1.28-inch round 240×240 colour display",
+      "by": "ER-TFT1.28-1 (GC9A01), SPI"
+    },
+    {
+      "id": "F2",
+      "text": "Count steps and detect wrist raise to wake the display",
+      "by": "BMI270 accelerometer features"
+    },
+    {
+      "id": "F3",
+      "text": "Measure heart rate (and SpO2 as a raw signal, not a medical value) on demand and periodically",
+      "by": "MAX30102 through a window in the back cover"
+    },
+    {
+      "id": "F4",
+      "text": "Vibrate for alerts and confirmations",
+      "by": "DRV2605L + 8 mm LRA"
+    },
+    {
+      "id": "F5",
+      "text": "Exchange data with a phone over Bluetooth LE",
+      "by": "nRF52840 module"
+    },
+    {
+      "id": "F6",
+      "text": "Report battery state of charge",
+      "by": "MAX17048"
+    },
+    {
+      "id": "F7",
+      "text": "Charge from USB-C, and update firmware over USB",
+      "by": "MCP73831, USB-C receptacle, nRF52840 USB"
+    },
+    {
+      "id": "F8",
+      "text": "Two buttons on the case side: wake/select and back",
+      "by": "2 × side-push tact switches"
+    }
+  ]
+}

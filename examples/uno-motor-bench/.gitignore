@@ -1,0 +1,10 @@
+node_modules/
+.protoboard/cache/
+.protoboard/local/
+.protoboard/build/
+.protoboard/tools/
+.protoboard/evals/
+# skills copied from the project's extensions (protoboard skills export)
+.claude/skills/
+# the Manufacturing Package (protoboard release): rebuilt from the committed project
+release/

@@ -1,0 +1,61 @@
+{
+  "artifact": "ruthex-rx-m2x4",
+  "tool": "build123d (representative geometry from datasheet dimensions, library/cad/py/partkit.py)",
+  "toolVersion": "0.13.0",
+  "sourceDigest": "7def24f97f3f4e44d67a9bac718e5e2ac3a5fee4b94220e18813a5612c9bdc36",
+  "units": "mm",
+  "volume_mm3": 19.23,
+  "bodies": {
+    "insert": 19.23
+  },
+  "features": {
+    "thread": {
+      "area_mm2": 24.662,
+      "centroid": [
+        0.0,
+        0.0,
+        2.037
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          0.0,
+          0.0,
+          2.037
+        ]
+      ],
+      "diameter_mm": 2.0
+    },
+    "seat": {
+      "area_mm2": 5.027,
+      "centroid": [
+        0.0,
+        0.0,
+        3.65
+      ],
+      "faces": 1,
+      "centres": [
+        [
+          0.0,
+          0.0,
+          3.65
+        ]
+      ],
+      "diameter_mm": 3.2
+    },
+    "entry_face": {
+      "area_mm2": 5.16,
+      "centroid": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faces": 1,
+      "normal": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  }
+}

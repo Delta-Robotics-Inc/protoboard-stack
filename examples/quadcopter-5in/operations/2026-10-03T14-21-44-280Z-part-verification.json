@@ -1,0 +1,49 @@
+{
+  "schema": "protoboard.operation/v0",
+  "operation": "part-verification",
+  "extension": {
+    "id": "@protoboard/ext-parts",
+    "version": "0.1.0"
+  },
+  "effect": "export",
+  "inputs": {
+    "part": "meps-m5-flanged-lock-nut",
+    "independent": "false"
+  },
+  "projectDigest": "sha256:db3fac65b81a9d4ccc93c5d88b86b09a62d83982cee23a0fcaa7cfbe1a2cd58a",
+  "tools": [],
+  "startedAt": "2026-10-03T14:21:44.280Z",
+  "status": "succeeded",
+  "summary": "meps-m5-flanged-lock-nut: audit 3/4 (self-audit), 1 assumption(s), 2 data gap(s)",
+  "outputs": [
+    {
+      "path": "parts/evidence/meps-m5-flanged-lock-nut/verification.json",
+      "digest": "sha256:d9d9fec7af671aeb0b1f5ce53ef05dca5c2f044ce80af6d5dc13ef1864d03587",
+      "bytes": 720,
+      "description": "meps-m5-flanged-lock-nut: verification record"
+    }
+  ],
+  "data": {
+    "partId": "meps-m5-flanged-lock-nut",
+    "recorded_at": "2026-10-03T14:21:44.310Z",
+    "audit": {
+      "method": "self-audit: each fact re-read from the copies fetched on 2026-10-03 (sha256 in sources.json): the listing's technical summary or the maker's datasheet, product page or image",
+      "independent": false,
+      "auditor": "authoring agent (PB-836 session)",
+      "checked": 4,
+      "confirmed": 3,
+      "wrong": 0,
+      "unsupported": 1
+    },
+    "repairs": null,
+    "assumptions": [
+      "part choice"
+    ],
+    "data_gaps": [
+      "this nut's own height, across flats, flange and thread hand (not stated by MEPS (data_gap))",
+      "manufacturer CAD (none published; nominal body generated)"
+    ],
+    "vocabulary_gaps": []
+  },
+  "finishedAt": "2026-10-03T14:21:44.310Z"
+}

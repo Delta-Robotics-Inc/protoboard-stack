@@ -1,0 +1,498 @@
+{
+  "artifacts": [
+    {
+      "id": "art_datasheet",
+      "name": "Yageo RC_L series data sheet, V.14",
+      "type": "datasheet",
+      "url": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+    },
+    {
+      "filePath": "library/cad/py/catalog/yageo-rc0402.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "yageo-rc0402 generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/yageo-rc0402/artifacts/cad/yageo-rc0402.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "yageo-rc0402 (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/yageo-rc0402/artifacts/cad/yageo-rc0402.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "yageo-rc0402 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/yageo-rc0402/artifacts/cad/yageo-rc0402.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "yageo-rc0402 feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/yageo-rc0402/artifacts/cad/interfaces/pcb_mount.glb",
+      "format": "glb",
+      "id": "cad_if_pcb_mount",
+      "interfaceId": "pcb_mount",
+      "name": "pcb_mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "component.passive.resistor"
+  ],
+  "description": "Yageo RC_L series thick-film chip resistor, size 0402 (1.00 x 0.50 x 0.35 mm), standard power 1/16 W at 70 °C, max working voltage 50 V, -55 to +155 °C. Parametric: resistance and tolerance are set per placement (±0.1 % 10 Ω–1 MΩ, ±0.5 % 1 Ω–1 MΩ, ±1 % 1 Ω–10 MΩ, ±5 % 1 Ω–100 MΩ); the default instance is 10 kΩ ±1 % (RC0402FR-0710KL).",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "dielectric_withstanding_voltage_V": 100,
+        "max_overload_voltage_V": 100,
+        "max_working_voltage_V": 50,
+        "rated_power_W_at_70C": 0.0625,
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Table 2, RC0402 1/16 W row; Power rating)",
+        "technology": "thick film, laser trimmed, on a ceramic substrate"
+      }
+    },
+    {
+      "dimensions_mm": {
+        "height": 0.35,
+        "length": 1,
+        "width": 0.5
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "marking": "none (RC0402)",
+        "mounting_method": "surface_mount",
+        "msl": "1",
+        "packing": "paper tape on 7 in reels (reel code 07: 10,000 per reel in the ordering example)",
+        "source": [
+          "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Table 1; Construction; Marking; Features)",
+          "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Ordering example)"
+        ],
+        "termination_mm": {
+          "bottom_I2": 0.25,
+          "tolerance": 0.1,
+          "top_I1": 0.2
+        },
+        "terminations": "matte tin on nickel barrier"
+      },
+      "package": {
+        "code": "1005 metric (Yageo RC0402)",
+        "exposed_pad": false,
+        "name": "0402",
+        "pin_count": 2,
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Table 1: RC0402 L 1.00 ±0.05, W 0.50 ±0.05, H 0.35 ±0.05, I1 0.20 ±0.10, I2 0.25 ±0.10 mm)"
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "power_derating": "full rated power to 70 °C, derated linearly to 0 at 155 °C (Fig. 10-1)",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Operating temperature range, Fig. 10-1)"
+      },
+      "operating_temperature_C": [
+        -55,
+        155
+      ]
+    }
+  ],
+  "id": "yageo-rc0402",
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_1",
+            "signature": {
+              "area_mm2": 0.125,
+              "centroid": [
+                -0.375,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_1",
+      "name": "1",
+      "pin": 1,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Termination 1 (-X end in the model). The part has no polarity and the manufacturer numbers neither end; the designator is this model's.",
+            "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Fig. 9 outline; the chip has no polarity)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pin_2",
+            "signature": {
+              "area_mm2": 0.125,
+              "centroid": [
+                0.375,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          }
+        ]
+      },
+      "id": "pin_2",
+      "name": "2",
+      "pin": 2,
+      "protocols": [
+        {
+          "roles": [
+            "terminal"
+          ],
+          "type": "passive"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "Termination 2 (+X end in the model). The part has no polarity and the manufacturer numbers neither end; the designator is this model's.",
+            "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Fig. 9 outline; the chip has no polarity)"
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "surface_mount"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "pcb_mount",
+            "signature": {
+              "area_mm2": 0.25,
+              "centroid": [
+                0,
+                0,
+                0
+              ],
+              "normal": [
+                0,
+                0,
+                -1
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_pcb_mount",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "pcb_mount",
+      "name": "0402 chip terminations",
+      "protocols": [
+        {
+          "roles": [
+            "mounting_point"
+          ],
+          "type": "mechanical_connection"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "smd_2_terminal",
+            "note": "Two wrap-around terminations (matte tin on Ni barrier), bottom length I2 0.25 ±0.10 mm, top length I1 0.20 ±0.10 mm, on a 1.00 ±0.05 x 0.50 ±0.05 x 0.35 ±0.05 mm chip. Land pattern: Yageo's separate \"Chip resistors mounting\" data sheet; footprints are the PCB tool's choice. MSL 1.",
+            "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Construction, Fig. 9, Table 1; Features)"
+          },
+          "type": "connector"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Yageo",
+  "name": "Yageo RC0402 Chip Resistor (RC_L, 0402)",
+  "part_number": "RC0402FR-0710KL",
+  "tags": [
+    "yageo",
+    "rc0402",
+    "rc_l",
+    "resistor",
+    "chip-resistor",
+    "thick-film",
+    "0402",
+    "1005-metric",
+    "smd",
+    "passive",
+    "parametric"
+  ],
+  "traits": [
+    {
+      "params": {
+        "kind": "resistor",
+        "overridable": [
+          "resistance",
+          "tolerance",
+          "part_number"
+        ],
+        "parameters": [
+          {
+            "id": "resistance",
+            "name": "Resistance",
+            "range": [
+              1,
+              100000000
+            ],
+            "unit": "Ω",
+            "value": 10000
+          },
+          {
+            "id": "tolerance",
+            "name": "Resistance tolerance (fraction)",
+            "range": [
+              0.001,
+              0.05
+            ],
+            "unit": "dimensionless",
+            "value": 0.01
+          },
+          {
+            "id": "rated_power",
+            "name": "Rated power at 70 °C",
+            "unit": "W",
+            "value": 0.0625
+          },
+          {
+            "id": "max_working_voltage",
+            "name": "Maximum working voltage",
+            "unit": "V",
+            "value": 50
+          },
+          {
+            "id": "max_overload_voltage",
+            "name": "Maximum overload voltage",
+            "unit": "V",
+            "value": 100
+          }
+        ],
+        "part_number": {
+          "codes": {
+            "tolerance": {
+              "B": 0.001,
+              "D": 0.005,
+              "F": 0.01,
+              "J": 0.05
+            }
+          },
+          "decode": "^RC0402(?<tolerance>[BDFJ])(?<packing>[RK])-(?<reel>07|10|13|7D)(?<value>[0-9]*[RKM][0-9]*)L$",
+          "default": "RC0402FR-0710KL",
+          "pattern": "RC0402{tolerance}R-07{value}L",
+          "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Ordering information: RC size, tolerance B/D/F/J, packing R/K, reel 07/10/13/7D, value with R/K/M as decimal point, L)",
+          "value_code": "rkm"
+        },
+        "series": "Yageo RC_L RC0402, standard power",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Ordering information; Table 2 RC0402 1/16 W)",
+        "tolerance": 0.01,
+        "tolerances": [
+          {
+            "code": "B",
+            "range": [
+              10,
+              1000000
+            ],
+            "tolerance": 0.001
+          },
+          {
+            "code": "D",
+            "range": [
+              1,
+              1000000
+            ],
+            "tolerance": 0.005
+          },
+          {
+            "code": "F",
+            "range": [
+              1,
+              10000000
+            ],
+            "tolerance": 0.01
+          },
+          {
+            "code": "J",
+            "range": [
+              1,
+              100000000
+            ],
+            "tolerance": 0.05
+          }
+        ],
+        "unit": "Ω",
+        "value": 10000
+      },
+      "type": "passive"
+    },
+    {
+      "params": {
+        "jumper": "a zero-ohm jumper (< 50 mΩ, rated 1 A, max 2 A) is ordered as J tolerance; not modelled by this part",
+        "kind": "resistor",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Table 2, RC0402 1/16 W row)",
+        "temperature_coefficient_ppm_per_C": {
+          "1-10 Ω": 200,
+          "10 Ω-10 MΩ": 100,
+          "10-100 MΩ": 200
+        }
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "note": "Rated power 1/16 W at 70 °C ambient, derated linearly to zero at 155 °C. The continuous DC or AC (rms) working voltage is √(P x R) or 50 V, whichever is less.",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Table 2; Power rating; Rated voltage; Fig. 10-1)",
+        "temperature_C": [
+          -55,
+          155
+        ],
+        "voltage_V": 50
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "dielectric_withstanding_voltage_V": 100,
+        "overload_voltage_V": 100,
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Table 2, RC0402 1/16 W row)"
+      },
+      "type": "absolute_maximum"
+    },
+    {
+      "params": {
+        "note": "Set the value per placement: overrides { resistance: <Ω>, tolerance: 0.001 | 0.005 | 0.01 | 0.05 } on the board's child. The MPN is RC0402<B|D|F|J>R-07<value>L with R, K or M as the decimal point (4K7 = 4.7 kΩ); name part_number only for another packing or reel (K embossed tape; 10, 13 or 7D reels).",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Ordering information)",
+        "topic": "instance"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "terminal designators",
+        "reason": "Yageo numbers neither termination and the resistor has no polarity; two designators are needed for pin tables and footprints.",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Fig. 9)",
+        "value": "pin_1 = the -X termination, pin_2 = the +X termination"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD package dimensions",
+        "reason": "Table 1 gives the outline and the top and bottom termination lengths (I1 0.20, I2 0.25); the model uses the bottom length, which is what lands on the pad, at the nominal size.",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L (Table 1)",
+        "value": "nominal 1.00 x 0.50 x 0.35 mm chip; each termination one block 0.25 mm long (I2) over the full width and height; overcoat and marking layer not modelled"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "The RC_L data sheet links no 3D model and no vendor STEP was sought for a series part, whose one body stands for every value. Geometry is generated from Table 1 (library/cad/py/catalog/yageo-rc0402.py).",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "mass",
+        "note": "The RC_L data sheet states no unit mass.",
+        "source": "https://yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

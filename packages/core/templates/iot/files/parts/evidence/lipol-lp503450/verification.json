@@ -1,0 +1,27 @@
+{
+  "partId": "lipol-lp503450",
+  "recorded_at": "2026-10-03T08:23:10.401Z",
+  "audit": {
+    "method": "independent agent re-fetched cited sources (uhd-part-verify stage 2)",
+    "checked": 16,
+    "confirmed": 16,
+    "wrong": 0,
+    "unsupported": 0
+  },
+  "repairs": "none; re-verified with part-verify when vendored into smart-bottle (0 errors, 0 warnings)",
+  "assumptions": [
+    "charge and discharge temperature",
+    "length includes the PCM",
+    "lead side and order",
+    "lead wire and length"
+  ],
+  "data_gaps": [
+    "manufacturer datasheet / drawing",
+    "manufacturer CAD",
+    "temperature ranges",
+    "PCM thresholds",
+    "lead gauge, length, strip length, position",
+    "pulse discharge, swelling allowance, self-discharge"
+  ],
+  "vocabulary_gaps": []
+}

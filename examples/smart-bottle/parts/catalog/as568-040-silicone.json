@@ -1,0 +1,588 @@
+{
+  "artifacts": [
+    {
+      "id": "art_parker_handbook",
+      "name": "Parker O-Ring Handbook ORD 5700A (AS568A sizes, face seal glands)",
+      "type": "datasheet",
+      "url": "https://www.macroseal.com/pdf/Parker%20O-rings.pdf"
+    },
+    {
+      "id": "art_product_page",
+      "name": "Marco S1000-040 O-ring, AS568-040, silicone 70A, FDA",
+      "type": "documentation",
+      "url": "https://www.marcorubber.com/product/S1000-040"
+    },
+    {
+      "id": "art_material_datasheet",
+      "name": "Marco S1000 material summary",
+      "type": "datasheet",
+      "url": "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf"
+    },
+    {
+      "filePath": "library/cad/py/catalog/as568-040-silicone.py",
+      "format": "py",
+      "id": "cad_source",
+      "name": "as568-040-silicone generator",
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "description": "Body plus one named sub-shape per interface feature; features and signatures in the manifest.",
+      "filePath": "library/parts/as568-040-silicone/artifacts/cad/as568-040-silicone.step",
+      "format": "step",
+      "id": "cad_step",
+      "name": "as568-040-silicone (STEP)",
+      "provenance": {
+        "generatedFrom": "cad_source",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "mm"
+    },
+    {
+      "description": "Viewer mesh of the STEP body (glTF metres, Y-up).",
+      "filePath": "library/parts/as568-040-silicone/artifacts/cad/as568-040-silicone.glb",
+      "format": "glb",
+      "id": "cad_glb",
+      "name": "as568-040-silicone (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-040-silicone/artifacts/cad/as568-040-silicone.manifest.json",
+      "format": "json",
+      "id": "cad_manifest",
+      "name": "as568-040-silicone feature manifest",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/as568-040-silicone/artifacts/cad/interfaces/seal_face.glb",
+      "format": "glb",
+      "id": "cad_if_seal_face",
+      "interfaceId": "seal_face",
+      "name": "seal_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-040-silicone/artifacts/cad/interfaces/gland_face.glb",
+      "format": "glb",
+      "id": "cad_if_gland_face",
+      "interfaceId": "gland_face",
+      "name": "gland_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-040-silicone/artifacts/cad/interfaces/inner_face.glb",
+      "format": "glb",
+      "id": "cad_if_inner_face",
+      "interfaceId": "inner_face",
+      "name": "inner_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/as568-040-silicone/artifacts/cad/interfaces/outer_face.glb",
+      "format": "glb",
+      "id": "cad_if_outer_face",
+      "interfaceId": "outer_face",
+      "name": "outer_face geometry",
+      "provenance": {
+        "generatedFrom": "cad_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "mechanical.seal"
+  ],
+  "description": "AS568 dash -040 O-ring in FDA silicone (VMQ), 70 Shore A: ID 72.75 ± 0.51 mm (2.864 in), cross section 1.78 ± 0.08 mm (0.070 in), OD 76.31 mm. -60 to 205 °C, static seals only. Documented SKU Marco S1000-040 (orange, FDA 21 CFR 177.2600). Smart bottle: the electronics lid face seal.",
+  "domains": [
+    {
+      "dimensions_mm": {
+        "height": 1.78,
+        "length": 76.31,
+        "width": 76.31
+      },
+      "domain": "mechanical",
+      "material": {
+        "assumption": "Marco's S1000 datasheet gives no specific gravity; Parker's 70A silicone S0604-70 (specific gravity 1.43, ORD 5700 p. 3-26) is used. Silicone compounds vary with filler, so the mass (about 0.83 g) is an estimate.",
+        "density_g_cm3": 1.43,
+        "name": "Silicone (VMQ) 70 Shore A, Marco compound S1000 (density of Parker S0604-70 used)",
+        "source": "https://www.macroseal.com/pdf/Parker%20O-rings.pdf"
+      },
+      "metadata": {
+        "astm_d2000": "M7GE705 A19 B37 EA14 EO16 EO36 F19",
+        "colour": "orange (Marco S1000)",
+        "cross_section_in": 0.07,
+        "cross_section_mm": 1.78,
+        "cross_section_tolerance_mm": 0.08,
+        "cure": "peroxide",
+        "dimensions_note": "Envelope = OD x OD x cross section, free state. Tolerances are for standard (AN) shrinkage compounds (Parker table note b).",
+        "food_contact": "FDA 21 CFR 177.2600 (compound S1000)",
+        "hardness_shore_a": [
+          65,
+          75
+        ],
+        "hardness_typical_shore_a": 68,
+        "inner_diameter_in": 2.864,
+        "inner_diameter_mm": 72.75,
+        "inner_diameter_tolerance_mm": 0.51,
+        "nominal_size_in": "2 7/8 x 3 x 1/16",
+        "outer_diameter_in": 3.004,
+        "outer_diameter_mm": 76.31,
+        "source": [
+          "https://www.macroseal.com/pdf/Parker%20O-rings.pdf",
+          "https://www.marcorubber.com/product/S1000-040",
+          "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf"
+        ],
+        "standard": "SAE AS568 (dash -040); Parker 2-040",
+        "volume_mm3": 581.74
+      }
+    },
+    {
+      "domain": "thermal",
+      "metadata": {
+        "heat_ageing": "ASTM D573 (A19), 70 h at 225 °C: hardness +3, tensile -9 %, elongation -26 % (typical)",
+        "low_temperature_test": "ASTM D2137 Method A (F19): non-brittle after 3 min at -55 °C, pass",
+        "service_temperature_F": [
+          -75,
+          400
+        ],
+        "source": [
+          "https://www.marcorubber.com/product/S1000-040",
+          "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf"
+        ]
+      },
+      "operating_temperature_C": [
+        -60,
+        205
+      ]
+    }
+  ],
+  "id": "as568-040-silicone",
+  "interfaces": [
+    {
+      "capabilities": [
+        "face_seal",
+        "static_seal",
+        "o_ring"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "seal_face",
+            "signature": {
+              "area_mm2": 327.334,
+              "centroid": [
+                0,
+                0,
+                0.089
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_seal_face",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "face_seal",
+      "name": "Sealing face (bears on the counterface)",
+      "parameters": [
+        {
+          "id": "o_ring_mean_diameter",
+          "name": "Centre-line diameter (ID + CS)",
+          "unit": "mm",
+          "value": 74.53
+        },
+        {
+          "id": "o_ring_cross_section",
+          "range": [
+            1.7,
+            1.86
+          ],
+          "unit": "mm",
+          "value": 1.78
+        },
+        {
+          "id": "squeeze_static",
+          "name": "Face-gland squeeze (Parker Design Chart 4-2)",
+          "range": [
+            19,
+            32
+          ],
+          "unit": "%",
+          "value": 25.5
+        },
+        {
+          "id": "hardness",
+          "range": [
+            65,
+            75
+          ],
+          "unit": "Shore A",
+          "value": 70
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "o_ring_face_seal",
+            "note": "The ring's -Z side in its CAD (frame origin on the axis at z = 0, normal -Z): it bears on a flat counterface, in the smart bottle the cap body rim under the lid. Uncompressed contact is a line on the Ø74.53 centre line; squeezed 19-32 % the footprint widens about it. The ring is symmetric, so the side is a naming convention."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "Parker AS568A table, 2-040 (AS568 -040): nominal 2 7/8 x 3 x 1/16 in; I.D. 2.864 ± .020 in (72,75 ± 0,51 mm); W .070 ± .003 in (1,78 ± 0,08 mm); volume .0355 in³. Marco S1000-040: Size Code 040; Cross Section 0.070 in (1.78 mm); Inside Diameter 2.864 in (72.75 mm); Outside Diameter 3.004 in (76.31 mm). Marco S1000: 'Hardness, Shore A 70 +/- 5'; 'Silicones are excellent seal materials for extreme temperature in static applications.' Parker Design Chart 4-2 (.070): squeeze actual .013 to .023 in, 19 to 32 %.",
+            "source": [
+              "https://www.macroseal.com/pdf/Parker%20O-rings.pdf",
+              "https://www.marcorubber.com/product/S1000-040",
+              "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "o_ring_gland",
+        "as568_040"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            1.78
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "gland_face",
+            "signature": {
+              "area_mm2": 327.334,
+              "centroid": [
+                0,
+                0,
+                1.691
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "inner_face",
+            "signature": {
+              "area_mm2": 320.295,
+              "centroid": [
+                0,
+                0,
+                0.89
+              ]
+            }
+          },
+          {
+            "artifact": "cad_step",
+            "kind": "feature",
+            "name": "outer_face",
+            "signature": {
+              "area_mm2": 334.372,
+              "centroid": [
+                0,
+                0,
+                0.89
+              ]
+            }
+          },
+          {
+            "artifact": "cad_if_gland_face",
+            "kind": "artifact"
+          },
+          {
+            "artifact": "cad_if_inner_face",
+            "kind": "artifact"
+          },
+          {
+            "artifact": "cad_if_outer_face",
+            "kind": "artifact"
+          }
+        ]
+      },
+      "id": "gland",
+      "name": "Seat in the host's face groove (groove bottom and walls)",
+      "parameters": [
+        {
+          "id": "o_ring_inner_diameter",
+          "range": [
+            72.24,
+            73.26
+          ],
+          "unit": "mm",
+          "value": 72.75
+        },
+        {
+          "id": "o_ring_cross_section",
+          "range": [
+            1.7,
+            1.86
+          ],
+          "unit": "mm",
+          "value": 1.78
+        },
+        {
+          "id": "o_ring_outer_diameter",
+          "name": "OD (ID + 2 x CS)",
+          "unit": "mm",
+          "value": 76.31
+        },
+        {
+          "id": "gland_depth",
+          "name": "Face-gland depth (Parker Design Chart 4-2)",
+          "range": [
+            1.27,
+            1.37
+          ],
+          "unit": "mm",
+          "value": 1.32
+        },
+        {
+          "id": "groove_width",
+          "name": "Face-groove width, liquids (Parker Design Chart 4-2)",
+          "range": [
+            2.57,
+            2.72
+          ],
+          "unit": "mm",
+          "value": 2.65
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "peer"
+          ],
+          "type": "custom"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "as568_o_ring_gland",
+            "note": "The ring's +Z side and both flanks in its CAD (frame origin on the axis at z = 1.78, normal +Z): the bottom and walls of the host's face groove. With water outside (a lid) size the groove by its ID = 72.75 mm (+1 %), so the inner flank locates; with pressure inside, by its OD = 76.31 mm (-1 %). See the gland usage note."
+          },
+          "type": "connector"
+        },
+        {
+          "params": {
+            "description": "Parker AS568A table, 2-040 (AS568 -040): nominal 2 7/8 x 3 x 1/16 in; I.D. 2.864 ± .020 in (72,75 ± 0,51 mm); W .070 ± .003 in (1,78 ± 0,08 mm); volume .0355 in³. Marco S1000-040: Size Code 040; Cross Section 0.070 in (1.78 mm); Inside Diameter 2.864 in (72.75 mm); Outside Diameter 3.004 in (76.31 mm). Parker Design Chart 4-2, face seal glands, O-ring sizes 004 through 050 (W .070 ± .003): gland depth .050 to .054; squeeze actual .013 to .023, 19 to 32 %; groove width .101 to .107 (liquids), .084 to .089 (vacuum and gases); groove radius .005 to .015 (in). Surface finish 32 for liquids, 16 for vacuum and gases (RMS). 'For External Pressure (inward pressure direction) dimension the groove by its inside diameter (H)i and width: (H)i = Mean I.D. of O-ring; Tolerance = Plus 1% of Mean I.D., but not more than +.060.' 'For Internal Pressure (outward pressure direction) dimension the groove by its outside diameter (HO) and width: (HO) = Mean O.D. of O-ring; Tolerance = Minus 1% of Mean O.D., but not more than -.060.'",
+            "source": [
+              "https://www.macroseal.com/pdf/Parker%20O-rings.pdf",
+              "https://www.marcorubber.com/product/S1000-040"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Generic (SAE AS568)",
+  "name": "O-ring AS568-040, silicone 70A (72.75 x 1.78 mm)",
+  "part_number": "S1000-040 (Marco Sealing Solutions, AS568-040 silicone 70A, FDA)",
+  "tags": [
+    "standard-part",
+    "seal",
+    "o-ring",
+    "as568",
+    "as568-040",
+    "silicone",
+    "vmq",
+    "70a",
+    "fda",
+    "face-seal",
+    "smart-bottle"
+  ],
+  "traits": [
+    {
+      "params": {
+        "compound": "Marco S1000",
+        "compression_set_pct": {
+          "max": 30,
+          "test": "ASTM D395 Method B (B37), 22 h at 175 °C; the datasheet prints 'ASTM D 325 Method B', read as D395, the compression-set method that B37 calls up",
+          "typical": 12
+        },
+        "kind": "seal",
+        "material": "silicone (VMQ), 70 Shore A",
+        "seal_type": "O-ring, static",
+        "source": [
+          "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf",
+          "https://www.marcorubber.com/product/S1000-040"
+        ],
+        "standard_size": "AS568-040",
+        "tensile_strength_psi": {
+          "min": 725,
+          "typical": 899
+        },
+        "ultimate_elongation_pct": {
+          "min": 150,
+          "typical": 219
+        },
+        "water_resistance": {
+          "hardness_change_typical": -2,
+          "limits": "±5 points, ±5 %",
+          "test": "ASTM D471 (EA14), 70 h at 100 °C water",
+          "volume_change_pct_typical": 3
+        }
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "food_contact": "FDA 21 CFR 177.2600 for food and beverage contact (compound S1000)",
+        "not_compatible": "superheated steam over 121 °C, acids and alkalis, low molecular weight chlorinated hydrocarbons (trichloroethylene), aromatic mineral oil, hydrocarbon based fuels, aromatic hydrocarbons (benzene, toluene) (Parker 2.2.17, silicone)",
+        "service": "static seals only: 'Silicones are excellent seal materials for extreme temperature in static applications.' Parker: silicones have poor tear and wear resistance.",
+        "source": [
+          "https://www.marcorubber.com/product/S1000-040",
+          "https://www.marcorubber.com/downloads/Marco-Material-Datasheet-S1000.pdf",
+          "https://www.macroseal.com/pdf/Parker%20O-rings.pdf"
+        ],
+        "temperature_C": [
+          -60,
+          205
+        ],
+        "temperature_F": [
+          -75,
+          400
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "note": "Face seal gland for this ring (Parker Design Chart 4-2, .070 section): depth 1.27-1.37 mm, giving 0.33-0.58 mm (19-32 %) squeeze; width 2.57-2.72 mm for liquids (2.13-2.26 mm for vacuum and gases); groove corner radius 0.13-0.38 mm; 32 RMS finish for liquids. Water from outside (a lid): size the groove by its ID = 72.75 mm (+1 %), so the groove OD is 77.89-78.19 mm. Pressure from inside: size it by its OD = 76.31 mm (-1 %). A rectangular face groove needs inside corner radii of at least 3 x the cross section (5.34 mm).",
+        "source": "https://www.macroseal.com/pdf/Parker%20O-rings.pdf"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "AS568 tolerances are for standard (AN) shrinkage compounds. A silicone moulded in standard tooling can come out smaller: Parker's S0604-70 is shrinkage class I, which gives a 2-040 ID of 2.847 ± .023 in (72.31 ± 0.58 mm). Marco states the nominal 72.75 x 1.78 mm for S1000-040 without a class. Measure the rings bought before freezing a groove sized on the ID.",
+        "source": [
+          "https://www.macroseal.com/pdf/Parker%20O-rings.pdf",
+          "https://www.marcorubber.com/product/S1000-040"
+        ]
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Smart bottle (examples/smart-bottle/docs component-selection.md, system.md): the electronics lid face seal, in a groove in the lid, squeezed against the cap body rim; six M2 screws into heat-set inserts close the lid, inside a cap of at most 80 mm diameter. With the groove sized for water from outside, its OD is about 78.19 mm, leaving about 0.91 mm of wall to an 80 mm outside, and the brief's screw circle (76 mm) falls inside the groove band (72.75-78.19 mm). Either the screws move inside the seal, where each lid hole opens into the sealed space and needs its own seal (for example a sealing washer under the head), or the cap grows to put them outside it, or a smaller dash size is used. The enclosure track decides; nothing here is a sourced fact about the bottle.",
+        "quantity_per_bottle": 1
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "field": "supplier and compound",
+        "reason": "The brief names no supplier ('any AS568 supplier', grade chosen by the enclosure track, OQ-B5). S1000-040 is a documented ring of the right size and material with a stated temperature range and FDA compliance; another supplier's 70A silicone -040 needs its own temperature and food-contact facts.",
+        "source": "https://www.marcorubber.com/product/S1000-040",
+        "value": "Marco S1000-040 (FDA silicone 70A) as the representative SKU"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "CAD state",
+        "reason": "The cited dimensions are for the free ring. In the gland the section squeezes 19-32 % axially; the frames sit on the free faces and the axis, so they do not depend on that.",
+        "value": "free (uncompressed, unstretched) at nominal ID and CS"
+      },
+      "type": "assumption"
+    },
+    {
+      "params": {
+        "field": "manufacturer CAD",
+        "note": "Marco's S1000-040 page has a specification table and a material datasheet, no CAD download; no other vendor CAD was sought. An O-ring is a torus fully defined by ID and CS, so the body is generated at nominal size (library/cad/py/catalog/as568-040-silicone.py)."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "fields": [
+          "density of compound S1000",
+          "shrinkage class of S1000",
+          "SAE AS568 document"
+        ],
+        "note": "Marco states no specific gravity or shrinkage class for S1000. SAE AS568 is paywalled; the size comes from Parker's AS568A table and two corroborating charts."
+      },
+      "type": "data_gap"
+    }
+  ],
+  "version": "1.0.0"
+}

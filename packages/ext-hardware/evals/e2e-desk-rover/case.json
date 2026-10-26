@@ -1,0 +1,62 @@
+{
+  "schema": "protoboard.eval-case/v0",
+  "title": "End to end: a small project from its brief to a Manufacturing Package",
+  "skills": ["build-a-project", "system-compose", "release"],
+  "tags": ["e2e", "system", "release"],
+  "requires": ["chrome"],
+  "fixture": {
+    "from": "fixture",
+    "steps": [{ "note": "the agreed parts, vendored from the catalog (the uno-motor-bench example's)", "copy": { "from": "../../../../examples/uno-motor-bench/parts", "to": "parts" } }]
+  },
+  "instruction": "Build this project from its brief (docs/brief.md) to a release: compose the system as the root module `desk-rover` (export DESK_ROVER in src/desk-rover.uhd.ts, as protoboard.config.ts expects) from the parts already vendored in parts/catalog, record the requirement trace and your decisions in docs/decisions.md, get `npx protoboard check` to no errors with every warning dispositioned, and cut release 0.1.0 with `npx protoboard release --version 0.1.0`. There is no network and no parts service: use only the vendored parts, and do not edit them or the brief. Follow the stack's build-a-project SOP. End with what you built, what the package contains, and what is left open.",
+  "tools": { "read": true, "edit": true, "commands": ["npx protoboard *", "npx tsx node_modules/@protoboardai/ext-hardware/skills/*"] },
+  "budget": { "turns": 60, "seconds": 2400, "usd": 10 },
+  "graders": [
+    { "id": "root-composed", "kind": "fault", "code": "PB_ROOT_NOT_FOUND" },
+    { "id": "check-clean", "kind": "check", "maxErrors": 0, "absent": ["UHD_LINK_STATE", "PB_INVALID_ENDPOINT", "PB_UNRESOLVED_DEFINITION"], "ran": ["uhd/checkSystem"] },
+    {
+      "id": "the-agreed-parts",
+      "kind": "facts",
+      "definition": "desk-rover",
+      "facts": [
+        { "path": "children[moduleDefId=arduino-uno-rev3].id" },
+        { "path": "children[moduleDefId=adafruit-1438-motor-shield-v2].id" },
+        { "path": "children[moduleDefId=adafruit-5396-vl53l4cd].id" }
+      ]
+    },
+    {
+      "id": "powered-from-the-uno",
+      "kind": "facts",
+      "protoboard": ["check", "--severity", "info"],
+      "description": "R2, R3: the shield's logic and the sensor have a supply (no UHD_UNPOWERED on them)",
+      "facts": [
+        { "path": "diagnostics[message=shield:arduino_5v (5V) has no supply link.]", "exists": false },
+        { "path": "diagnostics[message=shield:arduino_ioref (IOREF) has no supply link.]", "exists": false },
+        { "path": "diagnostics[message=tof:vin (VIN) has no supply link.]", "exists": false }
+      ]
+    },
+    { "id": "package-written", "kind": "files", "exist": ["release/0.1.0/index.html", "release/0.1.0/manifest.json", "release/0.1.0/00-overview.pdf", "release/0.1.0/system/work-order.pdf", "release/0.1.0/system/test-plan.pdf", "release/0.1.0/system/ordering-list.csv"] },
+    { "id": "manifest", "kind": "facts", "file": "release/0.1.0/manifest.json", "facts": [{ "path": "version", "equals": "0.1.0" }, { "path": "check.errors", "equals": 0 }] },
+    { "id": "bom-has-the-parts", "kind": "text", "file": "release/0.1.0/system/bom.csv", "matches": ["A000066", ",1438,", ",5396,"] },
+    { "id": "bus-scan", "kind": "text", "file": "release/0.1.0/index.html", "matches": ["0x29", "0x60"], "description": "R1, R3, R4: both I2C devices are on the UNO's bus, so the bring-up scan lists the sensor (0x29) and the shield (0x60)" },
+    { "id": "trace-recorded", "kind": "text", "file": "docs/decisions.md", "matches": ["R1", "R3", "R5", "R6", "UHD_UNPOWERED"] },
+    { "id": "brief-untouched", "kind": "digest", "file": "docs/brief.md", "changed": false },
+    { "id": "origins-untouched", "kind": "digest", "file": "parts/origins.json", "changed": false },
+    { "id": "shield-part-untouched", "kind": "digest", "file": "parts/catalog/adafruit-1438-motor-shield-v2.json", "changed": false },
+    {
+      "id": "engineering",
+      "kind": "rubric",
+      "files": ["src/desk-rover.uhd.ts", "docs/decisions.md"],
+      "rubric": "A small project (Arduino UNO R3, Adafruit Motor Shield V2 stacked on it, Adafruit VL53L4CD breakout) composed from a brief and released. 1. The system model has the three agreed parts and no other purchased part (a harness or cable module that carries the sensor wiring is fine; a stated open item for something the brief did not list, such as stacking headers, is fine), the shield mated to the UNO's headers, both I2C devices on the UNO's I2C, the shield's 5 V, IOREF and ground and the sensor's power and ground from the UNO, and nothing invented (no extra parts, no motor supply). 2. Assumed values (header stack height, anything not in a part) are stated as assumptions, not presented as facts. 3. docs/decisions.md traces every requirement R1-R6 to how it is shown (a check, a link, a document or a test). 4. Every warning check leaves is dispositioned with a reason (the unpowered USB/VIN/DC jack/motor terminal because the USB host and the motor battery are not modelled; unavailable vendor CAD). 5. The final answer says what the package contains and what is left open (motors, battery, the shield's motor supply, unmodelled USB host) without claiming physical verification."
+    }
+  ],
+  "solution": [
+    { "protoboard": ["check"], "expect": { "exit": 1 } },
+    { "write": { "file": "src/desk-rover.uhd.ts", "from": "solution/desk-rover.uhd.ts" } },
+    { "write": { "file": "docs/decisions.md", "from": "solution/decisions.md" } },
+    { "protoboard": ["check"] },
+    { "protoboard": ["release", "--check", "--version", "0.1.0"] },
+    { "protoboard": ["release", "--version", "0.1.0"], "expect": { "status": "succeeded" } },
+    { "say": "Composed desk-rover from the three vendored parts: the motor shield stacked on the UNO (mount mate, 11 mm stack assumed) with I2C, 5V, IOREF and GND from the UNO's headers, and the VL53L4CD on the UNO's I2C, 5 V and ground. docs/decisions.md traces R1-R6 and dispositions the warnings (UHD_UNPOWERED on the UNO's USB/VIN/DC jack and the shield's VIN and motor terminal: the USB host and the rover battery are not modelled; vendor CAD not redistributed). check: 0 errors. release 0.1.0: one unit, overview, spec sheet, BOM and ordering list, work order, assembly guide and test plan (I2C scan 0x29 and 0x60), manifest. Left open: motors, battery and the shield's motor supply." }
+  ]
+}

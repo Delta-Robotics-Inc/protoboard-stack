@@ -1,0 +1,1150 @@
+{
+  "artifacts": [
+    {
+      "id": "art_product_page",
+      "name": "Matek M9N-5883 product page",
+      "type": "datasheet",
+      "url": "https://www.mateksys.com/?portfolio=m9n-5883"
+    },
+    {
+      "id": "art_img_features",
+      "name": "M9N-5883 feature summary image",
+      "type": "documentation",
+      "url": "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_1.jpg"
+    },
+    {
+      "id": "art_img_dims",
+      "name": "M9N-5883 dimensions / silkscreen image",
+      "type": "documentation",
+      "url": "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+    },
+    {
+      "id": "art_qmc5883p",
+      "name": "QST QMC5883P datasheet Rev E",
+      "type": "datasheet",
+      "url": "https://www.qstcorp.com/upload/pdf/202512/2C939E5AA0704285BC3BE71132B8629B.pdf"
+    },
+    {
+      "id": "art_qmc5883l",
+      "name": "QST QMC5883L datasheet Rev B",
+      "type": "datasheet",
+      "url": "https://www.qstcorp.com/upload/pdf/202512/13-52-04%20QMC5883L%20Datasheet%20Rev.%20B.pdf"
+    },
+    {
+      "description": "Manufacturer STEP with named components (Board, GH6P-1, GH6P-2, MAG, ANTENNA, GPS, …). Its terms say who may receive it.",
+      "filePath": "library/parts/matek-m9n-5883/artifacts/cad/vendor/M9N-5883.step",
+      "format": "step",
+      "id": "cad_vendor_step",
+      "name": "M9N-5883 STEP (Matek)",
+      "provenance": {
+        "sourceDigest": "0b3cb5cd696a2982639e4c7bc7bd24bb720b7a4fc0e2f60d088e5903134e5272",
+        "tool": "manufacturer"
+      },
+      "role": "source",
+      "type": "3d_model",
+      "units": "mm",
+      "url": "https://www.mateksys.com/Downloads/other/M9N-5883_step.zip"
+    },
+    {
+      "description": "Converted from the vendor STEP by library/cad/py/gnss_vendor.py; it comes under the STEP's terms.",
+      "filePath": "library/parts/matek-m9n-5883/artifacts/cad/vendor/M9N-5883.glb",
+      "format": "glb",
+      "id": "cad_vendor_glb",
+      "name": "M9N-5883 (GLB)",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "body",
+      "type": "3d_model",
+      "units": "m"
+    },
+    {
+      "filePath": "library/parts/matek-m9n-5883/artifacts/cad/matek-m9n-5883-vendor.manifest.json",
+      "format": "json",
+      "id": "cad_vendor_manifest",
+      "name": "M9N-5883 vendor component manifest",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "source",
+      "type": "cad"
+    },
+    {
+      "filePath": "library/parts/matek-m9n-5883/artifacts/cad/vendor/interfaces/mount.glb",
+      "format": "glb",
+      "id": "cad_vendor_if_mount",
+      "interfaceId": "mount",
+      "name": "mount geometry",
+      "provenance": {
+        "generatedFrom": "cad_vendor_step",
+        "tool": "build123d 0.13.0"
+      },
+      "role": "interface",
+      "type": "3d_model",
+      "units": "m"
+    }
+  ],
+  "categories": [
+    "sensor.gnss",
+    "sensor.magnetic",
+    "robotics.drone"
+  ],
+  "description": "Matek Systems M9N-5883 GNSS and compass module: u-blox NEO-M9N concurrent receiver (GPS, GLONASS, Galileo, BeiDou) with a 25x25x4 mm patch antenna, plus a QMC5883P (0x2C; QMC5883L 0x0D on pre-2026 units) magnetometer on I2C. 4-5.5 V input, 50 mA, UART at 38400 baud default, two JST-GH-6P connectors, 32x32x10 mm, 14.5 g. Matek's current replacement for the EOL M10Q-5883.",
+  "domains": [
+    {
+      "domain": "electrical",
+      "metadata": {
+        "supply_current_mA": 50,
+        "supply_current_note": "\"Power consumption: 50mA\" (Matek Specifications)."
+      },
+      "power_domains": [
+        {
+          "id": "vin_5v",
+          "max_current_mA": 50,
+          "name": "5V input",
+          "nominal_voltage_V": 5,
+          "voltage_range_V": [
+            4,
+            5.5
+          ]
+        }
+      ]
+    },
+    {
+      "dimensions_mm": {
+        "height": 10,
+        "length": 32,
+        "width": 32
+      },
+      "domain": "mechanical",
+      "metadata": {
+        "cad": "M9N-5883_step.zip (STEP model linked from the Matek product page)",
+        "corner_radius_mm": 3,
+        "mounting_holes": "4x Φ2 mm, 26 mm spacing",
+        "patch_antenna_mm": [
+          25,
+          25,
+          4
+        ]
+      },
+      "weight_g": 14.5
+    },
+    {
+      "domain": "thermal",
+      "operating_temperature_C": [
+        -20,
+        80
+      ]
+    },
+    {
+      "domain": "network",
+      "metadata": {
+        "antenna": "integrated 25x25x4 mm patch (Cirocomm PA025AZ0009, formerly Taoglas), no external antenna connector",
+        "constellations": [
+          "GPS",
+          "GLONASS",
+          "Galileo",
+          "BeiDou"
+        ],
+        "gnss_receiver": "u-blox NEO-M9N"
+      }
+    }
+  ],
+  "id": "matek-m9n-5883",
+  "interfaces": [
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-1",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                13.362,
+                0,
+                2.213
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-2",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                -13.362,
+                0,
+                2.213
+              ]
+            }
+          }
+        ]
+      },
+      "id": "vin_5v",
+      "name": "5V",
+      "parameters": [
+        {
+          "id": "voltage",
+          "range": [
+            4,
+            5.5
+          ],
+          "unit": "V",
+          "value": 5
+        },
+        {
+          "id": "current_draw",
+          "unit": "A",
+          "value": 0.05
+        }
+      ],
+      "pin": "5V",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "5V — module supply input, 4~5.5 V (\"Input voltage range: 4~5.5V (5V pad/pin)\"); power consumption 50 mA. Wire to flight controller 4~5.5 V.",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "ground"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-1",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                13.362,
+                0,
+                2.213
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-2",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                -13.362,
+                0,
+                2.213
+              ]
+            }
+          }
+        ]
+      },
+      "id": "gnd",
+      "name": "G",
+      "pin": "G",
+      "protocols": [
+        {
+          "roles": [
+            "ground"
+          ],
+          "type": "power"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "G — ground. Wire to flight controller GND.",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_rx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart_gnss_rx",
+      "name": "RX",
+      "pin": "RX",
+      "protocols": [
+        {
+          "roles": [
+            "receiver"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "RX — GNSS UART receive. Wire to flight controller UART_TX.",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "uart_tx"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "uart_gnss_tx",
+      "name": "TX",
+      "pin": "TX",
+      "protocols": [
+        {
+          "roles": [
+            "transmitter"
+          ],
+          "type": "uart"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "TX — GNSS UART transmit. Wire to flight controller UART_RX.",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-1",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                13.362,
+                0,
+                2.213
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-2",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                -13.362,
+                0,
+                2.213
+              ]
+            }
+          }
+        ]
+      },
+      "id": "uart_gnss",
+      "name": "GNSS UART (NEO-M9N)",
+      "parameters": [
+        {
+          "id": "baud_rate",
+          "unit": "Hz",
+          "value": 38400
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "rx": "uart_gnss_rx",
+            "tx": "uart_gnss_tx"
+          },
+          "id": "uart_gnss_default",
+          "label": "GNSS UART (NEO-M9N)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "device"
+          ],
+          "type": "uart"
+        }
+      ],
+      "slots": [
+        {
+          "id": "rx",
+          "match": {
+            "capability": "uart_rx",
+            "protocol": "uart",
+            "role": "receiver"
+          },
+          "required": true
+        },
+        {
+          "id": "tx",
+          "match": {
+            "capability": "uart_tx",
+            "protocol": "uart",
+            "role": "transmitter"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "UART (TX, RX) interface for GNSS NEO-M9N, 38400 baud default. UBX protocol is bidirectional: flight controller firmware changes GNSS settings over UBX, so no u-center setup is needed. Requires INAV 5.0.0, Betaflight 4.3.0, ArduPilot 4.3 or newer.",
+            "source": "https://www.mateksys.com/?portfolio=m9n-5883"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_sda"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "i2c_compass_sda",
+      "name": "DA",
+      "pin": "DA",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "DA — I2C data for the compass. Wire to flight controller I2C_SDA.",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "i2c_scl"
+      ],
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "i2c_compass_scl",
+      "name": "CL",
+      "pin": "CL",
+      "protocols": [
+        {
+          "roles": [
+            "input",
+            "output",
+            "bidirectional"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "CL — I2C clock for the compass. Wire to flight controller I2C_SCL.",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+            ]
+          },
+          "type": "pin_functions"
+        }
+      ]
+    },
+    {
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-1",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                13.362,
+                0,
+                2.213
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-2",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                -13.362,
+                0,
+                2.213
+              ]
+            }
+          }
+        ]
+      },
+      "id": "i2c_compass",
+      "max_instances": 1,
+      "name": "Compass I2C (QMC5883P / QMC5883L)",
+      "parameters": [
+        {
+          "id": "clock_freq",
+          "range": [
+            100000,
+            400000
+          ],
+          "unit": "Hz"
+        },
+        {
+          "id": "i2c_address",
+          "unit": "dimensionless",
+          "value": 44
+        }
+      ],
+      "profiles": [
+        {
+          "bindings": {
+            "scl": "i2c_compass_scl",
+            "sda": "i2c_compass_sda"
+          },
+          "id": "i2c_compass_default",
+          "label": "Compass I2C (QMC5883P / QMC5883L)"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "slave"
+          ],
+          "type": "i2c"
+        }
+      ],
+      "slots": [
+        {
+          "id": "sda",
+          "match": {
+            "capability": "i2c_sda",
+            "protocol": "i2c",
+            "role": "data"
+          },
+          "required": true
+        },
+        {
+          "id": "scl",
+          "match": {
+            "capability": "i2c_scl",
+            "protocol": "i2c",
+            "role": "clock"
+          },
+          "required": true
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "note": "I2C (DA, CL) interface for compass QMC5883L/QMC5883P. QMC5883P default 7-bit address 0x2C; QMC5883L default 0x0D. Both support 100 kHz and 400 kHz and require external pull-up resistors on the bus (QST datasheets §5.4). Matek does not state whether pull-ups are fitted on the module.",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.qstcorp.com/upload/pdf/202512/2C939E5AA0704285BC3BE71132B8629B.pdf",
+              "https://www.qstcorp.com/upload/pdf/202512/13-52-04%20QMC5883L%20Datasheet%20Rev.%20B.pdf"
+            ]
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "compass IC / I2C address",
+            "resolution": "Same SKU, compass changed in production (\"As of January 2026, the QMC5883L has been replaced by the QMC5883P\"). Modelled as QMC5883P / 0x2C (current production). Check the unit: a pre-2026 unit answers at 0x0D.",
+            "sources": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_1.jpg",
+              "https://www.qstcorp.com/upload/pdf/202512/13-52-04%20QMC5883L%20Datasheet%20Rev.%20B.pdf",
+              "https://www.qstcorp.com/upload/pdf/202512/2C939E5AA0704285BC3BE71132B8629B.pdf"
+            ],
+            "values": [
+              "QMC5883L, 0x0D (units built before January 2026)",
+              "QMC5883P, 0x2C (from January 2026)"
+            ]
+          },
+          "type": "source_discrepancy"
+        },
+        {
+          "params": {
+            "note": "QMC5883P needs newer firmware than Matek's stated minimums: Betaflight's unified QMC5883 driver (src/main/drivers/compass/compass_qmc5883.c) detects QMC5883L (0x0D) and QMC5883P (0x2C). QMC5883P units need Betaflight >= 2025.12.1, INAV >= 9.0.0 (compass_qmc5883p.c), ArduPilot >= 4.5.0 (AP_Compass_QMC5883P.cpp), per the release tags checked in the independent audit.",
+            "source": [
+              "https://github.com/betaflight/betaflight/blob/master/src/main/drivers/compass/compass_qmc5883.c",
+              "https://github.com/iNavFlight/inav/pull/10994"
+            ],
+            "topic": "compass firmware support"
+          },
+          "type": "usage_note"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            15.4,
+            0,
+            2.175
+          ],
+          "xAxis": [
+            0,
+            1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-1",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                13.362,
+                0,
+                2.213
+              ]
+            }
+          }
+        ]
+      },
+      "id": "gh6p_1",
+      "max_instances": 1,
+      "name": "GH6P-1 socket",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "vin_5v",
+            "p2": "uart_gnss_rx",
+            "p3": "uart_gnss_tx",
+            "p4": "i2c_compass_scl",
+            "p5": "i2c_compass_sda",
+            "p6": "gnd"
+          },
+          "default_active": true,
+          "id": "gh6p_1_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "5V",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "RX",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "TX",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "CL",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p5",
+          "label": "DA",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p6",
+          "label": "G",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_gh_6",
+            "gender": "receptacle",
+            "note": "JST-GH-6P, two connectors fitted, both silkscreened 5V RX TX CL DA G (same order as the M10Q-5883). Pin 1 is not marked by the source, so the order is silkscreen order. The same signals are also on edge pads (G DA CL TX RX 5V). A 20 cm JST-GH-6P to JST-GH-6P silicone lead is included.",
+            "pinout": [
+              "5V",
+              "RX",
+              "TX",
+              "CL",
+              "DA",
+              "G"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "default_active": true,
+      "domain": "electrical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            -1,
+            0,
+            0
+          ],
+          "origin": [
+            -15.4,
+            0,
+            2.175
+          ],
+          "xAxis": [
+            0,
+            -1,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "GH6P-2",
+            "signature": {
+              "area_mm2": 333.419,
+              "centroid": [
+                -13.362,
+                0,
+                2.213
+              ]
+            }
+          }
+        ]
+      },
+      "id": "gh6p_2",
+      "max_instances": 1,
+      "name": "GH6P-2 socket",
+      "profiles": [
+        {
+          "bindings": {
+            "p1": "vin_5v",
+            "p2": "uart_gnss_rx",
+            "p3": "uart_gnss_tx",
+            "p4": "i2c_compass_scl",
+            "p5": "i2c_compass_sda",
+            "p6": "gnd"
+          },
+          "default_active": true,
+          "id": "gh6p_2_pinout",
+          "label": "Pinout"
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "mate"
+          ],
+          "type": "connector"
+        }
+      ],
+      "slots": [
+        {
+          "id": "p1",
+          "label": "5V",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p2",
+          "label": "RX",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p3",
+          "label": "TX",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p4",
+          "label": "CL",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p5",
+          "label": "DA",
+          "match": {},
+          "required": false
+        },
+        {
+          "id": "p6",
+          "label": "G",
+          "match": {},
+          "required": false
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "connector_type": "jst_gh_6",
+            "gender": "receptacle",
+            "note": "JST-GH-6P, two connectors fitted, both silkscreened 5V RX TX CL DA G (same order as the M10Q-5883). Pin 1 is not marked by the source, so the order is silkscreen order. The same signals are also on edge pads (G DA CL TX RX 5V). A 20 cm JST-GH-6P to JST-GH-6P silicone lead is included.",
+            "pinout": [
+              "5V",
+              "RX",
+              "TX",
+              "CL",
+              "DA",
+              "G"
+            ],
+            "positions": 6
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "digital_io"
+      ],
+      "default_active": false,
+      "domain": "electrical",
+      "exposed": true,
+      "id": "rst",
+      "name": "RST",
+      "pin": "RST",
+      "protocols": [
+        {
+          "roles": [
+            "input"
+          ],
+          "type": "digital"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "description": "RST — receiver reset pad. Bridging RST to ground for at least 100 ms triggers a cold start and deletes all stored information; recovery use only (e.g. when the FC cannot detect the GNSS module).",
+            "source": [
+              "https://www.mateksys.com/?portfolio=m9n-5883",
+              "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg"
+            ]
+          },
+          "type": "pin_functions"
+        },
+        {
+          "params": {
+            "connector_type": "solder_pad",
+            "note": "Pad labelled \"RST\" beside the NEO-M9N module on the component side."
+          },
+          "type": "connector"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        "bolt_pattern"
+      ],
+      "default_active": true,
+      "domain": "mechanical",
+      "exposed": true,
+      "geometry": {
+        "frame": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "xAxis": [
+            1,
+            0,
+            0
+          ]
+        },
+        "refs": [
+          {
+            "artifact": "cad_vendor_step",
+            "kind": "feature",
+            "name": "mount",
+            "signature": {
+              "area_mm2": 16.46,
+              "centroid": [
+                0,
+                0,
+                -0.312
+              ]
+            }
+          },
+          {
+            "artifact": "cad_vendor_if_mount",
+            "kind": "artifact"
+          },
+          {
+            "generator": "bolt_pattern",
+            "kind": "procedural"
+          }
+        ]
+      },
+      "id": "mount",
+      "name": "Mounting holes",
+      "parameters": [
+        {
+          "id": "hole_spacing",
+          "unit": "mm",
+          "value": 26
+        },
+        {
+          "id": "hole_count",
+          "unit": "dimensionless",
+          "value": 4
+        },
+        {
+          "id": "fastener_diameter",
+          "unit": "mm",
+          "value": 2
+        }
+      ],
+      "protocols": [
+        {
+          "roles": [
+            "component"
+          ],
+          "type": "bolt_pattern"
+        }
+      ],
+      "traits": [
+        {
+          "params": {
+            "fastener": "Φ2 mm hole (fastener not named)",
+            "note": "Four corner holes, Φ2 mm, 26 mm spacing on a 32 x 32 mm board with R3 mm corners.",
+            "shape": "square",
+            "threaded": false
+          },
+          "type": "bolt_pattern"
+        },
+        {
+          "params": {
+            "note": "Hole pattern confirmed by Matek's STEP (PB-775): four Φ2.1 mm holes at (±13, ±13) mm, a 26 x 26 mm square centred on the 32 x 32 mm board. Previously an assumption from the single 26 mm dimension on the drawing.",
+            "source": "https://www.mateksys.com/Downloads/other/M9N-5883_step.zip"
+          },
+          "type": "usage_note"
+        },
+        {
+          "params": {
+            "field": "fastener diameter",
+            "reason": "Matek gives the hole diameter (Φ2 mm) but names no fastener; the hole diameter is used as the fastener upper bound.",
+            "source": "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_2.jpg",
+            "value": "2 mm"
+          },
+          "type": "assumption"
+        }
+      ]
+    }
+  ],
+  "manufacturer": "Matek Systems",
+  "name": "Matek M9N-5883 GNSS & Compass",
+  "part_number": "M9N-5883",
+  "tags": [
+    "gnss",
+    "gps",
+    "compass",
+    "magnetometer",
+    "u-blox",
+    "neo-m9n",
+    "qmc5883p",
+    "qmc5883l",
+    "uart",
+    "i2c",
+    "jst-gh",
+    "fpv",
+    "matek"
+  ],
+  "traits": [
+    {
+      "params": {
+        "antenna": "25 x 25 x 4 mm patch; Taoglas replaced by Cirocomm PA025AZ0009 (\"Both antennas perform the same\")",
+        "compass": "QST QMC5883P (from January 2026) or QMC5883L 3-axis magnetometer",
+        "constellations": [
+          "GPS",
+          "GLONASS",
+          "Galileo",
+          "BeiDou"
+        ],
+        "kind": "gnss",
+        "receiver": "u-blox NEO-M9N (concurrent reception of GPS, Galileo, GLONASS, BeiDou)",
+        "source": [
+          "https://www.mateksys.com/?portfolio=m9n-5883",
+          "https://www.mateksys.com/wp-content/uploads/2020/10/M9N-5883_1.jpg"
+        ]
+      },
+      "type": "performance"
+    },
+    {
+      "params": {
+        "field": "GNSS update rate, sensitivity, TTFF, position accuracy",
+        "note": "Not stated by Matek for the M9N-5883."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "UART / I2C logic level and I2C pull-ups on the connector",
+        "note": "Not stated by Matek."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "field": "edge pads VBus, D-, D+, Bt and V-USB jumper",
+        "note": "Silkscreened on the board (gallery image 2) but Matek states no function, so they are not modelled."
+      },
+      "type": "data_gap"
+    },
+    {
+      "params": {
+        "operating_temperature_C": [
+          -20,
+          80
+        ],
+        "source": "https://www.mateksys.com/?portfolio=m9n-5883",
+        "supply_current_mA": 50,
+        "supply_voltage_V": [
+          4,
+          5.5
+        ]
+      },
+      "type": "operating_conditions"
+    },
+    {
+      "params": {
+        "note": "Mount flat; tilting the magnetometer is strongly discouraged. INAV/Betaflight: compass arrow forward → set CW 270° Flip (with FC arrow forward); compass arrow backward → CW 90° Flip. ArduPilot/Mission Planner: Rotation None. Keep the compass 10 cm away from power lines, ESC, motors and iron-based material.",
+        "source": "https://www.mateksys.com/?portfolio=m9n-5883",
+        "topic": "compass alignment"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "NEO-M9N has no dataflash: settings are held only while powered or by the on-board supercapacitor, and revert to default once it runs out.",
+        "source": "https://www.mateksys.com/?portfolio=m9n-5883",
+        "topic": "backup / settings retention"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "3.3V power LED, red. GNSS PPS LED, green, blinking 1 Hz when GNSS has a 3D fix. From u-blox FW 3.01 the timepulse is UTC-aligned and valid only after the leap second is downloaded (up to 12.5 min), so the LED may not blink immediately after the 3D fix.",
+        "source": "https://www.mateksys.com/?portfolio=m9n-5883",
+        "topic": "status LEDs"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "5V → FC 4~5.5 V; RX → FC UART_TX; TX → FC UART_RX; CL → FC I2C_SCL; DA → FC I2C_SDA; G → FC GND.",
+        "source": "https://www.mateksys.com/?portfolio=m9n-5883",
+        "topic": "wiring"
+      },
+      "type": "usage_note"
+    },
+    {
+      "params": {
+        "note": "Listed as an active product on Matek's GNSS page. Matek names no successor for the EOL M10Q-5883 (all its M10 GNSS modules are on the Discontinued page); this is its only current UART GNSS + I2C compass module. Versus the M10Q-5883: same connector silkscreen and wiring, but 32x32x10 mm / 14.5 g (vs 20x20x12.4 mm / 8 g), 50 mA (vs 13 mA), 38400 default baud (vs 9600), and adds mounting holes.",
+        "source": [
+          "https://www.mateksys.com/?page_id=2849",
+          "https://www.mateksys.com/?page_id=2853",
+          "https://www.mateksys.com/?portfolio=m9n-5883"
+        ],
+        "topic": "lifecycle / replacement"
+      },
+      "type": "usage_note"
+    }
+  ],
+  "version": "1.0.0"
+}

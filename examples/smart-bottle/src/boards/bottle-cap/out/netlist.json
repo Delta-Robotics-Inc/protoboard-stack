@@ -1,0 +1,524 @@
+{
+  "schema": "protoboard.netlist/v0",
+  "nets": [
+    {
+      "id": "boot",
+      "pins": [
+        "r2:pin_2",
+        "tp_boot:pad",
+        "u1:pin_23"
+      ]
+    },
+    {
+      "id": "btn",
+      "pins": [
+        "r8:pin_2",
+        "sw1:pin_2",
+        "u1:pin_6"
+      ]
+    },
+    {
+      "id": "chg_prog",
+      "pins": [
+        "r13:pin_1",
+        "u5:pin_8"
+      ]
+    },
+    {
+      "id": "chg_stat",
+      "pins": [
+        "r14:pin_2",
+        "r15:pin_1",
+        "u1:pin_21"
+      ]
+    },
+    {
+      "id": "chg_stat_5v",
+      "pins": [
+        "r14:pin_1",
+        "u5:pin_5"
+      ]
+    },
+    {
+      "id": "en",
+      "pins": [
+        "c3:pin_1",
+        "r1:pin_2",
+        "tp_en:pad",
+        "u1:pin_8"
+      ]
+    },
+    {
+      "id": "fb",
+      "pins": [
+        "r11:pin_2",
+        "r12:pin_1",
+        "u4:pin_3"
+      ]
+    },
+    {
+      "id": "fg_alrt",
+      "pins": [
+        "r16:pin_2",
+        "u1:pin_20",
+        "u6:pin_5"
+      ]
+    },
+    {
+      "id": "gnd",
+      "pins": [
+        "c10:pin_2",
+        "c11:pin_2",
+        "c12:pin_2",
+        "c13:pin_2",
+        "c14:pin_2",
+        "c15:pin_2",
+        "c1:pin_2",
+        "c2:pin_2",
+        "c3:pin_2",
+        "c4:pin_2",
+        "c5:pin_2",
+        "c6:pin_2",
+        "c7:pin_2",
+        "c8:pin_2",
+        "c9:pin_2",
+        "d9:pin_2",
+        "j1:ground_tags",
+        "j1:pin_a1",
+        "j1:pin_a12",
+        "j1:pin_b1",
+        "j1:pin_b12",
+        "j1:shell",
+        "jbat:pad_neg",
+        "jprb:pad_gnd",
+        "r10:pin_2",
+        "r12:pin_2",
+        "r13:pin_2",
+        "r15:pin_2",
+        "r18:pin_2",
+        "r19:pin_2",
+        "r20:pin_2",
+        "r5:pin_2",
+        "r9:pin_2",
+        "sw1:pin_1",
+        "sw1:pin_3",
+        "tp_gnd:pad",
+        "u1:pin_1",
+        "u1:pin_11",
+        "u1:pin_14",
+        "u1:pin_2",
+        "u1:pin_36",
+        "u1:pin_37",
+        "u1:pin_38",
+        "u1:pin_39",
+        "u1:pin_40",
+        "u1:pin_41",
+        "u1:pin_42",
+        "u1:pin_43",
+        "u1:pin_44",
+        "u1:pin_45",
+        "u1:pin_46",
+        "u1:pin_47",
+        "u1:pin_48",
+        "u1:pin_49",
+        "u1:pin_50",
+        "u1:pin_51",
+        "u1:pin_52",
+        "u1:pin_53",
+        "u2:pin_12",
+        "u2:pin_2",
+        "u2:pin_3",
+        "u2:pin_4",
+        "u2:pin_6",
+        "u3:pin_25",
+        "u3:pin_26",
+        "u3:pin_33",
+        "u4:pgnd",
+        "u4:pin_13",
+        "u4:pin_2",
+        "u5:pin_6",
+        "u5:pin_9",
+        "u6:ep",
+        "u6:pin_1",
+        "u6:pin_4",
+        "u6:pin_6"
+      ]
+    },
+    {
+      "id": "i2c_scl",
+      "pins": [
+        "r4:pin_2",
+        "u1:pin_5",
+        "u2:pin_10",
+        "u3:pin_29",
+        "u6:pin_7"
+      ]
+    },
+    {
+      "id": "i2c_sda",
+      "pins": [
+        "r3:pin_2",
+        "u1:pin_22",
+        "u2:pin_9",
+        "u3:pin_28",
+        "u6:pin_8"
+      ]
+    },
+    {
+      "id": "led_en",
+      "pins": [
+        "r9:pin_1",
+        "u1:pin_19",
+        "u3:pin_30"
+      ]
+    },
+    {
+      "id": "led_iref",
+      "pins": [
+        "r10:pin_1",
+        "u3:pin_31"
+      ]
+    },
+    {
+      "id": "led_vcap",
+      "pins": [
+        "c7:pin_1",
+        "u3:pin_32"
+      ]
+    },
+    {
+      "id": "led1_b",
+      "pins": [
+        "d1:pin_4",
+        "u3:pin_3"
+      ]
+    },
+    {
+      "id": "led1_g",
+      "pins": [
+        "d1:pin_3",
+        "u3:pin_2"
+      ]
+    },
+    {
+      "id": "led1_r",
+      "pins": [
+        "d1:pin_2",
+        "u3:pin_1"
+      ]
+    },
+    {
+      "id": "led2_b",
+      "pins": [
+        "d2:pin_4",
+        "u3:pin_6"
+      ]
+    },
+    {
+      "id": "led2_g",
+      "pins": [
+        "d2:pin_3",
+        "u3:pin_5"
+      ]
+    },
+    {
+      "id": "led2_r",
+      "pins": [
+        "d2:pin_2",
+        "u3:pin_4"
+      ]
+    },
+    {
+      "id": "led3_b",
+      "pins": [
+        "d3:pin_4",
+        "u3:pin_9"
+      ]
+    },
+    {
+      "id": "led3_g",
+      "pins": [
+        "d3:pin_3",
+        "u3:pin_8"
+      ]
+    },
+    {
+      "id": "led3_r",
+      "pins": [
+        "d3:pin_2",
+        "u3:pin_7"
+      ]
+    },
+    {
+      "id": "led4_b",
+      "pins": [
+        "d4:pin_4",
+        "u3:pin_12"
+      ]
+    },
+    {
+      "id": "led4_g",
+      "pins": [
+        "d4:pin_3",
+        "u3:pin_11"
+      ]
+    },
+    {
+      "id": "led4_r",
+      "pins": [
+        "d4:pin_2",
+        "u3:pin_10"
+      ]
+    },
+    {
+      "id": "led5_b",
+      "pins": [
+        "d5:pin_4",
+        "u3:pin_15"
+      ]
+    },
+    {
+      "id": "led5_g",
+      "pins": [
+        "d5:pin_3",
+        "u3:pin_14"
+      ]
+    },
+    {
+      "id": "led5_r",
+      "pins": [
+        "d5:pin_2",
+        "u3:pin_13"
+      ]
+    },
+    {
+      "id": "led6_b",
+      "pins": [
+        "d6:pin_4",
+        "u3:pin_18"
+      ]
+    },
+    {
+      "id": "led6_g",
+      "pins": [
+        "d6:pin_3",
+        "u3:pin_17"
+      ]
+    },
+    {
+      "id": "led6_r",
+      "pins": [
+        "d6:pin_2",
+        "u3:pin_16"
+      ]
+    },
+    {
+      "id": "led7_b",
+      "pins": [
+        "d7:pin_4",
+        "u3:pin_21"
+      ]
+    },
+    {
+      "id": "led7_g",
+      "pins": [
+        "d7:pin_3",
+        "u3:pin_20"
+      ]
+    },
+    {
+      "id": "led7_r",
+      "pins": [
+        "d7:pin_2",
+        "u3:pin_19"
+      ]
+    },
+    {
+      "id": "led8_b",
+      "pins": [
+        "d8:pin_4",
+        "u3:pin_24"
+      ]
+    },
+    {
+      "id": "led8_g",
+      "pins": [
+        "d8:pin_3",
+        "u3:pin_23"
+      ]
+    },
+    {
+      "id": "led8_r",
+      "pins": [
+        "d8:pin_2",
+        "u3:pin_22"
+      ]
+    },
+    {
+      "id": "sw_l1",
+      "pins": [
+        "l1:pin_1",
+        "u4:pin_8",
+        "u4:pin_9"
+      ]
+    },
+    {
+      "id": "sw_l2",
+      "pins": [
+        "l1:pin_2",
+        "u4:pin_6",
+        "u4:pin_7"
+      ]
+    },
+    {
+      "id": "temp_dq",
+      "pins": [
+        "jprb:pad_dq",
+        "r7:pin_2",
+        "u1:pin_18"
+      ]
+    },
+    {
+      "id": "tof_int",
+      "pins": [
+        "r6:pin_2",
+        "u1:pin_13",
+        "u2:pin_7"
+      ]
+    },
+    {
+      "id": "tof_xshut",
+      "pins": [
+        "r5:pin_1",
+        "u1:pin_12",
+        "u2:pin_5"
+      ]
+    },
+    {
+      "id": "u0_rxd",
+      "pins": [
+        "tp_rxd:pad",
+        "u1:pin_30"
+      ]
+    },
+    {
+      "id": "u0_txd",
+      "pins": [
+        "tp_txd:pad",
+        "u1:pin_31"
+      ]
+    },
+    {
+      "id": "usb_cc1",
+      "pins": [
+        "j1:pin_a5",
+        "r19:pin_1"
+      ]
+    },
+    {
+      "id": "usb_cc2",
+      "pins": [
+        "j1:pin_b5",
+        "r20:pin_1"
+      ]
+    },
+    {
+      "id": "usb_dm",
+      "pins": [
+        "d9:pin_3",
+        "d9:pin_4",
+        "j1:pin_a7",
+        "j1:pin_b7",
+        "u1:pin_26"
+      ]
+    },
+    {
+      "id": "usb_dp",
+      "pins": [
+        "d9:pin_1",
+        "d9:pin_6",
+        "j1:pin_a6",
+        "j1:pin_b6",
+        "u1:pin_27"
+      ]
+    },
+    {
+      "id": "v3v3",
+      "pins": [
+        "c10:pin_1",
+        "c11:pin_1",
+        "c12:pin_1",
+        "c1:pin_1",
+        "c2:pin_1",
+        "c4:pin_1",
+        "c5:pin_1",
+        "jprb:pad_vdd",
+        "r11:pin_1",
+        "r16:pin_1",
+        "r1:pin_1",
+        "r2:pin_1",
+        "r3:pin_1",
+        "r4:pin_1",
+        "r6:pin_1",
+        "r7:pin_1",
+        "r8:pin_1",
+        "tp_3v3:pad",
+        "u1:pin_3",
+        "u2:pin_1",
+        "u2:pin_11",
+        "u4:pin_4",
+        "u4:pin_5"
+      ]
+    },
+    {
+      "id": "vbat",
+      "pins": [
+        "c14:pin_1",
+        "c15:pin_1",
+        "c6:pin_1",
+        "c8:pin_1",
+        "c9:pin_1",
+        "d1:pin_1",
+        "d2:pin_1",
+        "d3:pin_1",
+        "d4:pin_1",
+        "d5:pin_1",
+        "d6:pin_1",
+        "d7:pin_1",
+        "d8:pin_1",
+        "jbat:pad_pos",
+        "u3:pin_27",
+        "u4:pin_1",
+        "u4:pin_10",
+        "u4:pin_11",
+        "u4:pin_12",
+        "u5:pin_3",
+        "u5:pin_4",
+        "u6:pin_2",
+        "u6:pin_3"
+      ]
+    },
+    {
+      "id": "vbus",
+      "pins": [
+        "c13:pin_1",
+        "d9:pin_5",
+        "j1:pin_a4",
+        "j1:pin_a9",
+        "j1:pin_b4",
+        "j1:pin_b9",
+        "r17:pin_1",
+        "u5:pin_1",
+        "u5:pin_2"
+      ]
+    },
+    {
+      "id": "vbus_sense",
+      "pins": [
+        "r17:pin_2",
+        "r18:pin_1",
+        "u1:pin_16"
+      ]
+    }
+  ]
+}
