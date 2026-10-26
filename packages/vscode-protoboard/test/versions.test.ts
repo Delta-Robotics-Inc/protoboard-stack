@@ -30,11 +30,15 @@ describe("the extension's version is the stack's", () => {
     expect(STACK_VERSION).toBeUndefined();
   });
 
-  it("the build takes the stack version from packages/core/package.json and stops on a different one; the command is contributed", () => {
+  it("the build takes the stack version from packages/core/package.json (or a dev build of it) and stops on a different one; the command is contributed", () => {
     const build = read("esbuild.mjs");
     expect(build).toMatch(/join\(here, "\.\.", "core", "package\.json"\)/);
-    expect(build).toContain("__PB_STACK_VERSION__: JSON.stringify(stackVersion)");
     expect(build).toMatch(/ownVersion !== stackVersion/);
+    // the version the .vsix is built as: the stack's, or a development build's prerelease of it that package.mjs
+    // gives (PB-1062, scripts/build-version.mjs); never anything else
+    expect(build).toContain("const buildVersion = process.env.PROTOBOARD_BUILD_VERSION || stackVersion;");
+    expect(build).toContain(String.raw`buildVersion !== stackVersion && !/^\d+\.\d+\.\d+-dev\./.test(buildVersion)`);
+    expect(build).toContain("__PB_STACK_VERSION__: JSON.stringify(buildVersion)");
     const pkg = JSON.parse(read("package.json"));
     expect(pkg.contributes.commands.some((c: { command: string }) => c.command === "protoboard.about")).toBe(true);
     expect(read("src/extension.ts")).toContain('cmd("protoboard.about"');
