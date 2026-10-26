@@ -155,7 +155,8 @@ locally). Then, in order:
    `NPM_TOKEN` set it publishes with that token; without it, through npm
    trusted publishing.
 4. **extension**: `vsce publish --packagePath` (secret `VSCE_PAT`) and `ovsx
-   publish --packagePath` (secret `OVSX_PAT`), duplicates skipped. A
+   publish --trusted-publishing --packagePath` (OIDC, no secret), duplicates
+   skipped. A
    prerelease is not listed (the Marketplace takes major.minor.patch only).
 5. **github**: the GitHub release, with the changelog's section, the `.vsix`
    files, a `.sha256` for each and `SHA256SUMS.txt`.
@@ -179,8 +180,10 @@ everything without publishing.
 - `VSCE_PAT`: an Azure DevOps personal access token of the Marketplace
   publisher `deltarobotics` (organisation: All accessible organisations,
   scope Marketplace: Manage);
-- `OVSX_PAT`: an Open VSX access token of an account that is a member of the
-  namespace `deltarobotics` (`npx ovsx create-namespace deltarobotics` once).
+- on open-vsx.org, the namespace `deltarobotics` (`npx ovsx create-namespace
+  deltarobotics` once) with a trusted publisher (Settings, Trusted
+  publishers): the repository `Delta-Robotics-Inc/protoboard-stack`, the
+  workflow `release.yml` and the environment `release`. No secret.
 
 ## The local flow: `scripts/ci-stack.sh`
 
