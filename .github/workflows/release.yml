@@ -31,9 +31,12 @@
 #     set, for the first release; delete the secret once the trusted publishers
 #     are configured.
 #
-# The Marketplace and Open VSX: the secrets VSCE_PAT (an Azure DevOps token of
-# the publisher `deltarobotics`, scope Marketplace: Manage) and OVSX_PAT (an
-# Open VSX token of the namespace `deltarobotics`).
+# The Marketplace: the secret VSCE_PAT (an Azure DevOps token of the publisher
+# `deltarobotics`, scope Marketplace: Manage).
+# Open VSX: trusted publishing (OIDC), no secret. The namespace `deltarobotics`
+# names this repository, this workflow file (release.yml) and the environment
+# `release` as its trusted publisher (open-vsx.org > Settings > Trusted
+# publishers).
 #
 # Run by hand (Actions > Release > Run workflow) to build and check everything
 # without a tag: the publish and release jobs are skipped.
@@ -282,6 +285,7 @@ jobs:
     environment: release
     permissions:
       contents: read
+      id-token: write # Open VSX trusted publishing (OIDC)
     steps:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
@@ -294,21 +298,15 @@ jobs:
       - name: The secrets are set
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: |
-          missing=""
-          [ -n "$VSCE_PAT" ] || missing="$missing VSCE_PAT"
-          [ -n "$OVSX_PAT" ] || missing="$missing OVSX_PAT"
-          if [ -n "$missing" ]; then echo "::error::missing secrets:$missing (see the comment at the top of release.yml)"; exit 1; fi
+          if [ -z "$VSCE_PAT" ]; then echo "::error::missing secret: VSCE_PAT (see the comment at the top of release.yml)"; exit 1; fi
           ls -l vsix
       - name: Visual Studio Marketplace
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: npx --yes @vscode/vsce@4.0.0 publish --skip-duplicate --packagePath vsix/*.vsix
       - name: Open VSX
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
-        run: npx --yes ovsx@1.3.0 publish --skip-duplicate --packagePath vsix/*.vsix
+        run: npx --yes ovsx@1.3.0 publish --trusted-publishing --skip-duplicate --packagePath vsix/*.vsix
 
   github:
     name: GitHub release
