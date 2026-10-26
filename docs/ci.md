@@ -183,7 +183,9 @@ everything without publishing.
 - on open-vsx.org, the namespace `deltarobotics` (`npx ovsx create-namespace
   deltarobotics` once) with a trusted publisher (Settings, Trusted
   publishers): the repository `Delta-Robotics-Inc/protoboard-stack`, the
-  workflow `release.yml` and the environment `release`. No secret.
+  workflow `release.yml` and the environment `release`. No secret. Then set
+  the repository variable `OPENVSX_PUBLISH` to `true`; until then the release
+  skips Open VSX with a warning.
 
 ## The local flow: `scripts/ci-stack.sh`
 

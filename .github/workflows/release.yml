@@ -305,8 +305,14 @@ jobs:
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: npx --yes @vscode/vsce@4.0.0 publish --skip-duplicate --packagePath vsix/*.vsix
+      # Off until the namespace `deltarobotics` is claimed on open-vsx.org and its trusted publisher exists:
+      # then set the repository variable OPENVSX_PUBLISH to true (Settings > Secrets and variables > Actions)
       - name: Open VSX
+        if: vars.OPENVSX_PUBLISH == 'true'
         run: npx --yes ovsx@1.3.0 publish --trusted-publishing --skip-duplicate --packagePath vsix/*.vsix
+      - name: Open VSX is off
+        if: vars.OPENVSX_PUBLISH != 'true'
+        run: echo "::warning::Open VSX skipped, the repository variable OPENVSX_PUBLISH is not true"
 
   github:
     name: GitHub release
