@@ -12,7 +12,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, unlinkSync, w
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import type { UhdModuleDef } from "@protoboardai/cloud/client";
+import { CloudError, PartsClient, type UhdModuleDef } from "@protoboardai/cloud/client";
 import {
   addParts,
   checkPartUpdates,
@@ -186,6 +186,52 @@ describe("parts add", () => {
     await expect(addParts(p, ["test-m3-screw"], down)).rejects.toThrow(/cannot reach the Protoboard Cloud parts service/);
     await expect(checkPartUpdates(p, [], down)).resolves.toEqual([]); // nothing vendored: nothing to ask
     expect(readOrigins(dir).definitions).toEqual({});
+  });
+});
+
+describe("parts add from a library that withholds files", () => {
+  // the redistributable library (an open sign-up's, or <service>/distributable) serves a revision as published, and
+  // refuses the optional files whose terms do not allow giving them out (403 NOT_DISTRIBUTABLE)
+  const SHY: UhdModuleDef = { ...SCREW, id: "test-shy-sensor", name: "Shy sensor", artifacts: [{ id: "body", name: "Body", type: "3d_model", role: "body", format: "glb", filePath: "parts/test-shy-sensor/body.glb" }] };
+  beforeAll(async () => {
+    const blobs = new Blobs();
+    await svc.client.publish(
+      draft(blobs, SHY, {
+        files: { "parts/test-shy-sensor/body.glb": "our own body", "parts/test-shy-sensor/thumbnail.png": "a scraped photo" },
+        evidence: { "parts/test-shy-sensor/sources.json": "[]" },
+        terms: {
+          "parts/test-shy-sensor/body.glb": { distribution: "redistributable", license: "CC-BY-4.0" },
+          "parts/test-shy-sensor/thumbnail.png": { distribution: "unknown" },
+          "parts/test-shy-sensor/sources.json": { distribution: "internal" },
+        },
+      }),
+      blobs.source,
+    );
+  });
+
+  it("vendors what the library serves, records only that, and is unchanged when added again", async () => {
+    const view = connectCloud(undefined, { url: `${svc.url}/distributable`, env: {} });
+    const dir = tmpProject({ "protoboard.config.ts": CONFIG, "src/sys.uhd.ts": system(["s", "test-shy-sensor"]) });
+    const r = await addParts(await loadProject(dir, { checks: false }), ["test-shy-sensor@1"], view, { now: NOW });
+    expect(r).toMatchObject([{ id: "test-shy-sensor", revision: 1, status: "added", files: 1, message: "2 optional file(s) withheld by the library: their terms do not allow redistribution" }]);
+    const rec = readOrigins(dir).definitions["test-shy-sensor"];
+    expect(Object.keys(rec.files ?? {})).toEqual(["body.glb"]);
+    expect(rec.evidence).toBeUndefined();
+    expect(readdirSync(join(dir, rec.artifactBase!.kind === "vendored" ? rec.artifactBase!.dir : ""))).toEqual(["body.glb"]);
+    // the same envelope as the full library serves: the pin is the revision's, whoever added it
+    expect(rec.envelopeDigest).toBe((await svc.client.getRevision("test-shy-sensor", 1)).digest);
+    const again = await addParts(await loadProject(dir, { checks: false }), ["test-shy-sensor@1"], view);
+    expect(again.map((x) => x.status)).toEqual(["unchanged"]);
+  });
+
+  it("still fails when a file a definition artifact rests on is refused", async () => {
+    const env = await svc.client.getRevision("test-shy-sensor", 1);
+    const body = env.artifacts.find((a) => a.artifactId === "body")!;
+    const refusing = new PartsClient({ baseUrl: svc.url });
+    // a client whose every file is refused as not distributable
+    vi.spyOn(refusing, "downloadBlob").mockRejectedValue(new CloudError(403, "NOT_DISTRIBUTABLE", "not redistributable"));
+    await expect(refusing.downloadFiles(env, join(TMP, "refused"), { evidence: true, skipWithheld: true })).rejects.toMatchObject({ code: "NOT_DISTRIBUTABLE" });
+    expect(body.path).toBe("parts/test-shy-sensor/body.glb");
   });
 });
 

@@ -479,6 +479,8 @@ export interface AccountStatus {
   valid?: boolean;
   /** Whether the service lets this account use what needs one (false: not on its allowlist, PB-915). */
   allowed?: boolean;
+  /** What of the library the account reads: all of it, or (an open sign-up) the parts and files whose terms allow redistribution. */
+  distribution?: "all" | "redistributable";
   publisher?: boolean;
   problem?: string;
   /**
@@ -528,10 +530,11 @@ export async function accountStatus(service: string, options: { store?: Credenti
   try {
     const token = await accountToken(service, { store, ...(options.fetch ? { fetch: options.fetch } : {}) });
     const res = await (options.fetch ?? fetch)(`${serviceKey(service)}/v1/me`, { headers: { authorization: `Bearer ${token}` } });
-    const me = (await res.json().catch(() => ({}))) as { signedIn?: boolean; publisher?: boolean; allowed?: boolean; problem?: string };
+    const me = (await res.json().catch(() => ({}))) as { signedIn?: boolean; publisher?: boolean; allowed?: boolean; problem?: string; distribution?: unknown };
+    const distribution: Pick<AccountStatus, "distribution"> = me.distribution === "all" || me.distribution === "redistributable" ? { distribution: me.distribution } : {};
     // signed in, but not an invited account of a service limited to some (PB_CLOUD_ALLOWED_USERS, PB-915)
     if (me.signedIn && me.allowed === false) return { ...out, valid: false, allowed: false, ...(me.publisher !== undefined ? { publisher: me.publisher } : {}), problem: me.problem ?? "this account is not invited to the service; sign in with an invited account (`protoboard login`)" };
-    return { ...out, valid: !!me.signedIn, ...(me.allowed !== undefined ? { allowed: me.allowed } : {}), ...(me.publisher !== undefined ? { publisher: me.publisher } : {}), ...(me.signedIn ? {} : { problem: "the service does not accept this sign-in; run `protoboard login` again" }) };
+    return { ...out, valid: !!me.signedIn, ...(me.allowed !== undefined ? { allowed: me.allowed } : {}), ...(me.publisher !== undefined ? { publisher: me.publisher } : {}), ...distribution, ...(me.signedIn ? {} : { problem: "the service does not accept this sign-in; run `protoboard login` again" }) };
   } catch (e) {
     return { ...out, valid: false, problem: (e as Error).message };
   }
