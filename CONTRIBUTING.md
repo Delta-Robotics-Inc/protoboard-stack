@@ -4,7 +4,7 @@ Thanks for your interest in **Protoboard Stack**: the framework core, the `proto
 
 ## Code of conduct
 
-Participation in this project is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to uphold it. Report unacceptable behavior to **mark@deltaroboticsinc.com**.
+Participation in this project is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to uphold it. Report unacceptable behavior to **conduct@protoboard.ai**.
 
 ## Ways to contribute
 
