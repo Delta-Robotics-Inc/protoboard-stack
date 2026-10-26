@@ -270,7 +270,7 @@ jobs:
               continue
             fi
             echo "::group::$name@$version (dist-tag $DIST_TAG)"
-            npm publish "$tgz" --access public --provenance --tag "$DIST_TAG"
+            npm publish "./$tgz" --access public --provenance --tag "$DIST_TAG"
             echo "::endgroup::"
           done
 
