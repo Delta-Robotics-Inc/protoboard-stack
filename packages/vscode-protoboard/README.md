@@ -2,6 +2,8 @@
 
 Design hardware with your AI agent, and see it take shape in VS Code.
 
+**[protoboard.ai](https://protoboard.ai)**
+
 A Protoboard project describes a device as code: its modules, the
 interfaces between them, and the cables that connect them. Your agent
 writes it; Protoboard checks it as you go and shows it as a live diagram
@@ -61,6 +63,7 @@ requests you make.
 
 ## Learn more
 
+- [protoboard.ai](https://protoboard.ai)
 - [Installation guide](https://github.com/Delta-Robotics-Inc/protoboard-stack/blob/main/docs/guides/installation.md),
   by operating system and agent
 - [Source code](https://github.com/Delta-Robotics-Inc/protoboard-stack)

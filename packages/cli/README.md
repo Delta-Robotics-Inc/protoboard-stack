@@ -53,6 +53,7 @@ any MCP client) with `protoboard agents setup`, then ask it what to build.
 
 ## Learn more
 
+- [protoboard.ai](https://protoboard.ai)
 - [Installation guide](https://github.com/Delta-Robotics-Inc/protoboard-stack/blob/main/docs/guides/installation.md),
   by operating system and agent
 - [Report an issue](https://github.com/Delta-Robotics-Inc/protoboard-stack/issues)
