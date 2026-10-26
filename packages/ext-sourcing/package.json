@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-sourcing",
   "version": "0.2.0",
-  "description": "Protoboard extension: part discovery, datasheet extraction with citations, supplier and lifecycle evidence, handoff to local UHD authoring",
+  "description": "Protoboard extension: find parts, extract datasheet facts and compare suppliers.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -28,5 +28,16 @@
   "peerDependencies": {
     "@protoboardai/core": "^0.2.0",
     "@deltarobotics/uhd": ">=0.3.0"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "sourcing",
+    "datasheet",
+    "suppliers"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

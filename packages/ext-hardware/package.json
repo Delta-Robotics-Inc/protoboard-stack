@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-hardware",
   "version": "0.2.0",
-  "description": "Protoboard extension: system composition, harness, test and release skills, BOM, evidence checks",
+  "description": "Protoboard extension: system design, wiring, BOM, test and release skills for agents.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -28,5 +28,16 @@
   "peerDependencies": {
     "@protoboardai/core": "^0.2.0",
     "@deltarobotics/uhd": ">=0.3.0"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "agents",
+    "skills",
+    "bom"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

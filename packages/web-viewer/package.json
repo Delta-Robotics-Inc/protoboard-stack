@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/web-viewer",
   "version": "0.2.0",
-  "description": "Protoboard's shells over the viewer stack: the browser shell (`protoboard dev`: the Protoboard theme, view tabs from the view registry, its own inspector, hierarchy and DRC) and the VS Code shell (one viewer editor tab: VS Code's theme, no inspector or DRC of its own)",
+  "description": "The Protoboard viewer, for the browser and VS Code.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -50,5 +50,16 @@
     "@types/react-dom": "^19.2.3",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.1"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "viewer",
+    "diagram",
+    "3d"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

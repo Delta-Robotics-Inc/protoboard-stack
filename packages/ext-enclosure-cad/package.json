@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-enclosure-cad",
   "version": "0.2.0",
-  "description": "Protoboard extension: a cad capability provider for enclosures. Generates a printed or machined case from the UHD features it must provide and what the assembly puts inside it (build123d), with fit, wall, seal and alignment checks",
+  "description": "Protoboard extension: printed or machined enclosures generated from your design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -39,5 +39,16 @@
     "@protoboardai/ext-release": {
       "optional": true
     }
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "cad",
+    "enclosure",
+    "build123d"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

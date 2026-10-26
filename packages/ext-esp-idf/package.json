@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-esp-idf",
   "version": "0.2.0",
-  "description": "Protoboard firmware provider: ESP-IDF pin and peripheral headers and sdkconfig.defaults for ESP32-C3 modules, from UHD boards",
+  "description": "Protoboard extension: ESP-IDF firmware configuration for ESP32-C3 boards.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -29,5 +29,16 @@
   "peerDependencies": {
     "@protoboardai/core": "^0.2.0",
     "@deltarobotics/uhd": ">=0.3.0"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "firmware",
+    "esp32",
+    "esp-idf"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

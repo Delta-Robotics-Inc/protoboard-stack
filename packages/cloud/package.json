@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/cloud",
   "version": "0.2.0",
-  "description": "Typed client of the Protoboard parts service (API v1) and of any uhd-library/v1 library: the part-revision envelope, verified downloads",
+  "description": "Client for the Protoboard parts library: search, part revisions and verified downloads.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -30,5 +30,16 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "parts",
+    "library",
+    "client"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

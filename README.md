@@ -78,7 +78,7 @@ Then open the folder in VS Code, or ask your agent to start from the
 | `packages/cloud` | `@protoboardai/cloud`: the typed client of the parts service and of any `uhd-library/v1` library. |
 | `packages/views`, `packages/web-viewer` | The domain views and the shells of `protoboard dev` and the VS Code tabs. |
 | `packages/ext-*` | The extensions: hardware, parts, sourcing, docs, release, drone, tscircuit, zephyr, esp-idf, frame-cad, harness-cad, enclosure-cad. |
-| `packages/vscode-protoboard` | The VS Code extension ([README](packages/vscode-protoboard/README.md)). |
+| `packages/vscode-protoboard` | The VS Code extension ([developer reference](packages/vscode-protoboard/DEVELOPMENT.md)). |
 | `examples/` | Reference projects: a 5-inch quadcopter, a wearable watch, a smart water bottle and a motor test bench. |
 | `docs/` | The documentation above. |
 | `scripts/` | CI, the lints, the local registry and publishing. |

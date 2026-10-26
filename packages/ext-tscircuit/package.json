@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-tscircuit",
   "version": "0.2.0",
-  "description": "Protoboard circuit provider: PCBs from UHD board modules with tscircuit (generate, export, extract, check), offline under Node",
+  "description": "Protoboard extension: circuit boards from your design, with tscircuit and KiCad export.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -68,5 +68,16 @@
     "@protoboardai/ext-release": {
       "optional": true
     }
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "pcb",
+    "tscircuit",
+    "kicad"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

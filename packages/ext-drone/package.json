@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-drone",
   "version": "0.2.0",
-  "description": "Protoboard extension: multirotor flight-controller configuration from UHD",
+  "description": "Protoboard extension: flight-controller configuration for multirotor drones.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -34,5 +34,16 @@
     "@protoboardai/ext-release": {
       "optional": true
     }
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "drone",
+    "betaflight",
+    "multirotor"
+  ],
+  "homepage": "https://github.com/Delta-Robotics-Inc/protoboard-stack#readme",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

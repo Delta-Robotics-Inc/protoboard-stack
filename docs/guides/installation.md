@@ -499,7 +499,7 @@ protoboard dev --open
 serves the viewer in your browser and redraws it as files change. In the
 editor, **Protoboard: Open Viewer** and **Protoboard: Check** do the same.
 
-<!-- verified: init --list and its three templates (run 2026-10-25); init's --stack global default and the signed-out template parts (packages/cli/src/index.ts, docs/releases notes for this release); New Project and Initialize (packages/vscode-protoboard/README.md, "A window with no project"; "Open in New Window" in src/extension.ts). -->
+<!-- verified: init --list and its three templates (run 2026-10-25); init's --stack global default and the signed-out template parts (packages/cli/src/index.ts, docs/releases notes for this release); New Project and Initialize (packages/vscode-protoboard/DEVELOPMENT.md, "A window with no project"; "Open in New Window" in src/extension.ts). -->
 
 > **If you are an agent doing this for someone:** use plain `protoboard
 > init`, in the folder and with the starting point they chose. Never
