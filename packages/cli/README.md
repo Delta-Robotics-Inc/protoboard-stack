@@ -1,7 +1,7 @@
 # protoboard
 
 The command line for [Protoboard](https://github.com/Delta-Robotics-Inc/protoboard-stack):
-design hardware with your AI agent.
+design hardware with your AI agent. **[protoboard.ai](https://protoboard.ai)**
 
 A Protoboard project describes a device as code: its modules, the
 interfaces between them, and the cables that connect them. `protoboard`
