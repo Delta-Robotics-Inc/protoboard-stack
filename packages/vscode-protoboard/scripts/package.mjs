@@ -81,7 +81,9 @@ if (reuse) {
   // a development build keeps the kept stack's version (a commit since only moves the number); a release never reuses
   const carried = JSON.parse(readFileSync(join(here, "dist", "stack", "stack.json"), "utf8")).version;
   if (carried !== version) {
-    if (bv.release || !/-dev\./.test(carried) || !carried.startsWith(version.slice(0, version.indexOf("-dev.")))) throw new Error(`--reuse-stack: dist/stack is the stack ${carried} and this build is ${version}: package without --reuse-stack`);
+    // the same development line: the version before "-dev." is equal (0.2.1-dev.* is not 0.2.10-dev.*)
+    const base = (v) => (v.includes("-dev.") ? v.slice(0, v.indexOf("-dev.")) : null);
+    if (bv.release || base(carried) === null || base(carried) !== base(version)) throw new Error(`--reuse-stack: dist/stack is the stack ${carried} and this build is ${version}: package without --reuse-stack`);
     version = carried;
   }
   renameSync(join(here, "dist", "stack"), kept);

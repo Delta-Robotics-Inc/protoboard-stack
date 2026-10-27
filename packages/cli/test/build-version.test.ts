@@ -78,7 +78,7 @@ describe("a development build's version", () => {
     expect(JSON.parse(readFileSync(join(dir, "packages/core/package.json"), "utf8")).version).toBe("0.2.0");
 
     // a release stamp for this commit (the vsix job on a tag): the plain version and that stamp
-    const s = stamp(dir, { GITHUB_REF: "refs/tags/v0.2.0", GITHUB_SHA: head });
+    const s = stamp(dir, { GITHUB_EVENT_NAME: "push", GITHUB_REF: "refs/tags/v0.2.0", GITHUB_SHA: head });
     expect(s.release).toBe(true);
     expect(buildVersion(dir)).toMatchObject({ version: "0.2.0", release: true, stamp: { release: true, commit: head } });
     // the same stamp left behind after another commit is not that commit's
@@ -131,10 +131,19 @@ describe("release.mjs stamp: a release only for a tag build", () => {
   it("a tag build of this version says release; a manual run (a dry run) and another tag do not", () => {
     const dir = repo("stamps", "0.2.1");
     const sha = "f".repeat(40);
-    expect(stamp(dir, { GITHUB_REF: "refs/tags/v0.2.1", GITHUB_SHA: sha })).toMatchObject({ version: "0.2.1", commit: sha, release: true });
-    for (const ref of ["refs/heads/main", "refs/tags/v0.2.0", ""]) {
-      const s = stamp(dir, { GITHUB_REF: ref, GITHUB_SHA: sha });
-      expect(s.release, ref).toBeUndefined();
+    expect(stamp(dir, { GITHUB_EVENT_NAME: "push", GITHUB_REF: "refs/tags/v0.2.1", GITHUB_SHA: sha })).toMatchObject({ version: "0.2.1", commit: sha, release: true });
+    const runs: [string, string][] = [
+      ["push", "refs/heads/main"],
+      ["push", "refs/tags/v0.2.0"],
+      ["push", ""],
+      ["workflow_dispatch", "refs/heads/main"],
+      // a manual run dispatched on the release tag: still a dry run, a development build
+      ["workflow_dispatch", "refs/tags/v0.2.1"],
+      ["", "refs/tags/v0.2.1"],
+    ];
+    for (const [event, ref] of runs) {
+      const s = stamp(dir, { GITHUB_EVENT_NAME: event, GITHUB_REF: ref, GITHUB_SHA: sha });
+      expect(s.release, `${event} ${ref}`).toBeUndefined();
       // and such a stamp makes no release build
       expect(buildVersion(dir, { git: () => undefined })).toMatchObject({ release: false, version: "0.2.1-dev.0" });
     }

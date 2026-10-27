@@ -121,8 +121,10 @@ npmjs at the version core pins) and everything they depend on, as one
 
    **Release or development build** (PB-1062). A build is a release when
    the release workflow made it from a release tag: `.github/scripts/release.mjs
-   stamp` writes `"release": true` into the stamp only when `GITHUB_REF` is
-   `refs/tags/v<version>`, and the vsix job runs it too, so the npm packages
+   stamp` writes `"release": true` into the stamp only when a tag push ran
+   the workflow (`GITHUB_EVENT_NAME` is `push` and `GITHUB_REF` is
+   `refs/tags/v<version>`; a manual run on the tag is a development build),
+   and the vsix job runs it too, so the npm packages
    (however they are installed, `npm i -g` included) and the stack the
    Marketplace extension carries say "release". A build a registry installed
    at a published version is one as well. Every other build is a
