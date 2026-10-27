@@ -57,6 +57,9 @@ Rules that keep them apart:
 tool "protocol" means an interface or bus protocol (I²C, CAN), and the two
 meanings collide.
 
+The name "Handbook" is provisional: the team meeting of 2026-10-26 leaned
+towards "workbook" (PB-1077), and Mark decides.
+
 ## 3. Playbooks
 
 ### 3.1 What a playbook declares
@@ -90,7 +93,7 @@ meanings collide.
       "deliverables": [{ "path": "docs/requirements.md", "kind": "requirements" }],
       "skills": [],
       "handbook": ["robotics/requirements"],
-      "gate": { "checks": ["requirements:present"], "signoff": "owner" }
+      "gate": { "checks": ["@protoboardai/ext-hardware:requirements-present"], "signoff": "owner" }
     },
     {
       "id": "architecture",
@@ -99,7 +102,7 @@ meanings collide.
       "deliverables": [{ "kind": "uhd-system" }],
       "skills": ["@protoboardai/ext-hardware:system-compose", "@protoboardai/ext-hardware:system-review"],
       "handbook": ["pcb/core", "motion-control"],
-      "gate": { "checks": ["uhd:check", "safety:estop-path"], "signoff": "owner" }
+      "gate": { "checks": ["core:uhd/assemble", "@protoboardai/ext-hardware:estop-path"], "signoff": "owner" }
     }
   ]
 }
@@ -107,9 +110,12 @@ meanings collide.
 
 The format is data so that the CLI, the VS Code extension and an MCP client
 read the same thing; `README.md` beside it is the version a person reads.
-Checks named in a gate are ordinary check ids from installed extensions; a
-gate naming a check no installed extension provides is a load error, not a
-silent pass.
+A gate names each check with the extension that provides it,
+`<extension id>:<check id>` (as skills are named), because check ids are only
+unique within one extension; it is the check `protoboard check` reports as
+`ext:<extension id>/<check id>`. A check of the core is named `core:<validator>`
+(`core:uhd/assemble`, `core:protoboard/catalog`). A gate naming a check no
+installed extension (or the core) provides is a load error, not a silent pass.
 
 ### 3.3 Composition
 
@@ -117,9 +123,13 @@ Playbooks layer. `product` adds EVT/DVT/PVT, cost, compliance and supply
 gates; it composes on top of a domain playbook (`robotics`, `iot-device`)
 rather than repeating its phases. Composition rules:
 
-1. Phases are merged by id; a layered playbook may add phases, add
-   deliverables, skills and gate checks to an existing phase, and insert
-   phases between existing ones.
+1. Phases are merged by id; a layered playbook may add deliverables, skills
+   and gate checks to an existing phase, and add phases. A phase it adds that
+   the playbooks below do not have names where it goes: `"after": "<phase id>"`
+   or `"before": "<phase id>"`, a phase of the merged lifecycle so far. A new
+   phase without an anchor is a load error; phases anchored to the same place
+   keep the layered playbook's own order. The merge is therefore one result
+   for the same files, whichever tool reads them.
 2. It may not remove a phase or a gate check of the playbook it composes on.
 3. A project lists its playbooks in order; `protoboard doctor` shows the
    merged lifecycle.
@@ -139,11 +149,18 @@ enforced locks, and a project may record a waiver with a reason.
   blank project. `protoboard playbook add product` layers one later.
 - `protoboard check` reports, beside its findings, the current phase, its
   missing deliverables and failing gate checks. `protoboard phase` shows the
-  lifecycle; `protoboard phase next` closes a gate when its checks pass and
-  its sign-off is recorded.
+  lifecycle; `protoboard phase next` closes a gate when every gate check
+  ran (status `ran`, as `protoboard check` records it) with no errors, and its
+  sign-off is recorded. A check that was skipped (it threw, or its tool is
+  unavailable) or did not run blocks the gate as a failure does; only a
+  waiver recorded in `lifecycle.json`, with a reason, lets the phase close
+  without it.
 - The project's `AGENTS.md` gets a generated section: the playbooks, the
-  current phase, the next deliverable and the skills that apply. It is
-  regenerated on `init --refresh-guidance`, like the rest of the guidance.
+  current phase, the next deliverable and the skills that apply. Every command
+  that changes the lifecycle (`phase next`, `playbook add`, a sign-off or
+  waiver, an extension added or removed) rewrites that section in the same
+  step, so `AGENTS.md`, `lifecycle.json`, MCP and VS Code never disagree;
+  `init --refresh-guidance` rewrites it too, with the rest of the guidance.
 - The MCP server exposes the lifecycle (`project_status` gains the phase and
   next deliverable), so an agent connected over MCP sees the same state.
 - The VS Code extension shows the phase and its gate in the Inspector's
