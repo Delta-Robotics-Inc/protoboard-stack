@@ -133,6 +133,7 @@ import {
   projectStackRange,
   readLinkRecord,
   stackHome,
+  stackRangeFor,
   isAuthEnvName,
   tightenUserFolders,
   type LinkResult,
@@ -177,7 +178,7 @@ const cli = meow(
                             CLAUDE.md that imports AGENTS.md when there is none, and export the skills list;
                             lines elsewhere that contradict the guidance are reported, not rewritten
     upgrade [dir]           Move a project made by an earlier Protoboard (0.1.x) to this version: package.json's
-                            @protoboardai/* ranges become ^${FRAMEWORK_VERSION} and its UHD and TypeScript pins this
+                            @protoboardai/* ranges become ${stackRangeFor(FRAMEWORK_VERSION)} and its UHD and TypeScript pins this
                             stack's, its packages are linked again to a stack copy that fits, AGENTS.md and
                             CLAUDE.md get this version's guidance (init --refresh-guidance) and vendored parts
                             move to the current layout (parts migrate). Offline; --dry-run lists the changes and
@@ -1147,7 +1148,7 @@ async function main() {
         if (missing.length) throw new Error(`${missing.join(", ")} ${missing.length === 1 ? "is" : "are"} not in the Protoboard installed for your user (${stack.marker.version}, ${stack.dir}); nothing was changed. The extensions it has: ${listExtensionsIn(stack.dir).join(", ") || "none"}`);
       }
       const added: Awaited<ReturnType<typeof addExtension>>[] = [];
-      for (const w of wanted) added.push(await addExtension(root, w, { fallbackRange: `^${FRAMEWORK_VERSION}` }));
+      for (const w of wanted) added.push(await addExtension(root, w, { fallbackRange: stackRangeFor(FRAMEWORK_VERSION) }));
       const link = stack ? linkProject(root, stack) : undefined;
       let skills: string | undefined;
       try {

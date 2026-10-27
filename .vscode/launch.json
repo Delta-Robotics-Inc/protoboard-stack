@@ -1,0 +1,16 @@
+{
+  // F5: the extension from source (build it first: npm run build in packages/vscode-protoboard), in an
+  // Extension Development Host whose Protoboard home is ~/.protoboard-dev, so its stack copies and the projects it
+  // links never touch ~/.protoboard (CONTRIBUTING.md, "Development builds beside a release").
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension (dev Protoboard home)",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/packages/vscode-protoboard", "${workspaceFolder}/examples/quadcopter-5in"],
+      "outFiles": ["${workspaceFolder}/packages/vscode-protoboard/dist/**/*.cjs"],
+      "env": { "PROTOBOARD_HOME": "${userHome}/.protoboard-dev" }
+    }
+  ]
+}

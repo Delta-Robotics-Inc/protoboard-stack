@@ -65,6 +65,28 @@ numbers. The extension's build and the tests
 was missed. A new minor line (0.2 → 0.3) also needs `protoboard upgrade` to
 know what changed for existing projects (`packages/core/src/upgrade.ts`).
 
+The committed version is always the release's. A build that is not the
+release workflow's on a tag is a development build and is stamped at build
+time with a prerelease version, `0.2.1-dev.<commits since v0.2.0>.g<sha>`
+(`scripts/build-version.mjs`): the `.vsix`, its carried stack (and its folder
+in `~/.protoboard/stack`) and `protoboard --version` carry it. It satisfies
+the ranges projects pin (`^0.2.0`) and never replaces a release's stack copy.
+
+### Development builds beside a release
+
+To keep the Marketplace extension for real projects and test dev builds on
+the same machine, give the dev builds their own VS Code profile and
+Protoboard home (`~/.protoboard-dev`):
+
+```bash
+scripts/dev-instance.sh --install packages/vscode-protoboard/dist/vscode-protoboard-<version>.vsix
+scripts/dev-instance.sh ~/scratch/my-project    # later: open the dev instance
+```
+
+F5 in this repository (`.vscode/launch.json`, after `npm run build` in
+`packages/vscode-protoboard`) runs the extension from source with
+`PROTOBOARD_HOME=~/.protoboard-dev` too.
+
 ### Templates and part revisions
 
 A template (`packages/core/templates/<id>/`) pins catalog part revisions

@@ -33,6 +33,13 @@ if (ownVersion !== stackVersion) {
   console.error(`packages/vscode-protoboard is ${ownVersion} and the stack (packages/core) is ${stackVersion}: the extension and the stack share one version number. Set "version" in packages/vscode-protoboard/package.json and package-lock.json to ${stackVersion}.`);
   process.exit(1);
 }
+// scripts/package.mjs gives the version the .vsix is built as (PB-1062): the committed one for a release build, a
+// development build's prerelease of it (0.2.1-dev.7.g1a2b3c4) otherwise (scripts/build-version.mjs)
+const buildVersion = process.env.PROTOBOARD_BUILD_VERSION || stackVersion;
+if (buildVersion !== stackVersion && !/^\d+\.\d+\.\d+-dev\./.test(buildVersion)) {
+  console.error(`PROTOBOARD_BUILD_VERSION is ${buildVersion}: a build is the stack's version (${stackVersion}) or a development build of it (x.y.z-dev.…)`);
+  process.exit(1);
+}
 
 const targets = [
   {
@@ -47,7 +54,7 @@ const targets = [
     // copy (carriedStack), which the bundled extension never does, and it takes "no URL" as that answer
     // jsonc-parser's default entry is a UMD file whose requires a bundler cannot follow: take its ES modules
     alias: { "jsonc-parser": jsoncParser },
-    define: { __PB_STACK_VERSION__: JSON.stringify(stackVersion), "import.meta.url": "undefined" },
+    define: { __PB_STACK_VERSION__: JSON.stringify(buildVersion), "import.meta.url": "undefined" },
   },
   {
     ...common,

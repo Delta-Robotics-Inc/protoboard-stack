@@ -8,11 +8,19 @@
  * commit of protoboard-stack it was built from, whether that working tree had
  * changes, the branch, and whether it is a release.
  *
- * A build is a RELEASE only when it was installed from a registry at a
- * published version: a project's `npm install` from a registry, or a stack
- * copy `protoboard stack install` put in `<home>/stack`. A stack carried by a
- * .vsix, a tarball installed from a file, and a protoboard-stack checkout are
- * not releases.
+ * A build is a RELEASE when the release workflow made it, or a registry
+ * installed it at a published version:
+ *
+ *   - its stamp says `"release": true` for the version it runs as (written by
+ *     `.github/scripts/release.mjs stamp` on a tag build only): the npm
+ *     packages, however they were installed (`npm i -g` leaves no lockfile to
+ *     read), and the stack the Marketplace extension carries;
+ *   - or a project's `npm install` from a registry, or a stack copy
+ *     `protoboard stack install` put in `<home>/stack`.
+ *
+ * Everything else is a development build: a protoboard-stack checkout, a
+ * .vsix or a tarball built from one (whose version is a prerelease,
+ * `0.2.1-dev.7.g1a2b3c4`: scripts/build-version.mjs).
  *
  * Where it is recorded:
  *
@@ -42,6 +50,8 @@ export interface BuildStamp {
   dirty: boolean | null;
   branch: string | null;
   builtAt: string;
+  /** Made by the release workflow from a release tag (`release.mjs stamp`); absent on every other build. */
+  release?: boolean;
 }
 
 /** How this build reached the machine. */
@@ -52,7 +62,7 @@ export interface BuildProvenance {
   commit: string | null;
   dirty: boolean | null;
   branch: string | null;
-  /** True only for a build a registry installed at a published version. */
+  /** A release: the release workflow's stamp, or a registry installed it at a published version. */
   release: boolean;
   source: BuildSource;
   /** When the stamp was made (packaged builds). */
@@ -103,6 +113,9 @@ export function readStamp(cliDir: string): BuildStamp | undefined {
   return asStamp(readJson(join(cliDir, BUILD_INFO)));
 }
 
+/** The stamp is the release workflow's, for the version that runs. */
+const releaseStamp = (s: BuildStamp | undefined, version: string) => s?.release === true && s.version === version;
+
 const fromStamp = (s: BuildStamp | undefined) => ({ commit: s?.commit ?? null, dirty: s?.dirty ?? null, branch: s?.branch ?? null, ...(s?.builtAt ? { builtAt: s.builtAt } : {}) });
 
 /** How npm installed the package at `dir` (inside a node_modules), from npm's hidden lockfile. */
@@ -136,7 +149,7 @@ export function buildProvenance(o: { cliDir: string; version: string; carried?: 
   if (o.carried) {
     const m = o.carried.marker;
     const s = asStamp(m.build) ?? stamp;
-    return { version: o.version, ...fromStamp(s), release: m.source === "registry", source: m.source, stack: o.carried.dir };
+    return { version: o.version, ...fromStamp(s), release: m.source === "registry" || releaseStamp(s, o.version), source: m.source, stack: o.carried.dir };
   }
   const inModules = dir.split(sep).includes("node_modules");
   if (!inModules) {
@@ -149,7 +162,7 @@ export function buildProvenance(o: { cliDir: string; version: string; carried?: 
     }
   }
   const source = inModules ? npmSource(dir) : "unknown";
-  return { version: o.version, ...fromStamp(stamp), release: source === "registry", source };
+  return { version: o.version, ...fromStamp(stamp), release: source === "registry" || releaseStamp(stamp, o.version), source };
 }
 
 const SOURCE_TEXT: Record<BuildSource, string> = {
@@ -160,12 +173,13 @@ const SOURCE_TEXT: Record<BuildSource, string> = {
   unknown: "where it came from is unknown",
 };
 
-/** One line for doctor: `release` or `development build`, then what is known. */
+/** One line for doctor: `release` or `development build`, then what is known. A release that cannot say how it got here (`npm i -g`) leaves that out. */
 export function fmtProvenance(p: BuildProvenance): string {
   const known = [
     p.branch && `branch ${p.branch}`,
     p.commit && `commit ${p.commit.slice(0, 12)}${p.dirty ? " with uncommitted changes" : p.dirty === false ? " (clean)" : ""}`,
     p.builtAt && `built ${p.builtAt.slice(0, 16).replace("T", " ")} UTC`,
   ].filter(Boolean);
+  if (p.release && p.source === "unknown") return `${p.version} release${known.length ? `: ${known.join(", ")}` : ""}`;
   return `${p.version} ${p.release ? "release" : "development build"}: ${SOURCE_TEXT[p.source]}${known.length ? `, ${known.join(", ")}` : p.release ? "" : ", commit unknown"}`;
 }

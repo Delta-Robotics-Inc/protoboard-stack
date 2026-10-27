@@ -107,4 +107,9 @@ describe("release.yml: one .vsix per platform, each built and smoke-tested on it
     expect(commands).not.toMatch(/vsce package|--platforms "\$TARGET"/);
     expect(yml).toContain('*"vscode-protoboard-$version-$TARGET.vsix"');
   });
+
+  it("the vsix job checks out the release tags and history: a manual run's dev version counts from the last tag", () => {
+    const job = yml.slice(yml.indexOf("\n  vsix:"), yml.indexOf("\n  npm:"));
+    expect(job).toMatch(/path: protoboard-stack\n\s+persist-credentials: false\n(\s+#.*\n)*\s+fetch-depth: 0\n/);
+  });
 });
