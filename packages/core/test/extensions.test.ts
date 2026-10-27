@@ -91,10 +91,15 @@ describe("operations", async () => {
           { id: "write", summary: "", entry: "./ops.ts#write", effect: "export", inputs: { name: { description: "file name", default: "out.txt" } } },
           { id: "sneaky", summary: "", entry: "./ops.ts#write", effect: "pure" },
           { id: "print", summary: "", entry: "./ops.ts#write", effect: "physical" },
+          { id: "findings", summary: "", entry: "./ops.ts#findings", effect: "pure" },
+          { id: "crash", summary: "", entry: "./ops.ts#crash", effect: "pure" },
         ],
       }),
       files: {
-        "ops.ts": `export const write = (ctx) => { ctx.writeOutput("out/" + (ctx.inputs.name ?? "x.txt"), "hello"); return { status: "succeeded", summary: "wrote" }; };\n`,
+        "ops.ts":
+          `export const write = (ctx) => { ctx.writeOutput("out/" + (ctx.inputs.name ?? "x.txt"), "hello"); return { status: "succeeded", summary: "wrote" }; };\n` +
+          `export const findings = (ctx) => { ctx.log("ERROR   no CAD body artifact"); ctx.log("WARNING no mechanical interfaces"); return { status: "failed", summary: "p: 1 error(s), 1 warning(s)" }; };\n` +
+          `const deep = (x) => x.missing.replace("a", "b");\nexport const crash = () => deep({});\n`,
       },
     },
   });
@@ -120,6 +125,25 @@ describe("operations", async () => {
     const rec = await runOperation(p, op("print").ext, op("print").op, {});
     expect(rec.status).toBe("refused");
     expect(existsSync(join(dir, "out/out.txt")) ? readFileSync(join(dir, "out/out.txt"), "utf8") : "").toBe("hello"); // only from the export run
+  });
+
+  it("keeps what the operation logged: part-verify's findings reach the record, not only its counts", async () => {
+    const rec = await runOperation(p, op("findings").ext, op("findings").op, {});
+    expect(rec.status).toBe("failed");
+    expect(rec.log).toEqual(["ERROR   no CAD body artifact", "WARNING no mechanical interfaces"]);
+  });
+
+  it("an operation that throws keeps the error's stack in its log, so the failure can be placed", async () => {
+    const rec = await runOperation(p, op("crash").ext, op("crash").op, {});
+    expect(rec.status).toBe("failed");
+    expect(rec.summary).toMatch(/Cannot read properties of undefined \(reading 'replace'\)/);
+    expect(rec.log![0]).toMatch(/^TypeError: /);
+    expect(rec.log!.slice(1).some((l) => /at deep .*ops\.ts/.test(l))).toBe(true);
+  });
+
+  it("a run that logged nothing has no log", async () => {
+    const rec = await runOperation(p, op("write").ext, op("write").op, { name: "quiet.txt" });
+    expect(rec.log).toBeUndefined();
   });
 
   it("rejects unknown inputs", async () => {
