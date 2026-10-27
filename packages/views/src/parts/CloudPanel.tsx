@@ -30,6 +30,11 @@ function Account({ model, actions }: { model: CloudModel; actions: CloudActions 
                 : "Prices, quotes and publishing need an account"}
         </p>
       </div>
+      {signedIn && actions.manageAccount && (
+        <Button size="sm" icon="external-link" className="shrink-0" title="Manage Account" aria-label="Manage Account" onClick={actions.manageAccount}>
+          Manage
+        </Button>
+      )}
       {!signedIn && a.state !== "open" && a.state !== "unknown" && actions.signIn && (
         <Button size="sm" kind="primary" icon="log-in" onClick={actions.signIn}>
           Sign in

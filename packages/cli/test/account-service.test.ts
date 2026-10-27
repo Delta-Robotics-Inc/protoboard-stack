@@ -9,7 +9,8 @@
  * win everywhere. Nothing here reaches the hosted service: the commands that
  * would ask it are pointed at a port nothing listens on.
  */
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
+import { createServer as createHttpServer } from "node:http";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
@@ -278,5 +279,42 @@ describe("protoboard login --device: what it tells the service about this machin
     expect(bodies).toHaveLength(1);
     expect(JSON.parse(bodies[0]!)).toEqual({ client: `protoboard CLI (${process.platform})` });
     if (hostname()) expect(bodies[0]).not.toContain(hostname());
+  });
+});
+
+describe("protoboard account (PB-1089): the account page", () => {
+  /** The CLI run without blocking this process, so a service in it can answer. */
+  const cliAsync = (args: string[], env: Record<string, string> = {}) =>
+    new Promise<{ status: number | null; stdout: string; stderr: string }>((ok) => {
+      const clean = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith("PROTOBOARD_")));
+      const child = spawn(process.execPath, [CLI, ...args], { cwd: OUTSIDE, env: { ...clean, PROTOBOARD_CONFIG_DIR: join(TMP, "config"), PROTOBOARD_CREDENTIAL_STORE: "file", ...env } });
+      let stdout = "";
+      let stderr = "";
+      child.stdout.on("data", (d) => (stdout += d));
+      child.stderr.on("data", (d) => (stderr += d));
+      child.on("close", (status) => ok({ status, stdout, stderr }));
+    });
+
+  it("prints the page the service's discovery names (or /account beside its sign-in page)", async () => {
+    const account: Record<string, unknown> = { provider: "firebase", apiKey: "k", signInUrl: "https://site.example/login" };
+    const server = createHttpServer((_req, res) => res.writeHead(200, { "content-type": "application/json" }).end(JSON.stringify({ protocol: "uhd-library/v1", api: "/v1", account })));
+    await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+    const url = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
+    try {
+      const derived = await cliAsync(["account", "--url", url, "--json"]);
+      expect(derived.status, derived.stderr).toBe(0);
+      expect(JSON.parse(derived.stdout)).toEqual({ service: url, url: "https://site.example/account", opened: false });
+      account.accountUrl = "https://site.example/me";
+      const named = await cliAsync(["account", "--url", url, "--json"]);
+      expect(JSON.parse(named.stdout)).toMatchObject({ url: "https://site.example/me" });
+    } finally {
+      server.close();
+    }
+  });
+
+  it("says when the service cannot be reached", () => {
+    const r = cli(OUTSIDE, ["account", "--url", DEAD]);
+    expect(r.status).not.toBe(0);
+    expect(r.stderr).toContain(DEAD);
   });
 });

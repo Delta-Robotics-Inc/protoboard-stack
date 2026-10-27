@@ -445,6 +445,8 @@ export interface LibrariesActions {
   check?(): void;
   signIn?(): void;
   signOut?(): void;
+  /** Open the account page on the sign-in site (PB-1089): the profile, the sign-ins, delete the account. */
+  manageAccount?(): void;
 }
 
 // ---------------------------------------------------------------- settings
@@ -509,6 +511,8 @@ export interface SettingsLinkModel {
 export interface SettingsActions {
   signIn?(): void;
   signOut?(): void;
+  /** Open the account page on the sign-in site (PB-1089): the profile, the sign-ins, delete the account. */
+  manageAccount?(): void;
   connect(id: string): void;
   disconnect(id: string): void;
   refresh(): void;
@@ -581,6 +585,8 @@ export interface CloudModel {
 export interface CloudActions {
   signIn?(): void;
   signOut?(): void;
+  /** Open the account page on the sign-in site (PB-1089): the profile, the sign-ins, delete the account. */
+  manageAccount?(): void;
   generate?(): void;
   openRelease?(version: string): void;
   openBom?(): void;

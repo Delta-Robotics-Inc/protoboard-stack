@@ -7,7 +7,7 @@ import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, 
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { CredentialStore, DPAPI_PROTECT, DPAPI_UNPROTECT, accountStatus, accountToken, accountTokensFor, connectLibraries, explainCloudError, fetchProblem, loginWithBrowser, loginWithDevice, logout, type Runner, type Session } from "../src/index.js";
+import { CredentialStore, accountPage, accountPageUrl, DPAPI_PROTECT, DPAPI_UNPROTECT, accountStatus, accountToken, accountTokensFor, connectLibraries, explainCloudError, fetchProblem, loginWithBrowser, loginWithDevice, logout, type Runner, type Session } from "../src/index.js";
 import { CloudError } from "@protoboardai/cloud/client";
 
 const fileStore = () => new CredentialStore({ env: { PROTOBOARD_CONFIG_DIR: mkdtempSync(join(tmpdir(), "pb-account-")), PROTOBOARD_CREDENTIAL_STORE: "file" } });
@@ -311,5 +311,43 @@ describe("login", () => {
     expect(fetchProblem(new Error("fetch failed"))).toBe("fetch failed");
     expect(fetchProblem(Object.assign(new Error("fetch failed"), { cause: new Error("unable to verify the first certificate") }))).toBe("fetch failed: unable to verify the first certificate");
     expect(fetchProblem(Object.assign(new Error("The operation was aborted due to timeout"), { name: "TimeoutError" }))).toBe("no answer in time");
+  });
+});
+
+describe("the account page (PB-1089)", () => {
+  it("is the service's accountUrl, else /account beside its sign-in page", () => {
+    expect(accountPageUrl({ accountUrl: "https://dl.example/account", signInUrl: "https://dl.example/login" })).toBe("https://dl.example/account");
+    expect(accountPageUrl({ signInUrl: "https://dl.example/login?x=1" })).toBe("https://dl.example/account");
+    expect(accountPageUrl({ signInUrl: "http://127.0.0.1:5050/login" })).toBe("http://127.0.0.1:5050/account");
+    expect(accountPageUrl({})).toBeUndefined();
+  });
+
+  it("is never a page a browser may not be given", () => {
+    expect(accountPageUrl({ accountUrl: "http://evil.example/account" })).toBeUndefined();
+    expect(accountPageUrl({ accountUrl: "file:///etc/passwd" })).toBeUndefined();
+  });
+
+  it("is read from the service's discovery document; a service that signs no one in has none", async () => {
+    const discovery = (account: unknown) => (async () => Response.json({ protocol: "uhd-library/v1", api: "/v1", ...(account ? { account } : {}) })) as unknown as typeof fetch;
+    expect(await accountPage("https://parts.example", { fetch: discovery({ provider: "firebase", apiKey: "k", signInUrl: "https://dl.example/login" }) })).toBe("https://dl.example/account");
+    await expect(accountPage("https://parts.example", { fetch: discovery(undefined) })).rejects.toThrow(/does not sign users in/);
+  });
+});
+
+describe("the account page (PB-1089)", () => {
+  it("is the service's accountUrl, else /account beside its sign-in page; never a page a browser may not be given", () => {
+    expect(accountPageUrl({ accountUrl: "https://site.example/account", signInUrl: "https://other.example/login" })).toBe("https://site.example/account");
+    expect(accountPageUrl({ signInUrl: "https://site.example/login?x=1" })).toBe("https://site.example/account");
+    expect(accountPageUrl({ signInUrl: "http://127.0.0.1:5050/login" })).toBe("http://127.0.0.1:5050/account");
+    expect(accountPageUrl({ accountUrl: "http://evil.example/account" })).toBeUndefined();
+    expect(accountPageUrl({ accountUrl: "file:///etc/passwd" })).toBeUndefined();
+    expect(accountPageUrl({})).toBeUndefined();
+  });
+
+  it("is read from the discovery document; a service that signs no one in has none", async () => {
+    const withAccount = (async () => Response.json({ protocol: "uhd-library/v1", api: "/v1", account: { provider: "firebase", apiKey: "k", signInUrl: "https://dl.example/login" } })) as unknown as typeof fetch;
+    expect(await accountPage("https://parts.example", { fetch: withAccount })).toBe("https://dl.example/account");
+    const open = (async () => Response.json({ protocol: "uhd-library/v1", api: "/v1" })) as unknown as typeof fetch;
+    await expect(accountPage("https://parts.example", { fetch: open })).rejects.toMatchObject({ code: "NO_SIGN_IN" });
   });
 });

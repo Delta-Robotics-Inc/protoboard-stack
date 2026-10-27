@@ -41,10 +41,34 @@ export async function serviceAccount(service: string, options: { fetch?: typeof 
     if (f) throw new AccountError("UNREACHABLE", `GET ${f.url}: ${fetchProblem(f.error)}`);
     throw e;
   }
-  const account = (found.document as { account?: AccountInfo } | undefined)?.account;
+  // the discovery document's `account` (@protoboardai/cloud Discovery) is an AccountInfo: the same fields, accountUrl included
+  const account: AccountInfo | undefined = found.document?.account;
   if (!account || account.provider !== "firebase" || !account.apiKey)
     throw new AccountError("NO_SIGN_IN", `${serviceKey(service)} does not sign users in (a local parts service: everything is open there, nothing to sign in to)`);
   return account as AccountInfo & { apiKey: string };
+}
+
+/**
+ * The account page of a service's sign-in site (PB-1089): `account.accountUrl`,
+ * else `/account` beside its sign-in page (a service from before the page
+ * names none). Undefined when the service names no site, or the page is not
+ * one a browser may be given (https, or http on this machine).
+ */
+export function accountPageUrl(info: Pick<AccountInfo, "accountUrl" | "signInUrl">): string | undefined {
+  let url: string | undefined;
+  try {
+    url = info.accountUrl ?? (info.signInUrl ? new URL("/account", info.signInUrl).href : undefined);
+  } catch {
+    return undefined;
+  }
+  return url && !browserUrlProblem(url) ? url : undefined;
+}
+
+/** The account page of `service` (its discovery document); throws NO_SIGN_IN when it signs no one in, or names no page. */
+export async function accountPage(service: string, options: { fetch?: typeof fetch } = {}): Promise<string> {
+  const url = accountPageUrl(await serviceAccount(service, options));
+  if (!url) throw new AccountError("NO_SIGN_IN", `${serviceKey(service)} names no account page`);
+  return url;
 }
 
 export interface LoginOptions {

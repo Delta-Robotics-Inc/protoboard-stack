@@ -70,6 +70,7 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   login: LOCAL,
   logout: LOCAL,
   whoami: LOCAL,
+  account: LOCAL,
   // the project's libraries are where its parts come from: with no account, none of them is the Protoboard library's to use
   libraries: { gate: "cloud", what: "Managing the project's libraries", uses: "libraries" },
   doctor: LOCAL,

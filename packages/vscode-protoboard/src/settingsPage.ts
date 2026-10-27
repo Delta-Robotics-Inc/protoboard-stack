@@ -24,6 +24,7 @@ export type SettingsPageMessage =
   | { type: "ready" }
   | { type: "signIn" }
   | { type: "signOut" }
+  | { type: "manageAccount" }
   | { type: "connect"; id: string }
   | { type: "disconnect"; id: string }
   | { type: "refresh" }
@@ -46,6 +47,8 @@ export interface SettingsHost {
   account(): AccountModel;
   signIn(): unknown;
   signOut(): unknown;
+  /** Open the account page in the browser (PB-1089). */
+  manageAccount(): unknown;
   /** The current project, when one is open. */
   project(): string | undefined;
   /**
@@ -170,6 +173,8 @@ export class SettingsController implements vscode.Disposable {
         return this.host.signIn();
       case "signOut":
         return this.host.signOut();
+      case "manageAccount":
+        return this.host.manageAccount();
       case "connect":
         return this.connect(m.id);
       case "disconnect":

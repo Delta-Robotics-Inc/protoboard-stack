@@ -245,6 +245,12 @@
         "icon": "$(sign-out)"
       },
       {
+        "command": "protoboard.manageAccount",
+        "title": "Manage Account",
+        "category": "Protoboard",
+        "icon": "$(link-external)"
+      },
+      {
         "command": "protoboard.account",
         "title": "Protoboard Cloud Account",
         "category": "Protoboard",
@@ -772,9 +778,14 @@
           "group": "more@4"
         },
         {
-          "command": "protoboard.signOut",
+          "command": "protoboard.manageAccount",
           "when": "view == protoboard.cloud && protoboard.signedIn",
           "group": "more@4"
+        },
+        {
+          "command": "protoboard.signOut",
+          "when": "view == protoboard.cloud && protoboard.signedIn",
+          "group": "more@5"
         },
         {
           "command": "protoboard.newProject",
@@ -899,6 +910,10 @@
         },
         {
           "command": "protoboard.signOut",
+          "when": "protoboard.signedIn"
+        },
+        {
+          "command": "protoboard.manageAccount",
           "when": "protoboard.signedIn"
         },
         {
