@@ -84,7 +84,7 @@ describe("a project whose packages are not installed", () => {
 
 describe("a runtime no configured extension declares", () => {
   it("names the extensions that bring it and the command that adds one", async () => {
-    await expect(installRuntimes(OUTSIDE, [], ["cad"])).rejects.toThrow(/the cad runtime comes with ext-parts, .*`protoboard extensions add ext-parts`/);
+    await expect(installRuntimes(OUTSIDE, [], ["cad"])).rejects.toThrow(/The cad runtime comes with ext-parts, .*`protoboard extensions add ext-parts`/);
     await expect(installRuntimes(OUTSIDE, [], ["nope"])).rejects.toThrow(/declares a nope runtime \(declared: none\); runtimes come from [^.]*$/);
   });
 

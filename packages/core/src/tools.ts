@@ -471,7 +471,7 @@ export async function installRuntimes(root: string, extensions: LoadedExtension[
   const wanted = ids.includes("all") ? plans : ids.map((id) => plans.find((p) => p.id === id) ?? id);
   const unknown = wanted.filter((w): w is string => typeof w === "string");
   if (unknown.length) {
-    const hints = unknown.flatMap((id) => (RUNTIME_EXTENSIONS[id] ? [`the ${id} runtime comes with ${RUNTIME_EXTENSIONS[id].join(", ")}: \`protoboard extensions add ${RUNTIME_EXTENSIONS[id][0]}\` adds the first`] : []));
+    const hints = unknown.flatMap((id) => (RUNTIME_EXTENSIONS[id] ? [`The ${id} runtime comes with ${RUNTIME_EXTENSIONS[id].join(", ")}: \`protoboard extensions add ${RUNTIME_EXTENSIONS[id][0]}\` adds the first`] : []));
     throw new Error(
       `no extension in this project declares a ${unknown.join(", ")} runtime (declared: ${plans.map((p) => p.id).join(", ") || "none"}); runtimes come from the tools of the configured extensions and capability providers${hints.length ? `. ${hints.join("; ")}` : ""}`,
     );
