@@ -43,6 +43,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `login` | Sign in to Protoboard Cloud (the parts service at --url, else the project's cloud.url, else, outside a project, the hosted Protoboard library): a browser sign-in, or --device for agents and machines without a browser (a code to approve on the sign-in site). The sign-in goes to Linux's keyring, Windows' DPAPI, else a file only you can read; never to the project. Everything in the library needs it: search, adding parts, prices and downloads |
 | `logout` | Forget the sign-in for the service at --url |
 | `whoami` | Who is signed in to the service at --url (--check asks the service) |
+| `account` | Print the account page of the service at --url (the profile, sign-ins, sign out everywhere, delete the account) and open it in the browser |
 | `libraries` | The project's part libraries in order (--check asks each for its discovery document) |
 | `libraries add <id> <url> [--auth-env PROTOBOARD_<NAME>_TOKEN] [--position n]` | Add a uhd-library/v1 library (last unless --position); with only <url>, its discovery document suggests the id. --auth-env names the environment variable holding its read token; tokens are never written to the project |
 | `libraries remove <id>` | Remove a library (parts vendored from it stay vendored) |
@@ -235,6 +236,8 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             adding parts, prices and downloads
     logout                  Forget the sign-in for the service at --url
     whoami                  Who is signed in to the service at --url (--check asks the service)
+    account                 Print the account page of the service at --url (the profile, sign-ins, sign out
+                            everywhere, delete the account) and open it in the browser
     libraries               The project's part libraries in order (--check asks each for its discovery document)
     libraries add <id> <url> [--auth-env PROTOBOARD_<NAME>_TOKEN] [--position n]
                             Add a uhd-library/v1 library (last unless --position); with only <url>, its

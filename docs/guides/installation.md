@@ -535,7 +535,12 @@ a machine with no browser. `protoboard logout` signs out. The sign-in is kept
 in your system's keychain, else in a file only you can read, and never in a
 project. In CI, set `PROTOBOARD_CLOUD_TOKEN` to a service token instead.
 
-<!-- verified: the commands that need an account and exit code 4 (the CLI's help, "Sign-in"; ACCESS_EXIT_CODE in packages/core/src/access.ts); login, --device, whoami --check, logout; the credential store (packages/core/src/account.ts). -->
+To manage the account (its profile, where it is signed in, sign out
+everywhere, delete it): `protoboard account` prints its page and opens it,
+and **Manage Account** in Protoboard Settings or the Cloud view opens it from
+the editor.
+
+<!-- verified: the commands that need an account and exit code 4 (the CLI's help, "Sign-in"; ACCESS_EXIT_CODE in packages/core/src/access.ts); login, --device, whoami --check, logout, account (packages/core/src/account-login.ts accountPage); the credential store (packages/core/src/account.ts). -->
 
 > **If you are an agent doing this for someone:** you cannot sign in for
 > them and must not work around it. Ask whether they want the library now;

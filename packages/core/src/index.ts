@@ -351,7 +351,7 @@ export {
 export { ensurePrivateDir, tightenDir } from "./private-dir.js";
 export { AUTH_ENV_NAME, CLOUD_TOKEN_ORIGINS_ENV, browserUrlProblem, cloudTokenAllowed, cloudTokenOrigins, isAuthEnvName, isLoopbackHost, tokenTransportProblem } from "./web-urls.js";
 export { tightenUserFolders } from "./user-folders.js";
-export { loginWithBrowser, loginWithDevice, logout, serviceAccount, type DevicePrompt, type LoginOptions } from "./account-login.js";
+export { accountPage, accountPageUrl, loginWithBrowser, loginWithDevice, logout, serviceAccount, type DevicePrompt, type LoginOptions } from "./account-login.js";
 // The cloud's sign-in (PB-928): whether this machine may use a service's account features
 export {
   ACCESS_EXIT_CODE,
