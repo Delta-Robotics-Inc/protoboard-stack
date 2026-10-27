@@ -17,7 +17,8 @@
  *   index (`/__protoboard/source`, ./sources.ts);
  * - the views the project's extensions contribute become tabs (`views` in the
  *   state route); `?theme=` picks the theme (protoboard-dark, protoboard-light,
- *   vscode, …; default: the viewer's last choice, else Protoboard dark).
+ *   vscode, …, or light, dark, system for Protoboard's; default: the viewer's
+ *   last choice, else Protoboard dark).
  */
 
 /** Routes of the dev session, apart from the viewer handler's own. */

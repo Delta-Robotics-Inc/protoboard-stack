@@ -116,7 +116,16 @@ const CREDENTIAL_PARAM = /^(api_?key|key|token|access_token|client_secret|secret
 const isObj = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null && !Array.isArray(x);
 const isStr = (x: unknown): x is string => typeof x === "string" && x.trim().length > 0;
 const isDate = (x: unknown): x is string => isStr(x) && /^\d{4}-\d{2}-\d{2}/.test(x) && !Number.isNaN(Date.parse(x));
-const normMpn = (s: string) => s.trim().toUpperCase();
+/** An ordering code as compared: exact but for case and surrounding space (punctuation can name another variant). */
+export const normMpn = (s: string) => s.trim().toUpperCase();
+
+/**
+ * The code with spaces, dashes, dots, slashes and a leading zero left out:
+ * how suppliers often reformat one code (53261-0271 is 532610271 at one,
+ * 0532610271 at another), but also how two real variants can differ. Two
+ * codes equal only here are reported for a person to confirm, never matched.
+ */
+export const looseMpn = (s: string) => normMpn(s).replace(/[\s\-\u2010\u2011\u2013./]+/g, "").replace(/^0+(?=\d)/, "");
 
 function forbiddenKeys(x: unknown, at: string, out: string[]): void {
   if (Array.isArray(x)) x.forEach((v, i) => forbiddenKeys(v, `${at}[${i}]`, out));
@@ -192,7 +201,9 @@ export function validateSourcing(
       !VIA.includes(o.via as string) && "via (api|web|human)",
     ].filter(Boolean);
     if (lacks.length) add("SRC_OFFER_INCOMPLETE", "error", `${at}${isStr(o.supplier) ? ` (${o.supplier})` : ""} lacks ${lacks.join(", ")}: an undated or unsourced figure is not evidence`);
-    if (isStr(o.mpn) && isStr(r.mpn) && normMpn(o.mpn) !== normMpn(r.mpn))
+    if (isStr(o.mpn) && isStr(r.mpn) && normMpn(o.mpn) !== normMpn(r.mpn) && looseMpn(o.mpn) === looseMpn(r.mpn))
+      add("SRC_OFFER_MPN_FORMAT", "info", `${at} (${o.supplier}) lists ${o.mpn}, the record is for ${r.mpn}: the same characters but for punctuation or a leading zero. If the supplier's page shows it is this ordering code, write the record's mpn on the offer and the supplier's spelling in its note; if it is another variant, record it as an alternate. Until then it is not counted as an offer for this code`);
+    else if (isStr(o.mpn) && isStr(r.mpn) && normMpn(o.mpn) !== normMpn(r.mpn))
       add("SRC_OFFER_MPN_MISMATCH", "warning", `${at} (${o.supplier}) lists ${o.mpn}, the record is for ${r.mpn}: an offer for another ordering code is not evidence about this one; record it as an alternate or fix the MPN`);
     if (o.stock != null && !(Number.isInteger(o.stock) && o.stock >= 0)) add("SRC_OFFER_INCOMPLETE", "error", `${at} stock must be a whole number ≥ 0 or null (unknown)`);
     for (const [j, b] of (o.price_breaks ?? []).entries()) {

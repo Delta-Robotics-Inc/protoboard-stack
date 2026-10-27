@@ -99,6 +99,7 @@ false`), so a sibling code's price never reads as the cheapest offer.
 | `SRC_NO_OFFER` | warning | No offer with stock other than zero |
 | `SRC_OFFER_MPN_MISMATCH` | warning | An offer for another ordering code |
 | `SRC_PART_MISMATCH`, `SRC_UNKNOWN_PART` | warning | Record in the wrong folder, or for an id the project does not define |
+| `SRC_OFFER_MPN_FORMAT` | info | An offer's code equals the record's but for punctuation or a leading zero (`53261-0271`, `0532610271`). Not counted until confirmed: punctuation can name another variant |
 | `SRC_RISK_ACCEPTED` | info | A disqualifier a named person accepted, with the reason |
 | `SRC_STALE` | info | Newest offer older than 90 days (the extension's default, not a sourced figure) |
 | `SRC_UNVERIFIED`, `SRC_NO_CAPABILITY` | info | Searched without some sources, or coverage not recorded |
@@ -167,6 +168,7 @@ Then **sourcing-verify** re-reads the offers that decide the choice.
 | `SRC_FORBIDDEN_FIELD`, `SRC_CREDENTIAL_IN_URL` | An order or credential field, or a key in a URL | Remove it; store the public product URL |
 | `SRC_SINGLE_SOURCE`, `SRC_LOW_STOCK`, `SRC_LIFECYCLE` | A disqualifier nobody accepted | Read another supplier, name an alternate, or record a named acceptance |
 | `SRC_NO_OFFER`, `SRC_OFFER_MPN_MISMATCH` | No usable offer for this code | Read more suppliers; record a sibling code as an alternate |
+| `SRC_OFFER_MPN_FORMAT` | A supplier writes the code differently | Check the supplier's page: the same code, write the record's `mpn` on the offer and the supplier's spelling in `note`; another variant, record it as an alternate |
 | `SRC_STALE` | Offers older than 90 days | Re-read before quoting anything |
 | `SRC_PART_MISMATCH`, `SRC_UNKNOWN_PART` | The record is in the wrong folder or for an unknown id | Move or rename it |
 

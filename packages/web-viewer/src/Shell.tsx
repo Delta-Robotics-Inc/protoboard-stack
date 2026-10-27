@@ -28,7 +28,7 @@ import {
   type UhdViewerOptions,
 } from "@deltarobotics/uhd-viewer/components";
 import type { ResolvedView } from "@protoboardai/core";
-import { PartStatusStyles, PartsDataProvider, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, themeAdapterFor, type HostAdapter, type PartTrust, type PartsData, type ViewDefinition } from "@protoboardai/views";
+import { PartStatusStyles, PartsDataProvider, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, themeAdapterFor, themeChoiceOf, type HostAdapter, type PartTrust, type PartsData, type ViewDefinition } from "@protoboardai/views";
 import { Logo, markSvg } from "./Logo.js";
 
 export interface WebViewerOptions extends UhdViewerOptions {
@@ -84,7 +84,8 @@ function storedTheme(): string | null {
 /** The theme: `themeChoice` when the page names one, else the viewer's last pick, else Protoboard dark. */
 function useThemeChoice(given?: string): [string, (next: string) => void] {
   const [picked, setPicked] = useState<string | null>(() => storedTheme());
-  const choice = given ?? picked ?? "protoboard-dark";
+  // `?theme=light` means Protoboard light: the picker shows the id it resolves to
+  const choice = themeChoiceOf(given) ?? picked ?? "protoboard-dark";
   const set = (next: string) => {
     setPicked(next);
     try {

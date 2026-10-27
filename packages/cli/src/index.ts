@@ -1222,6 +1222,7 @@ async function main() {
         out(rec, () =>
           [
             `${rec.status.toUpperCase()}  ${rec.operation} ${rec.capability!.module} via ${rec.extension.id}  ${rec.summary}`,
+            ...(rec.log ?? []).map((l) => `  ${l}`),
             ...rec.outputs.map((o) => `  → ${o.path} (${o.bytes} bytes)`),
             ...(rec.diagnostics ?? []).map(fmtDiag),
           ].join("\n"),
@@ -1232,7 +1233,8 @@ async function main() {
       const found = findOperation(p.extensions, args[0]);
       if (!found) throw new Error(`no operation "${args[0]}" in the configured extensions (see \`protoboard doctor\`)`);
       const rec = await runOperation(p, found.ext, found.op, inputs, { authorize: cli.flags.authorize });
-      out(rec, () => `${rec.status.toUpperCase()}  ${found.ext.manifest.id}:${rec.operation}  ${rec.summary}\n${rec.outputs.map((o) => `  → ${o.path} (${o.bytes} bytes)`).join("\n")}`);
+      // the operation's log (part-verify's findings, a thrown error's stack) is part of its answer, not only of the record
+      out(rec, () => [`${rec.status.toUpperCase()}  ${found.ext.manifest.id}:${rec.operation}  ${rec.summary}`, ...(rec.log ?? []).map((l) => `  ${l}`), ...rec.outputs.map((o) => `  → ${o.path} (${o.bytes} bytes)`)].join("\n"));
       process.exitCode = rec.status === "succeeded" ? 0 : 1;
       return;
     }

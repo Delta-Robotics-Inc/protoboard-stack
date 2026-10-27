@@ -17,6 +17,7 @@ explains its codes.
 | Code | Severity | Means | Do |
 | --- | --- | --- | --- |
 | `PB_SOURCE_LOAD_FAILED` | error | A `src/**/*.uhd.ts` or `parts/local/**/*.uhd.ts` file threw on import. | Fix the TypeScript error shown; nothing in that file is loaded until then. |
+| `PB_DEFINITION_INVALID` | error | A definition's `interfaces` list holds something that is not one interface: most often a builder that returns several (`AcPower(...)`) placed without `...`. The definition is left out, so its instances also report `PB_UNRESOLVED_DEFINITION`. | Spread the builder (`...AcPower(...)`) or fix the entry the message names. |
 | `PB_SOURCES_IN_CATALOG` | info | A `sources` glob in `protoboard.config.ts` matches files in the catalog folder (directly or through a link). They are not loaded as the project's code: a vendored part's source is evaluated confined, from `parts/origins.json`. | Narrow `sources` (the default is `src/**/*.uhd.ts` and `parts/local/**/*.uhd.ts`). |
 | `PB_STACK_REPLACE_REFUSED` | error (a command's) | `protoboard stack unpack` (or the extension's "Add the Stack from Another .vsix File") found a copy of the same stack version from another build in `~/.protoboard/stack`, and replacing it was not agreed to. | Replace it only if you trust where the file came from: `protoboard stack unpack <file> --replace`, or answer the extension's question. |
 | `PB_ROOT_NOT_FOUND` | error | `protoboard.config.ts` names a root export that does not exist. | Fix `root.source` / `root.export`. |
@@ -161,6 +162,7 @@ Full table with the rules behind each: **supplier-compare** section 3.
 | `SRC_FORBIDDEN_FIELD`, `SRC_CREDENTIAL_IN_URL` | error | An order, cart or credential field, or a key in a URL. | Remove it; store the public product URL. Never commit a credential. |
 | `SRC_SINGLE_SOURCE`, `SRC_LOW_STOCK`, `SRC_LIFECYCLE` | warning | A selection disqualifier nobody accepted. | Name an alternate (**lifecycle-alternates**), or a named person accepts the risk in `risks[]`. |
 | `SRC_NO_OFFER`, `SRC_OFFER_MPN_MISMATCH` | warning | No offer with stock, or an offer for another ordering code. | Read more suppliers, or record the sibling code as an alternate. |
+| `SRC_OFFER_MPN_FORMAT` | info | An offer's code equals the record's but for punctuation or a leading zero; not counted until a person confirms it is the same code. | Same code: write the record's `mpn` on the offer, the supplier's spelling in `note`. Another variant: record it as an alternate. |
 | `SRC_PART_MISMATCH`, `SRC_UNKNOWN_PART` | warning | A record in the wrong folder, or for an id the project does not define. | Move or rename the record. |
 | `SRC_RISK_ACCEPTED` | info | A disqualifier a named person accepted. | Nothing; kept for traceability. |
 | `SRC_STALE` | info | Newest offer older than 90 days. | Re-read offers before quoting anything (**supplier-compare**). |
