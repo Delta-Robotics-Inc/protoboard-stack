@@ -190,6 +190,9 @@ jobs:
         with:
           path: protoboard-stack
           persist-credentials: false
+          # a manual run is a development build, numbered from the last release tag (scripts/build-version.mjs):
+          # it needs the tags and the history since them
+          fetch-depth: 0
       - uses: ./protoboard-stack/.github/actions/workspace
 
       # The same build stamp as the npm packages: on a tag it says "release": true, and the stack the extension

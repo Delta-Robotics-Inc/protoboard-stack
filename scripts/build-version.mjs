@@ -14,6 +14,13 @@
  *     tag yet, <that version>-dev.<commits since the last tag>.g<short sha>. It sorts after the release it builds
  *     on and before the next one, and later commits sort later. So a dev build never takes a release's stack
  *     folder, and a release never takes a dev build's.
+ *   - a committed prerelease (0.3.0-rc.1), tagged or not, builds on the release it leads to:
+ *         0.3.0-dev.<commits>.g<short sha>
+ *     (every dev build is x.y.z-dev.…, which the stack reads as a dev build of x.y.z). It sorts before the release,
+ *     and, as "dev" sorts before "rc", before the rc too: still never the same folder as either.
+ *
+ * The commit count needs the release tags: a checkout without them (a shallow CI clone) counts from the root it
+ * has, so the release workflow's vsix job checks out with full history and tags (fetch-depth: 0).
  */
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -43,9 +50,11 @@ export function nextPatch(version) {
  * A development build's version. `released`: the committed version has its tag behind HEAD, so the build is on
  * the way to the next patch. `commits` counts from that tag (or the last one); `sha` is the commit, shortened.
  * The sha takes a `g` (as git describe writes it): a prerelease part of digits only may not start with 0.
+ * A prerelease base (0.3.0-rc.1) builds on the release it leads to (0.3.0), tagged or not.
  */
 export function devVersion(base, { released, commits, sha }) {
-  const line = released ? nextPatch(base) : base;
+  const core = base.replace(/[-+].*$/, "");
+  const line = released && core === base ? nextPatch(base) : core;
   return `${line}-dev.${Number.isInteger(commits) && commits >= 0 ? commits : 0}${sha ? `.g${sha.slice(0, 7)}` : ""}`;
 }
 
@@ -74,4 +83,15 @@ export function buildVersion(repo, options = {}) {
   const counted = head ? git(["rev-list", "--count", tag ? `${tag}..HEAD` : "HEAD"], repo) : undefined;
   const commits = counted === undefined ? 0 : Number(counted);
   return { version: devVersion(base, { released: tag === `v${base}`, commits, sha: head }), base, release: false };
+}
+
+/**
+ * An extension's protoboard-extension.json as a build carries it: one of this repository's extensions takes the
+ * build's version, as its package.json does, so what it records (operations, doctor, release manifests) names
+ * the build that made it. A release build, or another extension, is left as it is.
+ */
+export function stampExtensionManifest(manifest, bv) {
+  if (bv.release || bv.version === manifest.version || typeof manifest.id !== "string" || !manifest.id.startsWith("@protoboardai/")) return manifest;
+  if (manifest.version !== bv.base) throw new Error(`${manifest.id}'s protoboard-extension.json is ${manifest.version} and the stack is ${bv.base}: the stack's packages share one version`);
+  return { ...manifest, version: bv.version };
 }

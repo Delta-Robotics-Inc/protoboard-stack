@@ -13,3 +13,4 @@ export declare function nextPatch(version: string): string;
 export declare function devVersion(base: string, o: { released: boolean; commits: number; sha?: string | null }): string;
 export declare function releaseStamp(file: string, version: string, commit?: string | null): BuildStamp | undefined;
 export declare function buildVersion(repo: string, options?: { git?: GitRunner }): BuildVersion;
+export declare function stampExtensionManifest<T extends { id?: unknown; version?: unknown }>(manifest: T, bv: BuildVersion): T;

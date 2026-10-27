@@ -32,7 +32,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { BUILD_INFO, gitStamp, type BuildStamp } from "@protoboardai/core/build-info";
-import { buildVersion } from "../../../scripts/build-version.mjs";
+import { buildVersion, stampExtensionManifest } from "../../../scripts/build-version.mjs";
 // npm as this Node with npm-cli.js: no npm.cmd, which Node does not start without a shell on Windows (PB-1047)
 import { npmCommand } from "../../../scripts/npm-cli.mjs";
 import { entriesOf, pack } from "../src/pbar.js";
@@ -139,6 +139,14 @@ function packDir(dir: string) {
   delete pkg.scripts;
   delete pkg.publishConfig;
   writeFileSync(pkgFile, JSON.stringify(pkg, null, 2) + "\n");
+  // an extension's manifest carries its version too (loadExtensions reads it into operations, doctor and release
+  // manifests): the build's, as its package.json
+  const extFile = join(tmp, "package", "protoboard-extension.json");
+  if (existsSync(extFile)) {
+    const ext = JSON.parse(readFileSync(extFile, "utf8")) as { id?: unknown; version?: unknown };
+    const stamped = stampExtensionManifest(ext, bv);
+    if (stamped !== ext) writeFileSync(extFile, JSON.stringify(stamped, null, 2) + "\n");
+  }
   if (pkg.name === "@protoboardai/cli") writeFileSync(join(tmp, "package", BUILD_INFO), JSON.stringify(build, null, 2) + "\n");
   const tgz = join(stage, "tgz", `${pkg.name.replace("@", "").replace("/", "-")}-${pkg.version}.tgz`);
   run(tar, ["-czf", tgz, "-C", tmp, "package"], tmp);
