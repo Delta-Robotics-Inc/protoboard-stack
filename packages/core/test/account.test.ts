@@ -216,6 +216,12 @@ describe("tokens", () => {
     expect(await accountStatus(SERVICE, { store, fetch: me, check: true })).toMatchObject({ signedIn: true, valid: false, allowed: false, problem: msg });
     const invited: typeof fetch = (async (url: string) => (String(url).endsWith("/v1/me") ? Response.json({ signedIn: true, uid: "u1", publisher: false, allowed: true }) : Response.json({ account: { provider: "firebase" } }))) as typeof fetch;
     expect(await accountStatus(SERVICE, { store, fetch: invited, check: true })).toMatchObject({ valid: true, allowed: true });
+    expect((await accountStatus(SERVICE, { store, fetch: invited, check: true })).distribution).toBeUndefined();
+    // an open sign-up reads the redistributable library, the team all of it: whoami --check says which
+    for (const distribution of ["redistributable", "all"] as const) {
+      const open: typeof fetch = (async (url: string) => (String(url).endsWith("/v1/me") ? Response.json({ signedIn: true, uid: "u1", publisher: false, allowed: true, distribution }) : Response.json({ account: { provider: "firebase" } }))) as typeof fetch;
+      expect(await accountStatus(SERVICE, { store, fetch: open, check: true })).toMatchObject({ valid: true, allowed: true, distribution });
+    }
   });
 });
 
