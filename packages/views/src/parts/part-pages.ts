@@ -215,8 +215,43 @@ export function fileSize(bytes: number): string {
   return `${mb < 10 ? Math.round(mb * 100) / 100 : Math.round(mb * 10) / 10} MB`;
 }
 
-/** A licence as a card writes it: its SPDX id, or "library terms" for the library's own. */
-export const licenseLabel = (license: string | undefined) => (!license ? undefined : /^LicenseRef-/i.test(license) ? "library terms" : license);
+/** Protoboard's library terms: `LicenseRef-Protoboard-Library`, and the same id with an upper-case B that earlier revisions carry. */
+export const isLibraryLicense = (license: string | undefined) => !!license && /^LicenseRef-Protoboard-Library$/i.test(license);
+
+/** Where the Protoboard library terms are published. */
+export const LIBRARY_TERMS_URL = "https://protoboard-cloud.web.app/library-terms";
+
+/** A licence as the part views say it: a short label, the terms' summary and their page. */
+export interface LicenseInfo {
+  label: string;
+  summary?: string;
+  url?: string;
+}
+
+const NOT_STATED = /^(unknown|unstated|not-stated|none-stated)$/i;
+
+/**
+ * A file's licence (PB-1061), from the terms its part's terms.json records:
+ * - the library's own: "Protoboard library terms", linking the terms page;
+ * - another `LicenseRef-…` (a vendor's terms): the vendor's terms by name ("REV IP Policy", "Hirose Terms of Use"),
+ *   with the summary and the link the record gives;
+ * - an SPDX id: as written ("MIT", "CC-BY-4.0").
+ */
+export function licenseOf(terms: { license?: string; licenseUrl?: string; summary?: string } | undefined): LicenseInfo | undefined {
+  const id = terms?.license?.trim();
+  if (!id) return undefined;
+  if (isLibraryLicense(id)) return { label: "Protoboard library terms", url: LIBRARY_TERMS_URL };
+  const extra = { ...(terms?.summary ? { summary: terms.summary } : {}), ...(terms?.licenseUrl ? { url: terms.licenseUrl } : {}) };
+  if (!/^LicenseRef-/i.test(id)) return { label: id, ...extra };
+  const name = id.replace(/^LicenseRef-/i, "");
+  if (NOT_STATED.test(name)) return { label: "Terms not stated", ...extra };
+  // "Arduino-Unstated": the vendor, its terms not stated
+  const vendor = name.replace(/[-_](unstated|not[-_]stated)$/i, "");
+  return { label: vendor !== name ? `${vendor.replace(/[-_]+/g, " ")} · terms not stated` : name.replace(/[-_]+/g, " "), ...extra };
+}
+
+/** A licence as a card writes it: its label (licenseOf). */
+export const licenseLabel = (license: string | undefined) => licenseOf({ license })?.label;
 
 const isImage = (a: EnvFile) => a.mediaType.startsWith("image/");
 const isGlb = (a: EnvFile) => a.mediaType === "model/gltf-binary" || extOf(a.path) === "glb";
@@ -246,7 +281,7 @@ export function cadInfo(env: Pick<Envelope, "artifacts" | "definition">, preview
   const vendor = /vendor/i.test(`${main.artifactId ?? ""} ${main.path}`);
   const kcl = env.artifacts.some((a) => extOf(a.path) === "kcl");
   const tool = defArts.find((d) => d.id === main.artifactId)?.provenance?.tool;
-  const second = vendor ? licenseLabel(main.terms?.license) : kcl ? "KCL" : typeof tool === "string" ? tool.split(/[\s(]/)[0] : licenseLabel(main.terms?.license);
+  const second = vendor ? licenseOf(main.terms)?.label : kcl ? "KCL" : typeof tool === "string" ? tool.split(/[\s(]/)[0] : licenseOf(main.terms)?.label;
   return {
     ...(preview ? { preview } : {}),
     file: `${step ? "STEP" : "GLB"} · ${fileSize(main.size)}`,
@@ -307,8 +342,13 @@ export function artifactGroups(env: Envelope): PartArtifactGroup[] {
   for (const a of env.artifacts) {
     if (a.role === "thumbnail") continue;
     const k = fileKind(a);
-    const license = licenseLabel(a.terms?.license);
-    push(k, { name: fileName(a.path), note: fileSize(a.size), ...(license ? { license } : {}) }, extOf(a.path).toUpperCase(), "files");
+    const license = licenseOf(a.terms);
+    push(
+      k,
+      { name: fileName(a.path), note: fileSize(a.size), ...(license ? { license: license.label, ...(license.summary ? { licenseSummary: license.summary } : {}), ...(license.url ? { licenseUrl: license.url } : {}) } : {}) },
+      extOf(a.path).toUpperCase(),
+      "files",
+    );
   }
   for (const e of env.evidence ?? []) push({ kind: "evidence", label: "Evidence", icon: "shield-check" }, { name: e.title ?? cap(e.kind), note: e.kind, ...(e.url ? { url: e.url } : {}) }, "", "records");
   const rank = (kind: string) => (KIND_ORDER.indexOf(kind) + 1 || KIND_ORDER.length) - 1;

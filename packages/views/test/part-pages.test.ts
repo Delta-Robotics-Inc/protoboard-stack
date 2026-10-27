@@ -9,8 +9,8 @@ import { PagerStore, PagesSource, stepIn } from "../src/parts/carousel.js";
 import { dimensionRows, fitChips } from "../src/parts/CardPages.js";
 import { projectCard } from "../src/parts/library-data.js";
 import type { PartDetailModel, PartPages, PartPriceSource } from "../src/parts/model.js";
-import { artifactGroups, availablePages, cadInfo, dimensionFacts, fileSize, interfaceChips, keyLabel, metadataFacts, pageImages, partPages, specFacts } from "../src/parts/part-pages.js";
-import { detailTabs } from "../src/parts/PartDetail.js";
+import { LIBRARY_TERMS_URL, artifactGroups, availablePages, cadInfo, licenseOf, dimensionFacts, fileSize, interfaceChips, keyLabel, metadataFacts, pageImages, partPages, specFacts } from "../src/parts/part-pages.js";
+import { detailTabs, termsOf } from "../src/parts/PartDetail.js";
 import { breaksOf, money, usdFirst } from "../src/parts/Prices.js";
 
 const sha = (c: string) => c.repeat(64);
@@ -20,7 +20,7 @@ const BOARD = {
   revision: 3,
   evidence: [{ kind: "sources", title: "Sources" }],
   artifacts: [
-    { artifactId: "cad_vendor_manifest", role: "source", mediaType: "application/json", path: "cad/board-vendor.manifest.json", sha256: sha("1"), size: 2941, terms: { license: "LicenseRef-Example-Library" } },
+    { artifactId: "cad_vendor_manifest", role: "source", mediaType: "application/json", path: "cad/board-vendor.manifest.json", sha256: sha("1"), size: 2941, terms: { license: "LicenseRef-Protoboard-Library" } },
     { role: "license", mediaType: "text/plain", path: "cad/LICENSE.txt", sha256: sha("2"), size: 1076, terms: { license: "MIT" } },
     { role: "attachment", mediaType: "model/3mf", path: "cad/vendor/board.3mf", sha256: sha("3"), size: 332426, terms: { license: "MIT" } },
     { artifactId: "cad_vendor_step", role: "source", mediaType: "model/step", path: "cad/vendor/board.step", sha256: sha("4"), size: 849321, terms: { license: "MIT" } },
@@ -173,9 +173,30 @@ describe("pictures, CAD and artifacts from the revision's files", () => {
       ["license", 1, "LICENSE.txt", "1.1 kB"],
       ["evidence", 1, "Sources", "sources"],
     ]);
-    // only http(s) links are offered; the library's own licence reads as its terms
+    // only http(s) links are offered; the library's own licence reads as its terms, with their page
     expect(JSON.stringify(groups)).not.toContain("javascript:");
-    expect(groups.find((g) => g.kind === "manifest")!.items[0].license).toBe("library terms");
+    expect(groups.find((g) => g.kind === "manifest")!.items[0]).toMatchObject({ license: "Protoboard library terms", licenseUrl: LIBRARY_TERMS_URL });
+  });
+
+  it("licences (PB-1061): the library's own terms, a vendor's terms by name with their summary and page, SPDX as written", () => {
+    // the identifier earlier revisions carry, with an upper-case B, is the library's too
+    const earlier = ["LicenseRef", "Proto" + "Board", "Library"].join("-");
+    for (const license of ["LicenseRef-Protoboard-Library", earlier]) expect(licenseOf({ license })).toEqual({ label: "Protoboard library terms", url: LIBRARY_TERMS_URL });
+    const rev = { license: "LicenseRef-REV-IP-Policy", licenseUrl: "https://www.revrobotics.com/ip-policy/", summary: "REV IP for non-commercial use; commercial use needs a REV licence." };
+    expect(licenseOf(rev)).toEqual({ label: "REV IP Policy", summary: rev.summary, url: rev.licenseUrl });
+    expect(licenseOf({ license: "LicenseRef-Hirose-Terms-of-Use" })!.label).toBe("Hirose Terms of Use");
+    expect(licenseOf({ license: "LicenseRef-Molex-proprietary" })!.label).toBe("Molex proprietary");
+    expect(licenseOf({ license: "LicenseRef-Arduino-Unstated" })!.label).toBe("Arduino · terms not stated");
+    expect(licenseOf({ license: "LicenseRef-unknown" })!.label).toBe("Terms not stated");
+    expect(licenseOf({ license: "MIT" })).toEqual({ label: "MIT" });
+    expect(licenseOf({})).toBeUndefined();
+    // a vendor STEP's CAD line names the vendor's terms, never "library terms"
+    const env = { ...BOARD, artifacts: BOARD.artifacts.map((a) => (a.artifactId === "cad_vendor_step" ? { ...a, terms: rev } : a)) } as unknown as PartRevisionEnvelope;
+    expect(cadInfo(env)!.origin).toBe("Vendor CAD · REV IP Policy");
+    // the Terms section: each licence once, with how many files come under it
+    const terms = termsOf(artifactGroups(env));
+    expect(terms.find((t) => t.label === "REV IP Policy")).toMatchObject({ url: rev.licenseUrl, summary: rev.summary, files: 1 });
+    expect(terms.find((t) => t.label === "Protoboard library terms")).toMatchObject({ url: LIBRARY_TERMS_URL, files: 1 });
   });
 
   it("sizes", () => {
