@@ -126,8 +126,8 @@ describe("the Inspector's selection", () => {
     const sel = (path: string, artifactsOf?: string) => card({ details: { target: { kind: "module", path }, ...(artifactsOf ? { artifactsOf } : {}), files: {}, previews: {}, links: [] } });
     const html = (c: InspectorCard, b: unknown = bundle) => render(createElement(SelectionInspector, { content: { card: c, project: "pod" }, bundle: b, actions }));
     const section = (h: string, id: string) => (h.includes(`data-section="${id}"`) ? h.slice(h.indexOf(`data-section="${id}"`)).split("</section>")[0] : undefined);
-    // the pod has no artifacts of its own: without the shell's word the viewer rolls its board's and enclosure's up, a row of parts to pick from
-    expect(html(sel("")).toUpperCase()).toContain("ARTIFACTS · PARTS");
+    // the pod has no artifacts of its own (uhd-viewer 0.2.0 rolls its board's and enclosure's up without the shell's word;
+    // from 0.2.1 it never does, PB-1088)
     const pod = html(sel("", "sample-imu-pod"));
     expect(section(pod, "artifacts")).toBeUndefined();
     expect(pod.toUpperCase()).not.toContain("ARTIFACTS · PARTS");
@@ -137,7 +137,10 @@ describe("the Inspector's selection", () => {
     const board = html(sel("board", "sample-imu-board"), withPart);
     expect(count(board, /class="uhd-artifact-card /g)).toBe(8);
     expect(board).not.toContain("MCU datasheet");
-    expect(section(board, "artifacts")).toMatch(/>8</);
+    // its eight are its outputs, drawn in its Board section: uhd-viewer 0.2.0 also counts them in an Artifacts header; from
+    // 0.2.1 there is no Artifacts section for outputs alone (PB-1088)
+    const arts = section(board, "artifacts");
+    if (arts) expect(arts).toMatch(/>8</);
     // the MCU shows it when it is selected
     expect(html(sel("board/u1", "fixture-mcu-qfn32"), withPart)).toContain("MCU datasheet");
   });
@@ -190,6 +193,16 @@ describe("the Inspector's selection", () => {
     expect(html).toContain("Selection · Frame, Top plate");
     expect(html).toContain('data-section="host:Selected"');
     expect(html).not.toContain("uhd-selection-details");
+  });
+
+  it("a long list shows ten rows at a time, with Show 10 more (PB-1088)", () => {
+    const rows = Array.from({ length: 23 }, (_, i) => ({ icon: "circle-x", label: `Finding ${i}`, tone: "error", code: "UHD_X", action: { type: "finding" as const, key: String(i) } }));
+    const html = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 23, rows }] }), project: "pod" }, actions }));
+    expect(count(html, /data-row-finding="UHD_X"/g)).toBe(10);
+    expect(html).toContain("Show 10 more");
+    expect(html).not.toContain("Show fewer");
+    const short = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 3, rows: rows.slice(0, 3) }] }), project: "pod" }, actions }));
+    expect(short).not.toContain("data-load-more");
   });
 
   it("uses the deeper severity shades the parts views use on a light page", () => {

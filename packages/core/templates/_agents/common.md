@@ -187,6 +187,14 @@ what they report. Do not answer from memory, from an earlier session or from
 the template's description: a project that started blank may hold a full
 system by now.
 
+## Descriptions and design notes
+
+A module's `description` says what the module is, in a sentence or two. The
+Inspector shows its first five lines. Long design notes go in the project's
+docs (`docs/`, for example `docs/<module>.md`), not in the description: the
+sub-modules and their part numbers, layout and assembly notes, the reasons
+behind a choice.
+
 ## The diagram's layout
 
 Where the nodes sit, and where the lines bend, is saved in
