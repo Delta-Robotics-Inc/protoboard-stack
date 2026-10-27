@@ -116,7 +116,12 @@ const CREDENTIAL_PARAM = /^(api_?key|key|token|access_token|client_secret|secret
 const isObj = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null && !Array.isArray(x);
 const isStr = (x: unknown): x is string => typeof x === "string" && x.trim().length > 0;
 const isDate = (x: unknown): x is string => isStr(x) && /^\d{4}-\d{2}-\d{2}/.test(x) && !Number.isNaN(Date.parse(x));
-const normMpn = (s: string) => s.trim().toUpperCase();
+/**
+ * An ordering code as compared, not as shown: case, spaces, dashes, dots and
+ * slashes are how a supplier formats it, and some list a number with its
+ * leading zero (53261-0271 is 532610271 at one, 0532610271 at another).
+ */
+export const normMpn = (s: string) => s.trim().toUpperCase().replace(/[\s\-\u2010\u2011\u2013./]+/g, "").replace(/^0+(?=\d)/, "");
 
 function forbiddenKeys(x: unknown, at: string, out: string[]): void {
   if (Array.isArray(x)) x.forEach((v, i) => forbiddenKeys(v, `${at}[${i}]`, out));

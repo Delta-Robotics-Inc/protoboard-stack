@@ -19,7 +19,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import { initProject, loadProject, resolveSkills } from "@protoboardai/core";
-import { chooseOffer, compareOffers, isFullReel, unitPriceAt, validateSourcing, type Offer, type SourcingRecord } from "../lib/sourcing.ts";
+import { chooseOffer, compareOffers, isFullReel, normMpn, unitPriceAt, validateSourcing, type Offer, type SourcingRecord } from "../lib/sourcing.ts";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const PKG = join(HERE, "..");
@@ -220,6 +220,18 @@ describe("sourcing records", () => {
     const issues = validateSourcing(goodRecord(), { now: NOW, knownPart: () => true });
     expect(issues.filter((i) => i.severity !== "info")).toEqual([]);
     expect(issues.map((i) => i.code).sort()).toEqual(["SRC_RISK_ACCEPTED", "SRC_UNVERIFIED"]);
+  });
+
+  it("an offer that writes the ordering code differently (dashes, spaces, a leading zero) is the same code", () => {
+    expect(normMpn("53261-0271")).toBe(normMpn("532610271"));
+    expect(normMpn("53261-0271")).toBe(normMpn("0532610271"));
+    expect(normMpn(" dmg2305ux-7 ")).toBe(normMpn("DMG2305UX 7"));
+    expect(normMpn("LDO3300-33SOT")).not.toBe(normMpn("LDO3300-50SOT"));
+    const r = goodRecord();
+    r.offers[1].mpn = r.mpn.toLowerCase().replace(/-/g, " ");
+    const codes = validateSourcing(r, { now: NOW, knownPart: () => true }).map((i) => i.code);
+    expect(codes).not.toContain("SRC_OFFER_MPN_MISMATCH");
+    expect(codes).not.toContain("SRC_SINGLE_SOURCE");
   });
 
   it("orders, credentials, undated offers and unaccepted disqualifiers are reported", () => {
@@ -485,6 +497,20 @@ describe("quote-check.ts", () => {
       "x.bad_page": "invalid",
     });
     expect(report.fields[1].notes.join(" ")).toMatch(/nope\.png is not on this machine/);
+  });
+
+  it("readings that are words agree when they read the same, ignoring case and spacing", () => {
+    const words = (path: string, value: string, a: string, b: string) => ({ path, value, evidence: fig(value), readings: [{ reader: "agent-a", value: a }, { reader: "agent-b", value: b }], status: "stated" });
+    write(
+      join(dir, "words.json"),
+      extraction([words("structure.contact", "Phosphor bronze, tin plated", "Phosphor bronze, tin plated", "phosphor  bronze,  TIN plated"), words("structure.housing", "LCP", "LCP", "PBT")]),
+    );
+    const r = tsx(dir, script, ["--extraction", join(dir, "words.json"), "--text", join(dir, "parsed.txt"), "--json"]);
+    expect(r.status, r.stderr).toBe(0);
+    expect(JSON.parse(r.stdout).fields.map((f: { verdict: string; readings_agree: boolean }) => [f.verdict, f.readings_agree])).toEqual([
+      ["visual", true],
+      ["weak", false],
+    ]);
   });
 
   it("a thousands-grouped figure is one number", () => {
