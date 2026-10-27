@@ -246,6 +246,8 @@ describe("the Inspector's card (PB-895)", () => {
     // the module as the viewer's inspector shows it (its facts, artifacts, interfaces), by its path, with the findings
     // its interface cards show: the link inside the board, by the id the viewer selects it with
     expect(card.details).toMatchObject({ target: { kind: "module", path: "board" }, files: {}, previews: {}, links: [] });
+    // its own artifacts only, not its parts' (PB-1063)
+    expect(card.details!.artifactsOf).toBe("mainboard");
     expect(card.details!.findings).toContainEqual(expect.objectContaining({ code: "UHD_LINK_STATE", refs: ["board/mcu_led"] }));
   });
 
@@ -255,6 +257,7 @@ describe("the Inspector's card (PB-895)", () => {
     expect(card.chips.map((c) => c.text)).toEqual(["catalog"]);
     expect(card.sections.map((s) => s.title)).not.toContain("Interfaces");
     expect(card.details?.target).toEqual({ kind: "module", path: "board/mcu" });
+    expect(card.details?.artifactsOf).toBe(nodes.get("i:board/mcu")!.defId);
     // without a bundle there are no details to draw
     expect(moduleCard(indexProject(resolved), nodes.get("i:board/mcu")!, list).details).toBeUndefined();
   });

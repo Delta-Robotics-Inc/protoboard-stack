@@ -11,7 +11,7 @@ import { describe, expect, it } from "vitest";
 import { appCsp, appHtml } from "../src/appPage.js";
 import { findings } from "../src/drc.js";
 import { boardSection, interfaceCard, libraryPartCard, linkHarnessDefs, pageContent, partCard, type InspectorContent } from "../src/inspector.js";
-import { MODEL_THUMB_MAX, artifactFiles, definitionsBelow, detailFiles, evidenceFiles, exportedPreview, fileKey, interfaceArtifacts, previewKey, resourceRoots, smallModel, type FileSystem } from "../src/inspectorFiles.js";
+import { MODEL_THUMB_MAX, artifactFiles, detailFiles, evidenceFiles, exportedPreview, fileKey, interfaceArtifacts, previewKey, resourceRoots, smallModel, type FileSystem } from "../src/inspectorFiles.js";
 import { indexProject, type ResolvedArtifact, type ResolvedProject } from "../src/model.js";
 import { buildTree, nodeMap } from "../src/tree.js";
 import { bundle, resolved } from "./fixtures.js";
@@ -137,10 +137,8 @@ describe("what the Inspector's page may load", () => {
     expect(evidenceFiles(ROOT, ["mcu"], fs(origins([{ kind: "sources", path: "package.json" }], ".."))).evidence).toEqual({});
   });
 
-  it("brings the files of a module and of the parts below it, nearest first", () => {
-    expect(definitionsBelow(index, "watch")).toEqual(["watch", "mainboard", "case", "mcu", "led"]);
-    expect(definitionsBelow(index, "watch", 3, 2)).toEqual(["watch", "mainboard"]);
-    expect(definitionsBelow(index, "mcu")).toEqual(["mcu"]);
+  it("a project part's card shows its own artifacts only (PB-1063)", () => {
+    expect(partCard(index, { id: "watch", name: "Watch" }, []).details?.artifactsOf).toBe("watch");
   });
 
   it("gives the page the projects, the packages their artifacts are in and the cache as its roots, and nothing wider", () => {
@@ -193,7 +191,7 @@ describe("a part's card", () => {
     expect(card.sections.map((s) => s.title)).toEqual(["Used in", "Checks"]);
     expect(card.sections[0].rows[0]).toMatchObject({ label: "board/mcu", action: { type: "focus", path: "board/mcu" } });
     // the definition as the build has it; a part the build does not have has no details
-    expect(card.details).toEqual({ target: { kind: "definition", id: "mcu" }, files: {}, previews: {}, links: [] });
+    expect(card.details).toEqual({ target: { kind: "definition", id: "mcu" }, artifactsOf: "mcu", files: {}, previews: {}, links: [] });
     expect(partCard(index, { id: "cap", name: "Cap" }, list).details).toBeUndefined();
   });
 

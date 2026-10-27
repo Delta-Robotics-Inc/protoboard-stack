@@ -139,11 +139,10 @@ export class ProjectTrust {
 /** The question, for the modal: the project's name and what running it means. */
 export function trustQuestion(name: string, root: string): { message: string; detail: string; trust: string; refuse: string } {
   return {
-    message: `Run the code of the Protoboard project "${name}"?`,
+    message: `Run the code of "${name}"?`,
     detail:
-      `Protoboard checks, builds and shows a project by running its TypeScript (protoboard.config.ts and its model files), and Initialize sets it up. ` +
-      `A project can also bring its own Protoboard CLI in node_modules. That code can do anything your account can.\n\n` +
-      `Allow it only for a project you trust (one you made, or from someone you trust).\n\n${root}`,
+      `Protoboard runs a project's code to check and show it. ` +
+      `That code can do anything your account can, so allow it only for projects you trust.\n\n${root}`,
     trust: "Trust and Run",
     refuse: "Don't Run",
   };

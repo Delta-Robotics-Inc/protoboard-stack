@@ -38,6 +38,17 @@ import { RowAction } from "../parts/ui.js";
 import type { InspectorActions, InspectorCard, InspectorChip, InspectorContent, InspectorRow, InspectorSection } from "./model.js";
 
 type Bundle = NonNullable<Parameters<typeof SelectionDetails>[0]["bundle"]>;
+
+/**
+ * The bundle with only one definition's artifacts (PB-1063). The viewer's
+ * details show an assembly's parts' artifacts as well (a row of parts to pick
+ * from, the count of all of them); the Inspector shows the selection's own.
+ */
+export function ownArtifactsOnly(bundle: unknown, defId: string | undefined): unknown {
+  const b = bundle as { definitions?: { id: string; artifacts?: unknown[] }[] } | undefined;
+  if (!defId || !b || !Array.isArray(b.definitions)) return bundle;
+  return { ...b, definitions: b.definitions.map((d) => (d.id === defId || !d.artifacts?.length ? d : { ...d, artifacts: [] })) };
+}
 type Definitions = NonNullable<Parameters<typeof SelectionDetails>[0]["definitions"]>;
 
 const TONE: Record<string, string> = { error: "text-error", warning: "text-warning", info: "text-info", ok: "text-ok" };
@@ -297,6 +308,7 @@ export function SelectionInspector({ content, bundle, actions }: SelectionInspec
   const details = card?.details;
   const light = useTheme().theme.scheme.includes("light");
   const resolve = useCallback((defId: string, filePath: string) => details?.files[`${defId}\n${filePath}`], [details]);
+  const shown = useMemo(() => ownArtifactsOnly(bundle, details?.artifactsOf), [bundle, details?.artifactsOf]);
   const host = useMemo<HostActions>(
     () => ({
       openArtifact: actions.openArtifact,
@@ -360,7 +372,7 @@ export function SelectionInspector({ content, bundle, actions }: SelectionInspec
             {details && (
               <SelectionDetails
                 className="pb-inspector-details"
-                bundle={bundle as Bundle | undefined}
+                bundle={shown as Bundle | undefined}
                 definitions={details.definitions as Definitions | undefined}
                 target={details.target}
                 resolveArtifact={resolve}
