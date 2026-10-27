@@ -84,7 +84,9 @@ and its lockfile; do not build a package manager. The framework discovers
 explicitly configured installed extensions and connects their declared skills
 and capabilities to the project.
 
-An extension may contain skills and references, templates, tool requirements,
+An extension may contain skills and references, templates, playbooks (a
+project type's lifecycle: phases, deliverables and gates; playbooks.md),
+Handbook chapters, tool requirements,
 CLI/SDK/MCP adapters, artifact handlers, validation hooks, and named operations.
 Skills provide engineering guidance; executable adapters produce structured
 results. An extension can be skills-only. External desktop tools, Python
