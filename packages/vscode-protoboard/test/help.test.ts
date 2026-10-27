@@ -29,7 +29,7 @@ describe("documentation, feedback and Discord (PB-1070)", () => {
 
   it("are a view of the Cloud side bar, shown in every window, whatever its height", () => {
     const view = (pkg.contributes.views as Record<string, { id: string; when?: string; name: string }[]>)["protoboard-cloud"].find((v) => v.id === "protoboard.help");
-    expect(view?.name).toBe("Help and Feedback");
+    expect(view?.name).toBe("Help");
     expect(view?.when).toBeUndefined();
   });
 

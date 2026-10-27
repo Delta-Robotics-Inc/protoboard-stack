@@ -1,7 +1,7 @@
 /**
  * Documentation, feedback and Discord (PB-1070): project-level links, so not
  * in a viewer tab's header or its side. They live in the Protoboard Cloud
- * side bar as a small view of their own (Help and Feedback), whatever the
+ * side bar as a small view of their own (Help), whatever the
  * window's height, in the command palette, and in the Protoboard status bar
  * item's tooltip.
  */
@@ -26,7 +26,7 @@ export const HELP_VIEW = "protoboard.help";
 
 export const helpCommand = (l: HelpLink) => `protoboard.help.${l.id}`;
 
-/** The Help and Feedback view's rows: one per link, a click opens it. */
+/** The Help view's rows: one per link, a click opens it. */
 export function helpItems(): vscode.TreeItem[] {
   return HELP_LINKS.map((l) => {
     const item = new vscode.TreeItem(l.label);

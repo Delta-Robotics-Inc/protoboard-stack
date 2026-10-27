@@ -146,7 +146,7 @@ describe("the extension's manifest", () => {
     for (const [container, views] of containers) {
       expect(views.filter((v) => v.id.startsWith("protoboard.signin.")), container).toEqual([]);
       for (const v of views) {
-        // Help and Feedback is there in every window, with a project or not (PB-1070)
+        // Help (docs, feedback, Discord) is there in every window, with a project or not (PB-1070)
         if (v.id === "protoboard.help") {
           expect(container).toBe("protoboard-cloud");
           expect(v.when, v.id).toBeUndefined();

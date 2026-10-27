@@ -629,13 +629,15 @@
           "name": "Protoboard Cloud",
           "when": "protoboard.hasProject && !protoboard.needsSetup",
           "icon": "media/cloud.svg",
-          "contextualTitle": "Protoboard"
+          "contextualTitle": "Protoboard",
+          "initialSize": 4
         },
         {
           "id": "protoboard.help",
-          "name": "Help and Feedback",
+          "name": "Help",
           "icon": "media/cloud.svg",
-          "contextualTitle": "Protoboard"
+          "contextualTitle": "Protoboard",
+          "initialSize": 1
         }
       ]
     },

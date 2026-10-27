@@ -545,7 +545,7 @@ class ProtoboardExtension {
       cmd("protoboard.openSourceInViewer", (uri?: vscode.Uri, defId?: string) => this.openSourceInViewer(uri, typeof defId === "string" ? defId : undefined)),
       // a window with no project, or one whose project is not set up: each Protoboard container has a view whose welcome offers New Project or Initialize (nothing to list)
       ...START_VIEWS.map((id) => vscode.window.registerTreeDataProvider(id, { getChildren: () => [], getTreeItem: (x: vscode.TreeItem) => x })),
-      // documentation, feedback and Discord: the Cloud side bar's Help and Feedback view and the palette (PB-1070)
+      // documentation, feedback and Discord: the Cloud side bar's Help view and the palette (PB-1070)
       ...registerHelp(),
       this.lensChanged,
       vscode.languages.registerCodeLensProvider({ scheme: "file", pattern: "**/*.uhd.ts" }, { onDidChangeCodeLenses: this.lensChanged.event, provideCodeLenses: (doc) => this.lenses(doc) }),
