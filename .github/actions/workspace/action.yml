@@ -19,8 +19,8 @@ inputs:
     default: v0.3.0
   uhd-viewer-ref:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
-    # the floating hierarchy card and its foldButton (PB-1070), until uhd-viewer v0.2.1 is tagged: then v0.2.1
-    default: d8650af20486d6ba13ab53c89296da8a53e4f99d
+    # the hierarchy's own fold and reopen buttons (PB-1070, PB-1119; uhd-viewer#8), until uhd-viewer v0.2.1 is tagged: then v0.2.1
+    default: 3324edc75d259afd81ee473e432b125bcdd91342
 
 runs:
   using: composite

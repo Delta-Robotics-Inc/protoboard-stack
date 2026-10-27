@@ -7,13 +7,12 @@
  * inspector and DRC (the viewer's panels). The VS Code shell keeps those in
  * native views instead (docs/specs/viewer-stack.md).
  */
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties } from "react";
 import {
   Icon,
   IconButton,
   ThemeProvider,
   ToolbarSeparator,
-  HierarchyToggle,
   UhdViewer,
   ViewerHierarchy,
   ViewerInspector,
@@ -23,7 +22,6 @@ import {
   tokenColor,
   useTheme,
   useViewer,
-  type HierarchyCommand,
   type HierarchyPanelState,
   type UhdViewerOptions,
 } from "@deltarobotics/uhd-viewer/components";
@@ -215,19 +213,14 @@ function Shell({ views, registry: given, pairRequests, theme, onTheme }: { views
   const View = active?.component ?? PlannedView;
   const diagram = active?.id === "diagram";
   const light = theme.endsWith("light");
-  // the hierarchy at the left: kept per browser tab; the header's button opens and folds it
+  // the hierarchy at the left: kept per browser tab; its own buttons fold it and open it again
   const [hierarchyState] = useState(keptHierarchy);
-  const [hierarchyOpen, setHierarchyOpen] = useState<boolean | null>(null);
-  const [hierarchyCommand, setHierarchyCommand] = useState<HierarchyCommand>();
-  const seq = useRef(0);
   const showHierarchy = !NO_HIERARCHY.has(active?.id ?? "");
 
   return (
     <div className="relative h-full overflow-hidden bg-background text-fg" style={INSETS}>
       <header className="absolute top-1 right-1 left-1 z-50 flex h-10 items-center gap-1 rounded-panel border border-line bg-surface px-1 shadow-panel outline outline-1 -outline-offset-1 outline-contrast">
         <Logo />
-        <ToolbarSeparator />
-        <HierarchyToggle open={showHierarchy && (hierarchyOpen ?? true)} disabled={!showHierarchy} onClick={() => setHierarchyCommand({ type: "toggle", seq: ++seq.current })} />
         <ToolbarSeparator />
         <nav role="tablist" aria-label="Views" className="flex min-w-0 items-center gap-0.5 overflow-x-auto [scrollbar-width:none]">
           {tabs.map((t) => (
@@ -252,7 +245,7 @@ function Shell({ views, registry: given, pairRequests, theme, onTheme }: { views
         />
         {onTheme && <IconButton icon={light ? "moon" : "sun"} label={light ? "Dark theme" : "Light theme"} onClick={() => onTheme(light ? "protoboard-dark" : "protoboard-light")} />}
       </header>
-      {showHierarchy && <ViewerHierarchy state={hierarchyState} command={hierarchyCommand} onStateChange={keepHierarchy} onOpenChange={setHierarchyOpen} foldButton={false} />}
+      {showHierarchy && <ViewerHierarchy state={hierarchyState} onStateChange={keepHierarchy} />}
       <div className="workspace" role="tabpanel" aria-label={active?.title}>
         {active && <View key={active.id} module={c.levelDef} path={path} bundle={c.source.bundle} host={host} view={active} params={active.uhd ? undefined : params} />}
         {diagram && <ViewerInspector />}

@@ -33,7 +33,6 @@ import {
   ToolbarSeparator,
   UhdViewer,
   ViewButtons,
-  HierarchyToggle,
   ViewerHierarchy,
   ViewerNodeMenu,
   cx,
@@ -320,7 +319,6 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   const View = active?.component ?? PlannedView;
   // the tab's hierarchy: the extension reveals modules in it and puts the keyboard in its filter
   const [hierarchyCommand, setHierarchyCommand] = useState<HierarchyCommand>();
-  const [hierarchyOpen, setHierarchyOpen] = useState(true);
   const commandSeq = useRef(0);
   useEffect(() => bridge.onHierarchy?.((m) => setHierarchyCommand({ type: m.type, ...(m.path !== undefined ? { path: m.path } : {}), seq: ++commandSeq.current })), [bridge]);
   // a row's right-click menu is VS Code's (the manifest's webview/context menus read this, and its commands get it)
@@ -343,15 +341,13 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
     <div className="relative size-full min-h-[240px] min-w-[320px] overflow-hidden bg-background text-fg" style={INSETS}>
       <Header>
         <ToolbarSeparator />
-        <HierarchyToggle open={hierarchyOpen} onClick={() => setHierarchyCommand({ type: "toggle", seq: ++commandSeq.current })} />
-        <ToolbarSeparator />
         <ViewTabs tabs={tabs} active={active?.id} opensEditor={opensNative} onOpen={(id, beside) => (beside || opensNative(id) ? bridge.post({ type: "openView", view: id, path }) : show(id))} />
         <ToolbarSeparator />
         <Breadcrumb part={on.part ? label : undefined} />
         <SourcePath bridge={bridge} path={on.path} />
       </Header>
-      {/* a floating card; the header's Hierarchy button is its one fold control (PB-1070) */}
-      <ViewerHierarchy state={bridge.hierarchyState} onStateChange={bridge.onHierarchyState} onOpenChange={setHierarchyOpen} command={hierarchyCommand} rowAttributes={rowAttributes} ownMenu={false} foldButton={false} />
+      {/* a floating card with its own fold button; folded, an icon-only button at its corner opens it again (PB-1070) */}
+      <ViewerHierarchy state={bridge.hierarchyState} onStateChange={bridge.onHierarchyState} command={hierarchyCommand} rowAttributes={rowAttributes} ownMenu={false} />
       <div className="workspace" role="tabpanel" aria-label={active?.title}>
         {active?.id === "diagram" ? (
           <>
