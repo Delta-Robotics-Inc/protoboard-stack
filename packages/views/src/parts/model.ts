@@ -123,7 +123,12 @@ export interface PartArtifactItem {
   /** Its format or size: "PDF", "web", "0.85 MB". */
   note?: string;
   url?: string;
+  /** Its licence, short: "MIT", "Protoboard library terms", "REV IP Policy". */
   license?: string;
+  /** What the terms say, from the part's terms.json (the card's tooltip). */
+  licenseSummary?: string;
+  /** The terms' page. */
+  licenseUrl?: string;
 }
 
 /** A part's artifacts of one kind: datasheets, CAD models, CAD sources. */

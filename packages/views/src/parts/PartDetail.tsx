@@ -255,6 +255,7 @@ function Section({ tab, model, actions, prices }: { tab: PartDetailTab; model: P
               </HostContext.Provider>
             </section>
           ))}
+          <TermsSection groups={p.artifacts} onOpen={actions.openLink} />
         </div>
       ) : (
         <Rows>
@@ -339,10 +340,60 @@ export function artifactItemCard(g: Pick<PartArtifactGroup, "kind" | "label" | "
     kindLabel: it.note ?? g.label,
     ...(source ? { source } : {}),
     ...(host && it.license ? { sourceNote: it.license } : {}),
+    // what the licence's terms say (the part's terms.json), in the card's tooltip
+    ...(it.licenseSummary ? { description: `${it.license}: ${it.licenseSummary}` } : {}),
     ...(it.url ? { location: it.url, href: it.url } : {}),
     icon: g.icon,
     remote: !!it.url,
   };
+}
+
+/**
+ * The terms the part's files come under (PB-1061), once each: the Protoboard library terms, a vendor's terms by name,
+ * an SPDX licence. A row opens the terms' page; its tooltip is what the part's terms.json says of them.
+ */
+export function termsOf(groups: Pick<PartArtifactGroup, "items">[]): { label: string; summary?: string; url?: string; files: number }[] {
+  const out = new Map<string, { label: string; summary?: string; url?: string; files: number }>();
+  for (const g of groups)
+    for (const it of g.items) {
+      if (!it.license) continue;
+      const t = out.get(it.license) ?? { label: it.license, files: 0 };
+      t.files++;
+      if (!t.summary && it.licenseSummary) t.summary = it.licenseSummary;
+      if (!t.url && it.licenseUrl) t.url = it.licenseUrl;
+      out.set(it.license, t);
+    }
+  return [...out.values()];
+}
+
+function TermsSection({ groups, onOpen }: { groups: PartArtifactGroup[]; onOpen: (url: string) => void }) {
+  const terms = termsOf(groups);
+  if (!terms.length) return null;
+  return (
+    <section aria-label="Terms" data-terms="">
+      <h3 className="flex items-center gap-1.5 pb-1 text-fg-muted">
+        <Icon name="scale" size={13} strokeWidth={1.75} aria-hidden />
+        <span className="font-ui text-[10.5px] tracking-[0.14em] uppercase">Terms</span>
+        <span className="font-ui text-[11px] tabular-nums">{terms.length}</span>
+      </h3>
+      <div className="divide-y divide-line-subtle">
+        {terms.map((t) => {
+          const note = `${t.files} file${t.files === 1 ? "" : "s"}`;
+          return t.url ? (
+            <span key={t.label} title={t.summary} className="block">
+              <LinkRow icon="scale" label={t.label} url={t.url} note={note} onOpen={onOpen} />
+            </span>
+          ) : (
+            <div key={t.label} title={t.summary} className="flex items-center gap-2 py-2 text-fg">
+              <Icon name="scale" size={14} className="shrink-0 text-fg-muted" aria-hidden />
+              <span className="truncate">{t.label}</span>
+              <span className="ml-auto shrink-0 font-ui text-[11px] text-fg-muted">{note}</span>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
 }
 
 function LinkRow({ icon, label, url, note, onOpen }: { icon: string; label: string; url: string; note?: string; onOpen: (url: string) => void }) {
