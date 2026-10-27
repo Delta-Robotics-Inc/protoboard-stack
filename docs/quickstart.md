@@ -217,7 +217,7 @@ project that works without `npm install` (the installation guide,
 route). No account is needed to work on a project; the Protoboard library
 (searching it, adding its parts, prices, publishing) needs a sign-in
 (**Protoboard: Sign In**). Everything else is in its
-[README](../packages/vscode-protoboard/README.md).
+[README](../packages/vscode-protoboard/DEVELOPMENT.md).
 
 ## 6. The parts library
 

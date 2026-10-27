@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-release",
-  "version": "0.2.0",
-  "description": "Protoboard extension: `protoboard release` and the Manufacturing Package (per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan PDFs, manufacturing files, one navigable HTML and a reproducible release manifest)",
+  "version": "0.2.1",
+  "description": "Protoboard extension: the manufacturing package, from BOM and ordering list to assembly guide and test plan.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -39,5 +39,16 @@
   "peerDependencies": {
     "@protoboardai/core": "^0.2.0",
     "@deltarobotics/uhd": ">=0.3.0"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "manufacturing",
+    "bom",
+    "release"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

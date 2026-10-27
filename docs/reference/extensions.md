@@ -63,7 +63,7 @@ Start with **build-a-project**: it takes an agent from a brief to a release and 
 
 ### @protoboardai/ext-docs
 
-Technical documents (datasheet, assembly guide) for a project's system: every value a query into the UHD model, figures rendered from the CAD artifacts, stand-in test data watermarked until measured data replaces it, and a verifier. Version 0.2.0; source [packages/ext-docs](../../packages/ext-docs).
+Technical documents (datasheet, assembly guide) for a project's system: every value a query into the UHD model, figures rendered from the CAD artifacts, stand-in test data watermarked until measured data replaces it, and a verifier. Version 0.2.1; source [packages/ext-docs](../../packages/ext-docs).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -85,7 +85,7 @@ Eval cases: `build-datasheet` (Build and verify the quadcopter's datasheet).
 
 ### @protoboardai/ext-drone
 
-Multirotor domain pack: flight-controller configuration (Betaflight) generated from the UHD model. Version 0.2.0; source [packages/ext-drone](../../packages/ext-drone).
+Multirotor domain pack: flight-controller configuration (Betaflight) generated from the UHD model. Version 0.2.1; source [packages/ext-drone](../../packages/ext-drone).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -101,7 +101,7 @@ Eval cases: `gps-moved-to-uart3` (Update the flight-controller configuration aft
 
 ### @protoboardai/ext-enclosure-cad
 
-Enclosure CAD: a printed or machined case generated with build123d from the UHD features it must provide (openings, plungers, windows, light pipes, insert bosses, O-ring glands, threads, strap lugs, the lid joint) and the bodies the assembly places inside it; fit, wall, seal and alignment checks. Version 0.2.0; source [packages/ext-enclosure-cad](../../packages/ext-enclosure-cad).
+Enclosure CAD: a printed or machined case generated with build123d from the UHD features it must provide (openings, plungers, windows, light pipes, insert bosses, O-ring glands, threads, strap lugs, the lid joint) and the bodies the assembly places inside it; fit, wall, seal and alignment checks. Version 0.2.1; source [packages/ext-enclosure-cad](../../packages/ext-enclosure-cad).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -120,7 +120,7 @@ Skills: `enclosure-cad`.
 
 ### @protoboardai/ext-esp-idf
 
-firmware provider: ESP-IDF pin and peripheral header and sdkconfig.defaults for ESP32-C3 modules, every setting citing the UHD facts it comes from. Version 0.2.0; source [packages/ext-esp-idf](../../packages/ext-esp-idf).
+firmware provider: ESP-IDF pin and peripheral header and sdkconfig.defaults for ESP32-C3 modules, every setting citing the UHD facts it comes from. Version 0.2.1; source [packages/ext-esp-idf](../../packages/ext-esp-idf).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -132,7 +132,7 @@ Eval cases: `wake-on-fuel-gauge` (Configure ESP-IDF for the bottle cap after a w
 
 ### @protoboardai/ext-frame-cad
 
-Custom structure and hardware CAD: plates generated from a module's UHD bolt patterns and frames, and nominal fastener bodies from their sizes, both as a provider of the cad capability (build123d), with STEP/GLB/DXF exports, feature manifests, frame and staleness checks and explicit re-binding. Version 0.2.0; source [packages/ext-frame-cad](../../packages/ext-frame-cad).
+Custom structure and hardware CAD: plates generated from a module's UHD bolt patterns and frames, and nominal fastener bodies from their sizes, both as a provider of the cad capability (build123d), with STEP/GLB/DXF exports, feature manifests, frame and staleness checks and explicit re-binding. Version 0.2.1; source [packages/ext-frame-cad](../../packages/ext-frame-cad).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -161,7 +161,7 @@ Eval cases: `regenerate-after-vtx-move` (Regenerate the frame's CAD after the tr
 
 ### @protoboardai/ext-hardware
 
-General hardware engineering: system composition and review, harnesses and fastener stack-ups, test and measurement, BOM export, evidence coverage. Releases are @protoboardai/ext-release. Version 0.2.0; source [packages/ext-hardware](../../packages/ext-hardware).
+General hardware engineering: system composition and review, harnesses and fastener stack-ups, test and measurement, BOM export, evidence coverage. Releases are @protoboardai/ext-release. Version 0.2.1; source [packages/ext-hardware](../../packages/ext-hardware).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -179,7 +179,7 @@ Eval cases: `compose-probe-cable` (Compose the temperature probe's connection th
 
 ### @protoboardai/ext-harness-cad
 
-Routed wire-harness CAD (a provider of the cad capability): each cable's 3D geometry (conductors swept along an obstacle-free route, twisted where the cable is, connector housings and solder joints) generated from the assembled UHD model and bound to the frames its ends land on. Version 0.2.0; source [packages/ext-harness-cad](../../packages/ext-harness-cad).
+Routed wire-harness CAD (a provider of the cad capability): each cable's 3D geometry (conductors swept along an obstacle-free route, twisted where the cable is, connector housings and solder joints) generated from the assembled UHD model and bound to the frames its ends land on. Version 0.2.1; source [packages/ext-harness-cad](../../packages/ext-harness-cad).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -205,7 +205,7 @@ Eval cases: `reroute-after-vtx-move` (Re-route the cable whose part moved: the D
 
 ### @protoboardai/ext-parts
 
-Purchased parts as datasheet-honest UHD definitions: research and cite the sources, author the ModuleDef, verify it automatically and by an independent audit, record the verification. Works on a project's parts (parts/local, parts/evidence) and on the cloud part library (library/parts). Version 0.2.0; source [packages/ext-parts](../../packages/ext-parts).
+Purchased parts as datasheet-honest UHD definitions: research and cite the sources, author the ModuleDef, verify it automatically and by an independent audit, record the verification. Works on a project's parts (parts/local, parts/evidence) and on the cloud part library (library/parts). Version 0.2.1; source [packages/ext-parts](../../packages/ext-parts).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -226,7 +226,7 @@ Eval cases: `author-ldo-regulator` (Author a small purchased part (an LDO regula
 
 ### @protoboardai/ext-release
 
-Releases: `protoboard release` refuses a project with check errors, stale outputs or uncommitted changes, then writes the Manufacturing Package (overview, per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan, manufacturing files, index.html) and a reproducible release manifest. Version 0.2.0; source [packages/ext-release](../../packages/ext-release).
+Releases: `protoboard release` refuses a project with check errors, stale outputs or uncommitted changes, then writes the Manufacturing Package (overview, per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan, manufacturing files, index.html) and a reproducible release manifest. Version 0.2.1; source [packages/ext-release](../../packages/ext-release).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -249,7 +249,7 @@ Eval cases: `release-after-hand-edit` (Cut a release of the smart bottle after a
 
 ### @protoboardai/ext-sourcing
 
-Part sourcing: external discovery, datasheet facts with checked quotes, supplier and lifecycle observations as dated evidence (never orders), alternates, and handoff into locally authored UHD parts. Version 0.2.0; source [packages/ext-sourcing](../../packages/ext-sourcing).
+Part sourcing: external discovery, datasheet facts with checked quotes, supplier and lifecycle observations as dated evidence (never orders), alternates, and handoff into locally authored UHD parts. Version 0.2.1; source [packages/ext-sourcing](../../packages/ext-sourcing).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -267,7 +267,7 @@ Eval cases: `record-ldo-offers` (Record a regulator's supplier offers and lifecy
 
 ### @protoboardai/ext-tscircuit
 
-circuit provider: PCBs from UHD board modules with tscircuit, run in-process under Node and offline (generate, export, extract, check). Version 0.2.0; source [packages/ext-tscircuit](../../packages/ext-tscircuit).
+circuit provider: PCBs from UHD board modules with tscircuit, run in-process under Node and offline (generate, export, extract, check). Version 0.2.1; source [packages/ext-tscircuit](../../packages/ext-tscircuit).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
@@ -286,7 +286,7 @@ Skills: `circuit-board`, `kicad-layout-review`, `kicad-cli`.
 
 ### @protoboardai/ext-zephyr
 
-firmware provider: Zephyr board definitions for nRF52840 modules (devicetree with pinctrl, buses, devices, buttons, display; Kconfig), every setting citing the UHD facts it comes from. Version 0.2.0; source [packages/ext-zephyr](../../packages/ext-zephyr).
+firmware provider: Zephyr board definitions for nRF52840 modules (devicetree with pinctrl, buses, devices, buttons, display; Kconfig), every setting citing the UHD facts it comes from. Version 0.2.1; source [packages/ext-zephyr](../../packages/ext-zephyr).
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 

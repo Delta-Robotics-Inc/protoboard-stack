@@ -27,8 +27,8 @@
     {"path":"docs/releases/stack-v0.1.md","contains":"`@protoboard/` with `@protoboardai/` in `package.json`,","reason":"0.1.1 release notes: the rename and how to upgrade a 0.1.0 project"},
     {"path":"docs/releases/stack-v0.1.md","contains":"instead of running a 0.1.0 CLI. Never `npm install` an `@protoboard/…`","reason":"0.1.1 release notes: the rename and how to upgrade a 0.1.0 project"},
     {"path":"packages/ext-hardware/skills/system-compose/references/diagnostic-codes.md","contains":"| `PB_PACKAGE_SCOPE_RENAMED` | error | The project names packages under the stack's former","reason":"reference entry of PB_PACKAGE_SCOPE_RENAMED"},
-    {"path":"packages/vscode-protoboard/README.md","contains":"A project written for stack 0.1.0 has `node_modules/@protoboard/cli`: the","reason":"documents the extension's message for a project written for the former scope"},
-    {"path":"packages/vscode-protoboard/README.md","contains":"packages were renamed to `@protoboardai/…` in 0.1.1 (the `@protoboard` name","reason":"documents the extension's message for a project written for the former scope"},
-    {"path":"packages/vscode-protoboard/README.md","contains":"shows a warning that says what to change (replace `@protoboard/` with","reason":"documents the extension's message for a project written for the former scope"}
+    {"path":"packages/vscode-protoboard/DEVELOPMENT.md","contains":"A project written for stack 0.1.0 has `node_modules/@protoboard/cli`: the","reason":"documents the extension's message for a project written for the former scope"},
+    {"path":"packages/vscode-protoboard/DEVELOPMENT.md","contains":"packages were renamed to `@protoboardai/…` in 0.1.1 (the `@protoboard` name","reason":"documents the extension's message for a project written for the former scope"},
+    {"path":"packages/vscode-protoboard/DEVELOPMENT.md","contains":"shows a warning that says what to change (replace `@protoboard/` with","reason":"documents the extension's message for a project written for the former scope"}
   ]
 }

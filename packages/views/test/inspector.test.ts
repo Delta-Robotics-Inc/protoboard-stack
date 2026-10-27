@@ -122,6 +122,26 @@ describe("the Inspector's selection", () => {
     expect(section("host:Sourcing")).toContain("JLC · $12.40");
   });
 
+  it("shows the selection's own artifacts only, never its parts' (PB-1063)", () => {
+    const sel = (path: string, artifactsOf?: string) => card({ details: { target: { kind: "module", path }, ...(artifactsOf ? { artifactsOf } : {}), files: {}, previews: {}, links: [] } });
+    const html = (c: InspectorCard, b: unknown = bundle) => render(createElement(SelectionInspector, { content: { card: c, project: "pod" }, bundle: b, actions }));
+    const section = (h: string, id: string) => (h.includes(`data-section="${id}"`) ? h.slice(h.indexOf(`data-section="${id}"`)).split("</section>")[0] : undefined);
+    // the pod has no artifacts of its own: without the shell's word the viewer rolls its board's and enclosure's up, a row of parts to pick from
+    expect(html(sel("")).toUpperCase()).toContain("ARTIFACTS · PARTS");
+    const pod = html(sel("", "sample-imu-pod"));
+    expect(section(pod, "artifacts")).toBeUndefined();
+    expect(pod.toUpperCase()).not.toContain("ARTIFACTS · PARTS");
+    expect(count(pod, /class="uhd-artifact-card /g)).toBe(0);
+    // a board whose MCU has a datasheet: the board's own eight, counted as eight, and not the MCU's
+    const withPart = { ...bundle, definitions: bundle.definitions.map((d: { id: string }) => (d.id === "fixture-mcu-qfn32" ? { ...d, artifacts: [{ id: "ds", name: "MCU datasheet", type: "datasheet", url: "https://example.com/mcu.pdf" }] } : d)) };
+    const board = html(sel("board", "sample-imu-board"), withPart);
+    expect(count(board, /class="uhd-artifact-card /g)).toBe(8);
+    expect(board).not.toContain("MCU datasheet");
+    expect(section(board, "artifacts")).toMatch(/>8</);
+    // the MCU shows it when it is selected
+    expect(html(sel("board/u1", "fixture-mcu-qfn32"), withPart)).toContain("MCU datasheet");
+  });
+
   it("draws a file only when the shell names it", () => {
     const with_ = card({ details: { target: { kind: "module", path: "board" }, files: { "sample-imu-board\nboard/out/schematic.svg": "https://file+.vscode-resource.test/p/board/out/schematic.svg" }, previews: {}, links: [] } });
     const html = render(createElement(SelectionInspector, { content: { card: with_, project: "pod" }, bundle, actions }));

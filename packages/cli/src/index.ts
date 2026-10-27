@@ -1895,7 +1895,7 @@ async function account(sub: "login" | "logout" | "whoami") {
     out({ ...s, access }, () =>
       [
         s.signedIn
-          ? [`Signed in to ${service} as ${s.email ?? s.uid}${s.via === "device" ? " (device sign-in)" : ""}`, `  kept in ${s.store}`, ...(s.valid === undefined ? [] : [s.valid ? `  the service accepts it${s.publisher ? "; you may publish" : ""}` : `  ✗ ${s.problem}`])].join("\n")
+          ? [`Signed in to ${service} as ${s.email ?? s.uid}${s.via === "device" ? " (device sign-in)" : ""}`, `  kept in ${s.store}`, ...(s.valid === undefined ? [] : [s.valid ? `  the service accepts it${s.distribution ? `; ${s.distribution === "all" ? "full" : "redistributable"} library` : ""}${s.publisher ? "; you may publish" : ""}` : `  ✗ ${s.problem}`])].join("\n")
           : s.needsAccount === false || access.via === "open-service"
             ? `${service} signs no one in: everything there is open, with no account (a parts service without sign-in).`
             : `Not signed in to ${service}. Local work (check, build, the viewer) needs no account; the Protoboard library (searching it, adding parts, prices and publishing) does: sign in with \`protoboard login\`.`,

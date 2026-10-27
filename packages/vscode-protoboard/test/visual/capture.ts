@@ -34,7 +34,7 @@ import { findBrowser, noBrowserMessage } from "@protoboardai/core/browser";
 import { DEFAULT_QUERY, drcModel, findings, pageModel } from "../../src/drc.js";
 import { appHtml } from "../../src/appPage.js";
 import { interfaceCard, libraryPartCard, linkHarnessDefs, moduleCard, linkCard, partCard } from "../../src/inspector.js";
-import { definitionsBelow, detailFiles, interfaceArtifacts, resourceRoots, smallModel } from "../../src/inspectorFiles.js";
+import { detailFiles, interfaceArtifacts, resourceRoots, smallModel } from "../../src/inspectorFiles.js";
 import { pageContent, type InspectorContent } from "../../src/inspector.js";
 import { indexProject, readBuild } from "../../src/model.js";
 import { loadCodeReference } from "../../src/codes.js";
@@ -776,7 +776,7 @@ try {
       if (want("inspector")) {
         pages.set(`/inspector-${tag}.html`, asWebview(app("inspector", "Selection"), theme, nonce, "sideBar"));
         fsRoots = resourceRoots([{ root, index }], CACHE);
-        const filesOf = (defId: string) => detailFiles(root, index, definitionsBelow(index, defId));
+        const filesOf = (defId: string) => detailFiles(root, index, [defId]);
         const bundle = { bundle: { file: join(root, ".protoboard", "build", "uhd-bundle.json"), version: String(build.at.getTime()) } };
         const instances = [...walk(tree)].filter((n) => n.type === "instance" && n.path);
         const leaf = instances.find((n) => n.tier === "catalog" && n.trust && (index.artifacts.get(n.defId ?? "") ?? []).some((a) => a.present === true));

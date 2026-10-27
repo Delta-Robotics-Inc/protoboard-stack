@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-enclosure-cad",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Enclosure CAD: a printed or machined case generated with build123d from the UHD features it must provide (openings, plungers, windows, light pipes, insert bosses, O-ring glands, threads, strap lugs, the lid joint) and the bodies the assembly places inside it; fit, wall, seal and alignment checks.",
   "compatibility": {
     "protoboard": "^0.2.0",
@@ -27,7 +27,11 @@
       "runtime": {
         "id": "cad",
         "kind": "python",
-        "packages": ["build123d==0.13.0", "numpy==2.5.3", "scipy==1.18.1"],
+        "packages": [
+          "build123d==0.13.0",
+          "numpy==2.5.3",
+          "scipy==1.18.1"
+        ],
         "env": "PROTOBOARD_PYTHON",
         "python": ">=3.11,<3.15"
       }
@@ -39,31 +43,88 @@
       "summary": "Enclosures (cases, caps, back covers) with build123d: generated from the features they provide and what goes inside them",
       "native": "build123d",
       "operations": {
-        "generate": { "entry": "./ops/cad.ts#generate", "requires": ["python-build123d"], "summary": "Write the build123d design (job + script) and build it: parts, body, report with the fit analysis" },
-        "export": { "entry": "./ops/cad.ts#exportOutputs", "requires": ["python-build123d"], "summary": "body.step, body.glb, body.manifest.json and, for print, an STL and a 3MF per printed part" },
-        "extract": { "entry": "./ops/cad.ts#extract", "summary": "Generated feature frames by interface id, and the artifacts the module should reference" },
-        "check": { "entry": "./ops/cad.ts#check", "summary": "Drift against the model and the assembly, fit (collisions, clearance, containment), walls, seal squeeze, opening and plunger alignment, envelope" }
+        "generate": {
+          "entry": "./ops/cad.ts#generate",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "Write the build123d design (job + script) and build it: parts, body, report with the fit analysis"
+        },
+        "export": {
+          "entry": "./ops/cad.ts#exportOutputs",
+          "requires": [
+            "python-build123d"
+          ],
+          "summary": "body.step, body.glb, body.manifest.json and, for print, an STL and a 3MF per printed part"
+        },
+        "extract": {
+          "entry": "./ops/cad.ts#extract",
+          "summary": "Generated feature frames by interface id, and the artifacts the module should reference"
+        },
+        "check": {
+          "entry": "./ops/cad.ts#check",
+          "summary": "Drift against the model and the assembly, fit (collisions, clearance, containment), walls, seal squeeze, opening and plunger alignment, envelope"
+        }
       },
       "constraints": {
-        "wall_mm": { "description": "side wall thickness", "required": true },
-        "floor_mm": { "description": "floor thickness (default: wall_mm)" },
-        "lid_mm": { "description": "lid thickness (default: wall_mm)" },
-        "clearance_mm": { "description": "gap between what goes inside and the walls (default 0.3)" },
-        "clearance_top_mm": { "description": "gap above the tallest part inside (default: clearance_mm)" },
-        "min_wall_mm": { "description": "thinnest wall allowed anywhere (default by process: print 0.8, machine 0.5)" },
-        "material": { "description": "material, e.g. PETG (recorded in the manifest; mass = volume × density)" },
-        "shape": { "description": "box (rounded rectangle) or round" },
-        "cavity_mm": { "description": "fixed cavity instead of one sized from the contents: { min, max } (box) or { centre, radius, z } (round)" },
-        "split_z_mm": { "description": "split plane height between base and lid (default: under the lid, at the joint)" },
-        "joint": { "description": "lid joint: { style: rabbet | flat, lip_height_mm, clearance_mm } (a joint O-ring makes it flat)" },
-        "fasteners": { "description": "screws (into heat-set inserts, from the joint interface) or none" },
-        "exclude": { "description": "instance paths placed in the assembly that are not inside the enclosure" },
-        "resolution_mm": { "description": "voxel size of the fit analysis (default 0.25)" }
+        "wall_mm": {
+          "description": "side wall thickness",
+          "required": true
+        },
+        "floor_mm": {
+          "description": "floor thickness (default: wall_mm)"
+        },
+        "lid_mm": {
+          "description": "lid thickness (default: wall_mm)"
+        },
+        "clearance_mm": {
+          "description": "gap between what goes inside and the walls (default 0.3)"
+        },
+        "clearance_top_mm": {
+          "description": "gap above the tallest part inside (default: clearance_mm)"
+        },
+        "min_wall_mm": {
+          "description": "thinnest wall allowed anywhere (default by process: print 0.8, machine 0.5)"
+        },
+        "material": {
+          "description": "material, e.g. PETG (recorded in the manifest; mass = volume × density)"
+        },
+        "shape": {
+          "description": "box (rounded rectangle) or round"
+        },
+        "cavity_mm": {
+          "description": "fixed cavity instead of one sized from the contents: { min, max } (box) or { centre, radius, z } (round)"
+        },
+        "split_z_mm": {
+          "description": "split plane height between base and lid (default: under the lid, at the joint)"
+        },
+        "joint": {
+          "description": "lid joint: { style: rabbet | flat, lip_height_mm, clearance_mm } (a joint O-ring makes it flat)"
+        },
+        "fasteners": {
+          "description": "screws (into heat-set inserts, from the joint interface) or none"
+        },
+        "exclude": {
+          "description": "instance paths placed in the assembly that are not inside the enclosure"
+        },
+        "resolution_mm": {
+          "description": "voxel size of the fit analysis (default 0.25)"
+        }
       }
     }
   ],
   "operations": [
-    { "id": "package:work-order", "summary": "Manufacturing Package: the print order of each printed enclosure (material, profile, each part's orientation and supports, inserts, O-rings, plungers, lid screws)", "entry": "./ops/package.ts#workOrder", "effect": "pure" },
-    { "id": "package:test-plan", "summary": "Manufacturing Package: the enclosure's checks (seal squeeze, buttons, plugs, lid joint, tight fits) from its build report", "entry": "./ops/package.ts#testPlan", "effect": "pure" }
+    {
+      "id": "package:work-order",
+      "summary": "Manufacturing Package: the print order of each printed enclosure (material, profile, each part's orientation and supports, inserts, O-rings, plungers, lid screws)",
+      "entry": "./ops/package.ts#workOrder",
+      "effect": "pure"
+    },
+    {
+      "id": "package:test-plan",
+      "summary": "Manufacturing Package: the enclosure's checks (seal squeeze, buttons, plugs, lid joint, tight fits) from its build report",
+      "entry": "./ops/package.ts#testPlan",
+      "effect": "pure"
+    }
   ]
 }
