@@ -110,8 +110,10 @@ describe("project trust", () => {
 
   it("the question says what runs and names the folder", () => {
     const q = trustQuestion("quad", "/work/quad");
-    expect(q.message).toBe('Run the code of the Protoboard project "quad"?');
-    expect(q.detail).toMatch(/protoboard\.config\.ts.*Initialize.*node_modules.*anything your account can/s);
+    expect(q.message).toBe('Run the code of "quad"?');
+    expect(q.detail).toBe(
+      "Protoboard runs a project's code to check and show it. That code can do anything your account can, so allow it only for projects you trust.\n\n/work/quad",
+    );
     expect(q.detail).toContain("/work/quad");
     expect([q.trust, q.refuse]).toEqual(["Trust and Run", "Don't Run"]);
   });

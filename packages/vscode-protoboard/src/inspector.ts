@@ -104,7 +104,7 @@ export function partCard(
     path: used[0]?.path ?? "",
     part: { partId: part.id, ...(part.library ? { library: part.library } : {}) },
     // the definition as the build has it: its facts, artifacts, evidence and interfaces
-    ...(bdef ? { details: { target: { kind: "definition", id: part.id }, ...files, links: [...(files.links ?? []), ...interfaceSourceLinks(index, part.id)] } } : {}),
+    ...(bdef ? { details: { target: { kind: "definition", id: part.id }, artifactsOf: part.id, ...files, links: [...(files.links ?? []), ...interfaceSourceLinks(index, part.id)] } } : {}),
   };
 }
 
@@ -411,7 +411,7 @@ export function moduleCard(
     path: node.path,
     // the module as the viewer's inspector shows it; without a bundle there is nothing to show it from
     ...(index.bundle && bdef
-      ? { details: { target: { kind: "module", path: node.path }, ...files, links: [...(files.links ?? []), ...interfaceSourceLinks(index, node.defId)], findings: interfaceFindings(findings, node.path) } }
+      ? { details: { target: { kind: "module", path: node.path }, artifactsOf: bdef.id, ...files, links: [...(files.links ?? []), ...interfaceSourceLinks(index, node.defId)], findings: interfaceFindings(findings, node.path) } }
       : {}),
   };
 }

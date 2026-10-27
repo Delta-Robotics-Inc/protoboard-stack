@@ -12,7 +12,7 @@ import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { PART_REVISION_SCHEMA, PartsClient, sealDraft, sha256Hex, type EnvelopeArtifact, type EvidenceRef, type PartRef, type PartRevisionDraft, type UhdModuleDef } from "@protoboardai/cloud/client";
+import { PART_REVISION_SCHEMA, PartsClient, sealDraft, sha256Hex, type EnvelopeArtifact, type EvidenceRef, type FileTerms, type PartRef, type PartRevisionDraft, type UhdModuleDef } from "@protoboardai/cloud/client";
 import { cloudCheckout } from "./cloud-checkout.js";
 
 export const TOKEN = "test-publish-token";
@@ -96,17 +96,18 @@ export class Blobs {
   source = (sha: string): Uint8Array => this.bytes.get(sha)!;
 }
 
-/** A sealed draft: `files` are path → content (artifacts the definition references are "body"), `evidence` likewise. */
+/** A sealed draft: `files` are path → content (artifacts the definition references are "body"), `evidence` likewise; `terms` by path. */
 export function draft(
   blobs: Blobs,
   definition: UhdModuleDef,
-  options: { revision?: number; dependencies?: PartRef[]; files?: Record<string, string>; evidence?: Record<string, string> } = {},
+  options: { revision?: number; dependencies?: PartRef[]; files?: Record<string, string>; evidence?: Record<string, string>; terms?: Record<string, FileTerms> } = {},
 ): PartRevisionDraft {
+  const terms = (path: string) => (options.terms?.[path] ? { terms: options.terms[path] } : {});
   const revision = options.revision ?? 1;
   const artifacts: EnvelopeArtifact[] = Object.entries(options.files ?? {})
     .map(([path, content]): EnvelopeArtifact => {
       const ref = (definition.artifacts ?? []).find((a) => a.filePath === path);
-      return { path, ...blobs.add(content), mediaType: path.endsWith(".glb") ? "model/gltf-binary" : "text/plain", role: ref ? "body" : "attachment", ...(ref ? { artifactId: ref.id } : {}) };
+      return { path, ...blobs.add(content), mediaType: path.endsWith(".glb") ? "model/gltf-binary" : "text/plain", role: ref ? "body" : "attachment", ...(ref ? { artifactId: ref.id } : {}), ...terms(path) };
     })
     .sort((a, b) => a.path.localeCompare(b.path));
   const evidence: EvidenceRef[] = Object.entries(options.evidence ?? {}).map(([path, content]) => ({
@@ -114,6 +115,7 @@ export function draft(
     path,
     ...blobs.add(content),
     mediaType: "application/json",
+    ...terms(path),
   }));
   return sealDraft({
     schema: PART_REVISION_SCHEMA,

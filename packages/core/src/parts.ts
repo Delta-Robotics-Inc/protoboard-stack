@@ -314,6 +314,8 @@ async function vendorClosure(p: Project, origins: OriginsFile, cloud: CloudConne
   mkdirSync(stagingRoot, { recursive: true });
   const staging = mkdtempSync(join(stagingRoot, "parts-"));
   const fileCounts = new Map<string, number>();
+  /** The paths each part was served: a library may withhold optional files whose terms do not allow giving them out. */
+  const served = new Map<string, Set<string>>();
   const sources = new Map<string, SourceOutcome>();
   const notes = new Map<string, string>();
   try {
@@ -327,7 +329,8 @@ async function vendorClosure(p: Project, origins: OriginsFile, cloud: CloudConne
       if (sha256(bytes) !== pl.env.definitionDigest) throw new CloudError(0, "INTEGRITY", `${pl.env.partId}@${pl.env.revision}: vendored bytes do not match definitionDigest`);
       writeFileSync(join(staging, `${pl.env.partId}.json`), bytes);
       const raw = join(staging, `${pl.env.partId}.download`);
-      const files = await cloud.client.downloadFiles(pl.env, raw, { evidence: true });
+      const files = await cloud.client.downloadFiles(pl.env, raw, { evidence: true, skipWithheld: true });
+      served.set(pl.env.partId, new Set(files.map((f) => f.path)));
       // laid out as this project keeps them: the library's folders down to the part's own left out
       for (const f of files) {
         const to = join(staging, pl.env.partId, ...stored(pl.env.partId, f.path).split("/"));
@@ -368,7 +371,12 @@ async function vendorClosure(p: Project, origins: OriginsFile, cloud: CloudConne
       if (existsSync(join(staging, env.partId))) renameSync(join(staging, env.partId), dir);
       renameSync(join(staging, `${env.partId}.json`), join(catalogDir, `${env.partId}.json`));
       const prev = origins.definitions[env.partId];
-      const carried = [...env.artifacts, ...env.evidence.filter((e): e is EvidenceRef & { path: string; sha256: string } => !!e.path && !!e.sha256)];
+      // what was vendored: the files the library served (a withheld optional file is neither on disk nor recorded)
+      const got = served.get(env.partId);
+      const kept = (path: string) => !got || got.has(path);
+      const carried = [...env.artifacts, ...env.evidence.filter((e): e is EvidenceRef & { path: string; sha256: string } => !!e.path && !!e.sha256)].filter((f) => kept(f.path));
+      const withheld = got ? [...env.artifacts.map((a) => a.path), ...env.evidence.flatMap((e) => (e.path ? [e.path] : []))].filter((path) => !got.has(path)).length : 0;
+      if (withheld) notes.set(env.partId, [notes.get(env.partId), `${withheld} optional file(s) withheld by the library: their terms do not allow redistribution`].filter(Boolean).join("; "));
       const rec: OriginRecord = {
         file: projectRelative(p.root, join(catalogDir, `${env.partId}.json`)),
         tier: "catalog",
@@ -384,7 +392,7 @@ async function vendorClosure(p: Project, origins: OriginsFile, cloud: CloudConne
         artifactBase: { kind: "vendored", dir: place.dir, ...(place.strip ? { strip: place.strip } : {}) },
         ...(env.dependencies.length ? { dependencies: env.dependencies } : {}),
         ...(carried.length ? { files: Object.fromEntries(carried.map((f) => [stored(env.partId, f.path), `sha256:${f.sha256}`]).sort(([a], [b]) => a.localeCompare(b))) } : {}),
-        ...(env.evidence.some((e) => e.path) ? { evidence: env.evidence.filter((e) => e.path).map((e) => ({ kind: e.kind, path: stored(env.partId, e.path!) })) } : {}),
+        ...(env.evidence.some((e) => e.path && kept(e.path)) ? { evidence: env.evidence.filter((e) => e.path && kept(e.path)).map((e) => ({ kind: e.kind, path: stored(env.partId, e.path!) })) } : {}),
         ...(env.missingArtifacts.length ? { missingArtifacts: env.missingArtifacts.map((m) => ({ ...m, path: stored(env.partId, m.path) })) } : {}),
         ...(source?.record ? { source: source.record } : {}),
         // a restore keeps the record's history; a new pin keeps the one it replaces

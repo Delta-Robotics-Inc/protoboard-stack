@@ -76,6 +76,8 @@ export type AccessRefusal =
   | "sign-in-invalid"
   /** Signed in, but the service's invite list does not have the account. */
   | "not-invited"
+  /** Signed in, but the account's e-mail address is not verified yet. */
+  | "email-unverified"
   /** The service cannot be reached and there is no recent good answer. */
   | "unreachable";
 
@@ -190,6 +192,8 @@ export function accessMessage(a: Pick<Access, "reason" | "service" | "email">, d
   switch (a.reason) {
     case "not-invited":
       return `${what} needs an invited account: ${a.email ?? "this account"} is signed in to ${a.service} but is not on its invite list${detail ? ` (${detail})` : ""}. Ask for an invitation, or ${SIGN_IN} with an invited account. Local work (check, build, the viewer) needs no account.`;
+    case "email-unverified":
+      return `${what} needs a verified e-mail address: ${a.email ?? "this account"} is signed in to ${a.service}, but its address is not verified yet. Verify it (the sign-in page sends the e-mail), then try again.`;
     case "sign-in-invalid":
       return `${what} needs a sign-in: the one kept for ${a.service}${a.email ? ` (${a.email})` : ""} no longer works${detail ? ` (${detail})` : ""}. To sign in again, ${SIGN_IN}.`;
     case "unreachable":
@@ -256,7 +260,7 @@ export async function checkAccess(service: string, options: AccessOptions = {}):
     writeRecord(file, key, undefined);
     return refuse("signed-out");
   }
-  let me: { signedIn?: boolean; allowed?: boolean; problem?: string };
+  let me: { signedIn?: boolean; allowed?: boolean; reason?: string; problem?: string };
   try {
     const token = await accountToken(key, { store, fetch: f, now });
     const res = await f(`${key}/v1/me`, { headers: { authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(10_000) });
@@ -276,7 +280,7 @@ export async function checkAccess(service: string, options: AccessOptions = {}):
   }
   if (me.allowed === false) {
     writeRecord(file, key, undefined);
-    return refuse("not-invited", who, me.problem);
+    return me.reason === "email-unverified" ? refuse("email-unverified", who) : refuse("not-invited", who, me.problem);
   }
   writeRecord(file, key, { uid: session.uid, ...(session.email ? { email: session.email } : {}), verifiedAt });
   return { allowed: true, service: key, via: "account", ...who, verifiedAt };

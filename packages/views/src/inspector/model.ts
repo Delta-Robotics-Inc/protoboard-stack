@@ -82,6 +82,11 @@ export interface InspectorDetails<F = string> {
   evidence?: Record<string, { sources?: unknown[]; verification?: unknown }>;
   /** Definitions that are not in the project's bundle (a library part shown on its own). */
   definitions?: unknown[];
+  /**
+   * The definition whose artifacts are shown: the selection's own, never the
+   * parts below it (PB-1063). A child's are seen by selecting the child.
+   */
+  artifactsOf?: string;
   /** A picture of the part that is not one of its definition's artifacts (a library's thumbnail). */
   picture?: F;
   /** Web addresses the page may ask the host to open (artifact and evidence links of what is shown). */
