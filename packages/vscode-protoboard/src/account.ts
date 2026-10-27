@@ -41,7 +41,7 @@ export interface WhoAmIAccess {
   required?: boolean;
   allowed: boolean;
   via?: string;
-  reason?: "signed-out" | "sign-in-invalid" | "not-invited" | "unreachable";
+  reason?: "signed-out" | "sign-in-invalid" | "not-invited" | "email-unverified" | "unreachable";
   message?: string;
   email?: string;
   offlineUntil?: string;
@@ -68,7 +68,7 @@ export type AccountState = (
 export interface Lock {
   locked: boolean;
   /** `checking`: not asked yet. `unknown`: the CLI could not say. The rest are the CLI's reasons. */
-  reason: "ok" | "checking" | "unknown" | "signed-out" | "sign-in-invalid" | "not-invited" | "unreachable";
+  reason: "ok" | "checking" | "unknown" | "signed-out" | "sign-in-invalid" | "not-invited" | "email-unverified" | "unreachable";
   /** One sentence for the Library's sign-in card and a cloud command's prompt. */
   message: string;
 }
@@ -131,6 +131,8 @@ export function lockOf(a: AccountState): Lock {
   if (access) {
     if (access.allowed) return UNLOCKED;
     const reason = access.reason ?? "signed-out";
+    // a reason this extension does not know (a newer CLI): the CLI's own line
+    if (!(reason in LOCK_MESSAGES)) return { locked: true, reason: "unknown", message: access.message ?? `Protoboard could not check your sign-in to its library.` };
     return { locked: true, reason, message: LOCK_MESSAGES[reason](a) };
   }
   switch (a.state) {
@@ -152,6 +154,7 @@ const LOCK_MESSAGES: Record<Exclude<Lock["reason"], "ok" | "checking" | "unknown
   "signed-out": () => "Sign in to use the Protoboard library.",
   "sign-in-invalid": (a) => `Your Protoboard sign-in${emailOf(a) ? ` (${emailOf(a)})` : ""} no longer works. Sign in again to use the Protoboard library.`,
   "not-invited": (a) => `${emailOf(a) ?? "This account"} is not invited to the Protoboard library yet. Ask for an invitation or use another account.`,
+  "email-unverified": (a) => `Verify ${emailOf(a) ?? "this account's e-mail address"} to use the Protoboard library: the sign-in page sends the e-mail.`,
   unreachable: () => "The Protoboard library could not be reached. Projects work offline.",
 };
 

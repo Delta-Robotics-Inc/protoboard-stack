@@ -76,11 +76,17 @@ describe("the cloud's lock (PB-928): when the library needs a sign-in", () => {
   });
 
   it("no message of the lock says Protoboard itself needs an account", () => {
-    for (const reason of ["signed-out", "sign-in-invalid", "not-invited", "unreachable"]) {
+    for (const reason of ["signed-out", "sign-in-invalid", "not-invited", "email-unverified", "unreachable"]) {
       const m = lockOf(whoami({ signedIn: reason !== "signed-out", email: "ada@example.com", access: { allowed: false, reason } }, 1)).message;
       expect(m, reason).toMatch(/library/);
       expect(m, reason).not.toMatch(/to use Protoboard\b|for now|unlock/i);
     }
+  });
+
+  it("an unverified e-mail is asked to be verified, never invited; a reason it does not know shows the CLI's line", () => {
+    const m = lockOf(whoami({ signedIn: true, email: "ada@example.com", access: { allowed: false, reason: "email-unverified" } }, 1));
+    expect(m).toEqual({ locked: true, reason: "email-unverified", message: "Verify ada@example.com to use the Protoboard library: the sign-in page sends the e-mail." });
+    expect(lockOf(whoami({ signedIn: true, access: { allowed: false, reason: "something-new", message: "the CLI's line" } }, 1))).toEqual({ locked: true, reason: "unknown", message: "the CLI's line" });
   });
 
   it("judges a project's older CLI, which does not report access, from what it does report", () => {

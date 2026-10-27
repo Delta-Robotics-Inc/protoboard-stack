@@ -39,7 +39,7 @@ import { BUNDLE_FILE, indexProject, linkFromViewer, localLinkId, readBuild, RESO
 import { IGNORED_DIRS, chooseProject, projectOf, projectRoots } from "./project.js";
 import type { ViewerCommand as HostToViewer } from "../../web-viewer/src/vscode/protocol.js";
 import { boardSection, groupCard, interfaceCard, libraryPartCard, linkCard, linkHarnessDefs, moduleCard, partCard, type DetailFiles, type InspectorCard } from "./inspector.js";
-import { definitionsBelow, detailFiles, interfaceArtifacts, resourceRoots, smallModel } from "./inspectorFiles.js";
+import { detailFiles, interfaceArtifacts, resourceRoots, smallModel } from "./inspectorFiles.js";
 import { InspectorViewProvider, type InspectorAction, type InspectorContent } from "./inspectorView.js";
 import { displayFile, saveLayout } from "./display.js";
 import { ViewerEditors, type ViewerEditor } from "./viewerEditor.js";
@@ -2717,9 +2717,9 @@ class ProtoboardExtension {
     }
   }
 
-  /** What the Inspector's page may load for a definition and the parts below it (PB-940): pictures, small models, evidence. */
+  /** What the Inspector's page may load for a definition (PB-940): pictures, small models, evidence. Its own only, not its parts' (PB-1063). */
   private filesOf(root: string, index: ProjectIndex, defId: string): DetailFiles {
-    return detailFiles(root, index, definitionsBelow(index, defId));
+    return detailFiles(root, index, [defId]);
   }
 
   /** A part picked in Project parts: the Inspector shows it, the focus stays in the list (PB-919). */

@@ -18,8 +18,6 @@ import type { ProjectIndex } from "./model.js";
 export const MODEL_THUMB_MAX = 2 * 1024 * 1024;
 /** An evidence file larger than this is not read for the Inspector. */
 const EVIDENCE_MAX = 512 * 1024;
-/** How many definitions one selection may bring files for (a module, the parts below it). */
-const MAX_DEFS = 80;
 
 const IMAGE = new Set(["png", "jpg", "jpeg", "webp", "gif", "svg", "avif"]);
 const MODEL = new Set(["glb", "gltf", "step", "stp"]);
@@ -62,27 +60,6 @@ export function smallModel(file: string | undefined, fs: FileSystem = DISK): str
   if (!file || !["glb", "gltf"].includes(ext(file))) return undefined;
   const size = fs.size(file);
   return size !== undefined && size <= MODEL_THUMB_MAX ? file : undefined;
-}
-
-/**
- * The definition and the definitions of the parts below it (the viewer shows
- * an assembly's parts' artifacts when it has none of its own), nearest first.
- */
-export function definitionsBelow(index: ProjectIndex, defId: string, depth = 3, max = MAX_DEFS): string[] {
-  const out: string[] = [];
-  const seen = new Set<string>();
-  let level = [defId];
-  for (let d = 0; d <= depth && level.length && out.length < max; d++) {
-    const next: string[] = [];
-    for (const id of level) {
-      if (seen.has(id) || out.length >= max) continue;
-      seen.add(id);
-      out.push(id);
-      for (const c of index.bundleDefs.get(id)?.children ?? []) next.push(c.moduleDefId);
-    }
-    level = next;
-  }
-  return out;
 }
 
 /** The pictures of the definitions' artifacts, and the web addresses they name. */

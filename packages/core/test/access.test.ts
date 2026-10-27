@@ -136,6 +136,16 @@ describe("a service that signs users in", () => {
     expect(await checkAccess(SERVICE, { env, store, fetch: service({ down: true }).fetch, now: T0 + 14 * HOUR })).toMatchObject({ allowed: false, reason: "unreachable" });
   });
 
+  it("an account whose e-mail is not verified is told to verify it, never to ask for an invitation", async () => {
+    const { env, store, signIn } = setup();
+    signIn();
+    const me = { signedIn: true, allowed: false, reason: "email-unverified", problem: "ada@example.com is signed in, but the e-mail address is not verified yet" };
+    const a = await checkAccess(SERVICE, { env, store, fetch: service({ me }).fetch, now: T0 });
+    expect(a).toMatchObject({ allowed: false, reason: "email-unverified", email: "ada@example.com" });
+    expect(a.message).toContain("needs a verified e-mail address");
+    expect(a.message).not.toMatch(/invit/i);
+  });
+
   it("refuses a sign-in the service no longer accepts", async () => {
     const { env, store, signIn } = setup();
     signIn();

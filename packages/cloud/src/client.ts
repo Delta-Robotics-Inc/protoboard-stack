@@ -21,6 +21,7 @@ import {
   envelopeDigest,
   isRedistributable,
   isSafePath,
+  referencedFiles,
   sha256Hex,
   stableStringify,
   uhdSchemaSupported,
@@ -374,14 +375,26 @@ export class PartsClient {
    * verified. Artifacts always; evidence files with `evidence: true`. With
    * `redistributableOnly`, only files whose terms say `redistributable`
    * (what the redistributable view serves, and all a copy for others may
-   * hold).
+   * hold). With `skipWithheld`, an optional file (one no definition artifact
+   * rests on: a thumbnail, an attachment, evidence) the service withholds for
+   * its terms (403 NOT_DISTRIBUTABLE, as the redistributable library does) is
+   * left out of the result instead of failing the download.
    */
-  async downloadFiles(env: PartRevisionEnvelope, dir: string, options: { evidence?: boolean; redistributableOnly?: boolean } = {}): Promise<{ path: string; file: string; size: number }[]> {
+  async downloadFiles(env: PartRevisionEnvelope, dir: string, options: { evidence?: boolean; redistributableOnly?: boolean; skipWithheld?: boolean } = {}): Promise<{ path: string; file: string; size: number }[]> {
     const files: (EnvelopeArtifact | EvidenceRef)[] = [...env.artifacts, ...(options.evidence ? env.evidence.filter((e) => e.path) : [])].filter((f) => !options.redistributableOnly || isRedistributable(f));
     const out: { path: string; file: string; size: number }[] = [];
+    // optional = no definition artifact references the path (read from the definition, not the file's artifactId marker)
+    const required = new Set(referencedFiles(env.definition).map((r) => r.path));
     for (const f of files) {
       if (!isSafePath(f.path!)) throw new CloudError(0, "INTEGRITY", `unsafe path ${f.path}`);
-      const bytes = await this.downloadBlob(f.sha256!, { size: f.size });
+      let bytes: Uint8Array;
+      try {
+        bytes = await this.downloadBlob(f.sha256!, { size: f.size });
+      } catch (e) {
+        const optional = !required.has(f.path!);
+        if (options.skipWithheld && optional && e instanceof CloudError && e.code === "NOT_DISTRIBUTABLE") continue;
+        throw e;
+      }
       const file = join(dir, ...f.path!.split("/"));
       mkdirSync(dirname(file), { recursive: true });
       writeFileSync(`${file}.part`, bytes);
