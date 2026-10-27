@@ -254,6 +254,8 @@ export interface Discovery {
     apiKey?: string;
     signInUrl?: string;
     deviceUrl?: string;
+    /** The account page: the profile, the sign-ins, sign out everywhere, delete the account. */
+    accountUrl?: string;
     emulator?: string;
   };
   /** The library's counts: left out for a request that is not signed in, when the service authenticates users. */

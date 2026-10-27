@@ -41,7 +41,8 @@ export async function serviceAccount(service: string, options: { fetch?: typeof 
     if (f) throw new AccountError("UNREACHABLE", `GET ${f.url}: ${fetchProblem(f.error)}`);
     throw e;
   }
-  const account = (found.document as { account?: AccountInfo } | undefined)?.account;
+  // the discovery document's `account` (@protoboardai/cloud Discovery) is an AccountInfo: the same fields, accountUrl included
+  const account: AccountInfo | undefined = found.document?.account;
   if (!account || account.provider !== "firebase" || !account.apiKey)
     throw new AccountError("NO_SIGN_IN", `${serviceKey(service)} does not sign users in (a local parts service: everything is open there, nothing to sign in to)`);
   return account as AccountInfo & { apiKey: string };
