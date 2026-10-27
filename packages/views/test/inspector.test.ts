@@ -126,8 +126,8 @@ describe("the Inspector's selection", () => {
     const sel = (path: string, artifactsOf?: string) => card({ details: { target: { kind: "module", path }, ...(artifactsOf ? { artifactsOf } : {}), files: {}, previews: {}, links: [] } });
     const html = (c: InspectorCard, b: unknown = bundle) => render(createElement(SelectionInspector, { content: { card: c, project: "pod" }, bundle: b, actions }));
     const section = (h: string, id: string) => (h.includes(`data-section="${id}"`) ? h.slice(h.indexOf(`data-section="${id}"`)).split("</section>")[0] : undefined);
-    // the pod has no artifacts of its own: without the shell's word the viewer rolls its board's and enclosure's up, a row of parts to pick from
-    expect(html(sel("")).toUpperCase()).toContain("ARTIFACTS · PARTS");
+    // the pod has no artifacts of its own (uhd-viewer 0.2.0 rolls its board's and enclosure's up without the shell's word;
+    // from 0.2.1 it never does, PB-1088)
     const pod = html(sel("", "sample-imu-pod"));
     expect(section(pod, "artifacts")).toBeUndefined();
     expect(pod.toUpperCase()).not.toContain("ARTIFACTS · PARTS");
@@ -137,7 +137,10 @@ describe("the Inspector's selection", () => {
     const board = html(sel("board", "sample-imu-board"), withPart);
     expect(count(board, /class="uhd-artifact-card /g)).toBe(8);
     expect(board).not.toContain("MCU datasheet");
-    expect(section(board, "artifacts")).toMatch(/>8</);
+    // its eight are its outputs, drawn in its Board section: uhd-viewer 0.2.0 also counts them in an Artifacts header; from
+    // 0.2.1 there is no Artifacts section for outputs alone (PB-1088)
+    const arts = section(board, "artifacts");
+    if (arts) expect(arts).toMatch(/>8</);
     // the MCU shows it when it is selected
     expect(html(sel("board/u1", "fixture-mcu-qfn32"), withPart)).toContain("MCU datasheet");
   });
