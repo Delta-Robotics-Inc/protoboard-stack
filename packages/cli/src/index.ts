@@ -87,6 +87,7 @@ import {
   scriptedHost,
   type AgentHost,
   AccountError,
+  accountPage,
   CredentialStore,
   accountStatus,
   accountTokensFor,
@@ -250,6 +251,8 @@ const cli = meow(
                             adding parts, prices and downloads
     logout                  Forget the sign-in for the service at --url
     whoami                  Who is signed in to the service at --url (--check asks the service)
+    account                 Print the account page of the service at --url (the profile, sign-ins, sign out
+                            everywhere, delete the account) and open it in the browser
     libraries               The project's part libraries in order (--check asks each for its discovery document)
     libraries add <id> <url> [--auth-env PROTOBOARD_<NAME>_TOKEN] [--position n]
                             Add a uhd-library/v1 library (last unless --position); with only <url>, its
@@ -707,9 +710,9 @@ async function main() {
   // The account's own commands and `setup` do not: a sign-in is the user's, and its service is read without loading
   // the project (projectService), so asking who is signed in never changes a project (first builds review, item 23)
   // `upgrade` changes the ranges first and links after, so it does not link to a copy the old ranges choose
-  const linked = command && !["init", "stack", "login", "logout", "whoami", "setup", "upgrade"].includes(command) ? linkIfCarried() : undefined;
+  const linked = command && !["init", "stack", "login", "logout", "whoami", "account", "setup", "upgrade"].includes(command) ? linkIfCarried() : undefined;
   // PB-1024: the CLI and the stack the project links to are different versions (`stack` says it in its own report)
-  if (command && !["stack", "setup", "login", "logout", "whoami", "upgrade"].includes(command)) {
+  if (command && !["stack", "setup", "login", "logout", "whoami", "account", "upgrade"].includes(command)) {
     const root = findProjectRoot(cwd);
     const mismatch = root ? stackVersionMismatch(root, String(cli.pkg.version)) : undefined;
     if (mismatch) process.stderr.write(`protoboard: warning: ${mismatch}\n`);
@@ -1008,7 +1011,8 @@ async function main() {
     }
     case "login":
     case "logout":
-    case "whoami": {
+    case "whoami":
+    case "account": {
       await account(command);
       return;
     }
@@ -1861,7 +1865,7 @@ function hasBrowser(): boolean {
 }
 
 /** `login`, `logout`, `whoami`: the user's Protoboard Cloud sign-in for the parts service at --url, else the project's, else (no project) the hosted library. */
-async function account(sub: "login" | "logout" | "whoami") {
+async function account(sub: "login" | "logout" | "whoami" | "account") {
   const chosen = await projectService();
   const root = chosen.root;
   const service = serviceKey(chosen.url);
@@ -1872,6 +1876,24 @@ async function account(sub: "login" | "logout" | "whoami") {
   }
   const unreachable = (what: string) => unreachableService(service, what, chosen.source, root ? join(root, CONFIG_FILE) : undefined);
   const store = new CredentialStore();
+  if (sub === "account") {
+    // PB-1089: the page where the account is managed; the link always printed, the browser opened when there is one
+    let url: string;
+    try {
+      url = await accountPage(service);
+    } catch (e) {
+      if (e instanceof AccountError && e.code === "UNREACHABLE") throw new Error(unreachable(e.message));
+      if (e instanceof AccountError && e.code === "NO_SIGN_IN") {
+        out({ service, url: null, message: e.message }, () => e.message);
+        process.exitCode = 1;
+        return;
+      }
+      throw e;
+    }
+    const opened = !json && hasBrowser() && openUrl(url);
+    out({ service, url, opened }, () => `${url}${opened ? "" : "\nOpen it in a browser to manage your Protoboard account."}`);
+    return;
+  }
   if (sub === "logout") {
     const had = logout(service, { store });
     forgetAccess(service);

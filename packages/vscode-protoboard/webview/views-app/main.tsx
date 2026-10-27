@@ -240,6 +240,7 @@ function Cloud() {
       actions={{
         signIn: () => send("signIn"),
         signOut: () => send("signOut"),
+        manageAccount: () => send("manageAccount"),
         generate: () => send("generate"),
         openRelease: (version) => send("openPackage", { version, what: "index" }),
         openBom: () => send("openBom"),
@@ -389,6 +390,7 @@ function Settings() {
       actions={{
         signIn: () => send("signIn"),
         signOut: () => send("signOut"),
+        manageAccount: () => send("manageAccount"),
         connect: (id) => send("connect", { id }),
         disconnect: (id) => send("disconnect", { id }),
         refresh: () => send("refresh"),

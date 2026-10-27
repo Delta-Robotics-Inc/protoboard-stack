@@ -34,7 +34,7 @@ const hostOf = (service: string | undefined): string | undefined => {
 };
 
 /** The account the libraries use: who, and the sign-in action. */
-export function AccountCard({ account, actions }: { account: AccountModel; actions: Pick<LibrariesActions, "signIn" | "signOut"> }) {
+export function AccountCard({ account, actions }: { account: AccountModel; actions: Pick<LibrariesActions, "signIn" | "signOut" | "manageAccount"> }) {
   const signedIn = account.state === "signed-in";
   const title =
     account.state === "signed-in"
@@ -65,6 +65,11 @@ export function AccountCard({ account, actions }: { account: AccountModel; actio
         <p className="truncate text-[13.5px] text-fg">{title}</p>
         <p className="truncate text-[12px] text-fg-muted">{note}</p>
       </div>
+      {signedIn && actions.manageAccount && (
+        <Button size="sm" icon="external-link" onClick={actions.manageAccount}>
+          Manage Account
+        </Button>
+      )}
       {signedIn && actions.signOut && (
         <Button size="sm" onClick={actions.signOut}>
           Sign out

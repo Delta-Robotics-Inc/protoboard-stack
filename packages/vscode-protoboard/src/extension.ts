@@ -453,6 +453,7 @@ class ProtoboardExtension {
         showLog: () => this.log.show(),
         signIn: act(() => this.signIn()),
         signOut: act(() => this.signOut()),
+        manageAccount: act(() => this.manageAccount()),
         openBom: act(() => vscode.commands.executeCommand("protoboard.openBom", this.current)),
         publish: () => void vscode.window.showInformationMessage("Protoboard: publishing a project is not available yet. Publish parts from Project Parts."),
         requestQuote: () => void vscode.window.showInformationMessage("Protoboard: quotes are not available yet. Send the Manufacturing Package's ordering list to your suppliers."),
@@ -478,6 +479,7 @@ class ProtoboardExtension {
       account: () => accountView(this.accountState),
       signIn: () => this.signIn(),
       signOut: () => this.signOut(),
+      manageAccount: () => this.manageAccount(),
       project: () => this.current,
       // the launcher an agent starts uses the CLI this extension itself would run (PB-929): the carried stack and its runtime
       cliSettings: (folder) => this.cliSettings(folder),
@@ -592,6 +594,7 @@ class ProtoboardExtension {
       cmd("protoboard.signIn", () => this.signIn()),
       cmd("protoboard.signInDevice", () => this.signIn(true)),
       cmd("protoboard.signOut", () => this.signOut()),
+      cmd("protoboard.manageAccount", () => this.manageAccount()),
       cmd("protoboard.account.check", () => this.refreshAccount(true)),
       cmd("protoboard.newProject", (given?: NewProjectArgs) => this.newProject(given)),
       cmd("protoboard.stack.show", () => this.showStack()),
@@ -1977,6 +1980,7 @@ class ProtoboardExtension {
     const a = this.accountState;
     const pick = await vscode.window.showQuickPick(
       [
+        { label: "$(link-external) Manage Account", detail: "Profile, sign-ins, delete the account", id: "manage" },
         { label: "$(sign-out) Sign Out", detail: `Forget the sign-in to ${a.service}`, id: "out" },
         { label: "$(refresh) Check Again", detail: "Check the service again", id: "check" },
         { label: "$(cloud) Show the Cloud View", id: "cloud" },
@@ -1985,6 +1989,7 @@ class ProtoboardExtension {
       { title: `Protoboard Cloud: ${a.email ?? a.uid ?? "signed in"}`, placeHolder: a.service },
     );
     if (pick?.id === "out") await this.signOut();
+    else if (pick?.id === "manage") await this.manageAccount();
     else if (pick?.id === "check") await this.refreshAccount();
     else if (pick?.id === "cloud") await vscode.commands.executeCommand("protoboard.cloud.focus");
     else if (pick?.id === "settings") this.settings.open();
@@ -2043,6 +2048,24 @@ class ProtoboardExtension {
       setTimeout(() => void poll(), 3000);
     };
     setTimeout(() => void poll(), 3000);
+  }
+
+  /**
+   * **Manage Account** (PB-1089): the account page on the sign-in site of the
+   * service this window signs in to, in the browser. The CLI's `protoboard
+   * account` finds it (the service's discovery document), as `logout` does.
+   */
+  async manageAccount() {
+    const root = this.current ?? (await this.roots())[0];
+    const r = await runCli(root && this.cliReady(root) ? this.cli(root) : this.cliOutside(), ["account", "--format", "json"], { cwd: root ?? homedir(), env: this.library.cliEnv() });
+    let url: string | undefined;
+    try {
+      url = (JSON.parse(r.stdout) as { url?: string | null }).url ?? undefined;
+    } catch {
+      url = undefined;
+    }
+    if (!url) throw new Error(`protoboard account: ${(r.stderr || r.stdout).trim() || "the service names no account page"}`);
+    await vscode.env.openExternal(vscode.Uri.parse(url));
   }
 
   async signOut() {

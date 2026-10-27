@@ -51,6 +51,8 @@ export interface AccountInfo {
   apiKey?: string;
   signInUrl?: string;
   deviceUrl?: string;
+  /** The account page: the profile, the sign-ins, sign out everywhere, delete (PB-1089). Older services name none: see accountPageUrl. */
+  accountUrl?: string;
   /** The Auth emulator's origin (local testing). */
   emulator?: string;
   /** Services that need a signed-in user. */
