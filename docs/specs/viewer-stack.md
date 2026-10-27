@@ -263,7 +263,7 @@ and ignored). `protoboard dev` passes the list to the web viewer (`views` in
 | --- | --- | --- |
 | Theme | Protoboard (dark default, light), or any choice by `?theme=` | The VS Code adapter, high contrast included; the optional Protoboard Dark and Light VS Code colour themes (from `BRAND_TOKENS`) carry the orange |
 | Tabs | The registry's tabs for the drilled module, in the header | One webview per editor tab; a view opens as its own tab |
-| Hierarchy | The viewer's `ViewerHierarchy` at the left, toggled from the header | The same, in each tab, scoped to the tab's project; its rows' menu is VS Code's (`webview/context`) |
+| Hierarchy | The viewer's `ViewerHierarchy` at the left: its own button folds it, and folded an icon-only button at its corner opens it again | The same, in each tab, scoped to the tab's project; its rows' menu is VS Code's (`webview/context`) |
 | Inspector, DRC | Its own: the viewer's `ViewerInspector`, toggled from the header | Native views: the Protoboard Inspector (the selection drawn with the viewer's `SelectionDetails`, secondary side bar, following the focused tab), DRC panel, Library |
 | Layout | Saved as it changes (the dev page posts it) | Saved with Ctrl+S (a dirty tab, undo and redo, hot exit) |
 | Opening a module | Expand in place, or drill | Double-click: a new editor tab; expand in place from the context menu |
@@ -300,7 +300,8 @@ type, a domain or a DRC state), so the standalone page and the VS Code
 tab isolate alike. The 3D tab shows the module the tab is on (`Scene3D`'s
 `scope`: the level, or the part a tab was opened on), and the shell adds how a
 missing model is made (`emptyHint`: a board's `circuit:generate`, then `circuit:export`, then the
-module's `artifacts`). At its left the tab's own hierarchy (`ViewerHierarchy`), and the **Hierarchy** toggle and the level's breadcrumb in its
+module's `artifacts`). At its left the tab's own hierarchy (`ViewerHierarchy`, folded and opened
+again by its own buttons, or by Toggle Hierarchy), and the level's breadcrumb in its
 header. No inspector or DRC: those are the Protoboard Inspector (secondary
 side bar: a selection card following the focused tab) and the DRC panel. The theme is
 `vscodeShellThemeAdapter`: uhd-viewer's VS Code adapter with VS Code's faces,
