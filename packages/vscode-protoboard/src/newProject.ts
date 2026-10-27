@@ -108,11 +108,18 @@ export function withoutRunHint(message: string): string {
     .trim();
 }
 
-/** `init` writes only into a folder that is empty or does not exist yet. */
+/**
+ * What `protoboard init` accepts in a folder it makes a project in (KEPT_ON_INIT
+ * in @protoboardai/core): a workspace's CLAUDE.md and what file managers and
+ * git leave. A test keeps the two lists equal.
+ */
+export const INIT_LEFTOVERS: ReadonlySet<string> = new Set(["CLAUDE.md", ".gitkeep", ".DS_Store", "Thumbs.db", "desktop.ini"]);
+
+/** `init` writes only into a folder that is new, empty, or holds only what init accepts (a .gitkeep, a CLAUDE.md). */
 export function canInitIn(dir: string, list: (d: string) => string[] = (d) => readdirSync(d), exists: (d: string) => boolean = existsSync): boolean {
   if (!exists(dir)) return true;
   try {
-    return list(dir).length === 0;
+    return list(dir).every((f) => INIT_LEFTOVERS.has(f));
   } catch {
     return false;
   }
