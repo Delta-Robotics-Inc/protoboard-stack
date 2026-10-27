@@ -291,8 +291,8 @@ describe("a native view's theme", () => {
 
   it("has VS Code's own faces, and Kode Mono (bold for labels) only under a Protoboard colour theme, as the viewer tab has", () => {
     const plain = vscodeViewThemeAdapter(doc("Default Dark Modern")).current();
-    expect(plain.tokens.fontUi).toBe("var(--vscode-font-family)");
-    expect(plain.tokens.fontLabel).toBe("var(--vscode-font-family)");
+    expect(plain.tokens.fontUi).toBe("var(--vscode-font-family, system-ui, sans-serif)");
+    expect(plain.tokens.fontLabel).toBe("var(--vscode-font-family, system-ui, sans-serif)");
     const own = vscodeViewThemeAdapter(doc("Protoboard Dark")).current();
     expect(own.tokens.fontUi).toContain("Kode Mono");
     expect(own.tokens.fontLabel).toMatch(/^"Kode Mono Bold", "Kode Mono"/);

@@ -2,7 +2,8 @@
  * The Protoboard mark (the "0" of PR0TOBOARD, PB-916) and wordmark. Its
  * colour is the theme's accent: orange in the Protoboard theme, the host's
  * accent anywhere else (PB-900: the brand colour is never hard-coded, not
- * even here).
+ * even here). The wordmark is in the brand face (bold Kode Mono) under every
+ * theme (PB-1070).
  */
 import { MARK_PATH } from "./logo-mark.js";
 
@@ -12,7 +13,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
       <svg aria-hidden width="18" height="18" viewBox="0 0 24 24" className="text-accent">
         <path fill="currentColor" d={MARK_PATH} />
       </svg>
-      {!compact && <span className="font-label text-[13px] leading-none tracking-[0.08em] text-fg max-[900px]:hidden">PROTOBOARD</span>}
+      {!compact && <span className="font-brand text-[13px] leading-none tracking-[0.08em] text-fg max-[900px]:hidden">PROTOBOARD</span>}
     </span>
   );
 }

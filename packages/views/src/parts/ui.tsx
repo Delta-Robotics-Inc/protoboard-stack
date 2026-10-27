@@ -9,7 +9,7 @@ import { forwardRef, useCallback, useEffect, useState, type ButtonHTMLAttributes
 import { Icon, cx } from "@deltarobotics/uhd-viewer/components";
 import { knownMatte, readMatte, type Matte } from "./matte.js";
 
-/** The body face: VS Code's in a webview, a neutral sans elsewhere; Kode Mono (font-ui) stays for values and labels. */
+/** The body face: the theme's in a webview (VS Code's, or Kode Mono under a Protoboard colour theme), a neutral sans elsewhere. */
 export const BODY = "font-[family-name:var(--pb-font-body)]";
 
 export type Tone = "neutral" | "ok" | "info" | "warning" | "error" | "accent";

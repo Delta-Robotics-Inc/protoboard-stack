@@ -15,6 +15,7 @@
     "./registry": "./src/registry.ts",
     "./tabs": "./src/tabs.ts",
     "./theme": "./src/theme.ts",
+    "./brand.css": "./src/brand.css",
     "./parts": "./src/parts/index.ts",
     "./parts-data": "./src/parts/library-data.ts",
     "./parts-model": "./src/parts/model.ts",

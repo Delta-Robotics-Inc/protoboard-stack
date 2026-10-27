@@ -211,8 +211,9 @@ package, drawn the same in every shell. They take plain data
   nothing about how a price was read exists in the views' model.
 - **Look.** Tokens only: cards are a wash of the text over the background
   (the earlier Protoboard web app's card in the Protoboard themes, the page with an outline in high
-  contrast); the body face is VS Code's in a webview, Kode Mono for values
-  and labels; product pictures sit on a white matte in every theme. Narrow
+  contrast); the faces are the theme's (below: VS Code's, or Kode Mono under
+  a Protoboard colour theme), and the titles that are the product's name are
+  in the brand face; product pictures sit on a white matte in every theme. Narrow
   views collapse (the BOM table becomes a list below 960 px, the full page's
   filters fold behind a button).
 
@@ -303,8 +304,12 @@ missing model is made (`emptyHint`: a board's `circuit:generate`, then `circuit:
 module's `artifacts`). At its left the tab's own hierarchy (`ViewerHierarchy`), and the **Hierarchy** toggle and the level's breadcrumb in its
 header. No inspector or DRC: those are the Protoboard Inspector (secondary
 side bar: a selection card following the focused tab) and the DRC panel. The theme is
-`vscodeShellThemeAdapter`: uhd-viewer's VS Code adapter with VS Code's faces,
-or Kode Mono (bold for labels) under a Protoboard colour theme. The shell reads
+`vscodeShellThemeAdapter`, the one adapter every Protoboard webview has
+(`vscodeViewThemeAdapter` in @protoboardai/views): uhd-viewer's VS Code adapter
+with VS Code's faces, or Kode Mono (bold for labels) under a Protoboard colour
+theme. The brand face (bold Kode Mono, `FONT_BRAND`, Tailwind's `font-brand`)
+is the same under every theme, for the PROTOBOARD wordmark and the titles that
+are the product's name; the editor's monospace stays VS Code's. The shell reads
 the bundle, artifacts, state and events from `protoboard dev` (CORS for a
 webview origin, reads only); double-click on a module emits `openModule`
 (uhd-viewer's `onOpenModule`), which opens it as a new tab; layout edits make

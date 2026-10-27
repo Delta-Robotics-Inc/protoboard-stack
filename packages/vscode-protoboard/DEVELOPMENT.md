@@ -125,8 +125,13 @@ Protoboard Inspector's, the design rule checks the DRC panel's.
   workbench, and the tab holds no frame that would swallow them.
 - **Theme.** The tab follows the VS Code colour theme, high contrast
   included; the Protoboard faces (Kode Mono, bold Kode Mono for labels) and the orange appear
-  only under a Protoboard colour theme. DRC colours are the same in every
-  theme.
+  only under a Protoboard colour theme, in this tab and in every other
+  Protoboard webview (the Inspector, DRC, Library, Project Parts, Cloud,
+  Settings, part and BOM pages, the CAD viewer). Under any other theme they
+  use VS Code's fonts, except the brand text: the PROTOBOARD wordmark, the
+  Protoboard Settings title and its Protoboard section, and the Library's
+  sign-in card title are bold Kode Mono in every theme. DRC colours are the
+  same in every theme.
 
 The page is the VS Code shell of `@protoboardai/web-viewer` (its
 `src/vscode`), shipped in the extension (`dist/webview`), never loaded from a
@@ -495,8 +500,9 @@ disabled and a tooltip that says why.
 The view refreshes when a release, `parts/offers.json` or a sourcing record
 changes, and after each check.
 
-Headings use Kode Mono (`media/fonts/`, SIL Open Font License,
-`media/fonts/OFL.txt`); colours are VS Code's theme tokens, so light
+Its faces are the theme's (Kode Mono only under a Protoboard colour theme;
+the font files are bundled with the webview's stylesheet, SIL Open Font
+License, `media/fonts/OFL.txt`); colours are VS Code's theme tokens, so light
 and dark themes both work.
 
 ## Viewer host messages
