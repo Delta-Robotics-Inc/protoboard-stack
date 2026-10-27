@@ -24,6 +24,7 @@ export {
   protoboardLight,
   protoboardThemeAdapter,
   themeAdapterFor,
+  themeChoiceOf,
   vscodeThemeAdapter,
   defaultThemeAdapter,
   staticTheme,

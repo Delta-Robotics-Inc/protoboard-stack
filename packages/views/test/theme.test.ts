@@ -1,7 +1,7 @@
 /** Protoboard's theme: the brand orange lives here and nowhere in the open viewer. */
 import { describe, expect, it } from "vitest";
 import { TOKEN_NAMES, defaultDark } from "@deltarobotics/uhd-viewer/components";
-import { THEME_CHOICES, protoboardDark, protoboardLight, themeAdapterFor } from "../src/theme.js";
+import { THEME_CHOICES, protoboardDark, protoboardLight, themeAdapterFor, themeChoiceOf } from "../src/theme.js";
 
 describe("Protoboard theme", () => {
   it("maps the Alpha app's tokens (next-alpha :root and .dark)", () => {
@@ -31,5 +31,16 @@ describe("Protoboard theme", () => {
   it("maps every theme choice to an adapter", () => {
     expect(THEME_CHOICES.map((c) => themeAdapterFor(c).id)).toEqual(["protoboard-dark", "protoboard-light", "protoboard", "vscode", "default", "default"]);
     expect(themeAdapterFor("nonsense").current().id).toBe("protoboard-dark");
+  });
+
+  it("takes light, dark and system as Protoboard's (?theme=light rendered dark before)", () => {
+    expect(themeAdapterFor("light").current().id).toBe("protoboard-light");
+    expect(themeAdapterFor("Light").current().id).toBe("protoboard-light");
+    expect(themeAdapterFor("dark").current().id).toBe("protoboard-dark");
+    expect(themeAdapterFor("system").id).toBe("protoboard");
+    expect(themeChoiceOf("light")).toBe("protoboard-light");
+    expect(themeChoiceOf("vscode")).toBe("vscode");
+    expect(themeChoiceOf("")).toBeUndefined();
+    expect(themeChoiceOf(undefined)).toBeUndefined();
   });
 });

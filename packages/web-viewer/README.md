@@ -32,4 +32,5 @@ viewer.focus("arm_fl/motor"); // the viewer's handle and host messages, unchange
 
 `?theme=` on the dev page picks the theme: `protoboard-dark` (default),
 `protoboard-light`, `protoboard-system`, `vscode`, `default-dark`,
-`default-light`.
+`default-light`; `light`, `dark` and `system` are short for the Protoboard
+ones.
