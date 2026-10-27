@@ -40,7 +40,7 @@ export interface InspectorSection {
   summary?: string;
   /** A secondary section: it starts closed (design A, PB-1042). */
   collapsed?: boolean;
-  /** Rows shown before "Show all N" (the rest wait behind it). */
+  /** Rows shown at a time (default 10, PB-1088): "Show 10 more" adds the next ones. */
   limit?: number;
 }
 

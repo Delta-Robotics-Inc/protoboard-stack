@@ -220,7 +220,7 @@ describe("the Inspector's card (PB-895)", () => {
   const nodes = nodeMap(buildTree(index));
   const list = findings(index, resolved.diagnostics);
 
-  it("shows a module: kind and tier chips, findings below it as counts, the modules below, its links and findings; the viewer's details show the rest", () => {
+  it("shows a module: kind and tier chips, findings below it as counts, how many modules are below, its links and findings; the viewer's details show the rest", () => {
     const card = moduleCard(index, nodes.get("i:board")!, list);
     expect(card).toMatchObject({ kind: "module", title: "Main board", path: "board", actions: { focus: true, source: true, operation: true } });
     // design A (PB-1042): "Board · <definition>" under the name; the tier stays a chip
@@ -232,12 +232,8 @@ describe("the Inspector's card (PB-895)", () => {
     expect(card.counts.error).toBe(1);
     expect(card.counts.warning).toBeGreaterThanOrEqual(1);
     const titles = card.sections.map((s) => s.title);
-    // the checks open; the children and the links closed, saying what they hold in their headers
-    expect(titles).toEqual(["Checks", "Children", "Links"]);
-    const modules = card.sections.find((s) => s.title === "Children")!;
-    expect(modules).toMatchObject({ collapsed: true, summary: "MCU · Status LED", count: 2 });
-    expect(modules.rows.map((r) => r.label)).toEqual(["MCU", "Status LED"]);
-    expect(modules.rows[1]).toMatchObject({ detail: "×2", action: { type: "focus", path: "board/led" } });
+    // the checks open, the links closed; a parent lists no children (PB-1088): the summary row counts them
+    expect(titles).toEqual(["Checks", "Links"]);
     expect(card.sections.find((s) => s.title === "Links")).toMatchObject({ collapsed: true });
     const checks = card.sections.find((s) => s.title === "Checks")!;
     // every severity, each with its code

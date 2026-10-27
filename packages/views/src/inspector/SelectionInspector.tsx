@@ -15,7 +15,7 @@
  * load. Nothing is loaded that the card does not name: pictures are lazy, a
  * model is drawn only when the shell marks it small enough.
  */
-import { useCallback, useMemo, type CSSProperties } from "react";
+import { useCallback, useMemo, useState, type CSSProperties } from "react";
 import {
   ArtifactGrid,
   DetailsSection,
@@ -27,7 +27,6 @@ import {
   SelectionDetails,
   Sections,
   cx,
-  useShowAll,
   useTheme,
   type ArtifactCardModel,
   type HostActions,
@@ -173,15 +172,48 @@ function Row({ row, actions }: { row: InspectorRow; actions: InspectorActions })
   );
 }
 
-/** One of the shell's sections, in the details' look: a header row, closed when secondary, "Show all N" past its limit. */
+/** How many rows of a section are shown at first, and how many more each "Show more" adds (PB-1088). */
+export const SECTION_STEP = 10;
+
+const MORE_BUTTON =
+  "-mx-1 inline-flex h-6 cursor-pointer items-center gap-1 rounded-[3px] px-1 text-[11px] leading-none text-fg-muted hover:text-fg focus-visible:outline focus-visible:outline-1 focus-visible:outline-focus";
+
+/** A long list `step` rows at a time: "Show 10 more" under it adds the next ones, "Show fewer" goes back (PB-1088). */
+export function useLoadMore(total: number, step = SECTION_STEP): { limit: number; footer: React.ReactNode } {
+  const [shown, setShown] = useState(step);
+  const limit = Math.min(total, shown);
+  if (total <= step) return { limit: total, footer: null };
+  const next = Math.min(step, total - limit);
+  return {
+    limit,
+    footer: (
+      <div className="flex min-h-6 items-center gap-3 pt-1" data-load-more="">
+        {next > 0 && (
+          <button type="button" className={MORE_BUTTON} onClick={() => setShown(limit + next)}>
+            <Icon name="chevron-down" size={12} strokeWidth={1.75} aria-hidden className="shrink-0" />
+            Show {next} more
+          </button>
+        )}
+        {limit > step && (
+          <button type="button" className={cx(MORE_BUTTON, next > 0 && "ml-auto")} onClick={() => setShown(step)}>
+            <Icon name="chevron-up" size={12} strokeWidth={1.75} aria-hidden className="shrink-0" />
+            Show fewer
+          </button>
+        )}
+      </div>
+    ),
+  };
+}
+
+/** One of the shell's sections, in the details' look: a header row, closed when secondary, ten rows at a time. */
 function HostSection({ section, actions }: { section: InspectorSection; actions: InspectorActions }) {
-  const showAll = useShowAll(section.rows.length, section.limit ?? Number.POSITIVE_INFINITY);
-  const rows = showAll.limit !== undefined ? section.rows.slice(0, showAll.limit) : section.rows;
+  const more = useLoadMore(section.rows.length, section.limit ?? SECTION_STEP);
   return (
-    <DetailsSection id={`host:${section.title}`} title={section.title} count={section.count} summary={section.summary} aside={showAll.aside} defaultOpen={!section.collapsed}>
-      {rows.map((r, i) => (
+    <DetailsSection id={`host:${section.title}`} title={section.title} count={section.count} summary={section.summary} defaultOpen={!section.collapsed}>
+      {section.rows.slice(0, more.limit).map((r, i) => (
         <Row key={`${r.label}-${i}`} row={r} actions={actions} />
       ))}
+      {more.footer}
     </DetailsSection>
   );
 }
