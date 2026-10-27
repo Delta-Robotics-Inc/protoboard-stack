@@ -143,14 +143,39 @@ export function compareVersions(a: string, b: string): number {
   return x.pre.localeCompare(y.pre, undefined, { numeric: true });
 }
 
+/** A development build's version (scripts/build-version.mjs): a prerelease `x.y.z-dev.…`. */
+export const isDevVersion = (version: string) => /^v?\d+\.\d+\.\d+-dev(?:\.|$)/.test(version.trim());
+
+/** The release a development build leads to (`0.2.1-dev.7.g1a2b3c4` → `0.2.1`); any other version as it is. */
+export const devBase = (version: string) => (isDevVersion(version) ? version.trim().replace(/^v/, "").replace(/-.*$/, "") : version);
+
+/**
+ * The range a project is given for this stack (`init`, `upgrade`, `extension
+ * add`): `^<version>`, and for a development build the release line it
+ * belongs to (`0.2.1-dev.7.g1a2b3c4` → `^0.2.0`), which a registry has and
+ * which the dev build itself satisfies.
+ */
+export function stackRangeFor(version: string): string {
+  if (!isDevVersion(version)) return `^${version}`;
+  const [M, m] = devBase(version).split(".");
+  return `^${M}.${m}.0`;
+}
+
 /**
  * Whether a version satisfies a package.json range, for the ranges projects
  * carry: `^1.2.3` (what `init` writes), `~1.2.3`, `1.2.3`, `>=1.2.3`, `*`,
  * `latest` and `x` ranges. Anything else (a tag, a URL, a compound range)
  * is "cannot tell": undefined.
+ *
+ * A development build (`0.2.1-dev.7.g1a2b3c4`) is judged by the release it
+ * leads to (`0.2.1`), so it serves projects that pin `^0.2.0` where npm's
+ * semver would refuse a prerelease. Only `-dev` versions: a release, and a
+ * published prerelease (`1.2.0-rc.1`), are judged as before. An exact range
+ * (`0.2.1`) still asks for that exact version.
  */
 export function satisfies(version: string, range: string): boolean | undefined {
   const r = range.trim();
+  if (isDevVersion(version) && !/^=?\s*v?\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(r)) return satisfies(devBase(version), r);
   const v = parts(version);
   if (!v) return undefined;
   if (r === "" || r === "*" || r === "latest" || r === "x") return true;

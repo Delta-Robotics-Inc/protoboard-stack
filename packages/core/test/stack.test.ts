@@ -19,6 +19,7 @@ import {
   linkProject,
   listStacks,
   globalStack,
+  isDevVersion,
   missingFromStack,
   needsLink,
   npmAuthProblem,
@@ -29,6 +30,7 @@ import {
   stackDir,
   stackFor,
   stackHome,
+  stackRangeFor,
   stackVersionMismatch,
   unlinkProject,
   versionSatisfies,
@@ -83,6 +85,38 @@ describe("versions", () => {
     expect(versionSatisfies("0.1.3", "next")).toBeUndefined();
     expect(versionSatisfies("0.1.3", "file:../core")).toBeUndefined();
   });
+
+  it("a development build (x.y.z-dev.<n>.g<sha>, PB-1062) is judged by the release it leads to; releases and published prereleases as before", () => {
+    const dev = "0.2.1-dev.7.g1a2b3c4";
+    expect(isDevVersion(dev)).toBe(true);
+    expect(isDevVersion("0.2.1")).toBe(false);
+    expect(isDevVersion("0.3.0-rc.1")).toBe(false);
+    // it sorts after the release it builds on, before the next, and later commits later (numerically)
+    expect(["0.2.1", "0.2.1-dev.12.gaaaaaaa", "0.2.0", "0.2.1-dev.7.g1a2b3c4", "0.2.1-dev.0.gbbbbbbb"].sort(compareVersions)).toEqual(["0.2.0", "0.2.1-dev.0.gbbbbbbb", "0.2.1-dev.7.g1a2b3c4", "0.2.1-dev.12.gaaaaaaa", "0.2.1"]);
+    // what projects pin: npm's semver would refuse a prerelease here
+    expect(versionSatisfies(dev, "^0.2.0")).toBe(true);
+    expect(versionSatisfies(dev, "~0.2.0")).toBe(true);
+    expect(versionSatisfies(dev, ">=0.2.0")).toBe(true);
+    expect(versionSatisfies(dev, "0.2.x")).toBe(true);
+    expect(versionSatisfies(dev, "^0.2.1")).toBe(true);
+    // not loosened: another line, a newer floor, an exact pin
+    expect(versionSatisfies(dev, "^0.1.0")).toBe(false);
+    expect(versionSatisfies(dev, "^0.3.0")).toBe(false);
+    expect(versionSatisfies(dev, "^0.2.2")).toBe(false);
+    expect(versionSatisfies(dev, "0.2.1")).toBe(false);
+    expect(versionSatisfies(dev, "0.2.0")).toBe(false);
+    expect(versionSatisfies(dev, dev)).toBe(true);
+    // a dev build of a version being prepared (no tag yet) counts as that version
+    expect(versionSatisfies("0.3.0-dev.4.gccccccc", "^0.3.0")).toBe(true);
+    expect(versionSatisfies("0.3.0-dev.4.gccccccc", "^0.2.0")).toBe(false);
+    // a release candidate is still below its release, as npm has it
+    expect(versionSatisfies("0.3.0-rc.1", "^0.3.0")).toBe(false);
+    // what a project a dev build creates is given: the release line, never the dev version
+    expect(stackRangeFor(dev)).toBe("^0.2.0");
+    expect(stackRangeFor("1.4.1-dev.2.gddddddd")).toBe("^1.4.0");
+    expect(stackRangeFor("0.2.0")).toBe("^0.2.0");
+    expect(stackRangeFor("0.3.0-rc.1")).toBe("^0.3.0-rc.1");
+  });
 });
 
 describe("the user's Protoboard folder", () => {
@@ -103,6 +137,26 @@ describe("the user's Protoboard folder", () => {
     expect(stackFor(project("pick-a", "^0.1.3"), stacks)?.marker.version).toBe("0.1.10");
     expect(stackFor(project("pick-b", "^0.2.0"), stacks)?.marker.version).toBe("0.2.0");
     expect(stackFor(project("pick-c", "^0.4.0"), stacks)).toBeUndefined();
+  });
+
+  it("a dev build's copy has its own folder beside the release's, and a project pinned ^0.2.0 links to it (PB-1062)", () => {
+    const home = join(TMP, "home-dev");
+    const release = fakeStack(home, "0.2.0", "vsix");
+    const dev = fakeStack(home, "0.2.1-dev.7.g1a2b3c4", "vsix");
+    expect(dev).not.toBe(release);
+    expect(listStacks(home).map((s) => s.marker.version)).toEqual(["0.2.1-dev.7.g1a2b3c4", "0.2.0"]);
+    const root = project("pinned-dev", "^0.2.0");
+    // the dev build's CLI prefers its own copy, which fits
+    const choice = chooseStack(root, { home, version: "0.2.1-dev.7.g1a2b3c4" });
+    expect(choice.stack?.dir).toBe(dev);
+    expect(choice.rejected).toEqual([]);
+    const r = linkProject(root, choice.stack!);
+    expect(r).toMatchObject({ version: "0.2.1-dev.7.g1a2b3c4", range: "^0.2.0", satisfied: true });
+    expect(realpathSync(join(root, "node_modules", "@protoboardai", "cli"))).toBe(realpathSync(join(dev, "node_modules", "@protoboardai", "cli")));
+    // the release CLI still takes the release's copy
+    expect(chooseStack(project("pinned-release", "^0.2.0"), { home, version: "0.2.0" }).stack?.dir).toBe(release);
+    // a project on another line is not served by the dev build
+    expect(chooseStack(project("pinned-old", "^0.1.3"), { home, version: "0.2.1-dev.7.g1a2b3c4" }).stack).toBeUndefined();
   });
 
   it("knows when the code runs from a copy, and when it does not", () => {

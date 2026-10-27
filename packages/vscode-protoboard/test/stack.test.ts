@@ -174,7 +174,7 @@ describe("a stack.json names its folder, so it is checked first (PB-1048)", () =
     const ext = await fakeExtension("ext-semver", "0.1.3");
     const good = JSON.parse(readFileSync(join(ext, "dist/stack/stack.json"), "utf8")) as CarriedManifest;
     expect(manifestProblem(good)).toBeUndefined();
-    for (const v of ["1.2.3-rc.1", "0.2.0-preview", "1.0.0+build.5"]) expect(manifestProblem({ ...good, version: v }), v).toBeUndefined();
+    for (const v of ["1.2.3-rc.1", "0.2.0-preview", "1.0.0+build.5", "0.2.1-dev.7.g1a2b3c4", "0.2.1-dev.0.g0123456"]) expect(manifestProblem({ ...good, version: v }), v).toBeUndefined();
     for (const v of ["../../evil", "0.1.3/../../x", "1.2", "01.2.3", "1.2.3-", "1.2.3 ", "v1.2.3", "1.2.3\\x", "", 3]) expect(manifestProblem({ ...good, version: v as string }), String(v)).toMatch(/not a semantic version/);
     for (const file of ["../stack.pbar.br", "/etc/passwd", "a/b.br", "..", ".hidden"]) expect(manifestProblem({ ...good, archives: { ...good.archives, main: { ...good.archives.main, file } } }), file).toMatch(/plain file/);
     // a .vsix whose stack.json names an escaping version is refused before anything is written
@@ -241,6 +241,15 @@ describe("unpacking the carried stack", () => {
     expect(readFileSync(stackCli(again.stack.dir), "utf8")).toContain("v2");
     // a project created with the older version keeps its copy
     expect(listStacks(home).map((s) => s.marker.version)).toEqual(["0.1.3", "0.1.2"]);
+  });
+
+  it("a dev build's stack (0.2.1-dev.…) unpacks beside the release's and never replaces it (PB-1062)", async () => {
+    const home = join(TMP, "home-dev");
+    const release = await ensureCarried(await fakeExtension("ext-rel", "0.2.0", "release"), home, { platform: "test-x64", replace: true });
+    const dev = await ensureCarried(await fakeExtension("ext-dev", "0.2.1-dev.7.g1a2b3c4", "dev"), home, { platform: "test-x64", replace: true });
+    expect(dev.stack.dir).toBe(join(home, "stack", "0.2.1-dev.7.g1a2b3c4"));
+    expect(readFileSync(stackCli(release.stack.dir), "utf8")).toContain("release");
+    expect(listStacks(home).map((s) => s.marker.version)).toEqual(["0.2.1-dev.7.g1a2b3c4", "0.2.0"]);
   });
 
   it("says so on a platform it carries no native modules for, and in a build that carries nothing", async () => {

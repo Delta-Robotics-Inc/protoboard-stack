@@ -190,7 +190,17 @@ jobs:
         with:
           path: protoboard-stack
           persist-credentials: false
+          # a manual run is a development build, numbered from the last release tag (scripts/build-version.mjs):
+          # it needs the tags and the history since them
+          fetch-depth: 0
       - uses: ./protoboard-stack/.github/actions/workspace
+
+      # The same build stamp as the npm packages: on a tag it says "release": true, and the stack the extension
+      # carries takes it (build-stack.ts), so the Marketplace extension's stack is a release (PB-1062). A manual run
+      # stamps a development build, which packages as a prerelease version (scripts/build-version.mjs).
+      - name: The build stamp
+        working-directory: protoboard-stack
+        run: node .github/scripts/release.mjs stamp
 
       # scripts/package.mjs --target builds the shell, the minified bundle and the carried stack with only this
       # platform's native modules, and packages it once, for this target (vsce package --target). Its last line is
@@ -203,9 +213,13 @@ jobs:
           node scripts/package.mjs --target "$TARGET" | tee "$RUNNER_TEMP/package.log"
           vsix="$(sed -n 's/^vsix: //p' "$RUNNER_TEMP/package.log" | tail -n 1 | tr -d '\r')"
           version="$(node -p 'require("./package.json").version')"
-          case "$vsix" in
-            *"vscode-protoboard-$version-$TARGET.vsix") ;;
-            *) echo "::error::package.mjs named no vscode-protoboard-$version-$TARGET.vsix (got: $vsix)"; exit 1 ;;
+          # a tag build is the release version; a manual run is a development build (x.y.z-dev.<n>.g<sha>)
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then want="vscode-protoboard-$version-$TARGET.vsix"; else want="vscode-protoboard-<x.y.z>-dev.…-$TARGET.vsix"; fi
+          case "$GITHUB_EVENT_NAME:$vsix" in
+            push:*"vscode-protoboard-$version-$TARGET.vsix") ;;
+            push:*) echo "::error::package.mjs named no $want (got: $vsix)"; exit 1 ;;
+            *"vscode-protoboard-"*"-dev."*"-$TARGET.vsix") ;;
+            *) echo "::error::package.mjs named no $want (got: $vsix)"; exit 1 ;;
           esac
           echo "VSIX=$vsix" >>"$GITHUB_ENV"
           ls -l dist/*.vsix
