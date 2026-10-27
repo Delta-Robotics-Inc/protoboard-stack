@@ -51,6 +51,19 @@ describe("a definition whose interfaces are not one object each", () => {
     expect(p.diagnostics.some((d) => d.code === "PB_UNRESOLVED_DEFINITION")).toBe(true);
   });
 
+  it("on the root itself: the model checks are skipped, not crashed", async () => {
+    const dir = join(TMP, "nested-root");
+    rmSync(dir, { recursive: true, force: true });
+    write(dir, {
+      "package.json": JSON.stringify({ name: "nested-root", type: "module" }),
+      "protoboard.config.ts": CONFIG,
+      "src/sys.uhd.ts": `const AcPower = () => [{ id: "l", protocols: [] }, { id: "n", protocols: [] }];\nexport const SYS = { id: "sys", interfaces: [AcPower()] };\n`,
+    });
+    const p = await loadProject(dir);
+    expect(p.diagnostics.find((d) => d.code === "PB_DEFINITION_INVALID")).toMatchObject({ entity: { id: "sys" }, source: { file: "src/sys.uhd.ts" } });
+    expect(p.checks.find((c) => c.validator === "uhd/checkSystem")).toMatchObject({ status: "skipped", reason: expect.stringMatching(/invalid definitions/) });
+  });
+
   it("names each bad entry", () => {
     const def = { id: "x", interfaces: [{ id: "ok" }, [{ id: "a" }], null, "vin"] } as never;
     expect(malformedInterfaces(def)).toEqual([
