@@ -91,6 +91,10 @@ export const <CONST_NAME>: ModuleDef = defineModule({ ... });
 - `id` equals the file name (without `.uhd.ts` / `.ts`). Also set `name`,
   `version: "1.0.0"`, `manufacturer`, `part_number`, `description`, `tags`,
   and `categories`.
+- `description` is a sentence or two: what the part is. Longer notes
+  (variants, layout and assembly advice) go in the part's evidence or the
+  project's docs, not in the description; the Inspector shows its first five
+  lines.
 - `categories` lists **every** UHD taxonomy path that fits the part, each the
   most specific that applies (UHD `docs/taxonomy.md`). Consider three kinds:
   - what the part is (`sensor.distance`, `actuator.motor_controller`);

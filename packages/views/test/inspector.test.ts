@@ -172,6 +172,16 @@ describe("the Inspector's selection", () => {
     expect(html).not.toContain("uhd-selection-details");
   });
 
+  it("a long list shows ten rows at a time, with Show 10 more (PB-1088)", () => {
+    const rows = Array.from({ length: 23 }, (_, i) => ({ icon: "circle-x", label: `Finding ${i}`, tone: "error", code: "UHD_X", action: { type: "finding" as const, key: String(i) } }));
+    const html = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 23, rows }] }), project: "pod" }, actions }));
+    expect(count(html, /data-row-finding="UHD_X"/g)).toBe(10);
+    expect(html).toContain("Show 10 more");
+    expect(html).not.toContain("Show fewer");
+    const short = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 3, rows: rows.slice(0, 3) }] }), project: "pod" }, actions }));
+    expect(short).not.toContain("data-load-more");
+  });
+
   it("uses the deeper severity shades the parts views use on a light page", () => {
     const html = render(createElement(SelectionInspector, { content: { card: card(), project: "pod" }, bundle, actions }));
     expect(html).toContain("--uhd-severity-warning:#a16207");

@@ -193,6 +193,14 @@ what they report. Do not answer from memory, from an earlier session or from
 the template's description: a project that started blank may hold a full
 system by now.
 
+## Descriptions and design notes
+
+A module's `description` says what the module is, in a sentence or two. The
+Inspector shows its first five lines. Long design notes go in the project's
+docs (`docs/`, for example `docs/<module>.md`), not in the description: the
+sub-modules and their part numbers, layout and assembly notes, the reasons
+behind a choice.
+
 ## The diagram's layout
 
 Where the nodes sit, and where the lines bend, is saved in
@@ -218,14 +226,31 @@ of the module that level shows (`""` is the top level, `"board"` is inside
 the instance `board`). `nodes` gives the position of each node of that level, in
 diagram units (x to the right, y down). The keys are the ones the
 viewer writes: move a node in the viewer once to see them for a level. A
-level without an entry is laid out automatically. Keep the file's other
-entries (`spatial`, below) as they are when you change the diagram.
+level without an entry is laid out automatically, as a block around the
+module most things connect to. Keep the file's other entries (`spatial`,
+below) as they are when you change the diagram.
 
-When you lay a diagram out: put the module most things connect to in the
-middle, the things that feed it on the left and what it drives on the right,
-leave room between nodes for the lines and their labels, and keep lines from
-crossing where you can. Then look at the result (the viewer in VS Code, or
-`protoboard dev`) before you say it is done.
+The first thing a person does with your build is look at its diagram. Before
+you call a build (or a level of it) done:
+
+1. Lay it out by function: the module most things connect to in the middle,
+   what feeds it (connectors, power) on the left, what it drives on the
+   right, parts that belong together next to each other. Keep it compact and
+   about the shape of a screen: never one long row or column of parts.
+2. Run `protoboard layout` (`project_layout` on the MCP server). It measures
+   every level as the viewer draws it: line crossings, overlapping cards, the
+   longest row or column of cards, the aspect ratio, lines under cards.
+3. Fix what it reports. `protoboard layout <level> --apply` lays a level out
+   afresh, `--tidy` keeps your arrangement and fixes it, `--pin <card>` keeps
+   a card where you put it; or move cards in `.protoboard/display.json`. Run
+   it again. If a level cannot get under the limits after two tries, say so
+   and show it, rather than going round again.
+4. Look at it (the viewer in VS Code, or `protoboard dev`) before you say it
+   is done. `protoboard check` lists a level that still needs it as
+   `PB_DIAGRAM_LAYOUT`.
+
+A board with dozens of parts reads better split into sub-modules by
+function, each a level of its own: model them, and the diagram follows.
 
 ## Placing parts in the 3D view
 

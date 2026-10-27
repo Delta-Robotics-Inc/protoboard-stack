@@ -87,8 +87,7 @@ export function partCard(
     sections.push({
       title: "Used in",
       count: used.length,
-      limit: 8,
-    ...cut(used.map<InspectorRow>((i) => ({ icon: "cpu", label: i.path, action: { type: "focus", path: i.path } }))),
+      ...cut(used.map<InspectorRow>((i) => ({ icon: "cpu", label: i.path, action: { type: "focus", path: i.path } }))),
     });
   sections.push(...checksSection(mine));
   const from = part.library ? `${part.library}${part.revision !== undefined ? ` ${rev(part.revision)}` : ""}` : undefined;
@@ -150,7 +149,7 @@ export function libraryPartCard(p: {
     subtitle: `${p.partId} · ${p.library}`,
     chips,
     counts: { error: 0, warning: 0, info: 0 },
-    sections: [...(p.facts.length ? [{ title: "Specs", count: p.facts.length, limit: 6, ...cut(p.facts.map<InspectorRow>((f) => ({ icon: "list", label: f.label, detail: f.value }))) }] : [])],
+    sections: [...(p.facts.length ? [{ title: "Specs", count: p.facts.length, ...cut(p.facts.map<InspectorRow>((f) => ({ icon: "list", label: f.label, detail: f.value }))) }] : [])],
     actions: { focus: false, source: false, artifacts: false, operation: false, detail: true },
     path: "",
     part: { partId: p.partId, library: p.library },
@@ -209,7 +208,7 @@ function findingRows(list: Finding[]): { rows: InspectorRow[] } {
 
 /** The Checks section: every finding here and below, the worst first; the count is all of them. */
 function checksSection(list: Finding[]): InspectorCard["sections"] {
-  return list.length ? [{ title: "Checks", count: list.length, limit: 6, ...findingRows(list) }] : [];
+  return list.length ? [{ title: "Checks", count: list.length, ...findingRows(list) }] : [];
 }
 
 /** A link's canonical id as the viewer selects it: `owner/local`, or `local` at the root. */
@@ -287,7 +286,7 @@ export function sourcingOf(lines: CostLine[] | undefined, path: string): { price
   };
 }
 
-/** Every row: the page scrolls, nothing is cut. */
+/** Every row: the page shows them ten at a time (SelectionInspector, PB-1088). */
 function cut<T>(rows: T[]): { rows: T[] } {
   return { rows };
 }
@@ -380,24 +379,9 @@ export function moduleCard(
   if (board && !level) sections.push(board);
   // design A: the checks open, then what is secondary, closed, saying what it holds in its header
   sections.push(...checksSection(mine));
+  // a parent lists no children (PB-1088, Mark: "this can explode the size of the inspector"): the Explorer and the
+  // canvas are where they are picked; the summary row says how many there are
   const children = node.children.filter((c) => c.type === "instance");
-  const short = (label: string) => label.replace(/\s*\(.*\)$/, "");
-  if (children.length)
-    sections.push({
-      title: "Children",
-      count: children.length,
-      collapsed: true,
-      summary: children.length <= 4 ? children.map((c) => short(c.label)).join(" · ") : `${children.slice(0, 3).map((c) => short(c.label)).join(" · ")} · …`,
-      ...cut(
-        children.map<InspectorRow>((c) => ({
-          icon: KIND_ICON[c.kind],
-          label: c.label,
-          detail: c.quantity && c.quantity > 1 ? `×${c.quantity}` : undefined,
-          tone: c.worst,
-          action: { type: "focus", path: c.path },
-        })),
-      ),
-    });
   const links = index.linksByOwner.get(node.path) ?? [];
   if (links.length) {
     const names = new Map((bdef?.links ?? []).map((l) => [l.id, l.name]));
