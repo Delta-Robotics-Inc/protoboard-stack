@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-harness-cad",
-  "version": "0.2.0",
-  "description": "Protoboard extension: routed 3D geometry for wire harnesses, generated from the assembled UHD model (obstacle-aware routing, swept conductors, connector and solder bodies) with build123d; a provider of the cad capability",
+  "version": "0.2.1",
+  "description": "Protoboard extension: 3D wire harness routing from your assembled design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -41,5 +41,16 @@
     "@protoboardai/ext-release": {
       "optional": true
     }
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "cad",
+    "harness",
+    "cables"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

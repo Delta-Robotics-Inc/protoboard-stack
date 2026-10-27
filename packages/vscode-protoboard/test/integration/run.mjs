@@ -8,6 +8,8 @@
 import { fork } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
+// VS Code puts its IPC socket in the profile; macOS caps a socket path at 104 bytes and its tmpdir() (/var/folders/…) is long
+const profileBase = process.platform === "darwin" ? "/tmp" : tmpdir();
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runTests } from "@vscode/test-electron";
@@ -15,7 +17,7 @@ import { trustProjects } from "./trust-fixture.mjs";
 
 const pkg = fileURLToPath(new URL("../..", import.meta.url));
 const workspace = join(pkg, "..", "..", "examples", "quadcopter-5in");
-const profile = mkdtempSync(join(tmpdir(), "vscode-protoboard-test-"));
+const profile = mkdtempSync(join(profileBase, "vscode-protoboard-test-"));
 // the Library searches a real library when one is given (the dev catalog, for example), else a stand-in
 let library = process.env.PROTOBOARD_TEST_LIBRARY_URL;
 let fake;

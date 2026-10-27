@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/ext-docs",
-  "version": "0.2.0",
-  "description": "Protoboard extension: technical documents (datasheet, assembly guide) generated from a project's UHD model, with every value a query into the model, figures rendered from its CAD, and a verifier",
+  "version": "0.2.1",
+  "description": "Protoboard extension: datasheets and assembly guides generated from your design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -49,5 +49,16 @@
     "@protoboardai/ext-release": {
       "optional": true
     }
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "documentation",
+    "datasheet",
+    "pdf"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

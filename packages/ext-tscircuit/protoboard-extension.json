@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-tscircuit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "circuit provider: PCBs from UHD board modules with tscircuit, run in-process under Node and offline (generate, export, extract, check).",
   "compatibility": {
     "protoboard": "^0.2.0",

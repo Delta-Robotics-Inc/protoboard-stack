@@ -6,6 +6,8 @@
 // VSCODE_TEST_VERSION picks the VS Code (default: stable); PROTOBOARD_TEST_LOGS keeps its logs, as run.mjs does.
 import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
+// VS Code puts its IPC socket in the profile; macOS caps a socket path at 104 bytes and its tmpdir() (/var/folders/…) is long
+const profileBase = process.platform === "darwin" ? "/tmp" : tmpdir();
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runTests } from "@vscode/test-electron";
@@ -14,7 +16,7 @@ const pkg = fileURLToPath(new URL("../..", import.meta.url));
 const examples = join(pkg, "..", "..", "examples");
 // not a dot-folder name the extension would take for scratch if a parent folder were opened; unique per run
 const workspace = mkdtempSync(join(examples, "new-project-test-"));
-const profile = mkdtempSync(join(tmpdir(), "vscode-protoboard-new-"));
+const profile = mkdtempSync(join(profileBase, "vscode-protoboard-new-"));
 const headless = process.platform === "linux" && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY ? ["--ozone-platform=headless", "--disable-gpu"] : [];
 try {
   await runTests({

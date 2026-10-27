@@ -1,7 +1,7 @@
 {
   "name": "@protoboardai/core",
-  "version": "0.2.0",
-  "description": "Protoboard framework core: project loading, definition registry and origins, resolution, aggregated checks, build",
+  "version": "0.2.1",
+  "description": "The Protoboard framework: loads projects, resolves parts, runs checks and builds.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
   "repository": {
@@ -15,6 +15,7 @@
     "./library-client": "./src/library-client.ts",
     "./views": "./src/view-ids.ts",
     "./cdp": "./src/cdp.ts",
+    "./browser": "./src/browser.ts",
     "./account": "./src/account.ts",
     "./access": "./src/access.ts",
     "./stack": "./src/stack.ts",
@@ -57,5 +58,14 @@
     "jsonc-parser": "^3.3.1",
     "smol-toml": "^1.9.0",
     "tsx": "^4.23.8"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "framework"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
   }
 }

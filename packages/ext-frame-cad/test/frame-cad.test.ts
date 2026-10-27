@@ -29,7 +29,8 @@ const HERE = fileURLToPath(new URL(".", import.meta.url));
 const REPO = join(HERE, "../../..");
 const QUAD = join(REPO, "examples/quadcopter-5in");
 const CLI = join(REPO, "packages/cli/bin/protoboard.mjs");
-const TMP = join(HERE, ".tmp");
+// its own folder: other test files here work in .tmp at the same time, and this one removes TMP when it ends
+const TMP = join(HERE, ".tmp/frame-cad");
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
 const PYTHON = cadPython();

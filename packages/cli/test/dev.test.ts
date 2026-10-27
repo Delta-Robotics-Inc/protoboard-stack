@@ -19,7 +19,8 @@ import { applyViewerLayout, formatDisplay, parseLayoutRequest, type DisplayFile 
 import { DEV_RECORD, folderGoneMessage, startDev, unwatchedMessage, watchPlan, type DevLogEvent, type DevRecord, type DevServer } from "../src/dev/server.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
-const TMP = join(HERE, ".tmp");
+// its own folder: other test files here work in .tmp at the same time, and this one removes TMP when it ends
+const TMP = join(HERE, ".tmp/dev");
 
 describe("viewer layout → display.json", () => {
   const display: DisplayFile = {

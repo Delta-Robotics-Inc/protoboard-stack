@@ -20,6 +20,6 @@ Guides:
 - [The SOP format](../guides/sop-format.md): how every skill is written.
 - [Evals](../guides/evals.md): eval cases, hosts, graders and scorecards.
 - [CI](../ci.md): the four repositories, `scripts/ci-stack.sh`, the read token.
-- [VS Code extension](../../packages/vscode-protoboard/README.md) and [ext-release](../../packages/ext-release/README.md) READMEs.
+- [VS Code extension](../../packages/vscode-protoboard/DEVELOPMENT.md) and [ext-release](../../packages/ext-release/README.md) READMEs.
 
 Design documents (the why) are in [`docs/specs/`](../specs/).

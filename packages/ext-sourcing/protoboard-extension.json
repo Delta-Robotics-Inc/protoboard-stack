@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-sourcing",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Part sourcing: external discovery, datasheet facts with checked quotes, supplier and lifecycle observations as dated evidence (never orders), alternates, and handoff into locally authored UHD parts.",
   "compatibility": {
     "protoboard": "^0.2.0",
@@ -47,7 +47,10 @@
     {
       "id": "pdftotext",
       "purpose": "Datasheet text layer for the deterministic quote check (datasheet-extract)",
-      "probe": ["pdftotext", "-v"],
+      "probe": [
+        "pdftotext",
+        "-v"
+      ],
       "install": "poppler-utils (apt install poppler-utils, brew install poppler)"
     }
   ],

@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-esp-idf",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "firmware provider: ESP-IDF pin and peripheral header and sdkconfig.defaults for ESP32-C3 modules, every setting citing the UHD facts it comes from.",
   "compatibility": {
     "protoboard": "^0.2.0",
@@ -20,17 +20,39 @@
       "summary": "ESP-IDF 5.3 board_pins.h (buses, addresses, buttons, controls, wake mask) and sdkconfig.defaults (target, flash, console, RTC clock) for an ESP32-C3 board",
       "native": "esp-idf",
       "operations": {
-        "generate": { "entry": "./ops/firmware.ts#generate", "summary": "Read the board into a firmware map, apply the rules, write board_pins.h and sdkconfig.defaults under esp-idf/ with the line index" },
-        "export": { "entry": "./ops/firmware.ts#exportOutputs", "summary": "Copy the generated files to out/config/ and write out/firmware.manifest.json (refuses files edited since generate)" },
-        "extract": { "entry": "./ops/firmware.ts#extract", "summary": "Artifact references and the GPIOs the header names" },
-        "check": { "entry": "./ops/firmware.ts#check", "summary": "Pin table, single use, bus functions, I2C addresses, strapping pins, Deep-sleep wake sources, controller counts, and drift between the files and the board" }
+        "generate": {
+          "entry": "./ops/firmware.ts#generate",
+          "summary": "Read the board into a firmware map, apply the rules, write board_pins.h and sdkconfig.defaults under esp-idf/ with the line index"
+        },
+        "export": {
+          "entry": "./ops/firmware.ts#exportOutputs",
+          "summary": "Copy the generated files to out/config/ and write out/firmware.manifest.json (refuses files edited since generate)"
+        },
+        "extract": {
+          "entry": "./ops/firmware.ts#extract",
+          "summary": "Artifact references and the GPIOs the header names"
+        },
+        "check": {
+          "entry": "./ops/firmware.ts#check",
+          "summary": "Pin table, single use, bus functions, I2C addresses, strapping pins, Deep-sleep wake sources, controller counts, and drift between the files and the board"
+        }
       },
       "constraints": {
-        "controller": { "description": "instance path of the controller, when the board has more than one microcontroller" },
-        "console": { "description": "usb (USB Serial/JTAG; default when GPIO18/19 are wired) or uart0" },
-        "i2c_frequency_hz": { "description": "I2C bus clock (default: the slowest device's limit, 400 kHz at most)" },
-        "uart_baud": { "description": "{ <instance>: baud } for UART devices that state no baud_rate" },
-        "wake": { "description": "[<button or device instance | net>] inputs that wake the chip from Deep-sleep; each must be on an RTC GPIO (GPIO0-5)" }
+        "controller": {
+          "description": "instance path of the controller, when the board has more than one microcontroller"
+        },
+        "console": {
+          "description": "usb (USB Serial/JTAG; default when GPIO18/19 are wired) or uart0"
+        },
+        "i2c_frequency_hz": {
+          "description": "I2C bus clock (default: the slowest device's limit, 400 kHz at most)"
+        },
+        "uart_baud": {
+          "description": "{ <instance>: baud } for UART devices that state no baud_rate"
+        },
+        "wake": {
+          "description": "[<button or device instance | net>] inputs that wake the chip from Deep-sleep; each must be on an RTC GPIO (GPIO0-5)"
+        }
       }
     }
   ]
