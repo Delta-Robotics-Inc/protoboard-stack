@@ -1,0 +1,8 @@
+/* The Protoboard brand face (FONT_BRAND in theme.ts): bold Kode Mono under
+ * every theme, for the wordmark and the titles that are the product's name
+ * (`font-brand`). Everything else follows the theme's faces (font-ui,
+ * font-label). The faces themselves come with the viewer's stylesheet
+ * (@deltarobotics/uhd-viewer/components.css). */
+@theme {
+  --font-brand: "Kode Mono Bold", "Kode Mono", var(--vscode-font-family, ui-monospace, monospace);
+}

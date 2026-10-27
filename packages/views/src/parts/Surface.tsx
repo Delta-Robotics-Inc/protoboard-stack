@@ -34,7 +34,8 @@ export function PartsSurface({ place, children, className }: { place: Place; chi
     "--pb-thumb-tile": hc || light ? "#ffffff" : "color-mix(in srgb, #ffffff 86%, var(--uhd-background))",
     "--pb-thumb-blend": hc ? "normal" : "multiply",
     "--pb-thumb-fg": "#8a8a8a",
-    "--pb-font-body": `var(--vscode-font-family, "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif)`,
+    // the body face: in VS Code the theme's (VS Code's own, or Kode Mono under a Protoboard colour theme, PB-1070); a neutral sans elsewhere
+    "--pb-font-body": theme.id === "vscode" ? "var(--uhd-font-ui)" : `var(--vscode-font-family, "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif)`,
     // the severity hues are bright for dark pages; as text on a light page they need the deeper shade of the same hue (WCAG AA on white)
     ...(light ? { "--uhd-severity-warning": "#a16207", "--uhd-severity-info": "#0369a1", "--uhd-severity-ok": "#15803d", "--uhd-severity-error": "#dc2626" } : {}),
     background: bg,

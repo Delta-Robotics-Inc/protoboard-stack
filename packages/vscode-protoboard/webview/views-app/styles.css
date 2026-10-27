@@ -5,6 +5,7 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 @import "@deltarobotics/uhd-viewer/tailwind-theme.css";
+@import "@protoboardai/views/brand.css";
 @source "./";
 @source "../../../views/src/parts";
 @source "../../../views/src/inspector";
@@ -74,7 +75,8 @@ body[data-screen="drc"] {
   overflow: auto;
   scrollbar-width: none;
   background: color-mix(in srgb, var(--vscode-sideBar-background, var(--vscode-editor-background, #1e1e1e)) 55%, transparent);
-  font-family: var(--vscode-font-family, system-ui, sans-serif);
+  /* the theme's face: VS Code's, or Kode Mono under a Protoboard colour theme; the title is in the brand face (font-brand) */
+  font-family: var(--uhd-font-ui, var(--vscode-font-family, system-ui, sans-serif));
   font-size: var(--vscode-font-size, 13px);
   color: var(--vscode-foreground, #cccccc);
 }

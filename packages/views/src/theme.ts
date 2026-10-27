@@ -154,30 +154,45 @@ export function protoboardThemeAdapter(scheme: "dark" | "light" | "system" = "da
 export const isProtoboardColourTheme = (doc: Document | undefined = typeof document === "undefined" ? undefined : document): boolean =>
   /^protoboard\b/i.test(doc?.body?.dataset.vscodeThemeId ?? doc?.body?.dataset.vscodeThemeName ?? "");
 
-/** VS Code's faces, or the Protoboard ones under a Protoboard colour theme (the only place they apply). */
-const VSCODE_FACES = { fontUi: "var(--vscode-font-family)", fontLabel: "var(--vscode-font-family)", fontMono: "var(--vscode-editor-font-family, ui-monospace, monospace)" };
-const PROTOBOARD_FACES = { fontUi: '"Kode Mono", var(--vscode-font-family)', fontLabel: '"Kode Mono Bold", "Kode Mono", var(--vscode-font-family)', fontMono: "var(--vscode-editor-font-family, ui-monospace, monospace)" };
+/**
+ * The Protoboard brand face: bold Kode Mono, under every theme (Mark, PB-1070: "the protoboard title text should be the
+ * KodeMono theme, as that is the app branding"). The wordmark and the titles that are the product's name use it, as
+ * Tailwind's `font-brand` (brand.css declares the same stack); every other text follows the theme's faces.
+ */
+export const FONT_BRAND = '"Kode Mono Bold", "Kode Mono", var(--vscode-font-family, ui-monospace, monospace)';
+
+/** VS Code's faces, or the Protoboard ones under a Protoboard colour theme (the only place they apply). The editor's monospace stays VS Code's in both. */
+const MONO = "var(--vscode-editor-font-family, ui-monospace, monospace)";
+const VSCODE_FACES = { fontUi: "var(--vscode-font-family, system-ui, sans-serif)", fontLabel: "var(--vscode-font-family, system-ui, sans-serif)", fontMono: MONO };
+const PROTOBOARD_FACES = { fontUi: '"Kode Mono", var(--vscode-font-family, ui-monospace, monospace)', fontLabel: FONT_BRAND, fontMono: MONO };
+
+/** The faces for the colour theme VS Code applies: Kode Mono (bold for labels) under Protoboard Dark or Light, VS Code's own under any other. */
+export const vscodeFaces = (doc: Document | undefined = typeof document === "undefined" ? undefined : document) => (isProtoboardColourTheme(doc) ? PROTOBOARD_FACES : VSCODE_FACES);
 
 /** Faint text in a native view: readable as text on the side bar's and the panel's background in a light and a dark theme. */
 const VIEW_FAINT = "color-mix(in oklab, var(--vscode-foreground) 72%, var(--vscode-sideBar-background, var(--vscode-editor-background)))";
 
 /**
- * VS Code's theme for a native view (the Inspector's selection, the DRC
- * panel): the viewer's VS Code adapter, every token on `--vscode-*`, with VS
- * Code's own faces, and Kode Mono (bold for labels) only under a Protoboard
- * colour theme. The viewer tab's shell has the same rule
- * (`vscodeShellThemeAdapter` in @protoboardai/web-viewer). A change of theme
- * (the body's class or its theme id) re-themes.
+ * VS Code's theme for every Protoboard webview (the viewer tab, the
+ * Inspector, the DRC panel, the Library, Project Parts, Cloud, Settings, the
+ * part and BOM pages, the CAD viewer): the viewer's VS Code adapter, every
+ * token on `--vscode-*`, with VS Code's own faces, and Kode Mono (bold for
+ * labels) only under a Protoboard colour theme. `viewFaint` (the Inspector's
+ * selection and the DRC panel) makes faint text readable on a native view's
+ * background. A change of theme (the body's class or its theme id) re-themes.
  */
-export function vscodeViewThemeAdapter(doc: Document | undefined = typeof document === "undefined" ? undefined : document): ThemeAdapter {
+export function vscodeViewThemeAdapter(
+  doc: Document | undefined = typeof document === "undefined" ? undefined : document,
+  { viewFaint = true }: { viewFaint?: boolean } = {},
+): ThemeAdapter {
   const base = vscodeThemeAdapter(doc);
   const current = () => {
     const t = base.current();
     // faint text (the keys of the details' facts) is much of what a native view shows, and VS Code's disabledForeground is
     // too pale to read as text (2.2:1 in Light Modern): the foreground stepped towards the view's background keeps 4.5:1;
     // high contrast has one text colour, the foreground
-    const textFaint = t.scheme.startsWith("high-contrast") ? "var(--vscode-foreground)" : VIEW_FAINT;
-    return defineTheme(t, { id: t.id, label: t.label, tokens: { ...(isProtoboardColourTheme(doc) ? PROTOBOARD_FACES : VSCODE_FACES), textFaint } });
+    const faint = viewFaint ? { textFaint: t.scheme.startsWith("high-contrast") ? "var(--vscode-foreground)" : VIEW_FAINT } : {};
+    return defineTheme(t, { id: t.id, label: t.label, tokens: { ...vscodeFaces(doc), ...faint } });
   };
   return {
     id: "vscode",
@@ -214,7 +229,7 @@ export function themeChoiceOf(choice: string | null | undefined): string | undef
   return c === "light" || c === "dark" || c === "system" ? `protoboard-${c}` : c;
 }
 
-/** The adapter for a choice (unknown: Protoboard dark; `light`, `dark`, `system`: Protoboard's). */
+/** The adapter for a choice (unknown: Protoboard dark; `light`, `dark`, `system`: Protoboard's; `vscode`: VS Code's colours and faces). */
 export function themeAdapterFor(choice: string | null | undefined): ThemeAdapter {
   switch (themeChoiceOf(choice)) {
     case "protoboard-light":
@@ -222,7 +237,8 @@ export function themeAdapterFor(choice: string | null | undefined): ThemeAdapter
     case "protoboard-system":
       return protoboardThemeAdapter("system");
     case "vscode":
-      return vscodeThemeAdapter();
+      // VS Code's colours, with the faces of the colour theme in use
+      return vscodeViewThemeAdapter(undefined, { viewFaint: false });
     case "default-dark":
       return defaultThemeAdapter("dark");
     case "default-light":

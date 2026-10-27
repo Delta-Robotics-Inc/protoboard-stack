@@ -1,12 +1,13 @@
 // The CAD viewer's webview (PB-906): one STEP or GLB in uhd-viewer's
 // ModelView (the 3D view's scene, lights, materials and toolbar), in the
-// VS Code theme. A STEP is converted here with occt-import-js (loaded from
+// VS Code theme (Kode Mono only under a Protoboard colour theme). A STEP is converted here with occt-import-js (loaded from
 // the extension, never a CDN). Bundled into dist/cad-viewer.js by esbuild.mjs.
 import "@deltarobotics/uhd-viewer/components.css";
 import { createRoot } from "react-dom/client";
 import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
-import { IconButton, ModelView, ThemeProvider, vscodeThemeAdapter } from "@deltarobotics/uhd-viewer/components";
+import { IconButton, ModelView, ThemeProvider } from "@deltarobotics/uhd-viewer/components";
+import { vscodeViewThemeAdapter } from "@protoboardai/views/theme";
 
 interface Config {
   model: string;
@@ -71,7 +72,8 @@ async function readStep(url: string): Promise<THREE.Object3D> {
 }
 
 function App() {
-  const adapter = useMemo(() => vscodeThemeAdapter(), []);
+  // VS Code's colours and the faces of the colour theme in use (Kode Mono only under a Protoboard one), as every Protoboard webview
+  const adapter = useMemo(() => vscodeViewThemeAdapter(undefined, { viewFaint: false }), []);
   const [object, setObject] = useState<THREE.Object3D | null | undefined>(config.kind === "step" ? null : undefined);
   const [error, setError] = useState<string>();
   useEffect(() => {

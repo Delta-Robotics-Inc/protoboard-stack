@@ -21,12 +21,13 @@ const STATUS: Record<AgentRowModel["status"], { tone: Tone; label: string }> = {
 const DETAIL: Record<NonNullable<AgentRowModel["detailTone"]>, string> = { neutral: "text-fg-muted", ok: "text-ok", warning: "text-warning", error: "text-error" };
 
 /** A section: its heading, a line about it, then its content. */
-function Section({ title, note, right, children }: { title: string; note?: ReactNode; right?: ReactNode; children: ReactNode }) {
+/** A section of the page; `brand`: its title is the product's name, in the brand face (bold Kode Mono, every theme). */
+function Section({ title, note, right, brand, children }: { title: string; note?: ReactNode; right?: ReactNode; brand?: boolean; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-2" aria-label={title}>
       <div className={cx(BODY, "flex items-end gap-3")}>
         <div className="min-w-0 flex-1">
-          <h2 className="text-[15px] font-semibold text-fg">{title}</h2>
+          <h2 className={cx("text-[15px] font-semibold text-fg", brand && "font-brand")}>{title}</h2>
           {note && <p className="mt-0.5 text-[12.5px] leading-snug text-fg-muted">{note}</p>}
         </div>
         {right}
@@ -161,14 +162,15 @@ export function SettingsPage({ model, actions }: { model: SettingsModel; actions
     <PartsSurface place="editor">
       <ScrollArea className="size-full" contentClassName="mx-auto flex max-w-[980px] min-w-[300px] flex-col gap-7 px-10 pt-7 pb-12 max-[640px]:px-4">
         <header className={BODY}>
-          <h1 className="text-[22px] font-semibold text-fg">Protoboard settings</h1>
+          {/* the page's title is the product's name: the brand face under every theme (PB-1070) */}
+          <h1 className="font-brand text-[22px] font-semibold text-fg">Protoboard settings</h1>
         </header>
 
         <Section title="Account">
           <AccountCard account={model.account} actions={actions} />
         </Section>
 
-        <Section title="Protoboard">
+        <Section title="Protoboard" brand>
           <Card className={cx(BODY, "flex flex-col text-[13px] text-fg")}>
             <div className="flex min-h-10 items-center gap-3 px-4 py-2">
               <span className="w-[88px] shrink-0 text-fg-muted">Version</span>

@@ -37,9 +37,7 @@ import {
   ViewerHierarchy,
   ViewerNodeMenu,
   cx,
-  defineTheme,
   useViewer,
-  vscodeThemeAdapter,
   type HierarchyCommand,
   type HierarchyNode,
   type HierarchyPanelState,
@@ -48,6 +46,7 @@ import {
 } from "@deltarobotics/uhd-viewer/components";
 import type { ResolvedView } from "@protoboardai/core";
 import { MissingPartsHint, PartStatusStyles, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, type HostAdapter, type PartTrust, type ViewDefinition } from "@protoboardai/views";
+import { isProtoboardColourTheme, vscodeViewThemeAdapter } from "@protoboardai/views/theme";
 import { Logo } from "../Logo.js";
 import { DEV_SERVER_IS, type ViewerStatus } from "./devLink.js";
 import type { DevAction, FromWebview, HierarchyAction, HierarchyRowContext, ModuleSource, SourceAction } from "./protocol.js";
@@ -92,44 +91,16 @@ export interface VsCodeViewerOptions extends UhdViewerOptions {
   partStatus?: Record<string, { trust: PartTrust; basis?: string; blank?: boolean }>;
 }
 
-/** VS Code's faces, or the Protoboard ones under a Protoboard colour theme (the only place they apply). */
-const VSCODE_FACES = { fontUi: "var(--vscode-font-family)", fontLabel: "var(--vscode-font-family)", fontMono: "var(--vscode-editor-font-family, ui-monospace, monospace)" };
-const PROTOBOARD_FACES = { fontUi: '"Kode Mono", var(--vscode-font-family)', fontLabel: '"Kode Mono Bold", "Kode Mono", var(--vscode-font-family)', fontMono: "var(--vscode-editor-font-family, ui-monospace, monospace)" };
-
 /** The colour theme VS Code applies is a Protoboard one (the extension's Protoboard Dark or Light). */
-export const isProtoboardTheme = (doc: Document | undefined = typeof document === "undefined" ? undefined : document): boolean =>
-  /^protoboard\b/i.test(doc?.body?.dataset.vscodeThemeId ?? doc?.body?.dataset.vscodeThemeName ?? "");
+export const isProtoboardTheme = isProtoboardColourTheme;
 
 /**
- * VS Code's theme (uhd-viewer's adapter, every token on `--vscode-*`) with
- * the faces of the colour theme in use: a change of theme (the body's class
- * or its theme id) re-themes.
+ * VS Code's theme with the faces of the colour theme in use: the one adapter
+ * every Protoboard webview has (`vscodeViewThemeAdapter` in
+ * @protoboardai/views), with the viewer's own faint text.
  */
-export function vscodeShellThemeAdapter(doc: Document | undefined = typeof document === "undefined" ? undefined : document): ThemeAdapter {
-  const base = vscodeThemeAdapter(doc);
-  const current = () => {
-    const t = base.current();
-    return defineTheme(t, { id: t.id, label: t.label, tokens: isProtoboardTheme(doc) ? PROTOBOARD_FACES : VSCODE_FACES });
-  };
-  return {
-    id: "vscode",
-    current,
-    subscribe: doc?.body
-      ? (onChange) => {
-          let key = `${doc.body.className}|${isProtoboardTheme(doc)}`;
-          const observer = new MutationObserver(() => {
-            const next = `${doc.body.className}|${isProtoboardTheme(doc)}`;
-            if (next !== key) {
-              key = next;
-              onChange(current());
-            }
-          });
-          observer.observe(doc.body, { attributes: true, attributeFilter: ["class", "data-vscode-theme-id", "data-vscode-theme-name"] });
-          return () => observer.disconnect();
-        }
-      : undefined,
-  };
-}
+export const vscodeShellThemeAdapter = (doc: Document | undefined = typeof document === "undefined" ? undefined : document): ThemeAdapter =>
+  vscodeViewThemeAdapter(doc, { viewFaint: false });
 
 export function VsCodeShell(props: VsCodeViewerOptions) {
   const adapter = useMemo(() => vscodeShellThemeAdapter(), []);

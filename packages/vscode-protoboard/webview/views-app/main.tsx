@@ -498,7 +498,7 @@ function AccessGate({ screen, children }: { screen: Screen; children: React.Reac
     <div className="pb-access size-full" style={{ position: "relative" }}>
       <div className="pb-signed-out" data-reason={access.reason ?? "signed-out"}>
         <div className="pb-signed-out-card" role="region" aria-labelledby="pb-signed-out-title">
-          <h1 id="pb-signed-out-title">{c.title}</h1>
+          <h1 id="pb-signed-out-title" className="font-brand">{c.title}</h1>
           {said && <p>{said}</p>}
           {access.reason !== "checking" && !/no account|without an account/i.test(said) && <p className="pb-signed-out-unlocks">{LOCAL_STILL_WORKS}</p>}
           {c.buttons.length > 0 && (
@@ -518,9 +518,10 @@ function AccessGate({ screen, children }: { screen: Screen; children: React.Reac
 
 function App({ screen, theme }: { screen: Screen; theme: string }) {
   const Screen = SCREENS[screen] ?? Waiting;
-  // the Inspector's selection and the DRC panel are native views: VS Code's own faces, as in the viewer tab beside them
-  // (the Protoboard faces only under a Protoboard colour theme)
-  const adapter = useMemo(() => (theme === "vscode" && (screen === "inspector" || screen === "drc") ? vscodeViewThemeAdapter() : themeAdapterFor(theme)), [screen, theme]);
+  // every screen has VS Code's colours and the faces of the colour theme in use, as the viewer tab beside it: Kode Mono
+  // only under a Protoboard colour theme (PB-1070); the Inspector's selection and the DRC panel also read faint text as a
+  // native view draws it
+  const adapter = useMemo(() => (theme === "vscode" ? vscodeViewThemeAdapter(undefined, { viewFaint: screen === "inspector" || screen === "drc" }) : themeAdapterFor(theme)), [screen, theme]);
   return (
     <ThemeProvider adapter={adapter} className="pb-app size-full">
       <AccessGate screen={screen}>
