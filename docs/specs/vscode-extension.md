@@ -252,8 +252,9 @@ and live rebuilds from `protoboard dev` over HTTP; the dev page is no longer
 framed. The messages are the same, plus `openModule` and `openPair`: a
 link's pair view opens as a viewer tab of its own at the link's level, its
 `link`, `a` and `b` in the tab's URI and passed to the view as `params`. A
-viewer's BOM and Library tabs open the BOM editor and the full-page library,
-the VS Code editors of their own, rather than drawing them in the viewer.)
+viewer's BOM tab opens the BOM editor, a VS Code editor of its own, rather
+than drawing it in the viewer. The viewer has no Library tab (PB-1070): the
+library is the Library side bar's, with its full page and part pages.)
 
 The viewer runs as before (`protoboard dev`), with a host message
 channel added to its embedding API (`mountViewer`):

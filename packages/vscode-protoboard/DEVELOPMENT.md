@@ -9,7 +9,7 @@ the project's own `protoboard` CLI and lives in VS Code's own places:
 | --- | --- |
 | Editor tabs | **The viewer**: one tab per module and view, as many as you like (below), each with its own **hierarchy** at its left: the tab's project as a tree, synced with its canvas (below). Source files and artifacts. |
 | Secondary side bar (right): **Protoboard Inspector** | One view: what the focused viewer tab has selected, shown as the viewer's own inspector shows it, every artifact a card (below). |
-| Activity bar: **Protoboard Library**, **Protoboard Project Parts**, **Protoboard Cloud** | **Library**: every active parts library, searched and filtered, with a preview and Add to project (below). **Project Parts**: the project's parts by library, each with its part status (gray local, yellow unverified, green verified, blue official) and its sync with the library (in sync, update available, diverged, local only); its heading opens the **Project Parts page**, the same parts as cards in an editor tab (below). **Cloud**: the account, the project, its releases and what it costs (below). Each container's one view has the container's name, so the side bar's title is that one name (not "PROTOBOARD LIBRARY: LIBRARY"). |
+| Activity bar: **Protoboard Library**, **Protoboard Project Parts**, **Protoboard Cloud** | **Library**: every active parts library, searched and filtered, with a preview and Add to project (below). **Project Parts**: the project's parts by library, each with its part status (gray local, yellow unverified, green verified, blue official) and its sync with the library (in sync, update available, diverged, local only); its heading opens the **Project Parts page**, the same parts as cards in an editor tab (below). **Cloud**: the account, the project, its releases and what it costs (below), and under it **Help**: Documentation, Feedback and Issues, Discord, in every window (also in the palette, `Protoboard: Open Documentation` and the rest, and in the status bar item's tooltip). Each container's main view has the container's name, so the side bar's title is that one name (not "PROTOBOARD LIBRARY: LIBRARY"). |
 | Panel (next to Problems): **DRC** | The project's findings in severity lanes, one line each (below). Shown when a project opens. The only DRC: the viewer has none of its own. |
 | Problems panel | Every finding at its source file and line. |
 | Status bar | The Protoboard **0** mark and **Protoboard**, then one mark for the last check of the active editor's project (a check mark, a warning or an error; the counts are in the tooltip and in VS Code's own Problems item; click to check again), and the Protoboard Cloud account. |
@@ -102,9 +102,14 @@ Protoboard Inspector's, the design rule checks the DRC panel's.
   always the same tab.
 - **View tabs.** The header lists the views the module supports, from the
   view registry (`@protoboardai/views`): Diagram, 3D when there is a model,
-  and the domain views (Schematic, PCB, BOM, Pair, Library; planned ones show
-  what is coming). Click switches the tab's view; Ctrl+click (or middle-click)
-  opens the view in a new editor tab beside it.
+  and the domain views (Schematic, PCB, BOM, Pair; planned ones show what is
+  coming). Click switches the tab's view; Ctrl+click (or middle-click) opens
+  the view in a new editor tab beside it. The library is not a viewer tab: it
+  is the Library side bar, whose full page and part pages open as tabs of
+  their own.
+- **Hierarchy card.** The tab's hierarchy floats at its left, a card like the
+  header, 4 px from the edges. The header's **Hierarchy** button opens and
+  folds it (a short slide); folded, the canvas takes the whole tab.
 - **Toolbar and legend.** Fit and zoom, then how links are drawn (one line
   per link or every conductor) and grounds. The legend holds the colouring
   (domain, DRC health, signal) it explains, and folds to its header; it

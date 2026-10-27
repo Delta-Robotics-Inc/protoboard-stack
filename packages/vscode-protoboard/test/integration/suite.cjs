@@ -98,6 +98,8 @@ exports.run = async function run() {
   assert.ok(tab.state.views.some((v) => v.id === "diagram") && tab.state.views.some((v) => v.id === "3d"), `view tabs: ${JSON.stringify(tab.state.views)}`);
   // tabs scoped to the module shown (PB-920): the quadcopter's system has no board drawings of its own
   assert.ok(!tab.state.views.some((v) => v.id === "schematic" || v.id === "pcb"), `board drawings at the top level: ${JSON.stringify(tab.state.views)}`);
+  // the library is the Library side bar's, not a viewer tab's (PB-1070)
+  assert.ok(!tab.state.views.some((v) => v.id === "library"), `a Library tab in the viewer: ${JSON.stringify(tab.state.views)}`);
   assert.equal(viewerTabs().length, 1);
   assert.equal(viewerTabs()[0].label, tab.title);
   assert.ok(!/Protoboard|UHD viewer/.test(tab.title), `tab title ${tab.title}`);

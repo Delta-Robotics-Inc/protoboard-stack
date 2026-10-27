@@ -146,6 +146,12 @@ describe("the extension's manifest", () => {
     for (const [container, views] of containers) {
       expect(views.filter((v) => v.id.startsWith("protoboard.signin.")), container).toEqual([]);
       for (const v of views) {
+        // Help (docs, feedback, Discord) is there in every window, with a project or not (PB-1070)
+        if (v.id === "protoboard.help") {
+          expect(container).toBe("protoboard-cloud");
+          expect(v.when, v.id).toBeUndefined();
+          continue;
+        }
         expect(v.when, v.id).toBe(v.id.startsWith("protoboard.start.") ? "protoboard.noProject || protoboard.needsSetup" : "protoboard.hasProject && !protoboard.needsSetup");
         expect(v.when, v.id).not.toMatch(/locked|signedIn/);
       }

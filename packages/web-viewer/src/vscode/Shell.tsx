@@ -238,8 +238,15 @@ function useRegistry(views: ResolvedView[] | undefined, given?: ViewRegistry): V
   return registry;
 }
 
-/** Views VS Code shows in editors of their own (PB-912): the full-page library and the BOM editor. */
-const NATIVE_VIEWS = new Set(["library", "bom"]);
+/** Views VS Code shows in editors of their own (PB-912): the BOM editor. */
+const NATIVE_VIEWS = new Set(["bom"]);
+
+/**
+ * Views a VS Code viewer tab does not offer (PB-1070): the library is the
+ * Library side bar's, and its full page and part pages open from there; a
+ * header tab is for what this tab shows.
+ */
+const NOT_IN_VSCODE = new Set(["library"]);
 
 /** What the floating header and the toolbar cover (the viewer's floating cards sit inside it). */
 const INSETS = { "--uhd-inset-top": "44px", "--uhd-inset-left": "0px", "--uhd-inset-right": "0px" } as CSSProperties;
@@ -258,7 +265,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   const c = useViewer();
   const registry = useRegistry(views, given);
   const path = c.drill.join("/");
-  const tabs = registry.forModule(c.levelDef, c.source.bundle, path);
+  const tabs = registry.forModule(c.levelDef, c.source.bundle, path).filter((t) => !NOT_IN_VSCODE.has(t.id));
   // a domain tab (schematic, BOM, …) when one is shown; the viewer's own view (diagram, 3D) otherwise
   const [domain, setDomain] = useState<string | null>(() => (bridge.startView === "diagram" || bridge.startView === "3d" ? null : bridge.startView));
   const lastView = useRef(c.view);
@@ -276,7 +283,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
     } else setDomain(id);
   };
   useEffect(() => bridge.onShowView(show));
-  // views with an editor of their own in VS Code (the full library, the BOM editor): their tab opens it
+  // views with an editor of their own in VS Code (the BOM editor): their tab opens it
   const opensNative = (id: string) => NATIVE_VIEWS.has(id);
   const host = useMemo<HostAdapter>(
     () => ({
@@ -372,7 +379,8 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
         <Breadcrumb part={on.part ? label : undefined} />
         <SourcePath bridge={bridge} path={on.path} />
       </Header>
-      <ViewerHierarchy state={bridge.hierarchyState} onStateChange={bridge.onHierarchyState} onOpenChange={setHierarchyOpen} command={hierarchyCommand} rowAttributes={rowAttributes} ownMenu={false} />
+      {/* a floating card; the header's Hierarchy button is its one fold control (PB-1070) */}
+      <ViewerHierarchy state={bridge.hierarchyState} onStateChange={bridge.onHierarchyState} onOpenChange={setHierarchyOpen} command={hierarchyCommand} rowAttributes={rowAttributes} ownMenu={false} foldButton={false} />
       <div className="workspace" role="tabpanel" aria-label={active?.title}>
         {active?.id === "diagram" ? (
           <>
