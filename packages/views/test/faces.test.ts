@@ -1,5 +1,5 @@
 /**
- * The faces across the extension (PB-1070). Mark: "the theme font should be
+ * The faces across the extension (PB-1070): "the theme font should be
  * applied across the app, but also in other themes at least the protoboard
  * title text should be the KodeMono theme, as that is the app branding".
  * Every webview takes one adapter (vscodeViewThemeAdapter): Kode Mono under

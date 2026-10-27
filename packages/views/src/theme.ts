@@ -155,7 +155,7 @@ export const isProtoboardColourTheme = (doc: Document | undefined = typeof docum
   /^protoboard\b/i.test(doc?.body?.dataset.vscodeThemeId ?? doc?.body?.dataset.vscodeThemeName ?? "");
 
 /**
- * The Protoboard brand face: bold Kode Mono, under every theme (Mark, PB-1070: "the protoboard title text should be the
+ * The Protoboard brand face: bold Kode Mono, under every theme (PB-1070: "the protoboard title text should be the
  * KodeMono theme, as that is the app branding"). The wordmark and the titles that are the product's name use it, as
  * Tailwind's `font-brand` (brand.css declares the same stack); every other text follows the theme's faces.
  */
