@@ -63,8 +63,8 @@ describe("the manifest: a window with no project (PB-931)", () => {
         expect(w.contents, w.when).not.toContain("protoboard.init)");
         expect(w.contents, w.when).not.toMatch(/npm install|\brun protoboard\b/i);
       }
-      // every other view of the container needs a project that is set up
-      for (const v of views.filter((x) => x !== start[0])) expect(v.when, v.id).toBe("protoboard.hasProject && !protoboard.needsSetup");
+      // every other view of the container needs a project that is set up, except Help and Feedback (PB-1070: always there)
+      for (const v of views.filter((x) => x !== start[0] && x.id !== "protoboard.help")) expect(v.when, v.id).toBe("protoboard.hasProject && !protoboard.needsSetup");
     }
     // the start views are the ones the extension registers
     const ids = starts.map((id) => (c.views[id] as { id: string; when?: string }[]).find((v) => v.when === START)!.id).sort();

@@ -11,6 +11,7 @@ import { homedir, release as osRelease } from "node:os";
 import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { basename, delimiter, dirname, extname, isAbsolute, join, relative, sep } from "node:path";
 import * as vscode from "vscode";
+import { helpCommands, helpMarkdown, registerHelp } from "./help.js";
 import { buildArtifacts, describeArtifact, describeInstances, openMode, partChoices, sortArtifacts, type ArtifactEntry, type PartChoice } from "./artifacts.js";
 import { openOutside } from "./openOutside.js";
 import { countDiagnostics, mapDiagnostics, parseCheck, skippedChecks, statusLabel, statusText, type Counts, type MappedDiagnostic } from "./check.js";
@@ -544,6 +545,8 @@ class ProtoboardExtension {
       cmd("protoboard.openSourceInViewer", (uri?: vscode.Uri, defId?: string) => this.openSourceInViewer(uri, typeof defId === "string" ? defId : undefined)),
       // a window with no project, or one whose project is not set up: each Protoboard container has a view whose welcome offers New Project or Initialize (nothing to list)
       ...START_VIEWS.map((id) => vscode.window.registerTreeDataProvider(id, { getChildren: () => [], getTreeItem: (x: vscode.TreeItem) => x })),
+      // documentation, feedback and Discord: the Cloud side bar's Help and Feedback view and the palette (PB-1070)
+      ...registerHelp(),
       this.lensChanged,
       vscode.languages.registerCodeLensProvider({ scheme: "file", pattern: "**/*.uhd.ts" }, { onDidChangeCodeLenses: this.lensChanged.event, provideCodeLenses: (doc) => this.lenses(doc) }),
       vscode.workspace.onDidChangeConfiguration((e) => e.affectsConfiguration("protoboard.editor.codeLens") && this.lensChanged.fire()),
@@ -2222,7 +2225,9 @@ class ProtoboardExtension {
     else if (this.failed.has(shown)) md.appendMarkdown("The last check failed: see the Protoboard log.\n\n");
     const dev = this.sessions.get(shown);
     if (dev?.endpoint) md.appendMarkdown(`Dev server: ${dev.endpoint.url} (${dev.process?.running ? "started here" : "attached"})\n\n`);
-    md.appendMarkdown("Click to check.");
+    md.appendMarkdown("Click to check.\n\n");
+    md.appendMarkdown(helpMarkdown());
+    md.isTrusted = { enabledCommands: helpCommands() };
     this.status.tooltip = md;
     this.status.show();
   }
