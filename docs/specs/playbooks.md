@@ -113,6 +113,11 @@ towards "workbook" (PB-1077), and Mark decides.
 The example shows the first two of the robotics playbook's five phases.
 The format is data so that the CLI, the VS Code extension and an MCP client
 read the same thing; `README.md` beside it is the version a person reads.
+A phase names its skills as `<extension id>:<skill id>`. Until skills are
+looked up and exported to agents by that qualified name (today `skills
+read` and the export to `.claude/skills/<id>` use the bare id), the same
+skill id from two installed extensions is a load error, so the skill a
+playbook names is the one an agent runs.
 A gate names each check with the extension that provides it,
 `<extension id>:<check id>` (as skills are named), because check ids are only
 unique within one extension; it is the check `protoboard check` reports as
@@ -168,20 +173,28 @@ enforced locks, and a project may record a waiver with a reason.
 ### 3.5 Iteration
 
 A lifecycle moves forward one gate at a time, and may go back. `protoboard
-phase reopen <phase>` makes an earlier phase current again, with a reason
-recorded. That phase and every phase after it are open again: their gate
+phase reopen <phase>` makes an earlier phase, or the current one, current
+again (a new iteration of it), with a reason recorded. That phase and every
+phase after it are open again: their gate
 results and sign-offs are kept in `lifecycle.json` as the previous
 iteration's history, no longer count, and each phase closes again through
 its own gate. `lifecycle.json` numbers the iterations, so a report can say
 which one a result belongs to.
 
-Any earlier phase may be reopened. A playbook that iterates by design
+Any earlier phase, or the current one, may be reopened. A playbook that iterates by design
 declares the usual loop as `iterates`: the phases a loop starts `from` and
 the phases it goes back `to` (robotics: from integration or field test, back
 to architecture, subsystem prototypes or integration). `protoboard phase`
 offers those as the next step beside `phase next`, and the generated
 `AGENTS.md` section names them; reopening another phase works the same way
 and is only not suggested.
+
+Adding a playbook (`playbook add`) can change phases already closed: a new
+phase anchored before the current one, or deliverables and gate checks
+added to a closed phase. The command shows the earliest phase it changes
+and reopens it, as `phase reopen` does, with the reason "playbook <name>
+added"; every later phase opens again with it. A playbook that only changes
+the current phase or later ones leaves the closed phases as they are.
 
 ## 4. How a project uses them
 
@@ -190,10 +203,14 @@ and is only not suggested.
   blank project. `protoboard playbook add product` layers one later.
 - `protoboard check` reports, beside its findings, the current phase, its
   missing deliverables and failing gate checks. `protoboard phase` shows the
-  lifecycle; `protoboard phase next` closes a gate when every deliverable of
-  the merged phase (from every playbook layered on it) is present, every gate
-  check ran (status `ran`, as `protoboard check` records it) with no errors,
-  and its sign-off is recorded. A missing deliverable blocks the gate whether
+  lifecycle; `protoboard phase next` runs the gate's checks itself, on the
+  project as it is at that moment (an earlier `protoboard check` does not
+  count), and closes the gate when every deliverable of the merged phase
+  (from every playbook layered on it) is present, every gate check ran
+  (status `ran`, as `protoboard check` records it) with no errors, and its
+  sign-off is recorded. `lifecycle.json` keeps the results with the commit
+  they ran on, and whether the working tree had changes, as the record of
+  what closed the phase. A missing deliverable blocks the gate whether
   or not a check looks for it. A check that was skipped (it threw, or its
   tool is unavailable) or did not run blocks the gate as a failure does; only
   a waiver recorded in `lifecycle.json`, with a reason, lets the phase close
