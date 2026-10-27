@@ -253,7 +253,7 @@ export const BLANK_EXTENSIONS = ["@protoboardai/ext-hardware"];
  * workspace's `projects/<group>/<project>/protoboard/`), and what file
  * managers and git leave.
  */
-const KEPT_ON_INIT = new Set(["CLAUDE.md", ".gitkeep", ".DS_Store", "Thumbs.db", "desktop.ini"]);
+export const KEPT_ON_INIT: ReadonlySet<string> = new Set(["CLAUDE.md", ".gitkeep", ".DS_Store", "Thumbs.db", "desktop.ini"]);
 
 /**
  * `skills: false` (`protoboard init --no-skills`) leaves the `postinstall`

@@ -452,6 +452,15 @@ export interface InstallResult {
 }
 
 /**
+ * The stack's extensions that declare each managed runtime, the one to suggest
+ * first: what a project made by plain `protoboard init` (no such extension
+ * yet) is told to add. A test keeps it in step with the extension manifests.
+ */
+export const RUNTIME_EXTENSIONS: Readonly<Record<string, readonly string[]>> = {
+  cad: ["ext-parts", "ext-enclosure-cad", "ext-frame-cad", "ext-harness-cad"],
+};
+
+/**
  * `protoboard tools install <id|all>`: create or update each runtime in the
  * project, record it, and probe the tools it provides. Runtimes are installed
  * one at a time; a failure is reported per runtime and does not stop the
@@ -462,8 +471,9 @@ export async function installRuntimes(root: string, extensions: LoadedExtension[
   const wanted = ids.includes("all") ? plans : ids.map((id) => plans.find((p) => p.id === id) ?? id);
   const unknown = wanted.filter((w): w is string => typeof w === "string");
   if (unknown.length) {
+    const hints = unknown.flatMap((id) => (RUNTIME_EXTENSIONS[id] ? [`the ${id} runtime comes with ${RUNTIME_EXTENSIONS[id].join(", ")}: \`protoboard extensions add ${RUNTIME_EXTENSIONS[id][0]}\` adds the first`] : []));
     throw new Error(
-      `no extension in this project declares a ${unknown.join(", ")} runtime (declared: ${plans.map((p) => p.id).join(", ") || "none"}); runtimes come from the tools of the configured extensions and capability providers`,
+      `no extension in this project declares a ${unknown.join(", ")} runtime (declared: ${plans.map((p) => p.id).join(", ") || "none"}); runtimes come from the tools of the configured extensions and capability providers${hints.length ? `. ${hints.join("; ")}` : ""}`,
     );
   }
   const results: InstallResult[] = [];

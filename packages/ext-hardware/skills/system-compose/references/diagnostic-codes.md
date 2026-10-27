@@ -17,6 +17,7 @@ explains its codes.
 | Code | Severity | Means | Do |
 | --- | --- | --- | --- |
 | `PB_SOURCE_LOAD_FAILED` | error | A `src/**/*.uhd.ts` or `parts/local/**/*.uhd.ts` file threw on import. | Fix the TypeScript error shown; nothing in that file is loaded until then. |
+| `PB_DEFINITION_INVALID` | error | A definition's `interfaces` list holds something that is not one interface: most often a builder that returns several (`AcPower(...)`) placed without `...`. The definition is left out, so its instances also report `PB_UNRESOLVED_DEFINITION`. | Spread the builder (`...AcPower(...)`) or fix the entry the message names. |
 | `PB_SOURCES_IN_CATALOG` | info | A `sources` glob in `protoboard.config.ts` matches files in the catalog folder (directly or through a link). They are not loaded as the project's code: a vendored part's source is evaluated confined, from `parts/origins.json`. | Narrow `sources` (the default is `src/**/*.uhd.ts` and `parts/local/**/*.uhd.ts`). |
 | `PB_STACK_REPLACE_REFUSED` | error (a command's) | `protoboard stack unpack` (or the extension's "Add the Stack from Another .vsix File") found a copy of the same stack version from another build in `~/.protoboard/stack`, and replacing it was not agreed to. | Replace it only if you trust where the file came from: `protoboard stack unpack <file> --replace`, or answer the extension's question. |
 | `PB_ROOT_NOT_FOUND` | error | `protoboard.config.ts` names a root export that does not exist. | Fix `root.source` / `root.export`. |
