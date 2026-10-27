@@ -74,6 +74,11 @@ describe("Protoboard Dark and Light", () => {
     });
   }
 
+  it("ship without filing the Marketplace listing under Themes (PB-1068): it files under Visualization", () => {
+    // the Marketplace's breadcrumb takes the first of its own ordering (Themes, Linters, Visualization, AI)
+    expect(pkg.categories).toEqual(["Visualization", "AI", "Linters"]);
+  });
+
   it("are contributed, and offered once after install", () => {
     expect(pkg.contributes.themes).toEqual([
       { label: "Protoboard Dark", id: "Protoboard Dark", uiTheme: "vs-dark", path: "./themes/protoboard-dark-color-theme.json" },
