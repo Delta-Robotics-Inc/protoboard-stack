@@ -78,6 +78,13 @@ For each source:
 
 - fetch it and save the bytes, or the extracted text for web pages, under
   `.research/downloads/`;
+- check that a "PDF" is one: its first bytes are `%PDF` (`file <download>`
+  says `PDF document`). Many datasheet links serve an HTML viewer or a
+  redirect page instead: LCSC's `www.lcsc.com/datasheet/…pdf` links (and
+  what distributor APIs return for them) are a viewer around the real file,
+  and several manufacturers' links redirect. Open the viewer, take the URL of
+  the file it loads, and record that URL; a wrapper's hash changes and
+  verify-part `--refetch` rejects it;
 - a documentation site built with GitBook (`docs.revrobotics.com`, many
   vendor docs) serves each page's Markdown when `.md` is appended to the
   page URL: save that export (`<page>.md`), hash its bytes, keep the page URL

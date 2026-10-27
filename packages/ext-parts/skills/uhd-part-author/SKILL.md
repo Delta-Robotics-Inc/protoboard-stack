@@ -250,6 +250,10 @@ Geometry). The geometry is made one of two ways.
 
 Pass `axis=` for holes and shafts (vendor `holes(...)` does this itself): the
 manifest then records each hole axis, and verify checks the frame against it.
+In a hand-written `signature()` or feature centroid, take a curved face's
+centre with `face.center(CenterOf.MASS)`: build123d's default for a full
+surface of revolution (a bore, a torus, an O-ring groove) is a point on its
+seam, not on its axis, and the feature then binds off-axis.
 Copy signatures from the manifest with
 `python library/cad/rebind.py library/parts/<id>.ts <manifest>` rather than by
 hand.

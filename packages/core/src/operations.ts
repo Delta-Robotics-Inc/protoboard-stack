@@ -72,11 +72,28 @@ export interface OperationRecord {
   data?: unknown;
   /** Findings attached to the run (a provider check, standard-output validation). */
   diagnostics?: ProjectDiagnostic[];
+  /**
+   * What the operation wrote with `ctx.log` (part-verify's findings, a build's
+   * progress), in order; and, when it threw, the error's stack. Absent when
+   * it logged nothing.
+   */
+  log?: string[];
   startedAt: string;
   finishedAt: string;
 }
 
-const digest = (b: string | Buffer) => "sha256:" + createHash("sha256").update(b).digest("hex");
+/** The lines of a thrown error worth keeping: its message, then up to 12 stack frames (none for a non-Error). */
+export function thrownTrace(e: unknown): string[] {
+  if (!(e instanceof Error)) return [`threw ${String(e)}`];
+  const frames = (e.stack ?? "")
+    .split("\n")
+    .filter((l) => /^\s+at /.test(l))
+    .slice(0, 12)
+    .map((l) => `  ${l.trim()}`);
+  return [`${e.name}: ${e.message}`, ...frames];
+}
+
+const digest = (b: string | Buffer) =>"sha256:" + createHash("sha256").update(b).digest("hex");
 
 export function findOperation(extensions: LoadedExtension[], id: string): { ext: LoadedExtension; op: OperationDecl } | undefined {
   for (const ext of extensions) {
@@ -200,6 +217,8 @@ export async function invokeOperation(p: Project, ext: LoadedExtension, inv: Inv
       // the staging folder is removed again before the next run
     }
     result = { status: "failed", summary: (e as Error).message.split("\n")[0] };
+    // the summary keeps one line; the stack says where it broke (a bare "Cannot read properties of undefined" is not actionable)
+    logs.push(...thrownTrace(e));
   }
   const record: OperationRecord = {
     ...base,
@@ -208,6 +227,7 @@ export async function invokeOperation(p: Project, ext: LoadedExtension, inv: Inv
     outputs,
     ...(result.data !== undefined ? { data: result.data } : {}),
     ...(diagnostics ? { diagnostics } : {}),
+    ...(logs.length ? { log: logs } : {}),
     finishedAt: now(),
   };
   if (options.record !== false && inv.effect !== "pure") {

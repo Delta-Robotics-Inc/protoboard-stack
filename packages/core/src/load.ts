@@ -67,10 +67,28 @@ export function freshImporter(): TsImporter {
   return async <T>(file: string) => (await api.import(pathToFileURL(file).href, import.meta.url)) as T;
 }
 
+/**
+ * The stack package a failed import could not find (`@protoboardai/core`,
+ * `@deltarobotics/uhd`), when that is why it failed: the project's packages
+ * are not installed or linked. Else undefined.
+ */
+export function missingStackPackage(e: unknown): string | undefined {
+  const err = e as { code?: string; message?: string } | undefined;
+  if (err?.code !== "ERR_MODULE_NOT_FOUND" && !/Cannot find (package|module)/.test(err?.message ?? "")) return undefined;
+  return /Cannot find (?:package|module) '((?:@protoboardai|@deltarobotics)\/[^/']+)/.exec(err?.message ?? "")?.[1];
+}
+
+/** What to do when protoboard.config.ts cannot load because the project's packages are missing (not a sign-in or config problem). */
+export const missingPackagesMessage = (pkg: string): string =>
+  `${CONFIG_FILE} could not load: ${pkg} is not installed in this project. ` +
+  "Run `protoboard stack link` to use the Protoboard installed for your user, or `npm install` if the project installs its own packages (`protoboard stack` says which)";
+
 export async function loadConfig(root: string): Promise<ProtoboardConfig> {
   const mod = await importTs<{ default?: ProtoboardConfig }>(join(root, CONFIG_FILE)).catch((e: unknown) => {
     // a project written for the former npm scope (PB-941): say what to change, not only what is missing
     if (isFormerScopeImport(e)) throw new Error(`${CONFIG_FILE}: ${importFailure(e)}`);
+    const missing = missingStackPackage(e);
+    if (missing) throw new Error(missingPackagesMessage(missing));
     throw e;
   });
   if (!mod.default) throw new Error(`${CONFIG_FILE} has no default export`);
@@ -109,6 +127,20 @@ export function expandGlob(root: string, pattern: string): string[] {
 
 export const isModuleDef = (v: unknown): v is ModuleDef =>
   !!v && typeof v === "object" && typeof (v as ModuleDef).id === "string" && Array.isArray((v as ModuleDef).interfaces);
+
+/**
+ * What is wrong with a definition's `interfaces` list: every entry must be one
+ * interface object. A builder that returns several (`AcPower(...)`) placed
+ * without `...` leaves an array in the list. Empty when the list is sound.
+ */
+export function malformedInterfaces(def: ModuleDef): string[] {
+  const out: string[] = [];
+  (def.interfaces as unknown[]).forEach((x, i) => {
+    if (Array.isArray(x)) out.push(`interfaces[${i}] is a list of ${x.length}, not one interface: a builder that returns several (AcPower(...)) is spread into the list, \`...AcPower(...)\``);
+    else if (!x || typeof x !== "object") out.push(`interfaces[${i}] is ${x === null ? "null" : typeof x}, not an interface`);
+  });
+  return out;
+}
 
 /** Line of `id: "<id>"` in a source file, for source-located diagnostics. */
 export function locateId(file: string, id: string, root: string, key = "id"): SourceLocation {
@@ -310,6 +342,20 @@ export async function loadDefinitions(root: string, config: ProtoboardConfig, im
         // a definition re-exported from another local file belongs to the file that declares its id
         const declared = files.find((f) => locateId(f, def.id, root).line !== undefined) ?? file;
         const source = locateId(declared, def.id, root);
+        // an interface that is not one object (a builder's array not spread) would crash the checks far from its cause:
+        // say where it is and leave the definition out, so its users report it unresolved instead
+        const bad = malformedInterfaces(def);
+        if (bad.length) {
+          diagnostics.push({
+            code: "PB_DEFINITION_INVALID",
+            severity: "error",
+            entity: { kind: "definition", id: def.id },
+            message: `${def.id}: ${bad.join("; ")}`,
+            source,
+            validator: "protoboard/loader",
+          });
+          continue;
+        }
         records.push({
           def,
           origin: { kind: "local", tier: localTier(source.file), source, artifactBase: { kind: "project" } },

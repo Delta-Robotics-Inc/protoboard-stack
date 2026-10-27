@@ -15,9 +15,11 @@
  *   move). A child's relative position is its absolute position minus its
  *   container's, where the container is placed as the viewer places it: by
  *   its own edit, else by its hand position inside its own container.
- * - A level with a hand layout is not laid out automatically: nodes the hand
- *   layout does not name sit at (0, 0) of their container. So the first save
- *   of a level that has no hand layout yet must name every node of the level.
+ * - A level with a hand layout is not laid out automatically: a top-level
+ *   node the hand layout does not name is put at the free spot nearest what
+ *   it links to (uhd-viewer's fillMissing), and that spot moves whenever the
+ *   rest of the layout does. So the first save of a level that has no hand
+ *   layout yet names every node of the level, which pins them all.
  *   Those positions come from the page (`LayoutSnapshot`, read from the
  *   rendered diagram); without a snapshot that covers the edits, the level is
  *   not written and is reported as skipped.

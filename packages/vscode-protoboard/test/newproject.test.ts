@@ -8,7 +8,8 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { EMPTY_TEMPLATE, KNOWN_TEMPLATES, canInitIn, folderFromName, folderHolding, folderNameProblem, folderNotice, initArgs, npxCommand, npxInitCommand, onPath, partsAddArgs, partsFailure, partsNotFetchedMessage, registryRefusal, templateChoices, toolsInstallHint, vscodeBefore, withoutRunHint } from "../src/newProject.js";
+import { KEPT_ON_INIT } from "@protoboardai/core";
+import { EMPTY_TEMPLATE, INIT_LEFTOVERS, KNOWN_TEMPLATES, canInitIn, folderFromName, folderHolding, folderNameProblem, folderNotice, initArgs, npxCommand, npxInitCommand, onPath, partsAddArgs, partsFailure, partsNotFetchedMessage, registryRefusal, templateChoices, toolsInstallHint, vscodeBefore, withoutRunHint } from "../src/newProject.js";
 import { canRun, globalCliScript, resolveCli } from "../src/cli.js";
 import { npmAuthProblem } from "../../core/src/stack.js";
 import { declarationLine, lensTitle, moduleAtLine, modulesInFile } from "../src/sourceModules.js";
@@ -162,6 +163,10 @@ describe("Create Project: the choices", () => {
     expect(npxInitCommand("0.1.3", ".").split(" ")[2]).toBe("@protoboardai/cli@0.1.3");
   });
 
+  it("accepts the same leftovers in a folder as protoboard init", () => {
+    expect([...INIT_LEFTOVERS].sort()).toEqual([...KEPT_ON_INIT].sort());
+  });
+
   it("makes a project only in a folder that is empty or new", () => {
     const fs: Record<string, string[]> = { "/w": ["a.txt"], "/w/empty": [], "/w/git": [".git"] };
     const exists = (d: string) => d in fs;
@@ -171,6 +176,9 @@ describe("Create Project: the choices", () => {
     expect(canInitIn("/w/new", list, exists)).toBe(true);
     // a folder with only .git in it is not empty to `protoboard init`
     expect(canInitIn("/w/git", list, exists)).toBe(false);
+    // what init itself accepts (a workspace template's .gitkeep) does not make a folder "not empty" here either
+    fs["/w/kept"] = [".gitkeep", "CLAUDE.md"];
+    expect(canInitIn("/w/kept", list, exists)).toBe(true);
     const can = (d: string) => canInitIn(d.split("\\").join("/"), list, exists);
     expect(folderNameProblem("bottle", "/w", can)).toBeUndefined();
     expect(folderNameProblem("  ", "/w", can)).toMatch(/name/);

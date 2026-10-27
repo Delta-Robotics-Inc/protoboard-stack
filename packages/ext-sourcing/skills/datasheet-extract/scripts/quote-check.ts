@@ -206,10 +206,17 @@ function checkFigures(f: Field, ev: Evidence[], base: string) {
     notes.push("two readings from the same reader: one reader asked twice is not two readings");
   }
   const target = asNumber(f.value);
-  const values = readings.map((r) => asNumber(r.value));
+  // a number agrees within 0.5 %; a reading that is not a number (a material, a finish, a marking) agrees when it reads
+  // the same, ignoring case and spacing (it was always "disagree" before: asNumber gave undefined)
+  const sameText = (v: unknown) => typeof f.value === "string" && typeof v === "string" && norm(v).toLowerCase().replace(/\s+/g, " ") === norm(f.value).toLowerCase().replace(/\s+/g, " ");
+  const agrees = (v: unknown) => {
+    if (target === undefined) return sameText(v);
+    const n = asNumber(v);
+    return n !== undefined && Math.abs(n - target) <= 0.005 * Math.abs(target);
+  };
   let readings_agree: boolean | null = null;
   if (readers.size >= 2 && readers.size === readings.length) {
-    readings_agree = target !== undefined && values.every((v) => v !== undefined && Math.abs(v - target) <= 0.005 * Math.abs(target));
+    readings_agree = f.value !== null && f.value !== undefined && readings.every((r) => agrees(r.value));
     if (!readings_agree) notes.push("independent readings disagree with each other or with the value: never average, take it to a human");
   } else notes.push("single reading: a second independent reader is required before this is cited");
   const verdict: Verdict = !ok ? "invalid" : readings_agree === false || !verified ? "weak" : "visual";

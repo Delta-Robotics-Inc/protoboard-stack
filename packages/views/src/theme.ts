@@ -204,9 +204,19 @@ export type ThemeChoice = "protoboard-dark" | "protoboard-light" | "protoboard-s
 
 export const THEME_CHOICES: readonly ThemeChoice[] = ["protoboard-dark", "protoboard-light", "protoboard-system", "vscode", "default-dark", "default-light"];
 
-/** The adapter for a choice (unknown: Protoboard dark). */
+/**
+ * A choice as given (`?theme=light` in a link or a brief) as the id it means:
+ * `light`, `dark` and `system` are Protoboard's own; ids pass through.
+ */
+export function themeChoiceOf(choice: string | null | undefined): string | undefined {
+  const c = choice?.trim().toLowerCase();
+  if (!c) return undefined;
+  return c === "light" || c === "dark" || c === "system" ? `protoboard-${c}` : c;
+}
+
+/** The adapter for a choice (unknown: Protoboard dark; `light`, `dark`, `system`: Protoboard's). */
 export function themeAdapterFor(choice: string | null | undefined): ThemeAdapter {
-  switch (choice) {
+  switch (themeChoiceOf(choice)) {
     case "protoboard-light":
       return protoboardThemeAdapter("light");
     case "protoboard-system":

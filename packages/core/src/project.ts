@@ -441,12 +441,13 @@ function netPortRef(def: ModuleDef, ref: string | undefined, lookup: ModuleLooku
 
 /** UHD validators: system rules (incl. link DRC), assembly, geometry bindings. */
 export function runModelChecks(p: Project): void {
-  const blocking = p.diagnostics.some((d) => d.severity === "error" && ["PB_INVALID_ENDPOINT", "PB_UNRESOLVED_DEFINITION", "PB_CONTAINMENT_CYCLE"].includes(d.code));
+  // PB_DEFINITION_INVALID: the root is imported apart from the registry, so a malformed root would still reach checkSystem
+  const blocking = p.diagnostics.some((d) => d.severity === "error" && ["PB_INVALID_ENDPOINT", "PB_UNRESOLVED_DEFINITION", "PB_CONTAINMENT_CYCLE", "PB_DEFINITION_INVALID"].includes(d.code));
   const skip = (validator: string, reason: string) => p.checks.push({ validator, status: "skipped", reason, counts: { error: 0, warning: 0, info: 0 } });
   const rootSource = p.rootDef ? p.definitions.get(p.rootDef.id)?.origin.source : undefined;
 
   if (!p.rootDef || blocking) {
-    const why = !p.rootDef ? "no root" : "unresolved definitions or invalid endpoints";
+    const why = !p.rootDef ? "no root" : "unresolved or invalid definitions, or invalid endpoints";
     skip("uhd/checkSystem", why);
     skip("uhd/assemble", why);
   } else {
