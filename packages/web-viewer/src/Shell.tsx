@@ -252,7 +252,7 @@ function Shell({ views, registry: given, pairRequests, theme, onTheme }: { views
         />
         {onTheme && <IconButton icon={light ? "moon" : "sun"} label={light ? "Dark theme" : "Light theme"} onClick={() => onTheme(light ? "protoboard-dark" : "protoboard-light")} />}
       </header>
-      {showHierarchy && <ViewerHierarchy state={hierarchyState} command={hierarchyCommand} onStateChange={keepHierarchy} onOpenChange={setHierarchyOpen} />}
+      {showHierarchy && <ViewerHierarchy state={hierarchyState} command={hierarchyCommand} onStateChange={keepHierarchy} onOpenChange={setHierarchyOpen} foldButton={false} />}
       <div className="workspace" role="tabpanel" aria-label={active?.title}>
         {active && <View key={active.id} module={c.levelDef} path={path} bundle={c.source.bundle} host={host} view={active} params={active.uhd ? undefined : params} />}
         {diagram && <ViewerInspector />}

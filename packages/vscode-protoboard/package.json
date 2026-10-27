@@ -160,6 +160,24 @@
         "icon": "$(filter)"
       },
       {
+        "command": "protoboard.help.docs",
+        "title": "Open Documentation",
+        "category": "Protoboard",
+        "icon": "$(book)"
+      },
+      {
+        "command": "protoboard.help.feedback",
+        "title": "Send Feedback or Report an Issue",
+        "category": "Protoboard",
+        "icon": "$(feedback)"
+      },
+      {
+        "command": "protoboard.help.discord",
+        "title": "Join the Discord",
+        "category": "Protoboard",
+        "icon": "$(comment-discussion)"
+      },
+      {
         "command": "protoboard.hierarchy.toggle",
         "title": "Toggle Hierarchy",
         "category": "Protoboard",
@@ -616,7 +634,15 @@
           "name": "Protoboard Cloud",
           "when": "protoboard.hasProject && !protoboard.needsSetup",
           "icon": "media/cloud.svg",
-          "contextualTitle": "Protoboard"
+          "contextualTitle": "Protoboard",
+          "initialSize": 4
+        },
+        {
+          "id": "protoboard.help",
+          "name": "Help",
+          "icon": "media/cloud.svg",
+          "contextualTitle": "Protoboard",
+          "initialSize": 1
         }
       ]
     },
