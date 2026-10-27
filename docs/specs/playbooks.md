@@ -74,7 +74,8 @@ towards "workbook" (PB-1077), and Mark decides.
     and sign-offs (a person records a decision);
 - **extensions** the playbook needs, with version ranges;
 - **handbook** chapters the phases cite;
-- **composes**: other playbooks it layers on (§3.3).
+- **composes**: the playbooks it can layer on, as alternatives; the project
+  chooses which one is below it (§3.3).
 
 ### 3.2 Format (draft)
 
@@ -86,6 +87,7 @@ towards "workbook" (PB-1077), and Mark decides.
   "summary": "Requirements, a system architecture across mechanical, electrical and firmware, subsystem prototypes, integration and field tests, iterated.",
   "extensions": { "@protoboardai/ext-hardware": "^0.3.0", "@protoboardai/ext-parts": "^0.3.0" },
   "composes": [],
+  "iterates": { "from": ["integration", "field-test"], "to": ["architecture", "subsystem-prototypes", "integration"] },
   "phases": [
     {
       "id": "requirements",
@@ -108,6 +110,7 @@ towards "workbook" (PB-1077), and Mark decides.
 }
 ```
 
+The example shows the first two of the robotics playbook's five phases.
 The format is data so that the CLI, the VS Code extension and an MCP client
 read the same thing; `README.md` beside it is the version a person reads.
 A gate names each check with the extension that provides it,
@@ -117,22 +120,42 @@ unique within one extension; it is the check `protoboard check` reports as
 (`core:uhd/assemble`, `core:protoboard/catalog`). A gate naming a check no
 installed extension (or the core) provides is a load error, not a silent pass.
 
+Playbooks are named the same way: `<extension id>:<playbook id>`
+(`@protoboardai/ext-hardware:product`), in `composes`, in a template's
+`playbooks`, in `lifecycle.json` and in the project's list, because two
+extensions may each ship a `robotics`. The `id` inside `playbook.json` is
+the part after the colon. On the command line a bare id is shorthand,
+accepted only when exactly one installed extension provides it; when more
+than one does, the command fails and lists the qualified names. Two
+playbooks with the same id in one extension is a load error.
+
 ### 3.3 Composition
 
 Playbooks layer. `product` adds EVT/DVT/PVT, cost, compliance and supply
 gates; it composes on top of a domain playbook (`robotics`, `iot-device`)
 rather than repeating its phases. Composition rules:
 
-1. Phases are merged by id; a layered playbook may add deliverables, skills
+1. The project's ordered list decides what is loaded and in what order: the
+   first playbook is the base, each later one layers on the merged lifecycle
+   before it. `composes` does not load anything; it lists the playbooks a
+   layered playbook may sit on, as alternatives (`product` composes
+   `robotics` or `iot-device`). Loading checks that each layered playbook has
+   one of its `composes` earlier in the project's list, and fails otherwise.
+   A playbook with an empty `composes` is a base: it stands alone and only
+   comes first.
+2. Phases are merged by id; a layered playbook may add deliverables, skills
    and gate checks to an existing phase, and add phases. A phase it adds that
    the playbooks below do not have names where it goes: `"after": "<phase id>"`
-   or `"before": "<phase id>"`, a phase of the merged lifecycle so far. A new
-   phase without an anchor is a load error; phases anchored to the same place
-   keep the layered playbook's own order. The merge is therefore one result
-   for the same files, whichever tool reads them.
-2. It may not remove a phase or a gate check of the playbook it composes on.
-3. A project lists its playbooks in order; `protoboard doctor` shows the
-   merged lifecycle.
+   or `"before": "<phase id>"`, a phase of the merged lifecycle so far. A
+   playbook that sits on several bases may give a list
+   (`"after": ["field-test", "pilot"]`): the first that exists in the merged
+   lifecycle is used. A new phase without an anchor, or with none that
+   exists, is a load error; phases anchored to the same place keep the
+   layered playbook's own order. The merge is therefore one result for the
+   same files, whichever tool reads them.
+3. It may not remove a phase or a gate check of the playbook it composes on.
+4. `protoboard doctor` shows the merged lifecycle and which playbook each
+   phase, deliverable and gate check came from.
 
 ### 3.4 State
 
@@ -142,6 +165,24 @@ playbooks, the current phase, and per phase the gate results and sign-offs
 are records like the review comments the owners already make; they are not
 enforced locks, and a project may record a waiver with a reason.
 
+### 3.5 Iteration
+
+A lifecycle moves forward one gate at a time, and may go back. `protoboard
+phase reopen <phase>` makes an earlier phase current again, with a reason
+recorded. That phase and every phase after it are open again: their gate
+results and sign-offs are kept in `lifecycle.json` as the previous
+iteration's history, no longer count, and each phase closes again through
+its own gate. `lifecycle.json` numbers the iterations, so a report can say
+which one a result belongs to.
+
+Any earlier phase may be reopened. A playbook that iterates by design
+declares the usual loop as `iterates`: the phases a loop starts `from` and
+the phases it goes back `to` (robotics: from integration or field test, back
+to architecture, subsystem prototypes or integration). `protoboard phase`
+offers those as the next step beside `phase next`, and the generated
+`AGENTS.md` section names them; reopening another phase works the same way
+and is only not suggested.
+
 ## 4. How a project uses them
 
 - `protoboard init --template drone` installs the template's extensions and
@@ -149,16 +190,18 @@ enforced locks, and a project may record a waiver with a reason.
   blank project. `protoboard playbook add product` layers one later.
 - `protoboard check` reports, beside its findings, the current phase, its
   missing deliverables and failing gate checks. `protoboard phase` shows the
-  lifecycle; `protoboard phase next` closes a gate when every gate check
-  ran (status `ran`, as `protoboard check` records it) with no errors, and its
-  sign-off is recorded. A check that was skipped (it threw, or its tool is
-  unavailable) or did not run blocks the gate as a failure does; only a
-  waiver recorded in `lifecycle.json`, with a reason, lets the phase close
-  without it.
+  lifecycle; `protoboard phase next` closes a gate when every deliverable of
+  the merged phase (from every playbook layered on it) is present, every gate
+  check ran (status `ran`, as `protoboard check` records it) with no errors,
+  and its sign-off is recorded. A missing deliverable blocks the gate whether
+  or not a check looks for it. A check that was skipped (it threw, or its
+  tool is unavailable) or did not run blocks the gate as a failure does; only
+  a waiver recorded in `lifecycle.json`, with a reason, lets the phase close
+  without a deliverable or a check.
 - The project's `AGENTS.md` gets a generated section: the playbooks, the
   current phase, the next deliverable and the skills that apply. Every command
-  that changes the lifecycle (`phase next`, `playbook add`, a sign-off or
-  waiver, an extension added or removed) rewrites that section in the same
+  that changes the lifecycle (`phase next`, `phase reopen`, `playbook add`, a
+  sign-off or waiver, an extension added or removed) rewrites that section in the same
   step, so `AGENTS.md`, `lifecycle.json`, MCP and VS Code never disagree;
   `init --refresh-guidance` rewrites it too, with the rest of the guidance.
 - The MCP server exposes the lifecycle (`project_status` gains the phase and
@@ -186,12 +229,13 @@ enforced locks, and a project may record a waiver with a reason.
 
 Templates already declare their extensions and catalog parts
 (`template.json`: `extensions`, `catalogParts`, `derivedFrom`). They gain
-`playbooks`, an ordered list:
+`playbooks`, an ordered list of qualified names (§3.2), the base first
+(§3.3):
 
 ```json
 {
   "title": "Drone: multirotor flight stack",
-  "playbooks": ["robotics", "drone"],
+  "playbooks": ["@protoboardai/ext-robotics:robotics", "@protoboardai/ext-drone:drone"],
   "extensions": ["@protoboardai/ext-hardware", "@protoboardai/ext-drone", "…"],
   "catalogParts": ["…"]
 }
@@ -202,7 +246,8 @@ uses the robotics playbook, a product template layers `product` on a domain
 playbook, a class-project template uses `class-project` with a short
 lifecycle. A blank project gets a default playbook (`hardware-project`: a
 minimal requirements, design, build, test lifecycle) so every project has a
-phase. Templates may also ship from extensions (architecture.md already
+phase. (`ext-robotics` above stands for whichever pack ships `robotics`,
+§7.1.) Templates may also ship from extensions (architecture.md already
 allows it), which lets a domain pack bring its own templates and playbooks
 together.
 
@@ -252,7 +297,7 @@ may change.
 |---|---|---|
 | `hardware-project` | requirements → design → build → test | The default for a blank project |
 | `class-project` | brief → concept → prototype → demo → report | Milestones are the course's; documentation is a deliverable |
-| `robotics` | requirements → architecture → subsystem prototypes → integration → field test (iterated) | Safety gates: e-stop path, current limits |
+| `robotics` | requirements → architecture → subsystem prototypes → integration → field test, iterated (§3.5) | Safety gates: e-stop path, current limits |
 | `iot-device` | requirements (power budget, connectivity) → architecture → prototype → firmware and OTA → certification → pilot → fleet | Composes with `product` |
 | `product` | research → concept → EVT → DVT → PVT → mass production → sustaining | Layers on a domain playbook; gates on BOM cost, compliance, DFM/DFA, supply |
 | `teardown` (REH) | target → evidence capture (seen / inferred / unknown) → dossier → rebuild spec | Feeds another playbook's research phase |
@@ -261,8 +306,8 @@ may change.
 ## 9. Order of work
 
 1. Format and loader: `protoboard.playbook/v0`, the manifest entries,
-   `lifecycle.json`, `protoboard phase`, the phase in `check`, `doctor`,
-   `AGENTS.md` and MCP. Tests with a fixture playbook.
+   `lifecycle.json`, `protoboard phase` (with `next` and `reopen`), the
+   phase in `check`, `doctor`, `AGENTS.md` and MCP. Tests with a fixture playbook.
 2. `hardware-project`, `robotics` and `drone`, with the quadcopter example
    moved onto them and visually checked in VS Code.
 3. The Handbook: rename the internal protocols, move the public chapters into
