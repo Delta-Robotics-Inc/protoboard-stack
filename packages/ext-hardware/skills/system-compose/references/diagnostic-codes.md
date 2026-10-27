@@ -162,6 +162,7 @@ Full table with the rules behind each: **supplier-compare** section 3.
 | `SRC_FORBIDDEN_FIELD`, `SRC_CREDENTIAL_IN_URL` | error | An order, cart or credential field, or a key in a URL. | Remove it; store the public product URL. Never commit a credential. |
 | `SRC_SINGLE_SOURCE`, `SRC_LOW_STOCK`, `SRC_LIFECYCLE` | warning | A selection disqualifier nobody accepted. | Name an alternate (**lifecycle-alternates**), or a named person accepts the risk in `risks[]`. |
 | `SRC_NO_OFFER`, `SRC_OFFER_MPN_MISMATCH` | warning | No offer with stock, or an offer for another ordering code. | Read more suppliers, or record the sibling code as an alternate. |
+| `SRC_OFFER_MPN_FORMAT` | info | An offer's code equals the record's but for punctuation or a leading zero; not counted until a person confirms it is the same code. | Same code: write the record's `mpn` on the offer, the supplier's spelling in `note`. Another variant: record it as an alternate. |
 | `SRC_PART_MISMATCH`, `SRC_UNKNOWN_PART` | warning | A record in the wrong folder, or for an id the project does not define. | Move or rename the record. |
 | `SRC_RISK_ACCEPTED` | info | A disqualifier a named person accepted. | Nothing; kept for traceability. |
 | `SRC_STALE` | info | Newest offer older than 90 days. | Re-read offers before quoting anything (**supplier-compare**). |

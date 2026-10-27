@@ -19,7 +19,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import { initProject, loadProject, resolveSkills } from "@protoboardai/core";
-import { chooseOffer, compareOffers, isFullReel, normMpn, unitPriceAt, validateSourcing, type Offer, type SourcingRecord } from "../lib/sourcing.ts";
+import { chooseOffer, compareOffers, isFullReel, looseMpn, normMpn, unitPriceAt, validateSourcing, type Offer, type SourcingRecord } from "../lib/sourcing.ts";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const PKG = join(HERE, "..");
@@ -222,16 +222,23 @@ describe("sourcing records", () => {
     expect(issues.map((i) => i.code).sort()).toEqual(["SRC_RISK_ACCEPTED", "SRC_UNVERIFIED"]);
   });
 
-  it("an offer that writes the ordering code differently (dashes, spaces, a leading zero) is the same code", () => {
-    expect(normMpn("53261-0271")).toBe(normMpn("532610271"));
-    expect(normMpn("53261-0271")).toBe(normMpn("0532610271"));
-    expect(normMpn(" dmg2305ux-7 ")).toBe(normMpn("DMG2305UX 7"));
-    expect(normMpn("LDO3300-33SOT")).not.toBe(normMpn("LDO3300-50SOT"));
+  it("an offer that writes the ordering code differently is reported to confirm, not matched and not a mismatch", () => {
+    expect(looseMpn("53261-0271")).toBe(looseMpn("532610271"));
+    expect(looseMpn("53261-0271")).toBe(looseMpn("0532610271"));
+    expect(looseMpn("LDO3300-33SOT")).not.toBe(looseMpn("LDO3300-50SOT"));
+    // the identity stays exact but for case and surrounding space: punctuation can name another variant
+    expect(normMpn(" ldo3300-33sot ")).toBe(normMpn("LDO3300-33SOT"));
+    expect(normMpn("ABC/1")).not.toBe(normMpn("ABC1"));
     const r = goodRecord();
-    r.offers[1].mpn = r.mpn.toLowerCase().replace(/-/g, " ");
-    const codes = validateSourcing(r, { now: NOW, knownPart: () => true }).map((i) => i.code);
-    expect(codes).not.toContain("SRC_OFFER_MPN_MISMATCH");
-    expect(codes).not.toContain("SRC_SINGLE_SOURCE");
+    r.offers[1].mpn = r.mpn.replace(/-/g, "");
+    r.risks = [];
+    const issues = validateSourcing(r, { now: NOW, knownPart: () => true });
+    const codes = issues.map((i) => `${i.severity}:${i.code}`);
+    expect(codes).toContain("info:SRC_OFFER_MPN_FORMAT");
+    expect(codes).not.toContain("warning:SRC_OFFER_MPN_MISMATCH");
+    // not counted until a person confirms it: one source left
+    expect(codes).toContain("warning:SRC_SINGLE_SOURCE");
+    expect(issues.find((i) => i.code === "SRC_OFFER_MPN_FORMAT")!.message).toMatch(/write the record's mpn on the offer/);
   });
 
   it("orders, credentials, undated offers and unaccepted disqualifiers are reported", () => {
