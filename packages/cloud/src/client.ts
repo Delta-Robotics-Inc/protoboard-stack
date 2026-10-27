@@ -21,6 +21,7 @@ import {
   envelopeDigest,
   isRedistributable,
   isSafePath,
+  referencedFiles,
   sha256Hex,
   stableStringify,
   uhdSchemaSupported,
@@ -382,13 +383,15 @@ export class PartsClient {
   async downloadFiles(env: PartRevisionEnvelope, dir: string, options: { evidence?: boolean; redistributableOnly?: boolean; skipWithheld?: boolean } = {}): Promise<{ path: string; file: string; size: number }[]> {
     const files: (EnvelopeArtifact | EvidenceRef)[] = [...env.artifacts, ...(options.evidence ? env.evidence.filter((e) => e.path) : [])].filter((f) => !options.redistributableOnly || isRedistributable(f));
     const out: { path: string; file: string; size: number }[] = [];
+    // optional = no definition artifact references the path (read from the definition, not the file's artifactId marker)
+    const required = new Set(referencedFiles(env.definition).map((r) => r.path));
     for (const f of files) {
       if (!isSafePath(f.path!)) throw new CloudError(0, "INTEGRITY", `unsafe path ${f.path}`);
       let bytes: Uint8Array;
       try {
         bytes = await this.downloadBlob(f.sha256!, { size: f.size });
       } catch (e) {
-        const optional = !("artifactId" in f) || f.artifactId === undefined;
+        const optional = !required.has(f.path!);
         if (options.skipWithheld && optional && e instanceof CloudError && e.code === "NOT_DISTRIBUTABLE") continue;
         throw e;
       }

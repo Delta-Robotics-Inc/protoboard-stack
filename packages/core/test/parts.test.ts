@@ -233,6 +233,18 @@ describe("parts add from a library that withholds files", () => {
     await expect(refusing.downloadFiles(env, join(TMP, "refused"), { evidence: true, skipWithheld: true })).rejects.toMatchObject({ code: "NOT_DISTRIBUTABLE" });
     expect(body.path).toBe("parts/test-shy-sensor/body.glb");
   });
+
+  it("reads which files are optional from the definition's references, not the artifactId marker", async () => {
+    const env = await svc.client.getRevision("test-shy-sensor", 1);
+    // an envelope whose referenced file has lost its artifactId marker: still required, still fails
+    const unmarked = { ...env, artifacts: env.artifacts.map(({ artifactId: _drop, ...a }) => a) };
+    const refusing = new PartsClient({ baseUrl: svc.url });
+    vi.spyOn(refusing, "downloadBlob").mockRejectedValue(new CloudError(403, "NOT_DISTRIBUTABLE", "not redistributable"));
+    await expect(refusing.downloadFiles(unmarked, join(TMP, "unmarked"), { skipWithheld: true })).rejects.toMatchObject({ code: "NOT_DISTRIBUTABLE" });
+    // and an unreferenced file is optional even when it carries a marker
+    const marked = { ...env, artifacts: env.artifacts.filter((a) => a.path.endsWith("thumbnail.png")).map((a) => ({ ...a, artifactId: "thumb" })) };
+    await expect(refusing.downloadFiles(marked, join(TMP, "marked"), { skipWithheld: true })).resolves.toEqual([]);
+  });
 });
 
 describe("parts update", () => {
