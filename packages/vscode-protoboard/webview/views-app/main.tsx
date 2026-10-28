@@ -244,6 +244,7 @@ function Cloud() {
         generate: () => send("generate"),
         openRelease: (version) => send("openPackage", { version, what: "index" }),
         openBom: () => send("openBom"),
+        open: () => send("open"),
         publish: () => send("publish"),
         requestQuote: () => send("requestQuote"),
         fetchOffers: () => send("fetchOffers"),

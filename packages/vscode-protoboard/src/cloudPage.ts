@@ -21,6 +21,7 @@ export type CloudPageMessage =
   | { type: "signOut" }
   | { type: "manageAccount" }
   | { type: "openBom" }
+  | { type: "open" }
   | { type: "publish" }
   | { type: "requestQuote" };
 

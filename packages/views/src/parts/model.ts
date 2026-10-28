@@ -601,6 +601,8 @@ export interface CloudActions {
   generate?(): void;
   openRelease?(version: string): void;
   openBom?(): void;
+  /** Open the project's system in the viewer (its tab, when one is open). */
+  open?(): void;
   publish?(): void;
   requestQuote?(): void;
   fetchOffers?(): void;

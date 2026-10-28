@@ -19,9 +19,8 @@ inputs:
     default: v0.3.0
   uhd-viewer-ref:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
-    # the legend at the bottom right with its folded tab, the context menu's icons and keys, the empty level's
-    # plus box (uhd-viewer#10, merged with main), until uhd-viewer v0.2.1 is tagged: then v0.2.1
-    default: 7b26b64f25eb6e97b9e87673d300c9433a59e0d1
+    # Harnesses & links lists the level on screen only (uhd-viewer#11), until uhd-viewer v0.2.1 is tagged: then v0.2.1
+    default: 74dd8b3ff5a266bad06eebb3d2dd5479730a0366
 
 runs:
   using: composite
