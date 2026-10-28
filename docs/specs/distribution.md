@@ -222,7 +222,10 @@ route `npm install` puts them in the project's `node_modules`.
 `node_modules` for each stack package its `package.json` names (a directory
 symlink; a junction on Windows, which needs no privilege), writes
 `node_modules/.bin/protoboard` and `pb`, and records what it did in
-`node_modules/.protoboard-stack.json`. Node resolves a linked package at its
+`node_modules/.protoboard-stack.json`. Re-pointing a project to another copy
+removes each old link with `unlink` (never a recursive remove, which could
+reach through a junction into the copy it leads to), and a failure part way
+puts the earlier links back. Node resolves a linked package at its
 real location, so:
 
 - each package's own dependencies come from the copy's tree;
@@ -398,7 +401,9 @@ the VS Code server's own `node`, which is used the same way.
 for the window's terminals (VS Code's environment contribution; the setting
 `protoboard.terminal.addCommand` turns it off). `protoboard` there is a small
 script: in a folder whose project has `node_modules/.bin/protoboard` it runs
-that one; otherwise the carried CLI. It runs on a Node.js 22 or later when
+that one; otherwise the carried CLI. `protoboard upgrade` always runs the
+carried CLI: it moves the project to that stack, and the project's own
+command is the older one. It runs on a Node.js 22 or later when
 `node` is one, else on the runtime named in `~/.protoboard/runtime`, which the
 extension rewrites at every start (VS Code's path changes when it updates).
 It is at the end of `PATH`, so a `protoboard` the user installed stays first.

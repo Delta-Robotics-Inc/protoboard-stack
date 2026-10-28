@@ -390,6 +390,8 @@ export {
   npmAuthProblem,
   isStackPackage,
   linkProject,
+  removeLink,
+  VALUE_OPTIONS,
   linkSummary,
   listStacks,
   needsLink,

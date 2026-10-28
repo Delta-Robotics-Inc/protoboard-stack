@@ -1451,6 +1451,10 @@ async function upgradeCommand(dir: string | undefined) {
     );
     return;
   }
+  // package.json as it was: put back when the packages cannot be linked again, so a project is never left
+  // asking for one version while its links lead to another (linkProject puts its own links back)
+  const pkgFile = join(root, "package.json");
+  const pkgBefore = readFileSync(pkgFile, "utf8");
   applyUpgrade(plan);
   // the packages: npm-installed ones are the project's; links (or none) are re-pointed to a copy the new ranges accept
   const names = Object.keys(projectDependencies(root)).filter(isStackPackage);
@@ -1460,8 +1464,14 @@ async function upgradeCommand(dir: string | undefined) {
   if (installed.length) linkNote = `${installed.length} package(s) were installed by npm: run \`npm install\` in the project to fetch ${plan.to}`;
   else {
     const choice = stackChoiceFor(root, true);
-    if (choice.stack) link = linkProject(root, choice.stack, { force: true });
-    else linkNote = noStackFits(choice);
+    if (choice.stack) {
+      try {
+        link = linkProject(root, choice.stack, { force: true });
+      } catch (e) {
+        writeFileSync(pkgFile, pkgBefore);
+        throw new Error(`the packages could not be linked to the stack ${choice.stack.marker.version} (${(e as Error).message}); nothing was changed: package.json and the links are as they were`);
+      }
+    } else linkNote = noStackFits(choice);
   }
   // guidance and parts need the project's configuration to load: with packages that do not fit yet, say what to run
   const loads = !installed.length && Boolean(link);
