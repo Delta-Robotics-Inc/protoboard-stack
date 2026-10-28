@@ -225,8 +225,8 @@ function cloudEntry(url: string): string {
 /**
  * Scaffold a project. `cloudUrl`, when given, is written as the project's
  * `cloud.url` (`protoboard init` passes the hosted library, PB-915);
- * without it the project uses the default (PROTOBOARD_CLOUD_URL, then
- * localhost).
+ * without it the project uses the default (PROTOBOARD_CLOUD_URL, then the
+ * hosted library).
  */
 /**
  * What a project's `npm install` runs last (its `postinstall`): the skills of
@@ -391,7 +391,7 @@ ${AGENTS_GUIDANCE}
   editing one. Updates are deliberate (\`parts update <id> --to <rev>\`).
 - The parts service is needed only by \`parts search|add|update|publish\` (URL from
   \`PROTOBOARD_CLOUD_URL\`, then \`cloud.url\` in protoboard.config.ts, default
-  http://localhost:8787). Sign in with \`protoboard login\`; never put a token in a file.
+  the hosted Protoboard library). Sign in with \`protoboard login\`; never put a token in a file.
 - Decisions go in \`docs/decisions.md\`; the brief in \`docs/brief.md\`. What the product
   is goes in \`docs/product.json\` (summary, features, functions, requirements with how
   each is shown): the Manufacturing Package and the datasheet open with it.
@@ -468,8 +468,8 @@ ${AGENTS_GUIDANCE}
  * before its packages are installed: the project's config cannot be loaded
  * yet (it imports @protoboardai/core), and a new project has no local
  * definitions that could collide with catalog ids, so this uses the
- * default library at `url` (or PROTOBOARD_CLOUD_URL, then
- * http://localhost:8787) and the default catalog folder.
+ * default library at `url` (or PROTOBOARD_CLOUD_URL, then the hosted
+ * library) and the default catalog folder.
  */
 export async function vendorTemplateParts(root: string, refs: string[], options: { url?: string; env?: NodeJS.ProcessEnv; fetch?: typeof fetch; now?: string; accountTokens?: AccountTokens } = {}): Promise<{ service: string; results: AddResult[] }> {
   const config: ProtoboardConfig = { root: { source: "", export: "" }, catalog: "parts/catalog" };

@@ -223,6 +223,15 @@ describe("tokens", () => {
       expect(await accountStatus(SERVICE, { store, fetch: open, check: true })).toMatchObject({ valid: true, allowed: true, distribution });
     }
   });
+
+  it("a library that does not answer: one on this machine is to be started, the hosted one is a connection to check", () => {
+    const e = new CloudError(0, "NETWORK", "GET x: fetch failed");
+    const local = explainCloudError(e, "http://localhost:8787").message;
+    expect(local).toContain("cannot reach the Protoboard Cloud parts service at http://localhost:8787 (fetch failed). Start it,");
+    const hosted = explainCloudError(e, "https://parts.example").message;
+    expect(hosted).toContain("cannot reach the Protoboard library at https://parts.example (fetch failed). Check your connection,");
+    expect(hosted).not.toContain("Start it");
+  });
 });
 
 describe("login", () => {

@@ -114,7 +114,9 @@ jobs:
         working-directory: protoboard-stack/examples/quadcopter-5in
         run: |
           node ../../packages/cli/bin/protoboard.mjs tools install cad --python "$PROTOBOARD_PYTHON"
-          node ../../packages/cli/bin/protoboard.mjs doctor
+          # its account check asks the project's library: the example sets no cloud.url (the hosted library), so a
+          # port that refuses connections instead
+          PROTOBOARD_CLOUD_URL=http://127.0.0.1:9 node ../../packages/cli/bin/protoboard.mjs doctor
 
   macos:
     name: macOS (Mac-specific tests, templates, integration test)
@@ -206,6 +208,9 @@ jobs:
       - name: The CLI starts (PowerShell)
         shell: pwsh
         working-directory: protoboard-stack
+        # doctor's account check: a port that refuses connections, never the hosted library
+        env:
+          PROTOBOARD_CLOUD_URL: http://127.0.0.1:9
         run: |
           node packages/cli/bin/protoboard.mjs --version
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

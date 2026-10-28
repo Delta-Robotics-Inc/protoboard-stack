@@ -200,7 +200,12 @@ local parts services that sign no one in (`PB_CLOUD_AUTH=none`). Nothing has
 to be turned off: the `PROTOBOARD_SIGN_IN` variable of 0.1.x is gone.
 `ci-stack.sh` and `vitest.config.ts` set `PROTOBOARD_CONFIG_DIR` to a
 temporary folder, so they never read or write the sign-ins or `access.json`
-of the person running them. `packages/cli/test/access.test.ts` runs the
+of the person running them. Nothing they run reaches the hosted Protoboard
+library, which a project without `cloud.url` uses by default:
+`scripts/test/no-hosted-service.mjs`, loaded into every Node process, fails
+such a request as a service that does not answer, and the run lists the
+requests it blocked at its end. A test that needs a service names its own
+(`cloud.url`, `PROTOBOARD_CLOUD_URL` or `--url`). `packages/cli/test/access.test.ts` runs the
 cloud commands signed out, signed in, not invited and against an open
 service, all against a stand-in. A project's own CI that adds library parts
 from the hosted library sets `PROTOBOARD_CLOUD_TOKEN` (the service token) or

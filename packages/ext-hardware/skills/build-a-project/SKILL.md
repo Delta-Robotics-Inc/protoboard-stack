@@ -53,7 +53,7 @@ a person, not performed.
 | The extensions the project needs | `extensions` in `protoboard.config.ts`; the Protoboard installed on the machine carries them | step 0 |
 | Earlier work to build on | another project's research, where the person says it is | the person asking (step 0) |
 | Tool runtimes | `.protoboard/tools/` (`npx protoboard doctor`) | `npx protoboard tools install cad` / `circuit` |
-| The parts service, for catalog parts | `PROTOBOARD_CLOUD_URL` or `cloud.url` in the config (default `http://localhost:8787`) | the operator; only `parts` commands use it |
+| The parts service, for catalog parts | `PROTOBOARD_CLOUD_URL` or `cloud.url` in the config (default: the hosted Protoboard library) | the operator; only `parts` commands use it |
 
 ## Steps
 

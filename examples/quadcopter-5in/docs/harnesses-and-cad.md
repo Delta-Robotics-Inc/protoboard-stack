@@ -269,7 +269,8 @@ npm run build && npm run build:library
 # then publish each changed part as its next catalog revision (protoboard-cloud
 # README, "Publish one part from a directory"); the seed leaves changed parts alone
 
-# this project (the parts service running: PROTOBOARD_CLOUD_URL, default http://localhost:8787)
+# this project, against the parts service the parts were published to (PROTOBOARD_CLOUD_URL; without it,
+# the hosted Protoboard library): PROTOBOARD_CLOUD_URL=http://localhost:8787 for one running on this machine
 cd ../protoboard-stack/examples/quadcopter-5in
 npx protoboard parts update                       # what the catalog recommends, and what it changes
 npx protoboard parts update <id> --to <revision>  # re-pin each changed part deliberately

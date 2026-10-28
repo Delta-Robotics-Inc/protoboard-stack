@@ -24,7 +24,7 @@ import { TERMINAL_PATH_ENV, applyPathPlan, describePathPlan, pathPlan } from "@p
 import { StackReplaceRefused, carriedManifest, ensureCarried, ensureFromVsix, unpackedCarried, writeHome, type CarriedManifest } from "./stackStore.js";
 import { loadCodeReference, type CodeReference } from "./codes.js";
 import { ACCESS_EXIT_CODE } from "@protoboardai/core/access";
-import { CHECKING, CLOUD_COMMANDS, SIGN_IN_UNAVAILABLE, accessMessage, accountCard, accountFromWhoAmI, accountView, accountItem, lockOf, signInUnavailable, terminalCommand, type AccountAction, type AccountState, type Lock } from "./account.js";
+import { CHECKING, CLOUD_COMMANDS, accessMessage, accountCard, accountFromWhoAmI, accountView, accountItem, lockOf, signInUnavailable, signInUnavailableMessage, terminalCommand, type AccountAction, type AccountState, type Lock } from "./account.js";
 import { setAccountHandler, setAppAccess, trackApp } from "./appView.js";
 import { cloudPageModel, pageOrder, projectAuthor, releaseOutcome, type ReleaseRecord, type ReleaseState } from "./cloud.js";
 import type { CloudPageMessage } from "./cloudPage.js";
@@ -2016,7 +2016,7 @@ class ProtoboardExtension {
     // a service that does not answer cannot sign anyone in: one line now, rather than a terminal that ends with its exit code
     if (canRun(found) && signInUnavailable(await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: "Protoboard: signing in" }, () => this.refreshAccount(true)))) {
       this.log.warn(`sign-in: the service does not answer (${"problem" in this.accountState ? this.accountState.problem : this.accountState.state}); no terminal opened`);
-      return void vscode.window.showWarningMessage(SIGN_IN_UNAVAILABLE);
+      return void vscode.window.showWarningMessage(signInUnavailableMessage(this.accountState));
     }
     // a remote window (SSH, WSL, a container) has no browser of its own: the code, approved on any device
     const byCode = device || !!vscode.env.remoteName;
@@ -2057,8 +2057,9 @@ class ProtoboardExtension {
       // the login ended with an error (the terminal stays, with its exit code): when that is the service not
       // answering, say so in one line and close the terminal, as before it opens
       if (t.exitStatus && t.exitStatus.code !== 0) {
-        if (signInUnavailable(await this.refreshAccount(true))) {
-          void vscode.window.showWarningMessage(SIGN_IN_UNAVAILABLE);
+        const state = await this.refreshAccount(true);
+        if (signInUnavailable(state)) {
+          void vscode.window.showWarningMessage(signInUnavailableMessage(state));
           t.dispose();
         }
         return;

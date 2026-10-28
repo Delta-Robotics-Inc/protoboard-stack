@@ -5,7 +5,7 @@
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { CHECKING, SIGN_IN_UNAVAILABLE, UNLOCKED, accountCard, accountFromWhoAmI, accountItem, lockOf, signInUnavailable, terminalCommand } from "../src/account.js";
+import { CHECKING, UNLOCKED, accountCard, accountFromWhoAmI, accountItem, lockOf, signInUnavailable, signInUnavailableMessage, terminalCommand } from "../src/account.js";
 
 const run = (data: unknown, code = 0) => ({ code, stdout: JSON.stringify(data, null, 2) + "\n", stderr: "" });
 
@@ -157,9 +157,12 @@ describe("a parts service that is down (B18)", () => {
 });
 
 describe("signing in while the service does not answer", () => {
-  it("is said in one short line, not with a terminal's exit code", () => {
-    expect(SIGN_IN_UNAVAILABLE).toBe("Sign-in isn't available right now. Try again later.");
-    expect(SIGN_IN_UNAVAILABLE.split("\n")).toHaveLength(1);
+  it("is said in one short line that names the service tried, not with a terminal's exit code", () => {
+    const problem = "GET http://localhost:8787/.well-known/uhd-library: fetch failed: ECONNREFUSED";
+    const m = signInUnavailableMessage(accountFromWhoAmI(run({ service: "http://localhost:8787", signedIn: false, unreachable: problem }, 1)));
+    expect(m).toBe("Sign-in isn't available right now: http://localhost:8787 does not answer. Try again later.");
+    expect(m.split("\n")).toHaveLength(1);
+    expect(signInUnavailableMessage({ state: "unknown", reason: "x" })).toBe("Sign-in isn't available right now. Try again later.");
   });
 
   it("is known from the account check: signed out or with a sign-in kept here, the service not answering", () => {

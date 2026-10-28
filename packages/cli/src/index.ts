@@ -246,7 +246,7 @@ const cli = meow(
                             (needs a publisher: signed in as one, or PROTOBOARD_CLOUD_TOKEN; --dry-run shows
                             the revision without publishing)
     login                   Sign in to Protoboard Cloud (the parts service at --url, else the project's
-                            cloud.url, else, outside a project, the hosted Protoboard library): a browser sign-in, or
+                            cloud.url, else the hosted Protoboard library): a browser sign-in, or
                             --device for agents and machines without a browser (a code to approve on the
                             sign-in site). The sign-in goes to Linux's keyring, Windows' DPAPI, else a file
                             only you can read; never to the project. Everything in the library needs it: search,
@@ -346,10 +346,8 @@ const cli = meow(
                             \`protoboard --version --json\` adds the build: commit, dirty, branch, source, release
     --cwd <dir>             Project directory (default: current)
     --url <service>         parts: the Protoboard library's URL (default PROTOBOARD_CLOUD_URL, then cloud.url in
-                            protoboard.config.ts, then http://localhost:8787). Only parts commands, init
-                            --template (its catalog parts) and login, logout and whoami use it; those three,
-                            run outside a project, default to the hosted Protoboard library instead of
-                            localhost.
+                            protoboard.config.ts, then the hosted Protoboard library). Only parts commands,
+                            init --template (its catalog parts) and login, logout and whoami use it.
     --library <id>          parts: the library to use (search: only that one)
     --compiled              parts add, parts update --to: vendor the definition JSON only, not its .uhd.ts
                             source
@@ -1868,7 +1866,7 @@ function hasBrowser(): boolean {
   return process.platform !== "linux" || !!(process.env.DISPLAY || process.env.WAYLAND_DISPLAY);
 }
 
-/** `login`, `logout`, `whoami`: the user's Protoboard Cloud sign-in for the parts service at --url, else the project's, else (no project) the hosted library. */
+/** `login`, `logout`, `whoami`: the user's Protoboard Cloud sign-in for the parts service at --url, else the project's, else the hosted library. */
 async function account(sub: "login" | "logout" | "whoami" | "account") {
   const chosen = await projectService();
   const root = chosen.root;
