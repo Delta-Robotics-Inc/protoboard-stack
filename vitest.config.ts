@@ -2,6 +2,7 @@ import { mkdtempSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vitest/config";
 import { SERVICE_TESTS, cloudCheckout } from "./packages/core/test/cloud-checkout.ts";
 
@@ -20,6 +21,14 @@ const shellsReactDom = (): Plugin => ({
   },
 });
 
+// No test reaches the hosted Protoboard library (a project without cloud.url uses it by default): the guard
+// fails such a request, as a service that does not answer, in the workers and in every Node process they
+// start, and the run lists them at its end (scripts/test/no-hosted-service.mjs)
+const NO_HOSTED = new URL("./scripts/test/no-hosted-service.mjs", import.meta.url);
+const NO_HOSTED_TEARDOWN = fileURLToPath(new URL("./scripts/test/no-hosted-service-teardown.mjs", import.meta.url));
+process.env.PB_TEST_HOSTED_LOG ??= join(mkdtempSync(join(tmpdir(), "protoboard-test-hosted-")), "hosted.log");
+const NODE_OPTIONS = [process.env.NODE_OPTIONS, `--import=${NO_HOSTED.href}`].filter(Boolean).join(" ");
+
 export default defineConfig({
   plugins: [shellsReactDom()],
   test: {
@@ -29,7 +38,9 @@ export default defineConfig({
     exclude: ["**/node_modules/**", ...(cloudCheckout() ? [] : SERVICE_TESTS)],
     // the tests never read or write the user's own Protoboard config folder (sign-ins, access.json): a suite that
     // needs one makes its own; this is the rest's
-    env: { PROTOBOARD_CONFIG_DIR: mkdtempSync(join(tmpdir(), "protoboard-test-config-")) },
+    env: { PROTOBOARD_CONFIG_DIR: mkdtempSync(join(tmpdir(), "protoboard-test-config-")), PB_TEST_HOSTED_LOG: process.env.PB_TEST_HOSTED_LOG, NODE_OPTIONS },
+    setupFiles: [fileURLToPath(NO_HOSTED)],
+    globalSetup: [NO_HOSTED_TEARDOWN],
     testTimeout: 60000,
     hookTimeout: 60000,
     server: { deps: { inline: [/[\\/]node_modules[\\/]@(radix-ui|floating-ui)[\\/]/] } },

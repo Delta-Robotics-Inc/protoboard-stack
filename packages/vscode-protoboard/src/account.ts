@@ -158,8 +158,15 @@ const LOCK_MESSAGES: Record<Exclude<Lock["reason"], "ok" | "checking" | "unknown
   unreachable: () => "The Protoboard library could not be reached. Projects work offline.",
 };
 
-/** What signing in says when the service does not answer: one short line, in a notification, never a terminal's exit code. */
-export const SIGN_IN_UNAVAILABLE = "Sign-in isn't available right now. Try again later.";
+/**
+ * What signing in says when the service does not answer: one short line, in a
+ * notification, never a terminal's exit code. It names the service that was
+ * tried, so a project pointed at a service that is not running (its
+ * cloud.url, PROTOBOARD_CLOUD_URL) is not mistaken for the hosted library
+ * being down.
+ */
+export const signInUnavailableMessage = (a: AccountState): string =>
+  "service" in a && a.service ? `Sign-in isn't available right now: ${a.service} does not answer. Try again later.` : "Sign-in isn't available right now. Try again later.";
 
 /** Whether a sign-in cannot work now: the account check found the service not answering (signed out, or with a sign-in kept here). */
 export const signInUnavailable = (a: AccountState): boolean => a.state === "unreachable" || (a.state === "expired" && /could not be reached/i.test(a.problem));
