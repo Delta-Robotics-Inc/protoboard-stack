@@ -152,6 +152,21 @@ export function unreachableService(service: string, what: string, source: Accoun
   return [`Cannot reach ${service} (${what}).`, ...why[source].map((l) => `  ${l}`)].join("\n");
 }
 
+/**
+ * What `login` says when its service does not answer: one line first, that
+ * signing in cannot work now and why, in short (`what` without the request
+ * it names). For the hosted library, or the service this machine is signed
+ * in to, that is all there is to do: try again later. A URL someone chose
+ * (--url, the environment, a project's cloud.url) also gets where it came
+ * from and how to use another, as `unreachableService`.
+ */
+export function signInUnreachable(service: string, what: string, source: AccountServiceSource, configFile?: string): string {
+  const reason = what.replace(/^[A-Z]+ \S+: /, "");
+  const line = `Sign-in isn't available right now: ${service} does not answer (${reason}).`;
+  if (source === "default" || source === "saved") return `${line} Try again later.`;
+  return [line, ...unreachableService(service, what, source, configFile).split("\n").slice(1)].join("\n");
+}
+
 /** A library as a project uses it: in order, with its URL resolved. */
 export interface ResolvedLibrary {
   id: string;

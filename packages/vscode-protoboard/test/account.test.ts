@@ -5,7 +5,7 @@
  */
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { CHECKING, UNLOCKED, accountCard, accountFromWhoAmI, accountItem, lockOf, terminalCommand } from "../src/account.js";
+import { CHECKING, SIGN_IN_UNAVAILABLE, UNLOCKED, accountCard, accountFromWhoAmI, accountItem, lockOf, signInUnavailable, terminalCommand } from "../src/account.js";
 
 const run = (data: unknown, code = 0) => ({ code, stdout: JSON.stringify(data, null, 2) + "\n", stderr: "" });
 
@@ -153,5 +153,22 @@ describe("a parts service that is down (B18)", () => {
   it("is still signed out with a project's CLI before 0.2.0 that refused this machine, or when the service answered", () => {
     expect(who({ ...down, access: { required: true, allowed: false, reason: "signed-out" } }).state).toBe("signed-out");
     expect(who({ ...down, unreachable: undefined }).state).toBe("signed-out");
+  });
+});
+
+describe("signing in while the service does not answer", () => {
+  it("is said in one short line, not with a terminal's exit code", () => {
+    expect(SIGN_IN_UNAVAILABLE).toBe("Sign-in isn't available right now. Try again later.");
+    expect(SIGN_IN_UNAVAILABLE.split("\n")).toHaveLength(1);
+  });
+
+  it("is known from the account check: signed out or with a sign-in kept here, the service not answering", () => {
+    const problem = "GET https://parts.example/.well-known/uhd-library: fetch failed: ENOTFOUND";
+    expect(signInUnavailable(accountFromWhoAmI(run({ service: "https://parts.example", signedIn: false, unreachable: problem }, 1)))).toBe(true);
+    expect(signInUnavailable(accountFromWhoAmI(run({ service: "https://parts.example", signedIn: true, email: "ada@example.com", valid: false, unreachable: problem, problem: `the service could not be reached (${problem})` }, 1)))).toBe(true);
+    // signed out, or a sign-in the service refused: signing in is what to do
+    expect(signInUnavailable(accountFromWhoAmI(run({ service: "https://parts.example", signedIn: false }, 1)))).toBe(false);
+    expect(signInUnavailable(accountFromWhoAmI(run({ service: "https://parts.example", signedIn: true, valid: false, problem: "the sign-in has expired" }, 1)))).toBe(false);
+    expect(signInUnavailable({ state: "unknown", reason: "x" })).toBe(false);
   });
 });

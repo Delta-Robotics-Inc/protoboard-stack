@@ -93,6 +93,7 @@ import {
   accountTokensFor,
   accountService,
   unreachableService,
+  signInUnreachable,
   CONFIG_FILE,
   cloudUrl,
   DEFAULT_CLOUD_URL,
@@ -1957,7 +1958,7 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
       out({ service, signedIn: false, message: e.message }, () => e.message);
       return;
     }
-    if (e instanceof AccountError && e.code === "UNREACHABLE") throw new Error(unreachable(e.message));
+    if (e instanceof AccountError && e.code === "UNREACHABLE") throw new Error(signInUnreachable(service, e.message, chosen.source, root ? join(root, CONFIG_FILE) : undefined));
     throw e;
   }
 }

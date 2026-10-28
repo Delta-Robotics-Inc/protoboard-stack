@@ -17,7 +17,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { DEFAULT_CLOUD_URL, HOSTED_CLOUD_URL, accountService, cloudUrlInConfigText, unloadedProjectService, unreachableService } from "@protoboardai/core";
+import { DEFAULT_CLOUD_URL, HOSTED_CLOUD_URL, accountService, cloudUrlInConfigText, signInUnreachable, unloadedProjectService, unreachableService } from "@protoboardai/core";
 
 const CLI = fileURLToPath(new URL("../bin/protoboard.mjs", import.meta.url));
 const TMP = realpathSync(mkdtempSync(join(tmpdir(), "pb-account-service-")));
@@ -202,11 +202,11 @@ describe("cloudUrlInConfigText and unloadedProjectService", () => {
 });
 
 describe("protoboard login and whoami --check: a service that does not answer", () => {
-  it("login says the URL, that --url gave it, and what to do; not a bare fetch failed", () => {
+  it("login says first that sign-in is not available now, then the URL, that --url gave it, and what to do; not a bare fetch failed", () => {
     for (const args of [["login", "--device"], ["login"]]) {
       const r = cli(OUTSIDE, [...args, "--url", DEAD]);
       expect(r.status).toBe(2);
-      expect(r.stderr).toContain(`protoboard: Cannot reach ${DEAD} (GET ${DEAD}/.well-known/uhd-library: fetch failed: ECONNREFUSED).`);
+      expect(r.stderr).toContain(`protoboard: Sign-in isn't available right now: ${DEAD} does not answer (fetch failed: ECONNREFUSED).\n`);
       expect(r.stderr).toContain("That URL is the one given with --url.");
       expect(r.stderr).toContain("leave --url out to use the default");
     }
@@ -214,15 +214,15 @@ describe("protoboard login and whoami --check: a service that does not answer", 
 
   it("login says when the environment or the project gave the URL", () => {
     const env = cli(OUTSIDE, ["login", "--device"], { PROTOBOARD_CLOUD_URL: DEAD });
-    expect(env.stderr).toContain(`Cannot reach ${DEAD} (`);
+    expect(env.stderr).toContain(`Sign-in isn't available right now: ${DEAD} does not answer (`);
     expect(env.stderr).toContain("That URL comes from the PROTOBOARD_CLOUD_URL environment variable.");
     const project = cli(PROJECT, ["login", "--device"]);
     expect(project.status).toBe(2);
-    expect(project.stderr).toContain(`Cannot reach ${DEAD} (`);
+    expect(project.stderr).toContain(`Sign-in isn't available right now: ${DEAD} does not answer (`);
     expect(project.stderr).toContain(`That URL is cloud.url in ${join(PROJECT, "protoboard.config.ts")}: the service this project takes its parts from.`);
     expect(project.stderr).toContain("pass --url <url> or set PROTOBOARD_CLOUD_URL");
     // as JSON, the same message is the error
-    expect(JSON.parse(cli(PROJECT, ["login", "--device", "--format", "json"]).stdout).error).toContain(`Cannot reach ${DEAD} (`);
+    expect(JSON.parse(cli(PROJECT, ["login", "--device", "--format", "json"]).stdout).error).toContain(`Sign-in isn't available right now: ${DEAD} does not answer (`);
   });
 
   it("whoami --check reports it (exit 1) instead of saying only that no one is signed in", () => {
@@ -316,5 +316,20 @@ describe("protoboard account (PB-1089): the account page", () => {
     const r = cli(OUTSIDE, ["account", "--url", DEAD]);
     expect(r.status).not.toBe(0);
     expect(r.stderr).toContain(DEAD);
+  });
+});
+
+describe("signInUnreachable: login says in one line that signing in cannot work now", () => {
+  const what = `GET ${HOSTED_CLOUD_URL}/.well-known/uhd-library: fetch failed: ENOTFOUND`;
+
+  it("for the hosted library (or the service signed in to), one line: try again later", () => {
+    for (const source of ["default", "saved"] as const)
+      expect(signInUnreachable(HOSTED_CLOUD_URL, what, source)).toBe(`Sign-in isn't available right now: ${HOSTED_CLOUD_URL} does not answer (fetch failed: ENOTFOUND). Try again later.`);
+  });
+
+  it("for a URL someone chose, the same first line, then where it came from and how to use another", () => {
+    const m = signInUnreachable("http://x", "GET http://x/.well-known/uhd-library: fetch failed: ECONNREFUSED", "flag").split("\n");
+    expect(m[0]).toBe("Sign-in isn't available right now: http://x does not answer (fetch failed: ECONNREFUSED).");
+    expect(m.slice(1)).toEqual(["  That URL is the one given with --url.", "  Check it, or leave --url out to use the default."]);
   });
 });
