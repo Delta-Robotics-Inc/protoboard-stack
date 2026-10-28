@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-release",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Releases: `protoboard release` refuses a project with check errors, stale outputs or uncommitted changes, then writes the Manufacturing Package (overview, per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan, manufacturing files, index.html) and a reproducible release manifest.",
   "compatibility": {
     "protoboard": "^0.2.0",

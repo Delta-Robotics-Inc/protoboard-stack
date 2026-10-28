@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-enclosure-cad",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Enclosure CAD: a printed or machined case generated with build123d from the UHD features it must provide (openings, plungers, windows, light pipes, insert bosses, O-ring glands, threads, strap lugs, the lid joint) and the bodies the assembly places inside it; fit, wall, seal and alignment checks.",
   "compatibility": {
     "protoboard": "^0.2.0",

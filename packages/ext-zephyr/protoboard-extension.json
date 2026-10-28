@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-zephyr",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "firmware provider: Zephyr board definitions for nRF52840 modules (devicetree with pinctrl, buses, devices, buttons, display; Kconfig), every setting citing the UHD facts it comes from.",
   "compatibility": {
     "protoboard": "^0.2.0",
