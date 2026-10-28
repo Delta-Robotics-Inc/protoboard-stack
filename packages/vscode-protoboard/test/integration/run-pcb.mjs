@@ -30,6 +30,8 @@ try {
       // never the user's own config folder (sign-ins, access.json): the test's own, empty (signed out)
       PROTOBOARD_CONFIG_DIR: join(profile, "protoboard-config"),
       PROTOBOARD_CREDENTIAL_STORE: "file",
+      // the example sets no cloud.url, so its library would be the hosted one: a port that refuses connections instead
+      PROTOBOARD_CLOUD_URL: "http://127.0.0.1:9",
     },
   });
 } catch (e) {

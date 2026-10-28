@@ -13,8 +13,11 @@ import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { UhdModuleDef } from "@protoboardai/cloud/client";
 import {
+  DEFAULT_CLOUD_URL,
+  HOSTED_CLOUD_URL,
   addParts,
   checkPartUpdates,
+  cloudUrl,
   configuredLibraries,
   connectLibraries,
   libraryProblems,
@@ -116,9 +119,16 @@ describe("libraries --check: what a library's reads need", () => {
 });
 
 describe("configured libraries", () => {
-  it("default to the Protoboard library at the configured cloud URL", () => {
+  it("default to the Protoboard library at the configured cloud URL: the hosted library when nothing names one", () => {
     const base: ProtoboardConfig = { root: { source: "", export: "" } };
-    expect(configuredLibraries(base, { env: {} })).toEqual([{ id: "protoboard", url: "http://localhost:8787", declared: false }]);
+    expect(configuredLibraries(base, { env: {} })).toEqual([{ id: "protoboard", url: HOSTED_CLOUD_URL, declared: false }]);
+    expect(cloudUrl(base, undefined, {})).toBe(HOSTED_CLOUD_URL);
+    expect(cloudUrl(undefined, undefined, {})).toBe(HOSTED_CLOUD_URL);
+    // a service on this machine only when something names it
+    expect(cloudUrl(base, undefined, {})).not.toBe(DEFAULT_CLOUD_URL);
+    expect(cloudUrl({ ...base, cloud: { url: `${DEFAULT_CLOUD_URL}/` } }, undefined, {})).toBe(DEFAULT_CLOUD_URL);
+    expect(cloudUrl(base, undefined, { PROTOBOARD_CLOUD_URL: DEFAULT_CLOUD_URL })).toBe(DEFAULT_CLOUD_URL);
+    expect(cloudUrl(base, DEFAULT_CLOUD_URL, {})).toBe(DEFAULT_CLOUD_URL);
     expect(configuredLibraries({ ...base, cloud: { url: "http://cloud.test/" } }, { env: {} })[0].url).toBe("http://cloud.test");
     expect(configuredLibraries(base, { env: { PROTOBOARD_CLOUD_URL: "http://env.test" }, url: "http://flag.test" })[0].url).toBe("http://flag.test");
     // declared: in order; "protoboard" without a url still follows the cloud URL
@@ -139,9 +149,9 @@ describe("configured libraries", () => {
     expect(() => configuredLibraries({ root: { source: "", export: "" }, libraries: [{ id: "a" }] })).toThrow(/protoboard.config.ts: libraries\[0\] \(a\) needs a url/);
   });
 
-  it("the quadcopter keeps the Protoboard library alone, and its pins read as that library's", async () => {
+  it("the quadcopter keeps the Protoboard library alone, the hosted one (it sets no cloud.url), and its pins read as that library's", async () => {
     const quad = join(HERE, "../../../examples/quadcopter-5in");
-    expect(configuredLibraries(await loadConfig(quad), { env: {} })).toEqual([{ id: "protoboard", url: "http://localhost:8787", declared: false }]);
+    expect(configuredLibraries(await loadConfig(quad), { env: {} })).toEqual([{ id: "protoboard", url: HOSTED_CLOUD_URL, declared: false }]);
     const p = await loadProject(quad, { checks: false, extensions: false });
     expect(p.definitions.get("meps-neon-2207-v2-1950kv")!.origin).toMatchObject({ provider: "protoboard-cloud", library: "protoboard" });
   });

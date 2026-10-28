@@ -20,7 +20,9 @@ export interface ProtoboardConfig {
   /**
    * Protoboard Cloud parts service used by `protoboard parts search|add|update|publish`
    * (never by loading or checking): the URL of the `protoboard` library.
-   * `PROTOBOARD_CLOUD_URL` overrides it; the default is http://localhost:8787.
+   * `PROTOBOARD_CLOUD_URL` overrides it; the default is the hosted Protoboard
+   * library (HOSTED_CLOUD_URL). A parts service on this machine is used only
+   * when named here, with PROTOBOARD_CLOUD_URL or with `--url`.
    * The publish token comes only from `PROTOBOARD_CLOUD_TOKEN`, never from a
    * project file.
    */

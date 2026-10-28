@@ -163,11 +163,11 @@ errors and no warnings. The templates live in `@protoboardai/core`
 
 Catalog parts are not copied into templates: `init` vendors the template's
 pinned revisions from the parts service (`--url`, `PROTOBOARD_CLOUD_URL`,
-then http://localhost:8787), so their files arrive with their terms and
-digests. `--no-parts` skips that and prints the `protoboard parts add`
-command to run later. Run from the registry (`npm exec`), or with
-`--registry <url>`, `init` also writes the project's `.npmrc` for the two
-scopes.
+`--local`'s http://localhost:8787, else the hosted Protoboard library), so
+their files arrive with their terms and digests. `--no-parts` skips that and
+prints the `protoboard parts add` command to run later. Run from the
+registry (`npm exec`), or with `--registry <url>`, `init` also writes the
+project's `.npmrc` for the two scopes.
 
 ```sh
 mkdir ~/projects && cd ~/projects
