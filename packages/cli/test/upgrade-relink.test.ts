@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
-import { STACK_MARKER, linkProject, listStacks, stackCli, stackDir, type StackMarker } from "@protoboardai/core";
+import { STACK_MARKER, VALUE_OPTIONS, linkProject, listStacks, stackCli, stackDir, type StackMarker } from "@protoboardai/core";
 
 const CLI = fileURLToPath(new URL("../bin/protoboard.mjs", import.meta.url));
 const REPO = fileURLToPath(new URL("../../..", import.meta.url));
@@ -79,5 +79,15 @@ describe("protoboard upgrade when the links cannot be moved", () => {
     expect(realpathSync(join(root, "node_modules/@protoboardai/core"))).toBe(realpathSync(join(now.dir, "node_modules/@protoboardai/core")));
     expect(JSON.parse(readFileSync(join(root, "package.json"), "utf8")).devDependencies["@protoboardai/cli"]).not.toBe("^0.1.7");
     expect(realpathSync(join(old.dir, "node_modules/@protoboardai/core/package.json"))).toBeTruthy();
+  });
+});
+
+describe("the terminal's command knows which options take a value", () => {
+  it("VALUE_OPTIONS is the CLI's own string and number options", () => {
+    const src = readFileSync(join(REPO, "packages/cli/src/index.ts"), "utf8");
+    const table = src.slice(src.indexOf("\n    flags: {"), src.indexOf("\n    },", src.indexOf("\n    flags: {")));
+    const fromCli = [...table.matchAll(/^ {6}([A-Za-z0-9]+): \{ type: "(?:string|number)"/gm)].map((m) => `--${m[1]!.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`).sort();
+    expect(fromCli.length).toBeGreaterThan(10);
+    expect([...VALUE_OPTIONS].sort()).toEqual(fromCli);
   });
 });
