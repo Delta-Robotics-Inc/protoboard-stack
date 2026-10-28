@@ -258,6 +258,18 @@ describe("the real CLI's build of the quadcopter", () => {
     expect(linkFromViewer(index, "stack/fc_esc_plug_fc")?.id).toBe("stack:fc_esc_plug_fc");
     expect(linkFromViewer(index, "arm_fl/prop_on_shaft")?.id).toBe("arm_fl:prop_on_shaft");
     for (const l of build.resolved.links.filter((x) => !x.owner)) expect(linkFromViewer(index, l.id)).toBe(l);
+    // a finding on a harness locates the harness (the viewer frames the lines it is drawn along); one on a link
+    // inside a harness drills to the harness and names it last, which the viewer resolves to its lines too
+    expect(viewerMessages(diagnosticTarget(index, { entity: { kind: "instance", id: "rx_wire" } }) as { path: string })).toEqual([
+      { type: "uhd-viewer:focus", path: "rx_wire" },
+    ]);
+    expect(viewerMessages(diagnosticTarget(index, { entity: { kind: "instance", id: "stack_hardware" } }) as { path: string })).toEqual([
+      { type: "uhd-viewer:focus", path: "stack_hardware" },
+    ]);
+    expect(viewerMessages(diagnosticTarget(index, { entity: { kind: "link", id: "rx_wire:wires" } }) as { path: string })).toEqual([
+      { type: "uhd-viewer:drill", path: "rx_wire" },
+      { type: "uhd-viewer:select", ids: ["rx_wire/wires", "rx_wire"] },
+    ]);
     // findings on derived links locate the derived link first
     for (const d of build.resolved.diagnostics.filter((x) => x.entity.kind === "link" && x.entity.id.includes("+"))) {
       const t = diagnosticTarget(index, d);
