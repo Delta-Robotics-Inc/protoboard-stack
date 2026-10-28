@@ -10,7 +10,8 @@
 #            dev server and the viewer's connection), the templates in a path
 #            with spaces, an example, and the extension's integration test in
 #            a real VS Code
-#   windows  the same for Windows (the sign-in link's opener, the PATH entry),
+#   windows  the same for Windows (the sign-in link's opener, the PATH entry, re-linking
+#            a project through junctions),
 #            from Git Bash and from PowerShell; the whole suite reports there
 #            without failing the run until it passes once (docs/ci.md)
 #
@@ -219,12 +220,14 @@ jobs:
 
       # The suites of the agents' set-up and of `protoboard setup` assume a POSIX file system in their fixtures
       # (docs/ci.md, "Windows"): they are in the whole suite below, which reports, until they run here.
-      - name: Unit tests (sign-in link, PATH entry)
+      - name: Unit tests (sign-in link, PATH entry, re-linking a project through junctions, the terminal's command)
         working-directory: protoboard-stack
         run: >
           npx vitest run
           packages/cli/test/open-url.test.ts
           packages/core/test/path-setup.test.ts
+          packages/core/test/stack-relink.test.ts
+          packages/cli/test/upgrade-relink.test.ts
 
       - name: init, check and build on every template in a path with spaces (Git Bash)
         working-directory: protoboard-stack

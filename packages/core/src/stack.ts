@@ -30,7 +30,7 @@
  * asks for another version. No VS Code API here.
  */
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, rmdirSync, symlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, realpathSync, rmSync, rmdirSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { ensurePrivateDir } from "./private-dir.js";
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
@@ -288,6 +288,29 @@ export function needsLink(root: string): boolean {
   });
 }
 
+/**
+ * Remove the link at `at` and only the link: never what it leads to, never a
+ * real folder. A junction on Windows is a link here too (`lstat` says so).
+ * `fs.rmSync` is not used: some Node releases look through the link and
+ * refuse it as a directory ("Path is a directory"), and a recursive remove
+ * could reach into the stack copy the link leads to. `unlink` removes a
+ * symlink, and on Windows a junction or a directory symlink; `rmdir` is the
+ * fallback for a Windows directory link that `unlink` refuses.
+ */
+export function removeLink(at: string): void {
+  const st = lstatSync(at);
+  if (!st.isSymbolicLink()) throw new Error(`${at} is a folder, not a link to a stack copy: it was left as it is`);
+  try {
+    unlinkSync(at);
+  } catch (first) {
+    try {
+      rmdirSync(at);
+    } catch {
+      throw new Error(`could not remove the link ${at}: ${(first as Error).message}`);
+    }
+  }
+}
+
 export interface LinkResult {
   root: string;
   stack: string;
@@ -325,49 +348,81 @@ export function linkProject(root: string, stack: Stack, options: { force?: boole
     if (ok !== undefined) result.satisfied = ok;
   }
   const modules = join(root, "node_modules");
+  const linkType = platform === "win32" ? "junction" : "dir";
   const carried = (name: string) => existsSync(join(stack.dir, "node_modules", ...name.split("/"), "package.json"));
   // the type packages the copy carries, which a project's tsconfig names (`types: ["node"]`, as `protoboard init`
   // and the examples write it): linked too, whether package.json lists them or not, so the editor type-checks a
   // project that Initialize set up with no npm (UI QA phase 2; B16)
   const names = [...new Set([...Object.keys(deps), ...(Object.keys(deps).some(isStackPackage) ? TYPES_FROM_STACK.filter(carried) : [])])].sort();
-  for (const name of names) {
-    if (!isStackPackage(name) && !(TYPES_FROM_STACK.includes(name) && carried(name))) {
-      if (packageState(root, name).state !== "installed") result.notProvided.push(name);
-      continue;
-    }
-    const target = join(stack.dir, "node_modules", ...name.split("/"));
-    if (!existsSync(join(target, "package.json"))) {
-      result.notInStack.push(name);
-      continue;
-    }
-    const at = join(modules, ...name.split("/"));
-    const now = packageState(root, name);
-    if (now.state === "installed") {
-      result.installed.push(name);
-      continue;
-    }
-    if (now.state === "linked") {
-      if (now.target === realpathSync(target) || !options.force) {
-        result.linked.push(name);
+  // what this call changed, so a failure part way (a link, the commands, the record) puts every link, command
+  // script and the record back as they were: a project is never left half on one copy
+  const changed: { at: string; before?: string }[] = [];
+  const bin = join(modules, ".bin");
+  const recordFile = join(modules, LINK_RECORD);
+  const files = [recordFile, ...["protoboard", "pb", "protoboard.cmd", "pb.cmd"].map((n) => join(bin, n))];
+  const filesBefore = new Map(files.map((f) => [f, readIfFile(f)] as const));
+  try {
+    for (const name of names) {
+      if (!isStackPackage(name) && !(TYPES_FROM_STACK.includes(name) && carried(name))) {
+        if (packageState(root, name).state !== "installed") result.notProvided.push(name);
         continue;
       }
+      const target = join(stack.dir, "node_modules", ...name.split("/"));
+      if (!existsSync(join(target, "package.json"))) {
+        result.notInStack.push(name);
+        continue;
+      }
+      const at = join(modules, ...name.split("/"));
+      const now = packageState(root, name);
+      if (now.state === "installed") {
+        result.installed.push(name);
+        continue;
+      }
+      if (now.state === "linked") {
+        if (now.target === realpathSync(target) || !options.force) {
+          result.linked.push(name);
+          continue;
+        }
+      }
+      const before = now.state === "missing" ? undefined : readlinkSync(at);
+      if (now.state !== "missing") removeLink(at);
+      changed.push({ at, ...(before !== undefined ? { before } : {}) });
+      mkdirSync(dirname(at), { recursive: true });
+      // a junction needs no privilege on Windows and takes an absolute target
+      symlinkSync(target, at, linkType);
+      result.linked.push(name);
+      result.made.push(name);
     }
-    if (now.state !== "missing") rmSync(at, { force: true, recursive: false });
-    mkdirSync(dirname(at), { recursive: true });
-    // a junction needs no privilege on Windows and takes an absolute target
-    symlinkSync(target, at, platform === "win32" ? "junction" : "dir");
-    result.linked.push(name);
-    result.made.push(name);
-  }
-  // the project's own command, as npm would have written it: only when the CLI is one of the links
-  if (result.linked.includes("@protoboardai/cli")) {
-    const home = options.home ?? dirname(dirname(stack.dir));
-    result.commands = writeCommands(join(modules, ".bin"), { kind: "project", cli: stackCli(stack.dir), home, platform });
-  }
-  if (result.linked.length) {
-    const record: LinkRecord = { schema: "protoboard.stack-link/v1", stack: stack.dir, version: stack.marker.version, linked: result.linked, at: options.now ?? new Date().toISOString() };
-    mkdirSync(modules, { recursive: true });
-    writeFileSync(join(modules, LINK_RECORD), JSON.stringify(record, null, 2) + "\n");
+    // the project's own command, as npm would have written it: only when the CLI is one of the links
+    if (result.linked.includes("@protoboardai/cli")) {
+      const home = options.home ?? dirname(dirname(stack.dir));
+      result.commands = writeCommands(bin, { kind: "project", cli: stackCli(stack.dir), home, platform });
+    }
+    if (result.linked.length) {
+      const record: LinkRecord = { schema: "protoboard.stack-link/v1", stack: stack.dir, version: stack.marker.version, linked: result.linked, at: options.now ?? new Date().toISOString() };
+      mkdirSync(modules, { recursive: true });
+      writeFileSync(join(modules, LINK_RECORD), JSON.stringify(record, null, 2) + "\n");
+    }
+  } catch (e) {
+    for (const c of changed.reverse()) {
+      try {
+        if (existsSyncLink(c.at)) removeLink(c.at);
+        if (c.before !== undefined) symlinkSync(c.before, c.at, linkType);
+      } catch {
+        // best effort: the error below says what failed
+      }
+    }
+    for (const [f, before] of filesBefore) {
+      try {
+        if (before === undefined) {
+          // a record this call began is removed whatever it holds; a command script only when it is one of ours
+          if (readIfFile(f) !== undefined && (f === recordFile || ours(f))) rmSync(f, { force: true });
+        } else if (readIfFile(f) !== before) writeFileSync(f, before);
+      } catch {
+        // best effort, as above
+      }
+    }
+    throw e;
   }
   return result;
 }
@@ -393,7 +448,7 @@ export function unlinkProject(r: LinkResult): void {
     const at = join(modules, ...name.split("/"));
     quiet(() => {
       // a link only (a junction is one too): never a real folder
-      if (lstatSync(at).isSymbolicLink()) rmSync(at, { force: true, recursive: false });
+      if (lstatSync(at).isSymbolicLink()) removeLink(at);
     });
   }
   const bin = join(modules, ".bin");
@@ -403,6 +458,25 @@ export function unlinkProject(r: LinkResult): void {
   }
   quiet(() => rmSync(join(modules, LINK_RECORD), { force: true }));
   for (const dir of [bin, ...new Set(r.made.filter((n) => n.includes("/")).map((n) => join(modules, n.split("/")[0]!))), modules]) quiet(() => rmdirSync(dir));
+}
+
+/** A file's text, or undefined when there is no file (or a link) there. */
+function readIfFile(p: string): string | undefined {
+  try {
+    return lstatSync(p).isFile() ? readFileSync(p, "utf8") : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Whether anything (a link included, even a broken one) is at `p`. */
+function existsSyncLink(p: string): boolean {
+  try {
+    lstatSync(p);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** One line about a link, for the CLI and the extension's log. */
@@ -434,6 +508,61 @@ export interface CommandOptions {
 const NEED_NODE =
   "protoboard: no Node.js 22 or later was found, and VS Code's own runtime is not where it was. Open a Protoboard project in VS Code once (the extension records its runtime), or install Node.js 22 or later (https://nodejs.org/en/download; macOS: brew install node; Windows: winget install OpenJS.NodeJS.LTS).";
 
+/**
+ * The CLI's options that take a value (`--library <id>`): the terminal's
+ * command skips each one's value when it looks for the command word. A test
+ * in the CLI keeps this list equal to the CLI's own option table.
+ */
+export const VALUE_OPTIONS: readonly string[] = [
+  "--agent",
+  "--allow-host",
+  "--auth-env",
+  "--case",
+  "--cursor",
+  "--cwd",
+  "--days",
+  "--domain",
+  "--editor",
+  "--extension",
+  "--format",
+  "--from",
+  "--from-vsix",
+  "--host",
+  "--host-origin",
+  "--input",
+  "--jobs",
+  "--judge",
+  "--library",
+  "--limit",
+  "--model",
+  "--module",
+  "--mpn",
+  "--name",
+  "--out-dir",
+  "--pin",
+  "--port",
+  "--position",
+  "--protocol",
+  "--python",
+  "--registry",
+  "--release",
+  "--scope",
+  "--severity",
+  "--sort",
+  "--stack",
+  "--tag",
+  "--taxonomy",
+  "--template",
+  "--timeout",
+  "--to",
+  "--trials",
+  "--units",
+  "--url",
+  "--version",
+  "--vsix",
+  "--work-dir",
+];
+
 const sq = (s: string) => `'${s.replace(/'/g, `'\\''`)}'`;
 
 /** The POSIX script. `node` 22 or later when there is one; else the runtime `<home>/runtime` names (VS Code's), as Node. */
@@ -447,8 +576,20 @@ export function shellCommand(o: CommandOptions): string {
     ...(o.kind === "home"
       ? [
           "# a project's own command wins: the one in the project's node_modules/.bin, the project being the nearest",
-          "# folder from here up with a protoboard.config.ts; nothing above that folder is looked at (PB-1048)",
-          "d=$PWD",
+          "# folder from here up with a protoboard.config.ts; nothing above that folder is looked at (PB-1048).",
+          "# Not for `upgrade`: it moves the project to this stack, and the project's own command is the older one.",
+          "# The command is the first word that is neither an option nor the value of one that takes a value",
+          'd=$PWD',
+          "skip=",
+          'for a in "$@"; do',
+          '  if [ -n "$skip" ]; then skip=; continue; fi',
+          '  case $a in',
+          `    ${VALUE_OPTIONS.join(" | ")}) skip=1 ;;`,
+          "    -*) ;;",
+          "    upgrade) d=; break ;;",
+          "    *) break ;;",
+          "  esac",
+          "done",
           'while [ -n "$d" ]; do',
           '  if [ -f "$d/protoboard.config.ts" ]; then',
           '    if [ -x "$d/node_modules/.bin/protoboard" ]; then exec "$d/node_modules/.bin/protoboard" "$@"; fi',
@@ -481,7 +622,12 @@ export function windowsCommand(o: CommandOptions): string {
     ...(o.kind === "home"
       ? [
           "rem a project's own command wins: the one in the project's node_modules\\.bin, the project being the nearest",
-          "rem folder from here up with a protoboard.config.ts; nothing above that folder is looked at (PB-1048)",
+          "rem folder from here up with a protoboard.config.ts; nothing above that folder is looked at (PB-1048).",
+          "rem Not for `upgrade`: it moves the project to this stack, and the project's own command is the older one.",
+          "rem The command is the first word that is neither an option nor the value of one that takes a value",
+          'set "UP="',
+          "call :scan %*",
+          "if defined UP goto run",
           'set "D=%CD%"',
           ":up",
           'if exist "%D%\\protoboard.config.ts" goto project',
@@ -500,6 +646,19 @@ export function windowsCommand(o: CommandOptions): string {
     'if defined RT if exist "%RT%" ( set "ELECTRON_RUN_AS_NODE=1" & "%RT%" "%CLI%" %* & exit /b )',
     `echo ${NEED_NODE.replace(/[()&|<>^]/g, "^$&")} 1>&2`,
     "exit /b 127",
+    ...(o.kind === "home"
+      ? [
+          ":scan",
+          'if "%~1"=="" exit /b',
+          'if /i "%~1"=="upgrade" ( set "UP=1" & exit /b )',
+          'set "A=%~1"',
+          'set "V="',
+          `for %%O in (${VALUE_OPTIONS.join(" ")}) do if /i "%A%"=="%%O" set "V=1"`,
+          "if defined V ( shift & shift & goto scan )",
+          'if "%A:~0,1%"=="-" ( shift & goto scan )',
+          "exit /b",
+        ]
+      : []),
     "",
   ].join("\r\n");
 }
