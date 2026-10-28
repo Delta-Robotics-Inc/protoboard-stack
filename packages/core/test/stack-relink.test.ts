@@ -109,6 +109,19 @@ describe("re-pointing a project's links to another stack copy", () => {
     expect(snapshot(a.dir)).toEqual(aFiles);
   });
 
+  it("a failure after the links moved (the command scripts cannot be written) puts the links and the record back", () => {
+    const root = project("late");
+    linkProject(root, a);
+    const record = readFileSync(join(root, "node_modules", ".protoboard-stack.json"), "utf8");
+    // node_modules/.bin is a file: every link moves, then the project's command cannot be written
+    rmSync(join(root, "node_modules", ".bin"), { recursive: true, force: true });
+    writeFileSync(join(root, "node_modules", ".bin"), "not a folder\n");
+    expect(() => linkProject(root, b, { force: true })).toThrow();
+    for (const n of PACKAGES) expect(realpathSync(at(root, n)), n).toBe(realpathSync(join(a.dir, "node_modules", ...n.split("/"))));
+    expect(readFileSync(join(root, "node_modules", ".protoboard-stack.json"), "utf8")).toBe(record);
+    expect(snapshot(a.dir)).toEqual(aFiles);
+  });
+
   it("unlinkProject removes its links and nothing they lead to", () => {
     const root = project("unlink");
     unlinkProject(linkProject(root, a));

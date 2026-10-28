@@ -354,8 +354,12 @@ export function linkProject(root: string, stack: Stack, options: { force?: boole
   // and the examples write it): linked too, whether package.json lists them or not, so the editor type-checks a
   // project that Initialize set up with no npm (UI QA phase 2; B16)
   const names = [...new Set([...Object.keys(deps), ...(Object.keys(deps).some(isStackPackage) ? TYPES_FROM_STACK.filter(carried) : [])])].sort();
-  // what this call changed, so a failure part way puts every link back as it was (a project is never left half on one copy)
+  // what this call changed, so a failure part way (a link, the commands, the record) puts every link, command
+  // script and the record back as they were: a project is never left half on one copy
   const changed: { at: string; before?: string }[] = [];
+  const bin = join(modules, ".bin");
+  const files = [join(modules, LINK_RECORD), ...["protoboard", "pb", "protoboard.cmd", "pb.cmd"].map((n) => join(bin, n))];
+  const filesBefore = new Map(files.map((f) => [f, readIfFile(f)] as const));
   try {
     for (const name of names) {
       if (!isStackPackage(name) && !(TYPES_FROM_STACK.includes(name) && carried(name))) {
@@ -388,6 +392,16 @@ export function linkProject(root: string, stack: Stack, options: { force?: boole
       result.linked.push(name);
       result.made.push(name);
     }
+    // the project's own command, as npm would have written it: only when the CLI is one of the links
+    if (result.linked.includes("@protoboardai/cli")) {
+      const home = options.home ?? dirname(dirname(stack.dir));
+      result.commands = writeCommands(bin, { kind: "project", cli: stackCli(stack.dir), home, platform });
+    }
+    if (result.linked.length) {
+      const record: LinkRecord = { schema: "protoboard.stack-link/v1", stack: stack.dir, version: stack.marker.version, linked: result.linked, at: options.now ?? new Date().toISOString() };
+      mkdirSync(modules, { recursive: true });
+      writeFileSync(join(modules, LINK_RECORD), JSON.stringify(record, null, 2) + "\n");
+    }
   } catch (e) {
     for (const c of changed.reverse()) {
       try {
@@ -397,17 +411,16 @@ export function linkProject(root: string, stack: Stack, options: { force?: boole
         // best effort: the error below says what failed
       }
     }
+    for (const [f, before] of filesBefore) {
+      try {
+        if (before === undefined) {
+          if (existsSync(f) && ours(f)) rmSync(f, { force: true });
+        } else if (readIfFile(f) !== before) writeFileSync(f, before);
+      } catch {
+        // best effort, as above
+      }
+    }
     throw e;
-  }
-  // the project's own command, as npm would have written it: only when the CLI is one of the links
-  if (result.linked.includes("@protoboardai/cli")) {
-    const home = options.home ?? dirname(dirname(stack.dir));
-    result.commands = writeCommands(join(modules, ".bin"), { kind: "project", cli: stackCli(stack.dir), home, platform });
-  }
-  if (result.linked.length) {
-    const record: LinkRecord = { schema: "protoboard.stack-link/v1", stack: stack.dir, version: stack.marker.version, linked: result.linked, at: options.now ?? new Date().toISOString() };
-    mkdirSync(modules, { recursive: true });
-    writeFileSync(join(modules, LINK_RECORD), JSON.stringify(record, null, 2) + "\n");
   }
   return result;
 }
@@ -443,6 +456,15 @@ export function unlinkProject(r: LinkResult): void {
   }
   quiet(() => rmSync(join(modules, LINK_RECORD), { force: true }));
   for (const dir of [bin, ...new Set(r.made.filter((n) => n.includes("/")).map((n) => join(modules, n.split("/")[0]!))), modules]) quiet(() => rmdirSync(dir));
+}
+
+/** A file's text, or undefined when there is no file (or a link) there. */
+function readIfFile(p: string): string | undefined {
+  try {
+    return lstatSync(p).isFile() ? readFileSync(p, "utf8") : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** Whether anything (a link included, even a broken one) is at `p`. */
