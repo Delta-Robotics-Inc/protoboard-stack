@@ -230,6 +230,8 @@ export function activate(context: vscode.ExtensionContext) {
     },
     inspectorAction: (card: InspectorCard, action: "focus" | "source" | "artifacts" | "operation" | "pair") => instance!.inspectorAction(card, action),
     openViewer: (target: Partial<ViewerTarget> & { root: string }) => instance!.openViewer(target),
+    /** The Cloud panel's Open. */
+    openProject: (root: string) => instance!.openProject(root),
     // PB-931, PB-946: a project made after the window opened, the Inspector in front once, a .uhd.ts in the viewer
     state: () => instance!.windowState(),
     createProject: (arg: { dir: string; template?: string; install?: boolean }) => instance!.newProject({ ...arg, open: false }),
@@ -456,6 +458,7 @@ class ProtoboardExtension {
         signOut: act(() => this.signOut()),
         manageAccount: act(() => this.manageAccount()),
         openBom: act(() => vscode.commands.executeCommand("protoboard.openBom", this.current)),
+        open: act(() => this.openProject(this.current)),
         publish: () => void vscode.window.showInformationMessage("Protoboard: publishing a project is not available yet. Publish parts from Project Parts."),
         requestQuote: () => void vscode.window.showInformationMessage("Protoboard: quotes are not available yet. Send the Manufacturing Package's ordering list to your suppliers."),
       },
@@ -2501,6 +2504,23 @@ class ProtoboardExtension {
       if (Date.now() - t0 > 10_000) throw new Error(`the viewer tab for ${target.path || basename(root)} did not open`);
       await new Promise((r) => setTimeout(r, 50));
     }
+  }
+
+  /**
+   * The Cloud panel's Open: the project's system in the viewer. A tab of the
+   * project's system already open (whatever level or view it shows) is brought
+   * to the front instead of opening another.
+   */
+  async openProject(given?: string): Promise<ViewerEditor> {
+    const root = await this.project(given);
+    const tabs = this.viewers.of(root).filter((e) => e.document.target.path === "" && (e.document.target.view === "diagram" || e.document.target.view === "3d"));
+    const existing = tabs.find((e) => e.document.target.view === "diagram") ?? tabs[0];
+    if (existing) {
+      existing.panel.reveal(undefined, false);
+      void this.ensureDev(root).catch(() => undefined);
+      return existing;
+    }
+    return this.openViewer({ root });
   }
 
   /** The hierarchy's "Open in New Tab": the module (or the module of an interface or link) as a viewer tab of its own. */

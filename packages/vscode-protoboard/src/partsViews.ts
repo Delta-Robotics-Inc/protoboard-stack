@@ -379,12 +379,18 @@ class ProjectPartsController implements vscode.WebviewViewProvider, vscode.Dispo
     if (this.root) this.host.partPicked?.(this.root, p);
   }
 
-  /** A library part opens its detail (its breadcrumb returns to the Project Parts page); the project's own parts open where they are written. */
+  /**
+   * A library part opens its detail (its breadcrumb returns to the Project Parts page). The project's own parts
+   * open in the viewer, where the system uses them (the first use selected); one the system does not use yet
+   * opens where it is written. Its source is the row's Open source.
+   */
   async open(id?: string) {
     const p = this.part(id);
     await this.select(p.id);
     if (p.tier === "catalog" && p.library) await this.host.library.whenLoaded().catch(() => undefined);
     if (p.tier === "catalog" && p.library && this.host.library.connection(p.library)) return this.host.library.showPart(p.library, p.id, undefined, undefined, "parts");
+    const used = this.root ? (this.host.index(this.root)?.usedBy.get(p.id) ?? []) : [];
+    if (this.root && used.length) return this.host.focusInstances(this.root, used.map((i) => i.path));
     return this.openSource(p.id);
   }
 

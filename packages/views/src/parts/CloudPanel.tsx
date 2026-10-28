@@ -65,6 +65,11 @@ export function CloudPanel({ model, actions }: { model: CloudModel; actions: Clo
           </p>
           <div className="flex items-center gap-2 pt-1">
             <span className="flex-1">{p.published ? <StatusText tone="ok">Published {p.published.at}</StatusText> : <StatusText tone="warning">Not published</StatusText>}</span>
+            {actions.open && (
+              <Button size="sm" icon="app-window" onClick={actions.open} title="Open the project in the viewer">
+                Open
+              </Button>
+            )}
             {actions.publish && (
               <Button size="sm" icon="cloud-upload" onClick={actions.publish} title="Publishing a project to Protoboard Cloud is not available yet">
                 Publish

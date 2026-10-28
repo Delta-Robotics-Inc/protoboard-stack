@@ -448,6 +448,15 @@ async function roundFive(api, explorer, child, step, viewerTabs) {
   assert.equal(textTabs().length, opened);
   step(`a viewer tab leads to its source: ${rel}${copied ? " (opened, and its path copied)" : " (opened)"}`);
 
+  // the Cloud panel's Open: the system's tab, brought to the front from another tab, never a second one
+  await api.openViewer({ root, path: child.path });
+  await until(() => api.viewers().find((v) => v.target.path === child.path).focused, 20000);
+  const before = api.viewers().length;
+  await api.openProject(root);
+  await until(() => api.viewers().find((v) => v.target.path === "").focused, 20000).catch(() => assert.fail("Open did not bring the system's tab to the front"));
+  assert.equal(api.viewers().length, before, "Open opened a second tab of the system");
+  step("the Cloud panel's Open brings the system's tab to the front");
+
   // D6: the user puts the Inspector away; selecting a module in the viewer brings it back, every time
   const selectInViewer = async (node) => {
     await vscode.commands.executeCommand("protoboard.explorer.focus", node);
@@ -881,6 +890,19 @@ async function libraryAndCloud(api, step) {
   const partDrawn = await until(() => api.inspectorDrawn() && api.inspectorDrawn().what.startsWith(`part:${used.id}:`) && api.inspectorDrawn().details && api.inspectorDrawn(), 30000);
   assert.ok(partDrawn.cards > 0 && partDrawn.rows === 0 && partDrawn.failed === 0, `the part's artifacts: ${JSON.stringify(partDrawn)}`);
   step(`project part ${used.id} in the Inspector: ${card.sections.map((s) => s.title).join(", ")}; ${partDrawn.cards} artifact cards (${partDrawn.loaded} pictures, ${partDrawn.icons} icons); status ${used.trust}`);
+  // a click on one of the project's own parts that the system uses opens the viewer on it, not its .uhd.ts
+  const own = parts.parts.parts.find((p) => p.tier !== "catalog" && p.instances > 0);
+  if (own) {
+    const texts = () => vscode.window.tabGroups.all.flatMap((g) => g.tabs).filter((t) => t.input instanceof vscode.TabInputText).length;
+    const textsBefore = texts();
+    await vscode.commands.executeCommand("protoboard.parts.open", own.id);
+    await until(() => {
+      const active = vscode.window.tabGroups.activeTabGroup.activeTab;
+      return active && active.input instanceof vscode.TabInputCustom && active.input.viewType === "protoboard.viewer";
+    }, 20000).catch(() => assert.fail(`opening project part ${own.id} did not bring a viewer tab to the front`));
+    assert.equal(texts(), textsBefore, `opening project part ${own.id} opened a text editor`);
+    step(`project part ${own.id} opens in the viewer`);
+  }
   // the Project Parts page (PB-945): an editor tab with the same parts as cards; the command opens it, once
   await vscode.commands.executeCommand("protoboard.parts.openPage");
   await until(() => webviewTabs("protoboard.partsPage").length === 1, 10000);
