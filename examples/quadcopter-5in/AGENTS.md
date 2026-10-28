@@ -50,8 +50,8 @@ parts and CAD.
 - `npx protoboard inspect [arm_fl/motor]` — context for the system or one instance
 - `npx protoboard build` — `.protoboard/build/resolved.json`
 - `npx protoboard parts search <words>` / `parts add <id>[@rev]` — find and vendor
-  catalog parts (needs the parts service: `PROTOBOARD_CLOUD_URL`, default
-  http://localhost:8787); `parts update` shows what the catalog recommends,
+  catalog parts (needs the parts service: `PROTOBOARD_CLOUD_URL`, then `cloud.url`,
+  default the hosted Protoboard library); `parts update` shows what the catalog recommends,
   `parts update <id> --to <rev>` re-pins deliberately; `parts publish
   parts/local/<file>` promotes a researched part (needs `PROTOBOARD_CLOUD_TOKEN`).
   Nothing else talks to the service: check, build and inspect work offline.

@@ -14,8 +14,8 @@
  *   ]
  *
  * Without `libraries`, the project uses the Protoboard library alone, at the
- * configured cloud URL (`--url`, PROTOBOARD_CLOUD_URL, `cloud.url`,
- * localhost). `authEnv` names the environment variable holding a library's
+ * configured cloud URL (`--url`, PROTOBOARD_CLOUD_URL, `cloud.url`, the
+ * hosted Protoboard library). `authEnv` names the environment variable holding a library's
  * read token; the token itself is never written anywhere.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -37,6 +37,11 @@ export {
   withLibraryRemoved,
   type LibraryConnection,
 } from "./library-client.js";
+/**
+ * A parts service started on this machine (protoboard-cloud's development
+ * server): what `protoboard init --local` writes into `cloud.url`. Never a
+ * fallback: a project that names no service uses HOSTED_CLOUD_URL.
+ */
 export const DEFAULT_CLOUD_URL = "http://localhost:8787";
 /** The hosted Protoboard library: defined in web-urls.ts (where tokens may go), which nothing heavy is imported into. */
 export { HOSTED_CLOUD_URL } from "./web-urls.js";
@@ -45,16 +50,21 @@ export const CLOUD_PROVIDER = "protoboard-cloud";
 /** `provider` of a definition vendored from any other uhd-library/v1 library. */
 export const LIBRARY_PROVIDER = "uhd-library";
 
-/** The Protoboard library's URL: `--url`, then PROTOBOARD_CLOUD_URL, then its entry's url, then `cloud.url`, then localhost. */
+/**
+ * The Protoboard library's URL: `--url`, then PROTOBOARD_CLOUD_URL, then its
+ * entry's url, then `cloud.url`, then the hosted Protoboard library (what
+ * `protoboard init` writes). A service on this machine is used only when one
+ * of those names it.
+ */
 export function cloudUrl(config?: ProtoboardConfig, override?: string, env: NodeJS.ProcessEnv = process.env, entryUrl?: string): string {
-  return (override || env.PROTOBOARD_CLOUD_URL || entryUrl || config?.cloud?.url || DEFAULT_CLOUD_URL).replace(/\/+$/, "");
+  return (override || env.PROTOBOARD_CLOUD_URL || entryUrl || config?.cloud?.url || HOSTED_CLOUD_URL).replace(/\/+$/, "");
 }
 
 /**
  * Where an account command's service URL came from: `--url`,
  * PROTOBOARD_CLOUD_URL, the project's `cloud.url`, a project that sets none
- * (localhost, as its `parts` commands use), or no project at all (the hosted
- * library).
+ * (the hosted library, as its `parts` commands use), or no project at all
+ * (the hosted library too).
  */
 export type AccountServiceSource =
   | "flag"
@@ -70,16 +80,16 @@ export type AccountServiceSource =
 /**
  * The service `login`, `logout` and `whoami` talk to. Inside a project it is
  * the service the project's `parts` commands use (`cloudUrl`), so a sign-in
- * is for the library the project takes parts from. With no project there is
- * nothing to follow, and the person signing in is a user of the hosted
- * library (what `protoboard init` writes into a new project), not of a
- * development service on this machine: HOSTED_CLOUD_URL, not localhost.
- * `--url` and PROTOBOARD_CLOUD_URL win everywhere.
+ * is for the library the project takes parts from. A project that sets no
+ * `cloud.url`, and no project at all, use the hosted library (what
+ * `protoboard init` writes into a new project), not a development service on
+ * this machine: HOSTED_CLOUD_URL, not localhost. `--url` and
+ * PROTOBOARD_CLOUD_URL win everywhere.
  */
 export function accountService(config: ProtoboardConfig | undefined, options: { url?: string; env?: NodeJS.ProcessEnv; inProject: boolean }): { url: string; source: AccountServiceSource } {
   const env = options.env ?? process.env;
   const source: AccountServiceSource = options.url ? "flag" : env.PROTOBOARD_CLOUD_URL ? "environment" : config?.cloud?.url ? "project" : options.inProject ? "project-default" : "default";
-  return { url: source === "default" ? HOSTED_CLOUD_URL : cloudUrl(config, options.url, env), source };
+  return { url: cloudUrl(config, options.url, env), source };
 }
 
 /**
@@ -133,8 +143,8 @@ export function unreachableService(service: string, what: string, source: Accoun
       `${elsewhere} (${DEFAULT_CLOUD_URL} is a parts service started on this machine; ${HOSTED_CLOUD_URL} is the hosted Protoboard library).`,
     ],
     "project-default": [
-      `${config} sets no cloud.url, so this is the default for a project without one: a parts service on this machine.`,
-      `Start one, or for another service set cloud.url there, pass --url <url> or set PROTOBOARD_CLOUD_URL (the hosted Protoboard library is ${HOSTED_CLOUD_URL}).`,
+      `${config} sets no cloud.url, so this is the hosted Protoboard library, the default for a project without one.`,
+      `Check your connection. For another service set cloud.url there, pass --url <url> or set PROTOBOARD_CLOUD_URL (${DEFAULT_CLOUD_URL} for a parts service on this machine).`,
     ],
     "project-file": [
       `That URL is cloud.url as written in ${config} (the file could not be loaded, so it was read as text): the service this project takes its parts from.`,
@@ -155,15 +165,16 @@ export function unreachableService(service: string, what: string, source: Accoun
 /**
  * What `login` says when its service does not answer: one line first, that
  * signing in cannot work now and why, in short (`what` without the request
- * it names). For the hosted library, or the service this machine is signed
- * in to, that is all there is to do: try again later. A URL someone chose
+ * it names). For the hosted library (no project, or a project that sets no
+ * cloud.url), or the service this machine is signed in to, that is all there
+ * is to do: try again later. A URL someone chose
  * (--url, the environment, a project's cloud.url) also gets where it came
  * from and how to use another, as `unreachableService`.
  */
 export function signInUnreachable(service: string, what: string, source: AccountServiceSource, configFile?: string): string {
   const reason = what.replace(/^[A-Z]+ \S+: /, "");
   const line = `Sign-in isn't available right now: ${service} does not answer (${reason}).`;
-  if (source === "default" || source === "saved") return `${line} Try again later.`;
+  if (source === "default" || source === "project-default" || source === "saved") return `${line} Try again later.`;
   return [line, ...unreachableService(service, what, source, configFile).split("\n").slice(1)].join("\n");
 }
 

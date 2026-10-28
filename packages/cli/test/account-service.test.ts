@@ -4,10 +4,12 @@
  *
  * Outside a project they use the hosted Protoboard library (a new user signs
  * in before there is a project; localhost there gave a bare "fetch failed").
- * Inside a project they follow the project: its cloud.url, or localhost when
- * it sets none, as its `parts` commands do. --url and PROTOBOARD_CLOUD_URL
+ * Inside a project they follow the project: its cloud.url, or the hosted
+ * library when it sets none, as its `parts` commands do. --url and PROTOBOARD_CLOUD_URL
  * win everywhere. Nothing here reaches the hosted service: the commands that
- * would ask it are pointed at a port nothing listens on.
+ * would ask it are pointed at a port nothing listens on, and the account
+ * check of those that resolve to it is answered by the test guard
+ * (scripts/test/no-hosted-service.mjs) as a service that does not answer.
  */
 import { spawn, spawnSync } from "node:child_process";
 import { createServer as createHttpServer } from "node:http";
@@ -68,11 +70,11 @@ describe("accountService: the service the account commands use", () => {
     expect(accountService(undefined, { env: {}, inProject: false })).toEqual({ url: HOSTED_CLOUD_URL, source: "default" });
   });
 
-  it("follows the project inside one: its cloud.url, or localhost when it sets none (what its parts commands use)", () => {
+  it("follows the project inside one: its cloud.url, or the hosted library when it sets none (what its parts commands use), never localhost unasked", () => {
     expect(accountService({ cloud: { url: "http://localhost:8795/" } } as never, { env: {}, inProject: true })).toEqual({ url: "http://localhost:8795", source: "project" });
-    expect(accountService({} as never, { env: {}, inProject: true })).toEqual({ url: DEFAULT_CLOUD_URL, source: "project-default" });
+    expect(accountService({} as never, { env: {}, inProject: true })).toEqual({ url: HOSTED_CLOUD_URL, source: "project-default" });
     // a project whose config could not be loaded is still a project
-    expect(accountService(undefined, { env: {}, inProject: true })).toEqual({ url: DEFAULT_CLOUD_URL, source: "project-default" });
+    expect(accountService(undefined, { env: {}, inProject: true })).toEqual({ url: HOSTED_CLOUD_URL, source: "project-default" });
   });
 
   it("--url, then PROTOBOARD_CLOUD_URL, win with or without a project", () => {
@@ -102,7 +104,7 @@ describe("unreachableService: the URL tried, why that one, and how to use anothe
     expect(unreachableService("http://x", what, "flag")).toContain("That URL is the one given with --url.");
     expect(unreachableService("http://x", what, "environment")).toContain("That URL comes from the PROTOBOARD_CLOUD_URL environment variable.");
     expect(unreachableService("http://x", what, "project", "/work/p/protoboard.config.ts")).toContain("That URL is cloud.url in /work/p/protoboard.config.ts: the service this project takes its parts from.");
-    expect(unreachableService("http://localhost:8787", what, "project-default", "/work/p/protoboard.config.ts")).toContain("/work/p/protoboard.config.ts sets no cloud.url, so this is the default for a project without one: a parts service on this machine.");
+    expect(unreachableService(HOSTED_CLOUD_URL, what, "project-default", "/work/p/protoboard.config.ts")).toContain("/work/p/protoboard.config.ts sets no cloud.url, so this is the hosted Protoboard library, the default for a project without one.");
     expect(unreachableService("http://x", what, "project-file", "/work/p/protoboard.config.ts")).toContain("cloud.url as written in /work/p/protoboard.config.ts");
     expect(unreachableService("http://x", what, "saved", "/work/p/protoboard.config.ts")).toContain("the service this machine is signed in to");
     for (const source of ["flag", "environment", "project", "project-default", "default", "project-file", "saved"] as const) {
@@ -127,10 +129,19 @@ describe("protoboard whoami, logout and login: the service", () => {
     expect(cli(OUTSIDE, ["whoami", "--format", "json", "--url", "http://localhost:8787"], { PROTOBOARD_CLOUD_URL: "http://localhost:9000" }).json()).toMatchObject({ service: "http://localhost:8787" });
   });
 
-  it("inside a project it is the project's cloud.url, and localhost for a project that sets none", () => {
+  it("inside a project it is the project's cloud.url, and the hosted library for a project that sets none", () => {
     expect(cli(PROJECT, ["whoami", "--format", "json"]).json()).toMatchObject({ service: DEAD });
-    expect(cli(BARE, ["whoami", "--format", "json"]).json()).toMatchObject({ service: DEFAULT_CLOUD_URL });
+    expect(cli(BARE, ["whoami", "--format", "json"]).json()).toMatchObject({ service: HOSTED_CLOUD_URL });
     expect(cli(PROJECT, ["whoami", "--format", "json"], { PROTOBOARD_CLOUD_URL: "http://localhost:9000" }).json()).toMatchObject({ service: "http://localhost:9000" });
+  });
+
+  it("a project's parts commands use the hosted library when it sets no cloud.url, and localhost only when asked", () => {
+    const r = cli(BARE, ["parts", "search", "esc"]);
+    expect(r.stdout + r.stderr).toContain(HOSTED_CLOUD_URL);
+    expect(r.stdout + r.stderr).not.toContain("localhost:8787");
+    expect(cli(BARE, ["libraries", "--format", "json"]).json()).toMatchObject({ libraries: [{ id: "protoboard", url: HOSTED_CLOUD_URL }] });
+    expect(cli(BARE, ["libraries", "--format", "json"], { PROTOBOARD_CLOUD_URL: DEFAULT_CLOUD_URL }).json()).toMatchObject({ libraries: [{ id: "protoboard", url: DEFAULT_CLOUD_URL }] });
+    expect(cli(BARE, ["libraries", "--format", "json", "--url", DEAD]).json()).toMatchObject({ libraries: [{ id: "protoboard", url: DEAD }] });
   });
 
   it("a project whose config does not load never sends the sign-in to localhost: it is the user's service, and said so", () => {

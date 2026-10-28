@@ -23,7 +23,16 @@
 import { LIBRARY_SORTS, isLibrarySort, type LibrarySort } from "./library-sort.js";
 import { CloudError, PartsClient, discoverLibrary, type PartSummary, type PublicOffer, type SearchFacets, type SearchQuery, type TaxonomyResult, type TaxonomyTreeNode } from "@protoboardai/cloud/client";
 
-import { cloudTokenAllowed, isAuthEnvName, tokenTransportProblem } from "./web-urls.js";
+import { cloudTokenAllowed, isAuthEnvName, isLoopbackHost, tokenTransportProblem } from "./web-urls.js";
+
+/** Whether a URL is a service on this machine (one that someone starts), not one reached over the network. */
+const onThisMachine = (url: string): boolean => {
+  try {
+    return isLoopbackHost(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+};
 
 /** The Protoboard Cloud parts library's id; its URL is the configured cloud URL. */
 export const DEFAULT_LIBRARY_ID = "protoboard";
@@ -233,7 +242,9 @@ export function explainCloudError(e: unknown, lib: string | { id?: string; url: 
       return new PartsError(
         e.code,
         isDefault(l)
-          ? `cannot reach the Protoboard Cloud parts service at ${url} (${e.message.replace(/^.*?: /, "")}). Start it, or point PROTOBOARD_CLOUD_URL (or cloud.url in protoboard.config.ts) at it. Loading, checking and building do not need the service.`
+          ? onThisMachine(url)
+            ? `cannot reach the Protoboard Cloud parts service at ${url} (${e.message.replace(/^.*?: /, "")}). Start it, or point PROTOBOARD_CLOUD_URL (or cloud.url in protoboard.config.ts) at it. Loading, checking and building do not need the service.`
+            : `cannot reach the Protoboard library at ${url} (${e.message.replace(/^.*?: /, "")}). Check your connection, or point PROTOBOARD_CLOUD_URL (or cloud.url in protoboard.config.ts) at another service. Loading, checking and building do not need the service.`
           : `cannot reach library ${l.id} at ${url} (${e.message.replace(/^.*?: /, "")}). Check its url in protoboard.config.ts (\`protoboard libraries list --check\`). Loading, checking and building do not need it.`,
       );
     case "PART_NOT_FOUND":

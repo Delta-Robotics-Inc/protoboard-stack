@@ -170,7 +170,9 @@ check_example() {
 # doctor finds the CAD runtime for every CAD extension; other tools (Chrome and
 # poppler for ext-docs) are listed, not required
 doctor_tools() {
-  node "$CLI" doctor --format json --cwd . >"$TMP/doctor.json" || return 1
+  # its account check asks the project's library: the example sets no cloud.url (the hosted library), so a port
+  # that refuses connections instead
+  PROTOBOARD_CLOUD_URL=http://127.0.0.1:9 node "$CLI" doctor --format json --cwd . >"$TMP/doctor.json" || return 1
   node -e '
     const j = JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"));
     const cad = (t) => t.id === "python-build123d";
@@ -217,6 +219,12 @@ fi
 # ---- the stack (its npm ci links ../uhd and ../uhd-viewer, so both are built first)
 PB_GATE="${UHD_GATE:-$VIEWER_GATE}"
 gated PB_GATE "stack: npm ci" "$PB" "${NPM_CI[@]}"
+# from here on nothing reaches the hosted Protoboard library (a project without cloud.url uses it by default):
+# every Node process fails such a request, as a service that does not answer, and the requests are listed at
+# the end (scripts/test/no-hosted-service.mjs; the tests' own vitest.config.ts does the same)
+export PB_TEST_HOSTED_LOG="$TMP/hosted-requests.log"
+NODE_OPTIONS_BEFORE="${NODE_OPTIONS:-}"
+export NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--import=$(node -e 'console.log(require("node:url").pathToFileURL(process.argv[1]).href)' "$PB/scripts/test/no-hosted-service.mjs")"
 for config in "$PB"/examples/*/protoboard.config.ts; do
   [ -e "$config" ] || continue
   ex="$(dirname "$config")"
@@ -228,6 +236,17 @@ g="$PB_GATE"; gated g "stack: typecheck" "$PB" npm run typecheck
 # the shipped eval cases run once, in the evals step below, not inside npm test as well
 g="$PB_GATE"; gated g "stack: tests$([ $CAD -eq 1 ] && echo ' (with the CAD generator tests)')$([ $HAS_CLOUD -eq 0 ] && echo ' (no protoboard-cloud: the parts service tests are left out)')" "$PB" env PROTOBOARD_SKIP_EVAL_CASES=1 npm test
 g="$PB_GATE"; gated g "stack: evals (scripted host)" "$PB" evals_ci
+no_hosted_requests() {
+  if [ -s "$PB_TEST_HOSTED_LOG" ]; then
+    echo "requests to the hosted Protoboard library, blocked (answered as a service that does not answer):"
+    cat "$PB_TEST_HOSTED_LOG"
+  else
+    echo "no request went to the hosted Protoboard library"
+  fi
+}
+step "stack: requests to the hosted library (blocked)" "$PB" no_hosted_requests
+export NODE_OPTIONS="$NODE_OPTIONS_BEFORE"
+[ -n "$NODE_OPTIONS" ] || unset NODE_OPTIONS
 # brand spelling (PB-913): "Protoboard" with a lowercase b, in every repository of the stack
 for repo in "$UHD" "$VIEWER" "$CLOUD" "$PB"; do
   [ -d "$repo/.git" ] || [ -f "$repo/.git" ] || continue
