@@ -1,0 +1,1 @@
+Preview images for the extension review fixes PR (Discord mark, status bar tooltip, sign-in message, More actions). Not part of the project and never merged; delete this branch after the PR is merged.
