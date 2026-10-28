@@ -178,5 +178,7 @@ describe("the terminal's command on Windows", () => {
     expect(run("--dry-run upgrade")).toBe("stack cli --dry-run,upgrade");
     expect(run(`--cwd "${proj}" upgrade`)).toBe(`stack cli --cwd,${proj},upgrade`);
     expect(run("check upgrade")).toBe("project own check upgrade");
+    expect(run("--json check upgrade")).toBe("project own --json check upgrade");
+    expect(run("--format json upgrade")).toBe("stack cli --format,json,upgrade");
   });
 });

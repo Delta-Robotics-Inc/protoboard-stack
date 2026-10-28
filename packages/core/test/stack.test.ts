@@ -365,6 +365,8 @@ describe("the terminal's command and a project's own (PB-1048)", () => {
     // `upgrade` as another command's argument is not the command
     expect(runArgs("check", "upgrade")).toBe("project own");
     expect(runArgs("--json", "check")).toBe("project own");
+    expect(runArgs("--json", "check", "upgrade")).toBe("project own");
+    expect(runArgs("--format", "json", "upgrade")).toBe("stack cli");
   });
 
   it("the Windows command stops at the project root too", () => {
