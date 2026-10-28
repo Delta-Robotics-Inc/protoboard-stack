@@ -21,7 +21,7 @@ inputs:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
     # the legend at the bottom right with its folded tab, the context menu's icons and keys, the empty level's
     # plus box (the uhd-viewer branch mark/pb-1125-alpha-parity-1), until uhd-viewer v0.2.1 is tagged: then v0.2.1
-    default: ceef96ae97ce86abe9d49a17fc587c6a6b24fd0b
+    default: 0ecdfcd56131d418fb8fb45934ab1fcb147dcc8e
 
 runs:
   using: composite
