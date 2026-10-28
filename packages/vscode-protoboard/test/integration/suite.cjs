@@ -901,6 +901,9 @@ async function libraryAndCloud(api, step) {
       return active && active.input instanceof vscode.TabInputCustom && active.input.viewType === "protoboard.viewer";
     }, 20000).catch(() => assert.fail(`opening project part ${own.id} did not bring a viewer tab to the front`));
     assert.equal(texts(), textsBefore, `opening project part ${own.id} opened a text editor`);
+    // the viewer tests below start from no viewer tab
+    await vscode.window.tabGroups.close(vscode.window.tabGroups.all.flatMap((g) => g.tabs).filter((t) => t.input instanceof vscode.TabInputCustom && t.input.viewType === "protoboard.viewer"));
+    await until(() => api.viewers().length === 0, 20000);
     step(`project part ${own.id} opens in the viewer`);
   }
   // the Project Parts page (PB-945): an editor tab with the same parts as cards; the command opens it, once

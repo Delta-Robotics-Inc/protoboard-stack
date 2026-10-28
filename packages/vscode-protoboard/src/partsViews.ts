@@ -389,7 +389,7 @@ class ProjectPartsController implements vscode.WebviewViewProvider, vscode.Dispo
     await this.select(p.id);
     if (p.tier === "catalog" && p.library) await this.host.library.whenLoaded().catch(() => undefined);
     if (p.tier === "catalog" && p.library && this.host.library.connection(p.library)) return this.host.library.showPart(p.library, p.id, undefined, undefined, "parts");
-    const used = this.root ? (this.host.index(this.root)?.usedBy.get(p.id) ?? []) : [];
+    const used = this.root && p.tier !== "catalog" ? (this.host.index(this.root)?.usedBy.get(p.id) ?? []) : [];
     if (this.root && used.length) return this.host.focusInstances(this.root, used.map((i) => i.path));
     return this.openSource(p.id);
   }
