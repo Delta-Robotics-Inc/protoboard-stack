@@ -225,7 +225,7 @@ export function SettingsPage({ model, actions }: { model: SettingsModel; actions
           </Section>
         )}
 
-        <Section title="More settings">
+        <Section title="More actions">
           <Card className={cx(BODY, "flex flex-col text-[13px] text-fg")}>
             <div className="flex min-h-11 items-center gap-3 px-4 py-2">
               <Icon name="settings" size={15} strokeWidth={1.75} className="shrink-0 text-fg-muted" aria-hidden />
@@ -233,7 +233,7 @@ export function SettingsPage({ model, actions }: { model: SettingsModel; actions
                 VS Code settings
                 <span className="block text-[12px] text-fg-muted">CLI and Node.js paths, dev server port, check on save</span>
               </span>
-              <Button size="sm" icon="external-link" onClick={actions.openVsCodeSettings}>
+              <Button size="sm" onClick={actions.openVsCodeSettings}>
                 Open
               </Button>
             </div>
@@ -244,7 +244,7 @@ export function SettingsPage({ model, actions }: { model: SettingsModel; actions
                   Libraries
                   <span className="block text-[12px] text-fg-muted">Where parts come from, in search order</span>
                 </span>
-                <Button size="sm" icon="external-link" onClick={actions.openLibraries}>
+                <Button size="sm" onClick={actions.openLibraries}>
                   Open
                 </Button>
               </div>
@@ -257,7 +257,8 @@ export function SettingsPage({ model, actions }: { model: SettingsModel; actions
                     {l.label}
                     <span className="block text-[12px] break-words text-fg-muted">{l.note}</span>
                   </span>
-                  <Button size="sm" icon="external-link" className="shrink-0" onClick={() => actions.run!(l.id)}>
+                  {/* only what leaves VS Code says so: an action or a view of VS Code's is a plain button */}
+                  <Button size="sm" icon={l.opens === "external" ? "external-link" : undefined} className="shrink-0" onClick={() => actions.run!(l.id)}>
                     {l.action}
                   </Button>
                 </div>

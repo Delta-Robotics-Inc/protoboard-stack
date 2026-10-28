@@ -498,7 +498,7 @@ export interface SettingsModel {
     problem?: string;
   };
   other?: OtherClientsModel;
-  /** What else of Protoboard is reached from here: the stack's folder, a new project, the bill of materials, the first steps. */
+  /** More actions: the first steps, the bill of materials, the stack's folder, the command on PATH. */
   links?: SettingsLinkModel[];
 }
 
@@ -509,8 +509,14 @@ export interface SettingsLinkModel {
   note: string;
   /** A lucide icon name. */
   icon: string;
-  /** The button's word: "Open", "Show Folder", "Create". */
+  /** The button's word: "Open", "Show Folder", "Add to PATH". */
   action: string;
+  /**
+   * What the button does: `external` opens something outside VS Code (a web
+   * page, the file manager) and is the only kind that shows the external-link
+   * icon; `view` opens a view of VS Code's; absent, it runs an action here.
+   */
+  opens?: "external" | "view";
 }
 
 export interface SettingsActions {

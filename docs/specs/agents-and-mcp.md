@@ -456,8 +456,11 @@ can grow:
    copy. The name in them (and in `agents config`) is `protoboard-stack`
    (since 0.1.7 always; before, only beside another server named
    `protoboard`).
-5. **More settings**: opens VS Code's own settings for the extension, and
-   the libraries manager. They are not repeated on the page.
+5. **More actions**: opens VS Code's own settings for the extension, the
+   libraries manager, the first steps and the bill of materials; shows the
+   installed stack's folder; adds the `protoboard` command to PATH. Only a
+   button that leaves VS Code (the file manager) carries the external-link
+   icon; one that runs an action or opens a view of VS Code's is plain.
 
 VS Code's own extension API for MCP servers
 (`mcpServerDefinitionProviders`) is not used in this pass: the server would

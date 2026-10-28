@@ -24,7 +24,7 @@ import { TERMINAL_PATH_ENV, applyPathPlan, describePathPlan, pathPlan } from "@p
 import { StackReplaceRefused, carriedManifest, ensureCarried, ensureFromVsix, unpackedCarried, writeHome, type CarriedManifest } from "./stackStore.js";
 import { loadCodeReference, type CodeReference } from "./codes.js";
 import { ACCESS_EXIT_CODE } from "@protoboardai/core/access";
-import { CHECKING, CLOUD_COMMANDS, accessMessage, accountCard, accountFromWhoAmI, accountView, accountItem, lockOf, terminalCommand, type AccountAction, type AccountState, type Lock } from "./account.js";
+import { CHECKING, CLOUD_COMMANDS, SIGN_IN_UNAVAILABLE, accessMessage, accountCard, accountFromWhoAmI, accountView, accountItem, lockOf, signInUnavailable, terminalCommand, type AccountAction, type AccountState, type Lock } from "./account.js";
 import { setAccountHandler, setAppAccess, trackApp } from "./appView.js";
 import { cloudPageModel, pageOrder, projectAuthor, releaseOutcome, type ReleaseRecord, type ReleaseState } from "./cloud.js";
 import type { CloudPageMessage } from "./cloudPage.js";
@@ -1799,23 +1799,25 @@ class ProtoboardExtension {
     };
   }
 
-  /** What the settings page links to besides its own sections (PB-930): what the other parts of the extension offer in this window. */
+  /**
+   * The settings page's More actions (PB-930): what the other parts of the extension offer in this window. A new
+   * project and checking the account again are not among them: they have their own places (the Cloud view, the
+   * account's status bar item).
+   */
   private settingsLinks(): SettingsLink[] {
     const tilde = (p: string) => (p.startsWith(homedir()) ? `~${p.slice(homedir().length)}` : p);
     const manifest = this.carried;
     return [
-      { id: "start", label: "First steps", note: "New project, viewer, sign-in, terminal", icon: "map", action: "Open", command: "workbench.action.openWalkthrough", args: [`${this.context.extension.id}#protoboard.start`, false] },
-      { id: "createProject", label: "A new project", note: "Blank or from a template", icon: "folder-plus", action: "Create", command: "protoboard.newProject" },
+      { id: "start", label: "First steps", note: "New project, viewer, sign-in, terminal", icon: "map", action: "Open", opens: "view", command: "workbench.action.openWalkthrough", args: [`${this.context.extension.id}#protoboard.start`, false] },
       ...(this.current && this.needsSetup(this.current) ? [{ id: "setupProject", label: `Set up ${basename(this.current)}`, note: "Not set up on this machine yet", icon: "rocket", action: "Initialize", command: "protoboard.setupProject" }] : []),
       ...(this.current && !this.needsSetup(this.current) ? [{ id: "runtimes", label: "Tool runtimes", note: `${basename(this.current)}: CAD and circuit runtimes`, icon: "wrench", action: "Install…", command: "protoboard.tools.install" }] : []),
-      ...(this.current ? [{ id: "bom", label: "Bill of materials", note: `${basename(this.current)}: parts and chosen offers, in USD`, icon: "table", action: "Open", command: "protoboard.openBom" }] : []),
+      ...(this.current ? [{ id: "bom", label: "Bill of materials", note: `${basename(this.current)}: parts and chosen offers, in USD`, icon: "table", action: "Open", opens: "view" as const, command: "protoboard.openBom" }] : []),
       ...(manifest
         ? [
-            { id: "stack", label: `Protoboard ${manifest.version}, installed for your user`, note: tilde(stackDir(this.home, manifest.version)), icon: "package", action: "Show Folder", command: "protoboard.stack.show" },
+            { id: "stack", label: `Protoboard ${manifest.version}, installed for your user`, note: tilde(stackDir(this.home, manifest.version)), icon: "package", action: "Show Folder", opens: "external" as const, command: "protoboard.stack.show" },
             { id: "path", label: "The protoboard command outside VS Code", note: `For terminals outside VS Code (${tilde(join(this.home, "bin"))})`, icon: "terminal", action: "Add to PATH", command: "protoboard.path.add" },
           ]
         : []),
-      { id: "account", label: "Check the account again", note: "Check the service again", icon: "refresh-cw", action: "Check", command: "protoboard.account.check" },
     ];
   }
 
@@ -2011,6 +2013,11 @@ class ProtoboardExtension {
     const root = this.current ?? (await this.roots())[0];
     if (this.signInTerminal) return this.signInTerminal.show();
     const found = root && !this.waiting.has(root) && this.cliReady(root) ? this.cli(root) : this.cliOutside();
+    // a service that does not answer cannot sign anyone in: one line now, rather than a terminal that ends with its exit code
+    if (canRun(found) && signInUnavailable(await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: "Protoboard: signing in" }, () => this.refreshAccount(true)))) {
+      this.log.warn(`sign-in: the service does not answer (${"problem" in this.accountState ? this.accountState.problem : this.accountState.state}); no terminal opened`);
+      return void vscode.window.showWarningMessage(SIGN_IN_UNAVAILABLE);
+    }
     // a remote window (SSH, WSL, a container) has no browser of its own: the code, approved on any device
     const byCode = device || !!vscode.env.remoteName;
     const args = ["login", ...(byCode ? ["--device"] : [])];
@@ -2047,6 +2054,15 @@ class ProtoboardExtension {
     const until = Date.now() + 10 * 60_000;
     const poll = async () => {
       if (this.signInTerminal !== t || Date.now() > until || this.disposed) return;
+      // the login ended with an error (the terminal stays, with its exit code): when that is the service not
+      // answering, say so in one line and close the terminal, as before it opens
+      if (t.exitStatus && t.exitStatus.code !== 0) {
+        if (signInUnavailable(await this.refreshAccount(true))) {
+          void vscode.window.showWarningMessage(SIGN_IN_UNAVAILABLE);
+          t.dispose();
+        }
+        return;
+      }
       if ((await this.refreshAccount()).state === "signed-in") return void vscode.window.setStatusBarMessage(this.lock.locked ? "$(account) Signed in; this account is not invited to the Protoboard library yet" : "$(account) Signed in to Protoboard", 4000);
       setTimeout(() => void poll(), 3000);
     };
@@ -2247,7 +2263,7 @@ class ProtoboardExtension {
     if (result) md.appendMarkdown(`Checked ${result.at.toLocaleTimeString()}: ${result.counts.error} errors, ${result.counts.warning} warnings, ${result.counts.info} info${result.skipped.length ? ` (${result.skipped.length} validators skipped)` : ""}\n\n`);
     else if (this.failed.has(shown)) md.appendMarkdown("The last check failed: see the Protoboard log.\n\n");
     const dev = this.sessions.get(shown);
-    if (dev?.endpoint) md.appendMarkdown(`Dev server: ${dev.endpoint.url} (${dev.process?.running ? "started here" : "attached"})\n\n`);
+    if (dev?.endpoint) md.appendMarkdown(`Dev server: ${dev.endpoint.url}\n\n`);
     md.appendMarkdown("Click to check.\n\n");
     md.appendMarkdown(helpMarkdown());
     md.isTrusted = { enabledCommands: helpCommands() };

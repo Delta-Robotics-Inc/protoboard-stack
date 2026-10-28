@@ -284,7 +284,7 @@ system, then its modules, parts and harnesses, each with an icon for its kind
 (assembly, group, part, board, enclosure, structure, harness, fastener stack)
 and a dot in its part status colour (gray local, yellow unverified, green
 verified, blue official), with a legend at the bottom. Harnesses, cables and
-fastener stacks are folded into one **Wiring & hardware** row at the bottom
+fastener stacks are folded into one **Harnesses & links** row at the bottom
 with a count, so the tree shows the system's structure first. A row's icon
 takes the colour of the worst error or warning here or below; a count beside
 the name is the row's own.
@@ -1096,8 +1096,10 @@ applications. On `examples/quadcopter-5in`, with the `.vsix` installed:
 9. The viewer tab's **hierarchy** at its left shows *5-inch 6S quadcopter*
    (`system`) with the frame, the arms (groups), the stack and the parts,
    each with its status dot; the harnesses and the hardware stacks are under
-   **Wiring & hardware** at the bottom. The secondary side bar has the
-   **Protoboard Inspector** only.
+   **Harnesses & links** at the bottom. The secondary side bar has the
+   **Protoboard Inspector** only. Click *Receiver wires* there: the cable
+   between the stack and the receiver is selected and framed; so are both
+   mounts for *Stack hardware*.
 10. Type `motor` in the hierarchy: the arms and the motor leads stay, the
     rest goes. Escape clears it.
 11. Click *FC + ESC stack* in the hierarchy: the tab selects it. Double-click
