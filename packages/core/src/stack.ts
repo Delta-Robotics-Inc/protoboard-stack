@@ -358,7 +358,8 @@ export function linkProject(root: string, stack: Stack, options: { force?: boole
   // script and the record back as they were: a project is never left half on one copy
   const changed: { at: string; before?: string }[] = [];
   const bin = join(modules, ".bin");
-  const files = [join(modules, LINK_RECORD), ...["protoboard", "pb", "protoboard.cmd", "pb.cmd"].map((n) => join(bin, n))];
+  const recordFile = join(modules, LINK_RECORD);
+  const files = [recordFile, ...["protoboard", "pb", "protoboard.cmd", "pb.cmd"].map((n) => join(bin, n))];
   const filesBefore = new Map(files.map((f) => [f, readIfFile(f)] as const));
   try {
     for (const name of names) {
@@ -414,7 +415,8 @@ export function linkProject(root: string, stack: Stack, options: { force?: boole
     for (const [f, before] of filesBefore) {
       try {
         if (before === undefined) {
-          if (existsSync(f) && ours(f)) rmSync(f, { force: true });
+          // a record this call began is removed whatever it holds; a command script only when it is one of ours
+          if (readIfFile(f) !== undefined && (f === recordFile || ours(f))) rmSync(f, { force: true });
         } else if (readIfFile(f) !== before) writeFileSync(f, before);
       } catch {
         // best effort, as above
