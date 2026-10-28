@@ -19,8 +19,8 @@ inputs:
     default: v0.3.0
   uhd-viewer-ref:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
-    # Harnesses & links lists the level on screen only (uhd-viewer#11), until uhd-viewer v0.2.1 is tagged: then v0.2.1
-    default: 74dd8b3ff5a266bad06eebb3d2dd5479730a0366
+    # the 0.2.1 release: the floating hierarchy, Harnesses & links, the legend at the bottom right
+    default: v0.2.1
 
 runs:
   using: composite

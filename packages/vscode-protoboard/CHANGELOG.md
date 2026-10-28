@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.2
+
+- A floating hierarchy that folds from its own header, and Harnesses & links
+  for the level on screen.
+- An Open button on the project card, and modules open in the viewer.
+- A loading screen, an empty module's Add a part, and the legend at the
+  bottom right with what each colour means.
+- The library works in every project, with clearer sign-in messages.
+- Help in the side bar, with the Discord community.
+- Windows: moving a project to a new stack no longer fails.
+
 ## 0.2.1
 
 - A new Marketplace page, with screenshots and a short getting-started guide.

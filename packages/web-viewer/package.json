@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/web-viewer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The Protoboard viewer, for the browser and VS Code.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -36,7 +36,7 @@
     "build:vscode": "vite build -c vite.vscode.config.ts"
   },
   "dependencies": {
-    "@deltarobotics/uhd-viewer": "^0.2.0",
+    "@deltarobotics/uhd-viewer": "^0.2.1",
     "@protoboardai/views": "^0.2.0",
     "@radix-ui/react-scroll-area": "^1.2.18",
     "@xyflow/react": "^12.12.0",

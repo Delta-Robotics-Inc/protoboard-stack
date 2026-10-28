@@ -5,6 +5,64 @@ extension, the cloud client and the viewer are open source under Apache-2.0,
 and local work needs no account. The [0.1 release notes](stack-v0.1.md)
 describe the line before it.
 
+## 0.2.2
+
+A cleaner viewer, a working library out of the box, and fixes from the first
+weeks of use.
+
+### Viewer
+
+- **A floating hierarchy.** It sits on the canvas as a card and folds from its
+  own header. When folded, a single icon at the top left reopens it. The
+  header keeps only the views: Diagram, 3D, BOM and Pair.
+- **Harnesses & links.** The hierarchy groups a level's cables, harnesses and
+  fastener stacks. Clicking one selects it and frames all of its lines, and
+  so does a check's **Locate in viewer**.
+- **Easier to open.** The project card in the Protoboard side bar has an
+  **Open** button, and opening a module from Protoboard shows it in the
+  viewer.
+- **A loading screen** with the Protoboard mark while a project loads.
+- **An empty module offers "Add a part"**, which opens the library.
+- **The legend** sits at the bottom right. It folds to a tab, and each
+  colour says what it means.
+- **Menus and tooltips:** menus have icons and keyboard shortcuts, and
+  tooltips are short labels.
+- **The Inspector** cuts long descriptions to five lines and shows long
+  lists ten at a time. It lists every interface of a part, and its pin
+  mapping fits a narrow panel.
+- **Fonts:** Kode Mono throughout under the Protoboard themes. Under any
+  other theme, only the Protoboard name uses it.
+
+### Library and account
+
+- **The library works in every project.** A project that names no service
+  now uses the hosted Protoboard library.
+- **Sign-in** says plainly when the service can't be reached.
+- **Manage Account** opens your account page from VS Code, and
+  `protoboard account` does the same from the command line.
+- **Part pages** name each vendor's terms.
+- **`parts add`** skips files the library doesn't redistribute.
+
+### Extension
+
+- **Help** in the Protoboard side bar has Documentation, Feedback and
+  Issues, and the Discord community.
+- **A shorter trust prompt** before a project's code runs.
+- **Settings** groups its commands under **More actions**.
+
+### Fixes
+
+- **Windows:** `protoboard upgrade` and `protoboard stack link` no longer
+  fail with "Path is a directory" when moving a project to a new stack. An
+  upgrade that can't finish leaves the project as it was.
+- **The `protoboard` command** outside VS Code runs `upgrade` with its own,
+  newer version.
+- **For agents:** clearer run logs and loader messages, theme aliases, and
+  supplier comparison in sourcing.
+
+Every package and the extension move to 0.2.2 together, with
+`@deltarobotics/uhd-viewer` 0.2.1. A 0.2.x project needs no change.
+
 ## 0.2.1
 
 The store pages. Nothing in the stack's behaviour changes.

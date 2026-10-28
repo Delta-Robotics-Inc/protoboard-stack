@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The protoboard command: create, check, build and release hardware projects.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -29,7 +29,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@deltarobotics/uhd-viewer": "^0.2.0",
+    "@deltarobotics/uhd-viewer": "^0.2.1",
     "@modelcontextprotocol/sdk": "1.32.1",
     "@protoboardai/core": "^0.2.0",
     "@protoboardai/ext-sourcing": "^0.2.0",
