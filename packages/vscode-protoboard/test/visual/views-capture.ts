@@ -324,7 +324,7 @@ async function exercise(page: Page, errors: string[], view: string, frames?: str
   vb = await viewBox(page);
   await drag("left", 120, -80);
   check(moved(vb, await viewBox(page), 120), "a left-drag with the Pan tool (H) did not pan");
-  check(await page.evaluate(() => document.querySelector("[aria-label^='Pan:']")?.getAttribute("aria-pressed") === "true"), "the Pan tool is not shown as chosen");
+  check(await page.evaluate(() => document.querySelector("[aria-label='Pan']")?.getAttribute("aria-pressed") === "true"), "the Pan tool is not shown as chosen");
   await page.keyboard.press("v");
   // the keys and the toolbar
   await page.keyboard.press("f");

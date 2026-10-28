@@ -42,3 +42,52 @@ body {
 .pb-vscode .pb-dev-primary:hover {
   background: var(--vscode-button-hoverBackground, var(--vscode-button-background));
 }
+
+/* the loading comet (Loading.tsx): dots that travel the chamfered triangle round the mark by transform (the
+   page may be busy meanwhile), each centred on its point by a negative margin and staggered by its delay; the
+   theme's accent, so orange only under a Protoboard theme */
+.pb-comet-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 9999px;
+  background: var(--uhd-accent);
+  will-change: transform;
+  animation: pb-comet-travel 1.6s linear infinite;
+}
+/* the triangle's corners, timed by the length run so far (Loading.tsx, TRIANGLE) */
+@keyframes pb-comet-travel {
+  0% {
+    transform: translate(81.2px, 83.78px);
+  }
+  26.66% {
+    transform: translate(18.8px, 83.78px);
+  }
+  33.34% {
+    transform: translate(11px, 70.26px);
+  }
+  40% {
+    transform: translate(18.8px, 56.75px);
+  }
+  60% {
+    transform: translate(42.2px, 16.22px);
+  }
+  66.66% {
+    transform: translate(57.8px, 16.22px);
+  }
+  73.33% {
+    transform: translate(65.6px, 29.73px);
+  }
+  93.33% {
+    transform: translate(89px, 70.26px);
+  }
+  100% {
+    transform: translate(81.2px, 83.78px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* no travel: each dot stays where the first frame puts it, a comet frozen on the path */
+  .pb-comet-dot {
+    animation: none;
+  }
+}

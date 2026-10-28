@@ -19,8 +19,9 @@ inputs:
     default: v0.3.0
   uhd-viewer-ref:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
-    # harnesses focused and framed, Harnesses & links, the pin mapping in a narrow Inspector (uhd-viewer#9), until uhd-viewer v0.2.1 is tagged: then v0.2.1
-    default: 99d3fccf7061caa44e0d60235eab79ec4a3499fe
+    # the legend at the bottom right with its folded tab, the context menu's icons and keys, the empty level's
+    # plus box (uhd-viewer#10, merged with main), until uhd-viewer v0.2.1 is tagged: then v0.2.1
+    default: 7b26b64f25eb6e97b9e87673d300c9433a59e0d1
 
 runs:
   using: composite

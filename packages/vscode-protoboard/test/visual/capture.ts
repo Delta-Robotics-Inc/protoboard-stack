@@ -507,25 +507,25 @@ try {
         const fitted = await rects();
         check(fitted.every((r) => r.x >= 0 && r.y >= 40 && r.x + r.w <= 1400 && r.y + r.h <= 860), "F does not fit the diagram");
 
-        // the empty canvas's menu; a module's menu has INSPECT, which goes to the extension
+        // the empty canvas's menu; a module's menu has Inspect, which goes to the extension
         const pane = await empty(120, 300);
         await page.mouse.click(pane.x, pane.y, { button: "right" });
         await settle(250);
-        const paneMenu = (await page.evaluate(() => [...document.querySelectorAll(".context-menu button")].map((b) => b.textContent))) as string[];
-        check(paneMenu.includes("FIT VIEW") && paneMenu.includes("SELECT ALL"), `the empty canvas's menu is ${JSON.stringify(paneMenu)}`);
+        const paneMenu = (await page.evaluate(() => [...document.querySelectorAll(".context-menu .context-menu-label")].map((b) => b.textContent))) as string[];
+        check(paneMenu.includes("Fit view") && paneMenu.includes("Select all"), `the empty canvas's menu is ${JSON.stringify(paneMenu)}`);
         await page.keyboard.press("Escape");
         const leaf = fitted.find((r) => !r.holds && r.w > 100);
         const holder = fitted.find((r) => r.holds);
         if (leaf) {
           await page.mouse.click(leaf.x + leaf.w / 2, leaf.y + leaf.h - 10, { button: "right" });
           await settle(300);
-          const menu = (await page.evaluate(() => [...document.querySelectorAll(".context-menu button")].map((b) => b.textContent))) as string[];
-          check(menu[0] === "INSPECT", `a module's menu is ${JSON.stringify(menu)}`);
-          check(!menu.includes("OPEN IN NEW TAB"), "a part with nothing inside offers OPEN IN NEW TAB");
+          const menu = (await page.evaluate(() => [...document.querySelectorAll(".context-menu .context-menu-label")].map((b) => b.textContent))) as string[];
+          check(menu[0] === "Inspect", `a module's menu is ${JSON.stringify(menu)}`);
+          check(!menu.includes("Open in new tab"), "a part with nothing inside offers Open in new tab");
           await shot(page, name("node-menu"));
-          await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(".context-menu button")].find((b) => b.textContent === "INSPECT")?.click());
+          await page.evaluate(() => [...document.querySelectorAll<HTMLElement>(".context-menu button")].find((b) => b.querySelector(".context-menu-label")?.textContent === "Inspect")?.click());
           await settle(200);
-          check((await posted("uhd-viewer:inspect")) === 1, "INSPECT did not reach the extension");
+          check((await posted("uhd-viewer:inspect")) === 1, "Inspect did not reach the extension");
           // item 13 (D8): a double-click on a part with nothing inside opens nothing
           await page.mouse.click(leaf.x + leaf.w / 2, leaf.y + leaf.h - 10, { count: 2 });
           await settle(300);
@@ -593,7 +593,7 @@ try {
               const click = (sel) => { const el = live(sel)[0]; if (el) el.click(); };
               click('[data-legend-slot] button');
               await wait(300);
-              click('[aria-label="Show the legend"]');
+              click('[aria-label="Legend"][data-legend-tab]');
               await wait(200);
               click('[aria-label="Colour by signal type"]');
               await wait(400);
@@ -604,7 +604,7 @@ try {
               const nodes = document.querySelectorAll(".react-flow__node").length;
               const out = document.querySelectorAll(".react-flow__node.isolated-out").length;
               const legend = live(".legend, .legend-popover")[0].getBoundingClientRect();
-              return { entry: entry ? entry.textContent || entry.getAttribute("aria-label") : undefined, pressed: entry ? entry.getAttribute("aria-pressed") : undefined, items: items.length, nodes, out, clear: !!document.querySelector('[aria-label="Show everything again"]'), legend: { left: legend.left, right: legend.right, top: legend.top, bottom: legend.bottom }, w: innerWidth, h: innerHeight, sw: document.documentElement.scrollWidth };
+              return { entry: entry ? entry.textContent || entry.getAttribute("aria-label") : undefined, pressed: entry ? entry.getAttribute("aria-pressed") : undefined, items: items.length, nodes, out, clear: !!document.querySelector('[aria-label="Show all"]'), legend: { left: legend.left, right: legend.right, top: legend.top, bottom: legend.bottom }, w: innerWidth, h: innerHeight, sw: document.documentElement.scrollWidth };
             })()`)) as { entry?: string; pressed?: string; items: number; nodes: number; out: number; clear: boolean; legend: { left: number; right: number; top: number; bottom: number }; w: number; h: number; sw: number };
             if (!isolated.entry || isolated.pressed !== "true") errors.push(`no legend entry was isolated: ${JSON.stringify(isolated)}`);
             if (!(isolated.out > 0 && isolated.out < isolated.nodes)) errors.push(`isolating ${isolated.entry} faded ${isolated.out} of ${isolated.nodes} nodes`);

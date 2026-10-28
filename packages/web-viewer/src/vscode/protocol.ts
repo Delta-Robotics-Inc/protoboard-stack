@@ -177,9 +177,12 @@ export type FromWebview =
 export type SourceAction = "open" | "reveal" | "copy" | "copyRelative";
 const SOURCE_ACTIONS: readonly SourceAction[] = ["open", "reveal", "copy", "copyRelative"];
 
-/** `signIn`, `signInDevice`, `signOut` and `checkAccount` are account buttons a page may show (Fetch Parts asks for a sign-in). */
-export type DevAction = "retry" | "reload" | "showLog" | "signIn" | "signInDevice" | "signOut" | "checkAccount" | "fetchParts";
-const DEV_ACTIONS: readonly DevAction[] = ["retry", "reload", "showLog", "signIn", "signInDevice", "signOut", "checkAccount", "fetchParts"];
+/**
+ * `signIn`, `signInDevice`, `signOut` and `checkAccount` are account buttons a page may show (Fetch Parts asks for a
+ * sign-in); `openLibrary` is an empty level's Add a part: the Library side bar.
+ */
+export type DevAction = "retry" | "reload" | "showLog" | "signIn" | "signInDevice" | "signOut" | "checkAccount" | "fetchParts" | "openLibrary";
+const DEV_ACTIONS: readonly DevAction[] = ["retry", "reload", "showLog", "signIn", "signInDevice", "signOut", "checkAccount", "fetchParts", "openLibrary"];
 
 export type ViewerEvent =
   | { type: "uhd-viewer:ready" }
