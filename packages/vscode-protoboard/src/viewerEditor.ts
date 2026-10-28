@@ -418,6 +418,8 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         if (m.action === "reload") return this.host.reloadWindow();
         if (m.action === "showLog") return this.host.showLog();
         if (m.action === "fetchParts") return void vscode.commands.executeCommand("protoboard.fetchParts", editor.root);
+        // an empty level's Add a part: the Library side bar, where parts are found and added
+        if (m.action === "openLibrary") return void vscode.commands.executeCommand("protoboard.library.focus");
         if (m.action !== "retry") return this.host.account(m.action);
         void this.host.retryDev(editor.root).catch((e: Error) => this.host.log.warn(`${this.name(editor)}: retry: ${e.message}`));
         return;

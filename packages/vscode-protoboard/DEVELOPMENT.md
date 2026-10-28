@@ -111,9 +111,22 @@ Protoboard Inspector's, the design rule checks the DRC panel's.
   header, 4 px from the edges. The header's **Hierarchy** button opens and
   folds it (a short slide); folded, the canvas takes the whole tab.
 - **Toolbar and legend.** Fit and zoom, then how links are drawn (one line
-  per link or every conductor) and grounds. The legend holds the colouring
-  (domain, DRC health, signal) it explains, and folds to its header; it
-  starts folded on a narrow tab.
+  per link or every conductor) and grounds. The legend sits at the bottom
+  right and holds the colouring (domain, DRC health, signal) it explains;
+  each entry has its name and what it stands for. It starts folded, as a tab
+  at the right edge with a dot per colour, and a tab under 500 px tall folds
+  it by itself. Tooltips are labels, after 250 ms; the toolbar's open above it.
+- **Context menu.** Right-click on the empty canvas: Fit view (F), Select
+  all (Ctrl+A), the pan or select tool (H, V), and, with a module selected,
+  Inspect, Open in new tab, Open source and Copy path for it. A module's own
+  menu has the same four, then Expand in place and Open as canvas for one
+  that holds modules.
+- **Loading.** Until the project loads the tab shows its frame (header and
+  hierarchy card) as grey blocks, and the Protoboard mark with a comet
+  running round it, the stage under it (connecting, loading). A dev server
+  problem shows its card instead.
+- **Empty level.** A level with no modules shows a dashed box with a plus,
+  **Add a part**, which opens the Library side bar.
 - **Layout.** Moving a module or a link marks the tab dirty (the tab's dot);
   **Save** (Ctrl+S) writes the edits to the project's display file
   (`.protoboard/display.json`, tracked in git, as the dev server would);

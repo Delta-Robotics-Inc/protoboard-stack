@@ -19,8 +19,9 @@ inputs:
     default: v0.3.0
   uhd-viewer-ref:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
-    # the hierarchy's own fold and reopen buttons (PB-1070, PB-1119; uhd-viewer#8), until uhd-viewer v0.2.1 is tagged: then v0.2.1
-    default: 3324edc75d259afd81ee473e432b125bcdd91342
+    # the legend at the bottom right with its folded tab, the context menu's icons and keys, the empty level's
+    # plus box (the uhd-viewer branch mark/pb-1125-alpha-parity-1), until uhd-viewer v0.2.1 is tagged: then v0.2.1
+    default: ceef96ae97ce86abe9d49a17fc587c6a6b24fd0b
 
 runs:
   using: composite

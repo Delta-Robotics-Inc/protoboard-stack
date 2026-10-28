@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import { hasEdits, hierarchyRowArg, parseFromWebview } from "../../web-viewer/src/vscode/protocol.js";
 import { tabModule } from "../../web-viewer/src/vscode/tab-module.js";
+import { COMET_DOTS, COMET_DUR_S, TRIANGLE, cometDots, trianglePoint } from "../../web-viewer/src/vscode/comet.js";
 import { statusLabel } from "../src/check.js";
 import { DEFAULT_DISPLAY, displayFile, saveLayout } from "../src/display.js";
 import { findings } from "../src/drc.js";
@@ -463,5 +464,51 @@ describe("the status bar item in words (item 30)", () => {
     expect(statusLabel(undefined, "idle")).toBe("Protoboard: not checked yet");
     expect(statusLabel(undefined, "running")).toBe("Protoboard: checking the project");
     expect(statusLabel({ error: 1, warning: 0, info: 0 }, "failed")).toBe("Protoboard: the last check failed");
+  });
+});
+
+describe("an empty level's Add a part", () => {
+  it("is posted by the tab and opens the Library side bar", () => {
+    expect(parseFromWebview({ type: "devAction", action: "openLibrary" })).toEqual({ type: "devAction", action: "openLibrary" });
+    const shell = readFileSync(join(HERE, "../../web-viewer/src/vscode/Shell.tsx"), "utf8");
+    expect(shell).toMatch(/label: "Add a part", onClick: \(\) => bridge\.post\(\{ type: "devAction", action: "openLibrary" \}\)/);
+    expect(shell).toMatch(/<DiagramCanvas .*emptyAction=\{addPart\} \/>/);
+    const editor = readFileSync(join(HERE, "../src/viewerEditor.ts"), "utf8");
+    expect(editor).toMatch(/m\.action === "openLibrary"\) return void vscode\.commands\.executeCommand\("protoboard\.library\.focus"\)/);
+    // the command VS Code makes for the Library view: its id in the manifest
+    const manifest = JSON.parse(readFileSync(join(HERE, "../package.json"), "utf8")) as { contributes: { views: Record<string, { id: string }[]> } };
+    expect(Object.values(manifest.contributes.views).flat().map((v) => v.id)).toContain("protoboard.library");
+  });
+});
+
+describe("the loading comet", () => {
+  const css = readFileSync(join(HERE, "../../web-viewer/src/vscode/styles.css"), "utf8");
+  const keyframes = [...(/@keyframes pb-comet-travel \{([\s\S]*?)\n\}/.exec(css)?.[1] ?? "").matchAll(/([\d.]+)% \{\s*transform: translate\(([\d.]+)px, ([\d.]+)px\);/g)].map((m) => ({ at: Number(m[1]) / 100, x: Number(m[2]), y: Number(m[3]) }));
+
+  it("runs round the triangle's corners, each reached when that share of the length is run", () => {
+    // a frame per corner, and the first again to close the loop
+    expect(keyframes).toHaveLength(TRIANGLE.length + 1);
+    keyframes.slice(0, -1).forEach((k, i) => {
+      expect([k.x, k.y]).toEqual([...TRIANGLE[i]]);
+      // the walk the still frame uses puts the same corner at the same time (the CSS rounds to 0.01 %)
+      const [x, y] = trianglePoint(k.at);
+      expect(Math.hypot(x - k.x, y - k.y)).toBeLessThan(0.1);
+    });
+    expect(keyframes.at(-1)).toEqual({ at: 1, x: TRIANGLE[0][0], y: TRIANGLE[0][1] });
+    expect(css).toMatch(new RegExp(`animation: pb-comet-travel ${COMET_DUR_S}s linear infinite`));
+  });
+
+  it("is a head and a tail that fades behind it, standing still under reduced motion", () => {
+    const dots = cometDots();
+    expect(dots).toHaveLength(COMET_DOTS);
+    expect(dots[0]).toMatchObject({ size: 5, opacity: 1, delay: -(COMET_DOTS - 1) * 0.016 });
+    for (let i = 1; i < dots.length; i++) expect(dots[i].opacity).toBeLessThan(dots[i - 1].opacity);
+    expect(dots.at(-1)!.delay).toBe(-0);
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.pb-comet-dot \{\s*animation: none;/);
+  });
+
+  it("is what a tab shows while it connects and loads; a dev server problem keeps its card", () => {
+    const shell = readFileSync(join(HERE, "../../web-viewer/src/vscode/Shell.tsx"), "utf8");
+    expect(shell).toMatch(/if \(!status\.problem\) return <LoadingScreen message=\{status\.message\} hierarchy=\{bridge\.hierarchyState\} \/>;/);
   });
 });

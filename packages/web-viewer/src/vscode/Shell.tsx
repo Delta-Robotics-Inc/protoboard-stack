@@ -20,6 +20,7 @@ import {
   DiagramLegendItems,
   EmptyState,
   FittedLegend,
+  LegendFold,
   LegendToolbarButton,
   Icon,
   IconButton,
@@ -47,6 +48,7 @@ import type { ResolvedView } from "@protoboardai/core";
 import { MissingPartsHint, PartStatusStyles, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, type HostAdapter, type PartTrust, type ViewDefinition } from "@protoboardai/views";
 import { isProtoboardColourTheme, vscodeViewThemeAdapter } from "@protoboardai/views/theme";
 import { Logo } from "../Logo.js";
+import { LoadingScreen } from "./Loading.js";
 import { DEV_SERVER_IS, type ViewerStatus } from "./devLink.js";
 import type { DevAction, FromWebview, HierarchyAction, HierarchyRowContext, ModuleSource, SourceAction } from "./protocol.js";
 import { tabModule } from "./tab-module.js";
@@ -115,12 +117,24 @@ export function VsCodeShell(props: VsCodeViewerOptions) {
           {status && <StatusCard status={status} bridge={props.bridge} over />}
         </UhdViewer>
       ) : (
-        <div className={cx("relative grid size-full bg-canvas", MIDDLE)}>
-          <Header />
-          <StatusCard status={status ?? { message: "Loading the project…", busy: true }} bridge={props.bridge} />
-        </div>
+        <Waiting status={status ?? { message: "Loading the project…", busy: true }} bridge={props.bridge} />
       )}
     </ThemeProvider>
+  );
+}
+
+/**
+ * The tab before it has a project: the frame's skeleton and the comet with
+ * the stage under it while it connects and loads; a dev server problem says
+ * so in its card.
+ */
+function Waiting({ status, bridge }: { status: ViewerStatus; bridge: ShellBridge }) {
+  if (!status.problem) return <LoadingScreen message={status.message} hierarchy={bridge.hierarchyState} />;
+  return (
+    <div className={cx("relative grid size-full bg-canvas", MIDDLE)}>
+      <Header />
+      <StatusCard status={status} bridge={bridge} />
+    </div>
   );
 }
 
@@ -157,9 +171,9 @@ function StatusCard({ status, bridge, over }: { status: ViewerStatus; bridge: Sh
       <p className="m-0 leading-snug">{DEV_SERVER_IS}</p>
       {act && (
         <div className="flex flex-wrap gap-1.5 pt-0.5">
-          <DevButton icon="refresh-cw" label="Retry" title="Find or start the dev server again and reload this tab from it" primary onClick={() => act("retry")} />
-          <DevButton icon="rotate-ccw" label="Reload Window" title="Reload this VS Code window: the extension and every viewer tab start again" onClick={() => act("reload")} />
-          <DevButton icon="scroll-text" label="Show Log" title="Protoboard: Show Log. What the extension started, on which address, and what this tab tried to reach" onClick={() => act("showLog")} />
+          <DevButton icon="refresh-cw" label="Retry" title="Restart the dev server" primary onClick={() => act("retry")} />
+          <DevButton icon="rotate-ccw" label="Reload Window" title="Reload the window" onClick={() => act("reload")} />
+          <DevButton icon="scroll-text" label="Show Log" title="Protoboard: Show Log" onClick={() => act("showLog")} />
         </div>
       )}
       </ScrollArea>
@@ -316,6 +330,8 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   ) : (
     <>A part's 3D model is its body artifact (a GLB). A part from the library brings its own; for a part of your own, ask your agent to model it.</>
   );
+  // an empty level's plus box: the Library side bar, where parts are found and added
+  const addPart = useMemo(() => ({ label: "Add a part", onClick: () => bridge.post({ type: "devAction", action: "openLibrary" }) }), [bridge]);
   const View = active?.component ?? PlannedView;
   // the tab's hierarchy: the extension reveals modules in it and puts the keyboard in its filter
   const [hierarchyCommand, setHierarchyCommand] = useState<HierarchyCommand>();
@@ -351,7 +367,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
       <div className="workspace" role="tabpanel" aria-label={active?.title}>
         {active?.id === "diagram" ? (
           <>
-            <DiagramCanvas toolbar={false} legend={false} coveredRight={false} missingHint={<MissingPartsHint host={host} />} />
+            <DiagramCanvas toolbar={false} legend={false} coveredRight={false} missingHint={<MissingPartsHint host={host} />} emptyAction={addPart} />
             <DiagramTools />
             <DiagramKey />
           </>
@@ -492,8 +508,8 @@ function Tab({ view, active, compact, measure, opensEditor, onOpen }: { view: Vi
       // the tab's name for screen readers and automation, also when it shows only its icon (B9)
       aria-label={view.title}
       aria-selected={measure ? undefined : active}
-      data-tooltip={`${view.title}${planned ? " · planned" : ""}${view.description ? `: ${view.description}` : ""}`}
-      data-tooltip-shortcut={opensEditor ? "Opens its own editor" : "Ctrl+click: new tab"}
+      data-tooltip={`${view.title}${planned ? " · planned" : ""}`}
+      data-tooltip-shortcut={opensEditor ? undefined : "Ctrl+click: new tab"}
       onClick={click}
       onAuxClick={(e) => e.button === 1 && click(e)}
       className={cx(
@@ -532,7 +548,8 @@ function SourcePath({ bridge, path }: { bridge: ShellBridge; path: string }) {
       <button
         type="button"
         aria-label={`Open ${at}`}
-        data-tooltip={`Open the source of this module: ${at}`}
+        data-tooltip="Open source"
+        data-tooltip-shortcut={at}
         onClick={() => act("open")}
         className="flex h-8 max-w-[280px] min-w-0 cursor-pointer items-center gap-1.5 rounded-md border border-transparent px-1.5 font-code text-[11px] text-fg-muted transition-colors hover:bg-hover hover:text-fg hover:outline hover:outline-1 hover:outline-dashed hover:-outline-offset-1 hover:outline-contrast-active focus-visible:outline focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-focus"
       >
@@ -543,8 +560,8 @@ function SourcePath({ bridge, path }: { bridge: ShellBridge; path: string }) {
           <span className="shrink-0">{name}</span>
         </span>
       </button>
-      <IconButton size="sm" icon="folder-search" label="Reveal the source file in the Explorer" onClick={() => act("reveal")} className="max-[480px]:hidden" />
-      <IconButton size="sm" icon="copy" label="Copy the source file's path" shortcut="Shift+click: relative" onClick={(e) => act(e.shiftKey ? "copyRelative" : "copy")} className="max-[480px]:hidden" />
+      <IconButton size="sm" icon="folder-search" label="Reveal in Explorer" onClick={() => act("reveal")} className="max-[480px]:hidden" />
+      <IconButton size="sm" icon="copy" label="Copy path" shortcut="Shift+click: relative" onClick={(e) => act(e.shiftKey ? "copyRelative" : "copy")} className="max-[480px]:hidden" />
     </div>
   );
 }
@@ -563,14 +580,14 @@ function DiagramTools() {
       <ViewButtons tooltipSide="top" />
       <ToolbarSeparator />
       <ToggleGroup label="Wires" tooltipSide="top" options={DETAIL_OPTIONS} value={c.conductors ? "conductors" : "bundled"} onChange={(v) => c.setConductors(v === "conductors")} />
-      <IconButton icon="arrow-down-to-line" tooltipSide="top" label={c.showGrounds ? "Draw grounds as symbols" : "Draw grounds as wires"} pressed={c.showGrounds} onClick={() => c.setShowGrounds(!c.showGrounds)} />
+      <IconButton icon="arrow-down-to-line" tooltipSide="top" label={c.showGrounds ? "Grounds as symbols" : "Grounds as wires"} pressed={c.showGrounds} onClick={() => c.setShowGrounds(!c.showGrounds)} />
     </Toolbar>
   );
 }
 
 const LEGEND_KEY = "protoboard-vscode:legend";
 
-/** The legend starts open on a roomy tab and folded on a narrow one; a choice made on it is kept (per webview). */
+/** The legend starts folded; a choice made on it is kept (per webview). */
 function useLegendOpen(): [boolean, (open: boolean) => void] {
   const [open, setOpen] = useState<boolean>(() => {
     try {
@@ -595,32 +612,31 @@ function useLegendOpen(): [boolean, (open: boolean) => void] {
 
 /**
  * The legend, with the colouring it explains chosen in it (PB-896: "it should
- * be in the legend itself"); it folds to its header. Its entries are buttons
- * (PB-946, the viewer's own): a click isolates a signal type or a domain, and
- * the header then carries the way back, folded or not. It stays at the bottom
- * left and gives way to the toolbar as the tab narrows: compact (no title,
- * swatches without labels), then a button in the toolbar that opens it.
+ * be in the legend itself"), at the bottom right. Folded, it is a tab at the
+ * right edge with a dot per colour; a short tab folds it by itself. Its
+ * entries are buttons (PB-946, the viewer's own): a click isolates a signal
+ * type or a domain, and the header then carries the way back. It gives way to
+ * the toolbar as the tab narrows: compact (no title, swatches without
+ * labels), then a button in the toolbar that opens it.
  */
 function DiagramKey() {
   const [open, setOpen] = useLegendOpen();
-  return <FittedLegend label="Legend" render={(form) => <DiagramKeyBody form={form} open={open} onOpen={setOpen} />} />;
+  return <FittedLegend label="Legend" open={open} onOpenChange={setOpen} render={(form) => <DiagramKeyBody form={form} />} />;
 }
 
-/** The legend's content: `full` and `compact` fold (`open`); `popover` (from the toolbar's button) always lists the entries. */
-function DiagramKeyBody({ form, open = true, onOpen }: { form: "full" | "compact" | "popover"; open?: boolean; onOpen?: (open: boolean) => void }) {
+/** The legend's content: `full` the colouring, then each colour's name and meaning; `compact` the swatches; `popover` (from the toolbar's button) as `full`, without folding. */
+function DiagramKeyBody({ form }: { form: "full" | "compact" | "popover" }) {
   const c = useViewer();
   const title = CLASSIFICATIONS.find((x) => x.id === c.mode)?.label;
-  const folds = form !== "popover";
-  const shown = !folds || open;
   return (
     <>
-      <div className={cx("-mx-1 -my-1 flex items-center justify-between gap-1", shown && "mb-1")}>
-        {folds && <IconButton icon={open ? "chevron-down" : "chevron-right"} size="sm" tooltipSide="top" label={open ? "Fold the legend" : "Show the legend"} aria-expanded={open} onClick={() => onOpen?.(!open)} className="size-6" />}
-        {form !== "compact" && <span className={cx("min-w-0 flex-1 truncate font-label text-[10px] tracking-[0.8px] text-fg-muted uppercase", !folds && "pl-1")}>{title}</span>}
+      <div className={cx("flex items-center justify-between gap-1", form === "compact" ? "-mx-1 -my-1" : "-mx-3 -mt-1 mb-1 min-h-7 border-b border-line-subtle px-3 pb-1")}>
+        {form !== "compact" && <span className="min-w-0 flex-1 truncate font-label text-[10px] tracking-[0.8px] text-fg-muted uppercase">{title}</span>}
         <IsolationClear />
         <ToggleGroup label="Colour links by" tooltipSide="top" size="sm" options={CLASSIFICATION_OPTIONS} value={c.mode} onChange={c.setMode} />
+        <LegendFold className={form === "compact" ? undefined : "-mr-1.5"} />
       </div>
-      {shown && (form === "compact" ? <DiagramLegendItems compact columns={4} /> : <DiagramLegendItems />)}
+      {form === "compact" ? <DiagramLegendItems compact columns={4} /> : <DiagramLegendItems />}
     </>
   );
 }
