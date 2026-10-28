@@ -505,6 +505,8 @@ describe("the loading comet", () => {
     for (let i = 1; i < dots.length; i++) expect(dots[i].opacity).toBeLessThan(dots[i - 1].opacity);
     expect(dots.at(-1)!.delay).toBe(-0);
     expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.pb-comet-dot \{\s*animation: none;/);
+    // nor do the skeleton's blocks pulse
+    expect(readFileSync(join(HERE, "../../web-viewer/src/vscode/Loading.tsx"), "utf8")).toMatch(/animate-pulse [^`]*motion-reduce:animate-none/);
   });
 
   it("is what a tab shows while it connects and loads; a dev server problem keeps its card", () => {

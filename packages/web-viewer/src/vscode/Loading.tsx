@@ -49,7 +49,7 @@ export function Comet() {
 
 /** A grey block that pulses, standing in for what will be there. */
 function Block({ className, style }: { className: string; style?: CSSProperties }) {
-  return <div className={`animate-pulse rounded-md bg-hover ${className}`} style={style} />;
+  return <div className={`animate-pulse rounded-md bg-hover motion-reduce:animate-none ${className}`} style={style} />;
 }
 
 /**
