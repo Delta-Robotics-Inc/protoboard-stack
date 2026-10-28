@@ -175,7 +175,7 @@
         "command": "protoboard.help.discord",
         "title": "Join the Discord",
         "category": "Protoboard",
-        "icon": "$(comment-discussion)"
+        "icon": "$(protoboard-discord)"
       },
       {
         "command": "protoboard.hierarchy.toggle",
@@ -554,6 +554,13 @@
         "default": {
           "fontPath": "media/protoboard-icons.woff",
           "fontCharacter": "\\E000"
+        }
+      },
+      "protoboard-discord": {
+        "description": "The Discord mark",
+        "default": {
+          "fontPath": "media/protoboard-icons.woff",
+          "fontCharacter": "\\E001"
         }
       }
     },

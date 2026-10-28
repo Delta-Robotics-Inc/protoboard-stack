@@ -86,11 +86,10 @@ const MODELS = {
     working: new Set(["claude-desktop"]),
     // what the extension lists for a window with a project and a carried stack (extension.ts, settingsLinks)
     links: [
-      { id: "start", label: "First steps", note: "Sign in, make a project from a template, open the viewer, use the terminal", icon: "map", action: "Open" },
-      { id: "createProject", label: "A new project", note: "From a template (drone, wearable, IoT) or empty, in this window's folder or another", icon: "folder-plus", action: "Create" },
-      { id: "bom", label: "Bill of materials", note: "soil-sensor: the design's parts with the offer chosen for each, in dollars", icon: "table", action: "Open" },
-      { id: "stack", label: `The stack this extension carries (${version})`, note: `~/.protoboard/stack/${version}: a project without packages links to it, and this window's terminals have the protoboard command`, icon: "package", action: "Show Folder" },
-      { id: "account", label: "Check the account again", note: "Ask the service whether this account may use Protoboard", icon: "refresh-cw", action: "Check" },
+      { id: "start", label: "First steps", note: "New project, viewer, sign-in, terminal", icon: "map", action: "Open", opens: "view" },
+      { id: "bom", label: "Bill of materials", note: "soil-sensor: parts and chosen offers, in USD", icon: "table", action: "Open", opens: "view" },
+      { id: "stack", label: `Protoboard ${version}, installed for your user`, note: `~/.protoboard/stack/${version}`, icon: "package", action: "Show Folder", opens: "external" },
+      { id: "path", label: "The protoboard command outside VS Code", note: "For terminals outside VS Code (~/.protoboard/bin)", icon: "terminal", action: "Add to PATH" },
     ],
   }),
   "settings-empty": settingsModel({ account: { state: "signed-out", service: "https://parts.protoboard.example" }, version, cli: { command: { command: "protoboard", args: [], from: "path" } }, agents: AGENTS.map((a) => ({ ...a, detected: false, status: "not-detected" as const })), command: LAUNCHER, home: HOME }),
@@ -178,6 +177,23 @@ try {
         const path = join(OUT, `${name}.png`);
         await p.screenshot({ path });
         shots.push(path);
+        // the last section (More actions), scrolled into view and captured on its own
+        if (model === "settings" && sizeName === "wide") {
+          const box = await p.evaluate(() => {
+            const s = document.querySelector('section[aria-label^="More"]');
+            if (!s) return null;
+            s.scrollIntoView({ block: "center" });
+            const r = s.getBoundingClientRect();
+            return { x: r.x - 16, y: r.y - 16, width: r.width + 32, height: r.height + 32 };
+          });
+          if (!box) problems.push(`${name}: no More section`);
+          else {
+            await new Promise((r) => setTimeout(r, 200));
+            const more = join(OUT, `more-${theme}.png`);
+            await p.screenshot({ path: more, clip: box });
+            shots.push(more);
+          }
+        }
         const facts = await p.evaluate(() => {
           const doc = document.documentElement;
           const unnamed = [...document.querySelectorAll("button")].filter((b) => !(b.textContent ?? "").trim() && !b.getAttribute("aria-label")).length;
@@ -259,6 +275,10 @@ try {
           // a row that is working cannot be clicked twice
           const disabled = await p.evaluate(() => ([...document.querySelectorAll('[data-agent="claude-desktop"] button')].find((b) => (b.textContent ?? "").trim() === "Connect") as HTMLButtonElement).disabled);
           if (!disabled) problems.push("the Connect button of a row that is working is not disabled");
+          // More actions: only a button that leaves VS Code (the file manager here) carries the external-link icon
+          const marked = await p.evaluate(() => [...document.querySelectorAll("[data-settings-link] button")].filter((b) => b.querySelector("svg")).map((b) => b.closest("[data-settings-link]")!.getAttribute("data-settings-link")));
+          if (JSON.stringify(marked) !== '["stack"]') problems.push(`More actions: the buttons with an icon are ${JSON.stringify(marked)}, expected only the stack's Show Folder`);
+          if (!(await p.evaluate(() => [...document.querySelectorAll("h2")].some((h) => (h.textContent ?? "").trim() === "More actions")))) problems.push("no More actions section");
           console.log(`actions: ${got.join(", ")}`);
         }
         await p.close();

@@ -11,7 +11,7 @@ export interface HelpLink {
   /** The command that opens it: `protoboard.help.<id>`. */
   id: "docs" | "feedback" | "discord";
   label: string;
-  /** A codicon. */
+  /** A codicon, or an icon this extension contributes (package.json `icons`: Discord's mark). */
   icon: string;
   url: string;
 }
@@ -19,7 +19,7 @@ export interface HelpLink {
 export const HELP_LINKS: readonly HelpLink[] = [
   { id: "docs", label: "Documentation", icon: "book", url: "https://github.com/Delta-Robotics-Inc/protoboard-stack#documentation" },
   { id: "feedback", label: "Feedback and Issues", icon: "feedback", url: "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues/new/choose" },
-  { id: "discord", label: "Discord", icon: "comment-discussion", url: "https://discord.gg/Xh37xeNMAJ" },
+  { id: "discord", label: "Discord", icon: "protoboard-discord", url: "https://discord.gg/Xh37xeNMAJ" },
 ];
 
 export const HELP_VIEW = "protoboard.help";
