@@ -357,8 +357,14 @@ describe("the terminal's command and a project's own (PB-1048)", () => {
     expect(run(join(project, "src", "deep"))).toBe("project own");
     expect(run(project)).toBe("project own");
     // `upgrade` moves the project to the terminal's stack: the terminal's CLI runs it, with its arguments
-    const upgrade = spawnSync("/bin/sh", [file, "upgrade", "--dry-run"], { encoding: "utf8", cwd: project, env: { PATH: `${join(process.execPath, "..")}:/usr/bin:/bin` } });
-    expect(upgrade.stdout.trim()).toBe("stack cli");
+    const runArgs = (...args: string[]) => spawnSync("/bin/sh", [file, ...args], { encoding: "utf8", cwd: project, env: { PATH: `${join(process.execPath, "..")}:/usr/bin:/bin` } }).stdout.trim();
+    expect(runArgs("upgrade", "--dry-run")).toBe("stack cli");
+    // after options, and after an option's value
+    expect(runArgs("--dry-run", "upgrade")).toBe("stack cli");
+    expect(runArgs("--cwd", project, "upgrade")).toBe("stack cli");
+    // `upgrade` as another command's argument is not the command
+    expect(runArgs("check", "upgrade")).toBe("project own");
+    expect(runArgs("--json", "check")).toBe("project own");
   });
 
   it("the Windows command stops at the project root too", () => {
@@ -370,8 +376,9 @@ describe("the terminal's command and a project's own (PB-1048)", () => {
     expect(at('node_modules\\.bin\\protoboard.cmd')).toBeGreaterThan(at(":project"));
     expect(at(":run")).toBeGreaterThan(at('node_modules\\.bin\\protoboard.cmd'));
     // `upgrade` goes straight to the terminal's CLI, before the walk
-    expect(at('if /i "%~1"=="upgrade" goto run')).toBeGreaterThan(0);
-    expect(at('if /i "%~1"=="upgrade" goto run')).toBeLessThan(at('set "D=%CD%"'));
+    expect(at("call :scan %*")).toBeGreaterThan(0);
+    expect(at("if defined UP goto run")).toBeLessThan(at('set "D=%CD%"'));
+    expect(lines.indexOf(":scan")).toBeGreaterThan(at("exit /b 127"));
   });
 });
 

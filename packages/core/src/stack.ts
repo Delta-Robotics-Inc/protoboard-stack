@@ -520,9 +520,17 @@ export function shellCommand(o: CommandOptions): string {
       ? [
           "# a project's own command wins: the one in the project's node_modules/.bin, the project being the nearest",
           "# folder from here up with a protoboard.config.ts; nothing above that folder is looked at (PB-1048).",
-          "# Not for `upgrade`: it moves the project to this stack, and the project's own command is the older one",
+          "# Not for `upgrade`: it moves the project to this stack, and the project's own command is the older one.",
+          "# The command is the first word that is not an option or an option's value (`--cwd <dir> upgrade`)",
           'd=$PWD',
-          'if [ "$1" = upgrade ]; then d=; fi',
+          "prev=",
+          'for a in "$@"; do',
+          '  case $a in',
+          "    upgrade) d=; break ;;",
+          "    -*) prev=opt ;;",
+          "    *) if [ \"$prev\" = opt ]; then prev=val; else break; fi ;;",
+          "  esac",
+          "done",
           'while [ -n "$d" ]; do',
           '  if [ -f "$d/protoboard.config.ts" ]; then',
           '    if [ -x "$d/node_modules/.bin/protoboard" ]; then exec "$d/node_modules/.bin/protoboard" "$@"; fi',
@@ -556,8 +564,12 @@ export function windowsCommand(o: CommandOptions): string {
       ? [
           "rem a project's own command wins: the one in the project's node_modules\\.bin, the project being the nearest",
           "rem folder from here up with a protoboard.config.ts; nothing above that folder is looked at (PB-1048).",
-          "rem Not for `upgrade`: it moves the project to this stack, and the project's own command is the older one",
-          'if /i "%~1"=="upgrade" goto run',
+          "rem Not for `upgrade`: it moves the project to this stack, and the project's own command is the older one.",
+          "rem The command is the first word that is not an option or an option's value (`--cwd <dir> upgrade`)",
+          'set "UP="',
+          'set "PREV="',
+          "call :scan %*",
+          "if defined UP goto run",
           'set "D=%CD%"',
           ":up",
           'if exist "%D%\\protoboard.config.ts" goto project',
@@ -576,6 +588,17 @@ export function windowsCommand(o: CommandOptions): string {
     'if defined RT if exist "%RT%" ( set "ELECTRON_RUN_AS_NODE=1" & "%RT%" "%CLI%" %* & exit /b )',
     `echo ${NEED_NODE.replace(/[()&|<>^]/g, "^$&")} 1>&2`,
     "exit /b 127",
+    ...(o.kind === "home"
+      ? [
+          ":scan",
+          'if "%~1"=="" exit /b',
+          'if /i "%~1"=="upgrade" ( set "UP=1" & exit /b )',
+          'set "A=%~1"',
+          'if "%A:~0,1%"=="-" ( set "PREV=opt" & shift & goto scan )',
+          'if "%PREV%"=="opt" ( set "PREV=val" & shift & goto scan )',
+          "exit /b",
+        ]
+      : []),
     "",
   ].join("\r\n");
 }

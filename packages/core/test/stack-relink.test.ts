@@ -175,5 +175,8 @@ describe("the terminal's command on Windows", () => {
     const run = (args: string) => spawnSync("cmd.exe", ["/d", "/s", "/c", `"\"${file}\" ${args}"`], { cwd: proj, encoding: "utf8", windowsVerbatimArguments: true }).stdout.trim();
     expect(run("check --json")).toBe("project own check --json");
     expect(run("upgrade --dry-run")).toBe("stack cli upgrade,--dry-run");
+    expect(run("--dry-run upgrade")).toBe("stack cli --dry-run,upgrade");
+    expect(run(`--cwd "${proj}" upgrade`)).toBe(`stack cli --cwd,${proj},upgrade`);
+    expect(run("check upgrade")).toBe("project own check upgrade");
   });
 });
