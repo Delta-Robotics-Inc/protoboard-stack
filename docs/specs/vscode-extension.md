@@ -53,9 +53,10 @@ work now where v3 changed them.
 Since 0.2.0 the hierarchy is a panel docked at the left of each viewer tab
 (`ViewerHierarchy` in uhd-viewer, so `protoboard dev` has it too), scoped to
 that tab's project: the module tree (root, sub-modules, parts, harnesses;
-harnesses, cables and fastener stacks folded into one **Wiring & hardware**
+harnesses, cables and fastener stacks folded into one **Harnesses & links**
 group), kind icons, part status dots and the worst finding. A click selects
-on the level that holds the module, a double-click drills, a canvas
+on the level that holds the module (a harness drawn along its lines: the
+line that carries its name tab, its lines framed), a double-click drills, a canvas
 selection reveals its row; it folds to a rail, resizes, filters as you type,
 and is an ARIA tree. Its rows carry `data-vscode-context`, so their
 right-click menu is VS Code's (`webview/context`: Open in New Viewer Tab,
