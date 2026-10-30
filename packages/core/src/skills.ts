@@ -50,9 +50,14 @@ const listFiles = (dir: string, base = dir): string[] =>
 
 /** The skill ids two or more extensions declare, each with those extensions (`PB_EXTENSION_SKILL_DUPLICATE`). */
 export function duplicateSkills(skills: ResolvedSkill[]): Map<string, string[]> {
-  const by = new Map<string, string[]>();
-  for (const s of skills) if (!by.get(s.id)?.includes(s.extension)) by.set(s.id, [...(by.get(s.id) ?? []), s.extension]);
-  return new Map([...by].filter(([, owners]) => owners.length > 1));
+  // an owner is the declaring package (two packages may carry the same manifest id), named by its extension id
+  const by = new Map<string, Map<string, string>>();
+  for (const s of skills) {
+    const owners = by.get(s.id) ?? new Map<string, string>();
+    owners.set(s.provider ?? s.extension, s.provider && s.provider !== s.extension ? `${s.extension} (${s.provider})` : s.extension);
+    by.set(s.id, owners);
+  }
+  return new Map([...by].filter(([, owners]) => owners.size > 1).map(([id, owners]) => [id, [...owners.values()]]));
 }
 
 /**

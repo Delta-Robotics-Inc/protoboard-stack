@@ -50,6 +50,7 @@ import {
   writeLibraries,
   vendorOffers,
   type AddResult,
+  duplicateSkills,
   exportSkills,
   addExtension,
   agentsSkillPaths,
@@ -659,7 +660,8 @@ async function exportSkillsAfterLink(root: string) {
     const p = await loadProject(root, { checks: false });
     const declared = resolveSkills(p, p.extensions);
     const skills = declared.filter((s) => s.file);
-    if (!skills.length) return;
+    // with no file found there is nothing to copy, but an earlier export's copy of a now duplicated id still goes
+    if (!skills.length && !duplicateSkills(declared).size) return;
     exportSkills(p, skills, "claude-code", declared);
     exportSkills(p, skills, "agents-md", declared);
     process.stderr.write(`protoboard: ${skills.length} skills of the project's extensions are in .claude/skills/ and listed in AGENTS.md\n`);
@@ -1177,7 +1179,7 @@ async function main() {
           const p = await loadProject(cwd, { checks: false });
           const declared = resolveSkills(p, p.extensions);
           const skills = declared.filter((s) => s.file);
-          if (!skills.length) return;
+          if (!skills.length && !duplicateSkills(declared).size) return;
           const { duplicates } = exportSkills(p, skills, "claude-code", declared);
           exportSkills(p, skills, "agents-md", declared);
           process.stdout.write(`protoboard: ${skills.length} skills of the installed extensions are in .claude/skills/ and listed in AGENTS.md (npm run skills:export does it again)${duplicates.length ? `; not exported: ${duplicates.join(", ")}, declared by two extensions (protoboard doctor)` : ""}\n`);
@@ -1419,7 +1421,7 @@ async function refreshProjectGuidance(root: string) {
     const p = await loadProject(root, { checks: false });
     const declared = resolveSkills(p, p.extensions);
     const found = declared.filter((x) => x.file);
-    if (found.length) {
+    if (found.length || duplicateSkills(declared).size) {
       exportSkills(p, found, "claude-code", declared);
       exportSkills(p, found, "agents-md", declared);
       skills = `${found.length} skills of the project's extensions listed in AGENTS.md and copied to .claude/skills/`;

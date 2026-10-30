@@ -122,6 +122,17 @@ describe("extension manifests", () => {
     expect(exportSkills(p, present, "claude-code", declared).duplicates).toEqual(["part-search"]);
     expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
   });
+
+  it("counts two packages with the same manifest id as two owners of a skill", async () => {
+    const same = (pkg: string) => ({ manifest: base("ext-same", { skills: [{ id: "part-search", summary: pkg, path: "skills/ps/SKILL.md" }] }), files: { "skills/ps/SKILL.md": `# ${pkg}\n` } });
+    const dir = project("same-manifest-id", { "pkg-one": same("pkg-one"), "pkg-two": same("pkg-two") });
+    const p = await loadProject(dir);
+    expect(p.diagnostics.filter((d) => d.code === "PB_EXTENSION_SKILL_DUPLICATE")).toHaveLength(1);
+    const skills = resolveSkills(p, p.extensions);
+    expect(() => readSkill(skills, "part-search")).toThrow(/ext-same \(pkg-one\), ext-same \(pkg-two\)/);
+    expect(exportSkills(p, skills, "claude-code").duplicates).toEqual(["part-search"]);
+    expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
+  });
 });
 
 describe("operations", async () => {

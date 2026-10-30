@@ -212,6 +212,8 @@ export interface LoadedExtension {
 
 export interface ResolvedSkill extends SkillDecl {
   extension: string;
+  /** The npm package of the extension that declares it (two packages may carry the same manifest id). */
+  provider?: string;
   /** Absolute path of SKILL.md (undefined if it could not be found). */
   file?: string;
 }
@@ -477,7 +479,7 @@ export function resolveSkills(p: Project, extensions: LoadedExtension[]): Resolv
     (e.manifest.skills ?? []).map((s) => {
       const base = s.package ? packageRoot(p.root, s.package) : e.root;
       const file = base ? join(base, s.path) : undefined;
-      return { ...s, extension: e.manifest.id, file: file && existsSync(file) ? file : undefined };
+      return { ...s, extension: e.manifest.id, ...(e.package ? { provider: e.package } : {}), file: file && existsSync(file) ? file : undefined };
     }),
   );
 }
