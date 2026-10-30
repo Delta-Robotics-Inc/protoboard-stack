@@ -59,13 +59,22 @@ export function duplicateSkills(skills: ResolvedSkill[]): Map<string, string[]> 
  * Puts the skills where an agent host finds them. `duplicates` are the ids
  * two extensions declare: neither is exported to .claude/skills (one would
  * overwrite the other, by discovery order), and AGENTS.md marks them.
+ * `declared` is every skill the extensions declare, when `skills` leaves out
+ * the ones whose files are missing: a duplicate is one by declaration, found
+ * or not, as the loader and readSkill count it.
  */
-export function exportSkills(p: Project, skills: ResolvedSkill[], host: SkillHost): { written: string[]; skipped: string[]; duplicates: string[] } {
+export function exportSkills(p: Project, skills: ResolvedSkill[], host: SkillHost, declared: ResolvedSkill[] = skills): { written: string[]; skipped: string[]; duplicates: string[] } {
   const written: string[] = [];
   const skipped: string[] = [];
-  const dup = duplicateSkills(skills);
+  const dup = duplicateSkills([...declared, ...skills]);
   const duplicates = [...dup.keys()];
   if (host === "claude-code") {
+    // a copy an earlier export wrote, before the second extension declared the id, goes too: Claude Code would keep
+    // using it. Only a folder the export made (its .protoboard-source) is removed, never one the person wrote.
+    for (const id of duplicates) {
+      const dest = join(p.root, ".claude", "skills", id);
+      if (existsSync(join(dest, ".protoboard-source"))) rmSync(dest, { recursive: true, force: true });
+    }
     // Claude Code discovers project skills in .claude/skills/<name>/SKILL.md; copy each skill folder (with its references)
     for (const s of skills) {
       if (dup.has(s.id)) continue;

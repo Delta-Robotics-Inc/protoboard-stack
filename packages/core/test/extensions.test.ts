@@ -85,6 +85,11 @@ describe("extension manifests", () => {
   it("refuses the same skill id from two extensions: the loader names both, read and export never pick one", async () => {
     const skill = (who: string) => ({ manifest: base(who, { skills: [{ id: "part-search", summary: `${who}'s search`, path: "skills/part-search/SKILL.md" }, { id: `${who}-own`, summary: "own", path: "skills/own/SKILL.md" }] }), files: { "skills/part-search/SKILL.md": `# ${who}'s part-search\n`, "skills/own/SKILL.md": `# ${who}'s own\n` } });
     const dir = project("same-skill", { "ext-alpha": skill("ext-alpha"), "ext-beta": skill("ext-beta") });
+    // what an export made while only ext-alpha was installed left behind (the folder with its .protoboard-source)
+    const earlier = join(dir, ".claude", "skills", "part-search");
+    mkdirSync(earlier, { recursive: true });
+    writeFileSync(join(earlier, "SKILL.md"), "# ext-alpha's part-search\n");
+    writeFileSync(join(earlier, ".protoboard-source"), "ext-alpha (ext-alpha)\nnode_modules/ext-alpha/skills/part-search/SKILL.md\n");
     const p = await loadProject(dir);
     // the loader reports it once, naming both extensions; both stay loaded
     const found = p.diagnostics.filter((d) => d.code === "PB_EXTENSION_SKILL_DUPLICATE");
@@ -100,7 +105,7 @@ describe("extension manifests", () => {
     expect(() => readSkill(skills, "part-search")).toThrow(/declared by 2 extensions \(ext-alpha, ext-beta\)/);
     expect(readSkill(skills, "ext-beta-own").text).toBe("# ext-beta's own\n");
 
-    // the export writes neither (one would overwrite the other) and says so
+    // the export writes neither (one would overwrite the other), removes the copy the earlier export made, and says so
     const claude = exportSkills(p, skills, "claude-code");
     expect(claude.duplicates).toEqual(["part-search"]);
     expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
@@ -108,6 +113,14 @@ describe("extension manifests", () => {
     exportSkills(p, skills, "agents-md");
     const agents = readFileSync(join(dir, "AGENTS.md"), "utf8");
     expect(agents.match(/\*\*part-search\*\* \(ext-(alpha|beta)\)[^\n]*cannot be read/g)).toHaveLength(2);
+
+    // one copy's files missing (the postinstall exports only the found ones): still a duplicate by its declaration
+    rmSync(join(dir, "node_modules", "ext-beta", "skills", "part-search"), { recursive: true, force: true });
+    const declared = resolveSkills(p, p.extensions);
+    const present = declared.filter((s) => s.file);
+    expect(present.filter((s) => s.id === "part-search")).toHaveLength(1);
+    expect(exportSkills(p, present, "claude-code", declared).duplicates).toEqual(["part-search"]);
+    expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
   });
 });
 
