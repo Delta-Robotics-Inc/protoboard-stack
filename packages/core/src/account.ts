@@ -42,7 +42,10 @@ import { chmodSync, existsSync, readFileSync, renameSync, rmSync, writeFileSync 
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { ensurePrivateDir } from "./private-dir.js";
+import { SIGN_IN_CHECK_UNAVAILABLE } from "./sign-in-check.js";
 import { tokenTransportProblem } from "./web-urls.js";
+
+export { SIGN_IN_CHECK_UNAVAILABLE };
 
 /** What a service's discovery document says about signing in (`account`). */
 export interface AccountInfo {
@@ -498,6 +501,8 @@ export interface AccountStatus {
    * above is still reported; nothing about the service is known.
    */
   unreachable?: string;
+  /** Asked with --check: the service answered, but could not check the sign-in right now (its problem, not the sign-in's). */
+  checkUnavailable?: boolean;
 }
 
 /** Whether a service signs users in, from its discovery document; `needs` undefined when it cannot be asked, `unreachable` when it did not answer. */
@@ -532,7 +537,9 @@ export async function accountStatus(service: string, options: { store?: Credenti
   try {
     const token = await accountToken(service, { store, ...(options.fetch ? { fetch: options.fetch } : {}) });
     const res = await (options.fetch ?? fetch)(`${serviceKey(service)}/v1/me`, { headers: { authorization: `Bearer ${token}` } });
-    const me = (await res.json().catch(() => ({}))) as { signedIn?: boolean; publisher?: boolean; allowed?: boolean; problem?: string; distribution?: unknown };
+    const me = (await res.json().catch(() => ({}))) as { signedIn?: boolean; publisher?: boolean; allowed?: boolean; problem?: string; distribution?: unknown; reason?: unknown };
+    // the service could not check the token (its own problem): whether it accepts the sign-in is unknown, not "no"
+    if (!me.signedIn && me.reason === "check-unavailable") return { ...out, valid: false, checkUnavailable: true, problem: SIGN_IN_CHECK_UNAVAILABLE };
     const distribution: Pick<AccountStatus, "distribution"> = me.distribution === "all" || me.distribution === "redistributable" ? { distribution: me.distribution } : {};
     // signed in, but not an invited account of a service limited to some (PB_CLOUD_ALLOWED_USERS, PB-915)
     if (me.signedIn && me.allowed === false) return { ...out, valid: false, allowed: false, ...(me.publisher !== undefined ? { publisher: me.publisher } : {}), problem: me.problem ?? "this account is not invited to the service; sign in with an invited account (`protoboard login`)" };
