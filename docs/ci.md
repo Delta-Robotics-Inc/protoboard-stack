@@ -154,7 +154,9 @@ locally). Then, in order:
    already on npmjs is skipped, so a failed run can be re-run. With the secret
    `NPM_TOKEN` set it publishes with that token; without it, through npm
    trusted publishing.
-4. **extension**: `vsce publish --packagePath` (secret `VSCE_PAT`) and `ovsx
+4. **extension**: `vsce publish --packagePath` (secret `VSCE_PAT`), with the
+   vsce `packages/vscode-protoboard/package-lock.json` pins, the one
+   `package.mjs` packaged with (`release.mjs vsce`), and `ovsx
    publish --trusted-publishing --packagePath` (OIDC, no secret), duplicates
    skipped. A
    prerelease is not listed (the Marketplace takes major.minor.patch only).
@@ -373,4 +375,6 @@ cd protoboard-stack && npm ci
 npm run typecheck && npm test
 node .github/scripts/release.mjs version
 node .github/scripts/release.mjs packages --repository Delta-Robotics-Inc/protoboard-stack
+node .github/scripts/release.mjs vsce
+(cd packages/vscode-protoboard && npm ci && node scripts/package.mjs --target linux-x64)
 ```
