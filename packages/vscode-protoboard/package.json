@@ -2,7 +2,7 @@
   "name": "vscode-protoboard",
   "displayName": "Protoboard",
   "description": "Design hardware with your AI agent: a live system diagram, 3D assembly and design checks for Protoboard projects.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

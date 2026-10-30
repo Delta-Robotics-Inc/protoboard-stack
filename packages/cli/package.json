@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/cli",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The protoboard command: create, check, build and release hardware projects.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

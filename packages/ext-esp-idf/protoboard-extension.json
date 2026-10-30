@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-esp-idf",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "firmware provider: ESP-IDF pin and peripheral header and sdkconfig.defaults for ESP32-C3 modules, every setting citing the UHD facts it comes from.",
   "compatibility": {
     "protoboard": "^0.2.0",

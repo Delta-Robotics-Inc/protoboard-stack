@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.3
+
+- Sign-in works again with the hosted library, and when the service can't check
+  a sign-in, the extension says so and keeps you signed in.
+- Searches with several words find more parts.
+- `views check` skips the Library tab, with the reason, when the library can't
+  be used.
+
 ## 0.2.2
 
 - A floating hierarchy that folds from its own header, and Harnesses & links

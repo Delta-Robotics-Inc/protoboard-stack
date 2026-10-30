@@ -5,6 +5,46 @@ extension, the cloud client and the viewer are open source under Apache-2.0,
 and local work needs no account. The [0.1 release notes](stack-v0.1.md)
 describe the line before it.
 
+## 0.2.3
+
+Sign-in works again, and says what is wrong when it can't.
+
+### Sign-in
+
+- **The hosted library accepts sign-ins again.** Since the 0.2.2 service
+  update, the service couldn't check whether a sign-in had been revoked, so it
+  turned every sign-in away. That is fixed on the service; nothing is needed on
+  your side.
+- **A clearer message when the service can't check a sign-in.** The command
+  line and VS Code now say "The Protoboard service can't check sign-ins right
+  now. Try again later." and keep your sign-in, instead of asking you to sign
+  in again.
+- **One sign-in per machine.** It's shared by every project and session until
+  you sign out.
+
+### Library
+
+- **Searching with several words finds more.** A part matches any of the
+  words, and parts matching more of them come first, so a search such as
+  "esc 12V" no longer comes back empty. This is a change on the hosted
+  service.
+
+### Fixes
+
+- **`protoboard views check`** no longer fails a project because the library
+  can't be used (signed out, sign-in refused, service unreachable). The
+  Library tab is reported as skipped, with the reason.
+- **Two installed extensions with a skill of the same name** are reported by
+  the loader and `protoboard doctor`, naming both. The skill isn't read or
+  exported to agents until one of them is removed, so neither silently
+  replaces the other.
+- **Packaging the extension from a fresh clone** tells you where to install
+  `@vscode/vsce`, and the release publishes with the same version it packages
+  with.
+
+Every package and the extension move to 0.2.3 together. A 0.2.x project needs
+no change.
+
 ## 0.2.2
 
 A cleaner viewer, a working library out of the box, and fixes from the first
