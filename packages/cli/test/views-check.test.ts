@@ -9,7 +9,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
-import { findBrowser } from "@protoboardai/core";
+import { accessMessage, findBrowser, type AccessRefusal } from "@protoboardai/core";
 import { formatViewsCheck, libraryAccessProblem, viewsCheck, type ViewsCheckReport } from "../src/views-check.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
@@ -97,11 +97,19 @@ describe("views check: the Library tab and the account", () => {
 
   it("every refusal is the account's or the connection's state, with its reason and one line, whatever the reason", () => {
     for (const reason of ["signed-out", "sign-in-invalid", "unreachable", "not-invited", "email-unverified", "check-unavailable"]) {
-      const p = libraryAccessProblem([{ allowed: false, service: S, reason: reason as never, message: `line for ${reason}\nmore` }]);
+      const p = libraryAccessProblem([{ allowed: false, service: S, reason: reason as AccessRefusal, message: `line for ${reason}\nmore` }]);
       expect(p).toEqual({ reason, message: `line for ${reason}` });
     }
     // no message: the line access.ts gives the reason
     expect(libraryAccessProblem([{ allowed: false, service: S, reason: "signed-out" }])?.message).toMatch(/protoboard login/);
+  });
+
+  it("a service that cannot check sign-ins (check-unavailable) skips the tab like any other refusal, saying to try again later", () => {
+    const p = libraryAccessProblem([{ allowed: false, service: S, reason: "check-unavailable", message: accessMessage({ reason: "check-unavailable", service: S }) }]);
+    expect(p).toEqual({ reason: "check-unavailable", message: accessMessage({ reason: "check-unavailable", service: S }) });
+    expect(p!.message).not.toMatch(/sign in again/i);
+    // with no message of its own, the line access.ts gives the reason
+    expect(libraryAccessProblem([{ allowed: false, service: S, reason: "check-unavailable" }])?.message).toBe(accessMessage({ reason: "check-unavailable", service: S }));
   });
 
   it("a service accepted only from the last answer, because it cannot be reached, reads as unreachable", () => {
