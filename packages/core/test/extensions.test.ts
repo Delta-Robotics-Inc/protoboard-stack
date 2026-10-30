@@ -7,7 +7,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
-import { findOperation, loadProject, probeTools, resolveSkills, runOperation, satisfies } from "../src/index.js";
+import { exportSkills, findOperation, loadProject, probeTools, readSkill, resolveSkills, runOperation, satisfies } from "../src/index.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const TMP = join(HERE, ".tmp-ext");
@@ -80,6 +80,69 @@ describe("extension manifests", () => {
       ["a", true],
       ["b", false],
     ]);
+  });
+
+  it("refuses the same skill id from two extensions: the loader names both, read and export never pick one", async () => {
+    const skill = (who: string) => ({ manifest: base(who, { skills: [{ id: "part-search", summary: `${who}'s search`, path: "skills/part-search/SKILL.md" }, { id: `${who}-own`, summary: "own", path: "skills/own/SKILL.md" }] }), files: { "skills/part-search/SKILL.md": `# ${who}'s part-search\n`, "skills/own/SKILL.md": `# ${who}'s own\n` } });
+    const dir = project("same-skill", { "ext-alpha": skill("ext-alpha"), "ext-beta": skill("ext-beta") });
+    // what an export made while only ext-alpha was installed left behind (the folder with its .protoboard-source)
+    const earlier = join(dir, ".claude", "skills", "part-search");
+    mkdirSync(earlier, { recursive: true });
+    writeFileSync(join(earlier, "SKILL.md"), "# ext-alpha's part-search\n");
+    writeFileSync(join(earlier, ".protoboard-source"), "ext-alpha (ext-alpha)\nnode_modules/ext-alpha/skills/part-search/SKILL.md\n");
+    const p = await loadProject(dir);
+    // the loader reports it once, naming both extensions; both stay loaded
+    const found = p.diagnostics.filter((d) => d.code === "PB_EXTENSION_SKILL_DUPLICATE");
+    expect(found).toHaveLength(1);
+    expect(found[0]).toMatchObject({ severity: "error", validator: "protoboard/extensions" });
+    expect(found[0].message).toContain("part-search");
+    expect(found[0].message).toContain("ext-alpha");
+    expect(found[0].message).toContain("ext-beta");
+    expect(p.extensions.map((e) => e.manifest.id)).toEqual(["ext-alpha", "ext-beta"]);
+
+    // reading the bare id is refused, naming both; the other skills still read
+    const skills = resolveSkills(p, p.extensions);
+    expect(() => readSkill(skills, "part-search")).toThrow(/declared by 2 extensions \(ext-alpha, ext-beta\)/);
+    expect(readSkill(skills, "ext-beta-own").text).toBe("# ext-beta's own\n");
+
+    // the export writes neither (one would overwrite the other), removes the copy the earlier export made, and says so
+    const claude = exportSkills(p, skills, "claude-code");
+    expect(claude.duplicates).toEqual(["part-search"]);
+    expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
+    expect(readdirSync(join(dir, ".claude", "skills")).sort()).toEqual(["ext-alpha-own", "ext-beta-own"]);
+    exportSkills(p, skills, "agents-md");
+    const agents = readFileSync(join(dir, "AGENTS.md"), "utf8");
+    expect(agents.match(/\*\*part-search\*\* \(ext-(alpha|beta)\)[^\n]*cannot be read/g)).toHaveLength(2);
+
+    // one copy's files missing (the postinstall exports only the found ones): still a duplicate by its declaration
+    rmSync(join(dir, "node_modules", "ext-beta", "skills", "part-search"), { recursive: true, force: true });
+    const declared = resolveSkills(p, p.extensions);
+    const present = declared.filter((s) => s.file);
+    expect(present.filter((s) => s.id === "part-search")).toHaveLength(1);
+    expect(exportSkills(p, present, "claude-code", declared).duplicates).toEqual(["part-search"]);
+    expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
+  });
+
+  it("a package listed twice in the config is one owner of its skills, not a duplicate", async () => {
+    const dir = project("listed-twice", { "ext-once": { manifest: base("ext-once", { skills: [{ id: "part-search", summary: "s", path: "skills/ps/SKILL.md" }] }), files: { "skills/ps/SKILL.md": "# once\n" } } });
+    const cfg = join(dir, "protoboard.config.ts");
+    writeFileSync(cfg, readFileSync(cfg, "utf8").replace('["ext-once"]', '["ext-once","ext-once"]'));
+    const p = await loadProject(dir);
+    expect(p.diagnostics.filter((d) => d.code === "PB_EXTENSION_SKILL_DUPLICATE")).toEqual([]);
+    const skills = resolveSkills(p, p.extensions);
+    expect(readSkill(skills, "part-search").text).toBe("# once\n");
+    expect(exportSkills(p, skills, "claude-code").duplicates).toEqual([]);
+  });
+
+  it("counts two packages with the same manifest id as two owners of a skill", async () => {
+    const same = (pkg: string) => ({ manifest: base("ext-same", { skills: [{ id: "part-search", summary: pkg, path: "skills/ps/SKILL.md" }] }), files: { "skills/ps/SKILL.md": `# ${pkg}\n` } });
+    const dir = project("same-manifest-id", { "pkg-one": same("pkg-one"), "pkg-two": same("pkg-two") });
+    const p = await loadProject(dir);
+    expect(p.diagnostics.filter((d) => d.code === "PB_EXTENSION_SKILL_DUPLICATE")).toHaveLength(1);
+    const skills = resolveSkills(p, p.extensions);
+    expect(() => readSkill(skills, "part-search")).toThrow(/ext-same \(pkg-one\), ext-same \(pkg-two\)/);
+    expect(exportSkills(p, skills, "claude-code").duplicates).toEqual(["part-search"]);
+    expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
   });
 });
 

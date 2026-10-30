@@ -36,6 +36,7 @@ explains its codes.
 | `PB_EXTENSION_NO_MANIFEST` | error | The package has no `protoboard-extension.json`. | It is not a Protoboard extension; remove it from `extensions`. |
 | `PB_EXTENSION_MANIFEST_INVALID` | error | The manifest breaks the schema: a missing field, a duplicate id, an operation requiring an undeclared tool, a tool runtime with a version range, an invalid capability or view (`contributes.views`) declaration. | Fix the extension (or report it to its author); `protoboard doctor` shows the message. |
 | `PB_EXTENSION_INCOMPATIBLE` | error | The extension needs another framework or UHD version. | Install a compatible version of the extension or the framework. |
+| `PB_EXTENSION_SKILL_DUPLICATE` | error | Two installed extensions declare a skill with the same id, which the message names with both extensions. Both extensions load, but the skill is not exported to `.claude/skills/`, and `protoboard skills read <id>` and `skill_read` refuse it: which one is meant cannot be told. | Remove one of the two extensions from `protoboard.config.ts`, or have one of them rename its skill. |
 | `PB_EXTENSION_VIEW_DUPLICATE` | warning | Two extensions contribute a view with the same id; the second is ignored. | Rename one of the views (`<extension>.<view>`), or drop one of the extensions. |
 
 ## Framework: parts and the cloud catalog (`protoboard/catalog`)

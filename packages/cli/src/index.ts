@@ -50,6 +50,7 @@ import {
   writeLibraries,
   vendorOffers,
   type AddResult,
+  duplicateSkills,
   exportSkills,
   addExtension,
   agentsSkillPaths,
@@ -659,10 +660,12 @@ async function exportSkillsAfterLink(root: string) {
     const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8")) as { scripts?: Record<string, string> };
     if (!/skills export/.test(pkg.scripts?.postinstall ?? "")) return;
     const p = await loadProject(root, { checks: false });
-    const skills = resolveSkills(p, p.extensions).filter((s) => s.file);
-    if (!skills.length) return;
-    exportSkills(p, skills, "claude-code");
-    exportSkills(p, skills, "agents-md");
+    const declared = resolveSkills(p, p.extensions);
+    const skills = declared.filter((s) => s.file);
+    // with no file found there is nothing to copy, but an earlier export's copy of a now duplicated id still goes
+    if (!skills.length && !duplicateSkills(declared).size) return;
+    exportSkills(p, skills, "claude-code", declared);
+    exportSkills(p, skills, "agents-md", declared);
     process.stderr.write(`protoboard: ${skills.length} skills of the project's extensions are in .claude/skills/ and listed in AGENTS.md\n`);
   } catch (e) {
     process.stderr.write(`protoboard: the extensions' skills were not exported (${(e as Error).message.split("\n")[0]}); run \`protoboard skills export --host all\` in the project\n`);
@@ -1154,9 +1157,10 @@ async function main() {
       let skills: string | undefined;
       try {
         const p = await loadProject(root, { checks: false });
-        const found = resolveSkills(p, p.extensions).filter((x) => x.file);
-        exportSkills(p, found, "claude-code");
-        exportSkills(p, found, "agents-md");
+        const declared = resolveSkills(p, p.extensions);
+        const found = declared.filter((x) => x.file);
+        exportSkills(p, found, "claude-code", declared);
+        exportSkills(p, found, "agents-md", declared);
         skills = `${found.length} skills in .claude/skills/ and listed in AGENTS.md`;
       } catch (e) {
         skills = `not exported (${(e as Error).message.split("\n")[0]}); \`protoboard skills export --host all\` does it`;
@@ -1175,11 +1179,12 @@ async function main() {
         // a project's postinstall: both hosts, one line, and never a failed install
         try {
           const p = await loadProject(cwd, { checks: false });
-          const skills = resolveSkills(p, p.extensions).filter((s) => s.file);
-          if (!skills.length) return;
-          exportSkills(p, skills, "claude-code");
-          exportSkills(p, skills, "agents-md");
-          process.stdout.write(`protoboard: ${skills.length} skills of the installed extensions are in .claude/skills/ and listed in AGENTS.md (npm run skills:export does it again)\n`);
+          const declared = resolveSkills(p, p.extensions);
+          const skills = declared.filter((s) => s.file);
+          if (!skills.length && !duplicateSkills(declared).size) return;
+          const { duplicates } = exportSkills(p, skills, "claude-code", declared);
+          exportSkills(p, skills, "agents-md", declared);
+          process.stdout.write(`protoboard: ${skills.length} skills of the installed extensions are in .claude/skills/ and listed in AGENTS.md (npm run skills:export does it again)${duplicates.length ? `; not exported: ${duplicates.join(", ")}, declared by two extensions (protoboard doctor)` : ""}\n`);
         } catch (e) {
           process.stdout.write(`protoboard: the extensions' skills were not exported (${(e as Error).message.split("\n")[0]}); run \`npm run skills:export\` in the project\n`);
         }
@@ -1199,8 +1204,8 @@ async function main() {
         if (!["claude-code", "agents-md", "all"].includes(host)) throw new Error("usage: protoboard skills export --host claude-code|agents-md|all");
         const hosts: SkillHost[] = host === "all" ? ["claude-code", "agents-md"] : [host as SkillHost];
         const each = hosts.map((h) => exportSkills(p, skills, h));
-        const r = { written: each.flatMap((x) => x.written), skipped: [...new Set(each.flatMap((x) => x.skipped))] };
-        out(r, () => `${r.written.length} written${r.skipped.length ? `, ${r.skipped.length} skipped (not found: ${r.skipped.join(", ")})` : ""}\n${r.written.map((w) => `  ${w}`).join("\n")}`);
+        const r = { written: each.flatMap((x) => x.written), skipped: [...new Set(each.flatMap((x) => x.skipped))], duplicates: [...new Set(each.flatMap((x) => x.duplicates))] };
+        out(r, () => `${r.written.length} written${r.skipped.length ? `, ${r.skipped.length} skipped (not found: ${r.skipped.join(", ")})` : ""}${r.duplicates.length ? `, not exported: ${r.duplicates.join(", ")} (declared by two extensions: protoboard doctor)` : ""}\n${r.written.map((w) => `  ${w}`).join("\n")}`);
         return;
       }
       out(
@@ -1416,10 +1421,11 @@ async function refreshProjectGuidance(root: string) {
   let skills: string | undefined;
   try {
     const p = await loadProject(root, { checks: false });
-    const found = resolveSkills(p, p.extensions).filter((x) => x.file);
-    if (found.length) {
-      exportSkills(p, found, "claude-code");
-      exportSkills(p, found, "agents-md");
+    const declared = resolveSkills(p, p.extensions);
+    const found = declared.filter((x) => x.file);
+    if (found.length || duplicateSkills(declared).size) {
+      exportSkills(p, found, "claude-code", declared);
+      exportSkills(p, found, "agents-md", declared);
       skills = `${found.length} skills of the project's extensions listed in AGENTS.md and copied to .claude/skills/`;
     }
   } catch (e) {

@@ -30,7 +30,10 @@ export function agentsSkillPaths(text: string): string[] {
 
 /** A skill's file, or a file of its folder (`references/<file>`), as text: what `protoboard skills read` prints. */
 export function readSkill(skills: ResolvedSkill[], id: string, file?: string): { skill: ResolvedSkill; path: string; text: string; files: string[] } {
-  const skill = skills.find((s) => s.id === id);
+  const found = skills.filter((s) => s.id === id);
+  const owners = duplicateSkills(skills).get(id);
+  if (owners) throw new Error(`the skill "${id}" is declared by ${owners.length} extensions (${owners.join(", ")}): which one is meant cannot be told; remove one of them from protoboard.config.ts (\`protoboard doctor\` reports it)`);
+  const skill = found[0];
   if (!skill) throw new Error(`no skill "${id}" in this project (${skills.map((s) => s.id).join(", ") || "none"}; \`protoboard skills\` lists them, \`protoboard extensions add <name>\` adds an extension's)`);
   if (!skill.file) throw new Error(`the skill "${id}" is declared by ${skill.extension}, but its files are not installed here; \`protoboard doctor\` says why`);
   const dir = dirname(skill.file);
@@ -45,12 +48,41 @@ export function readSkill(skills: ResolvedSkill[], id: string, file?: string): {
 const listFiles = (dir: string, base = dir): string[] =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? listFiles(join(dir, e.name), base) : [projectRelative(base, join(dir, e.name))])).sort();
 
-export function exportSkills(p: Project, skills: ResolvedSkill[], host: SkillHost): { written: string[]; skipped: string[] } {
+/** The skill ids two or more extensions declare, each with those extensions (`PB_EXTENSION_SKILL_DUPLICATE`). */
+export function duplicateSkills(skills: ResolvedSkill[]): Map<string, string[]> {
+  // an owner is the declaring package (two packages may carry the same manifest id), named by its extension id
+  const by = new Map<string, Map<string, string>>();
+  for (const s of skills) {
+    const owners = by.get(s.id) ?? new Map<string, string>();
+    owners.set(s.provider ?? s.extension, s.provider && s.provider !== s.extension ? `${s.extension} (${s.provider})` : s.extension);
+    by.set(s.id, owners);
+  }
+  return new Map([...by].filter(([, owners]) => owners.size > 1).map(([id, owners]) => [id, [...owners.values()]]));
+}
+
+/**
+ * Puts the skills where an agent host finds them. `duplicates` are the ids
+ * two extensions declare: neither is exported to .claude/skills (one would
+ * overwrite the other, by discovery order), and AGENTS.md marks them.
+ * `declared` is every skill the extensions declare, when `skills` leaves out
+ * the ones whose files are missing: a duplicate is one by declaration, found
+ * or not, as the loader and readSkill count it.
+ */
+export function exportSkills(p: Project, skills: ResolvedSkill[], host: SkillHost, declared: ResolvedSkill[] = skills): { written: string[]; skipped: string[]; duplicates: string[] } {
   const written: string[] = [];
   const skipped: string[] = [];
+  const dup = duplicateSkills([...declared, ...skills]);
+  const duplicates = [...dup.keys()];
   if (host === "claude-code") {
+    // a copy an earlier export wrote, before the second extension declared the id, goes too: Claude Code would keep
+    // using it. Only a folder the export made (its .protoboard-source) is removed, never one the person wrote.
+    for (const id of duplicates) {
+      const dest = join(p.root, ".claude", "skills", id);
+      if (existsSync(join(dest, ".protoboard-source"))) rmSync(dest, { recursive: true, force: true });
+    }
     // Claude Code discovers project skills in .claude/skills/<name>/SKILL.md; copy each skill folder (with its references)
     for (const s of skills) {
+      if (dup.has(s.id)) continue;
       if (!s.file) {
         skipped.push(s.id);
         continue;
@@ -62,7 +94,7 @@ export function exportSkills(p: Project, skills: ResolvedSkill[], host: SkillHos
       writeFileSync(join(dest, ".protoboard-source"), `${s.extension}${s.package ? ` (${s.package})` : ""}\n${projectRelative(p.root, s.file)}\n`);
       written.push(projectRelative(p.root, join(dest, "SKILL.md")));
     }
-    return { written, skipped };
+    return { written, skipped, duplicates };
   }
   // agents-md: a generated section in AGENTS.md naming the skills, never a path to them: the list is committed, and a
   // path into this machine's Protoboard install breaks on another machine or when the project moves (PB-1018)
@@ -74,7 +106,7 @@ export function exportSkills(p: Project, skills: ResolvedSkill[], host: SkillHos
     "",
     "Read a skill before doing the task it covers: `protoboard skills read <name>`, the MCP server's `skill_read`, or `.claude/skills/<name>/SKILL.md` after `protoboard skills export --host claude-code`.",
     "",
-    ...skills.map((s) => `- **${s.id}** (${s.extension}) — ${s.summary}${s.file ? "" : " (not installed here: `protoboard doctor`)"}${s.verifiedBy ? `; verify with **${s.verifiedBy}**` : ""}`),
+    ...skills.map((s) => `- **${s.id}** (${s.extension}) — ${s.summary}${dup.has(s.id) ? " (another extension declares the same name, so it cannot be read: `protoboard doctor`)" : s.file ? "" : " (not installed here: `protoboard doctor`)"}${s.verifiedBy ? `; verify with **${s.verifiedBy}**` : ""}`),
     END,
   ].join("\n");
   // the markers are found as text (BEGIN holds parentheses: as a pattern it never matched, and the section went stale)
@@ -84,5 +116,5 @@ export function exportSkills(p: Project, skills: ResolvedSkill[], host: SkillHos
   // unchanged: left alone, so a second export (every npm install) does not touch the file
   if (next !== current) writeFileSync(file, next);
   written.push("AGENTS.md");
-  return { written, skipped: skills.filter((s) => !s.file).map((s) => s.id) };
+  return { written, skipped: skills.filter((s) => !s.file).map((s) => s.id), duplicates };
 }
