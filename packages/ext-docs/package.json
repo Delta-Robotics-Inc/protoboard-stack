@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-docs",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Protoboard extension: datasheets and assembly guides generated from your design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

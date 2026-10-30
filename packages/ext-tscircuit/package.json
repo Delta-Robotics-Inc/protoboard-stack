@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-tscircuit",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Protoboard extension: circuit boards from your design, with tscircuit and KiCad export.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

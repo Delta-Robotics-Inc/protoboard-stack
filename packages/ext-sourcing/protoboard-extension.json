@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-sourcing",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Part sourcing: external discovery, datasheet facts with checked quotes, supplier and lifecycle observations as dated evidence (never orders), alternates, and handoff into locally authored UHD parts.",
   "compatibility": {
     "protoboard": "^0.2.0",

@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-harness-cad",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Routed wire-harness CAD (a provider of the cad capability): each cable's 3D geometry (conductors swept along an obstacle-free route, twisted where the cable is, connector housings and solder joints) generated from the assembled UHD model and bound to the frames its ends land on.",
   "compatibility": {
     "protoboard": "^0.2.0",
