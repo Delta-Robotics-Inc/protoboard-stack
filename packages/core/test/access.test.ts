@@ -154,6 +154,21 @@ describe("a service that signs users in", () => {
     expect(a.message).toContain("no longer works");
   });
 
+  it("a service that cannot check sign-ins: try again later, and the sign-in and its last answer are kept", async () => {
+    const { env, store, signIn } = setup();
+    signIn();
+    await checkAccess(SERVICE, { env, store, fetch: service({ me: { signedIn: true, allowed: true } }).fetch, now: T0 });
+    const a = await checkAccess(SERVICE, { env, store, fetch: service({ me: { signedIn: false, auth: "firebase", reason: "check-unavailable" } }).fetch, now: T0, fresh: true });
+    expect(a).toMatchObject({ allowed: false, reason: "check-unavailable", email: "ada@example.com" });
+    expect(a.message).toBe("The Protoboard service can't check sign-ins right now. Try again later.");
+    expect(a.message).not.toMatch(/login|sign in again/i);
+    expect(store.get(SERVICE)).toBeDefined();
+    // the earlier good answer still counts once the service checks again (it was not erased)
+    expect(await checkAccess(SERVICE, { env, store, fetch: service({}).fetch, now: T0 + HOUR })).toMatchObject({ allowed: true, via: "recent" });
+    // a cloud command stops with that line
+    await expect(requireAccess(SERVICE, { env, store, fetch: service({ me: { signedIn: false, reason: "check-unavailable" } }).fetch, now: T0, fresh: true })).rejects.toThrow("can't check sign-ins right now");
+  });
+
   it("a confirmation counts only for the account it was given to", async () => {
     const { env, store, signIn } = setup();
     signIn();

@@ -201,6 +201,10 @@ export function partsNotFetchedMessage(why: string, command: string | undefined)
       ? can
         ? "Sign in, then choose Fetch Parts."
         : "Sign in; the parts can then be added from the Protoboard Library view."
+      : kind === "check-unavailable"
+        ? can
+          ? "Choose Fetch Parts later."
+          : "The parts can be added later from the Protoboard Library view."
       : kind === "unreachable"
         ? can
           ? "Check the connection to the Protoboard library, then choose Fetch Parts."
@@ -214,8 +218,10 @@ export function partsNotFetchedMessage(why: string, command: string | undefined)
 }
 
 /** What kind of failure a parts fetch reported (B7), for the advice and the buttons. */
-export function partsFailure(why: string): "sign-in" | "unreachable" | "revision" | "other" {
+export function partsFailure(why: string): "sign-in" | "unreachable" | "check-unavailable" | "revision" | "other" {
   if (/no such revision|REVISION_NOT_FOUND/i.test(why)) return "revision";
+  // the service could not check the sign-in (its problem): never "sign in"
+  if (/can't check sign-ins|SIGN_IN_CHECK_UNAVAILABLE|check-unavailable/i.test(why)) return "check-unavailable";
   if (/cannot reach|not reached|unreachable|fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|timed out|offline/i.test(why)) return "unreachable";
   if (/sign(ed)? ?in|log ?in|AUTH_REQUIRED|FORBIDDEN|ACCOUNT_NOT_ALLOWED|refused access|not invited|\b401\b|\b403\b/i.test(why)) return "sign-in";
   return "other";
