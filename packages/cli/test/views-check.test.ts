@@ -159,7 +159,11 @@ describe.skipIf(!findBrowser())("views check: each tab rendered once in a headle
   }, 240000);
 
   it("skips the Library tab while no library can be used, and still judges the model's tabs", async () => {
-    const dir = project("library", DRAWN);
+    // the project's library on a loopback port nothing listens on: the tab asks no real service
+    const dir = project("library", {
+      ...DRAWN,
+      "protoboard.config.ts": `import { defineConfig } from "@protoboardai/core";\nexport default defineConfig({ name: "library", root: { source: "src/sys.uhd.ts", export: "SYS" }, cloud: { url: "http://127.0.0.1:59999" } });\n`,
+    });
     const r = await viewsCheck({ cwd: dir, module: "", timeout: 20, libraryAccess: async () => ({ reason: "sign-in-invalid", message: "The Protoboard library needs a sign-in." }) });
     const tabs = Object.fromEntries(r.levels[0].tabs.map((t) => [t.id, t]));
     expect(tabs.library).toMatchObject({ status: "skipped", reason: "sign-in-invalid", detail: "The Protoboard library needs a sign-in." });
