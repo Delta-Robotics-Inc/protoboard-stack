@@ -831,7 +831,7 @@
         },
         {
           "command": "protoboard.signIn",
-          "when": "view == protoboard.library && protoboard.cloudLocked && protoboard.access != 'checking'",
+          "when": "view == protoboard.library && protoboard.cloudLocked && protoboard.access != 'checking' && protoboard.access != 'check-unavailable' && protoboard.access != 'unreachable' && protoboard.access != 'unknown'",
           "group": "navigation@0"
         },
         {
@@ -938,6 +938,10 @@
         },
         {
           "command": "protoboard.signIn",
+          "when": "!protoboard.signedIn"
+        },
+        {
+          "command": "protoboard.signInDevice",
           "when": "!protoboard.signedIn"
         },
         {
