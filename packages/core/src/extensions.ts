@@ -212,6 +212,8 @@ export interface LoadedExtension {
 
 export interface ResolvedSkill extends SkillDecl {
   extension: string;
+  /** The npm package of the extension that declares it (two packages may carry the same manifest id). */
+  provider?: string;
   /** Absolute path of SKILL.md (undefined if it could not be found). */
   file?: string;
 }
@@ -309,7 +311,36 @@ export function loadExtensions(p: Project, providers: ExtensionRequest[] = []): 
     }
     extensions.push({ manifest: m, root, package: name });
   }
+  // A skill id is unique inside one manifest (above), and must be across the installed extensions too: `skills read
+  // <id>` and the agent export address a skill by its bare id, so two extensions' `part-search` would be read or
+  // exported by discovery order, one silently in place of the other. Both stay loaded; the id is refused.
+  source = { file: "protoboard.config.ts" };
+  for (const [id, owners] of skillOwners(extensions)) {
+    if (owners.length < 2) continue;
+    const named = owners.map((e) => (e.package && e.package !== e.manifest.id ? `${e.manifest.id} (${e.package})` : e.manifest.id));
+    diag(
+      owners[0].package ?? owners[0].manifest.id,
+      "PB_EXTENSION_SKILL_DUPLICATE",
+      `skill ${id} is declared by ${named.slice(0, -1).join(", ")} and ${named[named.length - 1]}: \`protoboard skills read ${id}\` and the agent export refuse it until one of these extensions is removed`,
+    );
+  }
   return { extensions, diagnostics };
+}
+
+/**
+ * Each skill id with the extensions that declare it, in load order: one per package (a package listed twice in
+ * protoboard.config.ts is one owner), as duplicateSkills counts them.
+ */
+function skillOwners(extensions: LoadedExtension[]): Map<string, LoadedExtension[]> {
+  const owners = new Map<string, LoadedExtension[]>();
+  const key = (e: LoadedExtension) => e.package ?? e.manifest.id;
+  for (const e of extensions) {
+    for (const s of e.manifest.skills ?? []) {
+      const those = owners.get(s.id) ?? [];
+      if (!those.some((o) => key(o) === key(e))) owners.set(s.id, [...those, e]);
+    }
+  }
+  return owners;
 }
 
 /** Problems with a manifest's `capabilities` (empty when valid or absent). */
@@ -457,7 +488,7 @@ export function resolveSkills(p: Project, extensions: LoadedExtension[]): Resolv
     (e.manifest.skills ?? []).map((s) => {
       const base = s.package ? packageRoot(p.root, s.package) : e.root;
       const file = base ? join(base, s.path) : undefined;
-      return { ...s, extension: e.manifest.id, file: file && existsSync(file) ? file : undefined };
+      return { ...s, extension: e.manifest.id, ...(e.package ? { provider: e.package } : {}), file: file && existsSync(file) ? file : undefined };
     }),
   );
 }

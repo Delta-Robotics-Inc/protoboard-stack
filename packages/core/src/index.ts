@@ -164,7 +164,7 @@ export {
   type OperationRecord,
   type OperationResult,
 } from "./operations.js";
-export { agentsSkillPaths, exportSkills, readSkill, type SkillHost } from "./skills.js";
+export { agentsSkillPaths, duplicateSkills, exportSkills, readSkill, type SkillHost } from "./skills.js";
 export { addExtension, extensionPackage, type AddExtensionResult } from "./extensions-add.js";
 export {
   BUILTIN_PROBES,
