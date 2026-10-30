@@ -71,6 +71,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       dist_tag: ${{ steps.version.outputs.dist_tag }}
+      vsce: ${{ steps.vsce.outputs.vsce }}
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.1
         with:
@@ -107,6 +108,15 @@ jobs:
           echo "version=$version" >>"$GITHUB_OUTPUT"
           echo "dist_tag=$(node .github/scripts/release.mjs dist-tag "$version")" >>"$GITHUB_OUTPUT"
           echo "Version $version"
+
+      # The extension is packaged (package.mjs) and published with the same vsce: its own lockfile's
+      - name: The vsce the extension's lockfile pins
+        id: vsce
+        working-directory: protoboard-stack
+        run: |
+          vsce="$(node .github/scripts/release.mjs vsce)"
+          echo "vsce=$vsce" >>"$GITHUB_OUTPUT"
+          echo "@vscode/vsce $vsce"
 
       - name: The npm packages can be published from this repository
         working-directory: protoboard-stack
@@ -323,7 +333,8 @@ jobs:
       - name: Visual Studio Marketplace
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: npx --yes @vscode/vsce@4.0.0 publish --skip-duplicate --packagePath vsix/*.vsix
+          VSCE_VERSION: ${{ needs.check.outputs.vsce }}
+        run: npx --yes "@vscode/vsce@$VSCE_VERSION" publish --skip-duplicate --packagePath vsix/*.vsix
       # Off until the namespace `deltarobotics` is claimed on open-vsx.org and its trusted publisher exists:
       # then set the repository variable OPENVSX_PUBLISH to true (Settings > Secrets and variables > Actions)
       - name: Open VSX
