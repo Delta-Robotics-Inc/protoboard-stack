@@ -123,6 +123,17 @@ describe("extension manifests", () => {
     expect(existsSync(join(dir, ".claude", "skills", "part-search"))).toBe(false);
   });
 
+  it("a package listed twice in the config is one owner of its skills, not a duplicate", async () => {
+    const dir = project("listed-twice", { "ext-once": { manifest: base("ext-once", { skills: [{ id: "part-search", summary: "s", path: "skills/ps/SKILL.md" }] }), files: { "skills/ps/SKILL.md": "# once\n" } } });
+    const cfg = join(dir, "protoboard.config.ts");
+    writeFileSync(cfg, readFileSync(cfg, "utf8").replace('["ext-once"]', '["ext-once","ext-once"]'));
+    const p = await loadProject(dir);
+    expect(p.diagnostics.filter((d) => d.code === "PB_EXTENSION_SKILL_DUPLICATE")).toEqual([]);
+    const skills = resolveSkills(p, p.extensions);
+    expect(readSkill(skills, "part-search").text).toBe("# once\n");
+    expect(exportSkills(p, skills, "claude-code").duplicates).toEqual([]);
+  });
+
   it("counts two packages with the same manifest id as two owners of a skill", async () => {
     const same = (pkg: string) => ({ manifest: base("ext-same", { skills: [{ id: "part-search", summary: pkg, path: "skills/ps/SKILL.md" }] }), files: { "skills/ps/SKILL.md": `# ${pkg}\n` } });
     const dir = project("same-manifest-id", { "pkg-one": same("pkg-one"), "pkg-two": same("pkg-two") });

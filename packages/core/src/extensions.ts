@@ -327,10 +327,19 @@ export function loadExtensions(p: Project, providers: ExtensionRequest[] = []): 
   return { extensions, diagnostics };
 }
 
-/** Each skill id with the extensions that declare it, in load order. */
+/**
+ * Each skill id with the extensions that declare it, in load order: one per package (a package listed twice in
+ * protoboard.config.ts is one owner), as duplicateSkills counts them.
+ */
 function skillOwners(extensions: LoadedExtension[]): Map<string, LoadedExtension[]> {
   const owners = new Map<string, LoadedExtension[]>();
-  for (const e of extensions) for (const s of e.manifest.skills ?? []) if (!owners.get(s.id)?.includes(e)) owners.set(s.id, [...(owners.get(s.id) ?? []), e]);
+  const key = (e: LoadedExtension) => e.package ?? e.manifest.id;
+  for (const e of extensions) {
+    for (const s of e.manifest.skills ?? []) {
+      const those = owners.get(s.id) ?? [];
+      if (!those.some((o) => key(o) === key(e))) owners.set(s.id, [...those, e]);
+    }
+  }
   return owners;
 }
 
