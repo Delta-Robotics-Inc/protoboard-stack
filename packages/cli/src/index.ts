@@ -1175,9 +1175,9 @@ async function main() {
           const p = await loadProject(cwd, { checks: false });
           const skills = resolveSkills(p, p.extensions).filter((s) => s.file);
           if (!skills.length) return;
-          exportSkills(p, skills, "claude-code");
+          const { duplicates } = exportSkills(p, skills, "claude-code");
           exportSkills(p, skills, "agents-md");
-          process.stdout.write(`protoboard: ${skills.length} skills of the installed extensions are in .claude/skills/ and listed in AGENTS.md (npm run skills:export does it again)\n`);
+          process.stdout.write(`protoboard: ${skills.length} skills of the installed extensions are in .claude/skills/ and listed in AGENTS.md (npm run skills:export does it again)${duplicates.length ? `; not exported: ${duplicates.join(", ")}, declared by two extensions (protoboard doctor)` : ""}\n`);
         } catch (e) {
           process.stdout.write(`protoboard: the extensions' skills were not exported (${(e as Error).message.split("\n")[0]}); run \`npm run skills:export\` in the project\n`);
         }
@@ -1197,8 +1197,8 @@ async function main() {
         if (!["claude-code", "agents-md", "all"].includes(host)) throw new Error("usage: protoboard skills export --host claude-code|agents-md|all");
         const hosts: SkillHost[] = host === "all" ? ["claude-code", "agents-md"] : [host as SkillHost];
         const each = hosts.map((h) => exportSkills(p, skills, h));
-        const r = { written: each.flatMap((x) => x.written), skipped: [...new Set(each.flatMap((x) => x.skipped))] };
-        out(r, () => `${r.written.length} written${r.skipped.length ? `, ${r.skipped.length} skipped (not found: ${r.skipped.join(", ")})` : ""}\n${r.written.map((w) => `  ${w}`).join("\n")}`);
+        const r = { written: each.flatMap((x) => x.written), skipped: [...new Set(each.flatMap((x) => x.skipped))], duplicates: [...new Set(each.flatMap((x) => x.duplicates))] };
+        out(r, () => `${r.written.length} written${r.skipped.length ? `, ${r.skipped.length} skipped (not found: ${r.skipped.join(", ")})` : ""}${r.duplicates.length ? `, not exported: ${r.duplicates.join(", ")} (declared by two extensions: protoboard doctor)` : ""}\n${r.written.map((w) => `  ${w}`).join("\n")}`);
         return;
       }
       out(

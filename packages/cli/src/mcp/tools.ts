@@ -354,7 +354,9 @@ export function cliTools(templates: string[]): ToolSpec[] {
         const r = readCliJson(await ctx.cli(dir, cliArgs(["skills"])));
         if (!r.ok) return failure(r.message, dir, r.code);
         const skills = (Array.isArray(r.data) ? r.data : []) as { id: string; file: string | null; extension?: string; summary?: string }[];
-        const skill = skills.find((s) => s.id === id);
+        const same = skills.filter((s) => s.id === id);
+        if (same.length > 1) return { data: { error: `the skill "${id}" is declared by ${same.length} extensions (${same.map((s) => s.extension).join(", ")}): which one is meant cannot be told; \`protoboard doctor\` in the project reports it` }, isError: true };
+        const skill = same[0];
         if (!skill) return { data: { error: `no skill "${id}" is installed in this project`, installed: skills.map((s) => s.id) }, isError: true };
         if (!skill.file) return { data: { error: `the skill "${id}" is declared by ${skill.extension} but its file was not found; \`protoboard doctor\` in the project says why (\`protoboard stack link\` links missing packages)` }, isError: true };
         // only a file the CLI itself named is read

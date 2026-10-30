@@ -309,7 +309,27 @@ export function loadExtensions(p: Project, providers: ExtensionRequest[] = []): 
     }
     extensions.push({ manifest: m, root, package: name });
   }
+  // A skill id is unique inside one manifest (above), and must be across the installed extensions too: `skills read
+  // <id>` and the agent export address a skill by its bare id, so two extensions' `part-search` would be read or
+  // exported by discovery order, one silently in place of the other. Both stay loaded; the id is refused.
+  source = { file: "protoboard.config.ts" };
+  for (const [id, owners] of skillOwners(extensions)) {
+    if (owners.length < 2) continue;
+    const named = owners.map((e) => (e.package && e.package !== e.manifest.id ? `${e.manifest.id} (${e.package})` : e.manifest.id));
+    diag(
+      owners[0].package ?? owners[0].manifest.id,
+      "PB_EXTENSION_SKILL_DUPLICATE",
+      `skill ${id} is declared by ${named.slice(0, -1).join(", ")} and ${named[named.length - 1]}: \`protoboard skills read ${id}\` and the agent export refuse it until one of these extensions is removed`,
+    );
+  }
   return { extensions, diagnostics };
+}
+
+/** Each skill id with the extensions that declare it, in load order. */
+function skillOwners(extensions: LoadedExtension[]): Map<string, LoadedExtension[]> {
+  const owners = new Map<string, LoadedExtension[]>();
+  for (const e of extensions) for (const s of e.manifest.skills ?? []) if (!owners.get(s.id)?.includes(e)) owners.set(s.id, [...(owners.get(s.id) ?? []), e]);
+  return owners;
 }
 
 /** Problems with a manifest's `capabilities` (empty when valid or absent). */
