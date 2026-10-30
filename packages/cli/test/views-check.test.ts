@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import { accessMessage, findBrowser, type AccessRefusal } from "@protoboardai/core";
-import { formatViewsCheck, libraryAccessProblem, viewsCheck, type ViewsCheckReport } from "../src/views-check.js";
+import { environmentTokenSent, formatViewsCheck, libraryAccessProblem, viewsCheck, type ViewsCheckReport } from "../src/views-check.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const TMP = join(HERE, ".tmp-views-check");
@@ -118,6 +118,19 @@ describe("views check: the Library tab and the account", () => {
     expect(p?.message).toContain(S);
     // an open service (no sign-in) answered from its last record while it cannot be reached
     expect(libraryAccessProblem([{ allowed: true, service: S, via: "open-service", offlineUntil: "2026-11-06T00:00:00.000Z" }])?.reason).toBe("unreachable");
+  });
+
+  it("a token from the environment counts only where the library client sends it", () => {
+    const H = "https://protoboard-parts.example.test";
+    const ci = { PROTOBOARD_CLOUD_TOKEN: "t", PROTOBOARD_CLOUD_TOKEN_ORIGINS: H };
+    // the service token: the Protoboard library, at an origin allowed to receive it
+    expect(environmentTokenSent({ id: "protoboard", url: H }, ci)).toBe(true);
+    expect(environmentTokenSent({ id: "protoboard", url: "https://elsewhere.example.test" }, ci)).toBe(false);
+    expect(environmentTokenSent({ id: "vendor", url: H }, ci)).toBe(false);
+    // a library's own token, when set, and never over plain http to another machine
+    expect(environmentTokenSent({ id: "vendor", url: "https://vendor.example.test", authEnv: "PROTOBOARD_VENDOR_TOKEN" }, { PROTOBOARD_VENDOR_TOKEN: "v" })).toBe(true);
+    expect(environmentTokenSent({ id: "vendor", url: "https://vendor.example.test", authEnv: "PROTOBOARD_VENDOR_TOKEN" }, {})).toBe(false);
+    expect(environmentTokenSent({ id: "vendor", url: "http://vendor.example.test", authEnv: "PROTOBOARD_VENDOR_TOKEN" }, { PROTOBOARD_VENDOR_TOKEN: "v" })).toBe(false);
   });
 
   it("the report: a skipped tab is marked, says why, and is not counted as failed", () => {

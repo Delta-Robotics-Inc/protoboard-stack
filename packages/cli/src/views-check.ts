@@ -24,7 +24,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { ModuleDef } from "@deltarobotics/uhd";
-import { accessMessage, checkAccess, configuredLibraries, findProjectRoot, isAuthEnvName, loadProject, resolveViews, uhdBundle, type Access, type ProtoboardConfig } from "@protoboardai/core";
+import { DEFAULT_LIBRARY_ID, accessMessage, checkAccess, cloudTokenAllowed, configuredLibraries, findProjectRoot, isAuthEnvName, loadProject, tokenTransportProblem, resolveViews, uhdBundle, type Access, type ProtoboardConfig } from "@protoboardai/core";
 import { tabsFor } from "@protoboardai/views/tabs";
 
 export type TabStatus = "ok" | "empty" | "error" | "skipped" | "not-rendered";
@@ -108,9 +108,23 @@ async function projectLibraryAccess(config: ProtoboardConfig): Promise<LibraryAc
     // a libraries list that cannot be read is `protoboard check`'s finding, not the account's
     return undefined;
   }
-  // a library whose token comes from the environment stands for an account: the tab is judged
-  if (libs.some((l) => isAuthEnvName(l.authEnv) && process.env[l.authEnv])) return undefined;
-  return libraryAccessProblem(await Promise.all([...new Set(libs.map((l) => l.url))].map((u) => checkAccess(u))));
+  // a library the client sends a token from the environment to stands for an account: the tab is judged
+  if (libs.some((l) => environmentTokenSent(l))) return undefined;
+  // PROTOBOARD_CLOUD_TOKEN reaches none of these libraries (see above): what counts is the account's sign-in
+  const { PROTOBOARD_CLOUD_TOKEN: _unsent, ...env } = process.env;
+  return libraryAccessProblem(await Promise.all([...new Set(libs.map((l) => l.url))].map((u) => checkAccess(u, { env }))));
+}
+
+/**
+ * Whether the library client (`connectLibrary`) sends this library a token
+ * from the environment, by its rules: its `authEnv` token, or the service
+ * token (PROTOBOARD_CLOUD_TOKEN) to the Protoboard library at an origin
+ * allowed to receive it; never over plain http to another machine.
+ */
+export function environmentTokenSent(l: { id: string; url: string; authEnv?: string }, env: NodeJS.ProcessEnv = process.env): boolean {
+  if (tokenTransportProblem(l.url)) return false;
+  if (isAuthEnvName(l.authEnv) && env[l.authEnv]) return true;
+  return l.id === DEFAULT_LIBRARY_ID && !!env.PROTOBOARD_CLOUD_TOKEN && cloudTokenAllowed(l.url, env);
 }
 
 const W = 1440;
@@ -126,6 +140,8 @@ const MIDDLE = { x: Math.round(W * 0.16), y: HEADER + 70, width: Math.round(W * 
 /** Below this share of differing pixels, a view counts as blank. */
 const MIN_INK = 0.002;
 
+/** The page's errors that are the view's: not a missing favicon, an aborted load or the reload channel. */
+const pageErrors = (errors: string[]) => errors.filter((e) => !/favicon|ERR_ABORTED|EventSource/i.test(e));
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const slug = (s: string) => s.replace(/[^A-Za-z0-9_.-]+/g, "_") || "root";
 
@@ -270,7 +286,7 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
           if (ink >= MIN_INK && settled && ((panel.drawings ?? 0) > 0 || (panel.rows ?? 0) > 0 || Date.now() - t0 > 4000)) break;
         }
         await sleep(600);
-        const errors = browser.takeErrors().filter((e) => !/favicon|ERR_ABORTED|EventSource/i.test(e));
+        const errors = pageErrors(browser.takeErrors());
         tab.ink = Math.round(ink * 10000) / 10000;
         if (errors.length) {
           tab.status = "error";
@@ -290,7 +306,12 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
         } else tab.status = "ok";
         // the Library tab without a usable library: what it shows is the account's state, not the project's
         const access = tab.id === "library" && !errors.length ? await libraryProblem() : undefined;
-        if (access) {
+        // asking the service can take its timeout: what the page threw meanwhile still fails the tab
+        const late = access ? pageErrors(browser.takeErrors()) : [];
+        if (late.length) {
+          tab.status = "error";
+          tab.detail = late[0]!.split("\n")[0]!.slice(0, 300);
+        } else if (access) {
           tab.status = "skipped";
           tab.reason = access.reason;
           tab.detail = access.message;
