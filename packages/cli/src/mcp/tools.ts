@@ -355,7 +355,9 @@ export function cliTools(templates: string[]): ToolSpec[] {
         if (!r.ok) return failure(r.message, dir, r.code);
         const skills = (Array.isArray(r.data) ? r.data : []) as { id: string; file: string | null; extension?: string; provider?: string; summary?: string }[];
         const same = skills.filter((s) => s.id === id);
-        if (same.length > 1) return { data: { error: `the skill "${id}" is declared by ${same.length} extensions (${same.map((s) => (s.provider && s.provider !== s.extension ? `${s.extension} (${s.provider})` : s.extension)).join(", ")}): which one is meant cannot be told; \`protoboard doctor\` in the project reports it` }, isError: true };
+        // one owner per package, as the loader and readSkill count them (a package listed twice is one)
+        const owners = [...new Map(same.map((s) => [s.provider ?? s.extension, s.provider && s.provider !== s.extension ? `${s.extension} (${s.provider})` : s.extension])).values()];
+        if (owners.length > 1) return { data: { error: `the skill "${id}" is declared by ${owners.length} extensions (${owners.join(", ")}): which one is meant cannot be told; \`protoboard doctor\` in the project reports it` }, isError: true };
         const skill = same[0];
         if (!skill) return { data: { error: `no skill "${id}" is installed in this project`, installed: skills.map((s) => s.id) }, isError: true };
         if (!skill.file) return { data: { error: `the skill "${id}" is declared by ${skill.extension} but its file was not found; \`protoboard doctor\` in the project says why (\`protoboard stack link\` links missing packages)` }, isError: true };
