@@ -1200,7 +1200,7 @@ class ProtoboardExtension {
   /** A cloud command asked for while the library needs a sign-in. */
   private async askSignIn() {
     this.signInPrompts.push(this.lock.message);
-    const again = this.lock.reason === "unreachable" || this.lock.reason === "unknown" || this.lock.reason === "checking";
+    const again = this.lock.reason === "unreachable" || this.lock.reason === "check-unavailable" || this.lock.reason === "unknown" || this.lock.reason === "checking";
     const choice = await vscode.window.showWarningMessage(`Protoboard: ${this.lock.message}`, ...(again ? ["Check Again", "Show Log"] : ["Sign In", "Sign In with a Code"]));
     if (choice === "Sign In") await this.signIn();
     else if (choice === "Sign In with a Code") await this.signIn(true);

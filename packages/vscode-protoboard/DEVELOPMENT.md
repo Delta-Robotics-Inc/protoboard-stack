@@ -593,7 +593,7 @@ To build it yourself (`npm run package`, never published):
 npm install                                  # at the repository root: the workspace, the viewer shell's dependencies
 npm run build --prefix ../uhd-viewer         # the sibling uhd-viewer checkout, which the shell builds on
 cd packages/vscode-protoboard
-npm install                                  # its own dependencies; not part of the root workspace
+npm ci                                       # its own lockfile (vsce among them); not part of the root workspace
 npm run package                              # dist/vscode-protoboard.vsix, for every platform
 code --install-extension dist/vscode-protoboard.vsix
 ```
@@ -606,7 +606,9 @@ codicons in `dist/webview`, builds the stack it carries (`--platforms
 (`linux-x64`, `darwin-arm64`, `win32-x64`, …) carries that platform's
 native modules only and packages it for that platform (`vsce package
 --target`): the release workflow (`.github/workflows/release.yml`) runs it
-once per platform, each on a runner of that platform.
+once per platform, each on a runner of that platform, and publishes with
+the vsce this folder's `package-lock.json` pins (`node
+.github/scripts/release.mjs vsce`).
 
 Reload the window when asked. To remove it: `code --uninstall-extension
 deltarobotics.vscode-protoboard`. Then open a project folder (for example

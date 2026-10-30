@@ -344,6 +344,7 @@ export {
   jwtClaims,
   refreshIdToken,
   serviceKey,
+  SIGN_IN_CHECK_UNAVAILABLE,
   signInStamp,
   signInWithCustomToken,
   type AccountInfo,

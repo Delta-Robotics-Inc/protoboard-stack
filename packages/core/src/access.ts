@@ -28,6 +28,9 @@
  * - `PROTOBOARD_CLOUD_TOKEN` (the service token, CI) counts as signed in. It is
  *   not sent anywhere by this check; the service judges it when it is used.
  * - An account the service's invite list refuses is not allowed, and is told so.
+ * - A service that cannot check sign-ins right now (`/v1/me` says
+ *   `reason: "check-unavailable"`) refuses too, but says to try again later,
+ *   never to sign in again: the sign-in and its last good answer are kept.
  *
  * What the check sends, and nothing else: `GET <service>/.well-known/uhd-library`
  * without credentials, `GET <service>/v1/me` with the account's ID token, and,
@@ -41,7 +44,7 @@
 import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { ensurePrivateDir } from "./private-dir.js";
 import { join } from "node:path";
-import { AccountError, CredentialStore, accountToken, configDir, fetchProblem, serviceKey } from "./account.js";
+import { AccountError, CredentialStore, SIGN_IN_CHECK_UNAVAILABLE, accountToken, configDir, fetchProblem, serviceKey } from "./account.js";
 
 /** How long a good answer is used without asking the service again. */
 export const ACCESS_RECHECK_HOURS = 12;
@@ -79,7 +82,9 @@ export type AccessRefusal =
   /** Signed in, but the account's e-mail address is not verified yet. */
   | "email-unverified"
   /** The service cannot be reached and there is no recent good answer. */
-  | "unreachable";
+  | "unreachable"
+  /** The service answered, but cannot check sign-ins right now: its problem, not the sign-in's. */
+  | "check-unavailable";
 
 export interface Access {
   /** Whether this machine may use the service's account features (the cloud) now. */
@@ -198,6 +203,8 @@ export function accessMessage(a: Pick<Access, "reason" | "service" | "email">, d
       return `${what} needs a sign-in: the one kept for ${a.service}${a.email ? ` (${a.email})` : ""} no longer works${detail ? ` (${detail})` : ""}. To sign in again, ${SIGN_IN}.`;
     case "unreachable":
       return `${what} needs ${a.service}, which cannot be reached to check the sign-in${detail ? ` (${detail})` : ""}.`;
+    case "check-unavailable":
+      return SIGN_IN_CHECK_UNAVAILABLE;
     default:
       return `${what} needs a Protoboard account: ${SIGN_IN} (not signed in to ${a.service}).`;
   }
@@ -274,6 +281,8 @@ export async function checkAccess(service: string, options: AccessOptions = {}):
     }
     return offline(e instanceof AccountError ? e.message : `GET ${key}/v1/me: ${fetchProblem(e)}`);
   }
+  // the service could not check the token: try again later; the sign-in and its last good answer stay
+  if (!me.signedIn && me.reason === "check-unavailable") return refuse("check-unavailable", who);
   if (!me.signedIn) {
     writeRecord(file, key, undefined);
     return refuse("sign-in-invalid", who, "the service does not accept it");
@@ -304,7 +313,8 @@ export const ACCESS_EXIT_CODE = 4;
 
 /**
  * `checkAccess`, throwing `AccessError` when the service definitely refuses
- * (signed out, a sign-in that no longer works, not invited). A service that
+ * (signed out, a sign-in that no longer works, not invited, sign-ins that
+ * cannot be checked right now). A service that
  * cannot be reached is not a refusal here: the command goes on and says
  * itself what it could not reach.
  */

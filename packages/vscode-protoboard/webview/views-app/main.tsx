@@ -437,6 +437,8 @@ function signedOutContent(reason: string): { title: string; buttons: [label: str
       return { title: "This account is not invited to the library yet", buttons: [["Use Another Account", "signIn", "Sign in with an invited account"], ["Check Again", "checkAccount", "Ask the service again, after you were invited"]] };
     case "email-unverified":
       return { title: "Verify your e-mail address", buttons: [["Check Again", "checkAccount", "Ask the service again, after you verified it"], ["Use Another Account", "signIn", "Opens the sign-in page in your browser"]] };
+    case "check-unavailable":
+      return { title: "Sign-in check unavailable", buttons: [["Check Again", "checkAccount", "Ask the service again"], ["Show Log", "showLog", "What the extension ran and what it was told"]] };
     case "unreachable":
     case "unknown":
       return { title: "The Protoboard library could not be reached", buttons: [["Check Again", "checkAccount", "Ask the service again"], ["Show Log", "showLog", "What the extension ran and what it was told"]] };
