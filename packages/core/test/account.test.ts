@@ -7,7 +7,7 @@ import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, 
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { CredentialStore, accountPage, accountPageUrl, DPAPI_PROTECT, DPAPI_UNPROTECT, accountStatus, accountToken, accountTokensFor, connectLibraries, explainCloudError, fetchProblem, loginWithBrowser, loginWithDevice, logout, type Runner, type Session } from "../src/index.js";
+import { CredentialStore, accountPage, accountPageUrl, DPAPI_PROTECT, DPAPI_UNPROTECT, accountStatus, accountToken, accountTokensFor, connectLibraries, explainCloudError, fetchProblem, loginWithBrowser, loginWithDevice, logout, SIGN_IN_CHECK_UNAVAILABLE, type Runner, type Session } from "../src/index.js";
 import { CloudError } from "@protoboardai/cloud/client";
 
 const fileStore = () => new CredentialStore({ env: { PROTOBOARD_CONFIG_DIR: mkdtempSync(join(tmpdir(), "pb-account-")), PROTOBOARD_CREDENTIAL_STORE: "file" } });
@@ -201,6 +201,20 @@ describe("tokens", () => {
     const e = new CloudError(401, "AUTH_REQUIRED", "downloading a full revision needs a signed-in Protoboard account: run `protoboard login` (browsing the library stays open)");
     expect(explainCloudError(e, { id: "protoboard", url: SERVICE }, "acme-motor").message).toMatch(/Sign in first: `protoboard login`/);
     expect(explainCloudError(e, { id: "protoboard", url: SERVICE, signedIn: true }, "acme-motor").message).toMatch(/You are signed in, but the service did not accept the sign-in/);
+  });
+
+  it("a service that cannot check sign-ins says try again later, never sign in again", async () => {
+    const e = new CloudError(503, "SIGN_IN_CHECK_UNAVAILABLE", "the service cannot check sign-ins right now: try again later");
+    const m = explainCloudError(e, { id: "protoboard", url: SERVICE, signedIn: true }, "acme-motor").message;
+    expect(m).toBe(`acme-motor: ${SIGN_IN_CHECK_UNAVAILABLE}`);
+    expect(m).not.toMatch(/login|sign in again/i);
+    const store = fileStore();
+    store.put(session({ idToken: "cached", idTokenExpiresAt: Date.now() + 30 * 60_000 }));
+    const me: typeof fetch = (async (url: string) => (String(url).endsWith("/v1/me") ? Response.json({ signedIn: false, auth: "firebase", reason: "check-unavailable" }) : Response.json({ account: { provider: "firebase" } }))) as typeof fetch;
+    const s = await accountStatus(SERVICE, { store, fetch: me, check: true });
+    expect(s).toMatchObject({ signedIn: true, valid: false, checkUnavailable: true, problem: SIGN_IN_CHECK_UNAVAILABLE });
+    // the sign-in is kept
+    expect(store.get(SERVICE)).toBeDefined();
   });
 
   it("explains a refusal of an account that is not invited (PB-915), and whoami --check says so", async () => {

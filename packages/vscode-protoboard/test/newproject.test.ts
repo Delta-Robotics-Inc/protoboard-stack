@@ -250,6 +250,11 @@ describe("a template whose parts were not fetched, and signing in before there i
     expect(revision).toContain("does not have the revisions the template pins");
     expect(partsNotFetchedMessage("cannot reach the Protoboard Cloud parts service at http://x (fetch failed).", "protoboard parts add a@3")).not.toMatch(/sign in/i);
     expect(partsNotFetchedMessage("the catalog at http://x refused access (AUTH_REQUIRED: sign in).", "protoboard parts add a@3")).toContain("Sign in, then choose Fetch Parts.");
+    // the service could not check the sign-in: try later, never "sign in"
+    const later = partsNotFetchedMessage("a@3: The Protoboard service can't check sign-ins right now. Try again later.", "protoboard parts add a@3");
+    expect(partsFailure("a@3: The Protoboard service can't check sign-ins right now. Try again later.")).toBe("check-unavailable");
+    expect(later).toContain("Choose Fetch Parts later.");
+    expect(later).not.toMatch(/Sign in,/);
     expect(partsFailure("x: no such revision at u")).toBe("revision");
     expect(partsFailure("cannot reach the service (fetch failed)")).toBe("unreachable");
     expect(partsFailure("refused access (AUTH_REQUIRED: …)")).toBe("sign-in");

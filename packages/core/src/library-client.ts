@@ -23,6 +23,7 @@
 import { LIBRARY_SORTS, isLibrarySort, type LibrarySort } from "./library-sort.js";
 import { CloudError, PartsClient, discoverLibrary, type PartSummary, type PublicOffer, type SearchFacets, type SearchQuery, type TaxonomyResult, type TaxonomyTreeNode } from "@protoboardai/cloud/client";
 
+import { SIGN_IN_CHECK_UNAVAILABLE } from "./sign-in-check.js";
 import { cloudTokenAllowed, isAuthEnvName, isLoopbackHost, tokenTransportProblem } from "./web-urls.js";
 
 /** Whether a URL is a service on this machine (one that someone starts), not one reached over the network. */
@@ -251,6 +252,9 @@ export function explainCloudError(e: unknown, lib: string | { id?: string; url: 
       return new PartsError(e.code, `${what}not in ${where} (\`protoboard parts search\` lists what is)`);
     case "REVISION_NOT_FOUND":
       return new PartsError(e.code, `${what}no such revision at ${url} (${e.message})`);
+    case "SIGN_IN_CHECK_UNAVAILABLE":
+      // the service could not check the sign-in (its problem): never "sign in again"
+      return new PartsError(e.code, `${what}${SIGN_IN_CHECK_UNAVAILABLE}`);
     case "ACCOUNT_NOT_ALLOWED":
       // signed in, but the service is limited to invited accounts (PB-915): its message says what to do
       return new PartsError(e.code, `${what}${where} refused access: ${e.message}`);

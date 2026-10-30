@@ -209,7 +209,15 @@ such a request as a service that does not answer, and the run lists the
 requests it blocked at its end. A test that needs a service names its own
 (`cloud.url`, `PROTOBOARD_CLOUD_URL` or `--url`). `packages/cli/test/access.test.ts` runs the
 cloud commands signed out, signed in, not invited and against an open
-service, all against a stand-in. A project's own CI that adds library parts
+service, all against a stand-in, and a service that cannot check sign-ins
+right now. `packages/cli/test/sign-in-emulator.test.ts` runs the real
+sign-in end to end: the CLI, the parts service from the `protoboard-cloud`
+checkout with Firebase sign-in, and the Firebase Auth emulator (firebase-tools:
+`FIREBASE`, or `firebase` on `PATH`). It covers `login --device`,
+`whoami --check`, `parts search`, a second project with the same sign-in, a
+service whose revocation check cannot run, and `logout`. It runs where the
+service tests run (with the checkout beside the stack, as in `ci-stack.sh`)
+and is skipped, saying why, without the checkout or firebase-tools. A project's own CI that adds library parts
 from the hosted library sets `PROTOBOARD_CLOUD_TOKEN` (the service token) or
 signs in with `protoboard login --device`. The service token goes to the
 hosted service's origin only; a CI that uses another service (a staging one,

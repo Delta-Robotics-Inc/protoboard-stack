@@ -33,13 +33,17 @@ export const cloudRepo = () => {
   return repo;
 };
 
-export async function startCloud(): Promise<CloudService> {
-  const dataDir = mkdtempSync(join(tmpdir(), "pb-parts-test-"));
+/**
+ * Start the service. `env` adds to its environment (sign-in against the Auth emulator: sign-in-emulator.test.ts);
+ * `port` and `dataDir` start it again where it was (a restart keeps its URL and its parts; `stop` then keeps the data).
+ */
+export async function startCloud(options: { env?: Record<string, string>; port?: number; dataDir?: string } = {}): Promise<CloudService> {
+  const dataDir = options.dataDir ?? mkdtempSync(join(tmpdir(), "pb-parts-test-"));
   const repo = cloudRepo();
   const tsxCli = createRequire(join(repo, "package.json")).resolve("tsx/cli");
   const child: ChildProcess = spawn(process.execPath, ["--no-warnings", tsxCli, join(repo, "src/server/main.ts")], {
     cwd: repo,
-    env: { ...process.env, PORT: "0", HOST: "127.0.0.1", PB_CLOUD_DATA_DIR: dataDir, PB_CLOUD_PUBLISH_TOKEN: TOKEN, PB_CLOUD_PUBLISHER: "test" },
+    env: { ...process.env, PORT: String(options.port ?? 0), HOST: "127.0.0.1", PB_CLOUD_DATA_DIR: dataDir, PB_CLOUD_PUBLISH_TOKEN: TOKEN, PB_CLOUD_PUBLISHER: "test", ...options.env },
     stdio: ["ignore", "pipe", "pipe"],
   });
   let log = "";
@@ -70,7 +74,7 @@ export async function startCloud(): Promise<CloudService> {
         child.kill("SIGTERM");
         await exited;
       }
-      rmSync(dataDir, { recursive: true, force: true });
+      if (!options.dataDir) rmSync(dataDir, { recursive: true, force: true });
     },
   };
 }
