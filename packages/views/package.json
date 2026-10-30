@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@deltarobotics/uhd-viewer": "^0.2.1",
-    "@radix-ui/react-select": "^2.3.7"
+    "@radix-ui/react-select": "^2.4.1"
   },
   "peerDependencies": {
     "@deltarobotics/uhd": ">=0.3.0",
