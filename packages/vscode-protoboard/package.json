@@ -1226,12 +1226,12 @@
   },
   "devDependencies": {
     "@types/vscode": "~1.106.0",
-    "@vscode/codicons": "^0.0.36",
+    "@vscode/codicons": "^0.0.45",
     "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "^4.0.0",
     "esbuild": "^0.28.2",
     "occt-import-js": "^0.0.23",
-    "three": "^0.180.0"
+    "three": "^0.186.1"
   },
   "keywords": [
     "hardware",
