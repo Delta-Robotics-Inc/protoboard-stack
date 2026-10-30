@@ -201,6 +201,8 @@ const cli = meow(
     views check             The viewer's tabs for the root and every level with modules inside it (--module
                             <instance path or module id> for one), each opened once in a headless browser:
                             fails (exit 1) on a tab that throws, shows an empty state or draws nothing.
+                            The Library tab is skipped, with the reason, while no library can be used
+                            from here (signed out, sign-in refused, service out of reach).
                             --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs
     dev                     Serve the UHD viewer on the project: rebuilds on every source change, saves
                             diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch)
