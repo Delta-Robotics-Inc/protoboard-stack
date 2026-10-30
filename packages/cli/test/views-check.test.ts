@@ -116,6 +116,8 @@ describe("views check: the Library tab and the account", () => {
     const p = libraryAccessProblem([{ allowed: true, service: S, via: "offline" }]);
     expect(p?.reason).toBe("unreachable");
     expect(p?.message).toContain(S);
+    // an open service (no sign-in) answered from its last record while it cannot be reached
+    expect(libraryAccessProblem([{ allowed: true, service: S, via: "open-service", offlineUntil: "2026-11-06T00:00:00.000Z" }])?.reason).toBe("unreachable");
   });
 
   it("the report: a skipped tab is marked, says why, and is not counted as failed", () => {

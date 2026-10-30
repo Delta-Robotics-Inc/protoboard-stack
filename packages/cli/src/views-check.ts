@@ -87,10 +87,13 @@ export interface ViewsCheckOptions {
  * The Library tab's problem, from the answers of the project's library
  * services: none while one of them can be used now. A refusal (whatever its
  * reason) is reported with its own line; a service accepted only from the
- * last good answer because it cannot be reached reads as unreachable.
+ * last good answer because it cannot be reached (an account's or an open
+ * service's) reads as unreachable.
  */
 export function libraryAccessProblem(answers: readonly Access[]): LibraryAccessProblem | undefined {
-  if (!answers.length || answers.some((a) => a.allowed && a.via !== "offline")) return undefined;
+  // an answer kept from before because the service cannot be reached now (`offlineUntil`: an account's, or an open
+  // service's) is no library to show
+  if (!answers.length || answers.some((a) => a.allowed && a.via !== "offline" && !a.offlineUntil)) return undefined;
   const refused = answers.find((a) => !a.allowed);
   if (refused) return { reason: refused.reason ?? "refused", message: (refused.message ?? accessMessage(refused)).split("\n")[0]! };
   return { reason: "unreachable", message: accessMessage({ reason: "unreachable", service: answers[0]!.service }) };
