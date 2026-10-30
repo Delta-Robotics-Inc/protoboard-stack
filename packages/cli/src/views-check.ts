@@ -305,9 +305,10 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
           tab.detail = `no drawing or table; shows "${(panel.text ?? "").split("\n")[0]}"`;
         } else tab.status = "ok";
         // the Library tab without a usable library: what it shows is the account's state, not the project's
-        const access = tab.id === "library" && !errors.length ? await libraryProblem() : undefined;
-        // asking the service can take its timeout: what the page threw meanwhile still fails the tab
-        const late = access ? pageErrors(browser.takeErrors()) : [];
+        const asked = tab.id === "library" && !errors.length;
+        const access = asked ? await libraryProblem() : undefined;
+        // asking the service can take its timeout: what the page threw meanwhile still fails the tab, usable library or not
+        const late = asked ? pageErrors(browser.takeErrors()) : [];
         if (late.length) {
           tab.status = "error";
           tab.detail = late[0]!.split("\n")[0]!.slice(0, 300);
