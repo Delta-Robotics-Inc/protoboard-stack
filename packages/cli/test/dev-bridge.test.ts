@@ -241,7 +241,9 @@ describe("protoboard dev: the view-state routes and the bridge", () => {
     const script = (await http(dev.port, "GET", "/__protoboard/dev.js")).body;
     expect(script).toContain("__protoboard/events?tab=");
     expect(script).toContain('events.addEventListener("bridge"');
-    expect(script).toContain("viewer.bridge(envelope)");
+    // the reply is posted in parts when it is large (wave 4 gate: page.ts uses viewer.bridgeParts)
+    expect(script).toContain("viewer.bridgeParts(envelope)");
+    expect(script).toContain("part: { i: m.i, n: m.n, data: m.data }");
     expect(script).toContain("onViewStateChange");
     expect(script).toContain("onPresentationChange");
   });

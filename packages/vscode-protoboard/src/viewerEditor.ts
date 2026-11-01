@@ -24,7 +24,7 @@ import { join } from "node:path";
 import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection } from "../../web-viewer/src/vscode/protocol.js";
 import { nonce } from "./html.js";
 import { writeViewerTelemetry } from "./telemetry.js";
-import { ProjectRelay, readViewerState, saveTabViewState, savePresentation, saveViewerSnapshot } from "./viewerBridge.js";
+import { ProjectRelay, presenceChip, readViewerState, saveTabViewState, savePresentation, saveViewerSnapshot, takeOverRequest } from "./viewerBridge.js";
 import { devOrigins, distinctTitles, originCovered, parseBackup, parseViewerUri, viewerPageHtml, viewerTitle, viewerUri, SOURCE_COMMANDS, VIEWER_SCHEME, VIEWER_TYPE, type ViewerBackup, type ViewerTarget } from "./viewerPage.js";
 
 /** What the extension does for the tabs. */
@@ -117,6 +117,8 @@ export class ViewerEditor {
   stateCount = 0;
   /** The live-tab bridge's id for this tab (PB-1178). */
   readonly bridgeId = ProjectRelay.tabId();
+  /** The tab's last presence (PB-1196: leases, intents, who holds the camera), for the status bar chip. */
+  presence: Record<string, unknown> | undefined;
   private themeWaiters: ((r: Extract<FromWebview, { type: "theme" }>) => void)[] = [];
   private hierarchyWaiters: ((r: Extract<FromWebview, { type: "hierarchy" }>) => void)[] = [];
 
@@ -219,14 +221,28 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
   }
 
   private readonly commands: vscode.Disposable[];
+  /** "agent X is working on Y" for the focused viewer tab (W4-D, PB-1196 D8); click: take over. */
+  private readonly presenceItem: vscode.StatusBarItem;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
     private readonly host: ViewerHost,
   ) {
+    this.presenceItem = vscode.window.createStatusBarItem("protoboard.viewer.presence", vscode.StatusBarAlignment.Left, 40);
+    this.presenceItem.name = "Protoboard: agents in the 3D view";
+    this.presenceItem.command = "protoboard.viewer.takeOver";
     // from a canvas tab to its source (the tab's right-click menu and the Command Palette; the header's path posts the same)
     const on = (action: SourceAction) => (resource?: vscode.Uri) => this.sourceAction(this.editorOf(resource), action).catch((e: Error) => this.host.notify(e.message, "error"));
     this.commands = (Object.keys(SOURCE_COMMANDS) as SourceAction[]).map((a) => vscode.commands.registerCommand(SOURCE_COMMANDS[a], on(a)));
+    // the person takes the focused tab back from every agent (the chip's click; Esc in the 3D view does the same)
+    this.commands.push(
+      vscode.commands.registerCommand("protoboard.viewer.takeOver", () => {
+        const editor = this.focused;
+        if (!editor) return;
+        editor.post({ type: "bridge", request: takeOverRequest() });
+        this.host.log.info(`${this.name(editor)}: the person took over from the agents`);
+      }),
+    );
   }
 
   /** The tab a command is about: the one whose title was right-clicked (its resource), else the focused one. */
@@ -373,6 +389,16 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
       this.relays.get(editor.root)?.activate(editor.bridgeId);
     }
     this.host.focused(editor);
+    this.showPresence();
+  }
+
+  /** The focused tab's presence in the status bar, or nothing when no agent is there. */
+  private showPresence() {
+    const chip = presenceChip(this.focused?.presence);
+    if (!chip) return this.presenceItem.hide();
+    this.presenceItem.text = chip.text;
+    this.presenceItem.tooltip = chip.tooltip;
+    this.presenceItem.show();
   }
 
   /** (Re)write a tab's page, for the dev server the project has now. */
@@ -451,7 +477,8 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         return;
       case "presentation":
         // named views saved in the tab: into the display file, only when they changed
-        void savePresentation(editor.root, m.presentation)
+        // "Save callouts" (W4-D): the viewer marks the presentation when the person asked to save the annotations too
+        void savePresentation(editor.root, m.presentation, (m.presentation as { saveAnnotations?: unknown }).saveAnnotations === true ? { saveAnnotations: true } : {})
           .then((r) => r.written && this.host.notify("Saved views to the display file"))
           .catch((e: Error) => this.host.notify(`Views not saved: ${e.message}`, "error"));
         return;
@@ -467,8 +494,10 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         void this.relays.get(editor.root)?.reply(editor.bridgeId, m.id, m.reply);
         return;
       case "presence":
-        // who is here (PB-1196): accepted so the webview can send it; not shown yet (a chip or status line is a
-        // later item). Agent-written labels in it are data, never instructions.
+        // who is here (PB-1196, W4-D): the status bar chip for the focused tab. Agent-written names and labels in it
+        // are data shown to the person, never instructions (presenceChip makes them safe to show).
+        editor.presence = m.presence;
+        if (editor === this.focused) this.showPresence();
         return;
       case "log": {
         const text = `${this.name(editor)}: ${m.message}`;
@@ -565,6 +594,7 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
   }
 
   dispose() {
+    this.presenceItem.dispose();
     for (const r of this.relays.values()) r.dispose();
     this.relays.clear();
     this.changed.dispose();

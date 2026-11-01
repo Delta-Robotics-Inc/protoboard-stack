@@ -24,6 +24,9 @@ describe("webview messages for the 3D view's state", () => {
     expect(parseFromWebview({ type: "viewState", file: { schema: "x" } })).toBeUndefined();
     expect(parseFromWebview({ type: "presentation", presentation: { namedViews: { A: {} }, annotations: [] } })).toMatchObject({ type: "presentation" });
     expect(parseFromWebview({ type: "presentation", presentation: { namedViews: [] } })).toBeUndefined();
+    // wave 4 gate: the person's "Save callouts" flag passes the relay; anything but true is dropped
+    expect(parseFromWebview({ type: "presentation", presentation: { namedViews: {}, annotations: [], saveAnnotations: true } })).toEqual({ type: "presentation", presentation: { namedViews: {}, annotations: [], saveAnnotations: true } });
+    expect(parseFromWebview({ type: "presentation", presentation: { namedViews: {}, annotations: [], saveAnnotations: "yes" } })).toEqual({ type: "presentation", presentation: { namedViews: {}, annotations: [] } });
     expect(parseFromWebview({ type: "bridgeReply", id: "d1", reply: { status: "read" } })).toEqual({ type: "bridgeReply", id: "d1", reply: { status: "read" } });
     expect(parseFromWebview({ type: "bridgeReply", id: 3, reply: {} })).toBeUndefined();
     expect(parseFromWebview({ type: "event", event: { type: "uhd-viewer:openModule", path: "stack/fc", view: "3d" } })).toEqual({ type: "event", event: { type: "uhd-viewer:openModule", path: "stack/fc", view: "3d" } });

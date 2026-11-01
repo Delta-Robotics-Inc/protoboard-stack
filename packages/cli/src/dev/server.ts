@@ -68,7 +68,7 @@ import { DEFAULT_HOST_ORIGINS, originAllowed } from "./relay.js";
 import { PARTS_PREFIX, partsRoutes } from "./parts.js";
 import { cliTelemetryMode, versionInventory } from "../telemetry.js";
 import { BRIDGE_KEY_HEADER, BRIDGE_ROUTES, BRIDGE_SESSION_HEADER, LiveBridge, MAX_BATCH_BYTES, parseBatchBody } from "./bridge.js";
-import { MAX_VIEWER_STATE_BYTES, presentationToWrite, parsePresentation, parseViewerStateFile, readViewerState, saveViewerState, withPresentation } from "./viewState.js";
+import { MAX_VIEWER_STATE_BYTES, presentationToWrite, parsePresentation, wantsAnnotations, parseViewerStateFile, readViewerState, saveViewerState, withPresentation } from "./viewState.js";
 import { SNAPSHOTS_DIR, backendOf, checkSnapshotMeta, readSnapshot, snapshotKey, writeSnapshot } from "@protoboardai/core/render-service";
 import { Journal } from "./journal.js";
 // TODO(W1-B handoff): `@protoboardai/core/telemetry` once core/package.json exports it
@@ -623,6 +623,19 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   const relays = new Map<string, ServerResponse>();
   /** The dev pages' event streams by tab id: a page is a bridge tab once its presence POST (with the page token) names it. */
   const pageStreams = new Map<string, ServerResponse>();
+  /**
+   * A page tab's delivery goes to whichever stream the page has open NOW (W4-D, wave 3 carry-forward: an event
+   * stream that reconnects left the tab bound to the closed one, so the first batch after it was `not-run`).
+   */
+  const pageDeliver = (tab: string) => (envelope: unknown) => {
+    const stream = pageStreams.get(tab);
+    if (!stream || stream.writableEnded || stream.destroyed) return false;
+    send(stream, "bridge", envelope);
+    return true;
+  };
+  /** Page tabs whose stream closed lately (DEFAULT 30 s): a stream that comes back under the same id is the same tab. */
+  const droppedTabs = new Map<string, number>();
+  const RECONNECT_GRACE_MS = 30_000;
   const bridgeRoute = async (req: IncomingMessage, res: ServerResponse, path: string) => {
     const reply = (status: number, body: unknown) => {
       res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
@@ -689,7 +702,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
         return reply(409, { error: `${displayRel()} is not valid JSON (${(e as Error).message}); fix it before saving views` });
       }
       // annotations go to the file only on an explicit save of them (DEFAULT, W3-A; collaboration D10)
-      const merged = withPresentation(current as { spatial?: Record<string, unknown> }, presentationToWrite(pres, current as { spatial?: Record<string, unknown> }, (r.body as { saveAnnotations?: unknown })?.saveAnnotations));
+      const merged = withPresentation(current as { spatial?: Record<string, unknown> }, presentationToWrite(pres, current as { spatial?: Record<string, unknown> }, wantsAnnotations(r.body)));
       if (!merged.changed) return reply(200, { written: false, file: displayRel().split(sep).join("/") });
       const data = formatDisplay(merged.display as DisplayFile, previous);
       ownDisplay = digest(data);
@@ -740,7 +753,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       // a reply may be as large as the viewer lets it be (uhd-viewer protocol.ts: 2 MB), plus its envelope
       const r = await readJson(req, (2 << 20) + MAX_BATCH_BYTES);
       if ("error" in r) return reply(r.status, { error: r.error });
-      const b = (r.body ?? {}) as { id?: unknown; reply?: unknown; tab?: unknown; active?: unknown; closed?: unknown; label?: unknown; relay?: unknown };
+      const b = (r.body ?? {}) as { id?: unknown; reply?: unknown; part?: unknown; tab?: unknown; active?: unknown; closed?: unknown; label?: unknown; relay?: unknown };
       // the page answers for its own tab; a relay names the tab it answers for
       const tab = typeof b.tab === "string" ? (page ? `web:${b.tab}` : b.tab) : undefined;
       if (path === BRIDGE_ROUTES.reply) {
@@ -748,7 +761,8 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
         // 204 with no body (W3-A): the dev page posts replies with `keepalive`, and Chrome counts a keepalive request
         // against its 64 kB in-flight budget until its response body is consumed; an unread "{}" kept every reply
         // counted, so after about 64 kB of replies the next one was refused in the page (found in the exit test)
-        const accepted = bridge.reply(b.id, b.reply, tab);
+        // a reply too large for one request comes in parts (W4-D; uhd-viewer `viewer.bridgeParts`), joined here
+        const accepted = b.part !== undefined ? bridge.replyPart(b.id, b.part, tab) : bridge.reply(b.id, b.reply, tab);
         res.writeHead(accepted ? 204 : 404, { "cache-control": "no-store" });
         return res.end();
       }
@@ -757,8 +771,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       else if (page && pageStreams.has(tab)) {
         // the dev page becomes a bridge tab only through this authenticated presence (its token, its origin), never
         // by opening an event stream (wave 2 gate item 2); the stream it opened carries the batches
-        const stream = pageStreams.get(tab)!;
-        if (!bridge.touch(tab)) bridge.addTab({ id: tab, kind: "web", label: "protoboard dev page", deliver: (envelope) => (stream.writableEnded || stream.destroyed ? false : (send(stream, "bridge", envelope), true)) });
+        if (!bridge.touch(tab)) bridge.addTab({ id: tab, kind: "web", label: "protoboard dev page", deliver: pageDeliver(tab) });
       }
       else if (!page && typeof b.relay === "string" && relays.has(b.relay)) {
         // a relayed tab: announced (or touched) by its relay
@@ -861,8 +874,19 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       const tab = (res as ServerResponse & { pbTab?: string }).pbTab;
       if (tab && personal) {
         pageStreams.set(tab, res);
+        // the page's stream came back (EventSource reconnects after a hiccup): it is the same live tab, delivered
+        // through the new stream at once instead of waiting for its next presence POST (W4-D)
+        const was = droppedTabs.get(tab);
+        if (was !== undefined && Date.now() - was < RECONNECT_GRACE_MS) {
+          droppedTabs.delete(tab);
+          if (!bridge.touch(tab)) bridge.addTab({ id: tab, kind: "web", label: "protoboard dev page", deliver: pageDeliver(tab), lastActive: was });
+        }
         res.on("close", () => {
-          if (pageStreams.get(tab) === res) pageStreams.delete(tab);
+          // only the stream the tab uses now ends it (an old stream closing after its replacement opened does not)
+          if (pageStreams.get(tab) !== res) return;
+          pageStreams.delete(tab);
+          if (bridge.listTabs().some((t) => t.id === tab)) droppedTabs.set(tab, Date.now());
+          for (const [k, at] of droppedTabs) if (Date.now() - at > RECONNECT_GRACE_MS) droppedTabs.delete(k);
           bridge.removeTab(tab);
         });
       }

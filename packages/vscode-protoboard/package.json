@@ -166,6 +166,16 @@
         "icon": "$(book)"
       },
       {
+        "command": "protoboard.updates.show",
+        "title": "Show Update and Vulnerability Check",
+        "category": "Protoboard"
+      },
+      {
+        "command": "protoboard.viewer.takeOver",
+        "title": "Take Over the 3D View from Agents",
+        "category": "Protoboard"
+      },
+      {
         "command": "protoboard.help.feedback",
         "title": "Send Feedback or Report an Issue",
         "category": "Protoboard",
@@ -426,6 +436,11 @@
     "configuration": {
       "title": "Protoboard",
       "properties": {
+        "protoboard.updates.check": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Check once a day for newer Protoboard releases, known vulnerabilities (OSV.dev) and lookalike packages in what is installed, and show a toast. Sends only package names and versions to registry.npmjs.org and api.osv.dev. Never installs anything. See docs/reference/update-check.md."
+        },
         "protoboard.telemetry.local": {
           "type": "boolean",
           "default": true,

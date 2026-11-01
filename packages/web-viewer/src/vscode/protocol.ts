@@ -76,6 +76,8 @@ export interface ViewerStateFile {
 export interface ViewerPresentation {
   namedViews: Record<string, unknown>;
   annotations: unknown[];
+  /** The person's explicit "Save callouts" (W4-D, D10): only then are the annotations written to the display file. */
+  saveAnnotations?: true;
 }
 
 /** The file a module is written in: project-relative, with the line of its definition when the build records it. */
@@ -374,7 +376,9 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
       const p = data.presentation;
       // DEFAULT (wave 2 gate item 9): 512 kB of JSON for the named views and annotations together
       if (!obj(p) || !obj(p.namedViews) || !Array.isArray(p.annotations) || JSON.stringify(p).length > PRESENTATION_MAX_CHARS) return undefined;
-      return { type: "presentation", presentation: { namedViews: p.namedViews, annotations: p.annotations } };
+      // the person's explicit "Save callouts" (W4-D, collaboration D10) travels on: the extension writes the
+      // annotations to the display file only when the save says so (wave 4 gate); anything but `true` is dropped
+      return { type: "presentation", presentation: { namedViews: p.namedViews, annotations: p.annotations, ...(p.saveAnnotations === true ? { saveAnnotations: true as const } : {}) } };
     }
     case "savePoint": {
       // a PNG of the view, at most 16 MB of base64; the meta's fields are checked where it is written

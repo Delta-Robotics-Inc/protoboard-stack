@@ -13,8 +13,12 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
-import { assemble, type Mat4, type ModuleDef } from "@deltarobotics/uhd";
+import type { assemble } from "@deltarobotics/uhd";
 import { importTs } from "../load.js";
+import { mateDiagnostics, projectMates } from "../mates/project.js";
+import { assembleProject } from "./assemble.js";
+import { clampSequenceJoints } from "./limits.js";
+import { applyMatesToSequence } from "./mates.js";
 import type { Project } from "../project.js";
 import type { ProjectDiagnostic } from "../types.js";
 import { generateSequence } from "./generate.js";
@@ -27,34 +31,7 @@ export const SEQUENCE_FILE = ".protoboard/build/sequence.json";
 export const SEQUENCE_PATCH_FILES = ["src/assembly.uhd.ts", "src/assembly.sequence.json"];
 export const SEQUENCE_GENERATOR = "@protoboardai/core sequence v0";
 
-const hasBody = (def: ModuleDef) => (def.artifacts ?? []).some((a) => a.role === "body" && a.format === "glb");
-
-/** The viewer's default root: the system when it has a body, else the top-level module with the most interface frames. */
-export function defaultSequenceRoot(system: ModuleDef, lookup: (id: string) => ModuleDef | undefined): string[] {
-  if (hasBody(system)) return [];
-  let best: { id: string; frames: number } | undefined;
-  for (const c of system.children ?? []) {
-    const def = lookup(c.moduleDefId);
-    if (!def || def.kind === "harness") continue;
-    const frames = def.interfaces.filter((i) => i.geometry?.frame).length;
-    if (frames && (!best || frames > best.frames)) best = { id: c.id, frames };
-  }
-  return best ? [best.id] : [];
-}
-
-interface DisplaySpatial {
-  root?: string;
-  placements?: Record<string, { matrix?: Mat4 }>;
-}
-
-function readDisplay(p: Project): DisplaySpatial {
-  const file = join(p.root, p.config.display ?? ".protoboard/display.json");
-  try {
-    return existsSync(file) ? ((JSON.parse(readFileSync(file, "utf8")) as { spatial?: DisplaySpatial }).spatial ?? {}) : {};
-  } catch {
-    return {}; // an unreadable display file only loses the hints, as in the project check
-  }
-}
+export { defaultSequenceRoot } from "./assemble.js";
 
 /** sha256 of what the sequence is generated from: placements, mates and hardware (not the patches). */
 function modelDigest(asm: ReturnType<typeof assemble>): string {
@@ -111,11 +88,9 @@ export interface SequenceBuild {
 
 /** Generate and patch the project's sequence (nothing written). Undefined when the project has no root system. */
 export async function buildSequence(p: Project): Promise<SequenceBuild | undefined> {
-  if (!p.rootDef) return undefined;
-  const spatial = readDisplay(p);
-  const root = spatial.root ? spatial.root.split("/") : defaultSequenceRoot(p.rootDef, p.lookup);
-  const fixed = Object.fromEntries(Object.entries(spatial.placements ?? {}).filter(([, v]) => Array.isArray(v.matrix) && v.matrix.length === 16).map(([k, v]) => [k, v.matrix!]));
-  const asm = assemble(p.rootDef, p.lookup, { root, fixed });
+  const placed = assembleProject(p);
+  if (!placed) return undefined;
+  const { asm, root, fixed } = placed;
   const generated = generateSequence(asm, { root, hinted: Object.keys(fixed), by: SEQUENCE_GENERATOR, modelDigest: modelDigest(asm) });
   const read = await readSequencePatches(p.root);
   let file = generated;
@@ -127,6 +102,18 @@ export async function buildSequence(p: Project): Promise<SequenceBuild | undefin
     applied += r.applied;
     problems.push(...r.problems);
   }
+  // PB-1185: mates the project declares (`protoboard.mate` traits, `<model>.mates.json` sidecars; never inferred
+  // ones) add joints with hard stops and fits for what only the planner placed; then every joint value is held
+  // at its stops. A project with no mates is unchanged. Mate validation findings are the check's (runMateChecks).
+  const mateSet = projectMates(p, asm);
+  if (mateSet.mates.length) {
+    const fed = applyMatesToSequence(file, asm, mateSet.mates);
+    file = fed.file;
+    problems.push(...fed.problems.filter((q) => q.severity !== "info"));
+  }
+  const held = clampSequenceJoints(file);
+  file = held.file;
+  problems.push(...held.problems);
   if (read.files.length || problems.length) file.patches = { files: read.files.map((f) => f.file), applied, problems };
   const diagnostics: ProjectDiagnostic[] = problems.map((q) => ({
     code: q.code,
@@ -202,5 +189,25 @@ export async function runSequenceChecks(p: Project): Promise<void> {
     p.checks.push({ validator: "protoboard/sequence", status: "ran", counts: { ...zero, warning: ds.filter((d) => d.severity === "warning").length, error: ds.filter((d) => d.severity === "error").length, info: ds.filter((d) => d.severity === "info").length } });
   } catch (e) {
     p.checks.push({ validator: "protoboard/sequence", status: "skipped", reason: (e as Error).message.split("\n")[0], counts: zero });
+  }
+}
+
+/**
+ * The check's view of the mates (PB-1185, wired at the wave 4 gate per W4-E's handoff): read the
+ * `protoboard.mate` traits and the `<model>.mates.json` sidecars of the placed models, validate them, and add
+ * their problems (validator `protoboard/mates`) with a check entry. Cheap without traits or sidecars (one
+ * `existsSync` per placed model file). A project that cannot be assembled is a skipped check, never a crash.
+ */
+export async function runMateChecks(p: Project): Promise<void> {
+  const zero = { error: 0, warning: 0, info: 0 };
+  if (!p.rootDef) return;
+  try {
+    const placed = assembleProject(p);
+    if (!placed) return;
+    const ds = mateDiagnostics(projectMates(p, placed.asm).problems);
+    p.diagnostics.push(...ds);
+    p.checks.push({ validator: "protoboard/mates", status: "ran", counts: { error: ds.filter((d) => d.severity === "error").length, warning: ds.filter((d) => d.severity === "warning").length, info: ds.filter((d) => d.severity === "info").length } });
+  } catch (e) {
+    p.checks.push({ validator: "protoboard/mates", status: "skipped", reason: (e as Error).message.split("\n")[0], counts: zero });
   }
 }

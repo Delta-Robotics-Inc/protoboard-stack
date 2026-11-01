@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { CONFIG_FILE, importTs } from "./load.js";
 import { findConfigObject } from "./libraries.js";
 import type { ProtoboardConfig } from "./types.js";
+import { checkPackageName } from "./update/lookalikes.js";
 
 /** The package an extension name means: `tscircuit`, `ext-tscircuit` and `@protoboardai/ext-tscircuit` are one. */
 export function extensionPackage(name: string): string {
@@ -38,6 +39,10 @@ function stackRange(deps: Record<string, string>, fallback: string): string {
  */
 export async function addExtension(root: string, name: string, options: { fallbackRange: string }): Promise<AddExtensionResult> {
   const pkg = extensionPackage(name);
+  // the lookalike deny list (PB-1168) refuses a known malicious or typosquat name before anything is written
+  // (wave 4 gate, W4-A's handoff): the next install would otherwise fetch it
+  const verdict = checkPackageName(pkg, "npm");
+  if (verdict.verdict === "deny") throw new Error(`${pkg} is on the lookalike deny list${verdict.resembles ? ` (imitates ${verdict.resembles})` : ""}; nothing was added${verdict.reason ? `. ${verdict.reason}` : ""}`);
   const pkgFile = join(root, "package.json");
   const pkgText = readFileSync(pkgFile, "utf8");
   const json = JSON.parse(pkgText) as { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };

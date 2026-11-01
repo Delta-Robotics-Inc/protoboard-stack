@@ -12,6 +12,7 @@ import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { basename, delimiter, dirname, extname, isAbsolute, join, relative, sep } from "node:path";
 import * as vscode from "vscode";
 import { helpCommands, helpMarkdown, registerHelp } from "./help.js";
+import { registerUpdateToast } from "./updateToast.js";
 import { buildArtifacts, describeArtifact, describeInstances, openMode, partChoices, sortArtifacts, type ArtifactEntry, type PartChoice } from "./artifacts.js";
 import { openOutside } from "./openOutside.js";
 import { countDiagnostics, mapDiagnostics, parseCheck, skippedChecks, statusLabel, statusText, type Counts, type MappedDiagnostic } from "./check.js";
@@ -144,6 +145,8 @@ export function activate(context: vscode.ExtensionContext) {
   // the extension runs in every window (`onStartupFinished`), so that a project made in it later is noticed
   // (PB-931); what a project needs (its views gathered, the Inspector in front) starts when there is one
   instance = new ProtoboardExtension(context);
+  // W4-A (PB-1168): the once-a-day update and vulnerability toast for the projects open in this window
+  registerUpdateToast(context, () => (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath).filter((p) => existsSync(join(p, "protoboard.config.ts"))), { extensionVersion: String(context.extension.packageJSON.version) });
   // what the integration test reads; nothing else uses it
   return {
     projects: () => instance!.roots(),

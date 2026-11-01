@@ -1,0 +1,119 @@
+{
+  "schema": "protoboard.lookalikes/v0",
+  "updated": "2026-11-01",
+  "comment": "The lookalike deny list (PB-1168). Data, not code: it ships with the stack and grows each release. `deny` entries are exact package names that impersonate a library Protoboard uses; a hit is reported as `lookalike` and refused by any install or fetch path that consults it (core/src/update/lookalikes.ts checkPackageName). `watch` entries are reported, never refused. `protect` lists the real names; any other name within the edit distance below, with a swapped scope, a -js/.js suffix change, or a wrapper prefix, is reported as a suspected lookalike (a warning that never blocks or deletes). `allow` lists real packages that sit near a protected name. `repos` pins the owner of a GitHub repository Protoboard points people at.",
+  "deny": [
+    {
+      "name": "vaps-transform",
+      "ecosystem": "npm",
+      "imitates": "@gltf-transform/cli",
+      "kind": "deny",
+      "added": "2026-10-31",
+      "comment": "Copies the glTF-Transform CLI description and claims Don McCurdy as author, published by yt540951254. Source: docs/specs/cad-view-research/review-round-1/renderers-and-perf-mechanics.md section 4.1 item 6 (registry.npmjs.org/vaps-transform/latest, read 2026-10-31)."
+    },
+    {
+      "name": "cbim-three-mesh-bvh",
+      "ecosystem": "npm",
+      "imitates": "three-mesh-bvh",
+      "kind": "deny",
+      "added": "2026-10-31",
+      "comment": "Lookalike of three-mesh-bvh. Source: renderers-and-perf-mechanics.md section 4.1 item 6 and the three-mesh-bvh row of section 4.2."
+    },
+    {
+      "name": "@wendraw/three-bvh-csg",
+      "ecosystem": "npm",
+      "imitates": "three-bvh-csg",
+      "kind": "deny",
+      "added": "2026-10-31",
+      "comment": "Rescoped copy of three-bvh-csg. Source: renderers-and-perf-mechanics.md section 4.1 item 6."
+    },
+    {
+      "name": "@sunbox/occt-import-js",
+      "ecosystem": "npm",
+      "imitates": "occt-import-js",
+      "kind": "deny",
+      "added": "2026-10-31",
+      "comment": "Rescoped copy of occt-import-js (used by the extension's CAD tab). Source: renderers-and-perf-mechanics.md section 4.1 item 6 and section 4.5 item 1; build-rules.md (Dependencies)."
+    },
+    {
+      "name": "@ohos-ports/gltf-transform-cli",
+      "ecosystem": "npm",
+      "imitates": "@gltf-transform/cli",
+      "kind": "deny",
+      "added": "2026-10-31",
+      "comment": "Port under another scope. Source: renderers-and-perf-mechanics.md section 4.1 item 6."
+    },
+    {
+      "name": "@bitruvius/meshopt",
+      "ecosystem": "npm",
+      "imitates": "meshoptimizer",
+      "kind": "deny",
+      "added": "2026-10-31",
+      "comment": "Lookalike of meshoptimizer. Source: renderers-and-perf-mechanics.md section 4.1 item 6."
+    },
+    {
+      "name": "@3dverse/livelink-camera-controls",
+      "ecosystem": "npm",
+      "imitates": "camera-controls",
+      "kind": "deny",
+      "added": "2026-10-31",
+      "comment": "Rescoped copy of camera-controls. Source: renderers-and-perf-mechanics.md section 4.1 item 6."
+    },
+    {
+      "name": "@tx-code/occt-js",
+      "ecosystem": "npm",
+      "imitates": "occt-import-js",
+      "kind": "watch",
+      "added": "2026-11-01",
+      "comment": "Listed beside occt-import-js in the round 1 library table; not proven malicious, so watched rather than denied. Source: renderers-and-perf-mechanics.md section 4.3 (occt-import-js row) and round-2-notes/security-updates-telemetry.md section A.4."
+    },
+    {
+      "name": "@mesmotronic/three-mesh-bvh-json",
+      "ecosystem": "npm",
+      "imitates": "three-mesh-bvh",
+      "kind": "watch",
+      "added": "2026-11-01",
+      "comment": "Named in the round 1 three-mesh-bvh row as a near name; watched, not denied. Source: renderers-and-perf-mechanics.md section 4.2 (three-mesh-bvh row) and security-updates-telemetry.md section A.4."
+    }
+  ],
+  "protect": [
+    { "name": "three", "ecosystem": "npm", "comment": "Renderer (build-rules.md: three r187)." },
+    { "name": "three-mesh-bvh", "ecosystem": "npm", "comment": "Picking (plan.md wave 0)." },
+    { "name": "three-bvh-csg", "ecosystem": "npm", "comment": "Named in the deny list's targets." },
+    { "name": "@gltf-transform/core", "ecosystem": "npm", "comment": "View sidecar writer (plan.md wave 0)." },
+    { "name": "@gltf-transform/functions", "ecosystem": "npm", "comment": "View sidecar writer (plan.md wave 0)." },
+    { "name": "@gltf-transform/extensions", "ecosystem": "npm", "comment": "View sidecar writer (dependencies.md)." },
+    { "name": "@gltf-transform/cli", "ecosystem": "npm", "comment": "Build-only tool named by the deny list." },
+    { "name": "meshoptimizer", "ecosystem": "npm", "comment": "Sidecar compression (plan.md wave 0)." },
+    { "name": "occt-import-js", "ecosystem": "npm", "comment": "The extension's CAD tab." },
+    { "name": "camera-controls", "ecosystem": "npm", "comment": "Target of a denied lookalike." },
+    { "name": "draco3d", "ecosystem": "npm", "comment": "New-publisher watch (renderers-and-perf-mechanics.md section 4.1 item 7)." },
+    { "name": "@deltarobotics/uhd", "ecosystem": "npm", "comment": "Our hardware description." },
+    { "name": "@deltarobotics/uhd-viewer", "ecosystem": "npm", "comment": "Our viewer." },
+    { "name": "@protoboardai/*", "ecosystem": "npm", "comment": "Our stack: any other scope within distance 2 of @protoboardai is suspect." },
+    { "name": "build123d", "ecosystem": "PyPI", "comment": "CAD runtime pin (ext-parts, ext-frame-cad manifests)." },
+    { "name": "numpy", "ecosystem": "PyPI", "comment": "CAD runtime pin." },
+    { "name": "scipy", "ecosystem": "PyPI", "comment": "CAD runtime pin." }
+  ],
+  "allow": [
+    { "name": "three-stdlib", "comment": "pmndrs helpers; a real package with a three- prefix." },
+    { "name": "tree", "comment": "Distance 1 from three; not used by the stack, listed so it never warns." },
+    { "name": "numpy-stl", "comment": "Real PyPI package." },
+    { "name": "scipy-stubs", "comment": "Real PyPI package." }
+  ],
+  "rules": {
+    "editDistance": { "max": 2, "maxForShortNames": 1, "shortNameLength": 6 },
+    "scopeSwap": true,
+    "jsSuffix": true,
+    "wrapperPrefixMinLength": 8,
+    "comment": "Generic rule (PB-1168 brief, security-updates-telemetry.md section A.4 item 2): names within edit distance 1-2 of a protected name (1 for names under 6 characters), the same base under another scope, a -js or .js suffix added or removed, or <prefix>-<protected base> for bases of 8 characters or more."
+  },
+  "repos": [
+    {
+      "repo": "rea",
+      "owner": "morluto",
+      "url": "https://github.com/morluto/rea",
+      "comment": "REA (reverse engineer anything). Verify the owner is morluto; lookalike repos exist. Source: docs/specs/cad-view-research/deep-research/reports/Protoboard CAD viewer direction.md line 379 and the landscape-and-phase-two research note."
+    }
+  ]
+}

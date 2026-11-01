@@ -21,7 +21,7 @@ const EXPECTED = [
   // UHD's schema-authoring reference, shipped by @deltarobotics/uhd and declared by ext-parts
   "uhd-authoring",
   // ext-parts (PB-801: moved out of UHD)
-  "uhd-part-research", "uhd-part-author", "uhd-part-verify",
+  "uhd-part-research", "uhd-part-author", "uhd-part-verify", "scan-to-part",
   // ext-docs (PB-801: moved out of UHD)
   "uhd-tech-docs", "uhd-tech-docs-verify",
   // ext-hardware (build-a-project: the top-level SOP, PB-844)

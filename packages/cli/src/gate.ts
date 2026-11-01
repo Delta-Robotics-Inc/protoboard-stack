@@ -52,6 +52,10 @@ const PARTS: Record<string, GateEntry> = {
   prices: { gate: "cloud", what: "Prices from the Protoboard library", uses: "cloud" },
   publish: { gate: "cloud", what: "Publishing a part", uses: "cloud" },
   usage: { gate: "cloud", what: "The library's usage figures", uses: "cloud" },
+  // reference tools and print (PB-1191, W4-B): local files only
+  export: LOCAL,
+  "import-step": LOCAL,
+  attach: LOCAL,
 };
 
 /** Every command, by name; a command not listed is local. */
@@ -85,6 +89,17 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   views: LOCAL,
   // the exact measurement tier (W3-D, PB-1187): build123d on this machine, nothing in the cloud
   geometry: LOCAL,
+  // .uhdpkg write/read/verify (W4-D, PB-1195): files on this machine only
+  package: LOCAL,
+  // W4-A (PB-1168): the inventory and the update check read this machine's packages; the check asks the public
+  // registry and OSV, never a Protoboard sign-in
+  inventory: LOCAL,
+  update: LOCAL,
+  // W4-E (PB-1185): mates and static interference, local files only
+  mates: LOCAL,
+  interference: LOCAL,
+  // W4-C (PB-1190): drawings to CAD, the CAD runtime on this machine
+  drawing: LOCAL,
   stack: LOCAL,
   agents: LOCAL,
   setup: LOCAL,

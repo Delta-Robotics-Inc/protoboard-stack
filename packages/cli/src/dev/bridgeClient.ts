@@ -13,7 +13,7 @@
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { BRIDGE_KEY_HEADER, BRIDGE_ROUTES, BRIDGE_SESSION_HEADER, type BatchBody, type BridgeOutcome } from "./bridge.js";
+import { BRIDGE_KEY_HEADER, BRIDGE_ROUTES, BRIDGE_SESSION_HEADER, type BatchBody, type BridgeOutcome, type Probe } from "./bridge.js";
 import { DEV_RECORD, type DevRecord } from "./server.js";
 
 export interface BridgeClient {
@@ -23,7 +23,7 @@ export interface BridgeClient {
   session: string;
   actor: { kind: "agent"; id: string; session: string };
   /** Send a batch (empty `ops`: read the view state). */
-  call(batch: BatchBody & { tab?: string; observe?: boolean | "components"; timeoutMs?: number }): Promise<BridgeOutcome>;
+  call(batch: BatchBody & { tab?: string; observe?: boolean | "components"; probe?: Probe; timeoutMs?: number }): Promise<BridgeOutcome>;
   /** The live tabs (the default one marked). */
   tabs(): Promise<{ id: string; kind: string; label?: string; lastActive: number; default: boolean }[]>;
 }

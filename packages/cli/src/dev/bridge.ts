@@ -106,6 +106,8 @@ export interface BridgeEnvelope {
   batch: BatchBody;
   actor: Actor;
   observe?: boolean | "components";
+  /** The critic's probes (W4-D): picks at canvas fractions and the drawn label boxes, answered in the reply. */
+  probe?: Probe;
   /** The last log entry the journal holds for this tab: the reply carries the ones after it. */
   since?: { epoch: string; seq: number };
   checkpoint?: boolean;
@@ -139,8 +141,24 @@ export type BridgeOutcome =
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 
+/** Probes a batch may carry (uhd-viewer `BridgeRequest.probe`): at most 64 picks, `[fx, fy]` canvas fractions. */
+export interface Probe {
+  picks?: [number, number][];
+  labels?: boolean;
+}
+/** DEFAULT (W4-D): pick probes per batch, as the viewer caps them. */
+export const MAX_PROBE_PICKS = 64;
+
+/** A probe, checked (undefined: none, or nothing usable). */
+export function parseProbe(v: unknown): Probe | undefined {
+  if (!isObj(v)) return undefined;
+  const picks = Array.isArray(v.picks) ? v.picks.filter((p): p is [number, number] => Array.isArray(p) && p.length === 2 && p.every((x) => typeof x === "number" && Number.isFinite(x) && x >= -1 && x <= 2)).slice(0, MAX_PROBE_PICKS) : [];
+  if (!picks.length && v.labels !== true) return undefined;
+  return { ...(picks.length ? { picks } : {}), ...(v.labels === true ? { labels: true } : {}) };
+}
+
 /** A batch body, checked as far as the bridge needs (the tab checks the ops), or a reason to refuse it. */
-export function parseBatchBody(body: unknown): { batch: BatchBody; tab?: string; observe?: boolean | "components"; timeoutMs?: number } | { error: string } {
+export function parseBatchBody(body: unknown): { batch: BatchBody; tab?: string; observe?: boolean | "components"; probe?: Probe; timeoutMs?: number } | { error: string } {
   if (!isObj(body)) return { error: "expected a JSON object" };
   const { batchId, label, ops } = body;
   if (typeof batchId !== "string" || !/^[\w.:-]{1,128}$/.test(batchId)) return { error: "batchId must be 1 to 128 letters, digits, '.', ':', '_' or '-'" };
@@ -163,8 +181,15 @@ export function parseBatchBody(body: unknown): { batch: BatchBody; tab?: string;
     ...(body.state === false ? { state: false } : {}),
     ...(body.leaseToken !== undefined ? { leaseToken: body.leaseToken as number } : {}),
   };
-  return { batch, ...(typeof body.tab === "string" ? { tab: body.tab } : {}), ...(body.observe === true || body.observe === "components" ? { observe: body.observe } : {}), ...(timeoutMs !== undefined ? { timeoutMs } : {}) };
+  const probe = parseProbe(body.probe);
+  return { batch, ...(typeof body.tab === "string" ? { tab: body.tab } : {}), ...(body.observe === true || body.observe === "components" ? { observe: body.observe } : {}), ...(probe ? { probe } : {}), ...(timeoutMs !== undefined ? { timeoutMs } : {}) };
 }
+
+/** DEFAULT (W4-D): the most parts one reply may come in, and the joined reply's size cap (JSON characters). */
+export const MAX_REPLY_PARTS = 256;
+export const MAX_JOINED_REPLY_CHARS = 12 * 1024 * 1024;
+/** DEFAULT: a reply whose parts stop coming is dropped after this long. */
+export const REPLY_PARTS_TTL_MS = 60_000;
 
 interface Pending {
   batchId: string;
@@ -276,7 +301,7 @@ export class LiveBridge {
   }
 
   /** Deliver a batch for a session and wait for the outcome. */
-  async submit(session: BridgeSession, request: { batch: BatchBody; tab?: string; observe?: boolean | "components"; timeoutMs?: number }): Promise<BridgeOutcome> {
+  async submit(session: BridgeSession, request: { batch: BatchBody; tab?: string; observe?: boolean | "components"; probe?: Probe; timeoutMs?: number }): Promise<BridgeOutcome> {
     const { batch } = request;
     // the batch id space is per session: two agents choosing the same id do not collide
     const key = `${session.id}:${batch.batchId}`;
@@ -300,7 +325,7 @@ export class LiveBridge {
   }
 
   /** Deliveries to one tab until it answers, says busy past the deadline, or the time runs out. */
-  private async run(session: BridgeSession, key: string, tab: LiveTab, request: { batch: BatchBody; observe?: boolean | "components"; timeoutMs?: number }): Promise<BridgeOutcome> {
+  private async run(session: BridgeSession, key: string, tab: LiveTab, request: { batch: BatchBody; observe?: boolean | "components"; probe?: Probe; timeoutMs?: number }): Promise<BridgeOutcome> {
     const { batch } = request;
     const ms = request.timeoutMs ?? DEFAULT_REPLY_MS;
     const deadline = this.now() + ms;
@@ -319,7 +344,7 @@ export class LiveBridge {
     }
   }
 
-  private deliverOnce(session: BridgeSession, key: string, tab: LiveTab, request: { batch: BatchBody; observe?: boolean | "components" }, ms: number, askedMs: number): Promise<BridgeOutcome | { status: "busy"; retryAfterMs: number }> {
+  private deliverOnce(session: BridgeSession, key: string, tab: LiveTab, request: { batch: BatchBody; observe?: boolean | "components"; probe?: Probe }, ms: number, askedMs: number): Promise<BridgeOutcome | { status: "busy"; retryAfterMs: number }> {
     const { batch } = request;
     const delivery = randomBytes(9).toString("base64url");
     const since = this.journal?.since(tab.id);
@@ -330,6 +355,7 @@ export class LiveBridge {
       batch: { ...batch, batchId: key },
       actor: session.actor,
       ...(request.observe ? { observe: request.observe } : {}),
+      ...(request.probe ? { probe: request.probe } : {}),
       ...(this.journal ? { since: since ?? { epoch: "", seq: 0 } } : {}),
       ...(this.journal?.wantCheckpoint(tab.id) ? { checkpoint: true } : {}),
     };
@@ -365,6 +391,46 @@ export class LiveBridge {
       this.log(`bridge: the journal could not take tab ${tab}'s log: ${(e as Error).message}`);
       return rest;
     }
+  }
+
+  /** Reply parts on their way, by delivery id (W4-D: a reply too large for one request comes in parts). */
+  private readonly parts = new Map<string, { tab?: string; n: number; got: Map<number, string>; size: number; at: number }>();
+
+  /**
+   * One part of a tab's reply (uhd-viewer `splitBridgeReply`: the reply message's JSON cut into `n` slices). When
+   * the last part arrives the reply is joined and taken as `reply` takes it. False for a part nothing waits for, a
+   * part from another tab, or a part over the caps (the delivery then answers may-have-run when it times out).
+   */
+  replyPart(delivery: string, part: unknown, fromTab?: string): boolean {
+    if (!isObj(part) || !Number.isInteger(part.i) || !Number.isInteger(part.n) || typeof part.data !== "string") return false;
+    const i = part.i as number;
+    const n = part.n as number;
+    if (n < 1 || n > MAX_REPLY_PARTS || i < 0 || i >= n) return false;
+    const waiting = this.pending.get(delivery) ?? this.late.get(delivery);
+    if (!waiting) return false;
+    if (fromTab && fromTab !== waiting.tab) return false;
+    const t = this.now();
+    for (const [k, p] of this.parts) if (t - p.at > REPLY_PARTS_TTL_MS) this.parts.delete(k);
+    let p = this.parts.get(delivery);
+    if (!p) this.parts.set(delivery, (p = { ...(fromTab ? { tab: fromTab } : {}), n, got: new Map(), size: 0, at: t }));
+    if (p.n !== n || p.got.has(i)) return false;
+    p.size += part.data.length;
+    if (p.size > MAX_JOINED_REPLY_CHARS) {
+      this.parts.delete(delivery);
+      return false;
+    }
+    p.got.set(i, part.data);
+    if (p.got.size < n) return true;
+    this.parts.delete(delivery);
+    let message: unknown;
+    try {
+      message = JSON.parse(Array.from({ length: n }, (_, k) => p!.got.get(k)).join(""));
+    } catch {
+      return false;
+    }
+    // the joined text is the viewer's reply message: { type: "uhd-viewer:bridgeReply", id, reply }
+    if (!isObj(message) || message.id !== delivery) return false;
+    return this.reply(delivery, message.reply, fromTab);
   }
 
   /** A tab's reply to a delivery. False when nothing waited for it (or it came from another tab). */

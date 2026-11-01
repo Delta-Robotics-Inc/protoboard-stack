@@ -126,6 +126,18 @@ export function parsePresentation(data: unknown): { views: Record<string, unknow
  * them on purpose (collaboration D10; DEFAULT, W3-A): without the flag the display file keeps the annotations it
  * holds. Found in the W3-A exit test: every agent callout was written to the tracked display file.
  */
+/**
+ * Whether a save asks to write the annotations too: `saveAnnotations: true` beside the presentation (the extension's
+ * relay), or inside it (W4-D: the viewer's "Save callouts" puts it in the presentation it posts, so a host that
+ * forwards the presentation as it is carries the person's choice).
+ */
+export function wantsAnnotations(body: unknown): boolean {
+  if (!isObj(body)) return false;
+  if (body.saveAnnotations === true) return true;
+  const p = body.presentation;
+  return isObj(p) && p.saveAnnotations === true;
+}
+
 export function presentationToWrite(pres: { views: Record<string, unknown>; annotations: unknown[] }, display: { spatial?: Record<string, unknown> } | undefined, saveAnnotations: unknown): { views: Record<string, unknown>; annotations: unknown[] } {
   if (saveAnnotations === true) return pres;
   const kept = display?.spatial?.annotations;
