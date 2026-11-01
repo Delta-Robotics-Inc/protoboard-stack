@@ -2580,8 +2580,9 @@ class ProtoboardExtension {
         await this.inspector.reveal({ focus: true, log: (text) => this.log.warn(text) });
         return;
       case "uhd-viewer:openModule":
-        // double-click on a module (PB-897): a new viewer tab on it, next to this one
-        await this.openViewer({ root, path: m.path });
+        // double-click on a module (PB-897): a new viewer tab on it, next to this one; a bought part, or a part
+        // double-clicked in 3D, opens on its own 3D view (PB-1072)
+        await this.openViewer({ root, path: m.path, ...(m.view === "3d" ? { view: "3d" } : {}) });
         return;
       case "uhd-viewer:openPair": {
         // the pair view of a link (PB-894 §3, PB-905): an editor tab of its own, at the level that holds the link, beside this one

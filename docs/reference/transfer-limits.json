@@ -1,0 +1,85 @@
+{
+  "schema": "protoboard.transfer-limits/v1",
+  "checked": "2026-11-01",
+  "recheckAfterDays": 60,
+  "note": "Sizes in bytes use the smaller reading of MB (10^6). Byte limits on images are measured on the base64 data, which is 4/3 of the raw file. The render service (packages/core/src/render-service/limits.ts) reads this file; its built-in copy must match it (a test checks). Recheck the sources when `checked` is older than `recheckAfterDays`.",
+  "routes": {
+    "claude-api": {
+      "imageFormats": ["image/jpeg", "image/png", "image/gif", "image/webp"],
+      "imageMaxBase64Bytes": 10000000,
+      "imageMaxSidePx": 8000,
+      "manyImages": { "over": 20, "imageMaxSidePx": 3000 },
+      "imagesPerRequest": { "default": 600, "context200k": 100 },
+      "nativeLongEdgePx": { "claude-4.7-and-later": 2576, "other": 1568 },
+      "requestMaxBytes": 128000000,
+      "sources": [
+        "https://platform.claude.com/docs/en/build-with-claude/vision",
+        "https://platform.claude.com/docs/en/api/overview"
+      ]
+    },
+    "google-managed": {
+      "imageMaxBase64Bytes": 10000000,
+      "requestMaxBytes": 30000000,
+      "sources": [
+        "https://platform.claude.com/docs/en/build-with-claude/vision",
+        "https://platform.claude.com/docs/en/api/overview"
+      ]
+    },
+    "bedrock": {
+      "imageMaxBase64Bytes": 5000000,
+      "requestMaxBytes": 20000000,
+      "sources": [
+        "https://platform.claude.com/docs/en/build-with-claude/vision",
+        "https://platform.claude.com/docs/en/api/overview"
+      ]
+    },
+    "claude-code": {
+      "requestMaxBytes": 32000000,
+      "readImageMaxBytes": 128000000,
+      "resizesImagesOnRead": true,
+      "errors": {
+        "dimensions": "image dimensions exceed max allowed size",
+        "requestTooLarge": "Request too large (max 32MB)"
+      },
+      "sources": [
+        "https://code.claude.com/docs/en/errors",
+        "https://code.claude.com/docs/en/tools-reference",
+        "https://code.claude.com/docs/en/common-workflows"
+      ]
+    },
+    "claude-ai": {
+      "imageMaxBytes": 10000000,
+      "imagesPerTurn": 20,
+      "fileMaxBytes": 500000000,
+      "projectFileMaxBytes": 30000000,
+      "sources": [
+        "https://platform.claude.com/docs/en/build-with-claude/vision",
+        "https://support.claude.com/en/articles/8241126-upload-files-to-claude"
+      ]
+    },
+    "telegram": {
+      "photoMaxBytes": 10000000,
+      "documentMaxBytes": 50000000,
+      "sources": ["https://core.telegram.org/bots/api"]
+    }
+  },
+  "policy": {
+    "route": "claude-api",
+    "defaultLongEdgePx": 2576,
+    "targetBytes": 2000000,
+    "hardMaxRawBytes": 3750000,
+    "pngFor": ["annotated", "line", "flat", "diagram"],
+    "jpegFor": ["shaded", "contact-sheet"],
+    "jpegQuality": [85, 75, 65],
+    "scaleStep": 0.85,
+    "maxSteps": 8,
+    "maxImagesPerSend": 20,
+    "retry": {
+      "rule": "On a failed send, inspect the error, fix the image, retry once; a second failure stops and reports the error, the sizes tried and the route.",
+      "dimensions": "scale to the route's max side (8000, or 3000 when more than 20 images)",
+      "manyImages": "scale every image of the batch to 3000 px per side, or split the batch to 20",
+      "tooLarge": "recompress (next JPEG quality) and scale by 0.75, or split the batch",
+      "other": "auth, rate limit, network: do not change the image; report"
+    }
+  }
+}

@@ -220,6 +220,10 @@ export interface CheckRun {
   subject?: string;
   status: "ran" | "skipped";
   reason?: string;
+  /** uhd/assemble only: the instance path the assembly was placed from ("" = the system itself), as `__cad.observe().root` reports it (PB-1137). */
+  root?: string;
+  /** uhd/assemble only: which step of the root rule chose it (docs/reference/display.md `root`). */
+  rootRule?: "display" | "own-body" | "most-frames";
   counts: Record<Severity, number>;
 }
 

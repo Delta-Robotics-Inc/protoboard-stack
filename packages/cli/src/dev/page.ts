@@ -18,7 +18,15 @@
  * - the views the project's extensions contribute become tabs (`views` in the
  *   state route); `?theme=` picks the theme (protoboard-dark, protoboard-light,
  *   vscode, …, or light, dark, system for Protoboard's; default: the viewer's
- *   last choice, else Protoboard dark).
+ *   last choice, else Protoboard dark);
+ * - the 3D view's live state (PB-1178) goes to the server after the viewer's
+ *   400 ms debounce (`.protoboard/local/viewer-state.json`) and comes back
+ *   from the state route when the page opens; named views and annotations
+ *   go to the display file only when saved;
+ * - the page is a live tab of the bridge (./bridge.ts): its event stream
+ *   names it (`?tab=`), batches arrive as `bridge` events, the viewer
+ *   answers them (`viewer.bridge`), and the page posts the reply; a focus
+ *   makes it the tab agents reach by default.
  */
 
 /** Routes of the dev session, apart from the viewer handler's own. */
@@ -32,6 +40,17 @@ export const DEV_ROUTES = {
   source: "/__protoboard/source",
   /** Local telemetry (PB-1181): the viewer's session and crash records, POSTed by the page; the server appends them under .protoboard/local/telemetry/. */
   telemetry: "/__protoboard/telemetry",
+  /** The 3D view's live state (PB-1178): GET the saved one, POST a newer one (.protoboard/local/viewer-state.json). */
+  viewState: "/__protoboard/view-state",
+  /** Named views and annotations (PB-1178): an explicit save into the display file (`spatial.views`, `spatial.annotations`). */
+  displayViews: "/__protoboard/display-views",
+  /** The last snapshot of a tab (PB-1180): GET its record (`?level=&view=`), POST a save point from the viewer. */
+  snapshot: "/__protoboard/snapshot",
+  /** The snapshot's image. */
+  snapshotPng: "/__protoboard/snapshot.png",
+  /** The live-tab bridge's reply and presence routes (./bridge.ts BRIDGE_ROUTES). */
+  bridgeReply: "/__protoboard/bridge/reply",
+  bridgePresence: "/__protoboard/bridge/presence",
   parts: "/__protoboard/parts/",
   viewerJs: "/__protoboard/viewer/web-viewer.js",
   viewerCss: "/__protoboard/viewer/web-viewer.css",
@@ -233,7 +252,20 @@ const relay = createRelay({
   },
 });
 
+const params = new URLSearchParams(location.search);
+// document mode (?chrome=none, PB-1109): what is marked as chrome is left out
+if (params.get("chrome") === "none") {
+  const style = document.createElement("style");
+  style.textContent = "[data-chrome]{display:none!important}";
+  document.head.append(style);
+}
+// the last snapshot of the view the page opens on (PB-1180), asked for with the state: painted before the models load
+const level = params.get("drill") ?? "";
+const snapshotView = params.get("view") === "3d" ? "3d" : undefined;
+const snapshotLoad = snapshotView ? fetch("${rel(DEV_ROUTES.snapshot)}?" + new URLSearchParams({ level, view: snapshotView }), { cache: "no-store" }).then((r) => (r.ok ? r.json() : undefined)).catch(() => undefined) : Promise.resolve(undefined);
 const state = await (await fetch("${rel(DEV_ROUTES.state)}", { cache: "no-store" })).json();
+const post = (route, body) =>
+  fetch(route, { method: "POST", keepalive: true, headers: { "content-type": "application/json", "${TOKEN_HEADER}": config.token }, body: JSON.stringify(body) });
 const themeChoice = new URLSearchParams(location.search).get("theme") ?? undefined;
 const viewer = mountWebViewer(document.getElementById("viewer"), {
   bundle: await fetchBundle(),
@@ -247,13 +279,64 @@ const viewer = mountWebViewer(document.getElementById("viewer"), {
   diagnostics: state.diagnostics,
   layout: empty(),
   onLayoutChange: save,
+  // the 3D view's live state (PB-1178): the one saved last comes back; a newer one is kept after the viewer's debounce
+  ...(state.viewState ? { viewState: state.viewState } : {}),
+  onViewStateChange: (file) => post("${rel(DEV_ROUTES.viewState)}", { file }).catch(() => {}),
+  // named views and annotations: an explicit save, into the display file
+  onPresentationChange: async (presentation) => {
+    try {
+      const res = await post("${rel(DEV_ROUTES.displayViews)}", { presentation });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? res.status);
+      status("ok", body.written ? "views saved · " + body.file : "views unchanged");
+    } catch (e) {
+      status("error", "views not saved: " + e.message);
+    }
+  },
+  // the visible viewer's own save points (PB-1180): the frame on settle and on hide, kept for the next tab
+  onSavePoint: async (point) => {
+    try {
+      const bytes = new Uint8Array(await point.png.arrayBuffer());
+      let bin = "";
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      const { png: _png, ...meta } = point;
+      // not keepalive: a keepalive body is capped at 64 kB, and a frame is larger
+      await fetch("${rel(DEV_ROUTES.snapshot)}", { method: "POST", headers: { "content-type": "application/json", "${TOKEN_HEADER}": config.token }, body: JSON.stringify({ png: btoa(bin), meta }) });
+    } catch {
+      // a save point is a convenience: the next tab opens without it
+    }
+  },
   ...relay.callbacks,
 });
 relay.attach(viewer);
+void snapshotLoad.then((snap) => {
+  if (snap && snap.imageUrl) viewer.post({ ...snap, type: "uhd-viewer:snapshot", imageUrl: here(snap.imageUrl), currentBundleHash: state.bundleHash });
+});
 window.protoboardDev = { viewer, relay, client, version: state.version, updates: 0 };
 status(state.building ? "busy" : state.failed ? "error" : "ok", state.message);
 
-const events = new EventSource("${rel(DEV_ROUTES.events)}");
+// the stream names this page: it is a live tab of the bridge while it is open (PB-1178)
+const events = new EventSource("${rel(DEV_ROUTES.events)}?tab=" + client);
+events.addEventListener("bridge", async (e) => {
+  const envelope = JSON.parse(e.data);
+  const answer = viewer.bridge(envelope);
+  if (!answer) return;
+  try {
+    await post("${rel(DEV_ROUTES.bridgeReply)}", { id: envelope.id, tab: client, reply: answer.reply });
+  } catch {
+    // the server says may-have-run when no reply arrives; a resend gets the tab's remembered answer
+  }
+});
+// the tab a person uses is the one an agent reaches by default
+let presentAt = 0;
+const present = () => {
+  if (Date.now() - presentAt < 5000) return;
+  presentAt = Date.now();
+  post("${rel(DEV_ROUTES.bridgePresence)}", { tab: client, active: true }).catch(() => {});
+};
+window.addEventListener("focus", present);
+document.addEventListener("pointerdown", present, { passive: true });
+events.addEventListener("hello", () => setTimeout(present, 50));
 events.addEventListener("hello", (e) => {
   // a restarted server: its bundle and session are new
   if (JSON.parse(e.data).session !== config.session) location.reload();
