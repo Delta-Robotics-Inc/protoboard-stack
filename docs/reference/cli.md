@@ -27,6 +27,12 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs through the project's warm render service (started when none runs); --no-service opens a browser of its own |
 | `views capture` | One view as an image for a document or an agent, through the warm render service: --view 3d\|diagram\|..., --level <instance path>, --state <json\|@file> (camera, explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend), --size, --format png\|jpeg\|webp, --out <file>; writes x.capture.json beside the image and a snapshot the visible viewer opens from. --no-service runs it in this process |
 | `geometry measure` | Exact measurement through build123d (PB-1187): measure <request.json \| -> (a protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on stdin and stdout) |
+| `drawing inspect` | Drawings to CAD (PB-1190): inspect <file> (vector or raster, units, scale, projection, title block, PDF permission flags), views <file>, crop <file> --view vN\|--bbox x0,y0,x1,y1 [--dpi] [--out x.png], dimensions <file> [--part <id> --write], compare <file> --part <instance>\|--model <x.step> [--view-map v1=front] [--tolerance mm]; --page N, --ocr, --ignore-pdf-permissions (a PDF whose flags forbid extraction is refused without it); needs the CAD runtime |
+| `mates list\|suggest\|validate [--json]` | Mates from traits and sidecars; heuristic suggestions (.protoboard/build/mates-suggested.json) |
+| `interference [--at <keyframe\|t>] [--json]` | Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where one exists) |
+| `inventory [--json]` | What is installed: the CLI, the stack, extensions and their packages (PB-1168) |
+| `update check [--json] [--force] \| status \| on \| off` | Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the background after a command (off in CI) |
+| `package write` | A part as one .uhdpkg (PB-1195): its revision envelope, unchanged, and its files, zipped: write <part-id \| folder> [--out <file>] [--exclude <path>] [--allow-unpinned] [--created-at <iso>] [--stored]; read <file.uhdpkg> <folder> unpacks after every check; verify <file.uhdpkg> checks without writing (exit 1 on any failure) |
 | `views doctor` | Can this machine render headless: the browser, the GL backend (GPU or SwiftShader; --backend auto\|gpu\|swiftshader), WebGL 2, a test frame, the capture encoders |
 | `views service \| status \| stop` | Run the render service in the foreground (one warm headless browser per project, loopback only, a session token in .protoboard/local/render-service.json; it stops after 15 minutes idle), say whether one runs, or stop it |
 | `dev` | Serve the UHD viewer on the project: rebuilds on every source change, saves diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch) |
@@ -43,6 +49,9 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `parts import <file> --part <id> [--board] [--replace]` | Use an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body: recorded in parts/sources.json (imported, sha256), the module bound to ext-parts' cad capability (constraints.import, no script), then cad:generate and cad:export. A board's STEP (--board, or a module with children) also maps each component node to its instance by designator, then LCSC C-number. Offline |
 | `parts fetch <part> --lcsc <C-number> \| --kicad <library:name> \| --link <https url>` | Fetch one vendor model for a part, on this machine, for the user: EasyEDA's model for an LCSC C-number (terms unknown: kept on this machine), KiCad's 3D library (the installed copy first, offline), or a link (--file-format, --terms). The bytes go to the machine cache and parts/files/<part>/model.<key>.<ext> (gitignored; never committed), the link, sha256 and terms to parts/sources.json; a STEP gets a GLB for the viewer when the CAD runtime is installed (--no-convert skips it). --offline refuses the network. Never runs on its own |
 | `parts fetch [part]` | Restore the vendor files parts/sources.json records that are not on this machine: the machine cache, KiCad's installed library, else their links (--offline: no network) |
+| `parts export <part\|instance> --format step\|stl\|3mf\|glb` | Write a part's full-resolution body for another tool (.protoboard/exports/, with a record) |
+| `parts import-step <file.step> --part <id>` | Make a STEP inside the project the part's body (sha256 recorded, converted on the CAD runtime; --tool records it as evidence) |
+| `parts attach <part> <file> --kind evidence\|drawing\|datasheet` | Copy a file into the part's folder with its sha256 and terms (evidence: --tool, --measure) |
 | `parts update [id...]` | Show the recommended revision of vendored parts and what it changes; writes nothing |
 | `parts update <id> --to <rev\|recommended>` | Deliberately re-pin a vendored part (the replaced pin is kept as previous); --library moves it to another library; --compiled as for add |
 | `parts offers [id...]` | Vendor the service's supplier offers for catalog parts into parts/offers.json (what a release quotes offline; replaces those parts' entries) |
@@ -140,6 +149,12 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 | `--kicad <lib:name>` | parts fetch: a model of KiCad's 3D library (the installed copy first) |
 | `--link <https url>` | parts fetch: a model at a link (--file-format step\|glb\|stl\|3mf, --terms redistributable\|internal\|unknown) |
 | `--offline` | parts fetch, build --fetch: never reach the network |
+| `--kind <kind>` | parts attach: evidence, drawing or datasheet |
+| `--tool <id>` | parts import-step, parts attach: a reference tool (docs/reference/reference-tools.md) |
+| `--measure <name=value unit>` | parts attach: a measurement (repeatable; ref: measures the tool itself) |
+| `--license <text>` | parts attach: the file's licence |
+| `--no-run` | parts import-step: record and bind only (no conversion) |
+| `--date <YYYY-MM-DD>` | parts attach: when the evidence was taken |
 | `--no-convert` | parts fetch: no GLB made from a fetched STEP |
 | `--fetch` | build: first restore recorded vendor files that are not on this machine (parts fetch) |
 | `--no-view` | build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json) |
@@ -224,6 +239,24 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces
                             <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on
                             stdin and stdout)
+    drawing inspect         Drawings to CAD (PB-1190): inspect <file> (vector or raster, units, scale, projection, title
+                            block, PDF permission flags), views <file>, crop <file> --view vN|--bbox x0,y0,x1,y1 [--dpi]
+                            [--out x.png], dimensions <file> [--part <id> --write], compare <file> --part <instance>|--model
+                            <x.step> [--view-map v1=front] [--tolerance mm]; --page N, --ocr, --ignore-pdf-permissions
+                            (a PDF whose flags forbid extraction is refused without it); needs the CAD runtime
+    mates list|suggest|validate [--json]
+                            Mates from traits and sidecars; heuristic suggestions (.protoboard/build/mates-suggested.json)
+    interference [--at <keyframe|t>] [--json]
+                            Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where
+                            one exists)
+    inventory [--json]      What is installed: the CLI, the stack, extensions and their packages (PB-1168)
+    update check [--json] [--force] | status | on | off
+                            Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the
+                            background after a command (off in CI)
+    package write           A part as one .uhdpkg (PB-1195): its revision envelope, unchanged, and its files,
+                            zipped: write <part-id | folder> [--out <file>] [--exclude <path>] [--allow-unpinned]
+                            [--created-at <iso>] [--stored]; read <file.uhdpkg> <folder> unpacks after every check;
+                            verify <file.uhdpkg> checks without writing (exit 1 on any failure)
     views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
                             --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
     views service | status | stop
@@ -281,6 +314,13 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             refuses the network. Never runs on its own
     parts fetch [part]      Restore the vendor files parts/sources.json records that are not on this machine:
                             the machine cache, KiCad's installed library, else their links (--offline: no network)
+    parts export <part|instance> --format step|stl|3mf|glb
+                            Write a part's full-resolution body for another tool (.protoboard/exports/, with a record)
+    parts import-step <file.step> --part <id>
+                            Make a STEP inside the project the part's body (sha256 recorded, converted on the CAD
+                            runtime; --tool records it as evidence)
+    parts attach <part> <file> --kind evidence|drawing|datasheet
+                            Copy a file into the part's folder with its sha256 and terms (evidence: --tool, --measure)
     parts update [id...]    Show the recommended revision of vendored parts and what it changes; writes nothing
     parts update <id> --to <rev|recommended>
                             Deliberately re-pin a vendored part (the replaced pin is kept as previous);
@@ -469,6 +509,13 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     --link <https url>      parts fetch: a model at a link (--file-format step|glb|stl|3mf, --terms
                             redistributable|internal|unknown)
     --offline               parts fetch, build --fetch: never reach the network
+    --kind <kind>           parts attach: evidence, drawing or datasheet
+    --tool <id>             parts import-step, parts attach: a reference tool (docs/reference/reference-tools.md)
+    --measure <name=value unit>
+                            parts attach: a measurement (repeatable; ref: measures the tool itself)
+    --license <text>        parts attach: the file's licence
+    --no-run                parts import-step: record and bind only (no conversion)
+    --date <YYYY-MM-DD>     parts attach: when the evidence was taken
     --no-convert            parts fetch: no GLB made from a fetched STEP
     --fetch                 build: first restore recorded vendor files that are not on this machine (parts fetch)
     --no-view               build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json)

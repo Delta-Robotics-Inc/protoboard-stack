@@ -257,13 +257,137 @@ per-part polylines in mm, `closed`, `lengthMm`, `watertight`), and
   by the relaying process; uhd-viewer's `replayJournal` rebuilds the state
   from the newest checkpoint and the entries after it.
 
+## Parallel agents (PB-1196 remainder, W4-D)
+
+- **Ids are the view's (D2)**: an agent never chooses a record's id. A record
+  new to the list must carry an id the view issued in that same batch
+  (`annotate` with a `handle`); a `set` that brings in an id of the agent's
+  own is refused (`invalid`, "the view issues record ids"). Hosts (the
+  inspector, the display file) keep deterministic ids of their own; the
+  inspector's ids are at most 128 characters (a long instance path is hashed
+  into the id).
+- **Text is data (D12)**: every string an agent writes into the scene (a
+  callout's title, rows and text, a lease's purpose, an intent, a batch
+  label, its chosen name) is stored with its author and returned to other
+  agents only as data. The view's refusal sentences (`message`) are made
+  from owner facts (lease ids, actor ids, seq numbers, times), never from
+  that text: a lease refusal names `lease <id> of agent <id>` and puts the
+  purpose in `lease`. Over MCP each such string comes back as
+  `{ "kind": "text", "text": <verbatim>, "author": <who wrote it> }`
+  ([view-tools.md](view-tools.md#text-is-data)).
+- **Undo per actor (D7)**: `undo` walks back the caller's own batches one by
+  one and never crosses actors; the person's Ctrl+Z undoes the person's own.
+  A person's edit inside an agent's lease revokes it (DEFAULT, plan.md).
+- **Presence**: the VS Code extension shows the focused tab's presence in the
+  status bar ("<agent> is working on <part> · camera: <agent>"); a click
+  takes over. The 3D view's toolbar has a **Take over** button (shown while
+  an agent holds a lease or the camera; Esc does the same) and a **Save
+  callouts** button (below).
+- **Take over from a host**: a bridge request from a `host` actor whose batch
+  is exactly `[{ "op": "takeOver" }]` ends every agent lease and gives the
+  camera back (the extension sends it for its status bar chip). An agent's
+  request with it is refused: the dev server mints only agent actors.
+- **Save callouts**: agents' callouts stay live and per user; the person's
+  explicit "Save callouts" posts `uhd-viewer:presentation` with
+  `presentation.saveAnnotations: true`, and the host writes
+  `spatial.annotations` to the display file only then (the dev server and the
+  extension also take `saveAnnotations: true` beside the presentation).
+- **Theme**: a view-state `theme` (`light`, `dark`, `system`) written after
+  load switches the theme at once (the shell's theme follows the store);
+  absent, the host's option and `?theme=` decide as before.
+
+### Probes and placements in a batch
+
+- `probe: { picks?: [[fx, fy], ...], labels?: true }` on a bridge request (at
+  most 64 picks; fractions of the canvas from its top left) is answered in the
+  same reply: `probe.picks[i] = { at, hit }` (what `__cad.pick` hits: the
+  instance path, body, face id, point in mm, distance; null where nothing is
+  drawn), `probe.labels` (the drawn label boxes, `__cad.labels()`), and
+  `probe.canvas` (CSS px). MCP `view_review` and `view_pick` use it.
+- Placement verbs, resolved in the page (where the faces are) into one `set`
+  on `placements` before the store sees the batch, so it is checked, logged
+  and fenced like any write:
+  `{ "op": "placeOnFace", part, face, target, targetFace, gap?, spinDeg?, align? }`,
+  `{ "op": "orientByFace", part, face, target, targetFace, flip? }`,
+  `{ "op": "unplace", part }`. Faces are read in the body's own frame and
+  placed by its assembled pose (`rec.base`), so a placement made while
+  exploded equals one made assembled. The stored matrix is part to the
+  **root** assembly (shown in every scope that draws the part); when the
+  view cannot relate the shown scope to the root (no body placed by both),
+  the placement keeps `frame: <scope>` and shows only there (DEFAULT). The
+  reply lists `placements: [{ part, matrix, delta, turnedDeg, movedMm }]`.
+  Without the 3D view mounted the verb is `invalid`.
+
+### Replies in parts
+
+A reply whose JSON is over 48 kB (DEFAULT; a dense board's observation with
+components) can travel in parts: `viewer.bridgeParts(request, maxChars?)`
+returns the reply whole or as `uhd-viewer:bridgeReplyPart` messages
+`{ id, i, n, data }` (slices of the reply message's JSON, each posted body
+under `maxChars`). The dev server's reply route takes `{ id, tab, part:
+{ i, n, data } }` and joins the parts (at most 256 parts and 12 MB of JSON,
+DEFAULT; parts that stop coming are dropped after 60 s). A whole reply is
+still taken as before (up to 2 MB plus its envelope).
+
+### One owner per batch: the routing state machine
+
+Who owns the op log (DEFAULT, plan.md "scene owner"): the render service when
+it runs (its headless page), the person's live tab while one is open (the dev
+server only forwards to it), and, when neither runs, the VS Code extension
+host's webview (the person's own view; agents reach it only through a dev
+server). The MCP server decides per call and remembers the route per
+`batchId` until a final answer:
+
+```
+                 send(batchId)
+                      |
+        remembered? --yes--> same route (and tab) as before
+                      | no
+        route = headless? --yes--> render service ----------------+
+                      | no                                        |
+        live tab open? --no--> live only? --yes--> not-run        |
+                      | yes             | no (auto) ------------->+
+        deliver to the tab                                        |
+          applied | read | refused | invalid  -> final: forget    |
+          busy (person dragging) ... -> not-run: forget           |
+          not-run, nothing reached a tab (it closed between       |
+            listing and sending) and auto -> headless ----------->+
+          may-have-run -> remember (live, tab)                    |
+                                                                  v
+                                            headless reply: final -> forget;
+                                            may-have-run -> remember (headless)
+
+  resend of a remembered live batch whose tab is gone:
+    may-have-run, "cannot be known" (never re-applied headless): forget
+```
+
+A batch is never sent to the second owner while the first may have applied
+it. Routes are remembered for 10 minutes, at most 512 (DEFAULT).
+
+### The journal with two writers
+
+`.protoboard/local/scene-oplog.jsonl` is written by the dev server (its tabs)
+and the render service (`headless:<level>`). Every append and compaction
+holds `scene-oplog.jsonl.lock` (made exclusively; a lock older than 10 s or
+whose process is gone is taken over; a writer that waits 2 s writes nothing
+and keeps its marks, so the next call asks the store for the same entries
+again). Compaction keeps, per tab, its newest checkpoint and what follows. A
+checkpoint over 1 MiB is written as a `checkpoint-omitted` line, never a
+base. A restarted writer reads the file's tail (1 MiB) for each tab's last
+epoch and seq, so it does not append what is already there.
+`replayJournal` restores `nextId` and `retired` from the entries after the
+checkpoint; `createViewStore(state, { epoch, seed: { nextId, retired } })`
+continues from them. A page whose event stream reconnects keeps its bridge
+tab: deliveries go to whichever stream the page has open now, and a stream
+that comes back within 30 s (DEFAULT) under the same tab id is the same tab.
+
 ## Not yet
 
-- The webview is still an owner when it is open (the live tab), and the
-  headless render service is the owner when none is: one owner process for
-  both (collaboration D1) is later work.
-- The journal is replayed by `replayJournal`, but a reloaded tab does not
-  restore its log from it (the headless route puts the last state back as
-  the host instead).
+- The webview and the headless page each keep a store of their own: the
+  routing above makes one owner per batch, not one shared scene for both.
+- A reloaded tab does not restore its log from the journal (the headless
+  route puts the last state back as the host instead).
+- The dev page still posts each bridge reply whole (`viewer.bridge`); posting
+  `viewer.bridgeParts` is a one-line change in the page script (handoff).
 - A view written while the tab is hidden is applied at once, but a throttled
   webview may answer late (`may-have-run`, then a resend).

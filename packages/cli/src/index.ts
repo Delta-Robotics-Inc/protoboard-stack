@@ -222,6 +222,24 @@ const cli = meow(
                             protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces
                             <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on
                             stdin and stdout)
+    drawing inspect         Drawings to CAD (PB-1190): inspect <file> (vector or raster, units, scale, projection, title
+                            block, PDF permission flags), views <file>, crop <file> --view vN|--bbox x0,y0,x1,y1 [--dpi]
+                            [--out x.png], dimensions <file> [--part <id> --write], compare <file> --part <instance>|--model
+                            <x.step> [--view-map v1=front] [--tolerance mm]; --page N, --ocr, --ignore-pdf-permissions
+                            (a PDF whose flags forbid extraction is refused without it); needs the CAD runtime
+    mates list|suggest|validate [--json]
+                            Mates from traits and sidecars; heuristic suggestions (.protoboard/build/mates-suggested.json)
+    interference [--at <keyframe|t>] [--json]
+                            Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where
+                            one exists)
+    inventory [--json]      What is installed: the CLI, the stack, extensions and their packages (PB-1168)
+    update check [--json] [--force] | status | on | off
+                            Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the
+                            background after a command (off in CI)
+    package write           A part as one .uhdpkg (PB-1195): its revision envelope, unchanged, and its files,
+                            zipped: write <part-id | folder> [--out <file>] [--exclude <path>] [--allow-unpinned]
+                            [--created-at <iso>] [--stored]; read <file.uhdpkg> <folder> unpacks after every check;
+                            verify <file.uhdpkg> checks without writing (exit 1 on any failure)
     views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
                             --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
     views service | status | stop
@@ -279,6 +297,13 @@ const cli = meow(
                             refuses the network. Never runs on its own
     parts fetch [part]      Restore the vendor files parts/sources.json records that are not on this machine:
                             the machine cache, KiCad's installed library, else their links (--offline: no network)
+    parts export <part|instance> --format step|stl|3mf|glb
+                            Write a part's full-resolution body for another tool (.protoboard/exports/, with a record)
+    parts import-step <file.step> --part <id>
+                            Make a STEP inside the project the part's body (sha256 recorded, converted on the CAD
+                            runtime; --tool records it as evidence)
+    parts attach <part> <file> --kind evidence|drawing|datasheet
+                            Copy a file into the part's folder with its sha256 and terms (evidence: --tool, --measure)
     parts update [id...]    Show the recommended revision of vendored parts and what it changes; writes nothing
     parts update <id> --to <rev|recommended>
                             Deliberately re-pin a vendored part (the replaced pin is kept as previous);
@@ -467,6 +492,13 @@ const cli = meow(
     --link <https url>      parts fetch: a model at a link (--file-format step|glb|stl|3mf, --terms
                             redistributable|internal|unknown)
     --offline               parts fetch, build --fetch: never reach the network
+    --kind <kind>           parts attach: evidence, drawing or datasheet
+    --tool <id>             parts import-step, parts attach: a reference tool (docs/reference/reference-tools.md)
+    --measure <name=value unit>
+                            parts attach: a measurement (repeatable; ref: measures the tool itself)
+    --license <text>        parts attach: the file's licence
+    --no-run                parts import-step: record and bind only (no conversion)
+    --date <YYYY-MM-DD>     parts attach: when the evidence was taken
     --no-convert            parts fetch: no GLB made from a fetched STEP
     --fetch                 build: first restore recorded vendor files that are not on this machine (parts fetch)
     --no-view               build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json)
@@ -568,6 +600,18 @@ const cli = meow(
       // telemetry export (PB-1181, W1-E)
       send: { type: "boolean", default: false },
       out: { type: "string" },
+      // package write (PB-1195, W4-D)
+      exclude: { type: "string", isMultiple: true },
+      allowUnpinned: { type: "boolean" },
+      createdAt: { type: "string" },
+      stored: { type: "boolean" },
+      // parts export | import-step | attach (PB-1191, W4-B)
+      kind: { type: "string" },
+      tool: { type: "string" },
+      measure: { type: "string", isMultiple: true },
+      license: { type: "string" },
+      run: { type: "boolean", default: true },
+      date: { type: "string" },
     },
   },
 );
@@ -997,8 +1041,10 @@ async function main() {
       p.diagnostics.push(...layout);
       if (p.rootDef) p.checks.push({ validator: "protoboard/layout", status: "ran", counts: { error: 0, warning: 0, info: layout.length } });
       // the assembly sequence's patches (PB-1183): an unknown step, member or sequence id is a SEQUENCE_PATCH_* warning
-      const { runSequenceChecks } = await import("@protoboardai/core/sequence");
+      const { runMateChecks, runSequenceChecks } = await import("@protoboardai/core/sequence");
       await runSequenceChecks(p);
+      // the mates (PB-1185): traits and sidecars validated, problems under protoboard/mates (wave 4 gate)
+      await runMateChecks(p);
       const min = SEV_RANK[cli.flags.severity as keyof typeof SEV_RANK] ?? 1;
       const shown = p.diagnostics.filter((d) => SEV_RANK[d.severity] <= min).sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity]);
       out({ checks: p.checks, diagnostics: p.diagnostics }, () =>
@@ -1405,6 +1451,36 @@ async function main() {
     case "geometry": {
       // W3-D (PB-1187): the exact tier's measurements; flags are read from args in geometry.ts
       process.exitCode = await (await import("./geometry.js")).geometryCommand(cwd, args, out);
+      return;
+    }
+    case "drawing": {
+      // W4-C (PB-1190): the raw argv, because the shared flag table makes --view a boolean and would eat `--view v1`
+      process.exitCode = await (await import("./drawing.js")).drawingCommand(cwd, process.argv.slice(process.argv.indexOf("drawing") + 1), out);
+      return;
+    }
+    case "mates": {
+      // W4-E (PB-1185)
+      process.exitCode = await (await import("./mates.js")).matesCommand(cwd, args, out);
+      return;
+    }
+    case "interference": {
+      // W4-E (PB-1185)
+      process.exitCode = await (await import("./interference.js")).interferenceCommand(cwd, args, out);
+      return;
+    }
+    case "inventory": {
+      // W4-A (PB-1168)
+      process.exitCode = await (await import("./inventory.js")).inventoryCommand(cwd, args, out);
+      return;
+    }
+    case "update": {
+      // W4-A (PB-1168): top-level `update`; `parts update` is its own command
+      process.exitCode = await (await import("./update-check.js")).updateCommand(cwd, args, out, { force: cli.flags.force });
+      return;
+    }
+    case "package": {
+      // W4-D (PB-1195): .uhdpkg write | read | verify; meow takes the flags out of args, so they come as cli.flags
+      process.exitCode = await (await import("./package.js")).packageCommand(cwd, args, out, cli.flags);
       return;
     }
     case "views": {
@@ -1815,9 +1891,22 @@ const fmtAdd = (r: AddResult[], showLibrary = false) =>
 
 /** `parts search|add|update|offers|prices|publish` (and `usage`, for the library's publishers): the only commands that talk to part libraries. */
 async function parts(sub: string | undefined, rest: string[]) {
-  const usage = "usage: protoboard parts list [--check] | search [words] [--sort <order>] | taxonomy [words] | add <id[@rev]...> | update [id...] [--to <rev>] | offers [id...] | prices <id> [--mpn <code>] | publish <path> [--dry-run] | migrate | models [instance] | import <file> --part <id> | fetch [part] [--lcsc <C#> | --kicad <lib:name> | --link <url>]";
+  const usage = "usage: protoboard parts list [--check] | search [words] [--sort <order>] | taxonomy [words] | add <id[@rev]...> | update [id...] [--to <rev>] | offers [id...] | prices <id> [--mpn <code>] | publish <path> [--dry-run] | migrate | models [instance] | import <file> --part <id> | fetch [part] [--lcsc <C#> | --kicad <lib:name> | --link <url>] | export <part|instance> --format step|stl|3mf|glb | import-step <file.step> --part <id> [--tool <id>] | attach <part> <file> --kind evidence|drawing|datasheet";
   // `usage` is the library owners' command (publishers only): it works, and is left out of the help users read
-  if (!["list", "search", "taxonomy", "add", "update", "offers", "prices", "usage", "publish", "migrate", "import", "fetch", "models"].includes(sub ?? "")) throw new Error(usage);
+  if (!["list", "search", "taxonomy", "add", "update", "offers", "prices", "usage", "publish", "migrate", "import", "fetch", "models", "export", "import-step", "attach"].includes(sub ?? "")) throw new Error(usage);
+  // reference tools and print (PB-1191, W4-B): local, the project's own files
+  if (sub === "export") {
+    process.exitCode = await (await import("./parts-export.js")).partsExport(cwd, rest, { format: cli.flags.fileFormat ?? cli.flags.format, out: cli.flags.out, from: cli.flags.from }, out);
+    return;
+  }
+  if (sub === "import-step") {
+    process.exitCode = await (await import("./parts-import-step.js")).partsImportStep(cwd, rest, { part: cli.flags.part, tool: cli.flags.tool, replace: cli.flags.replace, run: cli.flags.run }, out);
+    return;
+  }
+  if (sub === "attach") {
+    process.exitCode = await (await import("./parts-attach.js")).partsAttach(cwd, rest, { kind: cli.flags.kind, tool: cli.flags.tool, measure: cli.flags.measure, terms: cli.flags.terms, license: cli.flags.license, url: cli.flags.url, date: cli.flags.date }, out);
+    return;
+  }
   // the one model resolver's commands (PB-1174): local; fetch reaches a vendor only for the part it is given
   if (sub === "import" || sub === "fetch" || sub === "models") {
     const pf = await import("./part-files.js");
@@ -2230,7 +2319,13 @@ async function libraries(sub: string | undefined, rest: string[]) {
   }
 }
 
-main().catch((e: Error) => {
+main()
+  .then(async () => {
+    // W4-A (PB-1168): the once-a-day update check after a command; never throws, never waits, stderr only, skips
+    // update/inventory/mcp/dev/telemetry, off in CI and tests
+    (await import("./update-check.js")).afterCommand(cwd, command);
+  })
+  .catch((e: Error) => {
   if (e instanceof AccessError) {
     // PB-928: one line, and its own exit code so a script or the extension can tell it from a failed command
     if (json) process.stdout.write(JSON.stringify({ error: e.message, code: e.code, access: e.access }) + "\n");

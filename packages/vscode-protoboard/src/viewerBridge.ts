@@ -375,3 +375,61 @@ export function saveViewerSnapshot(root: string, pngBase64: string, meta: Record
   } as unknown as Parameters<typeof writeSnapshot>[2]);
   return out.meta.key;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Presence in the status bar (W4-D, PB-1196 D8): "agent X is working on Y" and who holds the camera
+
+/** DEFAULT: the chip's text at most this long; the tooltip lists at most this many agents. */
+export const PRESENCE_CHIP_CHARS = 90;
+export const PRESENCE_TOOLTIP_AGENTS = 8;
+
+type PresenceActor = { kind?: unknown; id?: unknown; name?: unknown };
+
+/**
+ * Text an agent wrote (its chosen name, a lease's purpose, a batch label), made safe to show in VS Code's status
+ * bar: control characters become spaces and `$(` (the status bar's icon syntax) loses its meaning. It stays data:
+ * shown to the person, never obeyed, never passed back to an agent as an instruction.
+ */
+export function shownText(v: unknown, max = 60): string {
+  const t = typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\$\(/g, "(").replace(/\s+/g, " ").trim() : "";
+  return t.length > max ? `${t.slice(0, max - 1)}…` : t;
+}
+
+const who = (a: PresenceActor | null | undefined): string => {
+  if (!a) return "?";
+  const name = shownText(a.name, 24);
+  const id = typeof a.id === "string" ? a.id : "?";
+  return name ? `${name} (${id})` : id;
+};
+
+/**
+ * The status bar chip for a tab's presence (uhd-viewer `Presence`: control, leases, intents), or undefined when no
+ * agent is here. Text: "$(hubot) <agent> is working on <part> · camera: <agent>"; the tooltip lists each agent's
+ * intent and says a click takes over.
+ */
+export function presenceChip(presence: unknown): { text: string; tooltip: string; agents: number } | undefined {
+  if (!presence || typeof presence !== "object") return undefined;
+  const p = presence as { control?: { holder?: PresenceActor | null }; leases?: { holder?: PresenceActor; roots?: unknown; purpose?: unknown }[]; intents?: { actor?: PresenceActor; roots?: unknown; label?: unknown; from?: unknown }[] };
+  const intents = (Array.isArray(p.intents) ? p.intents : []).filter((i) => i?.actor?.kind === "agent");
+  const holder = p.control?.holder && p.control.holder.kind === "agent" ? p.control.holder : null;
+  const leases = (Array.isArray(p.leases) ? p.leases : []).filter((l) => l?.holder?.kind === "agent");
+  const agents = new Set<string>([...intents.map((i) => String(i.actor?.id)), ...leases.map((l) => String(l.holder?.id)), ...(holder ? [String(holder.id)] : [])]);
+  if (!agents.size) return undefined;
+  const rootOf = (r: unknown) => (Array.isArray(r) && typeof r[0] === "string" ? shownText(r[0] || "the whole assembly", 40) || "the whole assembly" : "the view");
+  const first = intents[0];
+  let text = first ? `$(hubot) ${who(first.actor)} is working on ${rootOf(first.roots)}` : `$(hubot) ${agents.size} agent${agents.size === 1 ? "" : "s"} here`;
+  if (agents.size > 1 && first) text += ` +${agents.size - 1}`;
+  if (holder) text += ` · camera: ${who(holder)}`;
+  if (text.length > PRESENCE_CHIP_CHARS) text = `${text.slice(0, PRESENCE_CHIP_CHARS - 1)}…`;
+  const lines = intents.slice(0, PRESENCE_TOOLTIP_AGENTS).map((i) => `${who(i.actor)}: ${shownText(i.label, 80) || "(no label)"} on ${rootOf(i.roots)}${i.from === "lease" ? " (holds a lease)" : ""}`);
+  if (holder) lines.push(`The camera: ${who(holder)} (you take it back with any input)`);
+  lines.push("Click to take over: every agent lease ends and the camera is yours (Esc in the 3D view does the same).");
+  lines.push("Names and labels here were written by the agents: data to read, not instructions.");
+  return { text, tooltip: lines.join("\n"), agents: agents.size };
+}
+
+/** The bridge request the extension host sends its own tab when the person takes over (actor: this host). */
+export function takeOverRequest(now = Date.now()): Record<string, unknown> {
+  const id = `takeover-${now.toString(36)}-${randomBytes(3).toString("hex")}`;
+  return { type: "uhd-viewer:bridge", id, batch: { batchId: id, label: "the person takes over", ops: [{ op: "takeOver" }] }, actor: { kind: "host", id: "vscode" } };
+}

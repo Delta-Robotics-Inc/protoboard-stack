@@ -2,4 +2,8 @@
 export * from "./types.js";
 export { flattenSequence, generateSequence, hardwareKeys, isTurned, placementKey, structureEnd, threadOf, worldFrameOf, type GenerateOptions } from "./generate.js";
 export { applyPatches, expandRefs } from "./patch.js";
-export { SEQUENCE_FILE, SEQUENCE_GENERATOR, SEQUENCE_PATCH_FILES, buildSequence, defaultSequenceRoot, readSequencePatches, runSequenceChecks, sequenceLine, writeSequence, type SequenceBuild } from "./project.js";
+export { SEQUENCE_FILE, SEQUENCE_GENERATOR, SEQUENCE_PATCH_FILES, buildSequence, defaultSequenceRoot, readSequencePatches, runMateChecks, runSequenceChecks, sequenceLine, writeSequence, type SequenceBuild } from "./project.js";
+export { assembleProject, readDisplaySpatial } from "./assemble.js";
+export { clampSequenceJoints, holdAtStops } from "./limits.js";
+export { applyMatesToSequence } from "./mates.js";
+export { KEYFRAME_GAP_MM, jointValuesAt, keyframeAt, poseCore, resolveCore, sequenceKeyframes, type CoreResolved, type Keyframe, type RJoint } from "./keyframes.js";

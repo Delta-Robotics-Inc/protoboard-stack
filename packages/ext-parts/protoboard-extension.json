@@ -29,6 +29,11 @@
       "id": "uhd-part-verify",
       "summary": "Automated part checks, then an independent audit against the cited sources; record the verification",
       "path": "skills/uhd-part-verify/SKILL.md"
+    },
+    {
+      "id": "scan-to-part",
+      "summary": "Make a part's body from a scan or measurements against a reference tool (ScanRuler, a scan ruler, calibration cube or gauge block); record the evidence and import the STEP",
+      "path": "skills/scan-to-part/SKILL.md"
     }
   ],
   "operations": [
@@ -89,7 +94,9 @@
         "id": "cad",
         "kind": "python",
         "packages": [
-          "build123d==0.13.0"
+          "build123d==0.13.0",
+          "ezdxf==1.4.5",
+          "pdfplumber==0.11.10"
         ],
         "env": "PROTOBOARD_PYTHON",
         "python": ">=3.11,<3.15"

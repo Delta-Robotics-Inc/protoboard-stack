@@ -18,7 +18,8 @@ import { LIBRARY_SORTS, findProjectRoot, packageRoot } from "@protoboardai/core"
 /** Whether a project's packages are installed: the framework resolves from it (its own node_modules, or a workspace's further up). */
 const installedIn = (root: string) => !!packageRoot(root, "@protoboardai/core");
 import { DESCRIPTION_LIMIT } from "./instructions.js";
-import { viewTools } from "./view-tools.js";
+import { geometryTools, viewTools } from "./view-tools.js";
+import { reportTools } from "./report-tools.js";
 
 /** What a tool hands back: data (sent as JSON text), images (base64, only when asked for) and whether it is a failure. */
 export interface ToolOutcome {
@@ -165,7 +166,8 @@ const SEVERITY = ["error", "warning", "info"] as const;
  * which talk to the person's live viewer tab or the headless render service instead of running a command.
  */
 export function protoboardTools(templates: string[]): ToolSpec[] {
-  const specs = [...cliTools(templates), ...viewTools()];
+  // W4-D: the exact measurement tier (PB-1187) and issue and feature reports (PB-1197; a draft, shown, then sent only on confirm)
+  const specs = [...cliTools(templates), ...viewTools(), ...geometryTools(), ...reportTools()];
   for (const s of specs) if (s.description.length > DESCRIPTION_LIMIT) throw new Error(`the description of ${s.name} is ${s.description.length} characters; clients cut it at ${DESCRIPTION_LIMIT}`);
   return specs;
 }

@@ -20,6 +20,7 @@
 import { randomBytes } from "node:crypto";
 import type { ServerResponse } from "node:http";
 import type { BridgeClient } from "../dev/bridgeClient.js";
+import { parseProbe, type Probe } from "../dev/bridge.js";
 import type { Journal } from "../dev/journal.js";
 
 export type Route = "live-tab" | "headless";
@@ -56,6 +57,11 @@ export interface SceneDeps {
 
 interface Session {
   live?: { client: BridgeClient; url: string };
+  /**
+   * Where each batch went until it has a final answer (W4-D, wave 3 carry-forward): a resend after `may-have-run`
+   * goes the same way, never to the other owner, which would apply it a second time.
+   */
+  routes: Map<string, { route: Route; tab?: string; at: number }>;
   /** The headless actor of this MCP server for this project. */
   actor: { kind: "agent"; id: string; session: string; name: string };
 }
@@ -66,7 +72,7 @@ function sessionFor(root: string, name: string): Session {
   let s = sessions.get(root);
   if (!s) {
     const id = randomBytes(6).toString("base64url");
-    s = { actor: { kind: "agent", id: `agent:${id}`, session: id, name } };
+    s = { actor: { kind: "agent", id: `agent:${id}`, session: id, name }, routes: new Map() };
     sessions.set(root, s);
   }
   return s;
@@ -89,12 +95,44 @@ async function liveClient(root: string, deps: SceneDeps, s: Session, fresh = fal
   }
 }
 
+/** DEFAULT (W4-D): a batch's route is remembered this long without a final answer, and for this many batches. */
+export const ROUTE_MEMORY_MS = 10 * 60 * 1000;
+export const ROUTE_MEMORY_MAX = 512;
+/** Outcomes that are final: the batch id's route is forgotten. */
+const FINAL = ["applied", "read", "refused", "invalid", "not-run"];
+/** A live `not-run` that means no tab took the batch (the tab closed between listing and sending): auto mode goes headless. */
+const NO_TAB = /no viewer tab|no live tab|delivery to tab|not reachable|closed while|no protoboard dev server/;
+
 /**
  * Send a batch to the scene's owner. `observe` asks for what is drawn
- * (`"components"`: with the parts inside bodies, a board's U3).
+ * (`"components"`: with the parts inside bodies, a board's U3); `probe` asks the
+ * 3D view what it draws at canvas points and where its labels are (the critic).
+ *
+ * Routing (W4-D; the state machine is in docs/reference/viewer-bridge.md):
+ * - a batch id already sent and not finally answered goes where it went before
+ *   (live tab or headless), whatever `route` says now; when that tab is gone
+ *   its outcome cannot be learned and the answer says so (re-observe);
+ * - auto: the live tab when one is open; when it closed between listing the
+ *   tabs and sending (`not-run`: nothing reached it) the batch goes headless.
  */
-export async function sendScene(root: string, batch: SceneBatch, target: SceneTarget, deps: SceneDeps, observe?: boolean | "components"): Promise<SceneOutcome> {
+export async function sendScene(root: string, batch: SceneBatch, target: SceneTarget, deps: SceneDeps, observe?: boolean | "components", probe?: Probe): Promise<SceneOutcome> {
   const s = sessionFor(root, deps.agentName());
+  const t = Date.now();
+  for (const [k, r] of s.routes) if (t - r.at > ROUTE_MEMORY_MS) s.routes.delete(k);
+  while (s.routes.size > ROUTE_MEMORY_MAX) s.routes.delete(s.routes.keys().next().value as string);
+  const remembered = s.routes.get(batch.batchId);
+  const out = await routeScene(root, batch, remembered ? { ...target, route: remembered.route === "live-tab" ? "live" : "headless", ...(remembered.tab ? { tab: remembered.tab } : {}) } : target, deps, s, observe, probe, remembered);
+  if (FINAL.includes(out.status) || out.lost) s.routes.delete(batch.batchId);
+  else s.routes.set(batch.batchId, { route: out.route, ...(typeof out.via?.tab === "string" ? { tab: out.via.tab } : {}), at: remembered?.at ?? t });
+  return out;
+}
+
+/** Forget remembered routes (tests). */
+export function routesOf(root: string): Map<string, { route: Route; tab?: string; at: number }> | undefined {
+  return sessions.get(root)?.routes;
+}
+
+async function routeScene(root: string, batch: SceneBatch, target: SceneTarget, deps: SceneDeps, s: Session, observe: boolean | "components" | undefined, probe: Probe | undefined, remembered: { route: Route; tab?: string } | undefined): Promise<SceneOutcome & { lost?: boolean }> {
   const want = target.route ?? "auto";
   if (want !== "headless") {
     let client = await liveClient(root, deps, s);
@@ -105,21 +143,27 @@ export async function sendScene(root: string, batch: SceneBatch, target: SceneTa
       tabs = client ? await client.tabs().catch(() => undefined) : undefined;
     }
     const usable = (tabs ?? []).filter((t) => !target.tab || t.id === target.tab);
+    if (remembered?.route === "live-tab" && !usable.length) {
+      // the tab that may have applied it is gone: nobody can say now, and the headless scene must not apply it again
+      return { status: "may-have-run", lost: true, batchId: batch.batchId, reason: `tab ${remembered.tab ?? "?"} that may have applied this batch is gone; its outcome cannot be known: re-observe, then decide again (with a new batchId)`, route: "live-tab", via: { tab: remembered.tab } } as SceneOutcome & { lost: boolean };
+    }
     if (client && usable.length) {
-      let out = (await client.call({ ...batch, ...(target.tab ? { tab: target.tab } : {}), ...(observe ? { observe } : {}), ...(target.timeoutMs ? { timeoutMs: target.timeoutMs } : {}) })) as Record<string, unknown>;
+      const body = { ...batch, ...(target.tab ? { tab: target.tab } : {}), ...(observe ? { observe } : {}), ...(probe ? { probe } : {}), ...(target.timeoutMs ? { timeoutMs: target.timeoutMs } : {}) };
+      let out = (await client.call(body)) as Record<string, unknown>;
       // an expired session (8 h idle) or a restarted server: mint a new one and send once more (the batch id is per session)
       if (out.status === "not-run" && /session token|HTTP 401/.test(String(out.reason ?? ""))) {
         client = await liveClient(root, deps, s, true);
-        if (client) out = (await client.call({ ...batch, ...(target.tab ? { tab: target.tab } : {}), ...(observe ? { observe } : {}) })) as Record<string, unknown>;
+        if (client) out = (await client.call(body)) as Record<string, unknown>;
       }
-      return { ...out, status: String(out.status), route: "live-tab", via: { devServer: s.live?.url, tab: out.tab ?? target.tab ?? usable.find((t) => t.default)?.id } } as SceneOutcome;
-    }
-    if (want === "live") {
+      // auto: the tab closed between listing and sending, nothing reached it: the headless scene takes it (W4-D)
+      const fallBack = want === "auto" && !remembered && out.status === "not-run" && NO_TAB.test(String(out.reason ?? ""));
+      if (!fallBack) return { ...out, status: String(out.status), route: "live-tab", via: { devServer: s.live?.url, tab: out.tab ?? target.tab ?? usable.find((t) => t.default)?.id } } as SceneOutcome;
+    } else if (want === "live") {
       return { status: "not-run", batchId: batch.batchId, reason: client ? `no live tab${target.tab ? ` ${target.tab}` : ""} is open on this project` : "no protoboard dev server with a bridge runs for this project (start `protoboard dev`, or open the viewer in VS Code)", route: "live-tab", via: {} };
     }
   }
   const service = await deps.renderService(root);
-  const out = await service.stream<Record<string, unknown>>("/batch", { level: target.level ?? "", batch: { ...batch, batchId: `${s.actor.session}:${batch.batchId}` }, actor: s.actor, ...(observe ? { observe } : {}) });
+  const out = await service.stream<Record<string, unknown>>("/batch", { level: target.level ?? "", batch: { ...batch, batchId: `${s.actor.session}:${batch.batchId}` }, actor: s.actor, ...(observe ? { observe } : {}), ...(probe ? { probe } : {}) });
   if (typeof out?.batchId === "string") out.batchId = out.batchId.slice(out.batchId.indexOf(":") + 1);
   return { ...out, status: String(out?.status ?? "may-have-run"), route: "headless", via: { renderService: service.record.url, level: target.level ?? "", tab: out?.tab } } as SceneOutcome;
 }
@@ -166,6 +210,7 @@ export async function runHeadlessBatch(service: SceneService, journal: Journal |
       batch: body.batch,
       actor: { kind: "agent", id: a.id, session: a.session, ...(typeof a.name === "string" ? { name: a.name.slice(0, 64) } : {}) },
       ...(body.observe === true || body.observe === "components" ? { observe: body.observe } : {}),
+      ...(parseProbe(body.probe) ? { probe: parseProbe(body.probe) } : {}),
       ...(journal ? { since: journal.since(tab) ?? { epoch: "", seq: 0 }, ...(journal.wantCheckpoint(tab) ? { checkpoint: true } : {}) } : {}),
     };
     const msg = await b.evaluate<{ reply?: Record<string, unknown>; error?: string } | null>(

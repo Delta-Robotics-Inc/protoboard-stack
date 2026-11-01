@@ -32,9 +32,13 @@ const HOME = mkdtempSync(join(tmpdir(), "pb-mcp-home-"));
 const TOOLS = [
   "project_status", "project_init", "project_check", "project_inspect", "project_build", "project_layout", "parts_search", "parts_add", "parts_list", "parts_models", "parts_import", "telemetry_export", "skills_list", "skill_read", "bom", "release_check",
   // the agent's view tools (PB-1179): they change what the view shows, never the project's files
-  "view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_unannotate", "view_explode", "view_undo", "view_claim", "view_release", "view_capture", "view_review", "view_tour",
+  "view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_unannotate", "view_explode", "view_undo", "view_claim", "view_release", "view_capture", "view_review",
+  // W4-D (deliberate change): faces and placements, then the exact tier and issue reports (PB-1187, PB-1197)
+  "view_pick", "view_place_on_face", "view_orient_by_face", "view_tour", "geometry_measure", "report_issue", "request_feature", "report_send", "report_list",
 ];
 const WRITES = ["project_init", "project_build", "project_layout", "parts_add"];
+/** Tools that run no project code (W4-D): the exact tier and the issue reports. */
+const NO_PROJECT_CODE = ["geometry_measure", "report_issue", "request_feature", "report_send", "report_list"];
 
 const PART: UhdModuleDef = {
   id: "test-mcp-regulator",
@@ -174,9 +178,16 @@ describe("the server's surface", () => {
       expect(t.description!.length, t.name).toBeGreaterThan(80);
       expect(t.annotations, t.name).toBeDefined();
       const writes = WRITES.includes(t.name);
+      expect(t.annotations!.destructiveHint, t.name).toBe(false);
+      // W4-D (deliberate change): the exact tier and the report tools run no project code (geometry_measure runs the
+      // project's managed Python on its CAD files; the reports read and redact files only); they say so instead
+      if (NO_PROJECT_CODE.includes(t.name)) {
+        expect(t.description, t.name).toMatch(/Runs no project code|managed Python runtime|Reads nothing else/);
+        if (t.name === "report_send") expect(t.annotations!.openWorldHint, t.name).toBe(true);
+        continue;
+      }
       // every tool runs the project's code, so none is read-only: a client asks before it runs (PB-1048)
       expect(t.annotations!.readOnlyHint, t.name).toBe(false);
-      expect(t.annotations!.destructiveHint, t.name).toBe(false);
       expect(t.description, t.name).toContain("It runs the project's own code (protoboard.config.ts and its model files)");
       if (writes) expect(t.description, t.name).toMatch(/CHANGES FILES/);
       else if (t.name.startsWith("view_")) expect(t.description, t.name).toMatch(/CHANGES THE VIEW only|Writes nothing|writes an image/);

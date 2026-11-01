@@ -325,10 +325,14 @@ status(state.building ? "busy" : state.failed ? "error" : "ok", state.message);
 const events = new EventSource("${rel(DEV_ROUTES.events)}?tab=" + client);
 events.addEventListener("bridge", async (e) => {
   const envelope = JSON.parse(e.data);
-  const answer = viewer.bridge(envelope);
-  if (!answer) return;
+  // a reply comes in parts when it is large (W4-D, uhd-viewer \`viewer.bridgeParts\`, 48 kB per part DEFAULT): no single
+  // POST carries a dense board's observation; the reply route joins the parts (LiveBridge.replyPart)
+  const parts = viewer.bridgeParts(envelope);
+  if (!parts || !parts.length) return;
   try {
-    await post("${rel(DEV_ROUTES.bridgeReply)}", { id: envelope.id, tab: client, reply: answer.reply });
+    for (const m of parts) {
+      await post("${rel(DEV_ROUTES.bridgeReply)}", m.type === "uhd-viewer:bridgeReplyPart" ? { id: envelope.id, tab: client, part: { i: m.i, n: m.n, data: m.data } } : { id: envelope.id, tab: client, reply: m.reply });
+    }
   } catch {
     // the server says may-have-run when no reply arrives; a resend gets the tab's remembered answer
   }

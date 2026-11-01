@@ -21,6 +21,7 @@ import { delimiter, join, relative } from "node:path";
 import { BROWSER_PURPOSE, findBrowser, noBrowserMessage, type BrowserLookup } from "./browser.js";
 import type { LoadedExtension, ToolDecl } from "./extensions.js";
 import { npmAuthProblem } from "./stack.js";
+import { checkPackageName } from "./update/lookalikes.js";
 import { describeTried, formatPythonRange, intersectPythonRanges, noPythonMessage, parsePythonRange, selectPython, type PythonLookup, type PythonRange, type PythonSelection } from "./python.js";
 
 /** Where runtimes live, relative to the project root. */
@@ -488,6 +489,10 @@ async function installOne(root: string, extensions: LoadedExtension[], plan: Run
   const dir = join(root, dirRel);
   const result: InstallResult = { id: plan.id, kind: plan.kind, status: "failed", dir: dirRel, packages: plan.packages, verified: [] };
   if (plan.problems.length) return { ...result, message: `conflicting declarations: ${plan.problems.join("; ")}` };
+  // the lookalike deny list (PB-1168, core/reference/lookalikes.json) refuses a known malicious or typosquat name
+  // before anything is fetched (wave 4 gate, W4-A's handoff); `suspect` and `watch` names are left to the update check
+  const denied = deniedPins(plan.kind, plan.packages);
+  if (denied.length) return { ...result, message: `refused before installing: ${denied.join("; ")}` };
   let rec: RuntimeRecord;
   try {
     if (options.clean) rmSync(dir, { recursive: true, force: true });
@@ -526,6 +531,18 @@ async function installOne(root: string, extensions: LoadedExtension[], plan: Run
     status: failed.length ? "failed" : "installed",
     ...(failed.length ? { message: `installed, but ${failed.map((f) => `${f.tool} (${f.detail})`).join("; ")} still fails its probe` } : {}),
   };
+}
+
+/** The pins whose name the lookalike deny list refuses, each with the list's reason (empty when none is). */
+export function deniedPins(kind: RuntimeKind, specs: string[]): string[] {
+  const out: string[] = [];
+  for (const spec of specs) {
+    const pin = parsePin(kind, spec);
+    if (!pin) continue;
+    const v = checkPackageName(pin.name, kind === "python" ? "PyPI" : "npm");
+    if (v.verdict === "deny") out.push(`${spec} is on the lookalike deny list${v.resembles ? ` (imitates ${v.resembles})` : ""}${v.reason ? `: ${v.reason}` : ""}`);
+  }
+  return out;
 }
 
 async function installPython(root: string, dir: string, plan: RuntimePlan, exec: Exec, log: (line: string) => void, options: InstallOptions): Promise<RuntimeRecord> {
@@ -622,7 +639,9 @@ async function installNode(root: string, dir: string, plan: RuntimePlan, exec: E
   );
   const npm = WIN ? "npm.cmd" : "npm";
   log(`${plan.id}: npm install ${plan.packages.join(" ")}`);
-  await exec(npm, ["install", "--no-audit", "--no-fund", "--save-exact"], { cwd: dir });
+  // --ignore-scripts (wave 4 gate, PB-1168): no package's install script runs, as `stack install` already does
+  // (core/src/stack.ts); a runtime that needs one must say so in its extension and be vetted first
+  await exec(npm, ["install", "--no-audit", "--no-fund", "--save-exact", "--ignore-scripts"], { cwd: dir });
   const installed: Record<string, string> = {};
   for (const p of pins) {
     const file = join(dir, "node_modules", p.name, "package.json");

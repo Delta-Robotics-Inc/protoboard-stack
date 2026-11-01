@@ -38,6 +38,10 @@
     "./sequence": "./src/sequence/index.ts",
     "./render-service": "./src/render-service/index.ts",
     "./geometry-service": "./src/geometry-service/index.ts",
+    "./uhdpkg": "./src/uhdpkg/index.ts",
+    "./update": "./src/update/index.ts",
+    "./mates": "./src/mates/index.ts",
+    "./reference-tool": "./src/reference-tool/index.ts",
     "./findings-anchors": "./src/findings-anchors.ts",
     "./reference/*": "./reference/*"
   },

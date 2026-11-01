@@ -38,6 +38,12 @@ export type FrameRef =
    */
   | { mate: string; end?: "parent" | "child" | "structure" | "a" | "b" }
   | { world: Vec3 }
+  /**
+   * A line in the assembly root's coordinates (mm, Z up): a point on it and its direction. Written for a mate
+   * the mates module declares (a `protoboard.mate` trait or a `<model>.mates.json` sidecar, PB-1185) that no
+   * UHD link carries, so there is no link frame to name.
+   */
+  | { at: Vec3; axis: Vec3 }
   /** The display up axis. */
   | "up";
 
@@ -106,7 +112,23 @@ export interface SeqStep {
    * step's position among other planned steps follows the plan.
    */
   plan?: "stack";
+  /**
+   * Joint values this step leaves once it is assembled (a keyframe: "open the lid to 90"), degrees or mm by
+   * joint id. Played in assembly order, so the assembled model shows the last keyframe of each joint; a value
+   * outside the joint's stops is held at the stop and flagged in `limits` (PB-1185).
+   */
+  joints?: Record<string, number>;
+  /** Keyframe values the joint stops held (written by the build, or found by the viewer when it resolves). */
+  limits?: JointLimitFlag[];
   source: "generated" | "authored";
+}
+
+/** A joint value asked beyond a hard stop: what was asked, what is held, and which stop (PB-1185). */
+export interface JointLimitFlag {
+  joint: string;
+  asked: number;
+  held: number;
+  stop: "min" | "max";
 }
 
 /** A joint a part can be driven along (revolute or slider), with hard stops. */
@@ -123,8 +145,10 @@ export interface JointDef {
   max?: number;
   /** The pose the assembled model shows (default 0). */
   rest?: number;
-  /** Where the limits come from: "sequence" (authored), "uhd" (hardware data), or a note. */
+  /** Where the limits come from: "sequence" (authored), "uhd" (hardware data), "mate:trait", "mate:sidecar", or a note. */
   limitsFrom?: string;
+  /** Set when `rest` lay outside the stops and was held at one (PB-1185). */
+  limited?: JointLimitFlag;
 }
 
 export interface AssemblySequence {

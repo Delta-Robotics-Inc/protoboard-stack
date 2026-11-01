@@ -187,7 +187,7 @@ describe("the SOP skill set", () => {
 
   it("reads the command table from the CLI's help", () => {
     for (const c of ["init", "inspect", "check", "build", "dev", "parts", "doctor", "tools", "skills", "run", "capabilities", "operations"]) expect(table.commands.has(c), c).toBe(true);
-    expect([...table.commands.get("parts")!].sort()).toEqual(["add", "fetch", "import", "list", "migrate", "models", "offers", "prices", "publish", "search", "taxonomy", "update"]);
+    expect([...table.commands.get("parts")!].sort()).toEqual(["add", "attach", "export", "fetch", "import", "import-step", "list", "migrate", "models", "offers", "prices", "publish", "search", "taxonomy", "update"]);
     expect(table.commands.get("skills")!.has("export")).toBe(true);
     expect(table.runtimes).toEqual(new Set(["cad", "circuit", "all"]));
     for (const f of ["format", "module", "input", "to", "dry-run", "host", "severity"]) expect(table.flags.has(f), f).toBe(true);
