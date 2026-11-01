@@ -33,9 +33,9 @@ from pathlib import Path
 from typing import Callable, Iterable
 
 import build123d as bd
-from build123d import Compound, Face, Location, Shape, export_gltf, import_step
+from build123d import Compound, Face, Location, Shape, import_step
 
-from common import ROOT, part_dir, signature
+from common import DEFAULT, ROOT, export_glb, part_dir, signature
 
 Selector = Callable[[Shape], list[Face]]
 
@@ -250,9 +250,10 @@ def build(v: VendorStep) -> bool:
         features[name] = sig
         if name in v.interfaces:
             pads = [bd.Solid.thicken(f, 0.25) for f in faces]
-            export_gltf(Compound(label=name, children=pads), str(out / "interfaces" / f"{name}.glb"), binary=True)
+            export_glb(Compound(label=name, children=pads), out / "interfaces" / f"{name}.glb", DEFAULT, coarse=False)
 
-    export_gltf(shape, str(out / f"{v.name}.glb"), binary=True, linear_deflection=0.05, angular_deflection=0.3)
+    # a vendor model moved by `transform` is a located shape: export_glb bakes the location (PB-1112)
+    export_glb(shape, out / f"{v.name}.glb")
     bb = shape.bounding_box()
     archive = research_cad(v.part_id) / (v.archive or v.step)
     manifest = {

@@ -2,8 +2,8 @@
  * The CAD viewer's files and page (PB-906), without the VS Code API: which
  * files it opens, what it draws for each, and its webview's HTML.
  */
-import { existsSync, statSync } from "node:fs";
-import { basename, dirname, extname, join } from "node:path";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { basename, dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 
 export const CAD_VIEWER = "protoboard.cadViewer";
 
@@ -21,14 +21,62 @@ export interface CadSource {
   via?: string;
 }
 
-/** The GLB written with a STEP (same name, same folder), when it is as new (within the minute one export takes). */
-export function cadSource(file: string, exists: (p: string) => boolean = existsSync, mtime: (p: string) => number = (p) => statSync(p).mtimeMs): CadSource {
+/**
+ * The GLB written with a STEP (same name, same folder), when it is as new (within the minute one export takes);
+ * else the GLB the build's model table resolved for the same part (`resolvedGlb`), when the table is newer than
+ * the STEP; else the STEP itself, converted.
+ */
+export function cadSource(
+  file: string,
+  exists: (p: string) => boolean = existsSync,
+  mtime: (p: string) => number = (p) => statSync(p).mtimeMs,
+  resolved: (step: string) => string | undefined = (step) => resolvedGlb(step, exists, mtime),
+): CadSource {
   const ext = extname(file).toLowerCase();
   if (ext === ".glb") return { kind: "glb", file };
   const glb = join(dirname(file), `${basename(file, extname(file))}.glb`);
   // one export writes both, in either order: a GLB within a minute of the STEP is the same model
   if (exists(glb) && mtime(glb) >= mtime(file) - 60_000) return { kind: "glb", file, via: glb };
+  const other = resolved(file);
+  if (other) return { kind: "glb", file, via: other };
   return { kind: "step", file };
+}
+
+/** The build's model table is read only up to this size (security basics: size caps on parsed files). */
+const MAX_RESOLVED_BYTES = 64 * 1024 * 1024;
+
+/**
+ * The GLB the stack's resolver chose for the part whose STEP `step` is (PB-1174): the project's
+ * `.protoboard/build/resolved.json` (`models.instances[]`, schema protoboard.models/v0) lists, per drawn
+ * instance, the GLB the 3D view draws and the STEP of the same part. The extension reads the table rather than
+ * running the resolver: it is the build's record, and the CAD tab must not load a project to open a file.
+ * Only a table written after the STEP counts, and only a GLB inside the project that exists.
+ */
+export function resolvedGlb(step: string, exists: (p: string) => boolean = existsSync, mtime: (p: string) => number = (p) => statSync(p).mtimeMs, read: (p: string) => string = (p) => readFileSync(p, "utf8")): string | undefined {
+  const same = (a: string, b: string) => (process.platform === "win32" ? resolve(a).toLowerCase() === resolve(b).toLowerCase() : resolve(a) === resolve(b));
+  for (let dir = dirname(resolve(step)), i = 0; i < 32; i++) {
+    const table = join(dir, ".protoboard", "build", "resolved.json");
+    if (exists(table)) {
+      try {
+        if (statSync(table).size > MAX_RESOLVED_BYTES || mtime(table) < mtime(step)) return undefined;
+        const rows = (JSON.parse(read(table)) as { models?: { instances?: { file?: string; format?: string; step?: { file?: string } }[] } }).models?.instances ?? [];
+        for (const r of rows) {
+          if (!r.step?.file || !r.file || r.format !== "glb" || /^(package|cache):/.test(r.file)) continue;
+          if (!same(join(dir, r.step.file), step)) continue;
+          const glb = resolve(dir, r.file);
+          const inside = relative(dir, glb);
+          if (!inside.startsWith("..") && !isAbsolute(inside) && exists(glb)) return glb;
+        }
+      } catch {
+        // an unreadable table resolves nothing: the STEP is converted
+      }
+      return undefined;
+    }
+    const up = dirname(dir);
+    if (up === dir) return undefined;
+    dir = up;
+  }
+  return undefined;
 }
 
 /** The open CAD tabs, for the integration test. */

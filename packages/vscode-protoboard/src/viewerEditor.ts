@@ -17,6 +17,7 @@ import * as vscode from "vscode";
 import { join } from "node:path";
 import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection } from "../../web-viewer/src/vscode/protocol.js";
 import { nonce } from "./html.js";
+import { writeViewerTelemetry } from "./telemetry.js";
 import { devOrigins, distinctTitles, originCovered, parseBackup, parseViewerUri, viewerPageHtml, viewerTitle, viewerUri, SOURCE_COMMANDS, VIEWER_SCHEME, VIEWER_TYPE, type ViewerBackup, type ViewerTarget } from "./viewerPage.js";
 
 /** What the extension does for the tabs. */
@@ -406,6 +407,10 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         editor.post(devMessage(state));
         return;
       }
+      case "telemetry":
+        // local telemetry (PB-1181): written only while recording is on; never sent anywhere
+        writeViewerTelemetry(editor.root, m.record);
+        return;
       case "log": {
         const text = `${this.name(editor)}: ${m.message}`;
         if (m.level === "error") this.host.log.error(text);

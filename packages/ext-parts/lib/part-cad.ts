@@ -19,6 +19,8 @@
  * body.glb and body.manifest.json (`{ artifact, tool, toolVersion, units,
  * volume_mm3, bodies, features }`, with each interface feature's signature)
  * and any interfaces/<id>.glb into <out_dir>. It must be deterministic.
+ * It may also write body.coarse.glb, the same body tessellated coarser
+ * (0.5 rad / 0.1 mm), which the build's view sidecar uses as its coarse tier.
  */
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
@@ -145,6 +147,10 @@ export async function exportPart(ctx: Writer, t: PartCadTarget): Promise<Outcome
   const out = t.binding.out;
   ctx.writeOutput(`${out}/body.step`, readFileSync(join(scratch, "body.step")), `${t.def.id}: body with one named sub-shape per interface feature`);
   ctx.writeOutput(`${out}/body.glb`, readFileSync(join(scratch, "body.glb")), `${t.def.id}: viewer mesh`);
+  // optional coarse tessellation of the same body (0.5 rad / 0.1 mm), the coarse tier of the build's view sidecar
+  // (PB-1173; core view-model): a script that writes body.coarse.glb gets a kernel-made coarse tier, one that does
+  // not gets a simplified one
+  if (existsSync(join(scratch, "body.coarse.glb"))) ctx.writeOutput(`${out}/body.coarse.glb`, readFileSync(join(scratch, "body.coarse.glb")), `${t.def.id}: coarse viewer mesh`);
   const interfaces = existsSync(join(scratch, "interfaces")) ? readdirSync(join(scratch, "interfaces")).filter((n) => n.endsWith(".glb")).sort() : [];
   for (const n of interfaces) ctx.writeOutput(`${out}/interfaces/${n}`, readFileSync(join(scratch, "interfaces", n)), `${t.def.id}: ${n.replace(/\.glb$/, "")} geometry`);
   const standard = { ...manifest, artifact: "body", exportedFrom: { file: f.source, digest: sha256(sourceBytes) } };

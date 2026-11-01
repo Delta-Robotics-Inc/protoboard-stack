@@ -20,13 +20,13 @@
     },
     {
       "id": "kicad-cli",
-      "purpose": "KiCad 10's command line: saves the exported KiCad project in KiCad 10's format, and makes a locked board's fabrication outputs (DRC, Gerber, drill, position, STEP, GLB)",
+      "purpose": "KiCad's command line (KiCad 10 or newer, any install folder; the probe prints its version, path and where it was found): saves the exported KiCad project in KiCad's own format, and makes a locked board's fabrication outputs (DRC, Gerber, drill, position, STEP, GLB)",
       "probe": [
         "node",
         "-e",
         "require(require.resolve('@protoboardai/ext-tscircuit/lib/kicad/probe.cjs', { paths: [process.cwd()] }))"
       ],
-      "install": "install KiCad 10 (kicad.org/download); on Linux the distribution's kicad package, on macOS the KiCad app (its kicad-cli is in KiCad.app/Contents/MacOS; set PROTOBOARD_KICAD_CLI to it)"
+      "install": "install KiCad 10 or newer (kicad.org/download); it is found on PATH or in its install folder (Windows: the KiCad folder in Program Files, any version; macOS: /Applications/KiCad/KiCad.app; Linux: the distribution's kicad package). Elsewhere, set PROTOBOARD_KICAD_CLI to its kicad-cli"
     }
   ],
   "skills": [

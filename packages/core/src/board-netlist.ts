@@ -22,6 +22,7 @@
  * provider maps this to its own native design with its own tables, and
  * compares its laid-out copper back to it with `netlistDrift`.
  */
+import { bodyArtifact } from "./part-files.js";
 import {
   formatPath,
   isBoard,
@@ -368,8 +369,10 @@ export function boardNetlist(board: ModuleDef, lookup: ModuleLookup, options: Bo
         ...(child.overrides && Object.keys(child.overrides).length ? { overrides: child.overrides } : {}),
         ...(pkg ? { package: pkg } : {}),
         pins: pins.sort(byDesignator),
-        bodies: (def.artifacts ?? [])
-          .filter((a) => a.role === "body" && (a.format === "glb" || a.format === "step"))
+        // the part's body artifacts the one resolver chooses among (part-files.ts bodyArtifact), STEP first
+        bodies: ["step", "glb"]
+          .map((f) => bodyArtifact(def, [f]))
+          .filter((a): a is NonNullable<typeof a> => !!a)
           .map((a) => ({ artifact: a.id, format: a.format!, ...(a.units ? { units: a.units } : {}), ...(mount ? { mount } : {}) })),
       });
     }

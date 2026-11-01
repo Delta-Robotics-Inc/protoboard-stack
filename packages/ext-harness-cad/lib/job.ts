@@ -30,7 +30,7 @@ import {
   type Mat4,
   type ModuleDef,
 } from "@deltarobotics/uhd";
-import type { Project } from "@protoboardai/core";
+import { bodyArtifact, resolvePartFile, type Project } from "@protoboardai/core";
 import { SILICONE_OD_MM, WIRE_COLORS, termination, type Termination } from "./connectors.ts";
 
 export const JOB_SCHEMA = "protoboard.harness-cad.job/v0";
@@ -142,7 +142,8 @@ export function buildJob(p: Project): Job {
   const problems: string[] = [];
   const asm = projectAssembly(p);
   const placed = new Map(asm.placements.map((x) => [x.key, x]));
-  const art = (def: string, id: string) => p.artifacts.find((a) => a.definition === def && a.id === id);
+  // every body file through core's one resolver (part-files.ts, PB-1174); a missing body is a problem here, not a box
+  const bodyFile = (def: string, body?: string, instance?: string) => resolvePartFile(p, { part: def, ...(instance !== undefined ? { instance } : {}) }, "model", { formats: ["glb"], noPlaceholder: true, ...(body ? { body } : {}) });
 
   // obstacles: every placed body with a GLB, and every placed piece of hardware
   const bodies: Job["bodies"] = [];
@@ -158,17 +159,15 @@ export function buildJob(p: Project): Job {
   };
   for (const pl of asm.placements) {
     const inner = defAt.has(bodyKey(pl.path)) ? undefined : innerAt(pl.path);
-    const def = defAt.get(bodyKey(pl.path)) ?? (inner?.artifacts?.some((a) => a.format === "glb" && a.role === "body") ? inner : undefined);
+    const def = defAt.get(bodyKey(pl.path)) ?? (inner && bodyArtifact(inner, ["glb"]) ? inner : undefined);
     if (!def) continue;
-    const glb = (def.artifacts ?? []).find((a) => a.format === "glb" && a.role === "body" && (pl.body ? a.id === pl.body || a.provenance?.generatedFrom === pl.body : true));
-    const file = glb && art(def.id, glb.id);
-    if (file?.resolved && existsSync(file.resolved)) bodies.push({ key: pl.key, glb: file.resolved, matrix: pl.matrix });
-    else problems.push(`${pl.key}: no GLB body to route around (${glb?.filePath ?? "none declared"})`);
+    const r = bodyFile(def.id, pl.body, pl.path.join("/"));
+    if (r.file && r.source !== "none" && existsSync(r.file)) bodies.push({ key: pl.key, glb: r.file, matrix: pl.matrix });
+    else problems.push(`${pl.key}: no GLB body to route around (${bodyArtifact(def, ["glb"], pl.body)?.filePath ?? "none declared"})`);
   }
   for (const hw of asm.hardware) {
-    const glb = (hw.def.artifacts ?? []).find((a) => a.format === "glb" && a.role === "body");
-    const file = glb && art(hw.def.id, glb.id);
-    if (file?.resolved && existsSync(file.resolved)) bodies.push({ key: `${hw.harness}/${hw.child}`, glb: file.resolved, matrix: hw.matrix });
+    const r = bodyFile(hw.def.id);
+    if (r.file && r.source !== "none" && existsSync(r.file)) bodies.push({ key: `${hw.harness}/${hw.child}`, glb: r.file, matrix: hw.matrix });
   }
 
   const links = allLinks(p.rootDef!, p.lookup);

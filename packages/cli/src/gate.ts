@@ -86,6 +86,7 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   stack: LOCAL,
   agents: LOCAL,
   setup: LOCAL,
+  telemetry: LOCAL,
   mcp: LOCAL,
 };
 

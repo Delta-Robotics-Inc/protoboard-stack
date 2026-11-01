@@ -11,7 +11,9 @@ vi.mock("vscode", () => {
   class ThemeIcon {
     constructor(public id: string) {}
   }
-  return { TreeItem, ThemeIcon, window: {}, commands: {}, env: {}, Uri: { parse: (s: string) => s } };
+  // the telemetry row reads the settings (PB-1181): nothing set, VS Code's telemetry at its default
+  const workspace = { getConfiguration: () => ({ get: () => undefined }) };
+  return { TreeItem, ThemeIcon, window: {}, commands: {}, env: { isTelemetryEnabled: true }, workspace, Uri: { parse: (s: string) => s } };
 });
 
 const { HELP_LINKS, helpCommand, helpItems, helpMarkdown } = await import("../src/help.js");
@@ -59,13 +61,20 @@ describe("documentation, feedback and Discord (PB-1070)", () => {
     expect(view?.when).toBeUndefined();
   });
 
-  it("each row opens its link through its command", () => {
+  it("each row opens its link through its command; the last row says whether crash and performance data is recorded (PB-1181)", () => {
     const items = helpItems() as unknown as { label: string; command: { command: string } }[];
     expect(items.map((i) => [i.label, i.command.command])).toEqual([
       ["Documentation", "protoboard.help.docs"],
       ["Feedback and Issues", "protoboard.help.feedback"],
       ["Discord", "protoboard.help.discord"],
+      ["Crash and Performance Data: Local Only", "protoboard.telemetry.status"],
     ]);
+    const declared = new Set(pkg.contributes.commands.map((c: { command: string }) => c.command));
+    expect(declared.has("protoboard.telemetry.status")).toBe(true);
+    const off = helpItems({ mode: "off", reason: "VS Code telemetry is off" }) as unknown as { label: string; tooltip: string; iconPath: { id: string } }[];
+    expect(off[3]).toMatchObject({ label: "Crash and Performance Data: Off", iconPath: { id: "circle-slash" } });
+    expect(off[3].tooltip).toMatch(/^Protoboard records nothing: VS Code telemetry is off./);
+    expect((helpItems({ mode: "crash", reason: "" })[3] as unknown as { label: string }).label).toBe("Crash Data: Local Only");
   });
 
   it("show Discord's own mark, a monochrome icon of the extension's font that takes the theme's colour", () => {

@@ -68,6 +68,12 @@ export function rebase(bundle: UhdBundle & { artifactBases?: Record<string, stri
 /** Mount the shell in `element` with the page's config; returns the viewer's handle once the first bundle loads. */
 export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, vscode: VsCodeApi = acquireVsCodeApi()) {
   const post = (m: FromWebview) => vscode.postMessage(m);
+  // local telemetry (PB-1181): the viewer's session records (uhd-viewer src/telemetry/, a window event) go to the
+  // extension host, which writes them only while recording is on (protoboard.telemetry.local and VS Code's telemetry)
+  window.addEventListener("uhd-viewer:telemetry", (e) => {
+    const record = (e as CustomEvent).detail as unknown;
+    if (record && typeof record === "object" && !Array.isArray(record)) post({ type: "telemetry", record: record as Record<string, unknown> });
+  });
   const showListeners = new Set<(view: string) => void>();
   const statusListeners = new Set<() => void>();
   let status: ViewerStatus | null = { message: "Connecting to the project…", busy: true };

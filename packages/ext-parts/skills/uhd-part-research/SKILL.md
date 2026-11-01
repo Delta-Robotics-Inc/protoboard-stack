@@ -56,6 +56,13 @@ npx protoboard parts search <manufacturer> <product> --format json   # is it (or
 npx protoboard inspect --format json                                 # definitions the project already has
 ```
 
+- **LCSC first.** When the part is a board component, record its LCSC
+  C-number at selection time (in `parts/evidence/<id>/sourcing.json`, with the
+  date), check its LCSC/JLCPCB stock covers the build and that it is not
+  marked end-of-life, and note whether it is a JLC **Basic** or **Extended**
+  part (prefer Basic: each Extended part adds a loading fee). A part supplied
+  by the customer has no C-number: say so in the record, so it is not taken
+  for a missing one.
 - If the brief's product can't be confirmed from manufacturer documentation
   (it's discontinued, only exists as an unbranded listing, or the name is
   ambiguous), stop and report the problem together with the closest
@@ -139,7 +146,10 @@ alone.
 ### 3. Find CAD
 
 Every part gets 3D geometry (the author binds its interfaces to it), so
-look for manufacturer CAD while collecting sources. In order:
+look for manufacturer CAD while collecting sources. A board component with an
+LCSC C-number has EasyEDA's model, which comes with JLC's footprint: the
+person (never a bulk crawl) fetches it with `protoboard parts fetch <id>
+--lcsc <C-number>` (terms unknown: kept on their machine). In order:
 
 1. The manufacturer's product or downloads page (a "STEP", "3D model" or
    "CAD" link; REV, CTRE, Raspberry Pi, Arduino and Pololu publish one per

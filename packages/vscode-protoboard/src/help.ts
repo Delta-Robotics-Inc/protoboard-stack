@@ -4,8 +4,14 @@
  * side bar as a small view of their own (Help), whatever the
  * window's height, in the command palette, and in the Protoboard status bar
  * item's tooltip.
+ *
+ * The view also has one row for local crash and performance data (PB-1181):
+ * whether Protoboard records it on this machine (`protoboard.telemetry.local`
+ * and VS Code's own telemetry setting, ./telemetry.ts) and, on a click, what
+ * is stored and where; nothing is ever sent from here.
  */
 import * as vscode from "vscode";
+import { TELEMETRY_COMMAND, extensionTelemetryMode, registerTelemetry, telemetryLabel, telemetryStatusText } from "./telemetry.js";
 
 export interface HelpLink {
   /** The command that opens it: `protoboard.help.<id>`. */
@@ -26,9 +32,9 @@ export const HELP_VIEW = "protoboard.help";
 
 export const helpCommand = (l: HelpLink) => `protoboard.help.${l.id}`;
 
-/** The Help view's rows: one per link, a click opens it. */
-export function helpItems(): vscode.TreeItem[] {
-  return HELP_LINKS.map((l) => {
+/** The Help view's rows: one per link, a click opens it; then the local telemetry row (`mode`: as recording is now). */
+export function helpItems(mode: ReturnType<typeof extensionTelemetryMode> = extensionTelemetryMode()): vscode.TreeItem[] {
+  const links = HELP_LINKS.map((l) => {
     const item = new vscode.TreeItem(l.label);
     item.id = l.id;
     item.iconPath = new vscode.ThemeIcon(l.icon);
@@ -36,13 +42,22 @@ export function helpItems(): vscode.TreeItem[] {
     item.command = { command: helpCommand(l), title: l.label };
     return item;
   });
+  const telemetry = new vscode.TreeItem(telemetryLabel(mode.mode));
+  telemetry.id = "telemetry";
+  telemetry.iconPath = new vscode.ThemeIcon(mode.mode === "off" ? "circle-slash" : "pulse");
+  telemetry.tooltip = telemetryStatusText(mode);
+  telemetry.command = { command: TELEMETRY_COMMAND, title: telemetryLabel(mode.mode) };
+  return [...links, telemetry];
 }
 
-/** The view and the three commands. */
+/** The view, the three link commands and the telemetry status command; the telemetry row follows its settings. */
 export function registerHelp(): vscode.Disposable[] {
+  const changed = new vscode.EventEmitter<void>();
   return [
-    vscode.window.registerTreeDataProvider<vscode.TreeItem>(HELP_VIEW, { getChildren: (e) => (e ? [] : helpItems()), getTreeItem: (x) => x }),
+    changed,
+    vscode.window.registerTreeDataProvider<vscode.TreeItem>(HELP_VIEW, { onDidChangeTreeData: changed.event, getChildren: (e) => (e ? [] : helpItems()), getTreeItem: (x) => x }),
     ...HELP_LINKS.map((l) => vscode.commands.registerCommand(helpCommand(l), () => vscode.env.openExternal(vscode.Uri.parse(l.url)))),
+    ...registerTelemetry(() => changed.fire()),
   ];
 }
 

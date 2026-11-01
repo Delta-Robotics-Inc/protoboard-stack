@@ -16,7 +16,7 @@ the eval cases. Writing a provider: [the provider guide](../guides/writing-a-cap
 | `cad` | `@protoboardai/ext-enclosure-cad` | `build123d/` | Enclosures (cases, caps, back covers) with build123d: generated from the features they provide and what goes inside them |
 | `cad` | `@protoboardai/ext-frame-cad` | `frame-cad/` | Plates (frames, top plates, brackets) from a module's UHD bolt patterns and frames, and nominal mounting-hardware bodies (screws, nuts, standoffs, spacers) from their sizes, with build123d; DXF cutting profiles for plates |
 | `cad` | `@protoboardai/ext-harness-cad` | `harness-cad/` | Routed wire harnesses: an obstacle-free route through the assembled model, swept conductors, plug housings and solder joints (build123d) |
-| `cad` | `@protoboardai/ext-parts` | `part-cad/` | A project-researched part's body drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py): run, recorded and exported as STEP, GLB and a feature manifest |
+| `cad` | `@protoboardai/ext-parts` | `part-cad/` | A part's or module's body: drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py), or imported from an existing CAD file (STEP, STL, 3MF; constraints.import, written by `protoboard parts import`); run, recorded and exported as STEP, GLB and a feature manifest |
 | `circuit` | `@protoboardai/ext-tscircuit` | `tscircuit/` | PCBs from UHD boards with tscircuit: generated source, local autorouting, Gerber/BOM/PnP/GLB/STEP/manifest/netlist and SVG renders, DRC and netlist drift |
 | `firmware` | `@protoboardai/ext-esp-idf` | `esp-idf/` | ESP-IDF 5.3 board_pins.h (buses, addresses, buttons, controls, wake mask) and sdkconfig.defaults (target, flash, console, RTC clock) for an ESP32-C3 board |
 | `firmware` | `@protoboardai/ext-zephyr` | `zephyr/` | Zephyr 4.2 board definition (board.yml, Kconfig, defconfig, devicetree, pinctrl) and a Kconfig fragment for an nRF52840 board |
@@ -209,7 +209,7 @@ Purchased parts as datasheet-honest UHD definitions: research and cite the sourc
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
-**Capability `cad`**: A project-researched part's body drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py): run, recorded and exported as STEP, GLB and a feature manifest. Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`. Constraints: `generator`.
+**Capability `cad`**: A part's or module's body: drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py), or imported from an existing CAD file (STEP, STL, 3MF; constraints.import, written by `protoboard parts import`); run, recorded and exported as STEP, GLB and a feature manifest. Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`. Constraints: `generator`, `import`, `sha256`, `units`.
 
 | Operation | Effect | Needs | Summary |
 | --- | --- | --- | --- |
@@ -280,7 +280,7 @@ Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 | Tool | Purpose | Runtime |
 | --- | --- | --- |
 | `tscircuit-node` | tscircuit libraries (@tscircuit/core 0.0.2056 and its converters, exact versions) on Node 22+, run in Protoboard's process; no tsci, no Bun, no account | — |
-| `kicad-cli` | KiCad 10's command line: saves the exported KiCad project in KiCad 10's format, and makes a locked board's fabrication outputs (DRC, Gerber, drill, position, STEP, GLB) | — |
+| `kicad-cli` | KiCad's command line (KiCad 10 or newer, any install folder; the probe prints its version, path and where it was found): saves the exported KiCad project in KiCad's own format, and makes a locked board's fabrication outputs (DRC, Gerber, drill, position, STEP, GLB) | — |
 
 Skills: `circuit-board`, `kicad-layout-review`, `kicad-cli`.
 

@@ -4,8 +4,11 @@
  * cad:<generate|export|extract|check> --module <id>` on a part whose
  * `cad.config.ts` names @protoboardai/ext-parts.
  */
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import type { CapabilityContext, CapabilityOperationFn, ExtractedFacts } from "@protoboardai/core";
-import { exportPart, extractPart, generatePart, partCadDiagnostics, type PartCadTarget } from "../lib/part-cad.ts";
+import { exportPart, extractPart, generatePart, partCadArtifacts, partCadDiagnostics, type PartCadTarget } from "../lib/part-cad.ts";
+import { exportImport, generateImport, importDiagnostics, isImport } from "../lib/import-cad.ts";
 
 function target(ctx: CapabilityContext): PartCadTarget | string {
   const def = ctx.module.definition;
@@ -18,7 +21,8 @@ function target(ctx: CapabilityContext): PartCadTarget | string {
 export const generate: CapabilityOperationFn = async (ctx) => {
   const t = target(ctx);
   if (typeof t === "string") return { status: "failed", summary: t };
-  const r = await generatePart(ctx, t);
+  // constraints.import: an existing CAD file, imported (PB-1143); else the part's own script
+  const r = isImport(t) ? await generateImport(ctx, t) : await generatePart(ctx, t);
   if (!r.ok) return { status: "failed", summary: r.summary };
   const n = r.value.rebind.length;
   return {
@@ -31,7 +35,7 @@ export const generate: CapabilityOperationFn = async (ctx) => {
 export const exportOutputs: CapabilityOperationFn = async (ctx) => {
   const t = target(ctx);
   if (typeof t === "string") return { status: "failed", summary: t };
-  const r = await exportPart(ctx, t);
+  const r = isImport(t) ? await exportImport(ctx, t) : await exportPart(ctx, t);
   if (!r.ok) return { status: "failed", summary: r.summary };
   return { status: "succeeded", summary: `${t.def.id}: body.step, body.glb, body.manifest.json${r.value.interfaces.length ? ` and ${r.value.interfaces.length} interface GLBs` : ""} in ${r.value.out}`, data: r.value };
 };
@@ -39,6 +43,11 @@ export const exportOutputs: CapabilityOperationFn = async (ctx) => {
 export const extract: CapabilityOperationFn = (ctx) => {
   const t = target(ctx);
   if (typeof t === "string") return { status: "failed", summary: t };
+  if (isImport(t)) {
+    const root = ctx.project.root;
+    const artifacts = partCadArtifacts({ dir: t.binding.dir, name: t.def.id, generator: "import" }).filter((a) => a.id !== "cad_source" && a.filePath && existsSync(join(root, a.filePath)));
+    return { status: "succeeded", summary: `${artifacts.length} artifacts (imported body)`, data: { frames: {}, artifacts } };
+  }
   const r = extractPart(ctx.project.root, t);
   if (!r.ok) return { status: "failed", summary: r.summary };
   const facts: ExtractedFacts = r.value;
@@ -48,6 +57,7 @@ export const extract: CapabilityOperationFn = (ctx) => {
 export const check: CapabilityOperationFn = (ctx) => {
   const t = target(ctx);
   if (typeof t === "string") return { status: "succeeded", summary: t, diagnostics: [{ code: "PART_CAD_NOT_LOCAL", severity: "error", entity: { kind: "definition", id: ctx.module.id }, message: t }] };
-  const diagnostics = partCadDiagnostics(ctx.project.root, t, ctx.project.definitions.get(t.def.id)!.origin.source);
+  const src = ctx.project.definitions.get(t.def.id)!.origin.source;
+  const diagnostics = isImport(t) ? importDiagnostics(ctx.project.root, t, src) : partCadDiagnostics(ctx.project.root, t, src);
   return { status: "succeeded", summary: `${diagnostics.length} finding(s)`, diagnostics };
 };

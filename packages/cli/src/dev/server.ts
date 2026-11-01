@@ -52,6 +52,10 @@ import { DEV_ROUTES, DEV_SCRIPT, FAVICON_SVG, TOKEN_HEADER, devPage } from "./pa
 import { SOURCES_FILE, resolveSource, type SourceIndex } from "./sources.js";
 import { DEFAULT_HOST_ORIGINS, originAllowed } from "./relay.js";
 import { PARTS_PREFIX, partsRoutes } from "./parts.js";
+import { sendSidecar, sidecarOf, type ArtifactPlan } from "./sidecars.js";
+import { cliTelemetryMode, versionInventory } from "../telemetry.js";
+// TODO(W1-B handoff): `@protoboardai/core/telemetry` once core/package.json exports it
+import { MAX_LINE_BYTES, appendTelemetry, enrichViewerRecord } from "@protoboardai/core/telemetry";
 
 export const DEFAULT_DEV_PORT = 5180;
 const LOOPBACK = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
@@ -172,7 +176,7 @@ async function loadViewer(libOverride?: string) {
   for (const f of WEB_VIEWER_FILES) {
     if (!existsSync(join(lib, f))) throw new Error(`the web viewer is not built (${join(lib, f)} is missing): run \`npm run build\` in ${pkgDir ?? "@protoboardai/web-viewer"}`);
   }
-  return { viewerHandler: serve.viewerHandler, lib };
+  return { viewerHandler: serve.viewerHandler, planBundle: serve.planBundle, artifactHeaders: serve.artifactHeaders, lib };
 }
 
 function writeAtomic(file: string, data: string) {
@@ -245,6 +249,42 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   const viewer = await loadViewer(options.viewerLib);
   const bundleFile = join(root, ".protoboard", "build", "uhd-bundle.json");
   const handleViewer = viewer.viewerHandler({ bundleFile, allowHost });
+  // the bundle's artifact plan, as the viewer's handler makes it, re-made when the bundle file changes (for the view sidecars)
+  let planned: { mtimeMs: number; size: number; plan: ArtifactPlan } | undefined;
+  const artifactPlan = (): ArtifactPlan => {
+    const { mtimeMs, size } = statSync(bundleFile);
+    if (!planned || planned.mtimeMs !== mtimeMs || planned.size !== size) planned = { mtimeMs, size, plan: viewer.planBundle(JSON.parse(readFileSync(bundleFile, "utf8")), bundleFile) };
+    return planned.plan;
+  };
+  /**
+   * `X.view.glb`, `X.view.coarse.glb` and `X.view.json` beside a referenced `X.glb` (./sidecars.ts): the
+   * viewer's handler answers only files the bundle names, so these are answered here, with the same base,
+   * containment check and artifact headers. True when the request was one.
+   */
+  const handleSidecar = async (req: IncomingMessage, res: ServerResponse, path: string): Promise<boolean> => {
+    let key: string;
+    try {
+      key = decodeURIComponent(path.slice("/artifacts/".length));
+    } catch {
+      return false;
+    }
+    if (!sidecarOf(key)) return false;
+    let plan: ArtifactPlan;
+    try {
+      plan = artifactPlan();
+    } catch {
+      // no bundle yet: the viewer's handler says so
+      return false;
+    }
+    if (plan.files.has(key)) return false;
+    try {
+      await sendSidecar(req, res, plan, key, viewer.artifactHeaders(key));
+    } catch (e) {
+      if (!res.headersSent) res.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
+      res.end(String((e as Error).message));
+    }
+    return true;
+  };
   const token = randomBytes(18).toString("base64url");
   const session = randomBytes(9).toString("base64url");
   const tsx = pathToFileURL(require.resolve("tsx/esm")).href;
@@ -516,6 +556,37 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     return json(200, { file: displayRel(), levels: merged.levels, skipped: merged.skipped });
   };
 
+  // ---- local telemetry from the page (PB-1181): the session's token, the page's origin, JSON, one record of at most 64 kB
+  const saveTelemetry = async (req: IncomingMessage, res: ServerResponse) => {
+    const json = (status: number, body: unknown) => {
+      res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+      res.end(JSON.stringify(body));
+    };
+    const origin = req.headers.origin;
+    if (req.headers[TOKEN_HEADER] !== token) return json(403, { error: "missing or wrong session token" });
+    if (origin && !sameSite(origin, req)) return json(403, { error: `origin ${origin} not allowed` });
+    if (!/^application\/json\b/.test(req.headers["content-type"] ?? "")) return json(415, { error: "expected application/json" });
+    let size = 0;
+    const chunks: Buffer[] = [];
+    for await (const c of req) {
+      size += (c as Buffer).length;
+      if (size > MAX_LINE_BYTES * 2) return json(413, { error: "record too large" });
+      chunks.push(c as Buffer);
+    }
+    let body: { record?: unknown };
+    try {
+      body = JSON.parse(Buffer.concat(chunks).toString("utf8")) as { record?: unknown };
+    } catch {
+      return json(400, { error: "body is not JSON" });
+    }
+    // the switch is read on every record: `protoboard telemetry off` takes effect without a restart
+    const { mode } = cliTelemetryMode();
+    const inv = versionInventory();
+    const record = enrichViewerRecord(root, body?.record, { host: "dev-web", versions: { ...(inv.stack ? { stack: inv.stack } : {}) } });
+    const r = appendTelemetry(root, record, { mode });
+    return json(r.written ? 200 : r.reason === "off" ? 202 : 400, { written: r.written, ...(r.reason ? { reason: r.reason } : {}) });
+  };
+
   // ---- requests
   const lib = (file: string, type: string) => (res: ServerResponse) => {
     res.writeHead(200, { "content-type": type, "cache-control": "no-cache" });
@@ -605,6 +676,16 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
         res.end(e.message);
       });
     }
+    if (path === DEV_ROUTES.telemetry) {
+      if (req.method !== "POST") {
+        res.writeHead(405, { allow: "POST" });
+        return res.end("method not allowed");
+      }
+      return saveTelemetry(req, res).catch((e: Error) => {
+        if (!res.headersSent) res.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
+        res.end(e.message);
+      });
+    }
     if (req.method !== "GET" && req.method !== "HEAD") {
       res.writeHead(405, { allow: "GET, HEAD" });
       return res.end("method not allowed");
@@ -622,6 +703,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     const route = routes[path];
     if (route) return route(res);
     // the bundle and its artifacts: the viewer's handler (only referenced files, inside their base)
+    if (path.startsWith("/artifacts/") && (await handleSidecar(req, res, path))) return;
     if (path === "/uhd-bundle.json" || path.startsWith("/artifacts/")) return handleViewer(req, res);
     res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
     res.end("not found");
