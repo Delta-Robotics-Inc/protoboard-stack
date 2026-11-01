@@ -34,7 +34,9 @@
     "./private-dir": "./src/private-dir.ts",
     "./part-files": "./src/part-files.ts",
     "./telemetry": "./src/telemetry.ts",
-    "./view-model": "./src/view-model/index.ts"
+    "./view-model": "./src/view-model/index.ts",
+    "./sequence": "./src/sequence/index.ts",
+    "./render-service": "./src/render-service/index.ts"
   },
   "files": [
     "src",

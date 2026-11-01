@@ -22,9 +22,12 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `inspect [instance]` | System summary, or one instance's definition, origin, links, artifacts, diagnostics |
 | `artifacts [instance]` | Artifacts of the definitions in use (or of one instance), with the instances using them and the file each resolves to |
 | `check` | Resolve the project and run every available validator (exit 1 on errors) |
-| `build` | Write .protoboard/build/resolved.json (derived data only) with the model table: what the one model resolver chose for every drawn body (file, sha256, tier, provenance, placeholder), and an amber placeholder box per part with no model at any tier. Offline; --fetch first restores the vendor files parts/sources.json records that are not on this machine (parts fetch), over the network when they are not cached. Then the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json: merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after |
+| `build` | Write .protoboard/build/resolved.json (derived data only) with the model table: what the one model resolver chose for every drawn body (file, sha256, tier, provenance, placeholder), and an amber placeholder box per part with no model at any tier. Offline; --fetch first restores the vendor files parts/sources.json records that are not on this machine (parts fetch), over the network when they are not cached. Then the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json: merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after. Also .protoboard/build/sequence.json: the assembly sequence (fit and fasten steps from the mates and fastener stacks, patched by src/assembly.uhd.ts) the 3D view plays |
 | `layout [level]` | The diagram's layout measured, level by level, as the viewer draws it: line crossings, overlapping cards, the longest row or column of cards (a strip), the aspect ratio and lines under cards, with what to fix. A level is an instance path ("" is the top; default: every level). --apply lays the level(s) out afresh, --tidy keeps the saved arrangement and fixes it; either writes .protoboard/display.json where the result reads better (--force: anyway). --pin <card> keeps a card where it is (repeatable; remembered in the file). --check: exit 1 when a level still has something to fix. check reports the levels of modules that need it as PB_DIAGRAM_LAYOUT (info) |
-| `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs |
+| `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs through the project's warm render service (started when none runs); --no-service opens a browser of its own |
+| `views capture` | One view as an image for a document or an agent, through the warm render service: --view 3d\|diagram\|..., --level <instance path>, --state <json\|@file> (camera, explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend), --size, --format png\|jpeg\|webp, --out <file>; writes x.capture.json beside the image and a snapshot the visible viewer opens from. --no-service runs it in this process |
+| `views doctor` | Can this machine render headless: the browser, the GL backend (GPU or SwiftShader; --backend auto\|gpu\|swiftshader), WebGL 2, a test frame, the capture encoders |
+| `views service \| status \| stop` | Run the render service in the foreground (one warm headless browser per project, loopback only, a session token in .protoboard/local/render-service.json; it stops after 15 minutes idle), say whether one runs, or stop it |
 | `dev` | Serve the UHD viewer on the project: rebuilds on every source change, saves diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch) |
 | `bom` | The bill of materials, by top-level module, in US dollars: what one unit needs, the offer used for each line, what must be bought (whole packs, minimum orders), the cost per unit and the cost of the order. --units <n> builds n (default: the project's setting, else 1); --release <version> lists that release's ordering list instead of the design; --format json carries everything, --format csv is the export. Offline: prices are the offers the project holds |
 | `bom units <n>` | Set the units to build (parts/bom.json) |
@@ -194,7 +197,9 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             not on this machine (parts fetch), over the network when they are not cached. Then
                             the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json:
                             merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one
-                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after
+                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after.
+                            Also .protoboard/build/sequence.json: the assembly sequence (fit and fasten steps
+                            from the mates and fastener stacks, patched by src/assembly.uhd.ts) the 3D view plays
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -206,7 +211,20 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     views check             The viewer's tabs for the root and every level with modules inside it (--module
                             <instance path or module id> for one), each opened once in a headless browser:
                             fails (exit 1) on a tab that throws, shows an empty state or draws nothing.
-                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs
+                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs
+                            through the project's warm render service (started when none runs); --no-service
+                            opens a browser of its own
+    views capture           One view as an image for a document or an agent, through the warm render service:
+                            --view 3d|diagram|..., --level <instance path>, --state <json|@file> (camera,
+                            explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend),
+                            --size, --format png|jpeg|webp, --out <file>; writes x.capture.json beside the image
+                            and a snapshot the visible viewer opens from. --no-service runs it in this process
+    views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
+                            --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
+    views service | status | stop
+                            Run the render service in the foreground (one warm headless browser per project,
+                            loopback only, a session token in .protoboard/local/render-service.json; it stops
+                            after 15 minutes idle), say whether one runs, or stop it
     dev                     Serve the UHD viewer on the project: rebuilds on every source change, saves
                             diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch)
     bom                     The bill of materials, by top-level module, in US dollars: what one unit needs, the

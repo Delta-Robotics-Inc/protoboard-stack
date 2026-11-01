@@ -458,6 +458,31 @@ function netPortRef(def: ModuleDef, ref: string | undefined, lookup: ModuleLooku
   }
 }
 
+/**
+ * The instance the assembly is placed from (PB-1137), the same rule as the 3D viewer's (uhd-viewer
+ * `src/cad/state/view.ts` `assemblyRoot`, docs/reference/display.md `root`): (1) `spatialRoot` when it
+ * names an instance; (2) else the system itself when it has a body of its own; (3) else the top-level
+ * module, not a harness, with the most interface frames, the first declared on a tie. `path` is empty
+ * for the system itself; `rule: "none"` when nothing qualifies.
+ */
+export function assemblyRoot(system: ModuleDef, lookup: (id: string) => ModuleDef | undefined, spatialRoot?: string): { path: string[]; rule: "display" | "own-body" | "most-frames" | "none" } {
+  if (spatialRoot) {
+    const parts = spatialRoot.split("/").filter(Boolean);
+    let def: ModuleDef | undefined = system;
+    for (const id of parts) def = def ? lookup(def.children?.find((c) => c.id === id)?.moduleDefId ?? "") : undefined;
+    if (def && parts.length) return { path: parts, rule: "display" };
+  }
+  if (bodyArtifact(system, ["glb"])) return { path: [], rule: "own-body" };
+  let best: { id: string; frames: number } | undefined;
+  for (const c of system.children ?? []) {
+    const def = lookup(c.moduleDefId);
+    if (!def || def.kind === "harness") continue;
+    const frames = def.interfaces.filter((i) => i.geometry?.frame).length;
+    if (frames && (!best || frames > best.frames)) best = { id: c.id, frames };
+  }
+  return best ? { path: [best.id], rule: "most-frames" } : { path: [], rule: "none" };
+}
+
 /** UHD validators: system rules (incl. link DRC), assembly, geometry bindings. */
 export function runModelChecks(p: Project): void {
   // PB_DEFINITION_INVALID: the root is imported apart from the registry, so a malformed root would still reach checkSystem
@@ -510,20 +535,24 @@ export function runModelChecks(p: Project): void {
     }
     p.checks.push({ validator: "uhd/checkSystem", status: "ran", counts: count(p.diagnostics, "uhd/checkSystem") });
 
-    const firstStructure = p.instances.find((i) => i.parent === "" && p.lookup(i.definition)?.interfaces.some((f) => f.geometry?.frame));
-    if (!firstStructure) skip("uhd/assemble", "no instance with interface frames");
+    // the assembly root by the viewer's rule (PB-1137; uhd-viewer `src/cad/state/view.ts` `assemblyRoot`):
+    // the display file's `spatial.root` when it names an instance, else the system when it has a body of
+    // its own, else the top-level module (not a harness) with the most interface frames
+    const displayFile = join(p.root, p.config.display ?? ".protoboard/display.json");
+    let spatial: { root?: string; placements?: Record<string, { matrix?: Mat4 }> } | undefined;
+    try {
+      spatial = existsSync(displayFile) ? (JSON.parse(readFileSync(displayFile, "utf8")) as { spatial?: typeof spatial }).spatial : undefined;
+    } catch {
+      // an unreadable display file only loses the hints
+    }
+    const chosen = assemblyRoot(p.rootDef, p.lookup, typeof spatial?.root === "string" ? spatial.root : undefined);
+    if (chosen.rule === "none") skip("uhd/assemble", "no root: the system has no body and no top-level module has interface frames");
     else {
       // the project's display placements (parts held, bonded or strapped, which no mate places), as the viewer uses them
-      const displayFile = join(p.root, p.config.display ?? ".protoboard/display.json");
-      let fixed: Record<string, Mat4> | undefined;
-      try {
-        const spatial = existsSync(displayFile) ? (JSON.parse(readFileSync(displayFile, "utf8")) as { spatial?: { root?: string; placements?: Record<string, { matrix?: Mat4 }> } }).spatial : undefined;
-        if (spatial?.root === firstStructure.path && spatial.placements)
-          fixed = Object.fromEntries(Object.entries(spatial.placements).filter(([, v]) => Array.isArray(v.matrix) && v.matrix.length === 16).map(([k, v]) => [k, v.matrix!]));
-      } catch {
-        // an unreadable display file only loses the hints
-      }
-      const asm = assemble(p.rootDef, p.lookup, { root: [firstStructure.path], ...(fixed ? { fixed } : {}) });
+      const fixed = spatial?.placements
+        ? Object.fromEntries(Object.entries(spatial.placements).filter(([, v]) => Array.isArray(v?.matrix) && v.matrix.length === 16).map(([k, v]) => [k, v.matrix!]))
+        : undefined;
+      const asm = assemble(p.rootDef, p.lookup, { root: chosen.path, ...(fixed && Object.keys(fixed).length ? { fixed } : {}) });
       // instances inside a placed module that has a body of its own (a board's components in its
       // board.glb) are drawn by that body, as the viewer does: not reported as unplaced one by one
       const defAt = (path: string[]) => path.reduce<ModuleDef | undefined>((d, id) => (d ? p.lookup(d.children?.find((c) => c.id === id)?.moduleDefId ?? "") : undefined), p.rootDef);
@@ -541,7 +570,7 @@ export function runModelChecks(p: Project): void {
           validator: "uhd/assemble",
         });
       }
-      p.checks.push({ validator: "uhd/assemble", status: "ran", counts: count(p.diagnostics, "uhd/assemble") });
+      p.checks.push({ validator: "uhd/assemble", status: "ran", root: chosen.path.join("/"), rootRule: chosen.rule, counts: count(p.diagnostics, "uhd/assemble") });
     }
   }
 

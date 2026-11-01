@@ -500,7 +500,9 @@ describe("the project step", () => {
     // the bundle names no components of this definition, so the file is one part: one draw per look (mask, body, tin, silkscreen)
     expect(s.totals.after.draws).toBe(2 * 4);
     expect(s.line).toMatch(/draws 72 → 8/);
-    expect(lines.at(-1)).toBe(s.line);
+    // per-file lines are logged; the summary only returned (the build prints it once)
+    expect(lines).not.toContain(s.line);
+    expect(lines.some((l) => l.startsWith("view: parts/local/res/out/body.glb"))).toBe(true);
     const again = await writeProjectViewSidecars(root);
     expect(again.cached).toBe(1);
   });

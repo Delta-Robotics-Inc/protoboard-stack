@@ -10,6 +10,12 @@
  * exit keeps unsaved edits in a backup. Everything else a tab does (its
  * selection, open source, open artifact, open a module as a new tab) goes to
  * the extension through `ViewerHost`.
+ *
+ * The 3D view's state (PB-1178, viewerBridge.ts): a tab's live view state is
+ * saved to `.protoboard/local/viewer-state.json` (and kept in the webview's
+ * own state, so VS Code restores the camera and selection with the tab), its
+ * saved named views go to the display file, and the tabs of a project are
+ * live tabs of the dev server's bridge, through one relay per project.
  */
 import { existsSync } from "node:fs";
 import { basename } from "node:path";
@@ -18,6 +24,7 @@ import { join } from "node:path";
 import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection } from "../../web-viewer/src/vscode/protocol.js";
 import { nonce } from "./html.js";
 import { writeViewerTelemetry } from "./telemetry.js";
+import { ProjectRelay, readViewerState, saveTabViewState, savePresentation, saveViewerSnapshot } from "./viewerBridge.js";
 import { devOrigins, distinctTitles, originCovered, parseBackup, parseViewerUri, viewerPageHtml, viewerTitle, viewerUri, SOURCE_COMMANDS, VIEWER_SCHEME, VIEWER_TYPE, type ViewerBackup, type ViewerTarget } from "./viewerPage.js";
 
 /** What the extension does for the tabs. */
@@ -108,6 +115,8 @@ export class ViewerEditor {
   /** How many times the page said it runs, and reported what it shows (tests: a page that loads again is told the server again). */
   readyCount = 0;
   stateCount = 0;
+  /** The live-tab bridge's id for this tab (PB-1178). */
+  readonly bridgeId = ProjectRelay.tabId();
   private themeWaiters: ((r: Extract<FromWebview, { type: "theme" }>) => void)[] = [];
   private hierarchyWaiters: ((r: Extract<FromWebview, { type: "hierarchy" }>) => void)[] = [];
 
@@ -200,6 +209,14 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
   readonly onDidChangeCustomDocument = this.changed.event;
   readonly editors = new Set<ViewerEditor>();
   private active: ViewerEditor | undefined;
+  /** One bridge relay per project with open tabs (PB-1178). */
+  private readonly relays = new Map<string, ProjectRelay>();
+
+  private relayOf(root: string): ProjectRelay {
+    let r = this.relays.get(root);
+    if (!r) this.relays.set(root, (r = new ProjectRelay(root, undefined, (m) => this.host.log.info(m))));
+    return r;
+  }
 
   private readonly commands: vscode.Disposable[];
 
@@ -330,6 +347,7 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
     // the Inspector follows the viewer tab that has focus, and stays on it while another editor has focus
     panel.onDidChangeViewState((e) => e.webviewPanel.active && this.setActive(editor));
     panel.onDidDispose(() => {
+      this.relays.get(root)?.remove(editor.bridgeId);
       document.editors.delete(editor);
       this.editors.delete(editor);
       if (this.active === editor) this.setActive(undefined);
@@ -350,7 +368,10 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
   }
 
   private setActive(editor: ViewerEditor | undefined) {
-    if (editor) this.active = editor;
+    if (editor) {
+      this.active = editor;
+      this.relays.get(editor.root)?.activate(editor.bridgeId);
+    }
     this.host.focused(editor);
   }
 
@@ -375,6 +396,11 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         ...(state.dev ? { dev: state.dev } : {}),
         ...(editor.document.dirty ? { layout: editor.document.layout } : {}),
         ...(editor.document.target.params ? { params: editor.document.target.params } : {}),
+        // the project's saved live 3D view state (PB-1178): the webview's own state wins over it
+        ...(() => {
+          const viewState = readViewerState(editor.root);
+          return viewState ? { viewState } : {};
+        })(),
       },
     });
     this.tellSource(editor);
@@ -384,6 +410,8 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
 
   /** The project's dev server started, moved, restarted or stopped: every tab of it follows. */
   devChanged(root: string) {
+    // the bridge relay follows the server (a restart makes a new key)
+    this.relays.get(root)?.connect();
     const state = this.host.devState(root);
     for (const editor of this.of(root)) {
       if (state.dev && !originCovered(state.dev.url, editor.origins)) this.write(editor);
@@ -405,11 +433,38 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         const state = this.host.devState(editor.root);
         if (again) this.host.log.info(`${this.name(editor)}: its page loaded again; telling it where the dev server is (${state.dev?.url ?? state.message ?? "none"})`);
         editor.post(devMessage(state));
+        // a live tab of the bridge: batches for it come through the project's relay (PB-1178)
+        this.relayOf(editor.root).add({ id: editor.bridgeId, label: editor.panel.title, active: this.active === editor, deliver: (request) => editor.post({ type: "bridge", request }) });
         return;
       }
       case "telemetry":
         // local telemetry (PB-1181): written only while recording is on; never sent anywhere
         writeViewerTelemetry(editor.root, m.record);
+        return;
+      case "viewState":
+        // the live 3D view state (PB-1178), after the viewer's 400 ms debounce: per user, git-ignored, only when it changed
+        try {
+          saveTabViewState(editor.root, m.file);
+        } catch (e) {
+          this.host.log.warn(`${this.name(editor)}: view state not saved: ${(e as Error).message}`);
+        }
+        return;
+      case "presentation":
+        // named views saved in the tab: into the display file, only when they changed
+        void savePresentation(editor.root, m.presentation)
+          .then((r) => r.written && this.host.notify("Saved views to the display file"))
+          .catch((e: Error) => this.host.notify(`Views not saved: ${e.message}`, "error"));
+        return;
+      case "savePoint":
+        // the 3D view's save point (PB-1180): the same files the render service writes, for the next tab
+        try {
+          saveViewerSnapshot(editor.root, m.png, m.meta);
+        } catch (e) {
+          this.host.log.warn(`${this.name(editor)}: save point not kept: ${(e as Error).message}`);
+        }
+        return;
+      case "bridgeReply":
+        void this.relays.get(editor.root)?.reply(editor.bridgeId, m.id, m.reply);
         return;
       case "log": {
         const text = `${this.name(editor)}: ${m.message}`;
@@ -506,6 +561,8 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
   }
 
   dispose() {
+    for (const r of this.relays.values()) r.dispose();
+    this.relays.clear();
     this.changed.dispose();
     for (const c of this.commands) c.dispose();
   }

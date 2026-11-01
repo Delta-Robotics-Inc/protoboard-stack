@@ -60,6 +60,22 @@ export interface WebviewConfig {
   params?: Record<string, string>;
   /** The source file of the module the tab opens on, when the extension knows it already. */
   source?: ModuleSource;
+  /** The project's saved live 3D view state (`.protoboard/local/viewer-state.json`, PB-1178); the tab's own state wins over it. */
+  viewState?: ViewerStateFile;
+}
+
+/** uhd-viewer's `ViewerStateFile` (src/cad/state/serialize.ts): the live view state per scope, as the viewer hands it over. */
+export interface ViewerStateFile {
+  schema: "protoboard.viewer-state/v0";
+  viewState: "uhd-viewer.view-state/v1";
+  scope: string;
+  scopes: Record<string, Record<string, unknown>>;
+}
+
+/** Named views and annotations (uhd-viewer's `ViewerPresentation`): written to the display file on an explicit save. */
+export interface ViewerPresentation {
+  namedViews: Record<string, unknown>;
+  annotations: unknown[];
 }
 
 /** The file a module is written in: project-relative, with the line of its definition when the build records it. */
@@ -103,7 +119,12 @@ export type ToWebview =
    */
   | { type: "hierarchy"; command: HierarchyAction; path?: string }
   /** Test hook: report the hierarchy panel's rows. */
-  | { type: "reportHierarchy" };
+  | { type: "reportHierarchy" }
+  /**
+   * A live-tab bridge batch for this tab's viewer (PB-1178): uhd-viewer's `BridgeRequest`, from an agent session the
+   * dev server authenticated; the page answers with `bridgeReply`.
+   */
+  | { type: "bridge"; request: Record<string, unknown> };
 
 export type HierarchyAction = "reveal" | "filter" | "open" | "close" | "toggle";
 
@@ -178,7 +199,18 @@ export type FromWebview =
    * writes it to the project's .protoboard/local/telemetry/ when recording is on, after sanitising every field
    * (@protoboardai/core telemetry.ts); here only the envelope is checked.
    */
-  | { type: "telemetry"; record: Record<string, unknown> };
+  | { type: "telemetry"; record: Record<string, unknown> }
+  /** The 3D view's live state (PB-1178), 400 ms after it last changed: the extension host saves it to .protoboard/local/viewer-state.json. */
+  | { type: "viewState"; file: ViewerStateFile }
+  /** Named views or annotations were saved (PB-1178): the extension host writes them to the display file when they changed. */
+  | { type: "presentation"; presentation: ViewerPresentation }
+  /** The viewer's reply to a bridge batch (`bridge`), by the delivery's id. */
+  | { type: "bridgeReply"; id: string; reply: Record<string, unknown> }
+  /**
+   * A save point of the 3D view (PB-1180): the frame on settle or hide (`png`, base64) and what it shows; the
+   * extension host keeps it in .protoboard/local/snapshots/ for the next tab.
+   */
+  | { type: "savePoint"; png: string; meta: Record<string, unknown> };
 
 export type SourceAction = "open" | "reveal" | "copy" | "copyRelative";
 const SOURCE_ACTIONS: readonly SourceAction[] = ["open", "reveal", "copy", "copyRelative"];
@@ -195,7 +227,8 @@ export type ViewerEvent =
   | { type: "uhd-viewer:selectionChanged"; selection: ViewerSelection | null }
   | { type: "uhd-viewer:openSource"; defId: string; instancePath?: string }
   | { type: "uhd-viewer:openArtifact"; defId: string; artifactId: string }
-  | { type: "uhd-viewer:openModule"; path: string }
+  /** `view: "3d"` (PB-1072): a bought part, or a part double-clicked in the 3D view, opens on its 3D view. */
+  | { type: "uhd-viewer:openModule"; path: string; view?: "3d" }
   | { type: "uhd-viewer:openPair"; linkId: string; a: string; b: string }
   /** INSPECT in a module's context menu: the Protoboard Inspector, in front and focused. */
   | { type: "uhd-viewer:inspect"; path: string; defId?: string };
@@ -253,7 +286,7 @@ function parseEvent(v: unknown): ViewerEvent | undefined {
     case "uhd-viewer:openArtifact":
       return str(v.defId) && str(v.artifactId) ? { type: v.type, defId: v.defId, artifactId: v.artifactId } : undefined;
     case "uhd-viewer:openModule":
-      return str(v.path) ? { type: v.type, path: v.path } : undefined;
+      return str(v.path) ? { type: v.type, path: v.path, ...(v.view === "3d" ? { view: "3d" as const } : {}) } : undefined;
     case "uhd-viewer:openPair":
       return str(v.linkId) && str(v.a) && str(v.b) ? { type: v.type, linkId: v.linkId, a: v.a, b: v.b } : undefined;
     case "uhd-viewer:inspect":
@@ -324,7 +357,33 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
       if (JSON.stringify(r).length > 64 * 1024) return undefined;
       return { type: "telemetry", record: r };
     }
+    case "viewState": {
+      const file = parseViewerStateFile(data.file);
+      return file && { type: "viewState", file };
+    }
+    case "presentation": {
+      const p = data.presentation;
+      if (!obj(p) || !obj(p.namedViews) || !Array.isArray(p.annotations) || JSON.stringify(p).length > 512 * 1024) return undefined;
+      return { type: "presentation", presentation: { namedViews: p.namedViews, annotations: p.annotations } };
+    }
+    case "savePoint": {
+      // a PNG of the view, at most 16 MB of base64; the meta's fields are checked where it is written
+      if (!str(data.png) || data.png.length > 16 * 1024 * 1024 || !/^[A-Za-z0-9+/=]+$/.test(data.png) || !obj(data.meta)) return undefined;
+      const m = data.meta;
+      if (!str(m.level) || !str(m.view) || typeof m.width !== "number" || typeof m.height !== "number") return undefined;
+      return { type: "savePoint", png: data.png, meta: m };
+    }
+    case "bridgeReply":
+      if (!str(data.id) || data.id.length > 128 || !obj(data.reply) || JSON.stringify(data.reply).length > 2 * 1024 * 1024) return undefined;
+      return { type: "bridgeReply", id: data.id, reply: data.reply };
     default:
       return undefined;
   }
+}
+
+/** A viewer-state file, its envelope checked (the viewer checks every value it reads back); undefined for anything else. */
+export function parseViewerStateFile(v: unknown): ViewerStateFile | undefined {
+  if (!obj(v) || v.schema !== "protoboard.viewer-state/v0" || v.viewState !== "uhd-viewer.view-state/v1" || !obj(v.scopes)) return undefined;
+  if (Object.keys(v.scopes).length > 200 || !Object.values(v.scopes).every(obj) || JSON.stringify(v).length > 1024 * 1024) return undefined;
+  return { schema: v.schema, viewState: v.viewState, scope: str(v.scope) ? v.scope : "", scopes: v.scopes as ViewerStateFile["scopes"] };
 }

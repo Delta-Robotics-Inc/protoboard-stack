@@ -24,8 +24,8 @@ export {
   type PublishedRecord,
 } from "./load.js";
 export { FORMER_PACKAGE_SCOPE, PACKAGE_SCOPE, SCOPE_RENAMED, SCOPE_RENAME_FIX, formerScopeDependencies, formerScopeDiagnostics, renamedPackage } from "./scope.js";
-export { loadProject, runModelChecks, boardModules, errorCount, artifactPathEscape, type Project, type LoadOptions } from "./project.js";
-export { bom, resolvedProject, stableStringify, uhdVersion, writeBuild, RESOLVED_SCHEMA, type BomLine } from "./build.js";
+export { assemblyRoot, loadProject, runModelChecks, boardModules, errorCount, artifactPathEscape, type Project, type LoadOptions } from "./project.js";
+export { bom, resolvedProject, stableStringify, uhdVersion, writeBuild, writeBuildSequence, RESOLVED_SCHEMA, type BomLine } from "./build.js";
 export { inspectInstance, inspectProject, listArtifacts } from "./inspect.js";
 export { AGENTS_GUIDANCE, BLANK_EXTENSIONS, CLAUDE_MD, GUIDANCE_BEGIN, GUIDANCE_END, refreshGuidance, withCurrentGuidance, type GuidanceRefresh, SKILLS_EXPORT_SCRIPT, SKILLS_POSTINSTALL_SCRIPT, initProject, KEPT_ON_INIT, listTemplates, loadTemplate, vendorTemplateParts, TEMPLATES_DIR, TOOLCHAIN, type InitResult, type ProjectTemplate } from "./init.js";
 export { applyUpgrade, planUpgrade, STACK_RANGE, type UpgradeChange, type UpgradePlan } from "./upgrade.js";

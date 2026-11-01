@@ -301,6 +301,6 @@ export async function writeProjectViewSidecars(root: string, options: ProjectVie
   const cached = ok.length - written;
   const failed = files.length - ok.length;
   const line = `view sidecars: ${files.length} body GLB(s) (${written} written, ${cached} up to date${failed ? `, ${failed} failed` : ""}); one frame, every placement: draws ${fmt(totals.before.draws)} → ${fmt(totals.after.draws)}, triangles ${fmt(totals.before.triangles)} → ${fmt(totals.after.triangles)} (coarse ${fmt(totals.coarseTriangles)}), nodes ${fmt(totals.before.nodes)} → ${fmt(totals.after.nodes)}`;
-  options.log?.(line);
+  // the summary is returned (`line`), not logged: the build prints it once in its own output
   return { files, written, cached, failed, totals, line };
 }

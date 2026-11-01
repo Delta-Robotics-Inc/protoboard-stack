@@ -77,6 +77,7 @@ import {
   listArtifacts,
   loadProject,
   writeBuild,
+  writeBuildSequence,
   writeBundle,
   type Project,
   type ProjectDiagnostic,
@@ -195,7 +196,9 @@ const cli = meow(
                             not on this machine (parts fetch), over the network when they are not cached. Then
                             the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json:
                             merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one
-                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after
+                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after.
+                            Also .protoboard/build/sequence.json: the assembly sequence (fit and fasten steps
+                            from the mates and fastener stacks, patched by src/assembly.uhd.ts) the 3D view plays
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -207,7 +210,20 @@ const cli = meow(
     views check             The viewer's tabs for the root and every level with modules inside it (--module
                             <instance path or module id> for one), each opened once in a headless browser:
                             fails (exit 1) on a tab that throws, shows an empty state or draws nothing.
-                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs
+                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs
+                            through the project's warm render service (started when none runs); --no-service
+                            opens a browser of its own
+    views capture           One view as an image for a document or an agent, through the warm render service:
+                            --view 3d|diagram|..., --level <instance path>, --state <json|@file> (camera,
+                            explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend),
+                            --size, --format png|jpeg|webp, --out <file>; writes x.capture.json beside the image
+                            and a snapshot the visible viewer opens from. --no-service runs it in this process
+    views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
+                            --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
+    views service | status | stop
+                            Run the render service in the foreground (one warm headless browser per project,
+                            loopback only, a session token in .protoboard/local/render-service.json; it stops
+                            after 15 minutes idle), say whether one runs, or stop it
     dev                     Serve the UHD viewer on the project: rebuilds on every source change, saves
                             diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch)
     bom                     The bill of materials, by top-level module, in US dollars: what one unit needs, the
@@ -976,6 +992,9 @@ async function main() {
       const layout = await layoutDiagnostics(p);
       p.diagnostics.push(...layout);
       if (p.rootDef) p.checks.push({ validator: "protoboard/layout", status: "ran", counts: { error: 0, warning: 0, info: layout.length } });
+      // the assembly sequence's patches (PB-1183): an unknown step, member or sequence id is a SEQUENCE_PATCH_* warning
+      const { runSequenceChecks } = await import("@protoboardai/core/sequence");
+      await runSequenceChecks(p);
       const min = SEV_RANK[cli.flags.severity as keyof typeof SEV_RANK] ?? 1;
       const shown = p.diagnostics.filter((d) => SEV_RANK[d.severity] <= min).sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity]);
       out({ checks: p.checks, diagnostics: p.diagnostics }, () =>
@@ -1012,6 +1031,15 @@ async function main() {
       const p = await loadProject(cwd);
       const r = writeBuild(p);
       const b = await writeBundle(p);
+      // the assembly sequence (PB-1183): .protoboard/build/sequence.json beside the bundle; a sequence that
+      // cannot be built is a warning, never a failed build
+      const sq = await writeBuildSequence(p);
+      if (sq.warning) process.stderr.write(`warning: ${sq.warning}\n`);
+      const sequence = sq.sequence
+        ? { file: sq.sequence.path, steps: sq.sequence.steps, sequences: sq.sequence.sequences, problems: sq.sequence.diagnostics.length }
+        : sq.warning
+          ? { error: sq.warning }
+          : undefined;
       // view sidecars beside every body GLB (W1-A, PB-1173): after resolved.json and the bundle, which it reads;
       // a sidecar that cannot be written is logged and skipped, never a failed build
       let view: { line?: string } | undefined;
@@ -1022,7 +1050,8 @@ async function main() {
       const m = r.models;
       const held = m.placeholders ? ` (${m.placeholderInstances.slice(0, 6).join(", ")}${m.placeholderInstances.length > 6 ? ", …" : ""})` : "";
       const viewLine = view?.line ? `\n${view.line}` : "";
-      out({ ...r, bundle: b, ...(view ? { view } : {}) }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)\nmodels: ${m.instances} drawn bodies, ${m.resolved} resolved, ${m.placeholders} placeholder(s)${held}; ${m.files} distinct files (protoboard parts models)${viewLine}\n${summaryLine(p)}`);
+      const seqLine = sq.line ? `\n${sq.line}` : "";
+      out({ ...r, bundle: b, ...(sequence ? { sequence } : {}), ...(view ? { view } : {}) }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)${seqLine}\nmodels: ${m.instances} drawn bodies, ${m.resolved} resolved, ${m.placeholders} placeholder(s)${held}; ${m.files} distinct files (protoboard parts models)${viewLine}\n${summaryLine(p)}`);
       process.exitCode = errorCount(p) ? 1 : 0;
       return;
     }
@@ -1370,12 +1399,66 @@ async function main() {
       return;
     }
     case "views": {
-      if (args[0] !== "check") throw new Error("usage: protoboard views check [--module <instance path or module id>] [--out-dir <folder for PNGs>] [--no-render] [--timeout <s>]");
-      const { viewsCheck, formatViewsCheck } = await import("./views-check.js");
-      const r = await viewsCheck({ cwd, module: cli.flags.module, out: cli.flags.outDir, render: cli.flags.render, timeout: cli.flags.timeout, log: json ? undefined : (line) => process.stderr.write(line + "\n") });
-      out(r, () => formatViewsCheck(r));
-      process.exitCode = r.failed || (!r.rendered && cli.flags.render) ? 1 : 0;
-      return;
+      // W2-D (PB-1180): this case is the render service's; its flags are read from argv in views-capture.ts
+      const sub = args[0];
+      const viewsArgv = process.argv.slice(process.argv.indexOf("views") + 2);
+      const viewsUsage =
+        "usage: protoboard views check [--module <instance path or module id>] [--out-dir <folder for PNGs>] [--no-render] [--timeout <s>] [--no-service]\n" +
+        "       protoboard views capture [--view 3d|diagram|...] [--level <instance path>] [--state <json|@file>] [--annotate <ref[=label],...>] [--size 1600x1000] [--dpr 1] [--zoom 1] [--padding 24] [--format png|jpeg|webp] [--quality 85] [--theme protoboard-light] [--no-document] [--overlay burned+svg|svg|none] [--if-changed] [--max-long-edge 2576] [--batch N] [--out <file>] [--from <x.capture.json>] [--no-service]\n" +
+        "       protoboard views doctor [--backend auto|gpu|swiftshader]\n" +
+        "       protoboard views service | status | stop";
+      const views = await import("./views-capture.js");
+      const version = String(cli.pkg.version);
+      if (sub === "check") {
+        const { viewsCheck, formatViewsCheck } = await import("./views-check.js");
+        const log = json ? undefined : (line: string) => process.stderr.write(line + "\n");
+        const viaService = cli.flags.render && !process.argv.includes("--no-service");
+        const root = viaService ? findProjectRoot(cwd) : undefined;
+        const direct = () => viewsCheck({ cwd, module: cli.flags.module, out: cli.flags.outDir, render: cli.flags.render, timeout: cli.flags.timeout, log });
+        // the service is the fast path; when it cannot start (no browser, a broken page host) the check runs here and says why
+        const r = root
+          ? await views.viewsCheckViaService(root, version, { ...(cli.flags.module ? { module: cli.flags.module } : {}), ...(cli.flags.outDir ? { out: resolve(cwd, cli.flags.outDir) } : {}), ...(cli.flags.timeout ? { timeout: cli.flags.timeout } : {}) }, log).catch((e: Error) => {
+              process.stderr.write(`the render service could not run the check (${e.message.split("\n")[0]}); checking without it\n`);
+              return direct();
+            })
+          : await direct();
+        out(r, () => formatViewsCheck(r));
+        process.exitCode = r.failed || (!r.rendered && cli.flags.render) ? 1 : 0;
+        return;
+      }
+      if (sub === "capture") {
+        const r = await views.viewsCapture(viewsArgv, cwd, version);
+        out(r.response, () => views.formatCapture(r.response, r.root));
+        return;
+      }
+      if (sub === "doctor") {
+        const core = await import("@protoboardai/core/render-service");
+        const b = views.parseViewsArgv(viewsArgv).values.get("backend")?.at(-1);
+        if (b !== undefined && b !== "auto" && b !== "gpu" && b !== "swiftshader") throw new Error("--backend takes auto, gpu or swiftshader");
+        const r = await views.viewsDoctor(cwd, b ? { backend: b } : {});
+        out({ ...r.report, viaService: r.viaService }, () => `${core.formatDoctor(r.report)}${r.viaService ? "\n(probed on the warm render service's browser)" : ""}`);
+        process.exitCode = r.report.ok ? 0 : 1;
+        return;
+      }
+      if (sub === "service") {
+        const root = findProjectRoot(cwd);
+        if (!root) throw new Error(`no protoboard.config.ts in ${cwd} or its parents (run \`protoboard init\`)`);
+        const { runRenderServiceProcess } = await import("./views-service.js");
+        const b = views.parseViewsArgv(viewsArgv).values.get("backend")?.at(-1) as "auto" | "gpu" | "swiftshader" | undefined;
+        await runRenderServiceProcess({ root, version, ...(b ? { backend: b } : {}) });
+        return;
+      }
+      if (sub === "status" || sub === "stop") {
+        const core = await import("@protoboardai/core/render-service");
+        const root = findProjectRoot(cwd);
+        const running = root ? await core.connectRenderService(root) : undefined;
+        if (sub === "stop" && running) await running.shutdown();
+        const h = running && sub === "status" ? await running.health() : undefined;
+        const { describeHealth } = await import("./views-service.js");
+        out({ running: !!running, ...(h ? { health: h } : {}), ...(sub === "stop" ? { stopped: !!running } : {}) }, () => (sub === "stop" ? (running ? "render service stopped" : "no render service runs here") : h ? `render service ${describeHealth(h)}` : "no render service runs here"));
+        return;
+      }
+      throw new Error(viewsUsage);
     }
     case "upgrade": {
       await upgradeCommand(args[0]);

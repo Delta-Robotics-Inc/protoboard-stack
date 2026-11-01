@@ -40,6 +40,7 @@ packages/core/test/.tmp-agents-md/
 packages/core/test/.tmp-source/
 packages/core/test/.tmp-project-parts/
 packages/cli/test/.tmp-bom/
+packages/cli/test/.tmp-views-check/
 packages/cli/test/.tmp-init-skills/
 packages/core/test/.tmp-scope/
 examples/new-project-test-*/

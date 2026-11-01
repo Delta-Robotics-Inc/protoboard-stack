@@ -10,6 +10,11 @@
  *   tabs go to the extension (protocol.ts); its host messages come back.
  * - Keys the viewer does not use reach VS Code: the webview forwards every
  *   key press to the workbench, and nothing here stops one.
+ * - The 3D view's live state (PB-1178) is kept with the tab (the webview's
+ *   own state, so a hidden or restored tab comes back where it was) and goes
+ *   to the extension, which saves it to `.protoboard/local/viewer-state.json`;
+ *   named views go to the extension on an explicit save; bridge batches the
+ *   extension relays are answered by the viewer and the reply goes back.
  */
 import "@deltarobotics/uhd-viewer/components.css";
 import "./styles.css";
@@ -18,7 +23,7 @@ import type { UhdBundle } from "@deltarobotics/uhd";
 import type { ResolvedView } from "@protoboardai/core";
 import { VsCodeShell, type ShellBridge, type VsCodeViewerOptions } from "./Shell.js";
 import { DevLink, type EventSourceLike, type ViewerStatus } from "./devLink.js";
-import { emptyLayout, hasEdits, type FromWebview, type HierarchyAction, type HierarchyRowReport, type LayoutSnapshot, type ModuleSource, type ToWebview, type ViewerLayout, type ViewerViewport, type WebviewConfig } from "./protocol.js";
+import { emptyLayout, hasEdits, parseViewerStateFile, type FromWebview, type HierarchyAction, type HierarchyRowReport, type LayoutSnapshot, type ModuleSource, type ToWebview, type ViewerLayout, type ViewerStateFile, type ViewerViewport, type WebviewConfig } from "./protocol.js";
 
 export { VsCodeShell, vscodeShellThemeAdapter, isProtoboardTheme } from "./Shell.js";
 export * from "./protocol.js";
@@ -86,7 +91,9 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   const sourceListeners = new Set<() => void>();
   // where the user left each level's view: kept with the tab (the webview's own state), so it comes back
   // when the tab is shown again or VS Code restores it; a level with none is fitted
-  const kept = (vscode.getState() ?? {}) as { viewports?: Record<string, ViewerViewport>; hierarchy?: unknown };
+  const kept = (vscode.getState() ?? {}) as { viewports?: Record<string, ViewerViewport>; hierarchy?: unknown; viewState?: unknown };
+  // the 3D view's live state (PB-1178): the tab's own (VS Code keeps it across hide, reload and restore), else the project's saved one
+  const startViewState: ViewerStateFile | undefined = parseViewerStateFile(kept.viewState) ?? config.viewState;
   const hierarchyListeners = new Set<(command: { type: HierarchyAction; path?: string }) => void>();
   // a command that came before the shell drew its panel goes to the panel when it does
   let unheardHierarchy: { type: HierarchyAction; path?: string } | undefined;
@@ -151,10 +158,40 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       viewports = next;
       vscode.setState({ ...((vscode.getState() ?? {}) as object), viewports: next });
     },
+    // the viewer hands its live state over 400 ms after it last changed: kept with the tab, saved by the extension
+    onViewStateChange: (file: ViewerStateFile) => {
+      vscode.setState({ ...((vscode.getState() ?? {}) as object), viewState: file });
+      post({ type: "viewState", file });
+    },
+    onPresentationChange: (presentation: { namedViews: Record<string, unknown>; annotations: unknown[] }) => post({ type: "presentation", presentation }),
+    // the 3D view's save points (PB-1180): the extension keeps them for the next tab
+    onSavePoint: (point: { png: Blob }) => {
+      void point.png.arrayBuffer().then((buf) => {
+        const bytes = new Uint8Array(buf);
+        let bin = "";
+        for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+        const { png: _png, ...meta } = point;
+        post({ type: "savePoint", png: btoa(bin), meta: JSON.parse(JSON.stringify(meta)) as Record<string, unknown> });
+      });
+    },
   });
 
   // nothing to draw until there is a bundle: the shell says why
-  viewer = renderViewer(element, options() as VsCodeViewerOptions, VsCodeShell);
+  const startView3d = config.view === "3d";
+  /** The dev server's snapshot of this tab, if any, to the viewer (`uhd-viewer:snapshot`). */
+  const showSnapshot = async (base: string, currentBundleHash?: string) => {
+    try {
+      const q = new URLSearchParams({ level: config.path ?? "", view: "3d" });
+      const res = await fetch(new URL(`__protoboard/snapshot?${q}`, base).href, { cache: "no-store" });
+      if (!res.ok) return;
+      const snap = (await res.json()) as Record<string, unknown> & { imageUrl?: string };
+      if (typeof snap.imageUrl !== "string") return;
+      viewer?.post({ ...snap, type: "uhd-viewer:snapshot", imageUrl: new URL(snap.imageUrl, base).href, ...(currentBundleHash ? { currentBundleHash } : {}) });
+    } catch {
+      // no snapshot: the view opens as it always did
+    }
+  };
+  viewer = renderViewer(element, { ...options(), ...(startViewState ? { viewState: startViewState } : {}) } as VsCodeViewerOptions, VsCodeShell);
   let loaded = false;
 
   const log = (level: "info" | "warn" | "error", message: string) => post({ type: "log", level, message });
@@ -164,6 +201,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     log,
     onStatus: setStatus,
     onLoad: ({ base, state, bundle }) => {
+      // the last snapshot of this tab's 3D view (PB-1180): painted at once, while the models load
+      if (!loaded && (config.view === "3d" || startView3d)) void showSnapshot(base, (state as { bundleHash?: string }).bundleHash);
       views = Array.isArray(state.views) ? (state.views as ResolvedView[]) : [];
       partStatus = state.partStatus && typeof state.partStatus === "object" ? (state.partStatus as VsCodeViewerOptions["partStatus"]) : undefined;
       viewer!.update({ ...options(), bundle: rebase(bundle as UhdBundle, base), bundleUrl: new URL("uhd-bundle.json", base).href, diagnostics: state.diagnostics } as Partial<VsCodeViewerOptions>);
@@ -237,6 +276,12 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       case "reportHierarchy":
         post({ type: "hierarchy", ...hierarchyReport() });
         return;
+      case "bridge": {
+        // an agent's batch, relayed by the extension from the dev server (PB-1178): the viewer's store answers it
+        const out = viewer?.bridge(m.request as unknown as Parameters<ViewerHandle["bridge"]>[0]);
+        if (out) post({ type: "bridgeReply", id: out.id, reply: out.reply as unknown as Record<string, unknown> });
+        return;
+      }
       case "reportTheme": {
         const style = document.documentElement.style;
         const vars: Record<string, string> = {};

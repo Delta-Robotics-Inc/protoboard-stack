@@ -4,13 +4,16 @@
  * base, containment check and artifact headers as the GLB itself; nothing
  * beside a file the bundle does not reference, nothing through a link out of
  * the base. A VS Code webview reads them with CORS like any artifact.
+ *
+ * Since PB-1178 the dev server has no copy of its own: uhd-viewer's
+ * `viewerHandler` serves them (its own unit cases are in uhd-viewer
+ * test/serve.test.ts); these cases check them through `protoboard dev`.
  */
-import { mkdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { request } from "node:http";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { resolveSidecar, sidecarOf, type ArtifactPlan } from "../src/dev/sidecars.js";
 import { startDev, type DevServer } from "../src/dev/server.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
@@ -22,41 +25,6 @@ const write = (file: string, content: string) => {
   mkdirSync(join(file, ".."), { recursive: true });
   writeFileSync(file, content);
 };
-
-describe("which requests are sidecars", () => {
-  it("maps the three names to their GLB, and nothing else", () => {
-    expect(sidecarOf("p/cad/body.view.glb")).toEqual({ glbKey: "p/cad/body.glb", suffix: ".view.glb" });
-    expect(sidecarOf("p/cad/body.view.coarse.glb")).toEqual({ glbKey: "p/cad/body.glb", suffix: ".view.coarse.glb" });
-    expect(sidecarOf("p/cad/body.view.json")).toEqual({ glbKey: "p/cad/body.glb", suffix: ".view.json" });
-    expect(sidecarOf("p/cad/body.glb")).toBeUndefined();
-    expect(sidecarOf("p/cad/body.json")).toBeUndefined();
-    expect(sidecarOf("p/cad/body.view.view.glb")).toBeUndefined();
-    expect(sidecarOf(".view.glb")).toBeUndefined();
-  });
-
-  it("resolves only beside a referenced GLB, inside the base, and refuses a link out of it", async () => {
-    const base = join(TMP, "unit", "base");
-    const outside = join(TMP, "unit", "outside");
-    write(join(base, "cad", "body.glb"), "glb");
-    write(join(base, "cad", "body.view.glb"), "view");
-    write(join(outside, "leak.view.glb"), "secret");
-    // a folder link (a junction on Windows: no privilege needed) from inside the base to outside it
-    symlinkSync(outside, join(base, "linked"), "junction");
-    write(join(outside, "leak.glb"), "glb");
-    const plan: ArtifactPlan = {
-      mounts: new Map([["p", base]]),
-      files: new Map([
-        ["p/cad/body.glb", join(base, "cad", "body.glb")],
-        ["p/linked/leak.glb", join(base, "linked", "leak.glb")],
-      ]),
-    };
-    expect(await resolveSidecar(plan, "p/cad/body.view.glb")).toMatchObject({ status: 200 });
-    expect(await resolveSidecar(plan, "p/cad/body.view.json")).toEqual({ status: 404 });
-    expect(await resolveSidecar(plan, "p/cad/other.view.glb")).toEqual({ status: 404 });
-    expect(await resolveSidecar(plan, "q/cad/body.view.glb")).toEqual({ status: 404 });
-    expect(await resolveSidecar(plan, "p/linked/leak.view.glb")).toEqual({ status: 403 });
-  });
-});
 
 function call(port: number, path: string, method = "GET", headers: Record<string, string> = {}): Promise<{ status: number; headers: Record<string, unknown>; body: string }> {
   return new Promise((ok, fail) => {
@@ -110,7 +78,7 @@ export const SYS: ModuleDef = { id: "sys", name: "Sys", interfaces: [], children
     expect(view.headers["content-type"]).toBe("model/gltf-binary");
     expect(view.headers["content-security-policy"]).toBe(glb.headers["content-security-policy"]);
     expect(view.headers["x-content-type-options"]).toBe("nosniff");
-    expect(view.headers["last-modified"]).toBeTruthy();
+    // (uhd-viewer's handler sends no last-modified; the dev server's own copy did, and is gone since PB-1178)
     expect((await call(dev.port, "/artifacts/project/cad/body.view.coarse.glb")).body).toBe("coarse bytes");
     const json = await call(dev.port, "/artifacts/project/cad/body.view.json");
     expect(json.status).toBe(200);
