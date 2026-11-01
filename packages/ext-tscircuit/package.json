@@ -57,7 +57,7 @@
     "schematic-symbols": "0.0.248",
     "spicets": "0.0.4",
     "sucrase": "3.35.1",
-    "three": "0.179.1"
+    "three": "0.187.0"
   },
   "peerDependencies": {
     "@deltarobotics/uhd": ">=0.3.0",

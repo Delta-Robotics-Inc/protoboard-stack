@@ -1227,7 +1227,7 @@
     "@vscode/vsce": "^4.0.0",
     "esbuild": "^0.28.2",
     "occt-import-js": "^0.0.23",
-    "three": "^0.180.0"
+    "three": "0.187.0"
   },
   "keywords": [
     "hardware",
