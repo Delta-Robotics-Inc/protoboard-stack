@@ -13,6 +13,7 @@ The Protoboard Stack v0.1 reference set. New here: start with the
 | [display.json](display.md) | `.protoboard/display.json`: the diagram's layout, and the 3D view's root, placements (row-major 4×4, millimetres), labels, appearance and camera | Written against the viewer's `DisplayConfig` and UHD's `assemble`; every project's AGENTS.md carries the short form |
 | [Manufacturing Package](manufacturing-package.md) | `release/<version>/`: layout, `manifest.json` (`protoboard.release/v0`), reproducibility | `scripts/compare-release.mjs` against the committed release records |
 | [Library protocol](library-protocol.md) | Pointer to UHD's `uhd-library/v1`, and how the CLI uses it | UHD's own protocol tests |
+| [Local telemetry](telemetry.md) | The viewer's crash and performance records in `.protoboard/local/telemetry/` (recorded on your machine only, never sent): fields, retention, how to turn them off, `protoboard telemetry`, and the consent-to-send bundle and request shape | Written against `packages/core/src/telemetry.ts`; `packages/core/test/telemetry.test.ts` covers the writer, the redaction and the switches |
 
 Guides:
 

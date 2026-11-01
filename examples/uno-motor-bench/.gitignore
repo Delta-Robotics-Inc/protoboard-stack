@@ -8,3 +8,8 @@ node_modules/
 .claude/skills/
 # the Manufacturing Package (protoboard release): rebuilt from the committed project
 release/
+
+# View sidecars written by the build (phase 1 export pipeline): merged, instanced, compressed copies of body GLBs
+*.view.glb
+*.view.coarse.glb
+*.view.json

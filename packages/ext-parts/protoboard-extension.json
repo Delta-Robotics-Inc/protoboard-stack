@@ -99,7 +99,7 @@
   "capabilities": [
     {
       "id": "cad",
-      "summary": "A project-researched part's body drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py): run, recorded and exported as STEP, GLB and a feature manifest",
+      "summary": "A part's or module's body: drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py), or imported from an existing CAD file (STEP, STL, 3MF; constraints.import, written by `protoboard parts import`); run, recorded and exported as STEP, GLB and a feature manifest",
       "native": "part-cad",
       "operations": {
         "generate": {
@@ -127,9 +127,48 @@
       },
       "constraints": {
         "generator": {
-          "description": "file name of the build123d script in part-cad/ (required)"
+          "description": "file name of the build123d script in part-cad/ (required unless import is given)"
+        },
+        "import": {
+          "description": "an existing CAD file (STEP, STL or 3MF) inside the project, relative to the config's folder: the body is imported from it, with no script (written by `protoboard parts import <file> --part <id>`; PB-1143)"
+        },
+        "sha256": {
+          "description": "with import: the sha256 the file was imported at; generate and export stop when the file differs"
+        },
+        "units": {
+          "description": "with import: the file's length unit (mm)"
         }
-      }
+      },
+      "artifacts": [
+        {
+          "id": "cad_step",
+          "name": "Body (STEP)",
+          "type": "3d_model",
+          "role": "body",
+          "format": "step",
+          "units": "mm",
+          "path": "{out}/body.step"
+        },
+        {
+          "id": "cad_glb",
+          "name": "Body (GLB)",
+          "type": "3d_model",
+          "role": "body",
+          "format": "glb",
+          "units": "m",
+          "path": "{out}/body.glb",
+          "generatedFrom": "cad_step"
+        },
+        {
+          "id": "cad_manifest",
+          "name": "Body geometry manifest",
+          "type": "cad",
+          "role": "source",
+          "format": "json",
+          "path": "{out}/body.manifest.json",
+          "generatedFrom": "cad_step"
+        }
+      ]
     }
   ]
 }

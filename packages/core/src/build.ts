@@ -13,6 +13,7 @@ import { FRAMEWORK_VERSION } from "./extensions.js";
 import { packageRoot, revisionLabel } from "./load.js";
 import { formatPassive, placementPart } from "./placement.js";
 import { projectRelative } from "./paths.js";
+import { modelTable, writeModelFiles } from "./part-files.js";
 
 export const RESOLVED_SCHEMA = "protoboard.resolved/v0";
 
@@ -141,9 +142,14 @@ export function resolvedProject(p: Project) {
 }
 
 export function writeBuild(p: Project, outDir = join(p.root, ".protoboard", "build")) {
-  const data = stableStringify(resolvedProject(p));
+  // the model table (PB-1174): what the resolver chose for every drawn instance, one table for the
+  // viewer, the exports and the CAD extensions. Kept out of resolvedProject(), whose digest operation
+  // records use: a re-exported body changes the table, not the project
+  const models = modelTable(p);
+  writeModelFiles(p, models);
+  const data = stableStringify({ ...resolvedProject(p), models });
   const file = join(outDir, "resolved.json");
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, data);
-  return { file, digest: "sha256:" + createHash("sha256").update(data).digest("hex"), bytes: data.length };
+  return { file, digest: "sha256:" + createHash("sha256").update(data).digest("hex"), bytes: data.length, models: { ...models.counts, placeholderInstances: models.instances.filter((e) => e.placeholder).map((e) => e.instance) } };
 }

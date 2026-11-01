@@ -128,6 +128,14 @@ two or three survivors (**datasheet-extract**).
 **Keep the near-misses.** A part that almost fit is the cheapest alternate you
 will ever find. It stays in the table with the reason it lost.
 
+**LCSC first.** When the part is a board component, record its LCSC
+C-number at selection time (in `parts/evidence/<id>/sourcing.json`, with the
+date), check its LCSC/JLCPCB stock covers the build and that it is not
+marked end-of-life, and note whether it is a JLC **Basic** or **Extended**
+part (prefer Basic: each Extended part adds a loading fee). A part supplied
+by the customer has no C-number: say so in the record, so it is not taken
+for a missing one.
+
 ### 5. Record
 
 `docs/sourcing/<need>.md`:
@@ -222,3 +230,4 @@ Every other code: **system-compose** [diagnostic codes](../system-compose/refere
 4. Every figure dated and sourced; "typical for this class" is not a source.
 5. Near-misses kept with the reason they lost.
 6. No orders, carts, quotes requested, accounts created or logins used. Reading public pages and APIs only.
+7. LCSC first for a board component: its C-number recorded when it is chosen, its stock checked, Basic or Extended noted, Basic preferred.

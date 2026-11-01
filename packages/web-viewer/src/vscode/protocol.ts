@@ -172,7 +172,13 @@ export type FromWebview =
   | { type: "source"; action: SourceAction }
   | { type: "theme"; vars: Record<string, string>; classes: string[]; themeId?: string }
   /** The hierarchy panel's rows (`reportHierarchy`), whether it is open, and the tab's width in CSS pixels. */
-  | { type: "hierarchy"; open: boolean; rows: HierarchyRowReport[]; width?: number };
+  | { type: "hierarchy"; open: boolean; rows: HierarchyRowReport[]; width?: number }
+  /**
+   * Local telemetry (PB-1181): the viewer's session or crash record (uhd-viewer src/telemetry/). The extension host
+   * writes it to the project's .protoboard/local/telemetry/ when recording is on, after sanitising every field
+   * (@protoboardai/core telemetry.ts); here only the envelope is checked.
+   */
+  | { type: "telemetry"; record: Record<string, unknown> };
 
 export type SourceAction = "open" | "reveal" | "copy" | "copyRelative";
 const SOURCE_ACTIONS: readonly SourceAction[] = ["open", "reveal", "copy", "copyRelative"];
@@ -310,6 +316,13 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
         .slice(0, 5000)
         .map((r) => ({ path: r.path as string, label: r.label as string, ...(str(r.kind) ? { kind: r.kind } : {}), ...(r.selected === true ? { selected: true } : {}), ...(r.current === true ? { current: true } : {}) }));
       return { type: "hierarchy", open: data.open, rows, ...(typeof data.width === "number" && Number.isFinite(data.width) ? { width: data.width } : {}) };
+    }
+    case "telemetry": {
+      const r = data.record;
+      if (!obj(r) || (r.schema !== "pb.render-session/v0" && r.schema !== "pb.crash/v0")) return undefined;
+      // one record is small (numbers, short strings); anything larger is not a record of ours
+      if (JSON.stringify(r).length > 64 * 1024) return undefined;
+      return { type: "telemetry", record: r };
     }
     default:
       return undefined;

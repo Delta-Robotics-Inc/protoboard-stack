@@ -46,12 +46,20 @@ type Entry = Record<string, unknown>;
 const readJson = (file: string): unknown => JSON.parse(readFileSync(file, "utf8"));
 const sha256File = (file: string) => createHash("sha256").update(readFileSync(file)).digest("hex");
 
+/**
+ * View sidecars the build writes beside every body GLB (`X.view.glb`, `X.view.coarse.glb`, `X.view.json`;
+ * core view-model/names.ts): derived, gitignored, never a file the part carries, so never a download that
+ * needs a terms record, even beside a vendor GLB.
+ */
+const VIEW_SIDECAR = /\.view(\.coarse)?\.(glb|json)$/i;
+
 /** Every file under `dir`, root-relative with forward slashes; a large-file pointer stands for its file. */
 function listFiles(root: string, dir: string): string[] {
   const abs = join(root, dir);
   if (!existsSync(abs)) return [];
   return readdirSync(abs)
     .sort()
+    .filter((n) => !VIEW_SIDECAR.test(n))
     .flatMap((n) => (statSync(join(abs, n)).isDirectory() ? listFiles(root, `${dir}/${n}`) : [`${dir}/${n}`]))
     .map((p) => (p.endsWith(POINTER_SUFFIX) ? p.slice(0, -POINTER_SUFFIX.length) : p));
 }

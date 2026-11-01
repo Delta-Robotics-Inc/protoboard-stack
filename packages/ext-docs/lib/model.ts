@@ -12,7 +12,7 @@ import { pathToFileURL } from "url";
 import type { ArtifactDef, GeometryFrame, GeometryManifest, ModuleDef } from "@deltarobotics/uhd";
 import type { ModuleLookup } from "@deltarobotics/uhd";
 import { applyMat4, assemble, bodyKey, multiplyMat4, type Assembly, type Mat4 } from "@deltarobotics/uhd";
-import { packageRoot, type Project } from "@protoboardai/core";
+import { bodyArtifact, packageRoot, type Project } from "@protoboardai/core";
 import { packagePath, projectPath, type ServerRoots } from "./render/server.ts";
 import type { DocConfig } from "./types.ts";
 
@@ -188,10 +188,9 @@ export function category(def: ModuleDef): string {
 // ---------------------------------------------------------------------------
 
 /** Body GLB for a module (or for one of its bodies, by the STEP/vendor artifact id). */
-export function glbFor(def: ModuleDef, bodyArtifact?: string): ArtifactDef | undefined {
-  const arts = def.artifacts ?? [];
-  if (bodyArtifact) return arts.find((a) => a.format === "glb" && (a.id === bodyArtifact || a.provenance?.generatedFrom === bodyArtifact));
-  return arts.find((a) => a.role === "body" && a.format === "glb");
+export function glbFor(def: ModuleDef, body?: string): ArtifactDef | undefined {
+  // the rule lives in core's one resolver (part-files.ts bodyArtifact, PB-1174)
+  return bodyArtifact(def, ["glb"], body);
 }
 
 /** Feature names in the manifest of the STEP a GLB was generated from (sub-shapes to hide or call out). */

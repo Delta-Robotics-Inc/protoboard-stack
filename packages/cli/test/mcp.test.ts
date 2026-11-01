@@ -29,7 +29,7 @@ const TMP = join(HERE, ".tmp-mcp");
 const EMPTY = mkdtempSync(join(tmpdir(), "pb-mcp-empty-"));
 const HOME = mkdtempSync(join(tmpdir(), "pb-mcp-home-"));
 
-const TOOLS = ["project_status", "project_init", "project_check", "project_inspect", "project_build", "project_layout", "parts_search", "parts_add", "parts_list", "skills_list", "skill_read", "bom", "release_check"];
+const TOOLS = ["project_status", "project_init", "project_check", "project_inspect", "project_build", "project_layout", "parts_search", "parts_add", "parts_list", "parts_models", "parts_import", "telemetry_export", "skills_list", "skill_read", "bom", "release_check"];
 const WRITES = ["project_init", "project_build", "project_layout", "parts_add"];
 
 const PART: UhdModuleDef = {

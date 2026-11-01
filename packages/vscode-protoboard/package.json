@@ -178,6 +178,12 @@
         "icon": "$(protoboard-discord)"
       },
       {
+        "command": "protoboard.telemetry.status",
+        "title": "Local Crash and Performance Data",
+        "category": "Protoboard",
+        "icon": "$(pulse)"
+      },
+      {
         "command": "protoboard.hierarchy.toggle",
         "title": "Toggle Hierarchy",
         "category": "Protoboard",
@@ -420,6 +426,11 @@
     "configuration": {
       "title": "Protoboard",
       "properties": {
+        "protoboard.telemetry.local": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Record crash and performance data of the viewer tabs (load times, frame times, draw calls, GPU name, errors with hashed stacks) **on this machine only**, in each project's `.protoboard/local/telemetry/` (git-ignored; kept 30 days or 50 MB). Nothing is sent: `protoboard telemetry export` shows exactly what a report would carry, and it goes only after you approve it. Paths are hashed; no source, file contents, part names or text you type are recorded. Off when VS Code's own telemetry is off (`#telemetry.telemetryLevel#`); its `crash` or `error` level keeps crash records only."
+        },
         "protoboard.cliPath": {
           "type": "string",
           "default": "",

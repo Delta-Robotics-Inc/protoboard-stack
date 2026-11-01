@@ -262,7 +262,7 @@ export function cliTools(templates: string[]): ToolSpec[] {
       name: "project_build",
       title: "Build the project",
       description:
-        "Writes the resolved project and the UHD bundle the viewer reads (`protoboard build`). CHANGES FILES: only derived data under .protoboard/build/ in the project, which is rebuilt from the sources every time and is not committed. Returns the files written and the diagnostic counts. Publishes nothing.",
+        "Writes the resolved project and the UHD bundle the viewer reads (`protoboard build`). CHANGES FILES: only derived data under .protoboard/build/ in the project, which is rebuilt from the sources every time and is not committed: resolved.json with the model table (the body file, sha256, trust tier and provenance the one model resolver chose for every drawn instance) and an amber placeholder box for each part with no model at any tier. Also writes view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json: merged, instanced, compressed copies the 3D view loads; X.glb is unchanged), next to the GLBs (in out/ folders and parts/catalog, not only under .protoboard/build/; derived and not committed), and reports the pre-flight draw-call and triangle counts of one 3D frame before and after (`view.line`). Returns the files written, the diagnostic counts, `models` (how many drawn bodies resolved and how many are placeholders) and `view`. Offline; publishes nothing.",
       input: { dir: DIR },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       handler: async ({ dir }, ctx) => command(ctx, await ctx.dir(dir), cliArgs(["build"])),
@@ -333,6 +333,70 @@ export function cliTools(templates: string[]): ToolSpec[] {
       input: { dir: DIR, checkUpdates: z.boolean().optional().describe("Ask the libraries for updates (network).") },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       handler: async ({ dir, checkUpdates }, ctx) => command(ctx, await ctx.dir(dir), cliArgs(["parts", "list", ...(checkUpdates ? ["--check"] : [])])),
+    }),
+    tool({
+      name: "parts_models",
+      title: "List the body models the resolver chose",
+      description:
+        "The one model resolver's table (`protoboard parts models`): for every instance drawn as a body, the file used, its sha256, its trust tier (M1 a verified library body ... M6 parametric, M7 hand-modelled, M8 placeholder; `design` for a designed module's own generated body) and where it came from (artifact, provider output, a fetched vendor file, the machine cache, or a placeholder). `instance` narrows it to one instance and what it holds (a board's components, with the board STEP node that draws each when the board was imported). Before modelling a body, look here and at `PB_MODEL_MISSING` in project_check: reuse a source; never make placeholder CAD when one exists. Offline. Reads only.",
+      input: { dir: DIR, instance: z.string().optional().describe("An instance path (board, arm_fl/motor); left out: every drawn body.") },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async ({ dir, instance }, ctx) => command(ctx, await ctx.dir(dir), cliArgs(["parts", "models"], {}, instance ? [instance] : [])),
+    }),
+    tool({
+      name: "parts_import",
+      title: "Use an existing CAD file as a module's body",
+      description:
+        "Records an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body (`protoboard parts import <file> --part <id>`): parts/sources.json gets the file with provenance imported and its sha256, the module is bound to ext-parts' cad capability with constraints.import (no hand-written script), then cad:generate and cad:export write out/body.step, body.glb and body.manifest.json (needs the CAD runtime). For a board's ECAD STEP (`board: true`, or a module with children) it also maps each component node of the STEP to its instance by designator, then by LCSC C-number, for the model table. An existing cad.config.ts is kept unless `replace` is true. CHANGES FILES: parts/sources.json, the module's cad.config.ts, part-cad/source.json and out/. Offline.",
+      input: {
+        dir: DIR,
+        file: z.string().describe("The CAD file, relative to the project (cad/plate.step)."),
+        part: z.string().describe("The module or part id whose body it is."),
+        board: z.boolean().optional().describe("Map a board STEP's component nodes onto the board's instances."),
+        replace: z.boolean().optional().describe("Replace an existing cad.config.ts binding with the import."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      async handler({ dir: given, file, part, board, replace }, ctx) {
+        const dir = await ctx.dir(given);
+        // importing a large board STEP takes minutes (ClientX's 148 MB: about 192 s)
+        const r = readCliJson(await ctx.cli(dir, cliArgs(["parts", "import", ...(board ? ["--board"] : []), ...(replace ? ["--replace"] : [])], { part }, [file]), { timeoutMs: 25 * 60 * 1000 }));
+        return r.ok ? { data: r.data } : failure(r.message, dir, r.code);
+      },
+    }),
+    tool({
+      name: "telemetry_export",
+      title: "Export the local crash and performance records",
+      description:
+        "The redacted local crash and performance records of this project (.protoboard/local/telemetry/) as the exact bundle a report would carry, plus its sha256. Show it to the person. Only after they approve that bundle, call again with send: true and confirm: true; in this release send is a stub that records the consent and sends nothing. Writes the bundle file (and, with confirm, one consent line) under .protoboard/local/telemetry/.",
+      input: {
+        dir: DIR,
+        send: z.boolean().optional().describe("Go on to send the bundle (needs confirm: true; a stub in this release)."),
+        confirm: z.boolean().optional().describe("The person saw this bundle and agreed to send it."),
+        days: z.number().optional().describe("Only records from the last n days."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+      async handler({ dir: given, send, confirm, days }, ctx) {
+        const dir = await ctx.dir(given);
+        const root = findProjectRoot(dir);
+        if (!root) return failure("not a protoboard project (no protoboard.config.ts)", dir);
+        try {
+          const { telemetryExport } = await import("../telemetry.js");
+          const r = telemetryExport({ root, send, confirm, days });
+          return {
+            data: {
+              sha256: r.sha256,
+              file: r.file,
+              sent: r.sent,
+              note: r.note,
+              bundle: r.bundle,
+              ...(r.request ? { request: { method: r.request.method, url: r.request.url, headers: r.request.headers } } : {}),
+              ...(r.consent ? { consent: r.consent } : {}),
+            },
+          };
+        } catch (e) {
+          return { data: { message: (e as Error).message }, isError: true };
+        }
+      },
     }),
     tool({
       name: "skills_list",

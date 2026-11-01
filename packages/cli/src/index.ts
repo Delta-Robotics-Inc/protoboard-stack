@@ -188,7 +188,14 @@ const cli = meow(
     artifacts [instance]    Artifacts of the definitions in use (or of one instance), with the instances
                             using them and the file each resolves to
     check                   Resolve the project and run every available validator (exit 1 on errors)
-    build                   Write .protoboard/build/resolved.json (derived data only)
+    build                   Write .protoboard/build/resolved.json (derived data only) with the model table: what
+                            the one model resolver chose for every drawn body (file, sha256, tier, provenance,
+                            placeholder), and an amber placeholder box per part with no model at any tier.
+                            Offline; --fetch first restores the vendor files parts/sources.json records that are
+                            not on this machine (parts fetch), over the network when they are not cached. Then
+                            the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json:
+                            merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one
+                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -233,6 +240,25 @@ const cli = meow(
     parts migrate           Move vendored parts from the folder layout of 0.1.6 and earlier (which repeats the part
                             id in every path, too long for Windows in a nested project) to the short one; offline,
                             the pins stay. check reports PB_CATALOG_LAYOUT_EARLIER (info) while there are some
+    parts models [instance]
+                            The model resolver's table: per drawn body, the file used, its trust tier (M1 library
+                            verified ... M8 placeholder) and where it came from. Offline
+    parts import <file> --part <id> [--board] [--replace]
+                            Use an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body:
+                            recorded in parts/sources.json (imported, sha256), the module bound to ext-parts'
+                            cad capability (constraints.import, no script), then cad:generate and cad:export.
+                            A board's STEP (--board, or a module with children) also maps each component node
+                            to its instance by designator, then LCSC C-number. Offline
+    parts fetch <part> --lcsc <C-number> | --kicad <library:name> | --link <https url>
+                            Fetch one vendor model for a part, on this machine, for the user: EasyEDA's model for
+                            an LCSC C-number (terms unknown: kept on this machine), KiCad's 3D library (the
+                            installed copy first, offline), or a link (--file-format, --terms). The bytes go to
+                            the machine cache and parts/files/<part>/model.<key>.<ext> (gitignored; never
+                            committed), the link, sha256 and terms to parts/sources.json; a STEP gets a GLB for
+                            the viewer when the CAD runtime is installed (--no-convert skips it). --offline
+                            refuses the network. Never runs on its own
+    parts fetch [part]      Restore the vendor files parts/sources.json records that are not on this machine:
+                            the machine cache, KiCad's installed library, else their links (--offline: no network)
     parts update [id...]    Show the recommended revision of vendored parts and what it changes; writes nothing
     parts update <id> --to <rev|recommended>
                             Deliberately re-pin a vendored part (the replaced pin is kept as previous);
@@ -340,6 +366,11 @@ const cli = meow(
     agents refresh          Write or update Protoboard's launcher (in its own folder; no agent's file), for a
                             client set up by hand from agents config
     mcp                     The Protoboard MCP server on stdio: what an agent starts (it takes no arguments)
+    telemetry [status|show|export|clear|on|off]
+                            Local crash and performance records of the viewer (.protoboard/local/telemetry/, never
+                            sent): status, show (--days), export prints the redacted bundle and writes it (--out
+                            <file>); --send records your consent and, in this release, sends nothing (a stub);
+                            clear; on|off is the CLI's own switch (PROTOBOARD_TELEMETRY=off overrides)
 
   Options
     --format text|json      Output format (default text); --json is the same as --format json.
@@ -407,6 +438,18 @@ const cli = meow(
                             entry is "npx --no-install protoboard mcp" when the project depends on the CLI
                             (--portable forces that, --no-portable writes this machine's launcher)
     --ci                    evals: the CI hook: scripted host only, exit 1 on any failed trial or broken case
+    --send                  telemetry export: the consent to send that bundle (a stub in this release)
+    --out <file>            telemetry export: where to write the bundle
+    --part <id>             parts import, parts fetch: the module or part the file is for
+    --board                 parts import: map a board STEP's component nodes onto the board's instances
+    --lcsc <C-number>       parts fetch: EasyEDA's model for that LCSC part (terms unknown: kept on this machine)
+    --kicad <lib:name>      parts fetch: a model of KiCad's 3D library (the installed copy first)
+    --link <https url>      parts fetch: a model at a link (--file-format step|glb|stl|3mf, --terms
+                            redistributable|internal|unknown)
+    --offline               parts fetch, build --fetch: never reach the network
+    --no-convert            parts fetch: no GLB made from a fetched STEP
+    --fetch                 build: first restore recorded vendor files that are not on this machine (parts fetch)
+    --no-view               build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json)
 `,
   {
     importMeta: import.meta,
@@ -489,6 +532,22 @@ const cli = meow(
       refreshGuidance: { type: "boolean", default: false },
       render: { type: "boolean", default: true },
       timeout: { type: "number" },
+      // parts import | fetch (PB-1174)
+      part: { type: "string" },
+      board: { type: "boolean", default: false },
+      lcsc: { type: "string" },
+      kicad: { type: "string" },
+      link: { type: "string" },
+      fileFormat: { type: "string" },
+      terms: { type: "string" },
+      offline: { type: "boolean", default: false },
+      convert: { type: "boolean", default: true },
+      fetch: { type: "boolean", default: false },
+      // build: --no-view skips the view sidecars (PB-1173, W1-A)
+      view: { type: "boolean", default: true },
+      // telemetry export (PB-1181, W1-E)
+      send: { type: "boolean", default: false },
+      out: { type: "string" },
     },
   },
 );
@@ -717,6 +776,12 @@ async function main() {
     const mismatch = root ? stackVersionMismatch(root, String(cli.pkg.version)) : undefined;
     if (mismatch) process.stderr.write(`protoboard: warning: ${mismatch}\n`);
   }
+  // local crash records (PB-1181): append-only, on uncaughtExceptionMonitor, so Node's own exit is unchanged; the
+  // component is the command name, never its arguments (DEFAULT: the MCP server records too)
+  if (command) {
+    const { installCrashTelemetry } = await import("./telemetry.js");
+    installCrashTelemetry({ component: command, cwd });
+  }
   // PB-928: only what uses the cloud needs a sign-in (gate.ts); local work never asks
   const gate = commandGate(command, args[0], { check: cli.flags.check });
   if (gate.gate === "cloud") {
@@ -939,10 +1004,25 @@ async function main() {
       return;
     }
     case "build": {
+      // --fetch: restore recorded vendor files first (the only network a build may use, and only when asked)
+      if (cli.flags.fetch) {
+        const { partsFetch } = await import("./part-files.js");
+        await partsFetch(cwd, [], { offline: cli.flags.offline }, (_data, text) => process.stderr.write(`${text()}\n`));
+      }
       const p = await loadProject(cwd);
       const r = writeBuild(p);
       const b = await writeBundle(p);
-      out({ ...r, bundle: b }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)\n${summaryLine(p)}`);
+      // view sidecars beside every body GLB (W1-A, PB-1173): after resolved.json and the bundle, which it reads;
+      // a sidecar that cannot be written is logged and skipped, never a failed build
+      let view: { line?: string } | undefined;
+      if (cli.flags.view) {
+        const { writeProjectViewSidecars } = await import("@protoboardai/core/view-model");
+        view = await writeProjectViewSidecars(p.root, { log: (l: string) => process.stderr.write(`${l}\n`) });
+      }
+      const m = r.models;
+      const held = m.placeholders ? ` (${m.placeholderInstances.slice(0, 6).join(", ")}${m.placeholderInstances.length > 6 ? ", …" : ""})` : "";
+      const viewLine = view?.line ? `\n${view.line}` : "";
+      out({ ...r, bundle: b, ...(view ? { view } : {}) }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)\nmodels: ${m.instances} drawn bodies, ${m.resolved} resolved, ${m.placeholders} placeholder(s)${held}; ${m.files} distinct files (protoboard parts models)${viewLine}\n${summaryLine(p)}`);
       process.exitCode = errorCount(p) ? 1 : 0;
       return;
     }
@@ -1090,7 +1170,7 @@ async function main() {
           ...(tools.length
             ? tools.map(
                 (t) =>
-                  `  ${t.available ? "✓" : "✗"} ${t.id.padEnd(20)} ${t.purpose}${t.source === "runtime" ? `  (project runtime ${t.runtime})` : t.source === "environment" ? "  (from the environment)" : ""}${t.note ? `  (${t.note})` : ""}${t.available ? "" : `\n      missing: ${t.detail}${t.install ? `\n      install: ${t.install}` : ""}`}`,
+                  `  ${t.available ? "✓" : "✗"} ${t.id.padEnd(20)} ${t.purpose}${t.source === "runtime" ? `  (project runtime ${t.runtime})` : t.source === "environment" ? "  (from the environment)" : ""}${t.note ? `  (${t.note})` : ""}${t.available ? (t.detail ? `\n      found: ${t.detail}` : "") : `\n      missing: ${t.detail}${t.install ? `\n      install: ${t.install}` : ""}`}`,
               )
             : ["  (no external tools required)"]),
           ...(runtimes.length ? ["", "Runtimes (.protoboard/tools)", ...runtimes.map(fmtRuntime)] : []),
@@ -1280,6 +1360,13 @@ async function main() {
     }
     case "evals": {
       await evals();
+      return;
+    }
+    case "telemetry": {
+      const { telemetryCommand } = await import("./telemetry.js");
+      const r = telemetryCommand(args, { cwd, send: cli.flags.send, out: cli.flags.out, days: cli.flags.days });
+      out(r.data, () => r.text);
+      process.exitCode = r.exitCode;
       return;
     }
     case "views": {
@@ -1636,9 +1723,16 @@ const fmtAdd = (r: AddResult[], showLibrary = false) =>
 
 /** `parts search|add|update|offers|prices|publish` (and `usage`, for the library's publishers): the only commands that talk to part libraries. */
 async function parts(sub: string | undefined, rest: string[]) {
-  const usage = "usage: protoboard parts list [--check] | search [words] [--sort <order>] | taxonomy [words] | add <id[@rev]...> | update [id...] [--to <rev>] | offers [id...] | prices <id> [--mpn <code>] | publish <path> [--dry-run] | migrate";
+  const usage = "usage: protoboard parts list [--check] | search [words] [--sort <order>] | taxonomy [words] | add <id[@rev]...> | update [id...] [--to <rev>] | offers [id...] | prices <id> [--mpn <code>] | publish <path> [--dry-run] | migrate | models [instance] | import <file> --part <id> | fetch [part] [--lcsc <C#> | --kicad <lib:name> | --link <url>]";
   // `usage` is the library owners' command (publishers only): it works, and is left out of the help users read
-  if (!["list", "search", "taxonomy", "add", "update", "offers", "prices", "usage", "publish", "migrate"].includes(sub ?? "")) throw new Error(usage);
+  if (!["list", "search", "taxonomy", "add", "update", "offers", "prices", "usage", "publish", "migrate", "import", "fetch", "models"].includes(sub ?? "")) throw new Error(usage);
+  // the one model resolver's commands (PB-1174): local; fetch reaches a vendor only for the part it is given
+  if (sub === "import" || sub === "fetch" || sub === "models") {
+    const pf = await import("./part-files.js");
+    const flags = { part: cli.flags.part, board: cli.flags.board, replace: cli.flags.replace, lcsc: cli.flags.lcsc, kicad: cli.flags.kicad, link: cli.flags.link, fileFormat: cli.flags.fileFormat, terms: cli.flags.terms, offline: cli.flags.offline, convert: cli.flags.convert };
+    process.exitCode = sub === "import" ? await pf.partsImport(cwd, rest, flags, out) : sub === "fetch" ? await pf.partsFetch(cwd, rest, flags, out) : await pf.partsModels(cwd, rest, out);
+    return;
+  }
   const p = await loadProject(cwd, { checks: sub === "publish" });
   if (sub === "list" && !cli.flags.check) return listParts(projectParts(p));
   if (sub === "migrate") {

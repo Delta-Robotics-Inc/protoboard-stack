@@ -75,10 +75,11 @@ describe("viewer tab page", () => {
     const html = page();
     const csp = /http-equiv="Content-Security-Policy" content="([^"]*)"/.exec(html)![1].replace(/&#39;/g, "'");
     expect(csp).toBe(viewerCsp({ cspSource: "https://file+.vscode-resource", nonce: "N0nce", origins: devOrigins(config.dev.url) }));
-    expect(csp).toContain("script-src 'nonce-N0nce' https://file+.vscode-resource;");
+    // WebAssembly only (the meshopt decoder of the view sidecars), never eval or inline script
+    expect(csp).toContain("script-src 'nonce-N0nce' https://file+.vscode-resource 'wasm-unsafe-eval';");
     expect(csp).toContain("frame-src 'none'");
     expect(csp).toContain("connect-src https://file+.vscode-resource http://127.0.0.1:* http://localhost:* data: blob:");
-    expect(csp).not.toMatch(/script-src[^;]*unsafe/);
+    expect(csp).not.toMatch(/script-src[^;]*'unsafe-(inline|eval|hashes)'/);
     expect(html).not.toContain("<iframe");
     // one script, by nonce, from the extension; the config is inert JSON
     expect(html.match(/<script type="module"/g)).toHaveLength(1);

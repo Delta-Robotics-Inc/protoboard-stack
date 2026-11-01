@@ -20,6 +20,7 @@ import { isSafePath } from "@protoboardai/cloud/client";
 import { bomFileDiagnostics } from "./bom-files.js";
 import { formerScopeDiagnostics } from "./scope.js";
 import { isInsideReal } from "./paths.js";
+import { PART_FILES_VALIDATOR, bodyArtifact, partFileDiagnostics } from "./part-files.js";
 import { artifactBaseDir, artifactBaseLabel, findProjectRoot, freshImporter, importTs, loadConfig, loadDefinitions, locateId, originEntry, type TsImporter } from "./load.js";
 import type {
   CheckRun,
@@ -307,7 +308,10 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
   project.diagnostics.push(...bomFileDiagnostics(root));
   if (options.extensions === false) {
     project.diagnostics.push(...formerScopeDiagnostics(root, config));
-    if (options.checks !== false) runModelChecks(project);
+    if (options.checks !== false) {
+      runModelChecks(project);
+      runPartFileChecks(project);
+    }
   } else {
     const { loadExtensions, runExtensionChecks } = await import("./extensions.js");
     const capabilities = await import("./capabilities.js");
@@ -327,11 +331,26 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
     capabilities.attachDeclaredArtifacts(project);
     if (options.checks !== false) {
       runModelChecks(project);
+      // after the providers' outputs are attached: a body a provider exported counts
+      runPartFileChecks(project);
       await runExtensionChecks(project, extensions);
       await capabilities.runCapabilityChecks(project);
     }
   }
   return project;
+}
+
+/** The model findings of the one resolver (part-files.ts): PB_MODEL_MISSING, PB_MODEL_PLACEHOLDER and the sources record's. */
+function runPartFileChecks(p: Project): void {
+  let r: ReturnType<typeof partFileDiagnostics>;
+  try {
+    r = partFileDiagnostics(p);
+  } catch (e) {
+    p.checks.push({ validator: PART_FILES_VALIDATOR, status: "skipped", reason: (e as Error).message, counts: { error: 0, warning: 0, info: 0 } });
+    return;
+  }
+  p.diagnostics.push(...r.diagnostics);
+  p.checks.push({ validator: PART_FILES_VALIDATOR, status: r.ran ? "ran" : "skipped", ...(r.reason ? { reason: r.reason } : {}), counts: count(p.diagnostics, PART_FILES_VALIDATOR) });
 }
 
 /**
@@ -509,7 +528,7 @@ export function runModelChecks(p: Project): void {
       // board.glb) are drawn by that body, as the viewer does: not reported as unplaced one by one
       const defAt = (path: string[]) => path.reduce<ModuleDef | undefined>((d, id) => (d ? p.lookup(d.children?.find((c) => c.id === id)?.moduleDefId ?? "") : undefined), p.rootDef);
       const holders = asm.placements
-        .filter((pl) => !pl.body && defAt(pl.path)?.artifacts?.some((a) => a.role === "body" && a.format === "glb"))
+        .filter((pl) => { const d = !pl.body && defAt(pl.path); return !!d && !!bodyArtifact(d, ["glb"]); })
         .map((pl) => `${pl.path.join("/")}/`);
       for (const i of asm.issues) {
         if (i.severity === "info" && holders.some((h) => i.subject.startsWith(h))) continue;

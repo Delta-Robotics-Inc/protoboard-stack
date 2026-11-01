@@ -31,7 +31,10 @@
     "./agents": "./src/agents.ts",
     "./agent-launcher": "./src/agent-launcher.ts",
     "./user-folders": "./src/user-folders.ts",
-    "./private-dir": "./src/private-dir.ts"
+    "./private-dir": "./src/private-dir.ts",
+    "./part-files": "./src/part-files.ts",
+    "./telemetry": "./src/telemetry.ts",
+    "./view-model": "./src/view-model/index.ts"
   },
   "files": [
     "src",

@@ -8,7 +8,7 @@ import { join } from "path";
 import type { ModuleDef } from "@deltarobotics/uhd";
 import { checkSystem } from "@deltarobotics/uhd";
 import { isNet, wiringChecklist, type WiringStep } from "@deltarobotics/uhd";
-import { boardModules, type Project } from "@protoboardai/core";
+import { bodyArtifact, boardModules, type Project } from "@protoboardai/core";
 import { buildBom, type BomRow } from "./bom.ts";
 import { buildScene, loadSystem, type LoadedSystem } from "./model.ts";
 import { loadTestData } from "./testdata.ts";
@@ -41,7 +41,7 @@ export function fullWiring(system: ModuleDef, lookup: (id: string) => ModuleDef 
       const path = [...prefix, c.id];
       // a circuit board (a module with Net interfaces, or drawn whole by a body of its own): its links are
       // copper, made by the fab, not wired at the bench
-      if (def.interfaces.some(isNet) || (def.artifacts?.some((a) => a.role === "body" && a.format === "glb") && def.children?.length)) continue;
+      if (def.interfaces.some(isNet) || (bodyArtifact(def, ["glb"]) && def.children?.length)) continue;
       if (def.links?.length) {
         for (const s of wiringChecklist(def, lookup)) {
           if (s.domain === "mechanical") continue;

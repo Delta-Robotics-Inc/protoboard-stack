@@ -217,6 +217,62 @@ export {
 } from "./python.js";
 export { BROWSER_PURPOSE, browserPaths, findBrowser, noBrowserMessage, type BrowserLookup, type FoundBrowser } from "./browser.js";
 export { uhdBundle, writeBundle } from "./bundle.js";
+// one resolver for body models and footprints (PB-1174, docs/specs/cad-and-footprint-sources.md §5)
+export {
+  MAX_RECORD_BYTES,
+  MODEL_SIDECAR_SCHEMA,
+  MODEL_TABLE_SCHEMA,
+  PART_FILES_DIR,
+  PART_FILES_IGNORE,
+  PART_FILES_VALIDATOR,
+  PART_SOURCES_FILE,
+  PART_SOURCES_SCHEMA,
+  PLACEHOLDER_DIR,
+  bodyArtifact,
+  cachePath,
+  cachedFile,
+  declaredPlaceholder,
+  ensurePartFilesIgnored,
+  ensurePlaceholder,
+  expectsBody,
+  fileDigest,
+  fileSlug,
+  machineCacheDir,
+  modelSidecar,
+  modelTable,
+  ownBodyTier,
+  partFileDiagnostics,
+  partFilesDir,
+  placeholderBox,
+  projectHas3d,
+  putInCache,
+  readPartSources,
+  recordSourceEntry,
+  resolvePartFile,
+  sha256OfFile,
+  vendorFileName,
+  vendorKey,
+  writeModelFiles,
+  writePartSources,
+  type BoardStepMap,
+  type FootprintTier,
+  type ModelTable,
+  type ModelTableEntry,
+  type ModelTier,
+  type PartFileKind,
+  type PartFileSource,
+  type PartFileTerms,
+  type PartSourcesFile,
+  type PartSourcesRecord,
+  type ResolveOptions,
+  type ResolvedPartFile,
+  type SourceEntry,
+} from "./part-files.js";
+export { PLACEHOLDER_AMBER, glbJson, hatchPng, placeholderGlb, type PlaceholderSpec } from "./part-files-glb.js";
+export { IMPORT_FORMATS, boardComponents, definitionDir, importPartFile, importableFile, mapBoardStep, nodeDesignator, designatorKey, stepProductNames, type ImportResult } from "./part-files-import.js";
+// the view sidecars (PB-1173, W1-A): its index loads no glTF library; glTF-Transform loads inside the export step
+export * from "./view-model/index.js";
+export { MAX_FETCH_BYTES, fetchPartModel, kicadModelDirs, kicadModelPath, recordDerived, restorePartFiles, type FetchOutcome, type FetchSource, type Fetcher } from "./part-files-fetch.js";
 export {
   asDeclared,
   attachDeclaredArtifacts,

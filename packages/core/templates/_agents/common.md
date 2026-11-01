@@ -156,7 +156,10 @@ asks.
   doing at all.
 - **Never make placeholder CAD or 3D models** from datasheets while the
   part's UHD artifacts or its JLC/LCSC source has one. If none exists, ask
-  the person first.
+  the person first. You never make a placeholder yourself: a placeholder is
+  the build's own amber box, which the model resolver draws for a part with
+  no model at any tier and flags (`PB_MODEL_MISSING`); look for a source
+  first (`protoboard parts models`, `parts fetch`, `parts import`).
 - **A board is done when the person can see it in the viewer**: its
   Schematic, PCB, 3D and BOM tabs draw. `protoboard views check --module
   <board>` opens each tab once headless and fails on one that is empty or

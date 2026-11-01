@@ -154,13 +154,15 @@ export interface ViewerPage {
  * The page's policy: its own script (by nonce, from the extension), styles
  * from the extension and inline (the viewer positions and themes elements
  * with style attributes), images, fonts and data from the extension and the
- * dev server only. No frames, no forms.
+ * dev server only. No frames, no forms. `'wasm-unsafe-eval'` lets the page
+ * compile WebAssembly (and nothing else: no `eval`, no inline script): the
+ * 3D view's meshopt decoder for the view sidecars (`X.view.glb`, phase 1).
  */
 export function viewerCsp(p: Pick<ViewerPage, "cspSource" | "nonce" | "origins">): string {
   const dev = p.origins.join(" ");
   return [
     "default-src 'none'",
-    `script-src 'nonce-${p.nonce}' ${p.cspSource}`,
+    `script-src 'nonce-${p.nonce}' ${p.cspSource} 'wasm-unsafe-eval'`,
     `style-src ${p.cspSource} 'unsafe-inline'`,
     `img-src ${p.cspSource} ${dev} data: blob:`,
     `font-src ${p.cspSource} data:`,

@@ -22,7 +22,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `inspect [instance]` | System summary, or one instance's definition, origin, links, artifacts, diagnostics |
 | `artifacts [instance]` | Artifacts of the definitions in use (or of one instance), with the instances using them and the file each resolves to |
 | `check` | Resolve the project and run every available validator (exit 1 on errors) |
-| `build` | Write .protoboard/build/resolved.json (derived data only) |
+| `build` | Write .protoboard/build/resolved.json (derived data only) with the model table: what the one model resolver chose for every drawn body (file, sha256, tier, provenance, placeholder), and an amber placeholder box per part with no model at any tier. Offline; --fetch first restores the vendor files parts/sources.json records that are not on this machine (parts fetch), over the network when they are not cached. Then the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json: merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after |
 | `layout [level]` | The diagram's layout measured, level by level, as the viewer draws it: line crossings, overlapping cards, the longest row or column of cards (a strip), the aspect ratio and lines under cards, with what to fix. A level is an instance path ("" is the top; default: every level). --apply lays the level(s) out afresh, --tidy keeps the saved arrangement and fixes it; either writes .protoboard/display.json where the result reads better (--force: anyway). --pin <card> keeps a card where it is (repeatable; remembered in the file). --check: exit 1 when a level still has something to fix. check reports the levels of modules that need it as PB_DIAGRAM_LAYOUT (info) |
 | `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs |
 | `dev` | Serve the UHD viewer on the project: rebuilds on every source change, saves diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch) |
@@ -35,6 +35,10 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `parts taxonomy` | The libraries' category taxonomy merged, with part counts over --domain, --protocol, --tag and the words given |
 | `parts add <id[@rev]...>` | Vendor library revisions (default: the recommended one) with their closure and files into parts/catalog, pinned in parts/origins.json. The part comes from the first library that has it, unless --library names one or origins pins one. Its .uhd.ts source comes too (linted, and checked to evaluate to the pinned definition); --compiled vendors the definition JSON only |
 | `parts migrate` | Move vendored parts from the folder layout of 0.1.6 and earlier (which repeats the part id in every path, too long for Windows in a nested project) to the short one; offline, the pins stay. check reports PB_CATALOG_LAYOUT_EARLIER (info) while there are some |
+| `parts models [instance]` | The model resolver's table: per drawn body, the file used, its trust tier (M1 library verified ... M8 placeholder) and where it came from. Offline |
+| `parts import <file> --part <id> [--board] [--replace]` | Use an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body: recorded in parts/sources.json (imported, sha256), the module bound to ext-parts' cad capability (constraints.import, no script), then cad:generate and cad:export. A board's STEP (--board, or a module with children) also maps each component node to its instance by designator, then LCSC C-number. Offline |
+| `parts fetch <part> --lcsc <C-number> \| --kicad <library:name> \| --link <https url>` | Fetch one vendor model for a part, on this machine, for the user: EasyEDA's model for an LCSC C-number (terms unknown: kept on this machine), KiCad's 3D library (the installed copy first, offline), or a link (--file-format, --terms). The bytes go to the machine cache and parts/files/<part>/model.<key>.<ext> (gitignored; never committed), the link, sha256 and terms to parts/sources.json; a STEP gets a GLB for the viewer when the CAD runtime is installed (--no-convert skips it). --offline refuses the network. Never runs on its own |
+| `parts fetch [part]` | Restore the vendor files parts/sources.json records that are not on this machine: the machine cache, KiCad's installed library, else their links (--offline: no network) |
 | `parts update [id...]` | Show the recommended revision of vendored parts and what it changes; writes nothing |
 | `parts update <id> --to <rev\|recommended>` | Deliberately re-pin a vendored part (the replaced pin is kept as previous); --library moves it to another library; --compiled as for add |
 | `parts offers [id...]` | Vendor the service's supplier offers for catalog parts into parts/offers.json (what a release quotes offline; replaces those parts' entries) |
@@ -72,6 +76,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `agents config` | The command, JSON and steps for any other MCP client. Prints only |
 | `agents refresh` | Write or update Protoboard's launcher (in its own folder; no agent's file), for a client set up by hand from agents config |
 | `mcp` | The Protoboard MCP server on stdio: what an agent starts (it takes no arguments) |
+| `telemetry [status\|show\|export\|clear\|on\|off]` | Local crash and performance records of the viewer (.protoboard/local/telemetry/, never sent): status, show (--days), export prints the redacted bundle and writes it (--out <file>); --send records your consent and, in this release, sends nothing (a stub); clear; on\|off is the CLI's own switch (PROTOBOARD_TELEMETRY=off overrides) |
 
 ## Options
 
@@ -123,6 +128,17 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 | `--no-agents` | setup: leave the agents' configuration alone |
 | `--scope user\|project` | agents: your own configuration (default) or the project's shared file. A project's entry is "npx --no-install protoboard mcp" when the project depends on the CLI (--portable forces that, --no-portable writes this machine's launcher) |
 | `--ci` | evals: the CI hook: scripted host only, exit 1 on any failed trial or broken case |
+| `--send` | telemetry export: the consent to send that bundle (a stub in this release) |
+| `--out <file>` | telemetry export: where to write the bundle |
+| `--part <id>` | parts import, parts fetch: the module or part the file is for |
+| `--board` | parts import: map a board STEP's component nodes onto the board's instances |
+| `--lcsc <C-number>` | parts fetch: EasyEDA's model for that LCSC part (terms unknown: kept on this machine) |
+| `--kicad <lib:name>` | parts fetch: a model of KiCad's 3D library (the installed copy first) |
+| `--link <https url>` | parts fetch: a model at a link (--file-format step\|glb\|stl\|3mf, --terms redistributable\|internal\|unknown) |
+| `--offline` | parts fetch, build --fetch: never reach the network |
+| `--no-convert` | parts fetch: no GLB made from a fetched STEP |
+| `--fetch` | build: first restore recorded vendor files that are not on this machine (parts fetch) |
+| `--no-view` | build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json) |
 
 ## The help text
 
@@ -171,7 +187,14 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     artifacts [instance]    Artifacts of the definitions in use (or of one instance), with the instances
                             using them and the file each resolves to
     check                   Resolve the project and run every available validator (exit 1 on errors)
-    build                   Write .protoboard/build/resolved.json (derived data only)
+    build                   Write .protoboard/build/resolved.json (derived data only) with the model table: what
+                            the one model resolver chose for every drawn body (file, sha256, tier, provenance,
+                            placeholder), and an amber placeholder box per part with no model at any tier.
+                            Offline; --fetch first restores the vendor files parts/sources.json records that are
+                            not on this machine (parts fetch), over the network when they are not cached. Then
+                            the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json:
+                            merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one
+                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -216,6 +239,25 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     parts migrate           Move vendored parts from the folder layout of 0.1.6 and earlier (which repeats the part
                             id in every path, too long for Windows in a nested project) to the short one; offline,
                             the pins stay. check reports PB_CATALOG_LAYOUT_EARLIER (info) while there are some
+    parts models [instance]
+                            The model resolver's table: per drawn body, the file used, its trust tier (M1 library
+                            verified ... M8 placeholder) and where it came from. Offline
+    parts import <file> --part <id> [--board] [--replace]
+                            Use an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body:
+                            recorded in parts/sources.json (imported, sha256), the module bound to ext-parts'
+                            cad capability (constraints.import, no script), then cad:generate and cad:export.
+                            A board's STEP (--board, or a module with children) also maps each component node
+                            to its instance by designator, then LCSC C-number. Offline
+    parts fetch <part> --lcsc <C-number> | --kicad <library:name> | --link <https url>
+                            Fetch one vendor model for a part, on this machine, for the user: EasyEDA's model for
+                            an LCSC C-number (terms unknown: kept on this machine), KiCad's 3D library (the
+                            installed copy first, offline), or a link (--file-format, --terms). The bytes go to
+                            the machine cache and parts/files/<part>/model.<key>.<ext> (gitignored; never
+                            committed), the link, sha256 and terms to parts/sources.json; a STEP gets a GLB for
+                            the viewer when the CAD runtime is installed (--no-convert skips it). --offline
+                            refuses the network. Never runs on its own
+    parts fetch [part]      Restore the vendor files parts/sources.json records that are not on this machine:
+                            the machine cache, KiCad's installed library, else their links (--offline: no network)
     parts update [id...]    Show the recommended revision of vendored parts and what it changes; writes nothing
     parts update <id> --to <rev|recommended>
                             Deliberately re-pin a vendored part (the replaced pin is kept as previous);
@@ -323,6 +365,11 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     agents refresh          Write or update Protoboard's launcher (in its own folder; no agent's file), for a
                             client set up by hand from agents config
     mcp                     The Protoboard MCP server on stdio: what an agent starts (it takes no arguments)
+    telemetry [status|show|export|clear|on|off]
+                            Local crash and performance records of the viewer (.protoboard/local/telemetry/, never
+                            sent): status, show (--days), export prints the redacted bundle and writes it (--out
+                            <file>); --send records your consent and, in this release, sends nothing (a stub);
+                            clear; on|off is the CLI's own switch (PROTOBOARD_TELEMETRY=off overrides)
 
   Options
     --format text|json      Output format (default text); --json is the same as --format json.
@@ -390,4 +437,16 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             entry is "npx --no-install protoboard mcp" when the project depends on the CLI
                             (--portable forces that, --no-portable writes this machine's launcher)
     --ci                    evals: the CI hook: scripted host only, exit 1 on any failed trial or broken case
+    --send                  telemetry export: the consent to send that bundle (a stub in this release)
+    --out <file>            telemetry export: where to write the bundle
+    --part <id>             parts import, parts fetch: the module or part the file is for
+    --board                 parts import: map a board STEP's component nodes onto the board's instances
+    --lcsc <C-number>       parts fetch: EasyEDA's model for that LCSC part (terms unknown: kept on this machine)
+    --kicad <lib:name>      parts fetch: a model of KiCad's 3D library (the installed copy first)
+    --link <https url>      parts fetch: a model at a link (--file-format step|glb|stl|3mf, --terms
+                            redistributable|internal|unknown)
+    --offline               parts fetch, build --fetch: never reach the network
+    --no-convert            parts fetch: no GLB made from a fetched STEP
+    --fetch                 build: first restore recorded vendor files that are not on this machine (parts fetch)
+    --no-view               build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json)
 ```

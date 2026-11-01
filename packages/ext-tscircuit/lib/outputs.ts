@@ -259,8 +259,13 @@ export function reframeGlb(glb: Uint8Array, map: NameMap): Buffer {
   const rest = b.subarray(20 + jsonLength);
   const s = 0.001;
   const scene = json.scenes[json.scene ?? 0];
-  for (const n of json.nodes ?? []) if (n.name && map.components[n.name]) n.name = map.components[n.name].instance;
-  json.nodes.push({ name: "board", matrix: [-s, 0, 0, 0, 0, s, 0, 0, 0, 0, -s, 0, 0, 0, 0, 1], children: scene.nodes });
+  for (const n of json.nodes ?? []) {
+    if (!n.name || !map.components[n.name]) continue;
+    n.name = map.components[n.name].instance;
+    // the stable id the view sidecar and viewers pick by (PB-1173): the instance path, relative to the board
+    n.extras = { ...(n.extras ?? {}), protoboard: { ...(n.extras?.protoboard ?? {}), partInstanceId: n.name } };
+  }
+  json.nodes.push({ name: "board", matrix: [-s, 0, 0, 0, 0, s, 0, 0, 0, 0, -s, 0, 0, 0, 0, 1], children: scene.nodes, extras: { protoboard: { partInstanceId: "" } } });
   scene.nodes = [json.nodes.length - 1];
   json.asset = { ...json.asset, generator: `${json.asset?.generator ?? "circuit-json-to-gltf"} via @protoboardai/ext-tscircuit`, extras: { frame: "glTF: metres, +Y up; board frame (mm, Z up) = (x, -z, y) × 1000" } };
   let text = JSON.stringify(json);

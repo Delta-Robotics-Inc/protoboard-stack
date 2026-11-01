@@ -30,6 +30,8 @@ export const DEV_ROUTES = {
   layout: "/__protoboard/layout",
   relay: "/__protoboard/relay.js",
   source: "/__protoboard/source",
+  /** Local telemetry (PB-1181): the viewer's session and crash records, POSTed by the page; the server appends them under .protoboard/local/telemetry/. */
+  telemetry: "/__protoboard/telemetry",
   parts: "/__protoboard/parts/",
   viewerJs: "/__protoboard/viewer/web-viewer.js",
   viewerCss: "/__protoboard/viewer/web-viewer.css",
@@ -201,6 +203,20 @@ async function save(layout) {
     status("error", "layout not saved: " + e.message);
   }
 }
+
+// local telemetry (PB-1181): the viewer dispatches its session records (a partial one when the page is hidden, the
+// final one when it closes) and crash records as a window event; the server appends them to the project's
+// .protoboard/local/telemetry/ unless recording is off there. keepalive: a record sent as the page closes still arrives.
+window.addEventListener("uhd-viewer:telemetry", (e) => {
+  const record = e.detail;
+  if (!record || typeof record !== "object") return;
+  fetch("${rel(DEV_ROUTES.telemetry)}", {
+    method: "POST",
+    keepalive: true,
+    headers: { "content-type": "application/json", "${TOKEN_HEADER}": config.token },
+    body: JSON.stringify({ record }),
+  }).catch(() => {});
+});
 
 // a framing host (the VS Code extension) talks to the viewer through this page
 const relay = createRelay({

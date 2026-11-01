@@ -37,7 +37,7 @@ import {
   type ModuleDef,
   type Vec3,
 } from "@deltarobotics/uhd";
-import { stableStringify, type CadProcess, type CapabilityBinding, type Project } from "@protoboardai/core";
+import { resolvePartFile, stableStringify, type CadProcess, type CapabilityBinding, type Project } from "@protoboardai/core";
 import { projectAssembly } from "@protoboardai/ext-harness-cad/job";
 import { EXTERNAL_KINDS, readFeatures, type FeatureSpec } from "./features.ts";
 import { glandRow, type ORing } from "./standards.ts";
@@ -188,18 +188,63 @@ export function designOf(constraints: Record<string, unknown>, process: CadProce
 // ---------------------------------------------------------------------------
 
 export const sha256File = (file: string) => "sha256:" + createHash("sha256").update(readFileSync(file)).digest("hex");
+
+/**
+ * The digest of a body GLB the enclosure holds, over what the enclosure depends on: the file's bytes with the
+ * ids the export writes into glTF extras (`extras.protoboard`: instance paths, placeholder flags; PB-1173)
+ * taken out. Ids change no geometry, so adding them to a board.glb must not make every enclosure around it
+ * stale. A GLB without such extras hashes its bytes unchanged (`sha256File`), so jobs recorded before the ids
+ * existed still match; one with them hashes the GLB re-assembled without them, which is the byte-identical file
+ * the same export wrote before (JSON chunk re-serialised compact, space-padded, as the exports write it).
+ */
+export function glbContentDigest(file: string): string {
+  const buf = readFileSync(file);
+  const plain = () => "sha256:" + createHash("sha256").update(buf).digest("hex");
+  // GLB header: magic "glTF", version, length; first chunk: length, type "JSON"
+  if (buf.length < 20 || buf.readUInt32LE(0) !== 0x46546c67 || buf.readUInt32LE(16) !== 0x4e4f534a) return plain();
+  const jl = buf.readUInt32LE(12);
+  if (20 + jl > buf.length) return plain();
+  let json: unknown;
+  try {
+    json = JSON.parse(buf.subarray(20, 20 + jl).toString("utf8"));
+  } catch {
+    return plain();
+  }
+  let stripped = 0;
+  const walk = (o: unknown): void => {
+    if (Array.isArray(o)) return o.forEach(walk);
+    if (!o || typeof o !== "object") return;
+    const r = o as Record<string, unknown>;
+    const extras = r.extras as Record<string, unknown> | undefined;
+    if (extras && typeof extras === "object" && "protoboard" in extras) {
+      delete extras.protoboard;
+      stripped++;
+      if (!Object.keys(extras).length) delete r.extras;
+    }
+    for (const v of Object.values(r)) walk(v);
+  };
+  walk(json);
+  if (!stripped) return plain();
+  const text = Buffer.from(JSON.stringify(json), "utf8");
+  const chunk = Buffer.concat([text, Buffer.alloc((4 - (text.length % 4)) % 4, 0x20)]);
+  const rest = buf.subarray(20 + jl);
+  const head = Buffer.alloc(20);
+  head.writeUInt32LE(0x46546c67, 0);
+  head.writeUInt32LE(buf.readUInt32LE(4), 4);
+  head.writeUInt32LE(20 + chunk.length + rest.length, 8);
+  head.writeUInt32LE(chunk.length, 12);
+  head.writeUInt32LE(0x4e4f534a, 16);
+  return "sha256:" + createHash("sha256").update(head).update(chunk).update(rest).digest("hex");
+}
 const posix = (s: string) => s.split("\\").join("/");
 
 /** A module's body GLB: its capability provider's standard output, else its body artifact. */
 export function bodyGlb(p: Project, def: ModuleDef, body?: string): string | undefined {
+  // core's one resolver (part-files.ts, PB-1174): the bound provider's standard output, else the body
+  // artifact (by body id for a multi-body part), else a recorded vendor model; never a placeholder here
   const bound = p.capabilities.find((b) => b.module === def.id && !b.problem);
-  if (bound) {
-    const f = join(p.root, bound.out, bound.capability === "circuit" ? "board.glb" : "body.glb");
-    if (existsSync(f)) return f;
-  }
-  const glb = (def.artifacts ?? []).find((a) => a.format === "glb" && a.role === "body" && (body ? a.id === body || a.provenance?.generatedFrom === body : true));
-  const file = glb && p.artifacts.find((a) => a.definition === def.id && a.id === glb.id)?.resolved;
-  return file && existsSync(file) ? file : undefined;
+  const r = resolvePartFile(p, def.id, "model", { formats: ["glb"], noPlaceholder: true, ...(body && !bound ? { body } : {}) });
+  return r.file && r.source !== "none" && existsSync(r.file) ? r.file : undefined;
 }
 
 /**
@@ -359,13 +404,12 @@ export function buildJob(p: Project, binding: Pick<CapabilityBinding, "constrain
       continue;
     }
     const skip = markerNodes(p, d);
-    contents.push({ key: pl.key, label: d.name ?? d.id, glb: posix(relative(p.root, file)), digest: sha256File(file), matrix: multiplyMat4(enc.toLocal, pl.matrix).map(r6), ...(skip.length ? { skip_nodes: skip } : {}) });
+    contents.push({ key: pl.key, label: d.name ?? d.id, glb: posix(relative(p.root, file)), digest: glbContentDigest(file), matrix: multiplyMat4(enc.toLocal, pl.matrix).map(r6), ...(skip.length ? { skip_nodes: skip } : {}) });
   }
   for (const h of asm.harnesses) {
     if (exclude.some((x) => under(h.key, x))) continue;
-    const glb = (h.def.artifacts ?? []).find((a) => a.format === "glb" && a.role === "body");
-    const file = glb && p.artifacts.find((a) => a.definition === h.def.id && a.id === glb.id)?.resolved;
-    if (file && existsSync(file)) contents.push({ key: h.key, label: h.def.name ?? h.def.id, glb: posix(relative(p.root, file)), digest: sha256File(file), matrix: multiplyMat4(enc.toLocal, h.matrix).map(r6) });
+    const file = bodyGlb(p, h.def);
+    if (file) contents.push({ key: h.key, label: h.def.name ?? h.def.id, glb: posix(relative(p.root, file)), digest: glbContentDigest(file), matrix: multiplyMat4(enc.toLocal, h.matrix).map(r6) });
   }
   if (!contents.length && !design.cavity) problems.push(`nothing is placed inside ${at}: mate the parts it holds to it, or give them display placements`);
 

@@ -13,7 +13,7 @@
  * the 3D exporters run, so the native source never carries model paths.
  */
 import { join, relative, sep } from "node:path";
-import type { BoardComponent, Project } from "@protoboardai/core";
+import { resolvePartFile, type BoardComponent, type Project } from "@protoboardai/core";
 import type { CircuitElement } from "./runtime.ts";
 import type { NameMap } from "./source.ts";
 
@@ -44,26 +44,29 @@ export interface ComponentBody {
   mesh?: { format: "glb" | "obj"; path: string; label: string; units?: string; mount?: [number, number, number] };
 }
 
-/** Choose the body for each component. Box models and stripped copies are named here; writing them is the caller's. */
+/**
+ * Choose the body for each component through core's one resolver (part-files.ts, PB-1174): the
+ * part's STEP (its own body, a pinned or fetched vendor model, a library file from the machine
+ * cache), else a GLB or OBJ mesh for board.glb with the package box for board.step, else the box.
+ * Box models and stripped copies are named here; writing them is the caller's.
+ */
 export function chooseBodies(p: Project, components: BoardComponent[], nativeDir: string): ComponentBody[] {
   return components.map((c) => {
-    for (const b of c.bodies) {
-      if (b.format !== "step") continue;
-      const art = p.artifacts.find((a) => a.definition === c.part && a.id === b.artifact);
-      if (art?.resolved && art.present === true) {
-        const strip = (p.lookup(c.part)?.interfaces ?? []).map((i) => i.id);
-        return { instance: c.instance, source: "part", step: art.resolved, label: `${c.part}#${b.artifact}`, artifact: b.artifact, strip, stripped: `${nativeDir}/models/${c.part}-${b.artifact}.step`, ...(b.mount ? { mountOrigin: b.mount.origin } : {}) };
-      }
+    const mount = c.bodies.find((b) => b.mount)?.mount;
+    const ref = { part: c.part, instance: c.instance };
+    const step = resolvePartFile(p, ref, "model", { formats: ["step"], noPlaceholder: true });
+    if (step.file && step.source !== "none") {
+      const id = step.artifact ?? step.provenance.entry ?? "model";
+      // the part's own STEP carries its interface feature shapes (UHD bodies), which the board leaves out
+      const strip = step.artifact ? (p.lookup(c.part)?.interfaces ?? []).map((i) => i.id) : [];
+      return { instance: c.instance, source: "part", step: step.file, label: `${c.part}#${id}`, artifact: id, strip, stripped: `${nativeDir}/models/${c.part}-${id}.step`, ...(mount ? { mountOrigin: mount.origin } : {}) };
     }
     // no STEP: a GLB or OBJ body for board.glb (board.step falls back to the package box)
     let mesh: ComponentBody["mesh"];
-    for (const b of c.bodies) {
-      if (b.format !== "glb" && b.format !== "obj") continue;
-      const art = p.artifacts.find((a) => a.definition === c.part && a.id === b.artifact);
-      if (art?.resolved && art.present === true) {
-        mesh = { format: b.format, path: art.resolved, label: `${c.part}#${b.artifact}`, ...(b.units ? { units: b.units } : {}), ...(b.mount ? { mount: b.mount.origin } : {}) };
-        break;
-      }
+    const m = resolvePartFile(p, ref, "model", { formats: ["glb", "obj"], noPlaceholder: true });
+    if (m.file && m.source !== "none" && (m.format === "glb" || m.format === "obj")) {
+      const id = m.artifact ?? m.provenance.entry ?? "model";
+      mesh = { format: m.format, path: m.file, label: `${c.part}#${id}`, ...(m.units ? { units: m.units } : {}), ...(mount ? { mount: mount.origin } : {}) };
     }
     const s = c.package?.size_mm;
     if (s?.length && s.width && s.height) {
