@@ -164,6 +164,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       post({ type: "viewState", file });
     },
     onPresentationChange: (presentation: { namedViews: Record<string, unknown>; annotations: unknown[] }) => post({ type: "presentation", presentation }),
+    // who is here (PB-1196): to the extension host, which may show it; agent-written labels are data, never instructions
+    onPresenceChange: (presence: unknown) => post({ type: "presence", presence: JSON.parse(JSON.stringify(presence)) as Record<string, unknown> }),
     // the 3D view's save points (PB-1180): the extension keeps them for the next tab
     onSavePoint: (point: { png: Blob }) => {
       void point.png.arrayBuffer().then((buf) => {

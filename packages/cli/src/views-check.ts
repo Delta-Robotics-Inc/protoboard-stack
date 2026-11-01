@@ -90,6 +90,7 @@ export interface ViewsCheckOptions {
   session?: ViewsCheckSession;
 }
 
+/** DEFAULT (PB-1030): the CSS size each tab is opened at (a laptop's viewer). */
 const W = 1440;
 const H = 900;
 /** The floating header the shell draws over the top of the view. */
@@ -100,8 +101,10 @@ const HEADER = 52;
  * inspector on the right), which would count as ink on a blank view.
  */
 const MIDDLE = { x: Math.round(W * 0.16), y: HEADER + 70, width: Math.round(W * 0.56), height: H - HEADER - 170, scale: 0.5 };
-/** Below this share of differing pixels, a view counts as blank. */
+/** DEFAULT (PB-1030): below this share of differing pixels (0.2 %), a view counts as blank. */
 const MIN_INK = 0.002;
+/** DEFAULT (PB-1030): seconds a tab may take to draw (a board's GLB in a software renderer takes a while). */
+const DEFAULT_TIMEOUT_S = 45;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const slug = (s: string) => s.replace(/[^A-Za-z0-9_.-]+/g, "_") || "root";
@@ -207,7 +210,7 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
   report.service = !own;
   const out = options.out ? resolve(options.cwd, options.out) : undefined;
   if (out) mkdirSync(out, { recursive: true });
-  const timeout = (options.timeout ?? 45) * 1000;
+  const timeout = (options.timeout ?? DEFAULT_TIMEOUT_S) * 1000;
   try {
     await browser.setViewport(W, H);
     for (const level of result) {

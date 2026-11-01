@@ -21,12 +21,13 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import type { AddressInfo } from "node:net";
 import { basename, extname, isAbsolute, relative, resolve } from "node:path";
 import type { BackendInfo, Browser, GlBackendRequest } from "../cdp.js";
-import { captureSidecars, defaultCapturePath, removeServiceRecord, writeAtomic, writeServiceRecord, writeSnapshot } from "./files.js";
+import { captureSidecars, defaultCapturePath, removeServiceRecord, resolveInsideProject, writeAtomic, writeServiceRecord, writeSnapshot } from "./files.js";
 import { base64Bytes, firstEncode, loadTransferLimits, nextEncodeStep, planSize, type EncodeStep, type LoadedLimits } from "./limits.js";
 import {
   activateTab,
   addOverlay,
   applyCadState,
+  drawnRecords,
   applyDiagramZoom,
   compareFrames,
   diagramExtent,
@@ -47,7 +48,7 @@ import {
 } from "./page.js";
 import { buildLegend, fitState, OVERLAY_DARK, OVERLAY_LIGHT, overlaySvg, type RefNode } from "./project.js";
 import { IdleTimer, SerialQueue } from "./queue.js";
-import { CAPTURE_RESPONSE_SCHEMA, SERVICE_RECORD_SCHEMA, captureKey, imageKind, parseCaptureRequest, type CameraState, type CaptureRequest, type CaptureResponse, type ImageFormat, type LegendEntry, type ServiceRecord } from "./schema.js";
+import { CAPTURE_RESPONSE_SCHEMA, DEFAULT_SIZE, SERVICE_RECORD_SCHEMA, captureKey, imageKind, parseCaptureRequest, type CameraState, type CaptureRequest, type CaptureResponse, type DrawnRecord, type ImageFormat, type LegendEntry, type ServiceRecord } from "./schema.js";
 
 /** The viewer page the service drives: `protoboard dev`'s server for the project (watch off). */
 export interface PageHost {
@@ -71,9 +72,25 @@ export interface RenderServiceOptions {
   idleMs?: number;
   onIdle?: () => void;
   log?: (line: string) => void;
-  /** Seconds a tab may take to draw (default 120: a heavy model on SwiftShader). */
+  /** Seconds a tab may take to draw (default `DRAW_TIMEOUT_S`). */
   drawTimeoutS?: number;
 }
+
+/** DEFAULT (PB-1180): seconds a tab may take to draw before it is captured as it is (a heavy model on SwiftShader). */
+export const DRAW_TIMEOUT_S = 120;
+/** DEFAULT (PB-1180): ms to wait for the viewer shell's tab bar after a navigation. */
+export const TABS_TIMEOUT_MS = 60000;
+/** DEFAULT (PB-1180): ms a 2D view gets to fit itself again after the page is resized for an exact zoom. */
+export const ZOOM_RESIZE_SETTLE_MS = 400;
+/** DEFAULT (PB-1180): the last frames kept per request for `ifChanged` (each holds one plain PNG in memory). */
+export const CAPTURE_CACHE_ENTRIES = 64;
+/** DEFAULT (PB-1180): below this share of pixels differing from the background, a frame is called blank (0.2 %). */
+export const BLANK_INK_SHARE = 0.002;
+/** DEFAULT (PB-1180): at or above this share of pixels differing from the last frame, a frame has changed (0.05 %). */
+export const CHANGED_PIXEL_SHARE = 0.0005;
+
+/** How a refused `out` is told to write elsewhere on purpose. */
+const OUT_HINT = "run `protoboard views capture --out <file>` yourself to write elsewhere";
 
 export interface ServiceHealth {
   ok: true;
@@ -134,6 +151,45 @@ export class RenderService {
       captures: this.captures,
       uptimeMs: Date.now() - this.started,
     };
+  }
+
+  /**
+   * The headless scene owner (PB-1179, PB-1196; plan.md DEFAULT: the render service owns the scene when no
+   * person's tab is open): runs `job` on the 3D tab of `level`, in the same page a document capture of that level
+   * uses (`theme`, DEFAULT `protoboard-light`), so a capture after a batch shows what the batch set. The page is
+   * navigated only when the level changes (or after `views check` or a rebuild took it): the view store and its op
+   * log live in that page, and a new page starts a new epoch (the caller restores what it mirrored).
+   */
+  withScene<T>(level: string, job: (browser: Browser, info: { fresh: boolean; url: string }) => Promise<T>, theme = "protoboard-light"): Promise<T> {
+    return this.queue.run(() =>
+      this.idle.during(async () => {
+        const { browser: b, host } = await this.ensure();
+        const url = levelUrl(host.url, level, theme);
+        const size = this.page?.css ?? `${DEFAULT_SIZE.width}x${DEFAULT_SIZE.height}@${DEFAULT_SIZE.dpr}`;
+        let fresh = false;
+        if (this.page?.url !== url) {
+          if (!this.page) await b.setViewport(DEFAULT_SIZE.width, DEFAULT_SIZE.height, DEFAULT_SIZE.dpr);
+          await b.navigate(url);
+          this.page = { url, css: size };
+          fresh = true;
+        }
+        const page = this.page;
+        const shown = await waitForTabs(b, TABS_TIMEOUT_MS);
+        const resolved = await this.o.tabTitle?.(level, "3d").catch(() => undefined);
+        const title = matchTitle("3d", shown, resolved);
+        if (!title) throw new Error(`no 3d tab at ${level || "the top level"} (tabs shown: ${shown.join(", ") || "none"})`);
+        if (page.view !== title) {
+          await activateTab(b, title);
+          page.view = title;
+          fresh = true;
+        }
+        if (fresh) {
+          await setDocumentMode(b, true);
+          await waitDrawn(b, "3d", (this.o.drawTimeoutS ?? DRAW_TIMEOUT_S) * 1000);
+        }
+        return job(b, { fresh, url });
+      }),
+    );
   }
 
   /** Runs `job` with the warm browser and page host, one job at a time (views check, the doctor's capture test). */
@@ -197,6 +253,8 @@ export class RenderService {
   /** One capture (queued behind any running job). */
   capture(input: unknown): Promise<CaptureResponse> {
     const req = parseCaptureRequest(input);
+    // `out` stays inside the project unless the request opts out (the CLI, for a person's own --out): said before the queue
+    if (req.out && !req.allowOutsideProject) resolveInsideProject(this.o.root, req.out, "capture request: out", OUT_HINT);
     const queued = Date.now();
     return this.queue.run(() => this.idle.during(() => this.doCapture(req, Date.now() - queued)));
   }
@@ -205,7 +263,7 @@ export class RenderService {
     const t0 = Date.now();
     const warnings: string[] = [];
     const { browser: b, host, stale } = await this.ensure();
-    const drawTimeout = (this.o.drawTimeoutS ?? 120) * 1000;
+    const drawTimeout = (this.o.drawTimeoutS ?? DRAW_TIMEOUT_S) * 1000;
     const theme = req.theme ?? (req.document ? "protoboard-light" : "protoboard-dark");
     const url = levelUrl(host.url, req.level, theme);
     const css = `${req.size.width}x${req.size.height}@${req.size.dpr}`;
@@ -217,7 +275,7 @@ export class RenderService {
       this.page = { url, css };
     }
     this.page.css = css;
-    const shown = await waitForTabs(b, 60000);
+    const shown = await waitForTabs(b, TABS_TIMEOUT_MS);
     const resolved = await this.o.tabTitle?.(req.level, req.view).catch(() => undefined);
     const title = matchTitle(req.view, shown, resolved);
     if (!title) throw new Error(`no ${req.view} tab at ${req.level || "the top level"} (tabs shown: ${shown.join(", ") || "none"})`);
@@ -259,7 +317,7 @@ export class RenderService {
         await b.setViewport(size.width, size.height, size.dpr);
         this.page.css = `${size.width}x${size.height}@${size.dpr}`;
         // let the view finish its own resize (React Flow fits again) before the extent is read and the zoom set
-        await sleep(400);
+        await sleep(ZOOM_RESIZE_SETTLE_MS);
         await b.evaluate(FRAMES);
         const again = (await diagramExtent(b)) ?? ext;
         await applyDiagramZoom(b, again, req.zoom, req.padding);
@@ -276,10 +334,10 @@ export class RenderService {
     const key = captureKey(req);
     const prev = this.last.get(key);
     const cmp = await compareFrames(b, prev?.plain, plain);
-    if (cmp.ink < 0.002) warnings.push("the frame looks blank (under 0.2 % of pixels differ from the background)");
+    if (cmp.ink < BLANK_INK_SHARE) warnings.push("the frame looks blank (under 0.2 % of pixels differ from the background)");
     const errors = b.takeErrors().filter((e) => !/favicon|ERR_ABORTED|EventSource/i.test(e));
     if (errors.length) warnings.push(`page error: ${errors[0].split("\n")[0].slice(0, 200)}`);
-    const changed = !prev || cmp.changed >= 0.0005 || prev.response.bundleHash !== this.bundleHash;
+    const changed = !prev || cmp.changed >= CHANGED_PIXEL_SHARE || prev.response.bundleHash !== this.bundleHash;
     if (req.ifChanged && prev && !changed) {
       return { ...prev.response, changed: false, pixelsChangedShare: round4(cmp.changed), warnings, timings: { queueMs, pageMs, settleMs, captureMs: Date.now() - tc, encodeMs: 0, totalMs: Date.now() - t0 + queueMs } };
     }
@@ -288,10 +346,17 @@ export class RenderService {
     let camera: CameraState | undefined;
     let viewerState: Record<string, unknown> | undefined;
     let legend: LegendEntry[] = [];
+    let records: DrawnRecord[] | undefined;
     if (isCad) {
       const obs = await observeCad(b);
       camera = obs?.camera;
       viewerState = await viewStateOf(b).catch(() => undefined);
+      // the records the view state holds, as the layer drew them: a callout on a hidden part retracts (gate 3)
+      records = await drawnRecords(b).catch(() => undefined);
+      if (records && !records.length) records = undefined;
+      for (const r of records ?? [])
+        if (r.status !== "placed" && r.status !== "pinned" && r.kind !== "finding")
+          warnings.push(`${r.kind} ${r.id}${r.ref ? ` on ${r.ref}` : ""} is not in the picture (${r.status}${r.status === "occluded" ? ": another part hides it; isolate it or move the camera" : ""})`);
       if (req.annotate.length && obs) {
         const rect = await viewRect(b);
         const outScale = size.dpr * plan.scale;
@@ -401,6 +466,7 @@ export class RenderService {
       changed,
       pixelsChangedShare: prev ? round4(cmp.changed) : 1,
       legend,
+      ...(records ? { records } : {}),
       viewState,
       // the file's name only: the manifest sits beside committed images and must not carry a machine path
       limits: { file: this.limits.file === "built-in" ? "built-in" : basename(this.limits.file), checked: this.limits.limits.checked, applied },
@@ -409,7 +475,7 @@ export class RenderService {
     };
     writeAtomic(manifestPath, `${JSON.stringify(manifestOf(req, response, this.o.root), null, 2)}\n`);
     this.last.set(key, { plain, response });
-    if (this.last.size > 64) this.last.delete(this.last.keys().next().value!);
+    if (this.last.size > CAPTURE_CACHE_ENTRIES) this.last.delete(this.last.keys().next().value!);
     this.captures++;
     return response;
   }
@@ -417,7 +483,8 @@ export class RenderService {
   private imagePath(req: CaptureRequest, format: ImageFormat, warnings: string[]): string {
     const ext = format === "jpeg" ? "jpg" : format;
     if (!req.out) return defaultCapturePath(this.o.root, req.level, req.view, ext);
-    const asked = isAbsolute(req.out) ? req.out : resolve(this.o.root, req.out);
+    // checked again here (the folder may have changed while the job waited): inside the project unless opted out
+    const asked = req.allowOutsideProject ? (isAbsolute(req.out) ? req.out : resolve(this.o.root, req.out)) : resolveInsideProject(this.o.root, req.out, "capture request: out", OUT_HINT);
     const have = extname(asked).toLowerCase();
     const want = format === "jpeg" ? [".jpg", ".jpeg"] : [`.${format}`];
     if (want.includes(have)) return asked;
@@ -448,7 +515,7 @@ export const CAPTURE_MANIFEST_SCHEMA = "protoboard.capture-manifest/v0";
  */
 export function manifestOf(req: CaptureRequest, r: CaptureResponse, root: string) {
   const rel = (p: string | undefined) => (p ? relative(root, p).split("\\").join("/") : undefined);
-  const { out: _out, ...request } = req;
+  const { out: _out, allowOutsideProject: _allow, ...request } = req;
   return {
     schema: CAPTURE_MANIFEST_SCHEMA,
     request,
@@ -460,6 +527,7 @@ export function manifestOf(req: CaptureRequest, r: CaptureResponse, root: string
     bytes: r.bytes,
     viewState: r.viewState,
     legend: r.legend,
+    ...(r.records ? { records: r.records } : {}),
     bundleHash: r.bundleHash,
     revision: r.revision,
     backend: r.backend,
@@ -485,7 +553,8 @@ export interface ServeOptions {
 }
 
 const LOOPBACK_HOSTS = /^(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/i;
-const MAX_BODY = 256 * 1024;
+/** DEFAULT (PB-1180): the largest request body the loopback server reads (a capture request is a few kB). */
+export const RENDER_SERVICE_MAX_BODY = 256 * 1024;
 
 /**
  * Serves a render service on 127.0.0.1 (an ephemeral port), records it in
@@ -564,7 +633,7 @@ async function readBody(req: IncomingMessage): Promise<unknown> {
   let n = 0;
   for await (const c of req) {
     n += (c as Buffer).length;
-    if (n > MAX_BODY) throw new Error("request body over 256 kB");
+    if (n > RENDER_SERVICE_MAX_BODY) throw new Error(`request body over ${RENDER_SERVICE_MAX_BODY / 1024} kB`);
     chunks.push(c as Buffer);
   }
   const text = Buffer.concat(chunks).toString("utf8");

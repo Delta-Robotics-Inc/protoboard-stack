@@ -9,7 +9,7 @@
  * GPU first, `auto`), the viewer page (`protoboard dev`'s server, not
  * watching, no dev.json, so a person's own `protoboard dev` is left alone),
  * the tabs' titles (`@protoboardai/views/tabs`), and the `views check` route.
- * It shuts down after `PROTOBOARD_RENDER_IDLE_S` (default 15 min) idle.
+ * It shuts down after `PROTOBOARD_RENDER_IDLE_S` (default 15 min, DEFAULT: core's `DEFAULT_IDLE_MS`) idle.
  */
 import { spawn } from "node:child_process";
 import { closeSync, mkdirSync, openSync, statSync } from "node:fs";
@@ -17,8 +17,33 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ServerResponse } from "node:http";
 
-/** The service's log, beside its record (truncated when over 1 MB at start). */
+/** The service's log, beside its record (truncated when over `SERVICE_LOG_MAX_BYTES` at start). */
 export const SERVICE_LOG = join(".protoboard", "local", "render-service.log");
+/** DEFAULT (PB-1180): a service log larger than this is started afresh (1 MB). */
+export const SERVICE_LOG_MAX_BYTES = 1024 * 1024;
+/** DEFAULT (W3-A, 2026-11-01): the longest per-tab draw timeout a `/check` body may ask for, in seconds. */
+export const CHECK_MAX_TIMEOUT_S = 600;
+
+/**
+ * A `/check` body made safe (wave 2 gate): `out` (a folder for one PNG per tab) resolves inside the project
+ * unless the body carries `allowOutsideProject: true`, which only the CLI's `views check --out-dir` sets
+ * (the person's own folder); the MCP server never does. `module` is a string, `timeout` 1 to
+ * `CHECK_MAX_TIMEOUT_S` seconds. Throws naming what is wrong and what to do.
+ */
+export async function checkBody(root: string, body: unknown): Promise<{ module?: string; out?: string; timeout?: number }> {
+  const b = (body ?? {}) as Record<string, unknown>;
+  if (typeof b !== "object" || Array.isArray(b)) throw new Error("views check: the body must be a JSON object { module, out, timeout }");
+  if (b.module !== undefined && typeof b.module !== "string") throw new Error("views check: module is an instance path or module id");
+  if (b.timeout !== undefined && (typeof b.timeout !== "number" || !Number.isFinite(b.timeout) || b.timeout < 1 || b.timeout > CHECK_MAX_TIMEOUT_S)) throw new Error(`views check: timeout is 1 to ${CHECK_MAX_TIMEOUT_S} seconds`);
+  if (b.allowOutsideProject !== undefined && typeof b.allowOutsideProject !== "boolean") throw new Error("views check: allowOutsideProject is true or false");
+  let out: string | undefined;
+  if (b.out !== undefined) {
+    if (typeof b.out !== "string" || !b.out.trim() || /[<>"|?*\0]/.test(b.out.replace(/^[A-Za-z]:/, ""))) throw new Error('views check: out is a folder path (no < > " | ? *)');
+    const { resolveInsideProject } = await import("@protoboardai/core/render-service");
+    out = b.allowOutsideProject === true ? resolve(root, b.out) : resolveInsideProject(root, b.out, "views check: out", "run `protoboard views check --out-dir <folder>` yourself to write elsewhere");
+  }
+  return { ...(b.module !== undefined ? { module: b.module as string } : {}), ...(out !== undefined ? { out } : {}), ...(b.timeout !== undefined ? { timeout: b.timeout as number } : {}) };
+}
 
 export interface ServiceProcessOptions {
   root: string;
@@ -89,6 +114,8 @@ export async function runRenderServiceProcess(o: ServiceProcessOptions): Promise
   };
   const { service, core } = await createProjectRenderService({ ...o, log, onIdle: () => shutdown(`idle for ${Math.round((o.idleMs ?? core.idleMsFromEnv()) / 1000)} s`) });
   const { viewsCheck } = await import("./views-check.js");
+  const { sceneBatchRoute } = await import("./mcp/scene.js");
+  const { Journal } = await import("./dev/journal.js");
   const { findBrowser } = await import("@protoboardai/core");
   const ndjson = (res: ServerResponse) => {
     res.writeHead(200, { "content-type": "application/x-ndjson; charset=utf-8", "cache-control": "no-store" });
@@ -101,14 +128,17 @@ export async function runRenderServiceProcess(o: ServiceProcessOptions): Promise
       // views check in the warm browser: log lines as they come, then the report
       "/check": async (body, res) => {
         const line = ndjson(res);
-        const b = (body ?? {}) as { module?: string; out?: string; timeout?: number };
         try {
+          const b = await checkBody(o.root, body);
           const report = await service.withPage((browser, host) => viewsCheck({ cwd: o.root, module: b.module, out: b.out, timeout: b.timeout, session: { browser, url: host.url }, log: (l) => line({ log: l }) }));
           res.end(`${JSON.stringify({ report })}\n`);
         } catch (e) {
           res.end(`${JSON.stringify({ error: (e as Error).message })}\n`);
         }
       },
+      // an agent's view batch on the headless scene (PB-1179, PB-1196; DEFAULT: the service owns the scene when no
+      // person's tab is open): applied by the warm page's view store, its op log mirrored to scene-oplog.jsonl
+      "/batch": sceneBatchRoute(service, new Journal(o.root)),
       // the doctor's render and capture probes on the warm browser (no second browser)
       "/doctor": async (_body, res) => {
         const report = await service.withPage((browser) =>
@@ -143,7 +173,7 @@ export function spawnRenderService(root: string): void {
   mkdirSync(resolve(root, ".protoboard", "local"), { recursive: true });
   let flags = "a";
   try {
-    if (statSync(logFile).size > 1024 * 1024) flags = "w";
+    if (statSync(logFile).size > SERVICE_LOG_MAX_BYTES) flags = "w";
   } catch {
     /* new */
   }

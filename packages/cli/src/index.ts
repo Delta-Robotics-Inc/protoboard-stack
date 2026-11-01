@@ -218,6 +218,10 @@ const cli = meow(
                             explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend),
                             --size, --format png|jpeg|webp, --out <file>; writes x.capture.json beside the image
                             and a snapshot the visible viewer opens from. --no-service runs it in this process
+    geometry measure        Exact measurement through build123d (PB-1187): measure <request.json | -> (a
+                            protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces
+                            <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on
+                            stdin and stdout)
     views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
                             --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
     views service | status | stop
@@ -1396,6 +1400,11 @@ async function main() {
       const r = telemetryCommand(args, { cwd, send: cli.flags.send, out: cli.flags.out, days: cli.flags.days });
       out(r.data, () => r.text);
       process.exitCode = r.exitCode;
+      return;
+    }
+    case "geometry": {
+      // W3-D (PB-1187): the exact tier's measurements; flags are read from args in geometry.ts
+      process.exitCode = await (await import("./geometry.js")).geometryCommand(cwd, args, out);
       return;
     }
     case "views": {

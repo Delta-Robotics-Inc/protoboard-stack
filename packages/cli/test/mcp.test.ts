@@ -29,7 +29,11 @@ const TMP = join(HERE, ".tmp-mcp");
 const EMPTY = mkdtempSync(join(tmpdir(), "pb-mcp-empty-"));
 const HOME = mkdtempSync(join(tmpdir(), "pb-mcp-home-"));
 
-const TOOLS = ["project_status", "project_init", "project_check", "project_inspect", "project_build", "project_layout", "parts_search", "parts_add", "parts_list", "parts_models", "parts_import", "telemetry_export", "skills_list", "skill_read", "bom", "release_check"];
+const TOOLS = [
+  "project_status", "project_init", "project_check", "project_inspect", "project_build", "project_layout", "parts_search", "parts_add", "parts_list", "parts_models", "parts_import", "telemetry_export", "skills_list", "skill_read", "bom", "release_check",
+  // the agent's view tools (PB-1179): they change what the view shows, never the project's files
+  "view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_unannotate", "view_explode", "view_undo", "view_claim", "view_release", "view_capture", "view_review", "view_tour",
+];
 const WRITES = ["project_init", "project_build", "project_layout", "parts_add"];
 
 const PART: UhdModuleDef = {
@@ -175,13 +179,15 @@ describe("the server's surface", () => {
       expect(t.annotations!.destructiveHint, t.name).toBe(false);
       expect(t.description, t.name).toContain("It runs the project's own code (protoboard.config.ts and its model files)");
       if (writes) expect(t.description, t.name).toMatch(/CHANGES FILES/);
+      else if (t.name.startsWith("view_")) expect(t.description, t.name).toMatch(/CHANGES THE VIEW only|Writes nothing|writes an image/);
       else expect(t.description, t.name).toMatch(/Reads only|writes nothing|Writes nothing/);
     }
   });
 
   it("has no tool that publishes, orders, uploads, signs in or shows prices by source", async () => {
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).filter((n) => /publish|order|upload|login|logout|price|offer|usage|token|credential|run|release$/.test(n))).toEqual([]);
+    // (view_release ends a lease on the view, not a project release)
+    expect(tools.map((t) => t.name).filter((n) => n !== "view_release" && /publish|order|upload|login|logout|price|offer|usage|token|credential|run|release$/.test(n))).toEqual([]);
     // and none takes a token, a key or a service address
     for (const t of tools) expect(Object.keys(t.inputSchema.properties ?? {}).filter((k) => /token|key|secret|password|url/i.test(k)), t.name).toEqual([]);
   });

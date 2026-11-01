@@ -70,8 +70,16 @@ export interface CaptureRequest {
   theme?: string;
   /** How the annotations are delivered (default `burned+svg` when there is anything to annotate). */
   overlay: OverlayMode;
-  /** Where to write the image (absolute, or relative to the project); default `.protoboard/local/captures/`. */
+  /**
+   * Where to write the image (relative to the project, or absolute inside it); default
+   * `.protoboard/local/captures/`. It must resolve inside the project unless `allowOutsideProject` is set.
+   */
   out?: string;
+  /**
+   * Let `out` point outside the project (wave 2 gate). Only the CLI's `views capture` sets it, and only when
+   * the person passed `--out` themselves; the MCP server never does.
+   */
+  allowOutsideProject?: boolean;
   kind?: ImageKind;
   /** The long edge in output pixels; default `policy.defaultLongEdgePx` (2,576). Never above the route's limits. */
   maxLongEdge?: number;
@@ -131,11 +139,28 @@ export interface CaptureResponse {
   /** Share of pixels that differ from the previous capture of the same request (0-1; 1 when there was none). */
   pixelsChangedShare: number;
   legend: LegendEntry[];
+  /**
+   * What the viewer's annotation layer drew for each record in the view state (W3-B's callouts, marks and arrows;
+   * gate 3): `placed` or `pinned` are in the picture; `occluded` (its part is hidden behind another: the label
+   * retracts, a ring shows only as a faint ghost), `offscreen`, `hidden` and `orphan` (no such part) are not. A
+   * warning names each record not drawn. Absent when the viewer has no annotation layer or no records.
+   */
+  records?: DrawnRecord[];
   /** The view state as drawn: the request's state plus the camera the viewer reports. */
   viewState: ViewState & { camera?: CameraState };
   limits: { file: string; checked: string; applied: string[] };
   warnings: string[];
   timings: CaptureTimings;
+}
+
+/** One annotation record as the viewer's layer drew it (`window.__cad.annotations().records`). */
+export interface DrawnRecord {
+  id: string;
+  kind: string;
+  status: string;
+  ref?: string;
+  /** Where its anchor sits in the image (px). */
+  anchorPx?: [number, number];
 }
 
 /** The camera as `window.__cad.observe()` reports it (mm, Z up). */
@@ -167,8 +192,17 @@ export interface ServiceRecord {
   version: string;
 }
 
+/** DEFAULT (PB-1180): the view a capture draws when the request names no size. */
 export const DEFAULT_SIZE = { width: 1600, height: 1000, dpr: 1 } as const;
+/** DEFAULT (PB-1180): the largest view side in CSS px (the routes' 8,000 px per-side limit). */
 export const MAX_CSS_SIDE = 8000;
+/** DEFAULT (PB-1180): the most refs one capture annotates (more would not be legible). */
+export const MAX_ANNOTATE = 40;
+/** DEFAULT (PB-1180): the longest instance path a request may name, and the longest annotation label kept. */
+export const MAX_LEVEL_CHARS = 512;
+export const MAX_LABEL_CHARS = 80;
+/** DEFAULT (PB-1180): CSS px of margin around a 2D drawing at an exact zoom. */
+export const DEFAULT_PADDING = 24;
 
 const FORMATS: ImageFormat[] = ["png", "jpeg", "webp"];
 const KINDS: ImageKind[] = ["shaded", "annotated", "line", "flat", "diagram", "contact-sheet"];
@@ -185,13 +219,13 @@ const num = (v: unknown) => typeof v === "number" && Number.isFinite(v);
 export function parseCaptureRequest(input: unknown): CaptureRequest {
   const problems: string[] = [];
   const o = isObj(input) ? input : (problems.push("the request must be a JSON object"), {} as Record<string, unknown>);
-  const known = new Set(["schema", "view", "level", "state", "annotate", "size", "format", "quality", "ifChanged", "document", "zoom", "padding", "theme", "overlay", "out", "kind", "maxLongEdge", "batch"]);
+  const known = new Set(["schema", "view", "level", "state", "annotate", "size", "format", "quality", "ifChanged", "document", "zoom", "padding", "theme", "overlay", "out", "allowOutsideProject", "kind", "maxLongEdge", "batch"]);
   for (const k of Object.keys(o)) if (!known.has(k)) problems.push(`unknown field "${k}"`);
 
   const view = o.view === undefined ? "3d" : o.view;
   if (typeof view !== "string" || !/^[A-Za-z0-9_.:-]{1,64}$/.test(view)) problems.push(`view: a tab id such as 3d or diagram, not ${JSON.stringify(o.view)}`);
   const level = o.level === undefined ? "" : o.level;
-  if (typeof level !== "string" || level.length > 512 || /(^|\/)\.\.?(\/|$)|\\/.test(level)) problems.push(`level: an instance path such as "" or "arm_fr/motor", not ${JSON.stringify(o.level)}`);
+  if (typeof level !== "string" || level.length > MAX_LEVEL_CHARS || /(^|\/)\.\.?(\/|$)|\\/.test(level)) problems.push(`level: an instance path such as "" or "arm_fr/motor", not ${JSON.stringify(o.level)}`);
 
   let state: ViewState | undefined;
   if (o.state !== undefined) {
@@ -212,10 +246,10 @@ export function parseCaptureRequest(input: unknown): CaptureRequest {
     else
       for (const [i, a] of o.annotate.entries()) {
         if (typeof a === "string" && a.trim()) annotate.push({ ref: a.trim() });
-        else if (isObj(a) && typeof a.ref === "string" && a.ref.trim() && (a.label === undefined || typeof a.label === "string")) annotate.push({ ref: a.ref.trim(), ...(a.label ? { label: String(a.label).slice(0, 80) } : {}) });
+        else if (isObj(a) && typeof a.ref === "string" && a.ref.trim() && (a.label === undefined || typeof a.label === "string")) annotate.push({ ref: a.ref.trim(), ...(a.label ? { label: String(a.label).slice(0, MAX_LABEL_CHARS) } : {}) });
         else problems.push(`annotate[${i}]: a ref string or {ref, label}`);
       }
-    if (annotate.length > 40) problems.push("annotate: at most 40 refs in one capture");
+    if (annotate.length > MAX_ANNOTATE) problems.push(`annotate: at most ${MAX_ANNOTATE} refs in one capture`);
   }
 
   const size = { ...DEFAULT_SIZE } as { width: number; height: number; dpr: number };
@@ -244,7 +278,7 @@ export function parseCaptureRequest(input: unknown): CaptureRequest {
   if (o.padding !== undefined && (!num(o.padding) || (o.padding as number) < 0 || (o.padding as number) > 1000)) problems.push("padding: 0 to 1000 CSS px");
   if (o.maxLongEdge !== undefined && (!num(o.maxLongEdge) || (o.maxLongEdge as number) < 16)) problems.push("maxLongEdge: at least 16 px");
   if (o.batch !== undefined && (!num(o.batch) || (o.batch as number) < 1)) problems.push("batch: at least 1");
-  for (const k of ["ifChanged", "document"] as const) if (o[k] !== undefined && typeof o[k] !== "boolean") problems.push(`${k}: true or false`);
+  for (const k of ["ifChanged", "document", "allowOutsideProject"] as const) if (o[k] !== undefined && typeof o[k] !== "boolean") problems.push(`${k}: true or false`);
   if (o.theme !== undefined && (typeof o.theme !== "string" || !/^[A-Za-z0-9_-]{1,64}$/.test(o.theme))) problems.push("theme: a theme name such as protoboard-light");
   if (o.out !== undefined && (typeof o.out !== "string" || !o.out.trim() || /[<>"|?*]/.test(o.out.replace(/^[A-Za-z]:/, "")))) problems.push("out: a file path (no < > \" | ? *)");
 
@@ -260,10 +294,11 @@ export function parseCaptureRequest(input: unknown): CaptureRequest {
     ifChanged: o.ifChanged === true,
     document: o.document !== false,
     ...(o.zoom !== undefined ? { zoom: o.zoom as number } : {}),
-    padding: o.padding === undefined ? 24 : (o.padding as number),
+    padding: o.padding === undefined ? DEFAULT_PADDING : (o.padding as number),
     ...(o.theme !== undefined ? { theme: o.theme as string } : {}),
     overlay: (o.overlay as OverlayMode | undefined) ?? (annotate.length ? "burned+svg" : "none"),
     ...(o.out !== undefined ? { out: o.out as string } : {}),
+    ...(o.allowOutsideProject === true ? { allowOutsideProject: true } : {}),
     ...(o.kind !== undefined ? { kind: o.kind as ImageKind } : {}),
     ...(o.maxLongEdge !== undefined ? { maxLongEdge: Math.round(o.maxLongEdge as number) } : {}),
     ...(o.batch !== undefined ? { batch: Math.round(o.batch as number) } : {}),

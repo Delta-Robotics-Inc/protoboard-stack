@@ -68,13 +68,19 @@ import { DEFAULT_HOST_ORIGINS, originAllowed } from "./relay.js";
 import { PARTS_PREFIX, partsRoutes } from "./parts.js";
 import { cliTelemetryMode, versionInventory } from "../telemetry.js";
 import { BRIDGE_KEY_HEADER, BRIDGE_ROUTES, BRIDGE_SESSION_HEADER, LiveBridge, MAX_BATCH_BYTES, parseBatchBody } from "./bridge.js";
-import { MAX_VIEWER_STATE_BYTES, parsePresentation, parseViewerStateFile, readViewerState, saveViewerState, withPresentation } from "./viewState.js";
-import { SNAPSHOTS_DIR, readSnapshot, snapshotKey, writeSnapshot } from "@protoboardai/core/render-service";
+import { MAX_VIEWER_STATE_BYTES, presentationToWrite, parsePresentation, parseViewerStateFile, readViewerState, saveViewerState, withPresentation } from "./viewState.js";
+import { SNAPSHOTS_DIR, backendOf, checkSnapshotMeta, readSnapshot, snapshotKey, writeSnapshot } from "@protoboardai/core/render-service";
+import { Journal } from "./journal.js";
 // TODO(W1-B handoff): `@protoboardai/core/telemetry` once core/package.json exports it
 import { MAX_LINE_BYTES, appendTelemetry, enrichViewerRecord } from "@protoboardai/core/telemetry";
 
 export const DEFAULT_DEV_PORT = 5180;
 const LOOPBACK = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
+
+/** DEFAULT: a visible viewer's save point (a PNG of the view, base64) is at most this large. */
+export const MAX_SNAPSHOT_POST_BYTES = 16 << 20;
+/** DEFAULT: the build's sequence.json is served up to this size. */
+export const MAX_SEQUENCE_BYTES = 8 << 20;
 
 /**
  * A write's Origin is the page's own: the host it asked (http or https: a
@@ -275,8 +281,12 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   const handleViewer = viewer.viewerHandler({ bundleFile, allowHost });
   const token = randomBytes(18).toString("base64url");
   const session = randomBytes(9).toString("base64url");
-  // the live-tab bridge (./bridge.ts): its key is only in the record, so only a session that writes one is reachable
-  const bridge = new LiveBridge({ log: (message) => log({ level: "info", event: "bridge", message }) });
+  /** A person's session (not `views check`'s own): it keeps and restores the viewer's state and offers the bridge. */
+  const personal = options.record !== false;
+  // the live-tab bridge (./bridge.ts): its key is only in the record, so only a session that writes one is reachable;
+  // a person's session mirrors the tabs' op logs to .protoboard/local/scene-oplog.jsonl (PB-1196, ./journal.ts)
+  const journal = personal ? new Journal(root) : undefined;
+  const bridge = new LiveBridge({ log: (message) => log({ level: "info", event: "bridge", message }), ...(journal ? { journal } : {}) });
   /** `sha256:<hex>` of the bundle file (as the render service's snapshots name it), kept until the file changes. */
   let hashed: { mtimeMs: number; size: number; hash: string } | undefined;
   const bundleHash = (): string | undefined => {
@@ -288,8 +298,6 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       return undefined;
     }
   };
-  /** A person's session (not `views check`'s own): it keeps and restores the viewer's state and offers the bridge. */
-  const personal = options.record !== false;
   const tsx = pathToFileURL(require.resolve("tsx/esm")).href;
   const worker = fileURLToPath(new URL("./build-worker.ts", import.meta.url));
 
@@ -613,6 +621,8 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   const withKey = (req: IncomingMessage) => personal && bridge.keyMatches(req.headers[BRIDGE_KEY_HEADER]) && (!req.headers.origin || sameSite(req.headers.origin, req));
   /** Relays (the VS Code extension host) by id, and the tabs they announced. */
   const relays = new Map<string, ServerResponse>();
+  /** The dev pages' event streams by tab id: a page is a bridge tab once its presence POST (with the page token) names it. */
+  const pageStreams = new Map<string, ServerResponse>();
   const bridgeRoute = async (req: IncomingMessage, res: ServerResponse, path: string) => {
     const reply = (status: number, body: unknown) => {
       res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
@@ -638,28 +648,23 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     if (path === DEV_ROUTES.snapshot) {
       if (!fromPage(req) && !withKey(req)) return reply(403, { error: "missing or wrong session token" });
       if (!personal) return reply(202, { written: false, reason: "not a personal session" });
-      const r = await readJson(req, 16 << 20);
+      const r = await readJson(req, MAX_SNAPSHOT_POST_BYTES);
       if ("error" in r) return reply(r.status, { error: r.error });
-      const b = (r.body ?? {}) as { png?: unknown; meta?: Record<string, unknown> };
-      const m = b.meta ?? {};
-      if (typeof b.png !== "string" || !/^[A-Za-z0-9+/=]+$/.test(b.png) || typeof m.level !== "string" || typeof m.view !== "string" || typeof m.width !== "number" || typeof m.height !== "number")
-        return reply(400, { error: "expected { png: base64, meta: { level, view, width, height, css, camera, viewState } }" });
+      const b = (r.body ?? {}) as { png?: unknown; meta?: unknown };
+      if (typeof b.png !== "string" || !/^[A-Za-z0-9+/=]+$/.test(b.png)) return reply(400, { error: "expected { png: base64, meta: { level, view, width, height, css, camera, viewState } }" });
+      // the meta's shapes are checked (wave 2 gate item 4): css, camera, viewState (size capped), gpu, theme, takenAt
+      const checked = checkSnapshotMeta(b.meta);
+      if ("error" in checked) return reply(400, { error: checked.error });
       const png = Buffer.from(b.png, "base64");
       if (png.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") return reply(400, { error: "png is not a PNG" });
+      const m = checked.meta;
       const meta = {
-        view: m.view,
-        level: m.level,
-        width: m.width,
-        height: m.height,
-        css: (m.css ?? { width: m.width, height: m.height, dpr: 1 }) as { width: number; height: number; dpr: number },
-        ...(m.camera ? { camera: m.camera } : {}),
-        viewState: m.viewState ?? {},
+        ...m,
         bundleHash: bundleHash() ?? "",
         revision: version,
-        backend: "gpu" as const,
-        gpu: typeof m.gpu === "string" ? m.gpu.slice(0, 200) : "",
-        ...(typeof m.theme === "string" ? { theme: m.theme } : {}),
-        takenAt: typeof m.takenAt === "string" ? m.takenAt : new Date().toISOString(),
+        // the real backend the viewer drew with (its renderer string), not an assumed GPU
+        backend: backendOf(m.gpu),
+        takenAt: m.takenAt ?? new Date().toISOString(),
         source: "viewer" as const,
       };
       const out = writeSnapshot(root, png, meta as unknown as Parameters<typeof writeSnapshot>[2]);
@@ -683,7 +688,8 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       } catch (e) {
         return reply(409, { error: `${displayRel()} is not valid JSON (${(e as Error).message}); fix it before saving views` });
       }
-      const merged = withPresentation(current as { spatial?: Record<string, unknown> }, pres);
+      // annotations go to the file only on an explicit save of them (DEFAULT, W3-A; collaboration D10)
+      const merged = withPresentation(current as { spatial?: Record<string, unknown> }, presentationToWrite(pres, current as { spatial?: Record<string, unknown> }, (r.body as { saveAnnotations?: unknown })?.saveAnnotations));
       if (!merged.changed) return reply(200, { written: false, file: displayRel().split(sep).join("/") });
       const data = formatDisplay(merged.display as DisplayFile, previous);
       ownDisplay = digest(data);
@@ -739,10 +745,21 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       const tab = typeof b.tab === "string" ? (page ? `web:${b.tab}` : b.tab) : undefined;
       if (path === BRIDGE_ROUTES.reply) {
         if (typeof b.id !== "string") return reply(400, { error: "a reply needs the delivery id" });
-        return reply(bridge.reply(b.id, b.reply, tab) ? 200 : 404, {});
+        // 204 with no body (W3-A): the dev page posts replies with `keepalive`, and Chrome counts a keepalive request
+        // against its 64 kB in-flight budget until its response body is consumed; an unread "{}" kept every reply
+        // counted, so after about 64 kB of replies the next one was refused in the page (found in the exit test)
+        const accepted = bridge.reply(b.id, b.reply, tab);
+        res.writeHead(accepted ? 204 : 404, { "cache-control": "no-store" });
+        return res.end();
       }
       if (!tab) return reply(400, { error: "presence needs a tab id" });
       if (b.closed === true) bridge.removeTab(tab);
+      else if (page && pageStreams.has(tab)) {
+        // the dev page becomes a bridge tab only through this authenticated presence (its token, its origin), never
+        // by opening an event stream (wave 2 gate item 2); the stream it opened carries the batches
+        const stream = pageStreams.get(tab)!;
+        if (!bridge.touch(tab)) bridge.addTab({ id: tab, kind: "web", label: "protoboard dev page", deliver: (envelope) => (stream.writableEnded || stream.destroyed ? false : (send(stream, "bridge", envelope), true)) });
+      }
       else if (!page && typeof b.relay === "string" && relays.has(b.relay)) {
         // a relayed tab: announced (or touched) by its relay
         const relayRes = relays.get(b.relay)!;
@@ -839,11 +856,15 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       send(res, "hello", { session, version });
       clients.add(res);
       res.on("close", () => clients.delete(res));
-      // the dev page names itself (`?tab=`): it is a live tab of the bridge while its stream is open
+      // the dev page names itself (`?tab=`): the stream is kept for the tab, which becomes a live tab of the bridge
+      // when the page's authenticated presence POST names it (wave 2 gate item 2), and stops being one when it closes
       const tab = (res as ServerResponse & { pbTab?: string }).pbTab;
       if (tab && personal) {
-        bridge.addTab({ id: tab, kind: "web", label: "protoboard dev page", deliver: (envelope) => (res.writableEnded || res.destroyed ? false : (send(res, "bridge", envelope), true)) });
-        res.on("close", () => bridge.removeTab(tab));
+        pageStreams.set(tab, res);
+        res.on("close", () => {
+          if (pageStreams.get(tab) === res) pageStreams.delete(tab);
+          bridge.removeTab(tab);
+        });
       }
     },
   };
@@ -918,7 +939,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     // the assembly sequence beside the bundle (W2-C, PB-1183): the build's .protoboard/build/sequence.json, read only
     if (path === "/sequence.json") {
       const file = join(dirname(bundleFile), "sequence.json");
-      if (!existsSync(file) || statSync(file).size > 8 << 20) return json(res, 404, { error: "no sequence.json (run protoboard build)" });
+      if (!existsSync(file) || statSync(file).size > MAX_SEQUENCE_BYTES) return json(res, 404, { error: "no sequence.json (run protoboard build)" });
       res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-cache" });
       return res.end(req.method === "HEAD" ? undefined : readFileSync(file));
     }

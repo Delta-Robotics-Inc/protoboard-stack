@@ -96,7 +96,10 @@ export async function uhdBundle(p: Project, models?: ModelTable): Promise<UhdBun
     definitions: defs.sort((a, b) => a.id.localeCompare(b.id)),
     artifactBases,
     ...(scenarios.length ? { scenarios } : {}),
-    diagnostics: p.diagnostics.map((d) => ({ code: d.code, severity: d.severity, message: d.message, entity: d.entity, ...(d.source ? { source: d.source } : {}), validator: d.validator })),
+    // `location` (a provider's finding on a design: board mm, pads, vias) is kept so the viewer pins the finding to
+    // the 3D model (W3-B, PB-1184). It is an extra field beyond UHD's `UhdBundleDiagnostic` (UHD is read only: the
+    // field is noted in for-mark.md); readers that do not know it ignore it.
+    diagnostics: p.diagnostics.map((d) => ({ code: d.code, severity: d.severity, message: d.message, entity: d.entity, ...(d.source ? { source: d.source } : {}), ...(d.location ? { location: d.location } : {}), validator: d.validator })),
     ...(display ? { display } : {}),
     meta: { name: p.name, producer: "@protoboardai/core", producerVersion: FRAMEWORK_VERSION },
   };

@@ -264,8 +264,14 @@ const level = params.get("drill") ?? "";
 const snapshotView = params.get("view") === "3d" ? "3d" : undefined;
 const snapshotLoad = snapshotView ? fetch("${rel(DEV_ROUTES.snapshot)}?" + new URLSearchParams({ level, view: snapshotView }), { cache: "no-store" }).then((r) => (r.ok ? r.json() : undefined)).catch(() => undefined) : Promise.resolve(undefined);
 const state = await (await fetch("${rel(DEV_ROUTES.state)}", { cache: "no-store" })).json();
-const post = (route, body) =>
-  fetch(route, { method: "POST", keepalive: true, headers: { "content-type": "application/json", "${TOKEN_HEADER}": config.token }, body: JSON.stringify(body) });
+// not keepalive by default: Chrome refuses a keepalive body over 64 kB and counts every keepalive request in flight
+// against one 64 kB budget, so a large bridge reply was refused (gate 3, W3-A's bullet). Only the view-state flush
+// asks for it (it may be sent as the page hides), and only while its body fits under the budget.
+const KEEPALIVE_MAX_CHARS = 60 * 1024; // DEFAULT: under Chrome's 64 kB keepalive budget
+const post = (route, body, { keepalive = false } = {}) => {
+  const json = JSON.stringify(body);
+  return fetch(route, { method: "POST", keepalive: keepalive && json.length < KEEPALIVE_MAX_CHARS, headers: { "content-type": "application/json", "${TOKEN_HEADER}": config.token }, body: json });
+};
 const themeChoice = new URLSearchParams(location.search).get("theme") ?? undefined;
 const viewer = mountWebViewer(document.getElementById("viewer"), {
   bundle: await fetchBundle(),
@@ -281,7 +287,7 @@ const viewer = mountWebViewer(document.getElementById("viewer"), {
   onLayoutChange: save,
   // the 3D view's live state (PB-1178): the one saved last comes back; a newer one is kept after the viewer's debounce
   ...(state.viewState ? { viewState: state.viewState } : {}),
-  onViewStateChange: (file) => post("${rel(DEV_ROUTES.viewState)}", { file }).catch(() => {}),
+  onViewStateChange: (file) => post("${rel(DEV_ROUTES.viewState)}", { file }, { keepalive: true }).catch(() => {}),
   // named views and annotations: an explicit save, into the display file
   onPresentationChange: async (presentation) => {
     try {

@@ -18,7 +18,7 @@ import { RootsListChangedNotificationSchema } from "@modelcontextprotocol/sdk/ty
 import { z } from "zod";
 import { findProjectRoot, listTemplates } from "@protoboardai/core";
 import { guideText, serverInstructions } from "./instructions.js";
-import { cliTools, type CliRun, type ToolContext, type ToolOutcome, type ToolSpec } from "./tools.js";
+import { protoboardTools, type CliRun, type ToolContext, type ToolOutcome, type ToolSpec } from "./tools.js";
 
 /** The CLI that carries this server. */
 export const SELF_CLI = fileURLToPath(new URL("../../bin/protoboard.mjs", import.meta.url));
@@ -95,7 +95,7 @@ function spillDir(): string {
 }
 
 /** A tool's outcome as an MCP result: JSON text, moved to a file when it would flood the agent's context. */
-export function toResult(name: string, o: ToolOutcome): { content: { type: "text"; text: string }[]; isError?: boolean } {
+export function toResult(name: string, o: ToolOutcome): { content: [{ type: "text"; text: string }, ...{ type: "image"; data: string; mimeType: string }[]]; isError?: boolean } {
   let text = typeof o.data === "string" ? o.data : JSON.stringify(o.data, null, 2);
   if (text.length > RESULT_LIMIT) {
     // a project's BOM or model: readable by this user only, and removed by a later server once it is a day old
@@ -103,7 +103,8 @@ export function toResult(name: string, o: ToolOutcome): { content: { type: "text
     writeFileSync(file, text, { mode: 0o600 });
     text = JSON.stringify({ truncated: true, characters: text.length, file, note: "The whole result is in `file`: read the part you need (or query it with jq). Its start follows.", start: text.slice(0, 6000) }, null, 2);
   }
-  return { content: [{ type: "text", text }], ...(o.isError ? { isError: true } : {}) };
+  // images (a view capture asked for inline) follow the text; they are never spilled to a file
+  return { content: [{ type: "text", text }, ...(o.images ?? []).map((i) => ({ type: "image" as const, data: i.data, mimeType: i.mimeType }))], ...(o.isError ? { isError: true } : {}) };
 }
 
 export interface ServerOptions {
@@ -148,9 +149,10 @@ export function createServer(options: ServerOptions = {}): McpServer {
     cli: (dir, args, o) => runCli(ctx.cliFor(dir).entry, args, dir, o?.timeoutMs ?? 180_000),
     version: SELF_VERSION,
     about,
+    clientName: () => server.server.getClientVersion()?.name,
   };
 
-  for (const spec of [...cliTools(templates), ...(options.tools ?? [])]) {
+  for (const spec of [...protoboardTools(templates), ...(options.tools ?? [])]) {
     server.registerTool(spec.name, { title: spec.title, description: spec.description, inputSchema: spec.input, annotations: { title: spec.title, ...spec.annotations } }, async (args: Record<string, unknown>) => {
       try {
         const dir = typeof args.dir === "string" ? await ctx.dir(args.dir) : undefined;

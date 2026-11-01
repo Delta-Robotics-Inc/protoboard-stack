@@ -22,6 +22,17 @@
  *   with the same batchId; the tab answers a batchId it already applied
  *   from memory and never applies it twice).
  *
+ * - Turn-taking (PB-1179): a tab whose person is mid-gesture answers
+ *   `busy` (nothing applied, nothing remembered); the bridge delivers the
+ *   batch again after the tab's `retryAfterMs` until the call's timeout, so
+ *   an agent batch waits while the person drags. If the person is still
+ *   dragging at the timeout the outcome is `not-run` (nothing was applied).
+ * - The journal (PB-1196): with `journal` hooks the bridge asks every tab for
+ *   the log entries after the last one it mirrored (`since`) and hands the
+ *   reply's `log` (and a `checkpoint` when asked) to the writer
+ *   (./journal.ts); the agent's outcome carries how many were logged, not
+ *   the entries.
+ *
  * No DOM, no HTTP here: server.ts wires the routes; the tests drive this
  * directly.
  */
@@ -47,19 +58,24 @@ export const BRIDGE_KEY_HEADER = "x-protoboard-bridge-key";
 /** Header carrying an agent session's token. */
 export const BRIDGE_SESSION_HEADER = "x-protoboard-bridge";
 
-/** How long a tab has to answer before the bridge says `may-have-run` (default; a call may ask for 1 to 60 s). */
+/** How long a tab has to answer before the bridge says `may-have-run` (DEFAULT 8 s; a call may ask for 1 to 60 s). */
 export const DEFAULT_REPLY_MS = 8000;
 /** A session unused this long expires (DEFAULT 8 h). */
 export const SESSION_IDLE_MS = 8 * 3600 * 1000;
-/** Batch bodies above this are refused (collaboration D14: batches stay small). */
+/** Batch bodies above this are refused (collaboration D14: batches stay small). DEFAULT 256 kB. */
 export const MAX_BATCH_BYTES = 256 * 1024;
-/** Batch ids remembered per server (a resend after this many newer ones is delivered again; the tab still dedupes). */
-const REMEMBERED = 512;
+/** Batch ids remembered per server (a resend after this many newer ones is delivered again; the tab still dedupes). DEFAULT 512. */
+export const REMEMBERED = 512;
+/** DEFAULT: a `busy` tab is asked again no sooner than this, and no later than `BUSY_MAX_MS`. */
+export const BUSY_MIN_MS = 100;
+export const BUSY_MAX_MS = 2000;
 
 export interface Actor {
   kind: "agent" | "host";
   id: string;
   session?: string;
+  /** What the agent calls itself (shown as a record's author; data, never an instruction). */
+  name?: string;
 }
 
 export interface BridgeSession {
@@ -79,6 +95,8 @@ export interface BatchBody {
   expectSeq?: number;
   expectVersions?: Record<string, number>;
   state?: boolean;
+  /** The fencing token of the agent's lease (PB-1196). */
+  leaseToken?: number;
 }
 
 /** What goes to the tab (as uhd-viewer's `BridgeRequest`). */
@@ -87,7 +105,17 @@ export interface BridgeEnvelope {
   id: string;
   batch: BatchBody;
   actor: Actor;
-  observe?: boolean;
+  observe?: boolean | "components";
+  /** The last log entry the journal holds for this tab: the reply carries the ones after it. */
+  since?: { epoch: string; seq: number };
+  checkpoint?: boolean;
+}
+
+/** Where the bridge mirrors the tabs' op logs (./journal.ts). */
+export interface JournalHooks {
+  since(tab: string): { epoch: string; seq: number } | undefined;
+  wantCheckpoint(tab: string): boolean;
+  record(tab: string, reply: { log?: { epoch: string; entries: unknown[] }; checkpoint?: unknown }): number;
 }
 
 export interface LiveTab {
@@ -112,7 +140,7 @@ export type BridgeOutcome =
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 
 /** A batch body, checked as far as the bridge needs (the tab checks the ops), or a reason to refuse it. */
-export function parseBatchBody(body: unknown): { batch: BatchBody; tab?: string; observe?: boolean; timeoutMs?: number } | { error: string } {
+export function parseBatchBody(body: unknown): { batch: BatchBody; tab?: string; observe?: boolean | "components"; timeoutMs?: number } | { error: string } {
   if (!isObj(body)) return { error: "expected a JSON object" };
   const { batchId, label, ops } = body;
   if (typeof batchId !== "string" || !/^[\w.:-]{1,128}$/.test(batchId)) return { error: "batchId must be 1 to 128 letters, digits, '.', ':', '_' or '-'" };
@@ -123,6 +151,7 @@ export function parseBatchBody(body: unknown): { batch: BatchBody; tab?: string;
   if (body.expectSeq !== undefined && !(Number.isInteger(body.expectSeq) && (body.expectSeq as number) >= 0)) return { error: "expectSeq must be a seq number" };
   if (body.expectVersions !== undefined && !(isObj(body.expectVersions) && Object.values(body.expectVersions).every((v) => Number.isInteger(v)))) return { error: "expectVersions must map keys to version numbers" };
   if (body.tab !== undefined && typeof body.tab !== "string") return { error: "tab must be a tab id" };
+  if (body.leaseToken !== undefined && !(Number.isInteger(body.leaseToken) && (body.leaseToken as number) > 0)) return { error: "leaseToken must be the token a claim returned" };
   const timeoutMs = body.timeoutMs === undefined ? undefined : Number(body.timeoutMs);
   if (timeoutMs !== undefined && !(Number.isFinite(timeoutMs) && timeoutMs >= 1000 && timeoutMs <= 60000)) return { error: "timeoutMs must be between 1000 and 60000" };
   const batch: BatchBody = {
@@ -132,16 +161,16 @@ export function parseBatchBody(body: unknown): { batch: BatchBody; tab?: string;
     ...(body.expectSeq !== undefined ? { expectSeq: body.expectSeq as number } : {}),
     ...(body.expectVersions !== undefined ? { expectVersions: body.expectVersions as Record<string, number> } : {}),
     ...(body.state === false ? { state: false } : {}),
+    ...(body.leaseToken !== undefined ? { leaseToken: body.leaseToken as number } : {}),
   };
-  return { batch, ...(typeof body.tab === "string" ? { tab: body.tab } : {}), ...(body.observe === true ? { observe: true } : {}), ...(timeoutMs !== undefined ? { timeoutMs } : {}) };
+  return { batch, ...(typeof body.tab === "string" ? { tab: body.tab } : {}), ...(body.observe === true || body.observe === "components" ? { observe: body.observe } : {}), ...(timeoutMs !== undefined ? { timeoutMs } : {}) };
 }
 
 interface Pending {
   batchId: string;
   tab: string;
-  resolve: (o: BridgeOutcome) => void;
+  resolve: (o: BridgeOutcome | { status: "busy"; retryAfterMs: number }) => void;
   timer: ReturnType<typeof setTimeout>;
-  promise: Promise<BridgeOutcome>;
 }
 
 export interface LiveBridgeOptions {
@@ -149,7 +178,11 @@ export interface LiveBridgeOptions {
   key?: string;
   now?: () => number;
   log?: (message: string) => void;
+  /** Mirror the tabs' op logs (PB-1196). */
+  journal?: JournalHooks;
 }
+
+const REPLY_STATUSES = ["applied", "read", "refused", "invalid"];
 
 export class LiveBridge {
   readonly key: string;
@@ -159,17 +192,19 @@ export class LiveBridge {
   private readonly tabs = new Map<string, LiveTab>();
   /** Deliveries waiting for a reply, by delivery id. */
   private readonly pending = new Map<string, Pending>();
-  /** The same, by batchId (a resend while in flight waits for the same reply). */
-  private readonly inFlight = new Map<string, Pending>();
+  /** The outcome on its way, by batch key (a resend while in flight waits for the same reply). */
+  private readonly inFlight = new Map<string, Promise<BridgeOutcome>>();
   /** Final outcomes by batchId (a resend gets the first answer). */
   private readonly results = new Map<string, BridgeOutcome>();
-  /** Deliveries that timed out, by delivery id: a late reply is still kept for a resend. */
-  private readonly late = new Map<string, string>();
+  /** Deliveries that timed out, by delivery id: a late reply is still kept for a resend (if it comes from the same tab). */
+  private readonly late = new Map<string, { key: string; tab: string }>();
+  private readonly journal?: JournalHooks;
 
   constructor(options: LiveBridgeOptions = {}) {
     this.key = options.key ?? randomBytes(32).toString("base64url");
     this.now = options.now ?? (() => Date.now());
     this.log = options.log ?? (() => {});
+    this.journal = options.journal;
   }
 
   /** A header value matches the key (constant time over equal lengths). */
@@ -185,7 +220,7 @@ export class LiveBridge {
     const id = randomBytes(6).toString("base64url");
     const clean = typeof name === "string" ? name.replace(/[\u0000-\u001f]/g, " ").trim().slice(0, 64) : "";
     const shown = clean || "agent";
-    const s: BridgeSession = { id, token: randomBytes(24).toString("base64url"), actor: { kind: "agent", id: `agent:${id}`, session: id }, name: shown, created: this.now(), lastUsed: this.now() };
+    const s: BridgeSession = { id, token: randomBytes(24).toString("base64url"), actor: { kind: "agent", id: `agent:${id}`, session: id, name: shown }, name: shown, created: this.now(), lastUsed: this.now() };
     this.sessions.set(s.token, s);
     this.log(`bridge: session ${id} for "${shown}"`);
     return s;
@@ -213,7 +248,7 @@ export class LiveBridge {
   /** A tab went away: what was waiting on it may have run. */
   removeTab(id: string): void {
     if (!this.tabs.delete(id)) return;
-    for (const [delivery, p] of this.pending) if (p.tab === id) this.settle(delivery, { status: "may-have-run", batchId: p.batchId, tab: id, reason: "the tab closed before it answered; resend with the same batchId to learn the outcome" }, false);
+    for (const [delivery, p] of this.pending) if (p.tab === id) this.settle(delivery, { status: "may-have-run", batchId: p.batchId, tab: id, reason: "the tab closed before it answered; resend with the same batchId to learn the outcome" });
   }
 
   /** The tabs a relay brought: all go when the relay does. */
@@ -241,78 +276,129 @@ export class LiveBridge {
   }
 
   /** Deliver a batch for a session and wait for the outcome. */
-  async submit(session: BridgeSession, request: { batch: BatchBody; tab?: string; observe?: boolean; timeoutMs?: number }): Promise<BridgeOutcome> {
+  async submit(session: BridgeSession, request: { batch: BatchBody; tab?: string; observe?: boolean | "components"; timeoutMs?: number }): Promise<BridgeOutcome> {
     const { batch } = request;
     // the batch id space is per session: two agents choosing the same id do not collide
     const key = `${session.id}:${batch.batchId}`;
     const done = this.results.get(key);
     if (done) return { ...done, ...(done.status !== "not-run" && done.status !== "may-have-run" ? { duplicate: true } : {}) } as BridgeOutcome;
     const running = this.inFlight.get(key);
-    if (running) return running.promise;
+    if (running) return running;
     const tab = this.target(request.tab);
     if (!tab) {
       return { status: "not-run", batchId: batch.batchId, reason: request.tab ? `no live tab ${request.tab}` : "no viewer tab is open on this project (open it with `protoboard dev --open` or in VS Code)" };
     }
-    const delivery = randomBytes(9).toString("base64url");
-    // the tab remembers batch ids too: it sees them qualified by the session, so two agents never collide there either
-    const envelope: BridgeEnvelope = { type: "uhd-viewer:bridge", id: delivery, batch: { ...batch, batchId: key }, actor: session.actor, ...(request.observe ? { observe: true } : {}) };
-    let resolve!: (o: BridgeOutcome) => void;
-    const promise = new Promise<BridgeOutcome>((ok) => (resolve = ok));
-    const ms = request.timeoutMs ?? DEFAULT_REPLY_MS;
-    const timer = setTimeout(() => {
-      this.late.set(delivery, key);
-      this.settle(delivery, { status: "may-have-run", batchId: batch.batchId, tab: tab.id, reason: `the tab did not answer within ${ms} ms; resend with the same batchId to learn the outcome` }, false);
-    }, ms);
-    const p: Pending = { batchId: batch.batchId, tab: tab.id, resolve, timer, promise };
-    this.pending.set(delivery, p);
-    this.inFlight.set(key, p);
-    let sent = false;
-    try {
-      sent = tab.deliver(envelope);
-    } catch {
-      sent = false;
-    }
-    if (!sent) {
-      // it never left: nothing ran
-      this.settle(delivery, { status: "not-run", batchId: batch.batchId, reason: `the delivery to tab ${tab.id} failed (its connection is gone)` }, false);
-      this.removeTab(tab.id);
-    } else this.log(`bridge: "${batch.label}" (${batch.batchId}) from ${session.actor.id} to tab ${tab.id}`);
+    const promise = this.run(session, key, tab, request).then((out) => {
+      // only a tab's own answer is final; `not-run` and `may-have-run` let a resend try again
+      if (REPLY_STATUSES.includes(out.status)) this.results.set(key, out);
+      this.trim();
+      this.inFlight.delete(key);
+      return out;
+    });
+    this.inFlight.set(key, promise);
     return promise;
   }
 
-  /** A tab's reply to a delivery. False when nothing waited for it. */
+  /** Deliveries to one tab until it answers, says busy past the deadline, or the time runs out. */
+  private async run(session: BridgeSession, key: string, tab: LiveTab, request: { batch: BatchBody; observe?: boolean | "components"; timeoutMs?: number }): Promise<BridgeOutcome> {
+    const { batch } = request;
+    const ms = request.timeoutMs ?? DEFAULT_REPLY_MS;
+    const deadline = this.now() + ms;
+    let busySince: number | undefined;
+    for (;;) {
+      const left = Math.max(1, deadline - this.now());
+      const answer = await this.deliverOnce(session, key, tab, request, left, ms);
+      if (answer.status !== "busy") return answer as BridgeOutcome;
+      busySince ??= this.now();
+      const wait = Math.min(BUSY_MAX_MS, Math.max(BUSY_MIN_MS, Number((answer as { retryAfterMs?: number }).retryAfterMs) || BUSY_MIN_MS));
+      if (this.now() + wait >= deadline) {
+        return { status: "not-run", batchId: batch.batchId, reason: `the person was using the view (dragging) for ${Math.round((this.now() - busySince) / 100) / 10} s; nothing was applied: send it again` };
+      }
+      await new Promise((r) => setTimeout(r, wait));
+      if (!this.tabs.has(tab.id)) return { status: "not-run", batchId: batch.batchId, reason: `tab ${tab.id} closed while the person was using it; nothing was applied` };
+    }
+  }
+
+  private deliverOnce(session: BridgeSession, key: string, tab: LiveTab, request: { batch: BatchBody; observe?: boolean | "components" }, ms: number, askedMs: number): Promise<BridgeOutcome | { status: "busy"; retryAfterMs: number }> {
+    const { batch } = request;
+    const delivery = randomBytes(9).toString("base64url");
+    const since = this.journal?.since(tab.id);
+    // the tab remembers batch ids too: it sees them qualified by the session, so two agents never collide there either
+    const envelope: BridgeEnvelope = {
+      type: "uhd-viewer:bridge",
+      id: delivery,
+      batch: { ...batch, batchId: key },
+      actor: session.actor,
+      ...(request.observe ? { observe: request.observe } : {}),
+      ...(this.journal ? { since: since ?? { epoch: "", seq: 0 } } : {}),
+      ...(this.journal?.wantCheckpoint(tab.id) ? { checkpoint: true } : {}),
+    };
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => {
+        this.late.set(delivery, { key, tab: tab.id });
+        this.trim();
+        this.settle(delivery, { status: "may-have-run", batchId: batch.batchId, tab: tab.id, reason: `the tab did not answer within ${askedMs} ms; resend with the same batchId to learn the outcome` });
+      }, ms);
+      this.pending.set(delivery, { batchId: batch.batchId, tab: tab.id, resolve, timer });
+      let sent = false;
+      try {
+        sent = tab.deliver(envelope);
+      } catch {
+        sent = false;
+      }
+      if (!sent) {
+        // it never left: nothing ran
+        this.settle(delivery, { status: "not-run", batchId: batch.batchId, reason: `the delivery to tab ${tab.id} failed (its connection is gone)` });
+        this.removeTab(tab.id);
+      } else this.log(`bridge: "${batch.label}" (${batch.batchId}) from ${session.actor.id} to tab ${tab.id}`);
+    });
+  }
+
+  /** A tab's reply, its log mirrored to the journal and taken out of what the agent sees. */
+  private take(tab: string, reply: Record<string, unknown>): Record<string, unknown> {
+    const { log, checkpoint, ...rest } = reply;
+    if (!this.journal || (log === undefined && checkpoint === undefined)) return rest;
+    try {
+      const n = this.journal.record(tab, { ...(log ? { log: log as { epoch: string; entries: unknown[] } } : {}), ...(checkpoint ? { checkpoint } : {}) });
+      return { ...rest, logged: n };
+    } catch (e) {
+      this.log(`bridge: the journal could not take tab ${tab}'s log: ${(e as Error).message}`);
+      return rest;
+    }
+  }
+
+  /** A tab's reply to a delivery. False when nothing waited for it (or it came from another tab). */
   reply(delivery: string, reply: unknown, fromTab?: string): boolean {
     const p = this.pending.get(delivery);
     if (!p) {
-      // a reply after the timeout: kept, so a resend of that batchId gets it
-      const key = this.late.get(delivery);
-      if (!key || !isObj(reply)) return false;
+      // a reply after the timeout: kept, so a resend of that batchId gets it, but checked like an on-time one (wave 2 gate)
+      const late = this.late.get(delivery);
+      if (!late || !isObj(reply) || !REPLY_STATUSES.includes(reply.status as string)) return false;
+      if (fromTab && fromTab !== late.tab) return false;
       this.late.delete(delivery);
-      this.results.set(key, { ...(reply as Record<string, unknown>), batchId: key.slice(key.indexOf(":") + 1), tab: fromTab ?? "?" } as BridgeOutcome);
+      this.results.set(late.key, { ...this.take(late.tab, reply), batchId: late.key.slice(late.key.indexOf(":") + 1), tab: late.tab } as BridgeOutcome);
       this.trim();
       return true;
     }
     if (fromTab && fromTab !== p.tab) return false;
-    if (!isObj(reply) || !["applied", "read", "refused", "invalid"].includes(reply.status as string)) {
-      this.settle(delivery, { status: "may-have-run", batchId: p.batchId, tab: p.tab, reason: "the tab answered with something that is not a reply" }, false);
+    if (isObj(reply) && reply.status === "busy") {
+      const rest = this.take(p.tab, reply);
+      this.settle(delivery, { status: "busy", retryAfterMs: Number(rest.retryAfterMs) || BUSY_MIN_MS });
       return true;
     }
-    this.settle(delivery, { ...(reply as Record<string, unknown>), batchId: p.batchId, tab: p.tab } as BridgeOutcome, true);
+    if (!isObj(reply) || !REPLY_STATUSES.includes(reply.status as string)) {
+      this.settle(delivery, { status: "may-have-run", batchId: p.batchId, tab: p.tab, reason: "the tab answered with something that is not a reply" });
+      return true;
+    }
+    this.settle(delivery, { ...this.take(p.tab, reply), batchId: p.batchId, tab: p.tab } as BridgeOutcome);
     return true;
   }
 
-  private settle(delivery: string, outcome: BridgeOutcome, final: boolean) {
+  private settle(delivery: string, outcome: BridgeOutcome | { status: "busy"; retryAfterMs: number }) {
     const p = this.pending.get(delivery);
     if (!p) return;
     clearTimeout(p.timer);
     this.pending.delete(delivery);
-    const key = [...this.inFlight].find(([, v]) => v === p)?.[0];
-    if (key) {
-      this.inFlight.delete(key);
-      // only a tab's own answer is final; `not-run` and `may-have-run` let a resend try again
-      if (final) this.results.set(key, outcome);
-      this.trim();
-    }
     p.resolve(outcome);
   }
 
@@ -323,7 +409,7 @@ export class LiveBridge {
 
   /** The server stops: everything waiting may have run. */
   close(): void {
-    for (const [delivery, p] of [...this.pending]) this.settle(delivery, { status: "may-have-run", batchId: p.batchId, tab: p.tab, reason: "the dev server stopped" }, false);
+    for (const [delivery, p] of [...this.pending]) this.settle(delivery, { status: "may-have-run", batchId: p.batchId, tab: p.tab, reason: "the dev server stopped" });
     this.tabs.clear();
     this.sessions.clear();
   }

@@ -1,6 +1,6 @@
 /**
  * Minimal Chrome DevTools Protocol client: one headless Chrome, one page,
- * evaluate / screenshot / printToPDF. No dependencies (Node's WebSocket).
+ * evaluate / screenshot / printToPDF. No dependencies.
  * The documents (ext-docs) print with it; `protoboard views check` renders
  * the viewer's tabs with it (PB-1030); the render service (PB-1180,
  * ./render-service/) keeps one warm per project.
@@ -25,11 +25,23 @@
  * Every capture names its backend (`Browser.backend`): a headless WebGPU
  * canvas captures black, so the viewer stays on WebGL; a SwiftShader frame is
  * correct but slow.
+ *
+ * DevTools transport (`LaunchOptions.transport`, wave 2 gate):
+ * - `pipe` (the DEFAULT since 2026-11-01): `--remote-debugging-pipe`, the
+ *   protocol over the browser's fds 3 and 4 (NUL-terminated JSON). No local
+ *   port is opened, so nothing else on the machine can drive the render
+ *   service's browser during its 15 warm minutes. A pipe that does not come
+ *   up is tried once more on a port (`backend.transportFallback` says why).
+ * - `port`: `--remote-debugging-port=0` and a WebSocket on 127.0.0.1 (the
+ *   previous behaviour, kept as the fallback).
+ *   `PROTOBOARD_CDP_TRANSPORT` (pipe | port) overrides what a caller asks for.
+ * Either way the page is one target attached with a flattened session.
  */
 import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import type { Readable, Writable } from "node:stream";
 import { findBrowser, noBrowserMessage } from "./browser.js";
 
 // The render service's public surface is its own entry, `@protoboardai/core/render-service`
@@ -38,6 +50,9 @@ import { findBrowser, noBrowserMessage } from "./browser.js";
 type Pending = { resolve: (v: any) => void; reject: (e: Error) => void };
 
 export type GlBackendRequest = "swiftshader" | "gpu" | "auto";
+
+/** How DevTools is carried: Chrome's fds 3/4 (`pipe`, the default) or a WebSocket on a local port (`port`). */
+export type CdpTransport = "pipe" | "port";
 
 /** What the page's WebGL says it runs on. */
 export interface GlInfo {
@@ -64,6 +79,10 @@ export interface BackendInfo {
   product?: string;
   /** Milliseconds to start (both starts when `auto` fell back). */
   startMs: number;
+  /** How DevTools was carried. */
+  transport?: CdpTransport;
+  /** Why the pipe was not used when it was asked for (the browser then runs on a local port). */
+  transportFallback?: string;
 }
 
 export interface CaptureOptions {
@@ -105,6 +124,8 @@ export interface LaunchOptions {
   backend?: GlBackendRequest;
   /** For tests and the doctor: the platform whose GPU flags are used. */
   platform?: NodeJS.Platform;
+  /** The DevTools transport (default `pipe`); `PROTOBOARD_CDP_TRANSPORT` wins. */
+  transport?: CdpTransport;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -131,6 +152,13 @@ export function requestedBackend(asked: GlBackendRequest | undefined, env: NodeJ
   const v = (env.PROTOBOARD_RENDER_BACKEND ?? "").trim().toLowerCase();
   if (v === "swiftshader" || v === "gpu" || v === "auto") return v;
   return asked ?? "swiftshader";
+}
+
+/** The transport after the environment: `PROTOBOARD_CDP_TRANSPORT` (pipe | port) wins over the caller; DEFAULT `pipe` (no port open while the browser is warm). */
+export function requestedTransport(asked: CdpTransport | undefined, env: NodeJS.ProcessEnv = process.env): CdpTransport {
+  const v = (env.PROTOBOARD_CDP_TRANSPORT ?? "").trim().toLowerCase();
+  if (v === "pipe" || v === "port") return v;
+  return asked ?? "pipe";
 }
 
 /** In the page: WebGL facts from a throwaway canvas (its context is released at once). */
@@ -179,74 +207,179 @@ export async function launchBrowser(options: LaunchOptions = {}): Promise<Browse
   return b;
 }
 
-async function startChrome(options: LaunchOptions, glFlags: string[], kind: BackendInfo["kind"]): Promise<Browser> {
-  const found = findBrowser();
-  if (!found) throw new Error(noBrowserMessage());
-  const bin = found.path;
-  const profile = mkdtempSync(join(tmpdir(), "uhd-docs-chrome-"));
-  const proc: ChildProcess = spawn(
-    bin,
-    [
-      "--headless=new",
-      ...glFlags,
-      "--hide-scrollbars",
-      "--no-first-run",
-      "--no-default-browser-check",
-      "--disable-extensions",
-      "--font-render-hinting=none",
-      `--user-data-dir=${profile}`,
-      "--remote-debugging-port=0",
-      "about:blank",
-    ],
-    { stdio: "ignore" },
-  );
-  // a browser that cannot be run at all (CHROME names nothing) says so at once
-  let failed: Error | undefined;
-  proc.on("error", (e) => (failed = e));
+// ---------------------------------------------------------------------------------------------
+// The DevTools connection: a pipe (default) or a WebSocket on a local port
 
-  const portFile = join(profile, "DevToolsActivePort");
-  // the first start of a browser on a machine can take a while (macOS checks a new application)
-  for (let i = 0; i < 600 && !existsSync(portFile) && !failed && proc.exitCode === null; i++) await sleep(50);
-  if (!existsSync(portFile)) {
-    rmSync(profile, { recursive: true, force: true });
-    const why = failed ? ((failed as NodeJS.ErrnoException).code === "ENOENT" ? "it does not exist" : failed.message) : proc.exitCode !== null ? `it exited with code ${proc.exitCode}` : "it did not open its debugging port in 30 s";
-    throw new Error(`the browser did not start (${bin}${found.from === "PATH" || found.from === "installed" ? "" : `, from ${found.from}`}): ${why}. ${options.purpose ?? "The documents are rendered to PDF with a headless Chromium-family browser"}; set CHROME to one that runs`);
-  }
-  await sleep(50);
-  const [port, path] = readFileSync(portFile, "utf8").trim().split("\n");
+/**
+ * One DevTools connection, whichever way it is carried: text messages (one JSON object each) out and
+ * in, and one close. `send` throws once the connection is closed.
+ */
+export interface CdpConnection {
+  send(text: string): void;
+  onMessage(fn: (text: string) => void): void;
+  onClose(fn: (why?: Error) => void): void;
+  readonly open: boolean;
+  close(): void;
+}
 
-  const ws = new WebSocket(`ws://127.0.0.1:${port}${path}`);
-  await new Promise<void>((ok, fail) => {
-    ws.onopen = () => ok();
-    ws.onerror = () => fail(new Error("CDP connection failed"));
+/**
+ * DEFAULT (W3-A, 2026-11-01): the largest single message read from the pipe (256 MiB). A screenshot of
+ * an 8,000 px square view is about 100 MB of base64; a message past this closes the connection rather
+ * than growing without bound.
+ */
+export const MAX_PIPE_MESSAGE_BYTES = 256 * 1024 * 1024;
+
+/**
+ * DevTools over Chrome's `--remote-debugging-pipe`: the browser reads commands from its fd 3 and writes
+ * replies and events to its fd 4, each message one JSON text ended by a NUL byte (JSON never holds a raw
+ * NUL: `JSON.stringify` escapes it). `toChrome` is our end of fd 3, `fromChrome` our end of fd 4. No port
+ * is opened, so no other local process can reach the browser.
+ */
+export function pipeConnection(toChrome: Writable, fromChrome: Readable, maxMessageBytes = MAX_PIPE_MESSAGE_BYTES): CdpConnection {
+  let open = true;
+  const onMessage: ((text: string) => void)[] = [];
+  const onClose: ((why?: Error) => void)[] = [];
+  let pending: Buffer[] = [];
+  let pendingBytes = 0;
+  const shut = (why?: Error) => {
+    if (!open) return;
+    open = false;
+    pending = [];
+    pendingBytes = 0;
+    for (const fn of onClose) fn(why);
+  };
+  fromChrome.on("data", (chunk: Buffer | string) => {
+    if (!open) return;
+    const buf = typeof chunk === "string" ? Buffer.from(chunk, "utf8") : chunk;
+    let start = 0;
+    for (let nul = buf.indexOf(0, start); nul >= 0; nul = buf.indexOf(0, start)) {
+      const piece = buf.subarray(start, nul);
+      const whole = pending.length ? Buffer.concat([...pending, piece], pendingBytes + piece.length) : piece;
+      pending = [];
+      pendingBytes = 0;
+      start = nul + 1;
+      const text = whole.toString("utf8");
+      for (const fn of onMessage) fn(text);
+      if (!open) return;
+    }
+    if (start < buf.length) {
+      const rest = buf.subarray(start);
+      pendingBytes += rest.length;
+      if (pendingBytes > maxMessageBytes) {
+        shut(new Error(`a DevTools message over ${maxMessageBytes} bytes`));
+        fromChrome.destroy();
+        return;
+      }
+      // a copy: the stream may reuse its buffer
+      pending.push(Buffer.from(rest));
+    }
   });
+  fromChrome.on("end", () => shut());
+  fromChrome.on("close", () => shut());
+  fromChrome.on("error", (e) => shut(e));
+  // EPIPE when the browser has gone: the next read closes the connection; never an unhandled error
+  toChrome.on("error", (e) => shut(e));
+  toChrome.on("close", () => shut());
+  return {
+    send(text) {
+      if (!open) throw new Error("the browser closed the DevTools connection");
+      toChrome.write(`${text}\0`);
+    },
+    onMessage: (fn) => void onMessage.push(fn),
+    onClose: (fn) => void onClose.push(fn),
+    get open() {
+      return open;
+    },
+    close() {
+      if (!open) return;
+      toChrome.end();
+      fromChrome.destroy();
+      shut();
+    },
+  };
+}
+
+/** DevTools over a WebSocket (`--remote-debugging-port`: the fallback transport). */
+function socketConnection(ws: WebSocket): CdpConnection {
+  const onMessage: ((text: string) => void)[] = [];
+  const onClose: ((why?: Error) => void)[] = [];
+  let closed = false;
+  ws.onmessage = (ev) => {
+    for (const fn of onMessage) fn(String(ev.data));
+  };
+  ws.onclose = () => {
+    if (closed) return;
+    closed = true;
+    for (const fn of onClose) fn();
+  };
+  return {
+    send(text) {
+      if (ws.readyState !== WebSocket.OPEN) throw new Error("the browser closed the DevTools connection");
+      ws.send(text);
+    },
+    onMessage: (fn) => void onMessage.push(fn),
+    onClose: (fn) => void onClose.push(fn),
+    get open() {
+      return !closed && ws.readyState === WebSocket.OPEN;
+    },
+    close: () => ws.close(),
+  };
+}
+
+/** Commands with ids, replies matched to them, everything else to the listeners. Session-scoped when `sessionId` is given (flattened sessions). */
+export interface CdpRpc {
+  raw: (method: string, params?: Record<string, unknown>, sessionId?: string) => Promise<any>;
+  listeners: ((msg: any) => void)[];
+  conn: CdpConnection;
+}
+
+export function cdpRpc(conn: CdpConnection): CdpRpc {
   let nextId = 1;
   const pending = new Map<number, Pending>();
   const listeners: ((msg: any) => void)[] = [];
-  ws.onmessage = (ev) => {
-    const msg = JSON.parse(String(ev.data));
-    if (msg.id && pending.has(msg.id)) {
+  conn.onMessage((text) => {
+    let msg: any;
+    try {
+      msg = JSON.parse(text);
+    } catch {
+      return;
+    }
+    if (msg && msg.id && pending.has(msg.id)) {
       const p = pending.get(msg.id)!;
       pending.delete(msg.id);
       if (msg.error) p.reject(new Error(`${msg.error.message} ${msg.error.data ?? ""}`));
       else p.resolve(msg.result);
-    } else for (const l of listeners) l(msg);
-  };
+    } else for (const l of [...listeners]) l(msg);
+  });
   // a browser that dies (crash, killed) fails what waits on it instead of hanging the caller
-  ws.onclose = () => {
-    for (const p of pending.values()) p.reject(new Error("the browser closed the DevTools connection"));
+  conn.onClose((why) => {
+    for (const p of pending.values()) p.reject(new Error(`the browser closed the DevTools connection${why ? ` (${why.message})` : ""}`));
     pending.clear();
-  };
+  });
   const raw = (method: string, params: Record<string, unknown> = {}, sessionId?: string) =>
     new Promise<any>((resolve, reject) => {
       const id = nextId++;
       pending.set(id, { resolve, reject });
-      ws.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
+      try {
+        conn.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
+      } catch (e) {
+        pending.delete(id);
+        reject(e as Error);
+      }
     });
+  return { raw, listeners, conn };
+}
 
-  const product = await raw("Browser.getVersion")
-    .then((v) => String(v.product ?? ""))
-    .catch(() => "");
+/** A page attached over a connection: everything a `Browser` is except the process. */
+export type PageSession = Omit<Browser, "alive" | "backend" | "pid" | "close">;
+
+/**
+ * Opens one page and attaches to it with a flattened session (`Target.attachToTarget` with
+ * `flatten: true`: the page's commands and events carry its `sessionId` on the browser's one
+ * connection), then enables Page and Runtime and collects the page's errors.
+ */
+export async function attachPage(rpc: CdpRpc, options: { echoErrors?: boolean } = {}): Promise<PageSession> {
+  const { raw, listeners } = rpc;
   const { targetId } = await raw("Target.createTarget", { url: "about:blank" });
   const { sessionId } = await raw("Target.attachToTarget", { targetId, flatten: true });
   const send = (method: string, params: Record<string, unknown> = {}) => raw(method, params, sessionId);
@@ -266,8 +399,8 @@ async function startChrome(options: LaunchOptions, glFlags: string[], kind: Back
       errors.push(String(text));
       if (options.echoErrors !== false) console.error(`  [page error] ${text}`);
     }
-    // a long-lived page (the render service) keeps at most the last 200
-    if (errors.length > 200) errors.splice(0, errors.length - 200);
+    // a long-lived page (the render service) keeps only the last few
+    if (errors.length > PAGE_ERRORS_KEPT) errors.splice(0, errors.length - PAGE_ERRORS_KEPT);
   });
   const takeErrors = () => {
     const was = errors;
@@ -330,20 +463,136 @@ async function startChrome(options: LaunchOptions, glFlags: string[], kind: Back
   };
 
   const gl = () => evaluate<GlInfo>(GL_PROBE);
-  const alive = () => proc.exitCode === null && proc.signalCode === null && ws.readyState === WebSocket.OPEN;
+  return { send, navigate, evaluate, setViewport, printToPdf, screenshot, capture, gl, takeErrors };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Starting the browser
+
+/** DEFAULT (PB-1030): ms a browser gets to start and answer DevTools (the first start on a machine can be slow: macOS checks a new application). */
+export const BROWSER_START_TIMEOUT_MS = 30000;
+/** DEFAULT (PB-1180): the last page errors kept between two `takeErrors()` calls (a long-lived page). */
+export const PAGE_ERRORS_KEPT = 200;
+/** DEFAULT (PB-1030): ms `close()` waits for `Browser.close`, then for the process to exit, before it moves on. */
+export const BROWSER_CLOSE_WAIT_MS = 3000;
+export const BROWSER_EXIT_WAIT_MS = 5000;
+
+/**
+ * Starts the browser on the transport asked for; a pipe that does not come up (an unusual platform or
+ * browser build) is tried once more on a local port, and the backend says so (`transportFallback`).
+ */
+async function startChrome(options: LaunchOptions, glFlags: string[], kind: BackendInfo["kind"]): Promise<Browser> {
+  const transport = requestedTransport(options.transport);
+  if (transport === "port") return startChromeOn(options, glFlags, kind, "port");
+  try {
+    return await startChromeOn(options, glFlags, kind, "pipe");
+  } catch (e) {
+    const err = e as Error & { noBrowser?: boolean };
+    if (err.noBrowser) throw e;
+    const b = await startChromeOn(options, glFlags, kind, "port");
+    b.backend = { ...b.backend, transportFallback: `the DevTools pipe did not come up: ${err.message.split("\n")[0]}` };
+    return b;
+  }
+}
+
+async function startChromeOn(options: LaunchOptions, glFlags: string[], kind: BackendInfo["kind"], transport: CdpTransport): Promise<Browser> {
+  const found = findBrowser();
+  if (!found) throw Object.assign(new Error(noBrowserMessage()), { noBrowser: true });
+  const bin = found.path;
+  const profile = mkdtempSync(join(tmpdir(), "uhd-docs-chrome-"));
+  const args = [
+    "--headless=new",
+    ...glFlags,
+    "--hide-scrollbars",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-extensions",
+    "--font-render-hinting=none",
+    `--user-data-dir=${profile}`,
+    transport === "pipe" ? "--remote-debugging-pipe" : "--remote-debugging-port=0",
+    "about:blank",
+  ];
+  const proc: ChildProcess =
+    transport === "pipe"
+      ? // fds 3 and 4 are the DevTools pipe (3: commands in, 4: replies out); stdout and stderr are drained
+        spawn(bin, args, { stdio: ["ignore", "pipe", "pipe", "pipe", "pipe"] })
+      : spawn(bin, args, { stdio: "ignore" });
+  // a browser that cannot be run at all (CHROME names nothing) says so at once
+  let failed: Error | undefined;
+  proc.on("error", (e) => (failed = e));
+  let stderrTail = "";
+  proc.stdout?.resume();
+  proc.stderr?.on("data", (d: Buffer) => (stderrTail = (stderrTail + d.toString("utf8")).slice(-2000)));
+  proc.stderr?.on("error", () => undefined);
+  proc.stdout?.on("error", () => undefined);
+
+  const exited = () => proc.exitCode !== null || proc.signalCode !== null;
+  const fail = async (why: string): Promise<never> => {
+    if (!exited()) proc.kill();
+    rmSync(profile, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    const enoent = failed && (failed as NodeJS.ErrnoException).code === "ENOENT";
+    const tail = stderrTail.trim().split("\n").filter(Boolean).at(-1);
+    throw Object.assign(
+      new Error(`the browser did not start (${bin}${found.from === "PATH" || found.from === "installed" ? "" : `, from ${found.from}`}): ${why}${tail && !enoent ? ` (${tail.slice(0, 200)})` : ""}. ${options.purpose ?? "The documents are rendered to PDF with a headless Chromium-family browser"}; set CHROME to one that runs${transport === "pipe" ? ", or PROTOBOARD_CDP_TRANSPORT=port" : ""}`),
+      enoent ? { noBrowser: true } : {},
+    );
+  };
+  const whyFailed = () => (failed ? ((failed as NodeJS.ErrnoException).code === "ENOENT" ? "it does not exist" : failed.message) : exited() ? `it exited with code ${proc.exitCode ?? proc.signalCode}` : undefined);
+
+  let conn: CdpConnection;
+  if (transport === "pipe") {
+    const toChrome = proc.stdio[3] as Writable | null;
+    const fromChrome = proc.stdio[4] as Readable | null;
+    if (!toChrome || !fromChrome) return fail(whyFailed() ?? "no DevTools pipe on fds 3 and 4");
+    conn = pipeConnection(toChrome, fromChrome);
+  } else {
+    const portFile = join(profile, "DevToolsActivePort");
+    for (let i = 0; i < BROWSER_START_TIMEOUT_MS / 50 && !existsSync(portFile) && !failed && !exited(); i++) await sleep(50);
+    if (!existsSync(portFile)) return fail(whyFailed() ?? `it did not open its debugging port in ${BROWSER_START_TIMEOUT_MS / 1000} s`);
+    await sleep(50);
+    const [port, path] = readFileSync(portFile, "utf8").trim().split("\n");
+    const ws = new WebSocket(`ws://127.0.0.1:${port}${path}`);
+    await new Promise<void>((ok, no) => {
+      ws.onopen = () => ok();
+      ws.onerror = () => no(new Error("CDP connection failed"));
+    }).catch((e: Error) => fail(e.message));
+    conn = socketConnection(ws);
+  }
+  const rpc = cdpRpc(conn);
+
+  // the first answer proves the browser speaks DevTools (on the pipe there is no port file to wait for)
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const product = await Promise.race([
+    rpc.raw("Browser.getVersion").then((v) => String(v?.product ?? "")),
+    new Promise<never>((_, no) => {
+      timer = setTimeout(() => no(new Error(`it did not answer DevTools in ${BROWSER_START_TIMEOUT_MS / 1000} s`)), BROWSER_START_TIMEOUT_MS);
+      proc.once("exit", () => setTimeout(() => no(new Error(whyFailed() ?? "it exited")), 20));
+      proc.once("error", () => no(new Error(whyFailed() ?? "it could not be run")));
+    }),
+  ])
+    .catch(async (e: Error) => {
+      conn.close();
+      // a process that could not be run says why on its next tick
+      await sleep(50);
+      return fail(whyFailed() ?? e.message);
+    })
+    .finally(() => clearTimeout(timer));
+
+  const page = await attachPage(rpc, options);
+  const alive = () => !exited() && conn.open;
 
   const close = async () => {
     try {
-      await Promise.race([raw("Browser.close"), sleep(3000)]);
+      await Promise.race([rpc.raw("Browser.close"), sleep(BROWSER_CLOSE_WAIT_MS)]);
     } catch {
       /* already gone */
     }
-    ws.close();
+    conn.close();
     // wait for Chrome to exit (it may still be writing its profile), then remove the profile;
     // a profile that cannot be removed is left in the temp folder, never a failed render
-    const exited = proc.exitCode !== null || proc.signalCode !== null ? Promise.resolve() : new Promise<void>((ok) => proc.once("exit", () => ok()));
+    const gone = exited() ? Promise.resolve() : new Promise<void>((ok) => proc.once("exit", () => ok()));
     proc.kill();
-    await Promise.race([exited, sleep(5000)]);
+    await Promise.race([gone, sleep(BROWSER_EXIT_WAIT_MS)]);
     try {
       rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
     } catch {
@@ -351,6 +600,6 @@ async function startChrome(options: LaunchOptions, glFlags: string[], kind: Back
     }
   };
 
-  const backend: BackendInfo = { kind, requested: kind === "gpu" ? "gpu" : "swiftshader", flags: glFlags, ...(product ? { product } : {}), startMs: 0 };
-  return { send, navigate, evaluate, setViewport, printToPdf, screenshot, capture, gl, takeErrors, alive, backend, pid: proc.pid, close };
+  const backend: BackendInfo = { kind, requested: kind === "gpu" ? "gpu" : "swiftshader", flags: glFlags, transport, ...(product ? { product } : {}), startMs: 0 };
+  return { ...page, alive, backend, pid: proc.pid, close };
 }

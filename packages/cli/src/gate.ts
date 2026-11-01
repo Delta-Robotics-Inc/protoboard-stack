@@ -83,6 +83,8 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   operations: LOCAL,
   evals: LOCAL,
   views: LOCAL,
+  // the exact measurement tier (W3-D, PB-1187): build123d on this machine, nothing in the cloud
+  geometry: LOCAL,
   stack: LOCAL,
   agents: LOCAL,
   setup: LOCAL,

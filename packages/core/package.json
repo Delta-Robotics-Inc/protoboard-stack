@@ -36,11 +36,15 @@
     "./telemetry": "./src/telemetry.ts",
     "./view-model": "./src/view-model/index.ts",
     "./sequence": "./src/sequence/index.ts",
-    "./render-service": "./src/render-service/index.ts"
+    "./render-service": "./src/render-service/index.ts",
+    "./geometry-service": "./src/geometry-service/index.ts",
+    "./findings-anchors": "./src/findings-anchors.ts",
+    "./reference/*": "./reference/*"
   },
   "files": [
     "src",
     "templates",
+    "reference",
     "README.md",
     "LICENSE",
     "NOTICE"
@@ -60,6 +64,7 @@
   "dependencies": {
     "@deltarobotics/uhd": "^0.3.0",
     "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
     "@gltf-transform/functions": "4.5.1",
     "@protoboardai/cloud": "^0.2.0",
     "jsonc-parser": "^3.3.1",

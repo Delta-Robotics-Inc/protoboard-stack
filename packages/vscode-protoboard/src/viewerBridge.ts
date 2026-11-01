@@ -18,11 +18,11 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { request as httpRequest, type IncomingMessage } from "node:http";
-import { join } from "node:path";
+import { isAbsolute, join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { BRIDGE_KEY_HEADER, BRIDGE_ROUTES } from "../../cli/src/dev/bridge.js";
-import { parsePresentation, saveViewerState, withPresentation, type ViewerStateFile } from "../../cli/src/dev/viewState.js";
-import { writeSnapshot } from "../../core/src/render-service/files.js";
+import { parsePresentation, presentationToWrite, saveViewerState, withPresentation, type ViewerStateFile } from "../../cli/src/dev/viewState.js";
+import { backendOf, checkSnapshotMeta, writeSnapshot } from "../../core/src/render-service/files.js";
 import { createHash } from "node:crypto";
 
 export { readViewerState, saveViewerState } from "../../cli/src/dev/viewState.js";
@@ -261,35 +261,83 @@ export class ProjectRelay {
 }
 
 /**
+ * The project's display file without running its code (wave 2 gate): a static string `display: "..."` in
+ * `protoboard.config.ts` (relative, inside the project), else `.protoboard/display.json`. A config that computes
+ * the path is not evaluated here; the dev server, which loads the config, is asked first anyway.
+ */
+export function configuredDisplayFile(root: string): string {
+  const fallback = join(root, ".protoboard", "display.json");
+  try {
+    const text = readFileSync(join(root, "protoboard.config.ts"), "utf8");
+    const m = /\bdisplay\s*:\s*(["'`])([^"'`\n$]+)\1/.exec(text);
+    if (!m) return fallback;
+    const rel = m[2].trim();
+    if (!rel || isAbsolute(rel) || /^[A-Za-z]:/.test(rel) || rel.split(/[\\/]/).includes("..") || !/\.json$/i.test(rel)) return fallback;
+    return join(root, rel);
+  } catch {
+    return fallback;
+  }
+}
+
+/** Thrown when the dev server answered and refused the save: the file is NOT written here then. */
+export class PresentationRefused extends Error {}
+
+/**
  * Named views and annotations from a tab, into the display file: through the
  * dev server when it runs (it owns the file and rebuilds), else written here.
  * Nothing is written when they did not change.
+ *
+ * Wave 2 gate: the fallback writes the project's configured display file (not
+ * always `.protoboard/display.json`), through a temp file and a rename, and is
+ * taken only when the server cannot be reached (a transport error). A server
+ * that answers and refuses (403, 409 for a display file that is not valid
+ * JSON, 413...) is reported, never worked around.
  */
-export async function savePresentation(root: string, presentation: unknown, options: { transport?: RelayTransport; displayFile?: string; format?: (display: unknown, previous?: string) => string; write?: (file: string, text: string) => void } = {}): Promise<{ written: boolean; via: "dev" | "file" }> {
+export async function savePresentation(root: string, presentation: unknown, options: { transport?: RelayTransport; displayFile?: string; format?: (display: unknown, previous?: string) => string; write?: (file: string, text: string) => void; saveAnnotations?: boolean } = {}): Promise<{ written: boolean; via: "dev" | "file" }> {
   const pres = parsePresentation(presentation);
   if ("error" in pres) throw new Error(pres.error);
   const record = readBridgeRecord(root);
   if (record) {
+    let r: { status: number; body: unknown } | undefined;
     try {
-      const r = await (options.transport ?? nodeTransport).post(new URL("__protoboard/display-views", record.url).href, { [BRIDGE_KEY_HEADER]: record.bridge!.key }, { presentation });
-      if (r.status === 200) return { written: Boolean((r.body as { written?: boolean })?.written), via: "dev" };
+      r = await (options.transport ?? nodeTransport).post(new URL("__protoboard/display-views", record.url).href, { [BRIDGE_KEY_HEADER]: record.bridge!.key }, { presentation, ...(options.saveAnnotations ? { saveAnnotations: true } : {}) });
     } catch {
-      // the server went away: write the file here
+      // the server went away (a transport error): write the file here
+      r = undefined;
+    }
+    if (r) {
+      if (r.status === 200) return { written: Boolean((r.body as { written?: boolean })?.written), via: "dev" };
+      throw new PresentationRefused(`the dev server refused the save (HTTP ${r.status}): ${String((r.body as { error?: unknown })?.error ?? "no reason given")}`);
     }
   }
-  const file = options.displayFile ?? join(root, ".protoboard", "display.json");
+  const file = options.displayFile ?? configuredDisplayFile(root);
   let previous: string | undefined;
   let display: Record<string, unknown> = {};
-  if (existsSync(file)) display = JSON.parse((previous = readFileSync(file, "utf8"))) as Record<string, unknown>;
-  const merged = withPresentation(display as { spatial?: Record<string, unknown> }, pres);
+  if (existsSync(file)) {
+    try {
+      display = JSON.parse((previous = readFileSync(file, "utf8"))) as Record<string, unknown>;
+    } catch (e) {
+      throw new PresentationRefused(`${file} is not valid JSON (${(e as Error).message}); fix it before saving views`);
+    }
+  }
+  // annotations only on an explicit save of them (DEFAULT, W3-A; the dev server's rule)
+  const merged = withPresentation(display as { spatial?: Record<string, unknown> }, presentationToWrite(pres, display as { spatial?: Record<string, unknown> }, options.saveAnnotations));
   if (!merged.changed) return { written: false, via: "file" };
   const text = options.format ? options.format(merged.display, previous) : JSON.stringify(merged.display, null, 2) + "\n";
-  const { writeFileSync, mkdirSync } = await import("node:fs");
-  const { dirname } = await import("node:path");
   if (options.write) options.write(file, text);
   else {
+    const { writeFileSync, mkdirSync, renameSync, rmSync } = await import("node:fs");
+    const { dirname } = await import("node:path");
     mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, text);
+    // temp and rename: a reader (the dev server's watcher, git) never sees half a file
+    const tmp = `${file}.${process.pid}.${Date.now().toString(36)}.tmp`;
+    writeFileSync(tmp, text);
+    try {
+      renameSync(tmp, file);
+    } catch (e) {
+      rmSync(tmp, { force: true });
+      throw e;
+    }
   }
   return { written: true, via: "file" };
 }
@@ -306,26 +354,23 @@ export function saveTabViewState(root: string, file: ViewerStateFile): boolean {
 export function saveViewerSnapshot(root: string, pngBase64: string, meta: Record<string, unknown>): string {
   const png = Buffer.from(pngBase64, "base64");
   if (png.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") throw new Error("not a PNG");
+  // the meta's shapes and sizes checked as the dev server checks them (css, camera, viewState capped, gpu, theme)
+  const checked = checkSnapshotMeta(meta);
+  if ("error" in checked) throw new Error(checked.error);
+  const m = checked.meta;
   let bundleHash = "";
   try {
     bundleHash = `sha256:${createHash("sha256").update(readFileSync(join(root, ".protoboard", "build", "uhd-bundle.json"))).digest("hex")}`;
   } catch {
     // no bundle yet
   }
-  const css = (meta.css ?? { width: meta.width, height: meta.height, dpr: 1 }) as { width: number; height: number; dpr: number };
   const out = writeSnapshot(root, png, {
-    view: String(meta.view),
-    level: String(meta.level),
-    width: Number(meta.width),
-    height: Number(meta.height),
-    css,
-    ...(meta.camera ? { camera: meta.camera } : {}),
-    viewState: (meta.viewState ?? {}) as never,
+    ...m,
     bundleHash,
     revision: 0,
-    backend: "gpu",
-    gpu: "",
-    takenAt: typeof meta.takenAt === "string" ? meta.takenAt : new Date().toISOString(),
+    // the backend the viewer drew with (its renderer string), not an assumed GPU
+    backend: backendOf(m.gpu),
+    takenAt: m.takenAt ?? new Date().toISOString(),
     source: "viewer",
   } as unknown as Parameters<typeof writeSnapshot>[2]);
   return out.meta.key;

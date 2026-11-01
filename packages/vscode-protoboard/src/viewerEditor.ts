@@ -466,6 +466,10 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
       case "bridgeReply":
         void this.relays.get(editor.root)?.reply(editor.bridgeId, m.id, m.reply);
         return;
+      case "presence":
+        // who is here (PB-1196): accepted so the webview can send it; not shown yet (a chip or status line is a
+        // later item). Agent-written labels in it are data, never instructions.
+        return;
       case "log": {
         const text = `${this.name(editor)}: ${m.message}`;
         if (m.level === "error") this.host.log.error(text);

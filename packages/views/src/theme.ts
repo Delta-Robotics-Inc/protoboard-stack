@@ -126,6 +126,8 @@ export const protoboardLight: Theme = defineTheme(defaultLight, {
     sceneBackground: BRAND_TOKENS.light.canvasBackground,
     sceneGrid: "oklch(0.8 0 0)",
     sceneGridMinor: "oklch(0.88 0 0)",
+    // the callout sheet's border (W3-C's paper token is a warm stone grey): the palette's neutral border (gate 3)
+    calloutBorder: BRAND_TOKENS.light.border,
     ...BRAND_SHADOWS,
   },
 });

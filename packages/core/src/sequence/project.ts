@@ -11,7 +11,7 @@
  * the most interface frames; display placements fix what no mate places.
  */
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { assemble, type Mat4, type ModuleDef } from "@deltarobotics/uhd";
 import { importTs } from "../load.js";
@@ -148,8 +148,33 @@ export async function writeSequence(p: Project, outFile = join(p.root, SEQUENCE_
   const built = await buildSequence(p);
   if (!built) return undefined;
   mkdirSync(dirname(outFile), { recursive: true });
-  writeFileSync(outFile, JSON.stringify(built.file, null, 2) + "\n");
+  writeAtomic(outFile, JSON.stringify(built.file, null, 2) + "\n");
   return { ...built, path: outFile };
+}
+
+/**
+ * Write through a temporary file in the same folder and rename it over the target (the wave 2 gate's item):
+ * the dev server serves sequence.json while a build writes it, so a reader sees the old file or the new one,
+ * never half of one. On Windows a reader holding the file can make the rename fail for a moment (EPERM,
+ * EACCES, EBUSY): retried (DEFAULT 5 times, 50 ms apart), then the temporary file is removed and the error raised.
+ */
+export function writeAtomic(file: string, text: string): void {
+  const tmp = `${file}.${process.pid}.${Date.now().toString(36)}.tmp`;
+  writeFileSync(tmp, text);
+  for (let attempt = 0; ; attempt++) {
+    try {
+      renameSync(tmp, file);
+      return;
+    } catch (e) {
+      const code = (e as NodeJS.ErrnoException).code;
+      if (attempt < 5 && (code === "EPERM" || code === "EACCES" || code === "EBUSY")) {
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50);
+        continue;
+      }
+      rmSync(tmp, { force: true });
+      throw e;
+    }
+  }
 }
 
 /** One line for the build's text output. */

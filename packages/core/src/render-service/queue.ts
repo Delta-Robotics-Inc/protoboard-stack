@@ -136,7 +136,7 @@ export class IdleTimer {
   }
 }
 
-/** The idle timeout: `PROTOBOARD_RENDER_IDLE_S` seconds, else 15 minutes (DEFAULT, PB-1180: a warm SwiftShader Chrome holds a few hundred MB). */
+/** DEFAULT (PB-1180): the idle timeout, `PROTOBOARD_RENDER_IDLE_S` seconds, else 15 minutes (a warm SwiftShader Chrome holds a few hundred MB). */
 export const DEFAULT_IDLE_MS = 15 * 60 * 1000;
 export function idleMsFromEnv(env: NodeJS.ProcessEnv = process.env): number {
   const s = Number(env.PROTOBOARD_RENDER_IDLE_S);
