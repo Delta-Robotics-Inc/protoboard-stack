@@ -23,7 +23,7 @@ export interface BridgeClient {
   session: string;
   actor: { kind: "agent"; id: string; session: string };
   /** Send a batch (empty `ops`: read the view state). */
-  call(batch: BatchBody & { tab?: string; observe?: boolean; timeoutMs?: number }): Promise<BridgeOutcome>;
+  call(batch: BatchBody & { tab?: string; observe?: boolean | "components"; timeoutMs?: number }): Promise<BridgeOutcome>;
   /** The live tabs (the default one marked). */
   tabs(): Promise<{ id: string; kind: string; label?: string; lastActive: number; default: boolean }[]>;
 }

@@ -48,8 +48,13 @@ export function matchTitle(view: string, shown: string[], resolved?: string): st
   return shown.find((t) => t.toLowerCase() === v) ?? shown.find((t) => t.toLowerCase().replace(/[^a-z0-9]/g, "") === v.replace(/[^a-z0-9]/g, ""));
 }
 
+/** DEFAULT (PB-1180): ms a clicked tab gets to become the active panel. */
+export const TAB_OPEN_TIMEOUT_MS = 10000;
+/** DEFAULT (PB-1180): ms a 2D tab showing only an empty state is watched before it counts as drawn. */
+export const EMPTY_STATE_MS = 3000;
+
 /** Clicks a tab by title and waits until its panel is the active one. */
-export async function activateTab(b: PageBrowser, title: string, timeoutMs = 10000): Promise<void> {
+export async function activateTab(b: PageBrowser, title: string, timeoutMs = TAB_OPEN_TIMEOUT_MS): Promise<void> {
   if ((await b.evaluate<string>(ACTIVE)) === title) return;
   await b.evaluate(`[...document.querySelectorAll('[role=tablist] [role=tab]')].find((b) => ${TITLE} === ${JSON.stringify(title)})?.click()`);
   for (const t0 = Date.now(); Date.now() - t0 < timeoutMs; await sleep(100)) if ((await b.evaluate<string>(ACTIVE)) === title) return;
@@ -100,7 +105,7 @@ export async function waitDrawn(b: PageBrowser, view: string, timeoutMs: number)
       continue;
     }
     const n = (panel.drawings ?? 0) + (panel.rows ?? 0);
-    if ((panel.empties ?? []).length && !n && Date.now() - t0 > 3000) return { ms: Date.now() - t0, timedOut: false, panel };
+    if ((panel.empties ?? []).length && !n && Date.now() - t0 > EMPTY_STATE_MS) return { ms: Date.now() - t0, timedOut: false, panel };
     stable = n > 0 && n === last ? stable + 1 : 0;
     last = n;
     if (stable >= 2) return { ms: Date.now() - t0, timedOut: false, panel };
@@ -165,6 +170,18 @@ export interface Observed {
   nodes: (RefNode & { kind?: string; placeholder?: boolean })[];
   counts?: Record<string, number>;
   seq?: number;
+}
+
+/** DEFAULT (gate 3): records listed in a capture's response, at most. */
+export const MAX_DRAWN_RECORDS = 500;
+
+/** What the annotation layer drew per record (W3-B's `__cad.annotations()`), when the viewer offers it. */
+export async function drawnRecords(b: PageBrowser): Promise<{ id: string; kind: string; status: string; ref?: string; anchorPx?: [number, number] }[] | undefined> {
+  const raw = await b.evaluate<unknown>(`(() => {
+    const a = window.__cad && typeof window.__cad.annotations === 'function' ? window.__cad.annotations() : undefined;
+    return a && Array.isArray(a.records) ? a.records.slice(0, ${MAX_DRAWN_RECORDS}).map((r) => ({ id: String(r.id).slice(0, 200), kind: String(r.kind), status: String(r.status), ...(typeof r.ref === 'string' ? { ref: r.ref.slice(0, 512) } : {}), ...(Array.isArray(r.anchorPx) ? { anchorPx: r.anchorPx.slice(0, 2) } : {}) })) : undefined;
+  })()`);
+  return Array.isArray(raw) ? (raw as { id: string; kind: string; status: string; ref?: string; anchorPx?: [number, number] }[]) : undefined;
 }
 
 /** The viewer's whole view state (W2-A's `__cad.get()`), when it offers it. */
@@ -274,7 +291,8 @@ export async function removeOverlay(b: PageBrowser): Promise<void> {
 
 /**
  * In the page: the share of pixels that differ between two images (base64,
- * any format the browser decodes), compared at most 512 px wide; 1 when the
+ * any format the browser decodes), compared at most 512 px wide (DEFAULT, PB-1180: enough for the
+ * blank and changed shares, cheap in the page); 1 when the
  * sizes differ. Also the share of pixels unlike the most common colour of the
  * second image (ink: near 0 is a blank frame).
  */

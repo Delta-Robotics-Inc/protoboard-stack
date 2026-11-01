@@ -6,7 +6,7 @@
  * whole capture through the service and its loopback server with a fake
  * browser and page host.
  */
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,8 +19,14 @@ import {
   RenderService,
   SerialQueue,
   TOKEN_HEADER,
+  backendOf,
   base64Bytes,
   buildLegend,
+  checkSnapshotMeta,
+  drawnRecords,
+  isDeviceName,
+  resolveInsideProject,
+  shippedReferenceDir,
   captureKey,
   captureSidecars,
   connectRenderService,
@@ -58,6 +64,7 @@ import { gpuFlags, isSoftwareRenderer, requestedBackend } from "../src/cdp.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const DOCS_LIMITS = join(HERE, "..", "..", "..", "docs", "reference", "transfer-limits.json");
+const SHIPPED_LIMITS = join(HERE, "..", "reference", "transfer-limits.json");
 const TMP = mkdtempSync(join(tmpdir(), "pb-render-service-"));
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
@@ -110,6 +117,12 @@ describe("capture request and response schemas", () => {
   it("refuses an out path with characters Windows forbids", () => {
     expect(() => parseCaptureRequest({ out: 'shots/"top".png' })).toThrow(/out:/);
   });
+  it("allowOutsideProject is a known boolean, kept only when true, and not part of the frame's key", () => {
+    expect(parseCaptureRequest({ out: "/x.png", allowOutsideProject: true }).allowOutsideProject).toBe(true);
+    expect("allowOutsideProject" in parseCaptureRequest({ allowOutsideProject: false })).toBe(false);
+    expect(() => parseCaptureRequest({ allowOutsideProject: "yes" })).toThrow(/allowOutsideProject: true or false/);
+    expect(captureKey(parseCaptureRequest({ out: "a.png", allowOutsideProject: true }))).toBe(captureKey(parseCaptureRequest({})));
+  });
   it("two requests that draw the same frame share a key; a different state does not", () => {
     const a = parseCaptureRequest({ state: { azimuth: 10 }, annotate: ["x"] });
     expect(captureKey(a)).toBe(captureKey(parseCaptureRequest({ state: { azimuth: 10 }, annotate: ["x"], out: "elsewhere.png" })));
@@ -126,9 +139,11 @@ describe("transfer limits", () => {
   it("the built-in copy equals docs/reference/transfer-limits.json", () => {
     expect(JSON.parse(readFileSync(DOCS_LIMITS, "utf8"))).toEqual(BUILT_IN_LIMITS);
   });
-  it("loads the docs file in the checkout, else the built-in copy; says when it is due a recheck", () => {
-    const l = loadTransferLimits({ now: new Date("2026-11-02T00:00:00Z") });
-    expect(l.file).toBe(DOCS_LIMITS);
+  it("loads the copy shipped in the package first, else the built-in copy; says when it is due a recheck", () => {
+    const l = loadTransferLimits({ now: new Date("2026-11-02T00:00:00Z"), env: {} });
+    expect(l.file).toBe(join(shippedReferenceDir(), "transfer-limits.json"));
+    expect(l.file).toBe(SHIPPED_LIMITS);
+    expect(readFileSync(l.file)).toEqual(readFileSync(DOCS_LIMITS));
     expect(l.limits.routes["claude-api"].imageMaxBase64Bytes).toBe(10_000_000);
     expect(l.limits.routes.bedrock.imageMaxBase64Bytes).toBe(5_000_000);
     expect(l.stale).toBe(false);
@@ -328,8 +343,9 @@ describe("annotations come from the scene, projected through the viewer's camera
 describe("the handoff files", () => {
   it("snapshot keys are safe file names; a snapshot is written image first, then its record", () => {
     expect(snapshotKey("", "3d")).toBe("root__3d");
-    expect(snapshotKey("arm_fr/motor", "3d")).toBe("arm_fr_motor__3d");
-    expect(snapshotKey("a:b", 'x"y')).toBe("a_b__x_y");
+    expect(snapshotKey("arm_fr/motor", "3d")).toBe("arm_fr.motor__3d");
+    expect(snapshotKey("/arm_fr//motor/", "3d")).toBe("arm_fr.motor__3d");
+    expect(snapshotKey("a:b", 'x"y')).toBe("a~3ab__x~22y");
     const root = join(TMP, "snap");
     const w = writeSnapshot(root, fakePng(32, 20), { view: "3d", level: "", width: 32, height: 20, css: { width: 32, height: 20, dpr: 1 }, camera: CAM, viewState: { explode: 0 }, bundleHash: "sha256:ab", revision: 3, backend: "gpu", gpu: "ANGLE", takenAt: "2026-11-01T00:00:00Z" });
     expect(existsSync(w.png)).toBe(true);
@@ -345,6 +361,132 @@ describe("the handoff files", () => {
     expect(captureSidecars("/x/shot.png")).toEqual({ svg: "/x/shot.overlay.svg", manifest: "/x/shot.capture.json" });
     expect(imageSize(fakePng(7, 9))).toEqual({ width: 7, height: 9 });
     expect(imageSize(fakeJpeg(640, 480))).toEqual({ width: 640, height: 480 });
+  });
+});
+
+describe("snapshot keys never collide (wave 2 gate)", () => {
+  const WINDOWS_BAD = /[<>:"/\\|?*\x00-\x1f]/;
+  const levels = ["", "root", "Root", "arm_fr/motor", "arm/fr_motor", "arm_fr_motor", "a b", "a_b", "a.b", "a/b", "A/b", "a~2fb", "con", "con/x", "nul", "com1/motor", "lpt9", "aux.x", "café/π", "x__y", "x_", "x".repeat(300), "x".repeat(299) + "y", "é".repeat(200)];
+  const views = ["3d", "diagram", "pcb", "my_view", "my.view", "a:b", "x".repeat(64), "x".repeat(63) + "y"];
+  it("distinct (level, view) pairs give distinct keys, also folded to one case", () => {
+    const seen = new Map<string, string>();
+    for (const l of levels)
+      for (const v of views) {
+        const k = snapshotKey(l, v).toLowerCase();
+        const was = seen.get(k);
+        expect(was, `${JSON.stringify([l, v])} and ${was} share ${k}`).toBeUndefined();
+        seen.set(k, JSON.stringify([l, v]));
+      }
+    expect(snapshotKey("arm_fr/motor", "3d")).not.toBe(snapshotKey("arm/fr_motor", "3d"));
+    expect(snapshotKey("a b", "3d")).not.toBe(snapshotKey("a_b", "3d"));
+    expect(snapshotKey("root", "3d")).not.toBe(snapshotKey("", "3d"));
+    // the separator stays unambiguous: a level ending in _ and a view starting with _
+    expect(snapshotKey("x_", "y")).not.toBe(snapshotKey("x", "_y"));
+    expect(snapshotKey("x__y", "3d")).not.toBe(snapshotKey("x", "y__3d"));
+  });
+  it("every key is a Windows-safe file name of bounded length; device names are escaped", () => {
+    for (const l of levels)
+      for (const v of views) {
+        const k = snapshotKey(l, v);
+        expect(k).not.toMatch(WINDOWS_BAD);
+        expect(k).not.toMatch(/[. ]$/);
+        expect(isDeviceName(k)).toBe(false);
+        expect(isDeviceName(k.split(".")[0])).toBe(false);
+        expect(k.length).toBeLessThanOrEqual(96 + 2 + 48);
+      }
+    expect(snapshotKey("con/x", "3d")).toBe("~63on.x__3d");
+    expect(snapshotKey("x".repeat(300), "3d")).toMatch(/^x+~~[0-9a-f]{16}__3d$/);
+  });
+  it("readSnapshot still checks the level and view in the record", () => {
+    const root = join(TMP, "snap-check");
+    writeSnapshot(root, fakePng(4, 4), { view: "3d", level: "arm/fr_motor", width: 4, height: 4, css: { width: 4, height: 4, dpr: 1 }, viewState: {}, bundleHash: "", revision: 1, backend: "gpu", gpu: "", takenAt: "2026-11-01T00:00:00Z" });
+    expect(readSnapshot(root, "arm/fr_motor", "3d")).toBeDefined();
+    expect(readSnapshot(root, "arm_fr/motor", "3d")).toBeUndefined();
+    writeSnapshot(root, fakePng(4, 4), { view: "3d", level: "arm_fr/motor", width: 4, height: 4, css: { width: 4, height: 4, dpr: 1 }, viewState: {}, bundleHash: "", revision: 2, backend: "gpu", gpu: "", takenAt: "2026-11-01T00:00:00Z" });
+    // two levels, two files: neither overwrote the other
+    expect(readSnapshot(root, "arm/fr_motor", "3d")?.revision).toBe(1);
+    expect(readSnapshot(root, "arm_fr/motor", "3d")?.revision).toBe(2);
+  });
+});
+
+describe("a visible viewer's snapshot meta", () => {
+  const good = { level: "/arm_fr/motor", view: "3d", width: 1600, height: 1000, css: { width: 800, height: 500, dpr: 2 }, camera: { ...CAM, extra: 1 }, viewState: { schema: "uhd-viewer.view-state/v0", explode: 0.2 }, gpu: "ANGLE (Intel, D3D11)", theme: "protoboard-dark", takenAt: "2026-11-01T12:00:00.123Z", bundleHash: "ignored" };
+  it("keeps the known fields, normalises the level, drops unknown keys", () => {
+    const r = checkSnapshotMeta(good);
+    expect("meta" in r).toBe(true);
+    if (!("meta" in r)) return;
+    expect(r.meta).toEqual({ level: "arm_fr/motor", view: "3d", width: 1600, height: 1000, css: { width: 800, height: 500, dpr: 2 }, camera: CAM, viewState: { schema: "uhd-viewer.view-state/v0", explode: 0.2 }, gpu: "ANGLE (Intel, D3D11)", theme: "protoboard-dark", takenAt: "2026-11-01T12:00:00.123Z" });
+    const min = checkSnapshotMeta({ level: "", view: "diagram", width: 10, height: 20 });
+    expect(min).toEqual({ meta: { level: "", view: "diagram", width: 10, height: 20, css: { width: 10, height: 20, dpr: 1 }, viewState: {}, gpu: "" } });
+  });
+  it("names every problem: level, view, sizes, css, camera, viewState, gpu, theme, takenAt", () => {
+    const r = checkSnapshotMeta({ level: "../x", view: "3d tab", width: 0, height: 32001.5, css: { width: 1, height: 1, dpr: 9 }, camera: { position: [0, 0], target: [0, 0, 0], up: [0, 0, 1] }, viewState: [1], gpu: "g".repeat(201), theme: "a b", takenAt: "yesterday" });
+    expect("error" in r).toBe(true);
+    const msg = "error" in r ? r.error : "";
+    for (const bit of ["level:", "view:", "width:", "height:", "css:", "camera:", "viewState:", "gpu:", "theme:", "takenAt:"]) expect(msg).toContain(bit);
+    expect(checkSnapshotMeta({ ...good, camera: { ...CAM, fov: 180 } })).toMatchObject({ error: expect.stringContaining("camera.fov") });
+    expect(checkSnapshotMeta({ ...good, camera: { ...CAM, position: [0, NaN, 0] } })).toMatchObject({ error: expect.stringContaining("camera:") });
+    expect(checkSnapshotMeta({ ...good, width: 32001 })).toMatchObject({ error: expect.stringContaining("width:") });
+    expect(checkSnapshotMeta({ ...good, viewState: { blob: "x".repeat(1 << 20) } })).toMatchObject({ error: expect.stringContaining("viewState: over") });
+    expect(checkSnapshotMeta({ ...good, viewState: new Date() })).toMatchObject({ error: expect.stringContaining("viewState: a plain") });
+    expect(checkSnapshotMeta(null)).toMatchObject({ error: expect.stringContaining("snapshot meta") });
+  });
+  it("the backend a renderer string names", () => {
+    expect(backendOf("ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)")).toBe("swiftshader");
+    expect(backendOf("ANGLE (Intel, Intel(R) UHD Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)")).toBe("gpu");
+    expect(backendOf("")).toBe("gpu");
+  });
+});
+
+describe("the service writes only inside the project unless opted out (wave 2 gate)", () => {
+  const root = join(TMP, "contain");
+  const outside = join(TMP, "outside");
+  mkdirSync(join(root, "shots"), { recursive: true });
+  mkdirSync(outside, { recursive: true });
+  it("resolveInsideProject: relative and absolute paths inside pass; .. out, elsewhere and other drives are refused", () => {
+    expect(resolveInsideProject(root, "shots/a.png", "out")).toBe(join(root, "shots", "a.png"));
+    expect(resolveInsideProject(root, join(root, "new", "deep", "a.png"), "out")).toBe(join(root, "new", "deep", "a.png"));
+    expect(() => resolveInsideProject(root, "../outside/a.png", "out", "use --out")).toThrow(/out: .* is outside the project .*; write inside the project.*, or use --out/);
+    expect(() => resolveInsideProject(root, join(outside, "a.png"), "out")).toThrow(/outside the project/);
+    expect(() => resolveInsideProject(root, "shots/../../x.png", "out")).toThrow(/outside the project/);
+    if (process.platform === "win32") expect(() => resolveInsideProject("C:\\p", "D:\\x.png", "out")).toThrow(/outside the project/);
+    // a name that merely starts with two dots is inside
+    expect(resolveInsideProject(root, "..shots/a.png", "out")).toBe(join(root, "..shots", "a.png"));
+  });
+  it("a symlink or junction inside the project that leads out is refused", () => {
+    const link = join(root, "escape");
+    try {
+      symlinkSync(outside, link, "junction");
+    } catch {
+      return; // no permission to make links here: nothing to check
+    }
+    expect(() => resolveInsideProject(root, "escape/a.png", "out")).toThrow(/through a link/);
+    expect(() => resolveInsideProject(root, "escape/new/dir/a.png", "out")).toThrow(/through a link/);
+  });
+  it("a capture with an out outside the project is refused before it is drawn (400 over HTTP); the CLI's opt-in allows it", async () => {
+    const f = fakeBrowser();
+    mkdirSync(join(root, ".protoboard", "build"), { recursive: true });
+    const bundleFile = join(root, ".protoboard", "build", "uhd-bundle.json");
+    writeFileSync(bundleFile, "{}");
+    const host = (): PageHost => ({ url: "http://127.0.0.1:9/", bundleFile, version: 1, async rebuild() {}, async close() {} });
+    const s = new RenderService({ root, launch: async () => f.b, startHost: async () => host() });
+    expect(() => s.capture({ view: "3d", out: "../outside/x.png" })).toThrow(/capture request: out: .* is outside the project.*protoboard views capture --out/);
+    expect(() => s.capture({ view: "3d", out: join(outside, "x.png") })).toThrow(/outside the project/);
+    expect(f.calls.length).toBe(0);
+    const ok = await s.capture({ view: "3d", out: join(outside, "x.png"), allowOutsideProject: true });
+    expect(ok.imagePath).toBe(join(outside, "x.png"));
+    expect(existsSync(ok.imagePath)).toBe(true);
+    const manifest = JSON.parse(readFileSync(ok.manifestPath, "utf8"));
+    expect(manifest.request.allowOutsideProject).toBeUndefined();
+    const served = await serveRenderService(s, root, { version: "test" });
+    try {
+      const r = await fetch(new URL("capture", served.record.url), { method: "POST", headers: { [TOKEN_HEADER]: served.record.token, "content-type": "application/json" }, body: JSON.stringify({ view: "3d", out: "../outside/y.png" }) });
+      expect(r.status).toBe(400);
+      expect(((await r.json()) as { error: string }).error).toMatch(/outside the project/);
+      expect(existsSync(join(outside, "y.png"))).toBe(false);
+    } finally {
+      await served.close();
+    }
   });
 });
 
@@ -568,5 +710,24 @@ describe("a capture through the service, with a fake browser and page host", () 
     } finally {
       await served?.close();
     }
+  });
+});
+
+describe("drawnRecords (gate 3)", () => {
+  it("reads the annotation layer's per-record status from the page, and nothing when the viewer has no layer", async () => {
+    const run = (cad: unknown) => ({
+      evaluate: async <T>(expr: string): Promise<T> => new Function("window", `return ${expr}`)({ __cad: cad }) as T,
+    });
+    const records = [
+      { id: "a.e.1", kind: "mark", status: "placed", anchorPx: [10, 20, 99], extra: "dropped" },
+      { id: "a.e.2", kind: "callout", status: "occluded", ref: "stack/fc", anchorPx: [10, 20] },
+    ];
+    const got = await drawnRecords(run({ annotations: () => ({ records, findings: [] }) }) as never);
+    expect(got).toEqual([
+      { id: "a.e.1", kind: "mark", status: "placed", anchorPx: [10, 20] },
+      { id: "a.e.2", kind: "callout", status: "occluded", ref: "stack/fc", anchorPx: [10, 20] },
+    ]);
+    expect(await drawnRecords(run({}) as never)).toBeUndefined();
+    expect(await drawnRecords(run(undefined) as never)).toBeUndefined();
   });
 });

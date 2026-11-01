@@ -13,6 +13,13 @@ import { isCaptureResponse } from "./schema.js";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** DEFAULT (PB-1180): ms one call to the service may take (a views check of a heavy project on SwiftShader). */
+export const CALL_TIMEOUT_MS = 600000;
+/** DEFAULT (PB-1180): ms a health probe may take before the record counts as stale. */
+export const PROBE_TIMEOUT_MS = 2000;
+/** DEFAULT (PB-1180): ms to wait for a newly started service's record and health. */
+export const START_TIMEOUT_MS = 60000;
+
 export interface RenderClient {
   record: ServiceRecord;
   /** Whether this call started the service (its first capture pays the browser start and the page load). */
@@ -24,7 +31,7 @@ export interface RenderClient {
   shutdown(): Promise<void>;
 }
 
-async function call(record: ServiceRecord, method: "GET" | "POST", path: string, body?: unknown, timeoutMs = 600000): Promise<Response> {
+async function call(record: ServiceRecord, method: "GET" | "POST", path: string, body?: unknown, timeoutMs = CALL_TIMEOUT_MS): Promise<Response> {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), timeoutMs);
   try {
@@ -40,7 +47,7 @@ async function call(record: ServiceRecord, method: "GET" | "POST", path: string,
 }
 
 /** The service's health, or undefined when the record is stale (nothing answers, or another token). */
-export async function probeService(record: ServiceRecord, timeoutMs = 2000): Promise<ServiceHealth | undefined> {
+export async function probeService(record: ServiceRecord, timeoutMs = PROBE_TIMEOUT_MS): Promise<ServiceHealth | undefined> {
   try {
     const r = await call(record, "GET", "/health", undefined, timeoutMs);
     if (!r.ok) return undefined;
@@ -106,7 +113,7 @@ function clientFor(record: ServiceRecord, started: boolean): RenderClient {
 export interface EnsureOptions {
   /** Start a service for `root` (detached); the client then waits for its record. */
   spawn: () => void;
-  /** How long to wait for a new service's record and health (default 60 s). */
+  /** How long to wait for a new service's record and health (default `START_TIMEOUT_MS`). */
   timeoutMs?: number;
   /** The caller's version: an older service (another CLI) is replaced. */
   version?: string;
@@ -121,13 +128,13 @@ export async function ensureRenderService(root: string, opts: EnsureOptions): Pr
     for (let i = 0; i < 50 && readServiceRecord(root)?.pid === existing.pid; i++) await sleep(100);
   }
   opts.spawn();
-  const deadline = Date.now() + (opts.timeoutMs ?? 60000);
+  const deadline = Date.now() + (opts.timeoutMs ?? START_TIMEOUT_MS);
   while (Date.now() < deadline) {
     await sleep(150);
     const r = readServiceRecord(root);
     if (r && r.pid !== existing?.pid && (await probeService(r, 1000))) return clientFor(r, true);
   }
-  throw new Error(`the render service did not start in ${Math.round((opts.timeoutMs ?? 60000) / 1000)} s (no answer at .protoboard/local/render-service.json); run \`protoboard views service\` in the project to see why`);
+  throw new Error(`the render service did not start in ${Math.round((opts.timeoutMs ?? START_TIMEOUT_MS) / 1000)} s (no answer at .protoboard/local/render-service.json); run \`protoboard views service\` in the project to see why`);
 }
 
 /** A client for the running service only (no start); undefined when none answers. */

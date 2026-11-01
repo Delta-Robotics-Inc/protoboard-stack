@@ -5,19 +5,22 @@
  * written only when it changed) and named views in the display file; and the
  * dev server's routes end to end, with an agent reading a live tab.
  */
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { request, type IncomingMessage } from "node:http";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { BRIDGE_KEY_HEADER, BRIDGE_SESSION_HEADER, LiveBridge, parseBatchBody, type BridgeEnvelope } from "../src/dev/bridge.js";
 import { connectBridge } from "../src/dev/bridgeClient.js";
-import { VIEWER_STATE_FILE, parsePresentation, parseViewerStateFile, readViewerState, saveViewerState, withPresentation } from "../src/dev/viewState.js";
+import { VIEWER_STATE_FILE, parsePresentation, parseViewerStateFile, presentationToWrite, readViewerState, saveViewerState, withPresentation } from "../src/dev/viewState.js";
 import { DEV_RECORD, startDev, type DevRecord, type DevServer } from "../src/dev/server.js";
+import { JOURNAL_FILE, Journal } from "../src/dev/journal.js";
 
+// a folder of this run's own (two test processes on one machine must not share one; wave 2 gate), inside the
+// repository so the fixture project resolves the workspace's packages
 const HERE = fileURLToPath(new URL(".", import.meta.url));
-const TMP = join(HERE, ".tmp/dev-bridge");
-rmSync(TMP, { recursive: true, force: true });
+mkdirSync(join(HERE, ".tmp"), { recursive: true });
+const TMP = mkdtempSync(join(HERE, ".tmp", "dev-bridge-"));
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
 const batch = (id: string, ops: unknown[] = []) => ({ batchId: id, label: "read the current view state", ops });
@@ -42,7 +45,7 @@ describe("the bridge: outcomes", () => {
     expect(got.two).toHaveLength(0);
     // the tab sees the batch id qualified by the session, and the actor the session names (an agent, never the user)
     expect(got.one[0].batch.batchId).toBe(`${s2.id}:b1`);
-    expect(got.one[0].actor).toEqual({ kind: "agent", id: `agent:${s2.id}`, session: s2.id });
+    expect(got.one[0].actor).toEqual({ kind: "agent", id: `agent:${s2.id}`, session: s2.id, name: "x" });
     expect(timed.reply(got.one[0].id, { status: "read", seq: 4, state: { selection: { body: "battery" } } }, "one")).toBe(true);
     expect(await out).toMatchObject({ status: "read", seq: 4, tab: "one", batchId: "b1" });
     expect(timed.listTabs().find((x) => x.default)?.id).toBe("one");
@@ -121,6 +124,21 @@ describe("the saved view state and the display file's views", () => {
     const parsed = parseViewerStateFile(file({ "": { camera: cam, namedViews: { A: {} }, bogus: 1 } }));
     expect("error" in parsed ? parsed : parsed.scopes[""]).toEqual({ camera: cam });
     expect(parseViewerStateFile({ schema: "x" })).toMatchObject({ error: /schema/ });
+  });
+
+  it("writes annotations to the display file only on an explicit save of them", () => {
+    const display = { spatial: { root: "frame", annotations: [{ id: "keep", kind: "mark", ref: "battery", author: "user" }] } };
+    const pres = parsePresentation({ namedViews: {}, annotations: [{ id: "a.e.1", kind: "callout", ref: "stack/fc", author: "agent:claude", title: "FC" }] });
+    if ("error" in pres) throw new Error(pres.error);
+    // an agent's callout in the live view: the file keeps what it holds
+    expect(withPresentation(display, presentationToWrite(pres, display, undefined)).changed).toBe(false);
+    // saved on purpose
+    const saved = withPresentation(display, presentationToWrite(pres, display, true));
+    expect(saved.changed).toBe(true);
+    expect((saved.display.spatial as { annotations: { id: string }[] }).annotations.map((a) => a.id)).toEqual(["a.e.1"]);
+    // records without an author, or too large, are refused
+    expect(parsePresentation({ namedViews: {}, annotations: [{ id: "x", kind: "mark", ref: "a" }] })).toMatchObject({ error: expect.stringMatching(/author/) });
+    expect(parsePresentation({ namedViews: {}, annotations: [{ id: "x", kind: "mark", ref: "a", author: "u", text: "x".repeat(5000) }] })).toMatchObject({ error: expect.stringMatching(/4096/) });
   });
 
   it("puts named views in spatial.views only when they changed", () => {
@@ -264,20 +282,43 @@ describe("protoboard dev: the view-state routes and the bridge", () => {
     expect(await agent.call(batch("e1"))).toMatchObject({ status: "not-run", batchId: "e1" });
     expect(await agent.call({ batchId: "e0", label: "short", ops: [] })).toMatchObject({ status: "invalid" });
 
-    // a page opens: its stream names it, the bridge delivers to it, its reply comes back to the agent
+    // a page opens: its stream alone makes no tab (wave 2 gate item 2); its authenticated presence does
     const page = stream(dev.port, "/__protoboard/events?tab=abcdefgh-1234");
     await page.next("hello");
+    expect(await agent.tabs()).toEqual([]);
+    expect((await http(dev.port, "POST", "/__protoboard/bridge/presence", json, JSON.stringify({ tab: "abcdefgh-1234", active: true }))).status).toBe(403);
+    expect((await http(dev.port, "POST", "/__protoboard/bridge/presence", { ...json, "x-protoboard-dev": token, origin: "http://evil.example" }, JSON.stringify({ tab: "abcdefgh-1234", active: true }))).status).toBe(403);
+    // a presence naming a tab with no stream of its own makes no tab either
+    await http(dev.port, "POST", "/__protoboard/bridge/presence", { ...json, "x-protoboard-dev": token }, JSON.stringify({ tab: "zzzzzzzz-0000", active: true }));
+    expect(await agent.tabs()).toEqual([]);
+    expect((await http(dev.port, "POST", "/__protoboard/bridge/presence", { ...json, "x-protoboard-dev": token }, JSON.stringify({ tab: "abcdefgh-1234", active: true }))).status).toBe(200);
     expect((await agent.tabs()).map((t) => t.id)).toEqual(["web:abcdefgh-1234"]);
     const pending = agent.call({ ...batch("e2"), observe: true });
     const envelope = (await page.next("bridge")) as BridgeEnvelope;
-    expect(envelope).toMatchObject({ type: "uhd-viewer:bridge", batch: { batchId: `${agent.session}:e2`, ops: [] }, actor: agent.actor, observe: true });
-    const answer = { status: "read", batchId: envelope.batch.batchId, seq: 3, state: { selection: { body: "battery" }, camera: { position: [1, 2, 3], target: [0, 0, 0], up: [0, 0, 1] } } };
+    expect(envelope).toMatchObject({ type: "uhd-viewer:bridge", batch: { batchId: `${agent.session}:e2`, ops: [] }, actor: agent.actor, observe: true, since: { epoch: "", seq: 0 }, checkpoint: true });
+    const entry = { seq: 3, time: 1, actor: { kind: "human", id: "user" }, label: "pick the battery", ops: [{ op: "set", path: ["selection"], value: { body: "battery" } }], inverse: [], keys: ["selection"], touched: { selection: 1 } };
+    const answer = {
+      status: "read",
+      batchId: envelope.batch.batchId,
+      seq: 3,
+      state: { selection: { body: "battery" }, camera: { position: [1, 2, 3], target: [0, 0, 0], up: [0, 0, 1] } },
+      log: { epoch: "ep1", entries: [entry] },
+      checkpoint: { schema: "uhd-viewer.store-checkpoint/v0", epoch: "ep1", seq: 3, state: { selection: { body: "battery" } }, versions: { selection: 1 }, nextId: 1, retired: [], leases: [] },
+    };
     // only the page (its token) or a relay (the key) may answer
     expect((await http(dev.port, "POST", "/__protoboard/bridge/reply", json, JSON.stringify({ id: envelope.id, reply: answer }))).status).toBe(403);
-    expect((await http(dev.port, "POST", "/__protoboard/bridge/reply", { ...json, "x-protoboard-dev": token }, JSON.stringify({ id: envelope.id, tab: "abcdefgh-1234", reply: answer }))).status).toBe(200);
+    expect((await http(dev.port, "POST", "/__protoboard/bridge/reply", { ...json, "x-protoboard-dev": token }, JSON.stringify({ id: envelope.id, tab: "abcdefgh-1234", reply: answer }))).status).toBe(204); // no body: an unread body kept a keepalive request counted (the page no longer posts replies with keepalive)
     const out = await pending;
-    expect(out).toMatchObject({ status: "read", batchId: "e2", seq: 3, tab: "web:abcdefgh-1234", state: { selection: { body: "battery" } } });
+    expect(out).toMatchObject({ status: "read", batchId: "e2", seq: 3, tab: "web:abcdefgh-1234", state: { selection: { body: "battery" } }, logged: 1 });
+    // the log is mirrored to the journal, not handed to the agent
+    expect(out).not.toHaveProperty("log");
+    const lines = readFileSync(join(dir, JOURNAL_FILE), "utf8").trim().split("\n").map((l) => JSON.parse(l));
+    expect(lines.map((l) => [l.t, l.epoch, l.seq])).toEqual([["entry", "ep1", 3], ["checkpoint", "ep1", 3]]);
+    // the next call asks only for what follows
+    const p2 = agent.call(batch("e3"));
+    expect(((await page.next("bridge")) as BridgeEnvelope).since).toEqual({ epoch: "ep1", seq: 3 });
     page.close();
+    expect(await p2).toMatchObject({ status: "may-have-run" });
   });
 
   it("relays VS Code tabs through the extension host's stream", async () => {
@@ -294,5 +335,83 @@ describe("protoboard dev: the view-state routes and the bridge", () => {
     await http(dev.port, "POST", "/__protoboard/bridge/reply", { ...json, [BRIDGE_KEY_HEADER]: record.bridge!.key }, JSON.stringify({ id: envelope.id, tab, reply: { status: "read", seq: 0 } }));
     expect(await pending).toMatchObject({ status: "read", tab: "vscode:tab1", batchId: "f1" });
     relay.close();
+  });
+});
+
+describe("the bridge: turn-taking, late replies and the journal (W3-A)", () => {
+  it("delivers a batch again while the tab says busy, and says not-run when the person keeps dragging", async () => {
+    const b = new LiveBridge();
+    const s = b.mintSession("x");
+    const sent: BridgeEnvelope[] = [];
+    b.addTab({ id: "t", kind: "web", deliver: (e) => (sent.push(e), true) });
+    const out = b.submit(s, { batch: batch("g1", [{ op: "highlight", paths: ["u3"] }]) });
+    await new Promise((r) => setTimeout(r, 5));
+    b.reply(sent[0].id, { status: "busy", retryAfterMs: 100 }, "t");
+    await new Promise((r) => setTimeout(r, 160));
+    expect(sent).toHaveLength(2);
+    b.reply(sent[1].id, { status: "applied", seq: 1, applied: [] }, "t");
+    expect(await out).toMatchObject({ status: "applied", seq: 1, batchId: "g1" });
+    // still dragging at the deadline: nothing ran
+    const out2 = b.submit(s, { batch: batch("g2", [{ op: "highlight", paths: [] }]), timeoutMs: 1000 });
+    const answerBusy = async () => {
+      for (let i = 0; i < 40; i++) {
+        const e = sent.at(-1)!;
+        b.reply(e.id, { status: "busy", retryAfterMs: 250 }, "t");
+        await new Promise((r) => setTimeout(r, 60));
+      }
+    };
+    void answerBusy();
+    expect(await out2).toMatchObject({ status: "not-run", batchId: "g2", reason: expect.stringMatching(/dragging/) });
+  });
+
+  it("keeps a late reply only from the tab it was sent to, and only when it is a reply", async () => {
+    const b = new LiveBridge();
+    const s = b.mintSession("x");
+    const sent: BridgeEnvelope[] = [];
+    b.addTab({ id: "slow", kind: "web", deliver: (e) => (sent.push(e), true) });
+    expect(await b.submit(s, { batch: batch("h1"), timeoutMs: 1000 })).toMatchObject({ status: "may-have-run" });
+    expect(b.reply(sent[0].id, { status: "applied", seq: 9, applied: [] }, "other")).toBe(false);
+    expect(b.reply(sent[0].id, { status: "whatever" }, "slow")).toBe(false);
+    expect(b.reply(sent[0].id, { status: "applied", seq: 9, applied: [] }, "slow")).toBe(true);
+    expect(await b.submit(s, { batch: batch("h1") })).toMatchObject({ status: "applied", seq: 9, tab: "slow" });
+  });
+
+  it("writes the journal from the replies' logs, with checkpoints, and compacts it past its cap", () => {
+    const root = mkdtempSync(join(TMP, "journal-"));
+    const j = new Journal(root, { maxBytes: 4000, checkpointEvery: 3 });
+    expect(j.since("t")).toBeUndefined();
+    expect(j.wantCheckpoint("t")).toBe(true);
+    const e = (seq: number) => ({ seq, time: seq, actor: { kind: "agent", id: "agent:a" }, label: "highlight the parts now", ops: [{ op: "set", path: ["highlight"], value: [`p${seq}`] }], inverse: [], keys: ["highlight"], touched: { highlight: seq } });
+    expect(j.record("t", { log: { epoch: "e1", entries: [e(1), e(2)] } })).toBe(2);
+    // a repeat of what it has is not written twice
+    expect(j.record("t", { log: { epoch: "e1", entries: [e(2), e(3)] } })).toBe(1);
+    expect(j.since("t")).toEqual({ epoch: "e1", seq: 3 });
+    expect(j.wantCheckpoint("t")).toBe(true);
+    j.record("t", { checkpoint: { epoch: "e1", seq: 3, state: { highlight: ["p3"] }, versions: { highlight: 3 } } });
+    expect(j.wantCheckpoint("t")).toBe(false);
+    // a reload: a new epoch starts over
+    expect(j.record("t", { log: { epoch: "e2", entries: [e(1)] } })).toBe(1);
+    expect(j.since("t")).toEqual({ epoch: "e2", seq: 1 });
+    for (let i = 2; i < 40; i++) j.record("t", { log: { epoch: "e2", entries: [e(i)] }, ...(i === 30 ? { checkpoint: { epoch: "e2", seq: 30, state: {}, versions: {} } } : {}) });
+    const lines = j.read() as { t: string; seq: number; epoch: string }[];
+    expect(readFileSync(j.file, "utf8").length).toBeLessThanOrEqual(4000);
+    expect(lines[0]).toMatchObject({ t: "checkpoint", epoch: "e2", seq: 30 });
+    expect(lines.at(-1)).toMatchObject({ t: "entry", seq: 39 });
+    expect(existsSync(join(root, ".protoboard", "local", "scene-oplog.jsonl"))).toBe(true);
+    // gate 3: a second compaction keeps the checkpoint at line 0 as its base (it was halved away before)
+    for (let i = 40; i < 70; i++) j.record("t", { log: { epoch: "e2", entries: [e(i)] } });
+    const again = j.read() as { t: string; seq: number }[];
+    expect(readFileSync(j.file, "utf8").length).toBeLessThanOrEqual(4000);
+    expect(again[0]).toMatchObject({ t: "checkpoint", seq: 30 });
+    expect(again.at(-1)).toMatchObject({ t: "entry", seq: 69 });
+  });
+
+  it("never lets an entry rewrite the line's own fields (an entry cannot pass for a checkpoint)", () => {
+    const root = mkdtempSync(join(TMP, "journal-forge-"));
+    const j = new Journal(root);
+    j.record("t", { log: { epoch: "e1", entries: [{ seq: 1, t: "checkpoint", tab: "other", epoch: "x", label: "a forged line here", ops: [] }] } });
+    const [line] = j.read() as Record<string, unknown>[];
+    expect(line).toMatchObject({ t: "entry", tab: "t", epoch: "e1", seq: 1 });
+    expect(readFileSync(j.file, "utf8").startsWith('{"t":"entry"')).toBe(true);
   });
 });

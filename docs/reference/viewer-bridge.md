@@ -6,7 +6,9 @@ preconditions, and a local channel from the project's `protoboard dev`
 server to the viewer tab that is open. PB-1178; the first slice of the
 collaboration design (`docs/specs/cad-view-research/review-round-1/round-2-notes/multi-agent-collaboration.md`,
 section D). The agent's view verbs (observe, select, highlight, isolate,
-camera, callout, capture) are built on this in PB-1179.
+camera, callout, capture) are built on this in PB-1179: see
+[view-tools.md](view-tools.md) for the MCP tools; leases, undo per actor,
+owner-issued ids and the journal (PB-1196, first slice) are below.
 
 ## The view state
 
@@ -23,9 +25,9 @@ One object, schema `uhd-viewer.view-state/v1` (uhd-viewer `src/api.ts`,
 | `visibility` | `labels`, `labelKinds`, `frames`, `wires`, `hardware`, `findings` (`null`: automatic), `xray`, `hidden` (paths) | live |
 | `direction` | interface geometry by `feature`, `artifact` or `procedural` binding | live |
 | `sections` | section planes `{ axis: 0..2, at: 0..1, flip? }` (the view cuts with the first) | live |
-| `explode` | `{ t: 0..1, step: n | null }`; the view eases to `t` | live |
+| `explode` | `{ t: 0..1, step: id | null }`; the view eases to `t`. A step is named by its string id (`fit:arm_fl_mount`), never by index; a saved number reads as null | live |
 | `namedViews` | saved views by name (camera, and optionally explode, sections, hidden, isolation) | display file, on an explicit save |
-| `annotations` | reserved (callouts and marks, wave 3) | display file, on an explicit save |
+| `annotations` | callouts, marks and arrows (`uhd-viewer.annotation/v0` records: `id`, `kind`, `ref`, `author`, ...); at most 4,096 bytes of JSON each, 500, 512 kB in all (DEFAULT) | display file, on an explicit save |
 | `scope` | read-only: the module the view shows (`""` the whole assembly) | |
 | `loading` | read-only: `{ phase, total, done, failed }` | |
 | `quality` | read-only: `{ mode }`, the render quality curve's state (PB-1176) | |
@@ -48,7 +50,11 @@ person across scopes).
   a person's view.
 - **Presentation** (named views, annotations): written to the display file
   (`spatial.views`, `spatial.annotations`, [display.md](display.md)) only on an
-  explicit save (`saveView`, `deleteView`), and only when it changed. A camera
+  explicit save (`saveView`, `deleteView`), and only when it changed.
+  Annotations (an agent's callouts and marks) are live until someone saves
+  them on purpose: the dev server and the VS Code host write
+  `spatial.annotations` only when the save says `saveAnnotations: true`
+  (DEFAULT, W3-A; the viewer posts its presentation whenever it changes). A camera
   drag never touches a committed file. Diagram positions are written to the
   display file when a drag is dropped, never during it, and only when they
   changed.
@@ -80,8 +86,13 @@ agent writes is data):
 | `saveView` | `name`, `view?` (default: the camera, explode, sections, hidden and isolation now) |
 | `deleteView` | `name` |
 | `applyView` | `name` |
+| `annotate` | a new record: `handle`, `kind` (`callout`, `mark`, `arrow`), `ref`, and `title`, `rows`, `text`, `shape`, `tone`, `point`, `to`; the view issues its id (the reply's `ids` maps the handle). A change: `id` and the fields |
+| `unannotate` | `ids` (retired: never given to another record) |
+| `claim` | alone in its batch: `roots`, `purpose`, `ttlMs?` (a lease, below) |
+| `release` | alone in its batch: `lease?` (default: all of the caller's) |
+| `undo` | alone in its batch: the caller's own last batch (below) |
 
-A **batch** is `{ batchId, label, ops, expectSeq?, expectVersions?, state? }`:
+A **batch** is `{ batchId, label, ops, expectSeq?, expectVersions?, leaseToken?, state? }`:
 
 - `batchId`: chosen by the caller (1 to 128 of `A-Z a-z 0-9 _ . : -`). A
   resend with the same id returns the first answer (`duplicate: true`); the
@@ -96,6 +107,8 @@ A **batch** is `{ batchId, label, ops, expectSeq?, expectVersions?, state? }`:
   touch (top-level keys; one named view is `namedViews.<name>`); refused
   (`stale-versions`) when any changed, with each conflict's current value
   and who changed it. Unrelated writes since do not refuse it.
+- `leaseToken`: the fencing token of the writer's lease, when it writes
+  inside a subtree it claimed.
 
 ### The op log
 
@@ -115,8 +128,9 @@ lasts, so seq numbers can have gaps; `missed` lists the entries kept. Facts
 | --- | --- |
 | `applied` | `seq`, the `applied` set operations, the `changed` keys, `versions`, and the `state` after it (unless `state: false`) |
 | `read` | `seq`, `versions`, `state` (and `observation` when asked: what is drawn, `__cad.observe()` without components) |
-| `refused` | `reason` `stale-seq` or `stale-versions`; `missed: { from, to, entries }`; `conflicts` per key. Re-observe, then decide again |
+| `refused` | `reason` `stale-seq` or `stale-versions` (`missed: { from, to, entries }`; `conflicts` per key), `leased` (`lease`), `lease-revoked`, `view-held` (`until`), `stale-undo`, `nothing-to-undo`; `message` says it in a sentence. Re-observe, then decide again |
 | `invalid` | `error`, and the `index` of the op that could not run |
+| `busy` | the person is mid-gesture (dragging): nothing was applied or remembered; the bridge delivers it again after `retryAfterMs` |
 | `not-run` | from the bridge: nothing reached a tab (no tab open, the delivery failed before it left, the server is not running) |
 | `may-have-run` | from the bridge: the batch was delivered and no answer came in time, or the tab closed. Resend with the same `batchId` to learn the outcome |
 
@@ -152,13 +166,25 @@ protoboard dev  ──(event stream, `bridge` event)──▶  the dev page (?ta
   (`agent:<session>`), so an agent can never write as the person. Sessions
   expire after 8 hours unused (DEFAULT) and end with the server. Batch ids
   are per session: two agents' `b1` never collide.
+- **Tabs register through presence**: a dev page's event stream (`?tab=`)
+  alone makes no tab; the page's authenticated presence POST (its token,
+  its origin) names it, and only then is it a live tab (wave 2 gate). A
+  VS Code tab is announced by its relay with the key.
 - **Which tab**: a batch may name `tab`; otherwise it goes to the tab the
   person used last (a focus or a click in the dev page; the focused VS Code
   viewer tab). `GET /__protoboard/bridge/state` (token or key) lists the
   tabs, the default marked.
 - **Timeouts**: the tab has 8 s by default (`timeoutMs`, 1 to 60 s, per
   batch) before the bridge says `may-have-run`. A reply that comes later is
-  kept, and a resend of that `batchId` gets it.
+  kept, and a resend of that `batchId` gets it, when it comes from the tab
+  the batch went to and is a reply (checked like an on-time one).
+- **Busy**: a tab answering `busy` gets the batch again after its
+  `retryAfterMs` (100 ms to 2 s) until the timeout; a person still dragging
+  then makes it `not-run` (nothing was applied).
+- **Journal**: each delivery asks the tab for the log entries after the last
+  one mirrored (`since`), and for a checkpoint every 200 entries; the server
+  appends them to `.protoboard/local/scene-oplog.jsonl`. The agent's outcome
+  says how many were logged (`logged`), not the entries.
 - **Refused requests**: a wrong key or token (403, 401), a request with a
   foreign `Origin` (403: a web page cannot set the headers without a
   preflight, which is never granted), a body over 256 kB (413), a bad batch
@@ -191,18 +217,53 @@ The same store answers `window.__cad`: `get()` (the state), `apply(batch)`
 (as the bridge applies it, logged as `__cad`), `log(since)`, `presentation()`,
 `observe()` (its `seq` is the view state's; `frame` counts frames drawn;
 `placeholders` is "N of M components are placeholders"; `root` the
-instance the assembly is placed from), and `set({ ... })`, which also takes
-view-state keys. A host uses the handle (`viewState()`, `setViewState()`,
+instance the assembly is placed from; `sections`, with planes in force: the
+planes in world mm, their scope, and once the view settled the cut per plane:
+per-part polylines in mm, `closed`, `lengthMm`, `watertight`), and
+`set({ ... })`, which also takes view-state keys. A host uses the handle (`viewState()`, `setViewState()`,
 `restoreViewState()`, `bridge()`, `presentation()`) or the messages
 `uhd-viewer:setViewState`, `uhd-viewer:restoreViewState` and
 `uhd-viewer:bridge` (reply `uhd-viewer:bridgeReply`), and hears
 `uhd-viewer:viewState` and `uhd-viewer:presentation`.
 
+## Collaboration (PB-1196, first slice)
+
+- **Owner-issued ids**: a record made with `annotate` gets `a.<epoch>.<n>`
+  from the store; the epoch changes with every new store (a reload), so ids
+  never repeat; removed ids are retired and refused if written back.
+- **Per-record versions**: `annotations.<id>` beside the top-level keys.
+- **Leases with fencing tokens**: `claim` grants a lease on subtrees
+  (instance paths; `""` is everything) when no other actor's live lease
+  overlaps; its token rises with every grant. Other agents' writes touching
+  a path under it are refused (`leased`); a write quoting a token that is not
+  live, or writing in a subtree the writer holds or held without its live
+  token, is refused (`lease-revoked`). A person's edit inside a lease revokes
+  it (DEFAULT), "take over" (`uhd-viewer:takeOver`) revokes every agent
+  lease. Leases expire (120 s DEFAULT, renewed by a write with the token).
+  Camera and selection touch no path; explode, sections and named views
+  touch `""`.
+- **Undo per actor** (DEFAULT): `undo` appends the inverse of the caller's
+  own last batch (`undoOf`); refused (`stale-undo`) when what it changed was
+  changed again since. The store's `undo(actor)` serves the person's Ctrl+Z.
+- **Turn-taking**: an agent write while the person is mid-gesture answers
+  `busy`; the camera is the person's for 25 s after their last input
+  (`view-held`); an agent that stops writing hands it back after 25 s.
+- **Presence and intent**: every reply carries `epoch` and `presence`
+  (`control`: who holds the camera, the person's last input, `interacting`;
+  `leases`; `intents`: each agent's leases and where it wrote in the last
+  30 s). The viewer emits `uhd-viewer:presence` for a host to show "agent X
+  is working on U3".
+- **Journal**: the log is mirrored to `.protoboard/local/scene-oplog.jsonl`
+  by the relaying process; uhd-viewer's `replayJournal` rebuilds the state
+  from the newest checkpoint and the entries after it.
+
 ## Not yet
 
-- Leases with fencing tokens, presence and intent, undo per actor and the
-  journal on disk (`.protoboard/local/scene-oplog.jsonl`) are PB-1196; the
-  agent's verbs over MCP are PB-1179. The log lives in the tab's memory: a
-  reload starts a new log at seq 0 (callers see `stale-seq` and re-observe).
+- The webview is still an owner when it is open (the live tab), and the
+  headless render service is the owner when none is: one owner process for
+  both (collaboration D1) is later work.
+- The journal is replayed by `replayJournal`, but a reloaded tab does not
+  restore its log from it (the headless route puts the last state back as
+  the host instead).
 - A view written while the tab is hidden is applied at once, but a throttled
   webview may answer late (`may-have-run`, then a resend).

@@ -26,6 +26,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `layout [level]` | The diagram's layout measured, level by level, as the viewer draws it: line crossings, overlapping cards, the longest row or column of cards (a strip), the aspect ratio and lines under cards, with what to fix. A level is an instance path ("" is the top; default: every level). --apply lays the level(s) out afresh, --tidy keeps the saved arrangement and fixes it; either writes .protoboard/display.json where the result reads better (--force: anyway). --pin <card> keeps a card where it is (repeatable; remembered in the file). --check: exit 1 when a level still has something to fix. check reports the levels of modules that need it as PB_DIAGRAM_LAYOUT (info) |
 | `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs through the project's warm render service (started when none runs); --no-service opens a browser of its own |
 | `views capture` | One view as an image for a document or an agent, through the warm render service: --view 3d\|diagram\|..., --level <instance path>, --state <json\|@file> (camera, explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend), --size, --format png\|jpeg\|webp, --out <file>; writes x.capture.json beside the image and a snapshot the visible viewer opens from. --no-service runs it in this process |
+| `geometry measure` | Exact measurement through build123d (PB-1187): measure <request.json \| -> (a protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on stdin and stdout) |
 | `views doctor` | Can this machine render headless: the browser, the GL backend (GPU or SwiftShader; --backend auto\|gpu\|swiftshader), WebGL 2, a test frame, the capture encoders |
 | `views service \| status \| stop` | Run the render service in the foreground (one warm headless browser per project, loopback only, a session token in .protoboard/local/render-service.json; it stops after 15 minutes idle), say whether one runs, or stop it |
 | `dev` | Serve the UHD viewer on the project: rebuilds on every source change, saves diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch) |
@@ -219,6 +220,10 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend),
                             --size, --format png|jpeg|webp, --out <file>; writes x.capture.json beside the image
                             and a snapshot the visible viewer opens from. --no-service runs it in this process
+    geometry measure        Exact measurement through build123d (PB-1187): measure <request.json | -> (a
+                            protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces
+                            <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on
+                            stdin and stdout)
     views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
                             --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
     views service | status | stop

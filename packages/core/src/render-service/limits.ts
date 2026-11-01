@@ -13,8 +13,10 @@
  *   or recompresses, and retries once; a second failure stops and reports.
  *
  * The docs file is the source of truth. A published CLI has no `docs/`
- * folder, so a built-in copy of the same values is used when the file is not
- * found (a test keeps the two equal).
+ * folder, so @protoboardai/core ships a byte-identical copy in its
+ * `reference/` folder (with display.md, viewer-bridge.md and
+ * render-service.md), read first; a built-in copy of the same values is the
+ * last resort (tests keep all three equal).
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -131,10 +133,29 @@ export interface LoadedLimits {
   stale: boolean;
 }
 
-/** Where the docs file is: `PROTOBOARD_TRANSFER_LIMITS`, else the stack checkout's docs/reference (this file is packages/core/src/render-service/). */
+/**
+ * The reference folder @protoboardai/core ships (`packages/core/reference/` in the stack, `node_modules/@protoboardai/core/reference/`
+ * in an installed project): this file is `<package>/src/render-service/limits.ts` in both.
+ */
+export function shippedReferenceDir(): string {
+  return join(dirname(fileURLToPath(import.meta.url)), "..", "..", "reference");
+}
+
+/** The files shipped in `reference/`, each a byte-identical copy of `docs/reference/<name>` (a test keeps them so). */
+export const SHIPPED_REFERENCE_FILES = ["display.md", "viewer-bridge.md", "render-service.md", "view-tools.md", "transfer-limits.json"] as const;
+
+/**
+ * Where the limits file is, in order: `PROTOBOARD_TRANSFER_LIMITS`, the copy shipped in the package
+ * (`reference/transfer-limits.json`, found from the module file in the repo and in an installed package),
+ * then the stack checkout's docs/reference. None found: the built-in copy.
+ */
 export function limitsFileCandidates(env: NodeJS.ProcessEnv = process.env): string[] {
   const here = dirname(fileURLToPath(import.meta.url));
-  return [...(env.PROTOBOARD_TRANSFER_LIMITS ? [resolve(env.PROTOBOARD_TRANSFER_LIMITS)] : []), join(here, "..", "..", "..", "..", "docs", "reference", "transfer-limits.json")];
+  return [
+    ...(env.PROTOBOARD_TRANSFER_LIMITS ? [resolve(env.PROTOBOARD_TRANSFER_LIMITS)] : []),
+    join(shippedReferenceDir(), "transfer-limits.json"),
+    join(here, "..", "..", "..", "..", "docs", "reference", "transfer-limits.json"),
+  ];
 }
 
 /** Checks the shape of a limits file; throws naming what is wrong. */

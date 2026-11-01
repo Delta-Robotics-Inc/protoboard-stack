@@ -18,10 +18,12 @@ import { LIBRARY_SORTS, findProjectRoot, packageRoot } from "@protoboardai/core"
 /** Whether a project's packages are installed: the framework resolves from it (its own node_modules, or a workspace's further up). */
 const installedIn = (root: string) => !!packageRoot(root, "@protoboardai/core");
 import { DESCRIPTION_LIMIT } from "./instructions.js";
+import { viewTools } from "./view-tools.js";
 
-/** What a tool hands back: data (sent as JSON text) and whether it is a failure. */
+/** What a tool hands back: data (sent as JSON text), images (base64, only when asked for) and whether it is a failure. */
 export interface ToolOutcome {
   data: unknown;
+  images?: { data: string; mimeType: string }[];
   isError?: boolean;
 }
 
@@ -42,6 +44,8 @@ export interface ToolContext {
   /** The server's own version and instructions. */
   version: string;
   about: string;
+  /** What the connected client calls itself (MCP clientInfo name), for the author of what an agent writes in the view. */
+  clientName?: () => string | undefined;
 }
 
 export interface ToolSpec<S extends ZodRawShape = ZodRawShape> {
@@ -155,6 +159,16 @@ export function compactBom(data: unknown): unknown {
 }
 
 const SEVERITY = ["error", "warning", "info"] as const;
+
+/**
+ * Every tool the server offers: the CLI's commands, then the agent's view tools (PB-1179, ./view-tools.ts),
+ * which talk to the person's live viewer tab or the headless render service instead of running a command.
+ */
+export function protoboardTools(templates: string[]): ToolSpec[] {
+  const specs = [...cliTools(templates), ...viewTools()];
+  for (const s of specs) if (s.description.length > DESCRIPTION_LIMIT) throw new Error(`the description of ${s.name} is ${s.description.length} characters; clients cut it at ${DESCRIPTION_LIMIT}`);
+  return specs;
+}
 
 export function cliTools(templates: string[]): ToolSpec[] {
   const specs: ToolSpec[] = [

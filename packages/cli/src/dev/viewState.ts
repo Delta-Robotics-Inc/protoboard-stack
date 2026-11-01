@@ -21,9 +21,14 @@ import { basename, dirname, join } from "node:path";
 export const VIEWER_STATE_FILE = join(".protoboard", "local", "viewer-state.json");
 export const VIEWER_STATE_FILE_SCHEMA = "protoboard.viewer-state/v0";
 export const VIEW_STATE_SCHEMA = "uhd-viewer.view-state/v1";
-/** A saved file above this is refused (it holds a few cameras and selections per scope). */
+/** A saved file above this is refused (it holds a few cameras and selections per scope). DEFAULT 1 MiB. */
 export const MAX_VIEWER_STATE_BYTES = 1 << 20;
+/** DEFAULT: scopes (modules opened on their own) one file keeps. */
 const MAX_SCOPES = 200;
+/** DEFAULT, the viewer's caps (uhd-viewer `src/cad/state/schema.ts`): one annotation at most 4096 bytes of JSON, 500 of them, 512 kB in all. */
+export const MAX_ANNOTATION_BYTES = 4096;
+export const MAX_ANNOTATIONS = 500;
+export const MAX_ANNOTATIONS_BYTES = 512 * 1024;
 
 export interface ViewerStateFile {
   schema: typeof VIEWER_STATE_FILE_SCHEMA;
@@ -33,7 +38,7 @@ export interface ViewerStateFile {
 }
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
-const LIVE_KEYS = ["camera", "selection", "highlight", "isolation", "visibility", "direction", "sections", "explode"];
+const LIVE_KEYS = ["camera", "selection", "highlight", "isolation", "visibility", "direction", "sections", "explode", "placements"];
 
 /** A viewer-state file from the viewer, its envelope checked and its scopes reduced to the live keys; or why not. */
 export function parseViewerStateFile(data: unknown): ViewerStateFile | { error: string } {
@@ -103,8 +108,28 @@ export function parsePresentation(data: unknown): { views: Record<string, unknow
     if (!name.trim() || name.length > 80 || /[\u0000-\u001f]/.test(name)) return { error: `named view "${name.slice(0, 40)}" needs a name of 1 to 80 characters` };
     if (!isObj(v) || !isObj(v.camera)) return { error: `named view "${name}" needs a camera` };
   }
-  if (!Array.isArray(annotations) || annotations.length > 500) return { error: "annotations must be a list of at most 500" };
+  if (!Array.isArray(annotations) || annotations.length > MAX_ANNOTATIONS) return { error: `annotations must be a list of at most ${MAX_ANNOTATIONS}` };
+  let total = 0;
+  for (const [i, a] of annotations.entries()) {
+    const size = JSON.stringify(a ?? null).length;
+    if (!isObj(a) || typeof a.id !== "string" || typeof a.author !== "string") return { error: `annotations[${i}] must be a record with an id and its author` };
+    if (size > MAX_ANNOTATION_BYTES) return { error: `annotations[${i}] is ${size} bytes of JSON; one is at most ${MAX_ANNOTATION_BYTES}` };
+    total += size;
+  }
+  if (total > MAX_ANNOTATIONS_BYTES) return { error: `annotations are ${total} bytes of JSON in all; at most ${MAX_ANNOTATIONS_BYTES}` };
   return { views, annotations };
+}
+
+/**
+ * The presentation to write: named views always (they change only on an explicit save), annotations only when the
+ * save says so (`saveAnnotations: true`). Callouts and marks an agent puts in the view are live until someone saves
+ * them on purpose (collaboration D10; DEFAULT, W3-A): without the flag the display file keeps the annotations it
+ * holds. Found in the W3-A exit test: every agent callout was written to the tracked display file.
+ */
+export function presentationToWrite(pres: { views: Record<string, unknown>; annotations: unknown[] }, display: { spatial?: Record<string, unknown> } | undefined, saveAnnotations: unknown): { views: Record<string, unknown>; annotations: unknown[] } {
+  if (saveAnnotations === true) return pres;
+  const kept = display?.spatial?.annotations;
+  return { views: pres.views, annotations: Array.isArray(kept) ? kept : [] };
 }
 
 /**

@@ -22,6 +22,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
 
+/** DEFAULT (PB-1180): ms the CLI waits for a service it started (a cold Node start; the browser starts later). */
+export const SERVICE_START_TIMEOUT_MS = 90000;
+
 export interface CaptureArgs {
   request: Record<string, unknown>;
   noService: boolean;
@@ -75,9 +78,9 @@ export function captureArgs(argv: string[], cwd: string): CaptureArgs {
     if (!existsSync(file)) throw new Error(`--from: no manifest at ${file}`);
     const m = JSON.parse(readFileSync(file, "utf8")) as { schema?: string; request?: Record<string, unknown>; image?: string };
     if (m.schema !== "protoboard.capture-manifest/v0" || !m.request) throw new Error(`--from: ${file} is not a capture manifest (protoboard.capture-manifest/v0)`);
-    // the manifest's own `out` is not trusted (a manifest sits beside committed images and may be hand-edited):
-    // the image is drawn again where the manifest says it is, and only inside the project (wave 2 gate)
-    const { out: _ignored, ...kept } = m.request;
+    // the manifest's own `out` and opt-in are not trusted (a manifest sits beside committed images and may be
+    // hand-edited): the image is drawn again where the manifest says it is, and only inside the project (wave 2 gate)
+    const { out: _ignored, allowOutsideProject: _notTrusted, ...kept } = m.request;
     Object.assign(request, kept);
     if (m.image && !one("out")) {
       // project-relative, forward slashes, no `..`, no drive or absolute path, no NUL
@@ -122,7 +125,11 @@ export function captureArgs(argv: string[], cwd: string): CaptureArgs {
     if (v !== undefined) request[key] = v;
   }
   const out = one("out");
-  if (out !== undefined) request.out = isAbsolute(out) ? out : resolve(cwd, out);
+  if (out !== undefined) {
+    request.out = isAbsolute(out) ? out : resolve(cwd, out);
+    // the person named this file themselves: it may be outside the project (the MCP server never sets this)
+    request.allowOutsideProject = true;
+  }
   if (bools.has("document")) request.document = bools.get("document");
   if (bools.has("if-changed")) request.ifChanged = bools.get("if-changed");
   return { request, noService: bools.get("service") === false, ...(from ? { from } : {}) };
@@ -165,16 +172,21 @@ export async function viewsCapture(argv: string[], cwd: string, version: string)
     }
   }
   const { spawnRenderService } = await import("./views-service.js");
-  const client = await core.ensureRenderService(root, { spawn: () => spawnRenderService(root), version, timeoutMs: 90000 });
+  const client = await core.ensureRenderService(root, { spawn: () => spawnRenderService(root), version, timeoutMs: SERVICE_START_TIMEOUT_MS });
   return { response: await client.capture(args.request), root, started: client.started };
 }
 
-/** `views check` through the warm service (log lines streamed). */
+/**
+ * `views check` through the warm service (log lines streamed). For the CLI only: `opts.out` is the
+ * person's own `--out-dir`, so it may be outside the project (the request carries the opt-in). The MCP
+ * server posts `/check` itself, without the opt-in, and its folder must be inside the project.
+ */
 export async function viewsCheckViaService(root: string, version: string, opts: { module?: string; out?: string; timeout?: number }, log?: (line: string) => void) {
   const core = await import("@protoboardai/core/render-service");
   const { spawnRenderService } = await import("./views-service.js");
-  const client = await core.ensureRenderService(root, { spawn: () => spawnRenderService(root), version, timeoutMs: 90000 });
-  const last = await client.stream<{ report: import("./views-check.js").ViewsCheckReport }>("/check", opts, (line) => {
+  const client = await core.ensureRenderService(root, { spawn: () => spawnRenderService(root), version, timeoutMs: SERVICE_START_TIMEOUT_MS });
+  const body = { ...opts, ...(opts.out !== undefined ? { allowOutsideProject: true } : {}) };
+  const last = await client.stream<{ report: import("./views-check.js").ViewsCheckReport }>("/check", body, (line) => {
     const l = line as { log?: string };
     if (l.log !== undefined) log?.(l.log);
   });

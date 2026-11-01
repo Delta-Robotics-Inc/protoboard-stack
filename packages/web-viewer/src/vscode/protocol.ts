@@ -206,6 +206,8 @@ export type FromWebview =
   | { type: "presentation"; presentation: ViewerPresentation }
   /** The viewer's reply to a bridge batch (`bridge`), by the delivery's id. */
   | { type: "bridgeReply"; id: string; reply: Record<string, unknown> }
+  /** Who is here (PB-1196): the camera holder, agent leases and intents, at most every 250 ms. Data to show, never instructions. */
+  | { type: "presence"; presence: Record<string, unknown> }
   /**
    * A save point of the 3D view (PB-1180): the frame on settle or hide (`png`, base64) and what it shows; the
    * extension host keeps it in .protoboard/local/snapshots/ for the next tab.
@@ -232,6 +234,13 @@ export type ViewerEvent =
   | { type: "uhd-viewer:openPair"; linkId: string; a: string; b: string }
   /** INSPECT in a module's context menu: the Protoboard Inspector, in front and focused. */
   | { type: "uhd-viewer:inspect"; path: string; defId?: string };
+
+/** DEFAULT (wave 2 gate item 9): JSON characters of one bridge reply from the webview (the viewer's own reply cap). */
+export const BRIDGE_REPLY_MAX_CHARS = 2 * 1024 * 1024;
+/** DEFAULT (wave 2 gate item 9): JSON characters of a presentation save (named views and annotations together). */
+export const PRESENTATION_MAX_CHARS = 512 * 1024;
+/** DEFAULT (gate 3): JSON characters of one presence message (PB-1196). */
+export const PRESENCE_MAX_CHARS = 64 * 1024;
 
 const str = (v: unknown): v is string => typeof v === "string";
 const obj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -363,19 +372,26 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
     }
     case "presentation": {
       const p = data.presentation;
-      if (!obj(p) || !obj(p.namedViews) || !Array.isArray(p.annotations) || JSON.stringify(p).length > 512 * 1024) return undefined;
+      // DEFAULT (wave 2 gate item 9): 512 kB of JSON for the named views and annotations together
+      if (!obj(p) || !obj(p.namedViews) || !Array.isArray(p.annotations) || JSON.stringify(p).length > PRESENTATION_MAX_CHARS) return undefined;
       return { type: "presentation", presentation: { namedViews: p.namedViews, annotations: p.annotations } };
     }
     case "savePoint": {
       // a PNG of the view, at most 16 MB of base64; the meta's fields are checked where it is written
+      // DEFAULT: 16 MiB of base64
       if (!str(data.png) || data.png.length > 16 * 1024 * 1024 || !/^[A-Za-z0-9+/=]+$/.test(data.png) || !obj(data.meta)) return undefined;
       const m = data.meta;
       if (!str(m.level) || !str(m.view) || typeof m.width !== "number" || typeof m.height !== "number") return undefined;
       return { type: "savePoint", png: data.png, meta: m };
     }
     case "bridgeReply":
-      if (!str(data.id) || data.id.length > 128 || !obj(data.reply) || JSON.stringify(data.reply).length > 2 * 1024 * 1024) return undefined;
+      // DEFAULT (wave 2 gate item 9): a reply is at most 2 MB of JSON (the viewer's own cap)
+      if (!str(data.id) || data.id.length > 128 || !obj(data.reply) || JSON.stringify(data.reply).length > BRIDGE_REPLY_MAX_CHARS) return undefined;
       return { type: "bridgeReply", id: data.id, reply: data.reply };
+    case "presence":
+      // DEFAULT: 64 kB of JSON (presence is a few leases and intents; anything larger is not ours)
+      if (!obj(data.presence) || JSON.stringify(data.presence).length > PRESENCE_MAX_CHARS) return undefined;
+      return { type: "presence", presence: data.presence };
     default:
       return undefined;
   }
