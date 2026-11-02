@@ -35,9 +35,19 @@ export interface ViewerSettings {
   zoomToCursor: boolean;
   modelInfo: boolean;
   hoverLongDelayMs: number;
+  /** R4-B (wave R4 gate): the 3D view's units, floor grid, scale label and cube for scale (core `viewer.units`, DEFAULT mm). */
+  units: "mm" | "in";
+  /** R4-B (wave R4 gate): what the 3D view's scale button shows (core `viewer.scaleReference`, DEFAULT banana). */
+  scaleReference: "banana" | "cube" | "benchy";
 }
 
-export const DEFAULT_VIEWER_SETTINGS: ViewerSettings = { openModelsInPlace: true, zoomToCursor: true, modelInfo: true, hoverLongDelayMs: 900 };
+export const DEFAULT_VIEWER_SETTINGS: ViewerSettings = { openModelsInPlace: true, zoomToCursor: true, modelInfo: true, hoverLongDelayMs: 900, units: "mm", scaleReference: "banana" };
+
+/**
+ * The viewer settings a 3D view may write back itself (wave R4 gate): the toolbar's scale chooser and its units. The
+ * extension takes `uhd-viewer:setting` only for these keys (a tab never sets a path or an app), logged as the person.
+ */
+export const VIEWER_SAVABLE_SETTINGS = ["viewer.units", "viewer.scaleReference"] as const;
 
 /** A tab's place for its own back and forward (R2-E, F1): the module it is on and the view (a registry view id, or `diagram`, `3d`). */
 export interface TabLocation {
@@ -345,7 +355,12 @@ export type ViewerEvent =
    * R2-E (G3), for R2-B's toolbar Export button: write the view as a PNG, or a part's model, to the export folder
    * without asking (`target`: an instance path from the root; absent: the module the tab is on).
    */
-  | { type: "uhd-viewer:export"; format: ExportFormat; target?: string };
+  | { type: "uhd-viewer:export"; format: ExportFormat; target?: string }
+  /**
+   * Wave R4 gate (R4-B's handoff): the 3D toolbar's scale chooser or units, saved to the person's settings file
+   * (`VIEWER_SAVABLE_SETTINGS` only; core `checkSetting` checks the value again).
+   */
+  | { type: "uhd-viewer:setting"; key: (typeof VIEWER_SAVABLE_SETTINGS)[number]; value: string };
 
 /** DEFAULT (wave 2 gate item 9): JSON characters of one bridge reply from the webview (the viewer's own reply cap). */
 export const BRIDGE_REPLY_MAX_CHARS = 2 * 1024 * 1024;
@@ -430,6 +445,9 @@ function parseEvent(v: unknown): ViewerEvent | undefined {
     case "uhd-viewer:export":
       if (!(EXPORT_FORMATS as readonly unknown[]).includes(v.format) || (v.target !== undefined && !pathLike(v.target))) return undefined;
       return { type: v.type, format: v.format as ExportFormat, ...(v.target !== undefined ? { target: v.target as string } : {}) };
+    case "uhd-viewer:setting":
+      if (!(VIEWER_SAVABLE_SETTINGS as readonly unknown[]).includes(v.key) || typeof v.value !== "string" || v.value.length > 64) return undefined;
+      return { type: v.type, key: v.key as (typeof VIEWER_SAVABLE_SETTINGS)[number], value: v.value };
     default:
       return undefined;
   }
@@ -468,6 +486,8 @@ export function parseViewerSettings(v: unknown): ViewerSettings {
     zoomToCursor: b(o.zoomToCursor, DEFAULT_VIEWER_SETTINGS.zoomToCursor),
     modelInfo: b(o.modelInfo, DEFAULT_VIEWER_SETTINGS.modelInfo),
     hoverLongDelayMs: ms,
+    units: o.units === "in" ? "in" : DEFAULT_VIEWER_SETTINGS.units,
+    scaleReference: o.scaleReference === "cube" || o.scaleReference === "benchy" ? o.scaleReference : DEFAULT_VIEWER_SETTINGS.scaleReference,
   };
 }
 

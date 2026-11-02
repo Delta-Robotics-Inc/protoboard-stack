@@ -38,6 +38,8 @@ export function describeSetting(def: SettingDef, value: unknown, isSet: boolean,
     isDefault: !isSet,
     kind: def.kind,
     ...(def.min !== undefined ? { min: def.min, max: def.max } : {}),
+    // a choice's values (R4-B's kind; wave R4 gate: an agent sees them before it sets one)
+    ...(def.options ? { options: def.options.map((o) => o.value) } : {}),
     ...(effective !== value ? { effective } : {}),
     title: def.title,
     description: def.description,

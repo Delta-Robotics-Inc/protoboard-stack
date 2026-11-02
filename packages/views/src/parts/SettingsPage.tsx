@@ -216,6 +216,50 @@ function NumberSetting({ row, onSet }: { row: SettingRowModel; onSet: (v: number
 }
 
 /**
+ * A choice of a few values (R4-B, 2026-11-02: `viewer.units` mm or in, `viewer.scaleReference` banana, cube or Benchy):
+ * a segmented radio group, the value in force pressed. A choice is its own reset (the default is one of the buttons).
+ */
+function ChoiceSetting({ row, onSet }: { row: SettingRowModel; onSet: (v: string) => void }) {
+  const options = row.options ?? [];
+  const current = Math.max(0, options.findIndex((o) => o.value === row.value));
+  // a radio group's keys (wave R4 gate): one Tab stop, the arrows choose the next or previous value
+  const onKeyDown = (e: { key: string; preventDefault(): void; currentTarget: { querySelectorAll(s: string): ArrayLike<{ focus(): void }> } }) => {
+    const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    if (!step || !options.length) return;
+    e.preventDefault();
+    const next = (current + step + options.length) % options.length;
+    onSet(options[next].value);
+    e.currentTarget.querySelectorAll("[role=radio]")[next]?.focus();
+  };
+  return (
+    <span role="radiogroup" aria-label={row.title} onKeyDown={onKeyDown} className="inline-flex shrink-0 overflow-hidden rounded-[4px] border border-[var(--pb-control-border)]">
+      {options.map((o, i) => {
+        const on = row.value === o.value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            data-value={o.value}
+            tabIndex={i === current ? 0 : -1}
+            onClick={() => !on && onSet(o.value)}
+            className={cx(
+              "h-7 px-2.5 font-ui text-[12.5px]",
+              i > 0 && "border-l border-[var(--pb-control-border)]",
+              on ? "bg-accent text-on-accent" : "bg-sunken text-fg hover:bg-hover",
+              "outline-1 -outline-offset-1 outline-contrast focus-visible:outline focus-visible:outline-focus",
+            )}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </span>
+  );
+}
+
+/**
  * The Viewer section (R2-E's J1 settings; built at the R2 integration, R2-E's handoff to the views owner): how the 3D
  * viewer behaves, where exports go, which app opens STEP files. The same settings `protoboard settings` and an
  * agent's `settings_set` change; a change from any of them shows here.
@@ -235,9 +279,10 @@ function ViewerSettings({ rows, actions }: { rows: SettingRowModel[]; actions: S
               </span>
             )}
           </span>
-          {!r.isDefault && r.kind !== "boolean" && actions.setSetting && <RowAction icon="rotate-ccw" label={`Reset ${r.title} to the default`} onClick={() => actions.setSetting!(r.key, null)} />}
+          {!r.isDefault && r.kind !== "boolean" && r.kind !== "choice" && actions.setSetting && <RowAction icon="rotate-ccw" label={`Reset ${r.title} to the default`} onClick={() => actions.setSetting!(r.key, null)} />}
           {r.kind === "boolean" && actions.setSetting && <Switch on={r.value === true} label={r.title} onChange={(on) => actions.setSetting!(r.key, on)} />}
           {r.kind === "number" && actions.setSetting && <NumberSetting row={r} onSet={(v) => actions.setSetting!(r.key, v)} />}
+          {r.kind === "choice" && actions.setSetting && <ChoiceSetting row={r} onSet={(v) => actions.setSetting!(r.key, v)} />}
           {(r.kind === "folder" || r.kind === "app") && actions.chooseSetting && (
             <Button size="sm" className="shrink-0" onClick={() => actions.chooseSetting!(r.key)}>
               Choose…

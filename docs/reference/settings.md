@@ -31,6 +31,8 @@ and can be revisited.
 | `viewer.zoomToCursor` | true or false | `true` | The mouse wheel zooms toward the point under the pointer in the 3D view. Off: toward the centre of the view. |
 | `viewer.modelInfo` | true or false | `true` | The 3D view's model info card is open when a view opens. |
 | `viewer.hoverLongDelayMs` | 200 to 5000 | `900` | How long (ms) the pointer rests on a part or a finding before the larger tooltip shows. |
+| `viewer.units` | `mm` or `in` | `mm` | The 3D view's floor grid, its scale label and the cube for scale measure in millimetres or inches. The 3D toolbar's scale chooser changes it too. |
+| `viewer.scaleReference` | `banana`, `cube` or `benchy` | `banana` | What the 3D toolbar's scale button stands beside the model at true size: a scanned banana, a cube of the units with a grid on its faces, or a #3DBenchy (CC0, 3DBenchy.com). The toolbar's chooser changes it too. |
 | `tools.stepViewer` | an app id or a path | unset | The application "Open in the system's application" uses for a STEP file: `fusion360`, `onshape` (the browser), `kicad`, `freecad`, `protoboard` (the CAD viewer tab), `system` (the system default), or the absolute path of an executable. Unset: asked once, the first time. |
 | `files.exportFolder` | a folder | unset | Where exports are written, without asking. Unset: the Downloads folder (`XDG_DOWNLOAD_DIR` on Linux when set, else `~/Downloads`). |
 | `files.importFolder` | a folder | unset | Where a file picker for imports starts. Unset: the project's own folder for the import (today: the part's folder under `parts/`). Imports work as before. |

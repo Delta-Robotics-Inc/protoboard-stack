@@ -25,6 +25,8 @@ export function viewerSettingsOf(v: ProtoboardSettings): ViewerSettings {
     zoomToCursor: v["viewer.zoomToCursor"],
     modelInfo: v["viewer.modelInfo"],
     hoverLongDelayMs: v["viewer.hoverLongDelayMs"],
+    units: v["viewer.units"],
+    scaleReference: v["viewer.scaleReference"],
   };
 }
 
@@ -41,6 +43,9 @@ export function settingText(def: SettingDef, v: ProtoboardSettings, place: Setti
     case "folder":
       if (value !== null) return value as string;
       return def.key === "files.exportFolder" ? `Downloads (${downloadsFolder(place.env ?? process.env)})` : "The project's own folder for the import";
+    case "choice":
+      // R4-B: a choice reads as its option's words ("Banana", "mm")
+      return def.options?.find((o) => o.value === value)?.label ?? String(value);
   }
 }
 
@@ -50,6 +55,8 @@ const SETTING_ICONS: Record<string, string> = {
   "viewer.zoomToCursor": "zoom-in",
   "viewer.modelInfo": "info",
   "viewer.hoverLongDelayMs": "timer",
+  "viewer.units": "ruler",
+  "viewer.scaleReference": "banana",
   "tools.stepViewer": "box",
   "files.exportFolder": "download",
   "files.importFolder": "folder-input",
@@ -72,6 +79,8 @@ export function viewerRows(v: ProtoboardSettings, place: SettingsPlace = {}): Se
     ...(def.min !== undefined ? { min: def.min } : {}),
     ...(def.max !== undefined ? { max: def.max } : {}),
     ...(def.kind === "number" ? { unit: "ms" } : {}),
+    // R4-B: the page draws a choice as a row of buttons, one per option
+    ...(def.kind === "choice" ? { options: def.options } : {}),
     icon: SETTING_ICONS[def.key] ?? "settings",
   }));
 }
@@ -181,6 +190,15 @@ export async function editSetting(settings: UserSettings, key: unknown, pickApp:
       });
       if (text === undefined) return;
       settings.set(def.key, text.trim() ? Number(text) : null);
+      return;
+    }
+    case "choice": {
+      // R4-B (wave R4 gate): a choice from the Command Palette or a link row: one of its options
+      const pick = await vscode.window.showQuickPick(
+        (def.options ?? []).map((o) => ({ label: o.label, description: o.value === v[def.key] ? "current" : undefined, value: o.value })),
+        { title: def.title, placeHolder: def.description },
+      );
+      if (pick) settings.set(def.key, pick.value);
       return;
     }
     case "app": {
