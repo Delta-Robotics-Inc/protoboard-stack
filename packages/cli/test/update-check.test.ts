@@ -104,7 +104,8 @@ describe("after a CLI command", () => {
     expect(spawned).toEqual([]); // not due
     expect(Object.keys(readState(root).shown ?? {}).length).toBeGreaterThan(0);
     written = "";
-    afterCommand(root, "build", { env: e, stderr, spawnCheck: (r) => spawned.push(r) });
+    // wave R3 gate: a fixed clock (the real one passed the check's due time on 2026-11-02 and started a check here)
+    afterCommand(root, "build", { env: e, stderr, spawnCheck: (r) => spawned.push(r), now: new Date(now.getTime() + 2000) });
     expect(written).toBe(""); // printed once per finding and version
     // due, and allowed: starts one; never under a test runner or in CI, never after update/inventory/mcp
     afterCommand(root, "build", { env: e, stderr, spawnCheck: (r) => spawned.push(r), now: new Date(now.getTime() + 31 * 60 * 60 * 1000) });

@@ -268,6 +268,8 @@ export function modelSizeDiagnostics(p: Project, options: ModelSizeOptions = {})
     if (!bounds) continue;
     const c = compareSize(bounds, pkg, slab, ratio);
     if (!c.off.length || c.sides.some((s) => !(s.model > 0))) continue;
+    // wave R3 gate: the side furthest off as the card's VALUE, measured on the view meshes (tier mesh)
+    const worst = [...c.off].sort((a, b) => logOff(b.ratio) - logOff(a.ratio))[0];
     out.push({
       code: MODEL_SIZE_CODE,
       severity: "warning",
@@ -275,6 +277,8 @@ export function modelSizeDiagnostics(p: Project, options: ModelSizeOptions = {})
       message: sizeMessage(e.instance, e.part, pkg, c, e.drawnBy, ratio),
       source: p.definitions.get(e.part)?.origin.source,
       validator: MODEL_SIZE_VALIDATOR,
+      value: `${worst.side === "height" ? "height " : ""}${mm(worst.model)} mm against ${mm(worst.pkg)} mm`.slice(0, 40),
+      tier: "mesh",
     });
   }
   return { diagnostics: out, ran: true };

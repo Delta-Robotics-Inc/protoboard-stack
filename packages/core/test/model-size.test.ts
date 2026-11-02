@@ -134,6 +134,12 @@ describe("PB_MODEL_SIZE_MISMATCH", () => {
     const found = p.diagnostics.filter((d) => d.code === MODEL_SIZE_CODE);
     expect(found.map((d) => d.entity.id).sort()).toEqual(["big", "pcb/h1", "pcb/j1"]);
     for (const d of found) expect(d).toMatchObject({ severity: "warning", entity: { kind: "instance" }, validator: MODEL_SIZE_VALIDATOR });
+    // wave R3 gate: the card's VALUE row (the side furthest off) and how it was measured
+    for (const d of found) {
+      expect(d.tier).toBe("mesh");
+      expect(d.value).toMatch(/^(height )?[\d.]+ mm against [\d.]+ mm$/);
+      expect(d.value!.length).toBeLessThanOrEqual(40);
+    }
     expect(p.checks.find((c) => c.validator === MODEL_SIZE_VALIDATOR)).toMatchObject({ status: "ran", counts: { error: 0, warning: 3, info: 0 } });
 
     const big = found.find((d) => d.entity.id === "big")!.message;

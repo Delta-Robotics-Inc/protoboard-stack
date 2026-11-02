@@ -109,6 +109,10 @@ export async function uhdBundle(p: Project, models?: ModelTable): Promise<UhdBun
       message: d.message,
       ...(d.title ? { title: d.title } : {}),
       ...(d.summary ? { summary: d.summary } : {}),
+      // wave R3 gate: `value` and `tier` (a measured number and how it was measured: the viewer's risk card VALUE
+      // row), extra and additive like `title` and `summary`
+      ...(d.value ? { value: d.value } : {}),
+      ...(d.tier ? { tier: d.tier } : {}),
       entity: d.entity,
       ...(d.source ? { source: d.source } : {}),
       ...(d.location ? { location: d.location } : {}),

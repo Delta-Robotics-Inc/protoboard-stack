@@ -45,6 +45,8 @@ new epoch; the service puts the last state it saw back (`restored`).
 | `view_callout` | a callout record (`title`, `rows` such as MPN and LCSC, `text`) on a part |
 | `view_mark` | a ring (default), box, dot, pin or crosshair on a part |
 | `view_arrow` | an arrow from one part to another |
+| `view_dimension` | a measured distance between two parts or two points on them, with its tier (below) |
+| `view_angle` | a revolute joint's angle: arc, NOW, REST, HARD STOP and 0° (below) |
 | `view_unannotate` | removes records by id (their ids are retired) |
 | `view_explode` | explode amount 0 to 1, and a sequence step by its id |
 | `view_undo` | undoes your own last batch, never anyone else's |
@@ -73,6 +75,38 @@ is the live key `highlightColor`). The selection itself stays the theme's
 accent; a part whose own colour is close to the accent is selected in the
 theme's `highlight` colour instead. `view_highlight` takes `color` and passes
 it through; its `add` and `remove` keep the colour in force.
+
+### Dimensions and angles (R3, 2026-11-02)
+
+Two more kinds of the `annotate` op, drawn by the viewer's dimension layer
+(uhd-viewer `src/cad/dims/record.ts` has the record shapes, its style guide
+the look).
+
+`view_dimension` (`ref`, `to`; optional `point`, `toPoint`, `tier`,
+`valueMm`, `toleranceMm`, `offset`, `title`, `text`, `id`, `handle`): dots
+on the two parts, dashed extension lines, a thin dimension line and a chip
+such as `158.4 mm NOMINAL`. The number is the distance as assembled, in mm,
+so exploding the view never changes it. The tier says how it was measured:
+
+| Tier | When |
+| --- | --- |
+| `nominal` | no points: the ends are the parts' design frames |
+| `mesh` | `point` and `toPoint` (mm in each part's body frame, e.g. from `view_pick`): the distance between the points on the meshes |
+| `exact` | you measured the B-rep (`protoboard geometry measure`): give `valueMm` and `toleranceMm` |
+| `measured` | a bench reading: give `valueMm` and `toleranceMm` |
+
+`offset` is where the dimension line sits off the measured line (mm, the
+assembly root's frame). A new dimension needs both `ref` and `to`; either
+end not drawn now is kept as an orphan and listed under `unresolved`.
+
+`view_angle` (`ref`; optional `joint`, `title`, `id`, `handle`): an arc
+about a revolute joint's axis with ticks and labels NOW (the joint's value,
+read from the part's pose every frame, so it follows a drive or the
+Assemble play), REST, HARD STOP (each limit, red) and 0°. `ref` is the
+joint's id (usually its link id) or the instance path of the part it turns;
+`joint` picks one when the part has several. A joint id is kept as given
+(it is not a drawn part, so it is not listed as unresolved). Slider joints
+are listed as unsupported in the view's report.
 
 ### Settings an agent may change
 
