@@ -151,8 +151,13 @@ export interface DevOptions {
   host?: string;
   /** Watch the project and rebuild on changes (default true). */
   watch?: boolean;
-  /** Quiet period after a change before rebuilding (default 120 ms). */
+  /** Quiet period after a change to a source (code, the configuration) before rebuilding (default 120 ms). */
   debounceMs?: number;
+  /**
+   * Quiet period when only other files changed (parts, their CAD scripts and records, JSON): a tool writing a
+   * part writes several files over a second or so, and one rebuild follows them all (default 1.5 s; R1-B, DEFAULT).
+   */
+  slowDebounceMs?: number;
   log?: (event: DevLogEvent) => void;
   /** Where the web viewer's built files are (default: the installed `@protoboardai/web-viewer`'s dist). */
   viewerLib?: string;
@@ -257,14 +262,103 @@ export function watchPlan(root: string, w: NonNullable<BuildReport["watch"]>): [
     .filter(([d]) => (seen.has(d) ? false : (seen.add(d), true)));
 }
 
-/** Files whose changes do not matter: dependencies, build output, editor temporaries. */
-function ignored(rel: string, displayRel: string): boolean {
+/**
+ * Files whose changes do not matter: dependencies, build output, editor temporaries, and (R1-B, M3) what the
+ * build, the view tools and the parts tools write themselves, so the server never rebuilds for that output:
+ * - the view sidecars beside a GLB (`X.view.glb`, `X.view.coarse.glb`, `X.view.json`): `protoboard build --view`
+ *   and the view tools write them, the viewer reads them, the bundle does not name them;
+ * - `parts/evidence/**`: a part's research record (sources, verification, the research folder), written by the
+ *   parts tools and read by the Inspector. DEFAULT (R1-B): ignored; after editing a sources.json by hand, a
+ *   `protoboard check` (or saving any source) shows its checks again;
+ * - `.protoboard/**` (the build, the local state), `node_modules`, `.git`, `__pycache__`, editor temporaries.
+ * `parts/origins.json` is not ignored (the catalog is verified against it), but an event that changed nothing in
+ * it (`contentChanged`) starts nothing.
+ */
+export function ignoredPath(rel: string, displayRel = ""): boolean {
   if (rel === displayRel) return false;
   const parts = rel.split(/[\\/]/);
   const name = parts[parts.length - 1];
   if (parts.some((p) => p === "node_modules" || p === "__pycache__" || p === ".git" || p === ".protoboard")) return true;
   if (name.startsWith(".") || name.endsWith("~") || /\.(swp|swx|tmp|crdownload)$/.test(name) || name === "4913") return true;
+  if (/\.view(\.coarse)?\.glb$|\.view\.json$/i.test(name)) return true;
+  if (parts[0] === "parts" && parts[1] === "evidence") return true;
   return parts[0] === "operations";
+}
+function ignored(rel: string, displayRel: string): boolean {
+  return ignoredPath(rel, displayRel);
+}
+
+/**
+ * A source of the project: code (a `sources` match, a script the sources import), the configuration, the
+ * scenarios. Its change rebuilds after the short quiet period; anything else (parts, their CAD scripts and
+ * records, JSON) waits for the longer one (R1-B).
+ */
+export function isSourcePath(rel: string, w: Pick<NonNullable<BuildReport["watch"]>, "sources" | "scenarios">): boolean {
+  const r = rel.split(/[\\/]/).join("/");
+  if (r === "protoboard.config.ts" || (w.scenarios !== undefined && r === w.scenarios)) return true;
+  if (/\.(m?[jt]sx?|cts|cjs)$/.test(r) && !r.startsWith("parts/")) return true;
+  return w.sources.some((g) => {
+    // the loader's minimal glob (core load.ts expandGlob): "dir/**/*.suffix", or a plain path
+    const m = g.match(/^(.*?)\/?\*\*\/\*(\.[\w.]+)$/);
+    if (!m) return r === g;
+    return (m[1] === "" || r.startsWith(`${m[1]}/`)) && r.endsWith(m[2]);
+  });
+}
+
+/**
+ * What a file looks like on disk, to tell a change of its content from an event that changed nothing a build
+ * reads (R1-B, M3). Windows reports an access-time or attribute update (a reader, an indexer, a virus scan, a
+ * sync client) as a `change`, and each such event used to start a rebuild: the storm of rebuilds every ~4.4 s
+ * while the person only looked. The creation time is in it so a copied file (which keeps the original's
+ * modification time) still counts.
+ */
+export interface DiskSignature {
+  mtimeMs: number;
+  birthtimeMs: number;
+  size: number;
+  dir: boolean;
+}
+export function diskSignature(abs: string): DiskSignature | undefined {
+  try {
+    const st = statSync(abs);
+    return { mtimeMs: st.mtimeMs, birthtimeMs: st.birthtimeMs, size: st.size, dir: st.isDirectory() };
+  } catch {
+    return undefined;
+  }
+}
+
+/** Slack on "written after the last build began", for file systems with coarse times (FAT: 2 s). DEFAULT (R1-B). */
+export const MTIME_SLACK_MS = 2000;
+/**
+ * Times closer than this are the same time: a time written back through a Date (a tool restoring the modification
+ * time while it sets the access time) comes back rounded by up to a millisecond. DEFAULT (R1-B).
+ */
+export const SAME_TIME_MS = 1.5;
+
+const sameSignature = (a: DiskSignature, b: DiskSignature) => a.dir === b.dir && a.size === b.size && Math.abs(a.mtimeMs - b.mtimeMs) <= SAME_TIME_MS && Math.abs(a.birthtimeMs - b.birthtimeMs) <= SAME_TIME_MS;
+
+/**
+ * Whether a watcher event is a change a rebuild must see: the file is gone, or newly created, or its signature
+ * differs from the one recorded, or (seen for the first time) it is a source (`firstSeenCounts`: a restored file
+ * keeps its old times, gate R1) or was written after the last build began, which read it as it was before.
+ * Records what it saw.
+ */
+export function contentChanged(seen: Map<string, DiskSignature>, abs: string, event: string, lastBuildAt: number, firstSeenCounts = false): boolean {
+  const sig = diskSignature(abs);
+  const before = seen.get(abs);
+  if (sig === undefined) {
+    seen.delete(abs);
+    return true;
+  }
+  seen.set(abs, sig);
+  if (before !== undefined) return !sameSignature(before, sig);
+  if (event === "rename" || firstSeenCounts) return true;
+  return Math.max(sig.mtimeMs, sig.birthtimeMs) >= lastBuildAt - MTIME_SLACK_MS;
+}
+
+/** The status the viewers show while a build runs (B2): plain words in `message`, the changed files in `detail`. */
+export function busyStatus(triggers: string[]): { state: "busy"; message: string; detail: string } {
+  return { state: "busy", message: "Updating model", detail: triggers.length ? triggers.join("\n") : "building" };
 }
 
 export async function startDev(options: DevOptions): Promise<DevServer> {
@@ -311,6 +405,8 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   let lastViews: NonNullable<BuildReport["views"]> = [];
   let lastPartStatus: NonNullable<BuildReport["partStatus"]> = {};
   let building = false;
+  /** When the last build began (wall clock): a file written before it was read by it as it is (R1-B). */
+  let lastBuildAt = 0;
   let closed = false;
   let child: ChildProcess | undefined;
   /** Digest of the display file as this server last wrote it (its own write is not news). */
@@ -417,7 +513,9 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   const build = (triggers: string[]) =>
     enqueue(async () => {
       building = true;
-      broadcast("status", { state: "busy", message: triggers.length ? `rebuilding (${triggers.slice(0, 3).join(", ")}${triggers.length > 3 ? ", …" : ""})` : "building" });
+      // B2: plain words for the pill; the files that changed go in `detail` (a tooltip and the console), not the text
+      broadcast("status", busyStatus(triggers));
+      lastBuildAt = Date.now();
       const r = await runWorker();
       building = false;
       if (closed) return r;
@@ -463,10 +561,27 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   let timer: NodeJS.Timeout | undefined;
   const changed = new Set<string>();
   let displayTouched = false;
-  const onChange = (dir: string) => (_event: string, name: string | Buffer | null) => {
+  /** What each file looked like when an event last came for it (R1-B, M3: only a real change rebuilds). */
+  const seen = new Map<string, DiskSignature>();
+  /** Files an event came for that had not changed, each logged once (the next storm names its cause). */
+  const quiet = new Set<string>();
+  const onChange = (dir: string) => (event: string, name: string | Buffer | null) => {
     if (closed || !name) return;
     const rel = relative(root, join(dir, name.toString()));
     if (rel.startsWith("..") || isAbsolute(rel) || ignored(rel, displayRel())) return;
+    // gate R1 (diff review): a source seen for the first time counts even with old times (unzip, `cp -p`, a restore);
+    // a reader can touch each source once at most, after which its signature is known (DEFAULT)
+    const real = rel === displayRel() || contentChanged(seen, join(root, rel), event, lastBuildAt, isSourcePath(rel.split(sep).join("/"), watchConfig));
+    // a folder inside a watched tree: its files' own events say what changed (a folder's time moves with its
+    // entries). Not a folder created, moved in or renamed (`rename`): a folder moved in reports only itself (gate R1)
+    if (dir !== root && watchers.has(`${dir}|true`) && event !== "rename" && seen.get(join(root, rel))?.dir) return;
+    if (!real) {
+      if (!quiet.has(rel) && quiet.size < 500) {
+        quiet.add(rel);
+        log({ level: "info", event: "watch", message: `ignored an event on ${rel}: nothing in it changed (an access or attribute update)`, path: rel, fsEvent: event });
+      }
+      return;
+    }
     if (rel === displayRel()) displayTouched = true;
     else if (dir === root || !watchers.has(`${dir}|true`)) {
       // a folder watched on its own: the configuration, sources named one by one, and new folders the next build watches
@@ -478,10 +593,13 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
         // deleted: only a named file matters
       }
       if (!named && !(folder && dir === root)) return;
-      changed.add(rel);
-    } else changed.add(rel);
+      changed.add(rel.split(sep).join("/"));
+    } else changed.add(rel.split(sep).join("/")); // one spelling on every system (the log, the status detail)
     clearTimeout(timer);
-    timer = setTimeout(flush, options.debounceMs ?? 120);
+    // a source (or the display file) rebuilds after the short quiet period; parts and records wait for the long one,
+    // so a tool writing a part's files over a second gives one rebuild (R1-B, DEFAULT 1.5 s)
+    const fast = displayTouched || [...changed].some((c) => isSourcePath(c, watchConfig));
+    timer = setTimeout(flush, fast ? (options.debounceMs ?? 120) : (options.slowDebounceMs ?? 1500));
   };
   const flush = () => {
     if (displayTouched) {
@@ -491,6 +609,8 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     if (changed.size) {
       const triggers = [...changed].sort();
       changed.clear();
+      // the trigger, named, so the next unexpected rebuild says what started it (R1-B, M3)
+      log({ level: "info", event: "watch", message: `rebuilding for ${triggers.length} changed file(s): ${triggers.slice(0, 8).join(", ")}${triggers.length > 8 ? ` and ${triggers.length - 8} more` : ""}`, trigger: triggers });
       background(build(triggers));
     }
   };

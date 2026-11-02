@@ -34,6 +34,8 @@ export interface InspectorActions {
   interfaceSource?(request: InspectorInterfaceRequest): unknown;
   /** An open slot's Connect…: where a link from it is written. */
   connect?(request: InspectorInterfaceRequest): unknown;
+  /** A board part's 3D card (F5): its board's 3D view with the part framed (`3d:holder`), or its own model (`3d:own`). */
+  open3d?(card: InspectorCard, which: string): unknown;
   /** Folders the page may load from (the projects, their artifact packages, the library's cache). */
   roots(): string[];
   /** A picture did not load (a file outside the roots, or gone): for the log. */
@@ -50,6 +52,7 @@ export type InspectorPageMessage =
   | { type: "openArtifact"; defId: string; artifactId: string }
   | { type: "openLink"; url: string }
   | { type: "interfaceSource" | "connect"; request: InspectorInterfaceRequest }
+  | { type: "open3d"; which: string }
   | ({ type: "drawn" } & PageDrawn);
 
 /** What the page says it drew, once settled (the log and the tests read it). */
@@ -227,6 +230,10 @@ export class InspectorViewProvider implements vscode.WebviewViewProvider {
         if (ok) void (m.type === "connect" ? this.actions.connect : this.actions.interfaceSource)?.({ path: r.path, interfaceId: r.interfaceId, owner: r.owner, links: r.links });
         return;
       }
+      case "open3d":
+        // only a 3D card the card itself offers
+        if (card && typeof m.which === "string" && card.threeD?.some((c) => c.artifactId === m.which)) void this.actions.open3d?.(card, m.which);
+        return;
       case "openLink":
         // only an address the card itself names (an artifact's or an evidence source's), and only the web
         if (card && typeof m.url === "string" && /^https?:\/\//i.test(m.url) && card.details?.links?.includes(m.url)) void this.actions.openLink(m.url);

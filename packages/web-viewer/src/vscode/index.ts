@@ -23,11 +23,13 @@ import type { UhdBundle } from "@deltarobotics/uhd";
 import type { ResolvedView } from "@protoboardai/core";
 import { VsCodeShell, type ShellBridge, type VsCodeViewerOptions } from "./Shell.js";
 import { DevLink, type EventSourceLike, type ViewerStatus } from "./devLink.js";
+import { suppressContextMenu } from "./contextMenu.js";
 import { emptyLayout, hasEdits, parseViewerStateFile, type FromWebview, type HierarchyAction, type HierarchyRowReport, type LayoutSnapshot, type ModuleSource, type ToWebview, type ViewerLayout, type ViewerStateFile, type ViewerViewport, type WebviewConfig } from "./protocol.js";
 
 export { VsCodeShell, vscodeShellThemeAdapter, isProtoboardTheme } from "./Shell.js";
 export * from "./protocol.js";
 export * from "./devLink.js";
+export * from "./contextMenu.js";
 
 interface VsCodeApi {
   postMessage(message: unknown): void;
@@ -73,6 +75,8 @@ export function rebase(bundle: UhdBundle & { artifactBases?: Record<string, stri
 /** Mount the shell in `element` with the page's config; returns the viewer's handle once the first bundle loads. */
 export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, vscode: VsCodeApi = acquireVsCodeApi()) {
   const post = (m: FromWebview) => vscode.postMessage(m);
+  // M9: no VS Code Cut/Copy/Paste menu over the viewer; a right-click says where it was (R2's context menu hook)
+  suppressContextMenu(element, post);
   // local telemetry (PB-1181): the viewer's session records (uhd-viewer src/telemetry/, a window event) go to the
   // extension host, which writes them only while recording is on (protoboard.telemetry.local and VS Code's telemetry)
   window.addEventListener("uhd-viewer:telemetry", (e) => {

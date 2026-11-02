@@ -12,6 +12,7 @@ import { ThemeProvider, keptInspectorState, vscodeTheme, staticTheme } from "@de
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { isProtoboardColourTheme, vscodeViewThemeAdapter } from "../src/theme.js";
 import { DrcPanel, SelectionInspector, type DrcPanelActions, type DrcPanelModel, type InspectorActions, type InspectorCard } from "../src/inspector/index.js";
+import { FindingExplain, artifactGlyph, glyphPicture } from "../src/inspector/SelectionInspector.js";
 
 const require = createRequire(import.meta.url);
 const shell = createRequire(new URL("../../web-viewer/package.json", import.meta.url));
@@ -105,14 +106,18 @@ describe("the Inspector's selection", () => {
     // every artifact is a card; none is a plain row
     expect(count(html, /class="uhd-artifact-card /g)).toBe(4);
     expect(html).not.toContain("artifact-file");
-    // the model shows the picture the shell named, and nothing else is loaded: no model, no remote picture
-    expect(count(html, /<img /g)).toBe(1);
+    // the model shows the picture the shell named, and nothing else is loaded: no model, no remote picture (a file
+    // with no picture shows its type as a glyph drawn in the page, a data URL: F6, R1-E)
+    expect(count(html, /<img (?![^>]*src="data:image\/svg\+xml)/g)).toBe(1);
     expect(html).toContain('src="https://file+.vscode-resource.test/p/docs/images/part-sample-imu-enclosure.png"');
     expect(html).toContain('loading="lazy"');
     expect(html).not.toContain("artifact-cad");
-    // a finding leads to it, says its code, and can be explained
+    // a finding leads to it, says its code, and opens its explanation under it (D7, R1-E: a chevron, not a tab; no
+    // tooltip repeating the row's own text)
     expect(html).toContain('data-row-finding="CAD_INTERFERENCE"');
-    expect(html).toContain('data-tooltip="Explain CAD_INTERFERENCE"');
+    expect(html).toContain('data-finding-toggle="CAD_INTERFERENCE"');
+    expect(html).toContain('aria-label="Explain CAD_INTERFERENCE"');
+    expect(html).not.toContain('data-tooltip="The lid does not close');
     // secondary sections start closed and say what they hold in their headers
     const section = (id: string) => html.slice(html.indexOf(`data-section="${id}"`)).split("</section>")[0];
     expect(section("host:Checks")).toContain('aria-expanded="true"');
@@ -149,10 +154,11 @@ describe("the Inspector's selection", () => {
     const with_ = card({ details: { target: { kind: "module", path: "board" }, files: { "sample-imu-board\nboard/out/schematic.svg": "https://file+.vscode-resource.test/p/board/out/schematic.svg" }, previews: {}, links: [] } });
     const html = render(createElement(SelectionInspector, { content: { card: with_, project: "pod" }, bundle, actions }));
     expect(count(html, /class="uhd-artifact-card /g)).toBe(8);
-    // the schematic was named; the PCB drawings and the board's model were not: they show their icons
-    expect(count(html, /<img /g)).toBe(1);
+    // the schematic was named; the PCB drawings and the board's model were not: they show their icons, or their type
+    // as a glyph drawn in the page (F6, R1-E: a data URL, nothing loaded)
+    expect(count(html, /<img (?![^>]*src="data:image\/svg\+xml)/g)).toBe(1);
     expect(html).toContain("board/out/schematic.svg");
-    expect(count(html, /data-artifact-picture="icon"/g)).toBe(7);
+    expect(count(html, /data-artifact-picture="icon"/g) + count(html, /<img [^>]*src="data:image\/svg\+xml/g)).toBe(7);
   });
 
   it("shows a link with its pair, a library part from its definition, and says why when there is nothing", () => {
@@ -203,6 +209,53 @@ describe("the Inspector's selection", () => {
     expect(html).not.toContain("Show fewer");
     const short = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 3, rows: rows.slice(0, 3) }] }), project: "pod" }, actions }));
     expect(short).not.toContain("data-load-more");
+  });
+
+  it("explains a finding under its row, with a small link to the full page (D7, R1-E)", () => {
+    const row = { icon: "circle-x", label: "The lid does not close", tone: "error", code: "CAD_INTERFERENCE", action: { type: "finding" as const, key: "3" }, explain: { severity: "error", validator: "ext:enclosure/check", means: "Two bodies overlap where `lid` meets `base`.", todo: "Move the lid\nor cut a relief.", message: "The lid does not close; overlap 0.4 mm at the hinge", page: true } };
+    const pressed: unknown[][] = [];
+    const el = FindingExplain({ row, onPage: () => pressed.push(["page"]) }) as ReactElement;
+    const html = render(el);
+    expect(html).toContain('data-finding-explain="CAD_INTERFERENCE"');
+    expect(html).toContain("error · CAD_INTERFERENCE");
+    expect(html).toContain("What it means");
+    expect(html).toContain("<code");
+    expect(html).toContain(">lid</code>");
+    expect(html).toContain("What to do");
+    expect(html).toContain("overlap 0.4 mm at the hinge");
+    expect(html).toContain("ext:enclosure/check");
+    expect(html).toContain("Open full page");
+    // no reference page: no link; no reference entry: it says so
+    const bare = render(FindingExplain({ row: { ...row, explain: { severity: "warning" } } }) as ReactElement);
+    expect(bare).not.toContain("Open full page");
+    expect(bare).toContain("No explanation of this code in the reference yet.");
+  });
+
+  it("gives a file with no picture its type as a glyph on no matte, and a board part a 3D section (F5, F6, R1-E)", () => {
+    expect(artifactGlyph({ filePath: "cad/cover.step" })).toBe("STEP");
+    expect(artifactGlyph({ filePath: "part-cad/body.py" })).toBe("PY");
+    expect(artifactGlyph({ filePath: "out/body.manifest.json" })).toBe("JSON");
+    expect(artifactGlyph({ format: "stp", filePath: "x" })).toBe("STEP");
+    expect(artifactGlyph({ url: "https://lcsc.com/product-detail/C393939.html" })).toBeUndefined();
+    expect(artifactGlyph({ filePath: "notes.unknownext" })).toBeUndefined();
+    const svg = decodeURIComponent(glyphPicture("STEP", "#a8a8a8").replace(/^data:image\/svg\+xml;utf8,/, ""));
+    expect(svg).toContain(">STEP</text>");
+    // no rectangle fills the tile: the card's own surface shows through
+    expect(svg).not.toMatch(/<rect/);
+    const part = card({
+      details: undefined,
+      threeD: [
+        { defId: "shouhan-type-c16pin", artifactId: "3d:holder", title: "In Mainboard B1_4 (rev-a)", kindLabel: "3D view", source: "pcb", icon: "rotate-3d" },
+        { defId: "shouhan-type-c16pin", artifactId: "3d:own", title: "Its own 3D model", kindLabel: "3D model", source: "shouhan-type-c16pin", icon: "box" },
+      ],
+    });
+    const html = render(createElement(SelectionInspector, { content: { card: part, project: "clientx" }, actions: { ...actions, open3d: (w) => posted.push(["open3d", w]) } }));
+    expect(html).toContain('data-section="host:3d"');
+    expect(html).toContain("In Mainboard B1_4 (rev-a)");
+    expect(html).toContain("Its own 3D model");
+    // the drawn models and the glyphs sit on the card's surface, photos keep the paper matte
+    expect(html).toContain('[data-artifact-picture="model"]');
+    expect(html).toContain("background: transparent");
   });
 
   it("uses the deeper severity shades the parts views use on a light page", () => {

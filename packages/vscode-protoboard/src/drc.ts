@@ -25,6 +25,8 @@ export interface Finding {
   validator: string;
   source: FindingSource;
   target: Target;
+  /** What the diagnostic names (`kind`, `id`), as the check wrote it: the 3D view's finding id is made from it (D7). */
+  entity?: { kind: string; id: string };
   location?: SourceLocation;
   /** From the extension's diagnostic-codes reference. */
   means?: string;
@@ -84,6 +86,7 @@ export function findings(index: ProjectIndex, diagnostics: CheckDiagnostic[], re
       validator: d.validator,
       source: findingSource(d.validator),
       target: diagnosticTarget(index, d),
+      ...(d.entity && typeof d.entity.kind === "string" && typeof d.entity.id === "string" ? { entity: { kind: d.entity.kind, id: d.entity.id } } : {}),
       location: d.source,
       means: entry?.means,
       todo: entry?.todo,

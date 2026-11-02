@@ -30,6 +30,12 @@ export interface InspectorRow {
   action?: { type: "focus"; path: string } | { type: "finding"; key: string };
   /** A finding's code, under its message. */
   code?: string;
+  /**
+   * A finding's explanation (D7, R1-E): opened under its row by its chevron, not in a tab. What its code means and
+   * what to do (the extension's codes reference), the whole message when the row shows only its first clause, who
+   * reported it, and whether the full reference page exists (a small "Open full page" link).
+   */
+  explain?: { severity?: string; validator?: string; means?: string; todo?: string; message?: string; page?: boolean };
 }
 
 export interface InspectorSection {
@@ -140,6 +146,11 @@ export interface InspectorCard<F = string> {
   details?: InspectorDetails<F>;
   /** Artifact cards of the card's own (an interface's geometry), before the sections. */
   artifacts?: InspectorArtifact<F>[];
+  /**
+   * F5 (R1-E): a board part's way to its 3D: the board's 3D view with the part selected and framed, and its own
+   * vendor model when it has one. A card's click calls `open3d` with its `artifactId`.
+   */
+  threeD?: InspectorArtifact<F>[];
 }
 
 /** The project's UHD bundle as the page loads it: a URL, and a version that changes with every build. */
@@ -166,6 +177,8 @@ export interface InspectorActions {
   interfaceSource?(request: InspectorInterfaceRequest): void;
   /** An open slot's Connect…: where a link from it is written. */
   connect?(request: InspectorInterfaceRequest): void;
+  /** A 3D card (F5): its `artifactId` says which. */
+  open3d?(which: string): void;
 }
 
 // ---- the DRC panel

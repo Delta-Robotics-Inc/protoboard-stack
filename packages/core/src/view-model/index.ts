@@ -8,4 +8,5 @@ export { VIEW_PIPELINE_VERSION, VIEW_SIDECAR_SCHEMA, isCoarseSourceFile, isViewS
 export { COARSE_ERROR, MAX_GLB_BYTES, MESH_ORIGIN_ERROR, writeViewSidecar, type ViewSidecarOptions, type ViewSidecarResult } from "./sidecar.js";
 export { bodyGlbs, componentsOf, manifestNames, placementCounts, vendorKeyOf, writeProjectViewSidecars, type ProjectViewFile, type ProjectViewOptions, type ProjectViewSummary } from "./project.js";
 export { LOOKS, lookForKind, lookForName, partKindOf, type MaterialLook } from "./materials.js";
-export type { ViewBounds, ViewComponent, ViewContext, ViewCounts, ViewNode, ViewOwner, ViewSidecarIndex, ViewTier } from "./types.js";
+export { LAYER_RANKS, LAYER_STEP_MM, layerClassOf, type LayerClass, type LayerOffset } from "./layers.js";
+export type { ViewBounds, ViewComponent, ViewContext, ViewCounts, ViewLayers, ViewNode, ViewOwner, ViewSidecarIndex, ViewTier } from "./types.js";

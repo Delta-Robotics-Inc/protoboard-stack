@@ -28,6 +28,8 @@ import type { DevEndpoint } from "./protocol.js";
 export interface ViewerStatus {
   message: string;
   busy?: boolean;
+  /** R1-B (B2): what a rebuild is for, the changed files one per line: the status's tooltip and the console, never its text. */
+  detail?: string;
   /**
    * The tab cannot read from the dev server: shown in the middle of the tab,
    * with what the dev server is and what to try (Retry, Reload Window, Show
@@ -302,8 +304,11 @@ export class DevLink {
     });
     es.addEventListener("status", (e) => {
       if (!current()) return;
-      const s = JSON.parse(e.data) as { state?: string; message?: string };
-      this.deps.onStatus(s.state === "error" ? { message: s.message ?? "error" } : s.state === "busy" ? { message: s.message ?? "building", busy: true } : this.resting);
+      const s = JSON.parse(e.data) as { state?: string; message?: string; detail?: string };
+      // B2 (R1-B's handoff): the changed files go to a tooltip and the console, not into the status's words
+      const detail = typeof s.detail === "string" && s.detail ? s.detail.slice(0, 4000) : undefined;
+      if (detail) console.info(`[protoboard dev] ${s.message ?? "building"}: ${detail.split("\n").join(", ")}`);
+      this.deps.onStatus(s.state === "error" ? { message: s.message ?? "error" } : s.state === "busy" ? { message: s.message ?? "building", busy: true, ...(detail ? { detail } : {}) } : this.resting);
     });
     // the server could not watch the project's files (B19): live reload is off, and the tab says so
     es.addEventListener("watch", (e) => {
@@ -435,7 +440,7 @@ export class DevLink {
       this.saidBuilding = false;
     } else if (state.building && !this.saidBuilding) {
       this.saidBuilding = true;
-      this.deps.onStatus({ message: "rebuilding", busy: true });
+      this.deps.onStatus({ message: "Updating model", busy: true });
     } else if (!state.building && this.saidBuilding) {
       this.saidBuilding = false;
       this.deps.onStatus(this.resting);
