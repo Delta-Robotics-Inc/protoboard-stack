@@ -195,6 +195,13 @@ export interface ProjectDiagnostic {
   title?: string;
   /** For people (wave R2, D3): one sentence, at most 160 characters, with the human names of the parts and links. */
   summary?: string;
+  /**
+   * Wave R3 (additive; the viewer's risk card shows it in its VALUE row): the measured number as shown, at most 40
+   * characters ("3.1 mm ±0.2", "6.5 mm against 10 mm"), when a check measures one.
+   */
+  value?: string;
+  /** Wave R3 (additive): how `value` was measured: the UHD numbers, the meshes, the exact B-rep, or on the part. */
+  tier?: "nominal" | "mesh" | "exact" | "measured";
 }
 
 /**

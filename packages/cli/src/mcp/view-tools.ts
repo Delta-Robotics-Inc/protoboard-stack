@@ -537,9 +537,59 @@ export function viewTools(given: ViewToolDeps = {}): ToolSpec[] {
         return annotate(ctx, { ...a, ref: a.from }, "arrow", { text: a.text, tone: a.tone }, a.to);
       },
     }),
+    // wave R3 gate (R3-C's handoff, the shapes it wrote in handoffs.md): dimensions and angles, uhd-viewer
+    // `src/cad/dims/record.ts`; both are additive kinds of the existing `annotate` op
+    tool({
+      name: "view_dimension",
+      title: "Dimension two parts",
+      description:
+        "Draws a measured distance between two parts (or two points on them) in the 3D view: dots on the parts, dashed extension lines, a thin dimension line and a chip '158.4 mm NOMINAL'. The number is the distance as assembled, in mm. Without points the ends are the parts' design frames (tier nominal); with both points (mm in each part's body frame, e.g. from view_pick) it is the mesh tier. If you measured it another way give `valueMm` and `tier` (exact: the B-rep through `protoboard geometry measure`; measured: a bench reading) and `toleranceMm`. Change one with `id` (its tier, value, points, offset or words; its two parts stay: draw a new one for other parts). " +
+        RUNS,
+      input: {
+        ...COMMON,
+        ref: z.string().optional().describe("The first part (instance path or unique tail). Needed for a new dimension."),
+        to: z.string().optional().describe("The second part. Needed for a new dimension."),
+        id: z.string().optional().describe("An existing record's id, to change it."),
+        handle: z.string().regex(/^[\w.:-]{1,64}$/).optional().describe("Your name for the new record; the result maps it to the id (default: the batchId)."),
+        // the viewer's limits (uhd-viewer src/cad/dims/record.ts DIM_LIMITS): values up to 1e6 mm, points under 1e7 mm
+        point: z.array(z.number().gt(-1e7).lt(1e7)).length(3).optional().describe("A point on the first part, mm in its body's frame."),
+        toPoint: z.array(z.number().gt(-1e7).lt(1e7)).length(3).optional().describe("A point on the second part, mm in its body's frame."),
+        tier: z.enum(["nominal", "mesh", "exact", "measured"]).optional(),
+        valueMm: z.number().min(0).max(1e6).optional().describe("The value you measured, mm (with tier exact or measured)."),
+        toleranceMm: z.number().min(0).max(1e6).optional().describe("Its tolerance, mm."),
+        offset: z.array(z.number().gt(-1e7).lt(1e7)).length(3).optional().describe("Where the dimension line sits off the measured line, mm in the assembly root's frame."),
+        title: z.string().max(120).optional(),
+        text: z.string().max(600).optional(),
+      },
+      annotations: ANNOTATE_ANNOTATIONS,
+      async handler(a, ctx) {
+        if (!a.id && !a.to) return { data: { error: "a new dimension needs ref and to: the two parts it measures between" }, isError: true };
+        if (a.id && (a.ref !== undefined || a.to !== undefined)) return { data: { error: "a dimension's parts cannot change: give id alone to change it, or ref and to for a new one" }, isError: true };
+        return annotate(ctx, a, "dimension", { point: a.point, toPoint: a.toPoint, tier: a.tier, valueMm: a.valueMm, toleranceMm: a.toleranceMm, offset: a.offset, title: a.title, text: a.text }, a.to);
+      },
+    }),
+    tool({
+      name: "view_angle",
+      title: "Show a joint's angle",
+      description:
+        "Draws a revolute joint's angle in the 3D view: an arc about the joint's axis with ticks and labels NOW (the current value, read from the part's pose every frame, so it follows a drive or the Assemble play), REST, HARD STOP (each limit) and 0°. `ref` is the joint's id (usually its link id) or the instance path of the part it turns; `joint` picks one when the part has several. Slider joints are listed as unsupported. Change one with `id`. " +
+        RUNS,
+      input: {
+        ...COMMON,
+        ref: z.string().optional().describe("The joint's id or the part it turns. Needed for a new angle."),
+        id: z.string().optional().describe("An existing record's id, to change it."),
+        handle: z.string().regex(/^[\w.:-]{1,64}$/).optional().describe("Your name for the new record; the result maps it to the id (default: the batchId)."),
+        joint: z.string().max(128).optional().describe("The joint's id, when the part has several."),
+        title: z.string().max(120).optional(),
+      },
+      annotations: ANNOTATE_ANNOTATIONS,
+      async handler(a, ctx) {
+        return annotate(ctx, a, "angle", { joint: a.joint, title: a.title });
+      },
+    }),
     tool({
       name: "view_unannotate",
-      title: "Remove callouts, marks or arrows",
+      title: "Remove callouts, marks, arrows, dimensions or angles",
       description: "Removes records by id. Their ids are retired: never given to another record. " + RUNS,
       input: { ...COMMON, ids: z.array(z.string()).min(1).max(100) },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
@@ -745,18 +795,26 @@ export function viewTools(given: ViewToolDeps = {}): ToolSpec[] {
     return write(ctx, a, [op]);
   }
 
-  /** callout, mark and arrow: one `annotate` op; a new record needs a ref that is drawn. */
-  async function annotate(ctx: ToolContext, a: Common & { ref?: string; id?: string; handle?: string }, kind: "callout" | "mark" | "arrow", fields: Record<string, unknown>, to?: string) {
+  /**
+   * callout, mark, arrow, dimension and angle: one `annotate` op; a new record needs a ref that is drawn (a
+   * dimension's `to` is resolved as an arrow's; an angle's ref may be a joint id, which no node names: kept as given).
+   */
+  async function annotate(ctx: ToolContext, a: Common & { ref?: string; id?: string; handle?: string }, kind: "callout" | "mark" | "arrow" | "dimension" | "angle", fields: Record<string, unknown>, to?: string) {
     const clean = Object.fromEntries(Object.entries(fields).filter(([, v]) => v !== undefined));
     if (a.id) return write(ctx, a, [{ op: "annotate", id: a.id, ...clean }]);
     if (!a.ref) return { data: { error: `a new ${kind} needs ${kind === "arrow" ? "from and to" : "ref"}: the part it points at` }, isError: true };
     if (kind === "arrow" && !to) return { data: { error: "an arrow needs to: the part it points at" }, isError: true };
+    const pair = kind === "arrow" || kind === "dimension";
     const seen = await read(ctx, a);
     const nodes = nodesOf(seen);
-    const { paths, missing } = resolveAll(kind === "arrow" ? [a.ref, to!] : [a.ref], nodes);
+    // each end on its own (wave R3 gate: with both in one list, an unresolved first end took the second's path)
+    const first = resolveAll([a.ref], nodes);
+    const second = pair ? resolveAll([to!], nodes) : { paths: [], missing: [] };
+    // an angle's ref is usually a joint id (no node is named so): the view finds the joint; not a missing part
+    const missing = kind === "angle" ? [] : [...first.missing, ...second.missing];
     // a ref the view does not draw is still a valid record (an orphan the view lists); say so
-    const ref = paths[0] ?? a.ref;
-    const target = kind === "arrow" ? (paths.length === 2 ? paths[1] : to) : undefined;
+    const ref = first.paths[0] ?? a.ref;
+    const target = pair ? (second.paths[0] ?? to) : undefined;
     const handle = a.handle ?? a.batchId;
     return write(ctx, a, [{ op: "annotate", handle, kind, ref, ...(target ? { to: target } : {}), ...clean }], missing.length ? { unresolved: missing, warning: "not drawn in the 3D view now: the record is kept and listed as an orphan until the part appears" } : {});
   }

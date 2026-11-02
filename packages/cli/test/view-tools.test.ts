@@ -91,7 +91,7 @@ beforeEach(() => resetSceneSessions());
 describe("the view tools: listing", () => {
   it("lists the view tools with the CLI's, under the description limit, taking no secret", () => {
     const names = protoboardTools([]).map((t) => t.name);
-    for (const n of ["view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_explode", "view_capture", "view_undo", "view_claim", "view_release", "view_review", "view_tour"]) expect(names).toContain(n);
+    for (const n of ["view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_dimension", "view_angle", "view_explode", "view_capture", "view_undo", "view_claim", "view_release", "view_review", "view_tour"]) expect(names).toContain(n);
     for (const t of viewTools()) {
       expect(t.description.length, t.name).toBeLessThanOrEqual(DESCRIPTION_LIMIT);
       expect(t.description, t.name).toContain("It runs the project's own code (protoboard.config.ts and its model files)");
@@ -153,6 +153,33 @@ describe("the view tools: the route, callouts, data, refusals", () => {
     expect(o.route).toBe("live-tab");
     expect(o.refs.map((r) => r.ref)).toContain("stack/fc/u3");
     expect(o.annotations.map((a) => a.id)).toEqual(["a.ep1.1", "a.ep1.2"]);
+  });
+
+  it("dimensions two parts and shows a joint's angle (wave R3 gate: view_dimension, view_angle)", async () => {
+    const root = project("dims");
+    const owner = fakeOwner();
+    const tools = viewTools({ connectBridge: async () => liveClient(owner), renderService: async () => { throw new Error("no headless expected"); }, capture: async () => ({}) });
+    const ctx = ctxFor(root);
+    const dim = await call(tools, "view_dimension", { label: "dimension the chip to the battery", batchId: "d1", ref: "U3", to: "battery", tier: "exact", valueMm: 31.25, toleranceMm: 0.05, point: [0, 0, 1], title: "Chip to pack" }, ctx);
+    expect(dim.data).toMatchObject({ status: "applied", route: "live-tab", ids: { d1: expect.any(String) } });
+    expect(owner.calls.at(-1)).toMatchObject({ ops: [{ op: "annotate", handle: "d1", kind: "dimension", ref: "stack/fc/u3", to: "battery", tier: "exact", valueMm: 31.25, toleranceMm: 0.05, point: [0, 0, 1], title: "Chip to pack" }] });
+    // an unresolved first end keeps its own ref (it no longer takes the second end's path)
+    const orphan = await call(tools, "view_dimension", { label: "dimension a missing part", batchId: "d2", ref: "nothing-here", to: "battery" }, ctx);
+    expect(owner.calls.at(-1)).toMatchObject({ ops: [{ op: "annotate", kind: "dimension", ref: "nothing-here", to: "battery" }] });
+    expect((orphan.data as { unresolved: { ref: string }[] }).unresolved.map((u) => u.ref)).toEqual(["nothing-here"]);
+    // a new dimension needs both ends
+    const half = await call(tools, "view_dimension", { label: "dimension with one end", batchId: "d3", ref: "battery" }, ctx);
+    expect(half.isError).toBe(true);
+    // a change by id keeps its two parts (asking to move an end is refused, not silently ignored)
+    const moved = await call(tools, "view_dimension", { label: "move a dimension's end", batchId: "d4", id: "a.ep1.1", to: "battery" }, ctx);
+    expect(moved.isError).toBe(true);
+    const retiered = await call(tools, "view_dimension", { label: "change a dimension's tier", batchId: "d5", id: "a.ep1.1", tier: "measured", valueMm: 31.3 }, ctx);
+    expect(owner.calls.at(-1)).toMatchObject({ ops: [{ op: "annotate", id: "a.ep1.1", tier: "measured", valueMm: 31.3 }] });
+    expect(retiered.isError).toBeFalsy();
+    // an angle's ref is a joint id: kept as given, not reported as a missing part
+    const ang = await call(tools, "view_angle", { label: "show the gps fold angle", batchId: "a1", ref: "gps_fold", title: "GPS fold" }, ctx);
+    expect(owner.calls.at(-1)).toMatchObject({ ops: [{ op: "annotate", handle: "a1", kind: "angle", ref: "gps_fold", title: "GPS fold" }] });
+    expect((ang.data as { unresolved?: unknown }).unresolved).toBeUndefined();
   });
 
   it("goes headless when no tab is open (or none was asked for), and refuses live-only with no tab", async () => {

@@ -32,9 +32,10 @@ const HOME = mkdtempSync(join(tmpdir(), "pb-mcp-home-"));
 const TOOLS = [
   "project_status", "project_init", "project_check", "project_inspect", "project_build", "project_layout", "parts_search", "parts_add", "parts_list", "parts_models", "parts_import", "telemetry_export", "skills_list", "skill_read", "bom", "release_check",
   // the agent's view tools (PB-1179): they change what the view shows, never the project's files
-  "view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_unannotate", "view_explode", "view_undo", "view_claim", "view_release", "view_capture", "view_review",
+  "view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_dimension", "view_angle", "view_unannotate", "view_explode", "view_undo", "view_claim", "view_release", "view_capture", "view_review",
   // W4-D (deliberate change): faces and placements, then the exact tier and issue reports (PB-1187, PB-1197)
   "view_pick", "view_place_on_face", "view_orient_by_face", "view_tour", "geometry_measure", "report_issue", "request_feature", "report_send", "report_list",
+  // wave R3 gate (deliberate change): view_dimension and view_angle sit after view_arrow above
   // R2-E (deliberate change): the user's settings
   "settings_get", "settings_set",
 ];

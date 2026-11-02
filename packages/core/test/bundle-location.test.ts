@@ -22,6 +22,9 @@ describe("bundle diagnostics", () => {
       entity: { kind: "instance", id: "stack/fc" },
       validator: "test/provider",
       location: { at: [1.5, -2.25], points: [[1.5, -2.25], [3, 4]], layer: "top", components: ["stack/fc/u1"], pads: ["pcb_smtpad_1"], nets: ["gnd"], items: ["pcb_via_2"] },
+      // wave R3 gate: the risk card's VALUE row and its tier travel with the finding
+      value: "0.12 mm ±0.05",
+      tier: "mesh",
     };
     const plain: Diagnostic = { code: "TEST_PLAIN", severity: "info", message: "no place", entity: { kind: "project", id: "quadcopter-5in" }, validator: "test/provider" };
     p.diagnostics.push(located, plain);
@@ -34,5 +37,7 @@ describe("bundle diagnostics", () => {
     expect(JSON.parse(JSON.stringify(a)).location).toEqual(located.location);
     expect(b).toBeDefined();
     expect("location" in (b as object)).toBe(false);
+    expect(a).toMatchObject({ value: "0.12 mm ±0.05", tier: "mesh" });
+    expect("value" in (b as object) || "tier" in (b as object)).toBe(false);
   });
 });
