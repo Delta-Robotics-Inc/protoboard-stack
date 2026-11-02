@@ -15,6 +15,12 @@
  *   to the extension, which saves it to `.protoboard/local/viewer-state.json`;
  *   named views go to the extension on an explicit save; bridge batches the
  *   extension relays are answered by the viewer and the reply goes back.
+ * - R2-E (F1, J1, G3): the tab moves in place when the extension says `go`
+ *   (and remembers where it is, so a restored tab comes back there); the
+ *   viewer's navigations and history go to the extension and the header; the
+ *   user's viewer settings arrive at the start and on every change; the BOM's
+ *   data is asked of the extension; a file the page would download is handed
+ *   to the extension, which writes it to the export folder without asking.
  */
 import "@deltarobotics/uhd-viewer/components.css";
 import "./styles.css";
@@ -24,9 +30,14 @@ import type { ResolvedView } from "@protoboardai/core";
 import { VsCodeShell, type ShellBridge, type VsCodeViewerOptions } from "./Shell.js";
 import { DevLink, type EventSourceLike, type ViewerStatus } from "./devLink.js";
 import { suppressContextMenu } from "./contextMenu.js";
-import { emptyLayout, hasEdits, parseViewerStateFile, type FromWebview, type HierarchyAction, type HierarchyRowReport, type LayoutSnapshot, type ModuleSource, type ToWebview, type ViewerLayout, type ViewerStateFile, type ViewerViewport, type WebviewConfig } from "./protocol.js";
+import { emptyLayout, hasEdits, parseViewerSettings, parseViewerStateFile, type FromWebview, type HierarchyAction, type HierarchyRowReport, type LayoutSnapshot, type ModuleSource, type TabLocation, type ToWebview, type ViewerLayout, type ViewerStateFile, type ViewerViewport, type WebviewConfig } from "./protocol.js";
+import { parseTabHistory, type TabHistory, type ViewerHistoryFlags } from "./tab-history.js";
+import { applyHubSettings, extensionPartsData, interceptDownloads } from "./host-io.js";
+import type { PartsData } from "@protoboardai/views";
 
 export { VsCodeShell, vscodeShellThemeAdapter, isProtoboardTheme } from "./Shell.js";
+export * from "./tab-history.js";
+export * from "./host-io.js";
 export * from "./protocol.js";
 export * from "./devLink.js";
 export * from "./contextMenu.js";
@@ -77,6 +88,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   const post = (m: FromWebview) => vscode.postMessage(m);
   // M9: no VS Code Cut/Copy/Paste menu over the viewer; a right-click says where it was (R2's context menu hook)
   suppressContextMenu(element, post);
+  // G3: a download (the BOM's Export CSV) goes to the extension, which writes it to the export folder
+  interceptDownloads(post);
   // local telemetry (PB-1181): the viewer's session records (uhd-viewer src/telemetry/, a window event) go to the
   // extension host, which writes them only while recording is on (protoboard.telemetry.local and VS Code's telemetry)
   window.addEventListener("uhd-viewer:telemetry", (e) => {
@@ -95,7 +108,19 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   const sourceListeners = new Set<() => void>();
   // where the user left each level's view: kept with the tab (the webview's own state), so it comes back
   // when the tab is shown again or VS Code restores it; a level with none is fitted
-  const kept = (vscode.getState() ?? {}) as { viewports?: Record<string, ViewerViewport>; hierarchy?: unknown; viewState?: unknown };
+  const kept = (vscode.getState() ?? {}) as { viewports?: Record<string, ViewerViewport>; hierarchy?: unknown; viewState?: unknown; location?: unknown; tabHistory?: unknown };
+  // R2-E (F1): where the tab was moved to in place (kept with the tab), else where it was opened
+  const keptLocation = kept.location as TabLocation | undefined;
+  const start: TabLocation =
+    keptLocation && typeof keptLocation.path === "string" && typeof keptLocation.view === "string" && keptLocation.path.length <= 1024 && keptLocation.view.length <= 64 ? { path: keptLocation.path, view: keptLocation.view } : { path: config.path ?? "", view: config.view };
+  const keep = (patch: Record<string, unknown>) => vscode.setState({ ...((vscode.getState() ?? {}) as object), ...patch });
+  // R2-E: the user's viewer settings, and the viewer's own 3D history as it last said
+  let settings = parseViewerSettings(config.settings);
+  let viewerHistory: (ViewerHistoryFlags & { index: number; entries: { scope: string; label: string; kind: string }[] }) | null = null;
+  const viewerHistoryListeners = new Set<() => void>();
+  const goListeners = new Set<(to: TabLocation) => void>();
+  const stepListeners = new Set<(delta: -1 | 1) => void>();
+  const parts = extensionPartsData(post);
   // the 3D view's live state (PB-1178): the tab's own (VS Code keeps it across hide, reload and restore), else the project's saved one
   const startViewState: ViewerStateFile | undefined = parseViewerStateFile(kept.viewState) ?? config.viewState;
   const hierarchyListeners = new Set<(command: { type: HierarchyAction; path?: string }) => void>();
@@ -106,8 +131,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     post,
     source: (path) => sources.get(path),
     onSource: (l) => (sourceListeners.add(l), () => void sourceListeners.delete(l)),
-    startView: config.view,
-    startPath: config.path ?? "",
+    startView: start.view,
+    startPath: start.path,
     ...(config.params ? { startParams: config.params } : {}),
     onShowView: (l) => (showListeners.add(l), () => void showListeners.delete(l)),
     status: () => status,
@@ -129,6 +154,15 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       // the tab tries by itself too: the extension answers with the same endpoint when the server is where it was
       if (action === "retry") link.retry();
     },
+    // R2-E (F1): moving in place, back and forward
+    onGo: (l) => (goListeners.add(l), () => void goListeners.delete(l)),
+    onHistoryStep: (l) => (stepListeners.add(l), () => void stepListeners.delete(l)),
+    viewerHistory: () => viewerHistory,
+    onViewerHistory: (l) => (viewerHistoryListeners.add(l), () => void viewerHistoryListeners.delete(l)),
+    command: (command) => void viewer?.post(command),
+    tabHistory: parseTabHistory(kept.tabHistory),
+    onTabHistory: (history: TabHistory) => keep({ tabHistory: history }),
+    onLocation: (location) => keep({ location }),
   };
 
   let viewer: ViewerHandle | undefined;
@@ -139,9 +173,25 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   let views: ResolvedView[] = [];
   let partStatus: VsCodeViewerOptions["partStatus"];
 
+  const navOptions: Record<string, unknown> = {
+    // R2-A (F1, F3): the viewer asks to open a part's own model; the extension decides in place or a new tab (R2-E)
+    onNavigate: (r: Record<string, unknown>) => post({ type: "event", event: { ...r, type: "uhd-viewer:navigate" } as Extract<FromWebview, { type: "event" }>["event"] }),
+    // R2-A (F1): the viewer's own 3D history, for the header's back and forward (and the extension's log)
+    onHistory: (h: { index: number; length: number; canBack: boolean; canForward: boolean; entries: { scope: string; label: string; kind: "open" | "drill" | "frame" | "isolate" }[] }) => {
+      viewerHistory = { canBack: h.canBack, canForward: h.canForward, index: h.index, entries: h.entries };
+      for (const l of viewerHistoryListeners) l();
+      post({ type: "event", event: { ...h, type: "uhd-viewer:history" } });
+    },
+    // G3, for R2-B's toolbar Export button (`ViewerOptions.onExport`, handoffs.md): the extension writes the file
+    onExport: (r: Record<string, unknown>) => post({ type: "event", event: { ...r, type: "uhd-viewer:export" } as Extract<FromWebview, { type: "event" }>["event"] }),
+  };
   const options = (): Omit<VsCodeViewerOptions, "bundle" | "bundleUrl"> => ({
     bridge,
     views,
+    settings,
+    partsData: parts.data as unknown as PartsData,
+    // R2-A's navigation options (typed loosely: a viewer build from before R2-A has neither and ignores them)
+    ...navOptions,
     ...(partStatus ? { partStatus } : {}),
     layout,
     onLayoutChange: (next) => {
@@ -183,11 +233,11 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   });
 
   // nothing to draw until there is a bundle: the shell says why
-  const startView3d = config.view === "3d";
+  const startView3d = start.view === "3d";
   /** The dev server's snapshot of this tab, if any, to the viewer (`uhd-viewer:snapshot`). */
   const showSnapshot = async (base: string, currentBundleHash?: string) => {
     try {
-      const q = new URLSearchParams({ level: config.path ?? "", view: "3d" });
+      const q = new URLSearchParams({ level: start.path, view: "3d" });
       const res = await fetch(new URL(`__protoboard/snapshot?${q}`, base).href, { cache: "no-store" });
       if (!res.ok) return;
       const snap = (await res.json()) as Record<string, unknown> & { imageUrl?: string };
@@ -197,6 +247,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       // no snapshot: the view opens as it always did
     }
   };
+  // zoom toward the pointer (or not) holds for the first 3D view too (R2-E, J1)
+  applyHubSettings(settings);
   viewer = renderViewer(element, { ...options(), ...(startViewState ? { viewState: startViewState } : {}) } as VsCodeViewerOptions, VsCodeShell);
   let loaded = false;
 
@@ -208,14 +260,14 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     onStatus: setStatus,
     onLoad: ({ base, state, bundle }) => {
       // the last snapshot of this tab's 3D view (PB-1180): painted at once, while the models load
-      if (!loaded && (config.view === "3d" || startView3d)) void showSnapshot(base, (state as { bundleHash?: string }).bundleHash);
+      if (!loaded && startView3d) void showSnapshot(base, (state as { bundleHash?: string }).bundleHash);
       views = Array.isArray(state.views) ? (state.views as ResolvedView[]) : [];
       partStatus = state.partStatus && typeof state.partStatus === "object" ? (state.partStatus as VsCodeViewerOptions["partStatus"]) : undefined;
       viewer!.update({ ...options(), bundle: rebase(bundle as UhdBundle, base), bundleUrl: new URL("uhd-bundle.json", base).href, diagnostics: state.diagnostics } as Partial<VsCodeViewerOptions>);
       if (!loaded) {
         loaded = true;
-        if (config.path) viewer!.drill(config.path);
-        if (config.view === "3d") viewer!.setView("3d");
+        if (start.path) viewer!.drill(start.path);
+        if (start.view === "3d") viewer!.setView("3d");
         for (const m of waiting.splice(0)) receive(m);
       }
     },
@@ -246,7 +298,7 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     }, 2000);
 
   function receive(m: ToWebview) {
-    if (!loaded && (m.type === "command" || m.type === "showView" || m.type === "layout" || m.type === "hierarchy")) {
+    if (!loaded && (m.type === "command" || m.type === "showView" || m.type === "layout" || m.type === "hierarchy" || m.type === "go" || m.type === "historyStep")) {
       waiting.push(m);
       return;
     }
@@ -282,6 +334,23 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       case "reportHierarchy":
         post({ type: "hierarchy", ...hierarchyReport() });
         return;
+      case "go":
+        // in place (R2-E, F1): the shell moves its target, drills and shows the view; Back returns
+        for (const l of goListeners) l({ path: m.path, view: m.view });
+        return;
+      case "historyStep":
+        // VS Code's Alt+Left / Alt+Right; the viewer may have taken the same key itself (its 3D view binds it)
+        if (Date.now() - keyTakenAt < 400) return;
+        for (const l of stepListeners) l(m.delta);
+        return;
+      case "settings":
+        settings = parseViewerSettings(m.settings);
+        applyHubSettings(settings);
+        viewer?.update({ settings } as Partial<VsCodeViewerOptions>);
+        return;
+      case "partsAnswer":
+        parts.answer(m);
+        return;
       case "bridge": {
         // an agent's batch, relayed by the extension from the dev server (PB-1178): the viewer's store answers it
         const out = viewer?.bridge(m.request as unknown as Parameters<ViewerHandle["bridge"]>[0]);
@@ -301,6 +370,16 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     }
   }
 
+  // the viewer's 3D view binds Alt+Left / Alt+Right itself (R2-A): when it took the key (default prevented), the same
+  // key forwarded to VS Code comes back as a `historyStep` that must not step a second time
+  let keyTakenAt = 0;
+  window.addEventListener("keydown", (e) => {
+    // wave R2 gate: read after the whole dispatch; the 3D view's own listener is added later (a React effect), so
+    // at this listener's turn it has not run yet and `defaultPrevented` was always false here
+    if (e.altKey && (e.key === "ArrowLeft" || e.key === "ArrowRight")) setTimeout(() => {
+      if (e.defaultPrevented) keyTakenAt = Date.now();
+    }, 0);
+  });
   window.addEventListener("message", (e) => {
     const m = e.data as ToWebview | undefined;
     if (m && typeof m === "object" && typeof m.type === "string") receive(m);

@@ -71,6 +71,8 @@ describe("quadcopter reference project", async () => {
       // the one model resolver's findings (PB-1174), once the providers' outputs are attached
       "protoboard/part-files:ran",
       "protoboard/model-size:ran",
+      // wave R2 (deliberate change): a board part's model upside down or through the board (PB_MODEL_ORIENTATION)
+      "protoboard/model-orientation:ran",
       "ext:@protoboardai/ext-hardware/evidence:ran",
       "ext:@protoboardai/ext-frame-cad/frames:ran",
       "ext:@protoboardai/ext-frame-cad/hardware:ran",

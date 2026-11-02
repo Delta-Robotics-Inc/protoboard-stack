@@ -205,7 +205,7 @@ export function sizeMessage(instance: string, part: string, pkg: { length: numbe
 const upper = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /** The body GLB a table entry draws, absolute, and the folder its sidecar must stay inside; undefined for a machine-cache file. */
-function glbOf(p: Project, e: ModelTableEntry): { glb: string; base: string } | undefined {
+export function glbOf(p: Project, e: ModelTableEntry): { glb: string; base: string } | undefined {
   if (!e.file || (e.format && e.format !== "glb") || e.file.startsWith("cache:")) return undefined;
   if (e.file.startsWith("package:")) {
     const art = p.artifacts.find((a) => a.definition === e.part && a.id === e.artifact && a.resolved);
@@ -219,7 +219,7 @@ function glbOf(p: Project, e: ModelTableEntry): { glb: string; base: string } | 
 }
 
 /** The view sidecar index of a body GLB, when it exists, is inside `base`, under the cap and names this GLB (by sha256). */
-function readIndex(glb: { glb: string; base: string }, sha256: string | undefined, cap: number, cache: Map<string, ViewSidecarIndex | undefined>): ViewSidecarIndex | undefined {
+export function readIndex(glb: { glb: string; base: string }, sha256: string | undefined, cap: number, cache: Map<string, ViewSidecarIndex | undefined>): ViewSidecarIndex | undefined {
   const file = viewSidecarPaths(glb.glb).index;
   if (cache.has(file)) return cache.get(file);
   let idx: ViewSidecarIndex | undefined;

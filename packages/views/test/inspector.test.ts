@@ -201,6 +201,19 @@ describe("the Inspector's selection", () => {
     expect(html).not.toContain("uhd-selection-details");
   });
 
+  it("a finding's row: its plain title, its plain sentence under it, its code; a named link's ids on hover (wave R2, D3 and D7)", () => {
+    const rows = [
+      { icon: "triangle-alert", label: "I2C line has no pull-up", detail: "The I2C clock line i2c0_scl on Power needs a pull-up resistor to its supply; none is connected.", tone: "warning", code: "UHD_BUS_PULLUP", action: { type: "finding" as const, key: "0" } },
+    ];
+    const links = [{ icon: "link", label: "12 V barrel plug (12 V 3 A wall adapter) to 12 V DC jack (Mainboard B1_4)", hint: "psu_plug: psu:dc_plug ↔ pcb:dc_jack" }];
+    const html = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 1, rows }, { title: "Links", count: 1, rows: links }] }), project: "pod" }, actions }));
+    const finding = html.slice(html.indexOf('data-row-finding="UHD_BUS_PULLUP"'));
+    expect(finding.indexOf("I2C line has no pull-up")).toBeLessThan(finding.indexOf("needs a pull-up resistor"));
+    expect(finding.indexOf("needs a pull-up resistor")).toBeLessThan(finding.indexOf(">UHD_BUS_PULLUP<"));
+    expect(html).toContain('data-tooltip="psu_plug: psu:dc_plug ↔ pcb:dc_jack"');
+    expect(html).toContain(">12 V barrel plug (12 V 3 A wall adapter) to 12 V DC jack (Mainboard B1_4)<");
+  });
+
   it("a long list shows ten rows at a time, with Show 10 more (PB-1088)", () => {
     const rows = Array.from({ length: 23 }, (_, i) => ({ icon: "circle-x", label: `Finding ${i}`, tone: "error", code: "UHD_X", action: { type: "finding" as const, key: String(i) } }));
     const html = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 23, rows }] }), project: "pod" }, actions }));
@@ -395,6 +408,16 @@ describe("the DRC panel", () => {
     expect(open).toContain("<code");
     expect(open).toContain("<b>incompatible</b>");
     expect(open).toContain("What to do: ");
+  });
+
+  it("shows a finding's plain title on its row, and its plain sentence before the raw detail when open (wave R2, D3)", () => {
+    const plainRow = { ...row("0", "UHD_LINK_STATE", "gpio1 drives 3.3 V into a 2.0 V LED"), title: "Link protocols do not match", plain: "GPIO1 and the LED anode share no protocol, so they cannot connect as modelled." };
+    const m: DrcPanelModel = { ...model, model: { ...model.model!, lanes: [{ id: "blocking", title: "Blocking", total: 1, shown: 1, groups: [{ key: "m:board", label: "Main board", items: [plainRow] }] }] } };
+    const closed = render(createElement(DrcPanel, { model: m, actions: none }));
+    expect(closed).toContain(">Link protocols do not match<");
+    const open = render(createElement(DrcPanel, { model: m, actions: { ...none, saved: { expanded: [`UHD_LINK_STATE|${plainRow.message}`] } } }));
+    expect(open.indexOf("share no protocol")).toBeGreaterThan(-1);
+    expect(open.indexOf("share no protocol")).toBeLessThan(open.indexOf(">gpio1 drives 3.3 V into a 2.0 V LED<"));
   });
 
   it("says what to do without a project or a build", () => {

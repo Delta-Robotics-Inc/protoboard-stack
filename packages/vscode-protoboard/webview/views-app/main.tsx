@@ -403,6 +403,9 @@ function Settings() {
         openLibraries: () => send("openLibraries"),
         showLog: () => send("showLog"),
         run: (id) => send("run", { id }),
+        // R2-E (J1), the Viewer section (R2 integration)
+        setSetting: (key, value) => send("setSetting", { key, value }),
+        chooseSetting: (key) => send("chooseSetting", { key }),
       }}
     />
   );

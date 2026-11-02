@@ -89,8 +89,9 @@ export interface CadTabState {
 }
 
 
-export function cadViewerHtml(o: { script: string; style: string; occt: string; wasm: string; model: string; source: CadSource; name: string; cspSource: string; nonce: string }): string {
-  const config = { model: o.model, kind: o.source.kind, name: o.name, via: o.source.via ? basename(o.source.via) : undefined, occt: o.occt, wasm: o.wasm };
+export function cadViewerHtml(o: { script: string; style: string; occt: string; wasm: string; model: string; source: CadSource; name: string; cspSource: string; nonce: string; modelInfo?: boolean }): string {
+  // R2-E's `viewer.modelInfo` (J1, R2 integration): the card closed at first when the person turned it off
+  const config = { model: o.model, kind: o.source.kind, name: o.name, via: o.source.via ? basename(o.source.via) : undefined, occt: o.occt, wasm: o.wasm, ...(o.modelInfo === false ? { modelInfo: false } : {}) };
   const json = JSON.stringify(config).replace(/</g, "\\u003c");
   return `<!doctype html>
 <html lang="en">

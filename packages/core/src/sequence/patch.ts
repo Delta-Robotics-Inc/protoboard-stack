@@ -10,7 +10,7 @@
  * there; an edit that names a step, member or sequence that no longer exists
  * is reported (`SEQUENCE_PATCH_*`) and skipped, never guessed.
  */
-import type { AssemblySequence, Member, PartRef, SeqStep, SequenceEdit, SequenceFile, SequencePatch, SequenceProblem } from "./types.js";
+import type { AssemblySequence, Member, PartRef, SeqStep, SequenceEdit, SequenceFile, SequencePatch, SequenceProblem, Vec3 } from "./types.js";
 
 const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x)) as T;
 
@@ -167,6 +167,22 @@ function applyEdit(seq: AssemblySequence, edit: SequenceEdit): Omit<SequenceProb
     const i = index(seq, edit.remove);
     if (i < 0) return unknown(edit.remove, seq);
     seq.steps.splice(i, 1);
+    return undefined;
+  }
+  if ("explode" in edit) {
+    // how a member leaves in the exploded view (R2-E, H2): every member the ref names, in every step of the sequence
+    const refs = expandRefs(seq, [edit.explode]);
+    const vec = (v: unknown): v is Vec3 => Array.isArray(v) && v.length === 3 && v.every((x) => typeof x === "number" && Number.isFinite(x)) && Math.hypot(v[0], v[1], v[2]) > 1e-9;
+    if (edit.direction !== undefined && !vec(edit.direction)) return { code: "SEQUENCE_PATCH_BAD_EXPLODE", severity: "warning", message: `explode "${edit.explode}": direction is three finite numbers, not all zero` };
+    if (edit.distance !== undefined && !(typeof edit.distance === "number" && Number.isFinite(edit.distance) && edit.distance >= 0)) return { code: "SEQUENCE_PATCH_BAD_EXPLODE", severity: "warning", message: `explode "${edit.explode}": distance is a number of mm, 0 or more` };
+    let hit = 0;
+    for (const step of seq.steps)
+      for (const m of step.members) {
+        if (!refs.includes(m.ref)) continue;
+        m.explode = { ...(m.explode ?? {}), ...(edit.direction ? { direction: [edit.direction[0], edit.direction[1], edit.direction[2]] as Vec3 } : {}), ...(edit.distance !== undefined ? { distance: edit.distance } : {}) };
+        hit++;
+      }
+    if (!hit) return { code: "SEQUENCE_PATCH_UNKNOWN_MEMBER", severity: "warning", message: `no step of sequence "${seq.id}" moves "${edit.explode}" (a base part does not move)` };
     return undefined;
   }
   if ("joint" in edit) {

@@ -14,12 +14,14 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { z, type ZodRawShape } from "zod";
 import { LIBRARY_SORTS, findProjectRoot, packageRoot } from "@protoboardai/core";
+import { plainFinding } from "@protoboardai/core/findings-text";
 
 /** Whether a project's packages are installed: the framework resolves from it (its own node_modules, or a workspace's further up). */
 const installedIn = (root: string) => !!packageRoot(root, "@protoboardai/core");
 import { DESCRIPTION_LIMIT } from "./instructions.js";
 import { geometryTools, viewTools } from "./view-tools.js";
 import { reportTools } from "./report-tools.js";
+import { settingsTools } from "./settings-tools.js";
 
 /** What a tool hands back: data (sent as JSON text), images (base64, only when asked for) and whether it is a failure. */
 export interface ToolOutcome {
@@ -167,7 +169,8 @@ const SEVERITY = ["error", "warning", "info"] as const;
  */
 export function protoboardTools(templates: string[]): ToolSpec[] {
   // W4-D: the exact measurement tier (PB-1187) and issue and feature reports (PB-1197; a draft, shown, then sent only on confirm)
-  const specs = [...cliTools(templates), ...viewTools(), ...geometryTools(), ...reportTools()];
+  // R2-E: the user's settings (settings_get, settings_set)
+  const specs = [...cliTools(templates), ...viewTools(), ...geometryTools(), ...reportTools(), ...settingsTools()];
   for (const s of specs) if (s.description.length > DESCRIPTION_LIMIT) throw new Error(`the description of ${s.name} is ${s.description.length} characters; clients cut it at ${DESCRIPTION_LIMIT}`);
   return specs;
 }
@@ -250,15 +253,17 @@ export function cliTools(templates: string[]): ToolSpec[] {
       name: "project_check",
       title: "Check the project",
       description:
-        "Resolves the project and runs every available validator (`protoboard check`). Returns the validators that ran or were skipped, the diagnostics at or above `severity` (default warning) with their code, message and source location, and the counts of all of them. `ok` is false when there are errors. When the project patches its assembly sequence (src/assembly.uhd.ts `sequencePatches`, src/assembly.sequence.json), an unknown step, member or sequence id is a SEQUENCE_PATCH_* warning (validator protoboard/sequence). Run it before and after every change. A passing check validates the model only; it does not establish physical readiness. Reads only.",
+        "Resolves the project and runs every available validator (`protoboard check`). Returns the validators that ran or were skipped, the diagnostics at or above `severity` (default warning) with their code, message, title, summary and source location, and the counts of all of them. `message` is the raw detail for you; `title` (at most 60 characters) and `summary` (one sentence, at most 160) are plain words for people, with the parts and links by their human names: when you tell a person about a finding, start from them and rewrite the summary for that person if it helps; never drop the code. `ok` is false when there are errors. When the project patches its assembly sequence (src/assembly.uhd.ts `sequencePatches`, src/assembly.sequence.json), an unknown step, member or sequence id is a SEQUENCE_PATCH_* warning (validator protoboard/sequence). Run it before and after every change. A passing check validates the model only; it does not establish physical readiness. Reads only.",
       input: { dir: DIR, severity: z.enum(SEVERITY).optional().describe("The lowest severity to return: error, warning (default) or info.") },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       async handler({ dir: given, severity }, ctx) {
         const dir = await ctx.dir(given);
         const rank = SEVERITY.indexOf(severity ?? "warning");
         return command(ctx, dir, cliArgs(["check"]), (data) => {
-          const d = data as { checks?: unknown; diagnostics?: { severity: (typeof SEVERITY)[number] }[] };
-          const all = d.diagnostics ?? [];
+          const d = data as { checks?: unknown; diagnostics?: { severity: (typeof SEVERITY)[number]; code: string; message: string; title?: string; summary?: string }[] };
+          // plain words for people (wave R2, D3): a finding the CLI wrote without them (added after loading, or an
+          // older CLI) gets them here, worded from its code and message alone
+          const all = (d.diagnostics ?? []).map((x) => (typeof x.title === "string" && typeof x.summary === "string" ? x : { ...x, ...plainFinding(x) }));
           const counts = Object.fromEntries(SEVERITY.map((s) => [s, all.filter((x) => x.severity === s).length]));
           const shown = all.filter((x) => SEVERITY.indexOf(x.severity) <= rank);
           return { ok: !counts.error, counts, checks: d.checks, diagnostics: shown, ...(shown.length < all.length ? { notShown: `${all.length - shown.length} below ${severity ?? "warning"}; pass severity: "info" for all` } : {}) };

@@ -419,8 +419,18 @@ export function viewTools(given: ViewToolDeps = {}): ToolSpec[] {
     tool({
       name: "view_highlight",
       title: "Highlight parts in the 3D view",
-      description: "Draws parts with a glow besides the selection (what you point at). `mode`: replace (default), add or remove. Refs are instance paths or unique tails. " + RUNS,
-      input: { ...COMMON, refs: PATHS.describe("Parts to highlight (instance paths or unique tails)."), mode: z.enum(["replace", "add", "remove"]).optional() },
+      description: "Draws parts with a glow besides the selection (what you point at). `mode`: replace (default), add or remove. Refs are instance paths or unique tails. `color` (optional): a theme token name such as drcError or a hex colour like #e11d48; omitted uses the theme's highlight glow; each highlight call replaces the colour (add and remove keep it). " + RUNS,
+      input: {
+        ...COMMON,
+        refs: PATHS.describe("Parts to highlight (instance paths or unique tails)."),
+        mode: z.enum(["replace", "add", "remove"]).optional(),
+        // R2-A (2026-11-02): the view state's `highlight` op takes `color`, stored as the live key `highlightColor`
+        color: z
+          .string()
+          .regex(/^(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|[a-zA-Z][a-zA-Z0-9]{0,31})$/)
+          .optional()
+          .describe("A theme token name (accent, highlight, drcError, drcWarning, drcInfo, drcRisk, drcPass, ...) or a hex colour (#rgb, #rrggbb). Omitted: the theme's highlight glow."),
+      },
       annotations: ANNOTATE_ANNOTATIONS,
       async handler(a, ctx) {
         const seen = await read(ctx, a);
@@ -429,7 +439,10 @@ export function viewTools(given: ViewToolDeps = {}): ToolSpec[] {
         const next = a.mode === "add" ? [...new Set([...now, ...paths])] : a.mode === "remove" ? now.filter((p) => !paths.includes(p)) : paths;
         // add and remove read first: refused if someone changed the highlight in between
         const versions = (seen.versions ?? {}) as Record<string, number>;
-        return write(ctx, { ...a, ...(a.mode && a.mode !== "replace" && !a.expectVersions ? { expectVersions: { highlight: versions.highlight ?? 0 } } : {}) }, [{ op: "highlight", paths: next }], missing.length ? { unresolved: missing } : {});
+        // a colour given replaces the one in force; add and remove keep the one in force (a highlight op without one clears it)
+        const kept = (seen.state as { highlightColor?: string } | undefined)?.highlightColor;
+        const color = a.color ?? (a.mode && a.mode !== "replace" ? kept : undefined);
+        return write(ctx, { ...a, ...(a.mode && a.mode !== "replace" && !a.expectVersions ? { expectVersions: { highlight: versions.highlight ?? 0 } } : {}) }, [{ op: "highlight", paths: next, ...(color ? { color } : {}) }], missing.length ? { unresolved: missing } : {});
       },
     }),
     tool({

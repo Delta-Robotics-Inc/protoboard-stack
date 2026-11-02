@@ -9,6 +9,12 @@
  * `cad/scope.ts`): from the display file's `spatial.root` when it names one,
  * else the system itself when it has a body, else the top-level module with
  * the most interface frames; display placements fix what no mate places.
+ *
+ * R2-E (H2, 2026-11-02): the assembly script may ask for the radial explode
+ * (`"explode": "radial"` beside `patches` in `src/assembly.sequence.json`, or
+ * `export const sequenceExplode = "radial"` in `src/assembly.uhd.ts`): every
+ * moving part then gets its way out from its mounting face (radial.ts) before
+ * the patches apply, so an `explode` patch edit adjusts it.
  */
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
@@ -23,6 +29,7 @@ import type { Project } from "../project.js";
 import type { ProjectDiagnostic } from "../types.js";
 import { generateSequence } from "./generate.js";
 import { applyPatches } from "./patch.js";
+import { projectRadialExplode } from "./radial.js";
 import type { SequenceFile, SequencePatch, SequenceProblem } from "./types.js";
 
 /** Where the build writes the sequence, project-relative. */
@@ -48,9 +55,16 @@ function isPatchList(x: unknown): x is SequencePatch[] {
 }
 
 /** The patches a project declares, by file; a file that cannot be read is a problem, not a crash. */
-export async function readSequencePatches(root: string): Promise<{ files: { file: string; patches: SequencePatch[] }[]; problems: SequenceProblem[] }> {
+export async function readSequencePatches(root: string): Promise<{ files: { file: string; patches: SequencePatch[] }[]; problems: SequenceProblem[]; explode?: "radial" }> {
   const files: { file: string; patches: SequencePatch[] }[] = [];
   const problems: SequenceProblem[] = [];
+  // R2-E (H2): the script's explode mode (the last file that names one wins)
+  let explode: "radial" | undefined;
+  const mode = (v: unknown, rel: string) => {
+    if (v === undefined) return;
+    if (v === "radial") explode = "radial";
+    else problems.push({ code: "SEQUENCE_PATCH_INVALID", severity: "warning", message: `${rel}: explode is "radial" (or left out), not ${JSON.stringify(v).slice(0, 40)}`, patch: rel });
+  };
   for (const rel of SEQUENCE_PATCH_FILES) {
     const abs = join(root, rel);
     if (!existsSync(abs)) continue;
@@ -59,9 +73,11 @@ export async function readSequencePatches(root: string): Promise<{ files: { file
       if (rel.endsWith(".json")) {
         const parsed = JSON.parse(readFileSync(abs, "utf8")) as unknown;
         value = Array.isArray(parsed) ? parsed : (parsed as { patches?: unknown }).patches;
+        if (!Array.isArray(parsed)) mode((parsed as { explode?: unknown }).explode, rel);
       } else {
         const mod = await importTs<Record<string, unknown>>(abs);
         value = mod.sequencePatches ?? mod.default;
+        mode(mod.sequenceExplode, rel);
       }
       if (value === undefined) continue; // the file declares other things (definitions), no patches
       if (!isPatchList(value)) {
@@ -73,7 +89,7 @@ export async function readSequencePatches(root: string): Promise<{ files: { file
       problems.push({ code: "SEQUENCE_PATCH_INVALID", severity: "warning", message: `${rel}: ${(e as Error).message}`, patch: rel });
     }
   }
-  return { files, problems };
+  return { files, problems, ...(explode ? { explode } : {}) };
 }
 
 export interface SequenceBuild {
@@ -86,8 +102,14 @@ export interface SequenceBuild {
   diagnostics: ProjectDiagnostic[];
 }
 
+/** What a build of the sequence may add (R2-E). */
+export interface SequenceBuildOptions {
+  /** "radial": every moving part's way out from its mounting face (radial.ts); default: what the assembly script says. */
+  explode?: "radial" | "none";
+}
+
 /** Generate and patch the project's sequence (nothing written). Undefined when the project has no root system. */
-export async function buildSequence(p: Project): Promise<SequenceBuild | undefined> {
+export async function buildSequence(p: Project, options: SequenceBuildOptions = {}): Promise<SequenceBuild | undefined> {
   const placed = assembleProject(p);
   if (!placed) return undefined;
   const { asm, root, fixed } = placed;
@@ -96,6 +118,14 @@ export async function buildSequence(p: Project): Promise<SequenceBuild | undefin
   let file = generated;
   let applied = 0;
   const problems = [...read.problems];
+  // R2-E (H2): the radial explode first, so the script's `explode` edits adjust what it wrote
+  const explode = options.explode ?? read.explode;
+  if (explode === "radial") {
+    const r = await projectRadialExplode(p, asm, file);
+    file = r.file;
+    // one line for the parts without a model (placeholders, no file): the viewer's own rule moves them
+    if (r.skipped.length) problems.push({ code: "SEQUENCE_EXPLODE_NO_MODEL", severity: "info", message: `radial explode: ${r.skipped.length} part(s) have no model to read (${r.skipped.slice(0, 3).map((x) => x.ref).join(", ")}${r.skipped.length > 3 ? ", ..." : ""}); the viewer's own rule moves them` });
+  }
   for (const f of read.files) {
     const r = applyPatches(file, f.patches, f.file);
     file = r.file;
@@ -131,8 +161,8 @@ export async function buildSequence(p: Project): Promise<SequenceBuild | undefin
  * The build hook: generate, patch and write `.protoboard/build/sequence.json`.
  * Returns what was written and the patch diagnostics (unknown step ids and the like).
  */
-export async function writeSequence(p: Project, outFile = join(p.root, SEQUENCE_FILE)): Promise<SequenceBuild | undefined> {
-  const built = await buildSequence(p);
+export async function writeSequence(p: Project, outFile = join(p.root, SEQUENCE_FILE), options: SequenceBuildOptions = {}): Promise<SequenceBuild | undefined> {
+  const built = await buildSequence(p, options);
   if (!built) return undefined;
   mkdirSync(dirname(outFile), { recursive: true });
   writeAtomic(outFile, JSON.stringify(built.file, null, 2) + "\n");

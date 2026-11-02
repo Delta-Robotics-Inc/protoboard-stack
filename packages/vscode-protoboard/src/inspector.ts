@@ -19,6 +19,7 @@ import { definitionSource } from "./source.js";
 import type { InspectorArtifact, InspectorCard as Card, InspectorChip, InspectorContent as PageContent, InspectorDetails, InspectorFinding, InspectorRow } from "@protoboardai/views/inspector-model";
 import { partSync, rev } from "./libraryModel.js";
 import { money, type CostLine } from "./cost.js";
+import { humanId, humanLinkName, shortName, type LinkEnd } from "@protoboardai/core/findings-text";
 
 export type { InspectorChip, InspectorDetails, InspectorRow };
 /** The card on the extension's side: its files are paths on disk. */
@@ -217,13 +218,18 @@ function findingRows(list: Finding[]): { rows: InspectorRow[] } {
     rows: list.map((f) => {
       const means = referenceText(f.means);
       const todo = referenceText(f.todo);
+      // plain words for people first (wave R2, D3: the title, its sentence under it); the raw message stays in the
+      // explanation ("This finding"), the code under the row
+      const label = f.title ?? f.summary;
+      const detail = f.plain && f.plain !== label ? f.plain : undefined;
       return {
         icon: f.severity === "error" ? "circle-x" : f.severity === "warning" ? "triangle-alert" : "info",
-        label: f.summary,
+        label,
+        ...(detail ? { detail } : {}),
         code: f.code,
         tone: f.severity,
         action: { type: "finding", key: f.key },
-        explain: { severity: f.severity, validator: f.validator, ...(means ? { means } : {}), ...(todo ? { todo } : {}), ...(f.message.trim() !== f.summary.trim() ? { message: f.message } : {}), page: !!f.reference },
+        explain: { severity: f.severity, validator: f.validator, ...(means ? { means } : {}), ...(todo ? { todo } : {}), ...(f.message.trim() !== (detail ?? label).trim() ? { message: f.message } : {}), page: !!f.reference },
       };
     }),
   };
@@ -348,7 +354,7 @@ export function interfaceFindings(findings: Finding[], path: string): InspectorF
       refs.push(viewerLinkId(t.path ?? "", t.linkId));
       if (t.derivedId) refs.push(viewerLinkId(t.path ?? "", t.derivedId));
     } else if (!t.linkId && t.label.includes(":") && inside(t.label.slice(0, t.label.lastIndexOf(":")))) refs.push(t.label);
-    return refs.length ? [{ key: f.key, code: f.code, message: f.summary, severity: f.severity, refs }] : [];
+    return refs.length ? [{ key: f.key, code: f.code, message: f.plain ?? f.summary, ...(f.title ? { title: f.title } : {}), severity: f.severity, refs }] : [];
   });
 }
 
@@ -506,7 +512,8 @@ export function moduleCard(
       title: "Links",
       count: links.length,
       collapsed: true,
-      ...cut(links.map<InspectorRow>((l) => ({ icon: "link", label: names.get(localLinkId(l)) ?? localLinkId(l), detail: `${l.a} ↔ ${l.b}` }))),
+      // named for people (D7): "12 V barrel plug (12 V 3 A wall adapter) to 12 V DC jack (Mainboard B1_4)"; the ids on hover
+      ...cut(links.map<InspectorRow>((l) => ({ icon: "link", label: linkName(index, l, names.get(localLinkId(l))), hint: `${localLinkId(l)}: ${l.a} ↔ ${l.b}` }))),
     });
   }
   const sourcing = sourcingOf(cost, node.path);
@@ -537,6 +544,25 @@ export function moduleCard(
       : {}),
   };
 }
+
+/**
+ * One end of a link named for a person (D7): its interface's name (without a trailing parenthetical) and the name of
+ * the module that holds it, from the build's definitions; the ids in words when a name is missing.
+ */
+export function linkEnd(index: ProjectIndex, owner: string, ref: string): LinkEnd {
+  const at = ref.lastIndexOf(":");
+  const mod = at >= 0 ? ref.slice(0, at) : ref;
+  const id = at >= 0 ? ref.slice(at + 1) : "";
+  const inst = index.instances.get(owner ? `${owner}/${mod}` : mod);
+  const def = inst ? index.bundleDefs.get(inst.definition) : undefined;
+  const holder = shortName(inst?.name ?? def?.name ?? index.defs.get(inst?.definition ?? "")?.name) ?? humanId(mod);
+  const iface = shortName(def?.interfaces?.find((i) => i.id === id)?.name ?? def?.exports?.find((e) => e.id === id)?.name) ?? humanId(id || mod);
+  return { iface, holder };
+}
+
+/** A link named for a person (D7, core `humanLinkName`): "<name> (<holder>) to <interface> (<holder>)". */
+export const linkName = (index: ProjectIndex, l: { owner: string; a: string; b: string }, name?: string): string =>
+  humanLinkName({ name, a: linkEnd(index, l.owner, l.a), b: linkEnd(index, l.owner, l.b) });
 
 /** The card for a link the viewer selected (by its canonical id), or undefined when it is not one of the build's links. */
 /**
@@ -590,14 +616,17 @@ export function linkCard(index: ProjectIndex, viewerId: string, findings: Findin
   const end = (ref: string): InspectorRow => {
     const [mod, iface] = ref.includes(":") ? [ref.slice(0, ref.lastIndexOf(":")), ref.slice(ref.lastIndexOf(":") + 1)] : [ref, ""];
     const path = link.owner ? `${link.owner}/${mod}` : mod;
-    return { icon: "plug", label: iface || ref, detail: mod, action: index.instances.has(path) ? { type: "focus", path } : undefined };
+    // named for people (D7), the ids on hover
+    const named = linkEnd(index, link.owner, ref);
+    return { icon: "plug", label: iface ? named.iface : ref, detail: named.holder, hint: ref, action: index.instances.has(path) ? { type: "focus", path } : undefined };
   };
   return {
     kind: "link",
     kindLabel: link.harness ? "Harness link" : "Link",
     icon: link.harness ? "cable" : "link",
-    title: name ?? local,
-    subtitle: `${local}${link.owner ? ` in ${link.owner}` : " in the system"}`,
+    title: name ?? linkName(index, link),
+    // the ends for people (D7), then the id the code uses
+    subtitle: `${name ? `${linkName(index, link, name)} · ` : ""}${local}${link.owner ? ` in ${link.owner}` : " in the system"}`,
     chips: link.harness ? [{ text: `harness ${link.harness}` }] : [],
     counts: countOf(mine),
     sections: [{ title: "Ends", count: 2, rows: [end(link.a), end(link.b)] }, ...checksSection(mine)],
@@ -663,7 +692,9 @@ export function interfaceCard(index: ProjectIndex, node: ExplorerNode, artifacts
         const other = l.a === ref ? l.b : l.a;
         const mod = other.includes(":") ? other.slice(0, other.lastIndexOf(":")) : other;
         const path = owner ? `${owner}/${mod}` : mod;
-        return { icon: "link", label: other, detail: names.get(localLinkId(l)) ?? localLinkId(l), ...(index.instances.has(path) ? { action: { type: "focus", path } } : {}) };
+        // the other end for people (D7): "<interface> (<holder>)", the link's name beside it, the ids on hover
+        const e = linkEnd(index, owner, other);
+        return { icon: "link", label: `${e.iface} (${e.holder})`, detail: names.get(localLinkId(l)) ?? localLinkId(l), hint: `${other} · ${localLinkId(l)}`, ...(index.instances.has(path) ? { action: { type: "focus", path } } : {}) };
       }),
     });
   }

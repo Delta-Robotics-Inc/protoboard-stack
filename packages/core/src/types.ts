@@ -188,6 +188,13 @@ export interface ProjectDiagnostic {
   validator: string;
   /** Where on a design the finding is, when a provider can say (a board's check: mm in the board frame). */
   location?: DiagnosticLocation;
+  /**
+   * For people (wave R2, D3): what is wrong in plain words, at most 60 characters ("I2C line has no pull-up").
+   * Filled from docs/reference/diagnostic-codes.md by `findings-text.ts`; `message` stays the raw detail.
+   */
+  title?: string;
+  /** For people (wave R2, D3): one sentence, at most 160 characters, with the human names of the parts and links. */
+  summary?: string;
 }
 
 /**

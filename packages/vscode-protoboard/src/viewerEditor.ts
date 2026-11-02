@@ -16,12 +16,22 @@
  * own state, so VS Code restores the camera and selection with the tab), its
  * saved named views go to the display file, and the tabs of a project are
  * live tabs of the dev server's bridge, through one relay per project.
+ *
+ * R2-E (walkthrough F1, 2026-11-02): a tab moves in place (`go`) when a model or
+ * module is opened from it or from the Inspector (the `viewer.openModelsInPlace`
+ * setting, DEFAULT on); its header's back and forward are the page's
+ * (web-viewer tab-history.ts), and VS Code's Alt+Left / Alt+Right reach them
+ * through `protoboard.viewer.back` / `forward` while the page says it has
+ * somewhere to go (the context keys `protoboard.viewer.canGoBack` and
+ * `canGoForward`; with nowhere to go Alt+Left is VS Code's own Go Back). The
+ * page's BOM asks its data here (`parts`), and a file it would download is
+ * written to the export folder (`download`).
  */
 import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection } from "../../web-viewer/src/vscode/protocol.js";
+import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type PartsOp, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection, type ViewerSettings } from "../../web-viewer/src/vscode/protocol.js";
 import { nonce } from "./html.js";
 import { writeViewerTelemetry } from "./telemetry.js";
 import { ProjectRelay, presenceChip, readViewerState, saveTabViewState, savePresentation, saveViewerSnapshot, takeOverRequest } from "./viewerBridge.js";
@@ -65,6 +75,12 @@ export interface ViewerHost {
    * click is only kept on the tab (`lastContextMenu`).
    */
   contextMenu?(editor: ViewerEditor, at: Extract<FromWebview, { type: "contextmenu" }>): unknown;
+  /** R2-E (J1): the user's viewer settings now (core settings.ts), for a page written now. */
+  settings?(): ViewerSettings;
+  /** R2-E (F1): the BOM's data and its writes, for the BOM drawn in a tab; the answer goes back to the page. */
+  parts?(editor: ViewerEditor, op: PartsOp, args: Record<string, unknown>): Promise<unknown>;
+  /** R2-E (G3): a file the page would download: written to the export folder without asking. */
+  download?(editor: ViewerEditor, name: string, data: Buffer): unknown;
   log: vscode.LogOutputChannel;
 }
 
@@ -127,6 +143,14 @@ export class ViewerEditor {
   readonly bridgeId = ProjectRelay.tabId();
   /** The tab's last presence (PB-1196: leases, intents, who holds the camera), for the status bar chip. */
   presence: Record<string, unknown> | undefined;
+  /** R2-E (F1): whether the tab's header has somewhere to go back or forward to (the page says). */
+  history: { back: boolean; forward: boolean } = { back: false, forward: false };
+  /** R2-E (F1): the viewer's own 3D history, as it last said (`uhd-viewer:history`). */
+  viewerHistory: Extract<ViewerEvent, { type: "uhd-viewer:history" }> | undefined;
+  /** R2-E (G3): the 3D view's last save point (a PNG of the view at rest), what an export of the view writes. */
+  lastSavePoint: { png: string; meta: Record<string, unknown>; at: number } | undefined;
+  /** R2-E (F1): in-place moves the extension made (tests). */
+  readonly moves: { path: string; view: string }[] = [];
   private themeWaiters: ((r: Extract<FromWebview, { type: "theme" }>) => void)[] = [];
   private hierarchyWaiters: ((r: Extract<FromWebview, { type: "hierarchy" }>) => void)[] = [];
 
@@ -154,7 +178,7 @@ export class ViewerEditor {
     else {
       // a navigation replaces the one waiting before it; the last of every other kind wins
       // (a finding to pin and a view-state write wait beside the navigation they follow, not in its place: D7, F5)
-      const kind = (t: string) => (t === "uhd-viewer:setView" ? "view" : t === "uhd-viewer:select" ? "select" : t === "uhd-viewer:openFinding" ? "finding" : t === "uhd-viewer:setViewState" ? "state" : "nav");
+      const kind = (t: string) => (t === "uhd-viewer:setView" ? "view" : t === "uhd-viewer:select" ? "select" : t === "uhd-viewer:openFinding" ? "finding" : t === "uhd-viewer:setViewState" ? "state" : t === "uhd-viewer:historyGo" ? "history" : "nav");
       const key = (x: ToWebview) => (x.type === "command" ? `command:${kind(x.command.type)}` : x.type);
       this.pending = [...this.pending.filter((p) => key(p) !== key(m)), m];
     }
@@ -174,6 +198,12 @@ export class ViewerEditor {
 
   get isReady() {
     return this.ready;
+  }
+
+  /** R2-E (F1): show a module on a view in this tab, in place (the page's back returns). */
+  go(path: string, view: string) {
+    this.moves.push({ path, view });
+    this.post({ type: "go", path, view });
   }
 
   /** Ask the page for its `--vscode-*` variables (tests capture the token sets VS Code gives a webview). */
@@ -231,6 +261,7 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
   }
 
   private readonly commands: vscode.Disposable[];
+  private readonly commands_: vscode.Disposable[];
   /** "agent X is working on Y" for the focused viewer tab (W4-D, PB-1196 D8); click: take over. */
   private readonly presenceItem: vscode.StatusBarItem;
 
@@ -238,6 +269,11 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
     private readonly extensionUri: vscode.Uri,
     private readonly host: ViewerHost,
   ) {
+    // R2-E (F1): VS Code's Alt+Left / Alt+Right in a viewer tab (package.json's keybindings, while the tab can go)
+    this.commands_ = [
+      vscode.commands.registerCommand("protoboard.viewer.back", () => this.focused?.post({ type: "historyStep", delta: -1 })),
+      vscode.commands.registerCommand("protoboard.viewer.forward", () => this.focused?.post({ type: "historyStep", delta: 1 })),
+    ];
     this.presenceItem = vscode.window.createStatusBarItem("protoboard.viewer.presence", vscode.StatusBarAlignment.Left, 40);
     this.presenceItem.name = "Protoboard: agents in the 3D view";
     this.presenceItem.command = "protoboard.viewer.takeOver";
@@ -400,6 +436,19 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
     }
     this.host.focused(editor);
     this.showPresence();
+    this.historyKeys();
+  }
+
+  /** R2-E (F1): Alt+Left / Alt+Right are the focused tab's while its header has somewhere to go, else VS Code's own. */
+  private historyKeys() {
+    const h = this.focused?.history ?? { back: false, forward: false };
+    void vscode.commands.executeCommand("setContext", "protoboard.viewer.canGoBack", h.back);
+    void vscode.commands.executeCommand("setContext", "protoboard.viewer.canGoForward", h.forward);
+  }
+
+  /** R2-E (J1): the user's viewer settings changed: every tab follows. */
+  settingsChanged(settings: ViewerSettings) {
+    for (const editor of this.editors) editor.post({ type: "settings", settings });
   }
 
   /** The focused tab's presence in the status bar, or nothing when no agent is there. */
@@ -426,7 +475,8 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
       title: editor.panel.title,
       origins: editor.origins,
       config: {
-        path: editor.path,
+        // the module the tab is on (a part with no level of its own included: R2-E), so a page written again comes back there
+        path: editor.module,
         view: editor.state?.view ?? editor.document.target.view,
         media: webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, "media")).toString(),
         ...(state.dev ? { dev: state.dev } : {}),
@@ -437,6 +487,8 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
           const viewState = readViewerState(editor.root);
           return viewState ? { viewState } : {};
         })(),
+        // the user's viewer settings (R2-E, J1)
+        ...(this.host.settings ? { settings: this.host.settings() } : {}),
       },
     });
     this.tellSource(editor);
@@ -493,7 +545,9 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
           .catch((e: Error) => this.host.notify(`Views not saved: ${e.message}`, "error"));
         return;
       case "savePoint":
-        // the 3D view's save point (PB-1180): the same files the render service writes, for the next tab
+        // the 3D view's save point (PB-1180): the same files the render service writes, for the next tab; the last one
+        // is also what an export of the view writes (R2-E, G3)
+        editor.lastSavePoint = { png: m.png, meta: m.meta, at: Date.now() };
         try {
           saveViewerSnapshot(editor.root, m.png, m.meta);
         } catch (e) {
@@ -502,6 +556,24 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         return;
       case "bridgeReply":
         void this.relays.get(editor.root)?.reply(editor.bridgeId, m.id, m.reply);
+        return;
+      case "parts": {
+        // the BOM drawn in the tab (R2-E, F1): its data and writes, as the BOM editor reads and writes them
+        const answer = (r: { ok: boolean; value?: unknown; error?: string }) => editor.post({ type: "partsAnswer", ask: m.ask, ...r });
+        if (!this.host.parts) return answer({ ok: false, error: "not available in this window" });
+        void this.host.parts(editor, m.op, m.args ?? {}).then(
+          (value) => answer({ ok: true, ...(value === undefined ? {} : { value }) }),
+          (e: Error) => answer({ ok: false, error: e.message }),
+        );
+        return;
+      }
+      case "download":
+        // G3: the page cannot save a file; the export folder gets it, no dialog
+        void Promise.resolve(this.host.download?.(editor, m.name, Buffer.from(m.data, "base64"))).catch((e: Error) => this.host.notify(`Not exported: ${e.message}`, "error"));
+        return;
+      case "historyState":
+        editor.history = { back: m.back, forward: m.forward };
+        if (editor === this.focused) this.historyKeys();
         return;
       case "contextmenu":
         // M9: VS Code's Cut/Copy/Paste is not shown over the viewer; R2's own menu hangs here
@@ -533,6 +605,7 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         return;
       case "event":
         if (m.event.type === "uhd-viewer:selectionChanged") editor.selection = m.event.selection;
+        if (m.event.type === "uhd-viewer:history") editor.viewerHistory = m.event;
         void Promise.resolve(this.host.event(editor, m.event)).catch((e: Error) => this.host.notify(e.message, "error"));
         return;
       case "state": {
@@ -614,5 +687,6 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
     this.relays.clear();
     this.changed.dispose();
     for (const c of this.commands) c.dispose();
+    for (const c of this.commands_) c.dispose();
   }
 }

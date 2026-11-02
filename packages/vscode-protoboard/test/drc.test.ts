@@ -9,7 +9,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { installedPackages, loadCodeReference, lookupCode, parseCodeTables } from "../src/codes.js";
-import { DEFAULT_QUERY, drcModel, findingSource, findings, pageModel, parseQuery, splitMessage, unfetchedPart, unfetchedParts, explainMarkdown, type DrcQuery } from "../src/drc.js";
+import { DEFAULT_QUERY, drcModel, findingSource, findings, matchesText, pageModel, parseQuery, splitMessage, unfetchedPart, unfetchedParts, explainMarkdown, type DrcQuery } from "../src/drc.js";
 import { appCsp, appHtml } from "../src/appPage.js";
 import { indexProject } from "../src/model.js";
 import { bundle, resolved } from "./fixtures.js";
@@ -142,6 +142,9 @@ describe("DRC model", () => {
       key: "0",
       code: "UHD_LINK_STATE",
       summary: "gpio1 drives 3.3 V into a 2.0 V LED",
+      // wave R2 (deliberate change, D3): plain words for people, worded here when the check did not write them
+      title: "Link ends do not agree",
+      plain: "The two ends of this connection do not agree on what they carry; the detail says which.",
       message: "gpio1 drives 3.3 V into a 2.0 V LED; add a resistor",
       reasons: ["add a resistor"],
       module: "link board:mcu_led",
@@ -153,6 +156,14 @@ describe("DRC model", () => {
       hasSource: false,
     });
     expect(list[0].reference).toEqual({ file: "/ref.md", line: 7 });
+  });
+
+  it("keeps the plain title and summary the check wrote (wave R2, D3), and finds a row by them", () => {
+    const [f] = findings(indexProject(resolved, bundle), [
+      { code: "UHD_BUS_PULLUP", severity: "warning", entity: { kind: "interface", id: "board/:i2c0_scl" }, message: "board (b): net i2c0_scl carries I2C (u1:pin_5) but no resistor pulls it up to a supply.", validator: "uhd/checkSystem", title: "I2C line has no pull-up", summary: "The I2C clock line i2c0_scl on Board needs a pull-up resistor to its supply; none is connected." } as never,
+    ]);
+    expect(f).toMatchObject({ title: "I2C line has no pull-up", plain: "The I2C clock line i2c0_scl on Board needs a pull-up resistor to its supply; none is connected." });
+    expect(matchesText(f, "pull-up")).toBe(true);
   });
 
   it("takes only known query values from the page", () => {

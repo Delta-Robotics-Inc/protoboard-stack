@@ -225,7 +225,8 @@ describe("an interface's card", () => {
     expect(card.kindLabel).toBe("Interface");
     expect(card.chips.map((c) => c.text)).toEqual(["electrical", "1 link"]);
     expect(card.sections.map((s) => s.title)).toEqual(["Protocols", "Linked to"]);
-    expect(card.sections[1].rows).toEqual([{ icon: "link", label: "led:anode", detail: "mcu_led", action: { type: "focus", path: "board/led" } }]);
+    // wave R2 (deliberate change, D7): the other end for people, "<interface> (<holder>)", the ids on hover
+    expect(card.sections[1].rows).toEqual([{ icon: "link", label: "anode (Status LED)", detail: "mcu_led", hint: "led:anode · mcu_led", action: { type: "focus", path: "board/led" } }]);
     // an interface nothing is linked to says so; an export leads to the child it comes from
     expect(interfaceCard(index, nodes.get("if:board/mcu:usb")!)!.chips.map((c) => c.text)).toEqual(["electrical", "not linked"]);
     const exported = interfaceCard(index, nodes.get("if:board:usb")!)!;
