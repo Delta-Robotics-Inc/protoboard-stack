@@ -13,7 +13,15 @@ export type ViewerCommand =
   | { type: "uhd-viewer:focus"; path: string }
   | { type: "uhd-viewer:select"; ids: string[]; reveal?: boolean }
   | { type: "uhd-viewer:drill"; path: string }
-  | { type: "uhd-viewer:setView"; view: "diagram" | "3d" };
+  | { type: "uhd-viewer:setView"; view: "diagram" | "3d" }
+  /** Write the 3D view's state as the host (uhd-viewer's `setViewState`: selection, highlight, ...). */
+  | { type: "uhd-viewer:setViewState"; state: Record<string, unknown> }
+  /**
+   * R1-E (D7, 2026-11-01): show one finding on the model: select and frame what it names and pin its callout
+   * open. `id` is the viewer's finding id (`drc:<code>:<entity kind>:<entity id>`, findings-anchors.ts); `path`
+   * the module it is about. A viewer that does not know this message ignores it (the host sends a focus too).
+   */
+  | { type: "uhd-viewer:openFinding"; id: string; code: string; path?: string };
 
 export interface ViewerSelection {
   kind: "node" | "link";
@@ -21,6 +29,14 @@ export interface ViewerSelection {
   defId?: string;
   /** Modules selected together (two or more, paths from the root); `id` is the first (QA B10). */
   ids?: string[];
+  /**
+   * R1-A/R1-E (M2, 2026-11-01): a component picked inside a body in the 3D view (a board's part): its instance
+   * path from the root, the body that draws it (`holder`, the board) and that body's definition. Absent for a
+   * pick of a whole body.
+   */
+  component?: string;
+  holder?: string;
+  holderDefId?: string;
 }
 
 /** As in uhd-viewer's host contract (`LinkLayout`). */
@@ -214,7 +230,24 @@ export type FromWebview =
    * A save point of the 3D view (PB-1180): the frame on settle or hide (`png`, base64) and what it shows; the
    * extension host keeps it in .protoboard/local/snapshots/ for the next tab.
    */
-  | { type: "savePoint"; png: string; meta: Record<string, unknown> };
+  | { type: "savePoint"; png: string; meta: Record<string, unknown> }
+  /**
+   * R1-E (M9, 2026-11-01): a right-click without a drag on the viewer (VS Code's own Cut/Copy/Paste menu is
+   * suppressed there): where, in CSS pixels of the tab, and what the 3D view has under the pointer (`pick`:
+   * uhd-viewer's `__cad.pick`, paths in the tab's scope). The hook for R2's context menu; today it is only kept.
+   */
+  | { type: "contextmenu"; x: number; y: number; view?: string; pick?: ContextMenuPick };
+
+/** What the 3D view has under a right-click (uhd-viewer's `__cad.pick`, the fields a menu needs). */
+export interface ContextMenuPick {
+  /** The module or component's instance path in the tab's scope. */
+  instancePath?: string;
+  /** The body's placement key (`path`, `path#artifact`). */
+  body?: string;
+  harness?: string;
+  /** The B-rep face (feature) id when the model has them. */
+  face?: number;
+}
 
 export type SourceAction = "open" | "reveal" | "copy" | "copyRelative";
 const SOURCE_ACTIONS: readonly SourceAction[] = ["open", "reveal", "copy", "copyRelative"];
@@ -290,7 +323,10 @@ function parseEvent(v: unknown): ViewerEvent | undefined {
       if (s === null || s === undefined) return { type: v.type, selection: null };
       if (!obj(s) || (s.kind !== "node" && s.kind !== "link") || !str(s.id)) return undefined;
       const ids = Array.isArray(s.ids) ? s.ids.filter(str).slice(0, 500) : [];
-      return { type: v.type, selection: { kind: s.kind, id: s.id, ...(str(s.defId) ? { defId: s.defId } : {}), ...(ids.length > 1 ? { ids } : {}) } };
+      // a component picked in a body (M2): its path, its holder body and the holder's definition, as short strings
+      const short = (x: unknown): x is string => str(x) && x.length <= 1024;
+      const parts = { ...(short(s.component) ? { component: s.component } : {}), ...(short(s.holder) ? { holder: s.holder } : {}), ...(short(s.holderDefId) ? { holderDefId: s.holderDefId } : {}) };
+      return { type: v.type, selection: { kind: s.kind, id: s.id, ...(str(s.defId) ? { defId: s.defId } : {}), ...(ids.length > 1 ? { ids } : {}), ...(s.kind === "node" ? parts : {}) } };
     }
     case "uhd-viewer:openSource":
       return str(v.defId) ? { type: v.type, defId: v.defId, ...(str(v.instancePath) ? { instancePath: v.instancePath } : {}) } : undefined;
@@ -392,6 +428,16 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
       // DEFAULT (wave 2 gate item 9): a reply is at most 2 MB of JSON (the viewer's own cap)
       if (!str(data.id) || data.id.length > 128 || !obj(data.reply) || JSON.stringify(data.reply).length > BRIDGE_REPLY_MAX_CHARS) return undefined;
       return { type: "bridgeReply", id: data.id, reply: data.reply };
+    case "contextmenu": {
+      const n = (x: unknown): x is number => typeof x === "number" && Number.isFinite(x);
+      if (!n(data.x) || !n(data.y)) return undefined;
+      const p = obj(data.pick) ? data.pick : undefined;
+      const s512 = (x: unknown): x is string => str(x) && x.length <= 1024;
+      const pick: ContextMenuPick | undefined = p
+        ? { ...(s512(p.instancePath) ? { instancePath: p.instancePath } : {}), ...(s512(p.body) ? { body: p.body } : {}), ...(s512(p.harness) ? { harness: p.harness } : {}), ...(Number.isInteger(p.face) ? { face: p.face as number } : {}) }
+        : undefined;
+      return { type: "contextmenu", x: Math.round(data.x), y: Math.round(data.y), ...(str(data.view) && data.view.length <= 64 ? { view: data.view } : {}), ...(pick && Object.keys(pick).length ? { pick } : {}) };
+    }
     case "presence":
       // DEFAULT: 64 kB of JSON (presence is a few leases and intents; anything larger is not ours)
       if (!obj(data.presence) || JSON.stringify(data.presence).length > PRESENCE_MAX_CHARS) return undefined;

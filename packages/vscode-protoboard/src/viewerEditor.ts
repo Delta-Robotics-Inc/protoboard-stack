@@ -59,6 +59,12 @@ export interface ViewerHost {
    * Reveal in Explorer and Copy Path act on it.
    */
   sourceOf?(root: string, path: string): ModuleSource | undefined;
+  /**
+   * A right-click without a drag on a tab (R1-E, M9): VS Code's own menu is not shown there; this is the hook for
+   * R2's context menu (inspect, open its 3D model, frame, isolate, explode, open in new tab). Optional: unset, the
+   * click is only kept on the tab (`lastContextMenu`).
+   */
+  contextMenu?(editor: ViewerEditor, at: Extract<FromWebview, { type: "contextmenu" }>): unknown;
   log: vscode.LogOutputChannel;
 }
 
@@ -106,6 +112,8 @@ export class ViewerEditor {
   origins: string[] = [];
   /** The tab's last selection (the Inspector shows it). */
   selection: ViewerSelection | null = null;
+  /** The tab's last right-click (M9, R2's context menu hook): where, and what the 3D view had under the pointer. */
+  lastContextMenu: Extract<FromWebview, { type: "contextmenu" }> | undefined;
   /** What the tab shows now (the shell reports it). */
   state: { path: string; label: string; view: string; nodes: number; views: { id: string; title: string }[]; missing?: number; /** The part the tab is on, when it is not the level shown. */ at?: string } | undefined;
   /** The source file last told to the page (`path` and what it was), so it is told again only when it changes. */
@@ -145,7 +153,9 @@ export class ViewerEditor {
     if (this.ready) void this.panel.webview.postMessage(m);
     else {
       // a navigation replaces the one waiting before it; the last of every other kind wins
-      const key = (x: ToWebview) => (x.type === "command" ? `command:${x.command.type === "uhd-viewer:setView" ? "view" : x.command.type === "uhd-viewer:select" ? "select" : "nav"}` : x.type);
+      // (a finding to pin and a view-state write wait beside the navigation they follow, not in its place: D7, F5)
+      const kind = (t: string) => (t === "uhd-viewer:setView" ? "view" : t === "uhd-viewer:select" ? "select" : t === "uhd-viewer:openFinding" ? "finding" : t === "uhd-viewer:setViewState" ? "state" : "nav");
+      const key = (x: ToWebview) => (x.type === "command" ? `command:${kind(x.command.type)}` : x.type);
       this.pending = [...this.pending.filter((p) => key(p) !== key(m)), m];
     }
   }
@@ -492,6 +502,11 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         return;
       case "bridgeReply":
         void this.relays.get(editor.root)?.reply(editor.bridgeId, m.id, m.reply);
+        return;
+      case "contextmenu":
+        // M9: VS Code's Cut/Copy/Paste is not shown over the viewer; R2's own menu hangs here
+        editor.lastContextMenu = m;
+        void Promise.resolve(this.host.contextMenu?.(editor, m)).catch((e: Error) => this.host.log.warn(`${this.name(editor)}: context menu: ${e.message}`));
         return;
       case "presence":
         // who is here (PB-1196, W4-D): the status bar chip for the focused tab. Agent-written names and labels in it

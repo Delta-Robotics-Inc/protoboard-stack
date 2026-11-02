@@ -149,10 +149,12 @@ const empty = () => ({ positions: {}, links: {} });
 const badge = document.getElementById("pb-dev");
 const text = document.getElementById("pb-dev-text");
 let quiet;
-function status(state, message) {
+// detail (B2, R1-B): the files a rebuild is for, one per line: the badge's tooltip, not its text
+function status(state, message, detail) {
   badge.dataset.state = state;
   badge.dataset.quiet = "0";
   text.textContent = message;
+  text.title = detail || "";
   clearTimeout(quiet);
   if (state === "ok") quiet = setTimeout(() => (badge.dataset.quiet = "1"), 4000);
 }
@@ -353,7 +355,8 @@ events.addEventListener("hello", (e) => {
 });
 events.addEventListener("status", (e) => {
   const s = JSON.parse(e.data);
-  status(s.state, s.message);
+  status(s.state, s.message, s.detail);
+  if (s.detail) console.info("[protoboard dev] " + s.message + ": " + String(s.detail).split("\\n").join(", "));
 });
 events.addEventListener("bundle", async (e) => {
   const msg = JSON.parse(e.data);

@@ -306,6 +306,8 @@ const INSPECTOR_ACTIONS: InspectorActions = {
   openLink: (url) => send("openLink", { url }),
   interfaceSource: (request) => send("interfaceSource", { request }),
   connect: (request) => send("connect", { request }),
+  // a board part's 3D cards (F5): which one was opened
+  open3d: (which) => send("open3d", { which }),
   drawModel: modelThumb,
 };
 

@@ -156,7 +156,9 @@ function StatusCard({ status, bridge, over }: { status: ViewerStatus; bridge: Sh
     return (
       <div role="status" className={cx(card, "flex max-w-[min(520px,calc(100%-32px))] items-start gap-2.5 px-3 py-2", over && "absolute bottom-16 left-1/2 -translate-x-1/2")}>
         {mark}
-        <span className="min-w-0">{message}</span>
+        <span className="min-w-0" title={status.detail}>
+          {message}
+        </span>
       </div>
     );
   }

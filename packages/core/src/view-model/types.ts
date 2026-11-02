@@ -111,6 +111,15 @@ export interface ViewTier {
   error?: number;
 }
 
+/** Board layer offsets the sidecar applied (fix wave R1, C1; layers.ts). Present only for a GLB with board layers. */
+export interface ViewLayers {
+  /** Offset per layer rank, model millimetres (DEFAULT 0.02). */
+  stepMm: number;
+  units: string;
+  /** Per layer and side: the rank, the outward offset in model mm, and how many source faces moved. */
+  offsets: { layer: "copper" | "mask" | "paste" | "silkscreen"; side: "top" | "bottom"; rank: number; offsetMm: number; faces: number }[];
+}
+
 export interface ViewSidecarIndex {
   schema: typeof VIEW_SIDECAR_SCHEMA;
   pipeline: number;
@@ -126,6 +135,8 @@ export interface ViewSidecarIndex {
   counts: { before: ViewCounts; after: ViewCounts };
   instancing: { groups: number; instances: number; extension: "EXT_mesh_gpu_instancing" };
   nodes: ViewNode[];
+  /** Board layers moved apart (only when the GLB has board layer nodes). */
+  layers?: ViewLayers;
   /** How ids travel, as verified by test/view-model.test.ts. */
   design: Record<string, string>;
   warnings?: string[];

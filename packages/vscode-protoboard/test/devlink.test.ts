@@ -228,7 +228,7 @@ describe("following the server", () => {
     r.sources[0].drop(true);
     (r.servers[A] as { building?: boolean }).building = true;
     await r.advance(1000);
-    expect(r.last()).toEqual({ message: "rebuilding", busy: true });
+    expect(r.last()).toEqual({ message: "Updating model", busy: true });
     r.servers[A] = { session: "s1", version: 2, failed: true, message: "build failed: boom" };
     await r.advance(1000);
     expect(r.last()).toEqual({ message: "build failed: boom" });

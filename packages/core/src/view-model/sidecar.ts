@@ -28,7 +28,13 @@
  * `reorder()` would interleave faces and break the face-range table, so
  * reordering runs per face (meshopt `reorderMesh`) instead (DEFAULT).
  *
- * Units: glTF metres, Y-up, as the source GLB; nothing is converted here.
+ * Board layers (fix wave R1, C1): an ECAD board's copper, mask, paste and
+ * silkscreen sheets sit 0.01 mm apart and z-fight; the sidecar moves each
+ * outward from the substrate by rank (layers.ts, DEFAULT 0.02 mm a step).
+ *
+ * Units: glTF metres, Y-up, as the source GLB; nothing is converted here,
+ * except the layer step, given in model mm and converted to the part frame
+ * (layers.ts).
  */
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
@@ -54,9 +60,10 @@ import {
   type Mat4,
   type Simplifier,
 } from "./geometry.js";
+import { glbNamesLayers, layerClassOf, layerOptions, LAYER_STEP_MM, offsetLayers, rankOf, type LayerClass, type LayerFace, type LayerOffset } from "./layers.js";
 import { lookForKind, lookForName, type MaterialLook } from "./materials.js";
 import { VIEW_PIPELINE_VERSION, VIEW_SIDECAR_SCHEMA, viewSidecarPaths } from "./names.js";
-import type { ViewBounds, ViewComponent, ViewContext, ViewCounts, ViewNode, ViewSidecarIndex, ViewTier } from "./types.js";
+import type { ViewBounds, ViewComponent, ViewContext, ViewCounts, ViewLayers, ViewNode, ViewSidecarIndex, ViewTier } from "./types.js";
 
 /** Largest GLB the writer parses (security basics: size caps on parsed files). */
 export const MAX_GLB_BYTES = 512 * 1024 * 1024;
@@ -330,6 +337,13 @@ interface Look {
   alphaCutoff: number;
   doubleSided: boolean;
   emissive: number[];
+  /** A board layer's look: its own material, so the viewer can tell layers apart (extras.protoboard.layer, layerRank). */
+  layer?: { kind: string; rank: number };
+}
+
+/** The look of a board layer face: the source look, kept apart from any other geometry with the same colour. */
+function layerLook(l: Look, c: LayerClass): Look {
+  return { ...l, layer: { kind: c.kind, rank: rankOf(c) }, key: `${l.key}|layer:${c.kind}` };
 }
 
 function lookOf(m: Material | null, fallback: MaterialLook): Look {
@@ -377,6 +391,8 @@ interface PartGeometry {
   faces: Face[];
   sourcePrimitives: number;
   warnings: string[];
+  /** Board layer offsets applied to this part's faces (layers.ts). */
+  layers: LayerOffset[];
 }
 
 /** Every triangle primitive under the part's members, moved into the part frame, with its look. */
@@ -387,8 +403,12 @@ function readPart(spec: PartSpec, looks: Map<string, Look>, ctx: ViewContext): P
   let feature = 0;
   const kind = spec.component?.partKind ?? ctx.owner?.partKind;
   const placeholder = !!(spec.component?.placeholder ?? (spec.owner ? ctx.owner?.placeholder : undefined)) || spec.extras.placeholder === true;
-  const visit = (n: GNode, inherited: MaterialLook | undefined) => {
+  const layerFaces: LayerFace[] = [];
+  const substrate: Face[] = [];
+  const visit = (n: GNode, inherited: MaterialLook | undefined, inheritedLayer: LayerClass | undefined) => {
     const named = lookForName(n.getName()) ?? inherited;
+    const layer = layerClassOf(n.getName()) ?? inheritedLayer;
+    const rank = rankOf(layer);
     const mesh = n.getMesh();
     if (mesh) {
       const batch = n.getExtension("EXT_mesh_gpu_instancing") as { getAttribute(s: string): import("@gltf-transform/core").Accessor | null } | null;
@@ -414,17 +434,20 @@ function readPart(spec: PartSpec, looks: Map<string, Look>, ctx: ViewContext): P
             continue;
           }
           const fallback = named ?? lookForKind(kind, placeholder);
-          const look = lookOf(p.getMaterial(), fallback);
+          const look = rank > 0 ? layerLook(lookOf(p.getMaterial(), fallback), layer!) : lookOf(p.getMaterial(), fallback);
           if (!looks.has(look.key)) looks.set(look.key, look);
           const nrm = p.getAttribute("NORMAL");
           const idx = p.getIndices();
           const positions = floats(pos);
           const indices = idx ? Uint32Array.from(idx.getArray() as ArrayLike<number>) : Uint32Array.from({ length: positions.length / 3 }, (_, i) => i);
-          faces.push(placeFace({ feature: feature++, material: look.key, positions, normals: nrm ? floats(nrm) : null, indices }, rel));
+          const face = placeFace({ feature: feature++, material: look.key, positions, normals: nrm ? floats(nrm) : null, indices }, rel);
+          faces.push(face);
+          if (rank > 0) layerFaces.push({ face, layer: layer! });
+          else if (layer?.kind === "substrate") substrate.push(face);
         }
       }
     }
-    if (deep.get(n) !== false) for (const c of n.listChildren()) visit(c, named);
+    if (deep.get(n) !== false) for (const c of n.listChildren()) visit(c, named, layer);
   };
   // a member's subtree, or only its own mesh when some descendant is a part of its own
   const deep = new Map(spec.members.map((m) => [m.node, m.deep]));
@@ -436,8 +459,18 @@ function readPart(spec: PartSpec, looks: Map<string, Look>, ctx: ViewContext): P
     }
     return undefined;
   };
-  for (const m of spec.members) visit(m.node, inheritedLook(m.node));
-  return { spec, faces, sourcePrimitives: feature, warnings };
+  /** The board layer a node inherits from its nearest ancestor that names one ("TopCopper" → its unnamed sheets). */
+  const inheritedLayer = (n: GNode): LayerClass | undefined => {
+    for (let p = n.getParentNode(); p; p = p.getParentNode()) {
+      const c = layerClassOf(p.getName());
+      if (c) return c;
+    }
+    return undefined;
+  };
+  for (const m of spec.members) visit(m.node, inheritedLook(m.node), inheritedLayer(m.node));
+  // C1: the layer sheets apart from the substrate and from each other (in place: placeFace and floats() copy)
+  const layers = offsetLayers(layerFaces, substrate, spec.world);
+  return { spec, faces, sourcePrimitives: feature, warnings, layers };
 }
 
 function compose(t: number[], r: number[], s: number[]): Mat4 {
@@ -531,6 +564,8 @@ function buildDocument(d: Deps, placements: Placement[], looks: Map<string, Look
         .setAlphaCutoff(l.alphaCutoff)
         .setDoubleSided(l.doubleSided)
         .setEmissiveFactor(l.emissive as [number, number, number]);
+      // a board layer's material says which layer it is, so the viewer can order coplanar layers (polygonOffset by rank)
+      if (l.layer) m.setExtras({ protoboard: { layer: l.layer.kind, layerRank: l.layer.rank } });
       materials.set(key, m);
     }
     return m;
@@ -631,9 +666,13 @@ async function compress(d: Deps, doc: Document): Promise<void> {
 // The writer
 // ---------------------------------------------------------------------------
 
-function optionsHash(ctx: ViewContext): string {
+/**
+ * The cache key. `layers` (the board layer step and ranks) is in it only when the GLB names a board layer, so
+ * changing the layer offsets rewrites board sidecars and leaves every other sidecar's key as it was (C1).
+ */
+function optionsHash(ctx: ViewContext, layers = false): string {
   const comps = ctx.components ? [...ctx.components.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)) : [];
-  return sha(new TextEncoder().encode(stable({ owner: ctx.owner ?? null, components: comps, features: [...(ctx.features ?? [])].sort(), bodies: [...(ctx.bodies ?? [])].sort(), meshOrigin: !!ctx.meshOrigin, MESH_ORIGIN_ERROR, COARSE_ERROR, pipeline: VIEW_PIPELINE_VERSION })));
+  return sha(new TextEncoder().encode(stable({ owner: ctx.owner ?? null, components: comps, features: [...(ctx.features ?? [])].sort(), bodies: [...(ctx.bodies ?? [])].sort(), meshOrigin: !!ctx.meshOrigin, MESH_ORIGIN_ERROR, COARSE_ERROR, pipeline: VIEW_PIPELINE_VERSION, ...(layers ? { layers: layerOptions() } : {}) })));
 }
 
 function cached(paths: ReturnType<typeof viewSidecarPaths>, sourceSha: string, coarseSha: string | undefined, options: string): ViewSidecarIndex | undefined {
@@ -661,6 +700,20 @@ async function readGlb(d: Deps, file: string): Promise<{ bytes: Uint8Array; doc:
   return { bytes, doc };
 }
 
+/** The board layer offsets of all parts, merged per layer and side, for the index; undefined when none were applied. */
+function layersOf(offsets: LayerOffset[]): ViewLayers | undefined {
+  if (!offsets.length) return undefined;
+  const by = new Map<string, LayerOffset>();
+  for (const o of offsets) {
+    const k = `${o.side}:${o.layer}`;
+    const have = by.get(k);
+    if (have) have.faces += o.faces;
+    else by.set(k, { ...o });
+  }
+  const list = [...by.values()].sort((a, b) => (a.side < b.side ? 1 : a.side > b.side ? -1 : 0) || a.rank - b.rank || (a.layer < b.layer ? -1 : 1));
+  return { stepMm: LAYER_STEP_MM, units: "offsetMm in model millimetres along the board normal, outward from the substrate; applied in the part frame (glTF metres)", offsets: list };
+}
+
 /** Write (or reuse) the view sidecars of one body GLB. */
 export async function writeViewSidecar(glb: string, options: ViewSidecarOptions = {}): Promise<ViewSidecarResult> {
   const ctx = options.context ?? {};
@@ -671,7 +724,7 @@ export async function writeViewSidecar(glb: string, options: ViewSidecarOptions 
   const sourceBytes = readFileSync(glb);
   const sourceSha = sha(sourceBytes);
   const coarseSha = existsSync(paths.coarseSource) ? sha(readFileSync(paths.coarseSource)) : undefined;
-  const opts = optionsHash(ctx);
+  const opts = optionsHash(ctx, glbNamesLayers(sourceBytes) || (!!coarseSha && glbNamesLayers(readFileSync(paths.coarseSource))));
   if (!options.force) {
     const hit = cached(paths, sourceSha, coarseSha, opts);
     if (hit) return { source: glb, cached: true, index: hit, paths };
@@ -699,9 +752,11 @@ export async function writeViewSidecar(glb: string, options: ViewSidecarOptions 
     } else warnings.push(`${basename(paths.coarseSource)} has other parts than ${basename(glb)}; coarse tier simplified instead`);
   }
 
+  const layerOffsets: LayerOffset[] = [];
   const built: BuiltPart[] = specs.map((spec, i) => {
     const g = readPart(spec, looks, ctx);
     warnings.push(...g.warnings);
+    layerOffsets.push(...g.layers);
     let fine = mergeFaces(g.faces.map((f) => weldAndReorder(f, d.encoder)), materialOrder);
     const tris = triangles(fine);
     const meshOrigin = !!ctx.meshOrigin || (g.sourcePrimitives <= MESH_ORIGIN_MAX_PRIMITIVES && tris >= MESH_ORIGIN_MIN_TRIANGLES);
@@ -777,6 +832,7 @@ export async function writeViewSidecar(glb: string, options: ViewSidecarOptions 
     }
   }
   const instancedGroups = placements.filter((p) => p.instanced);
+  const layers = layersOf(layerOffsets);
   const meshOriginParts = built.filter((p) => p.meshOrigin).length;
   const tierInfo = (t: typeof fine, file: string, method: ViewTier["method"], error?: number): ViewTier => ({
     file,
@@ -802,6 +858,7 @@ export async function writeViewSidecar(glb: string, options: ViewSidecarOptions 
     counts: { before, after: fine.counts },
     instancing: { groups: instancedGroups.length, instances: instancedGroups.reduce((n, p) => n + p.parts.length, 0), extension: "EXT_mesh_gpu_instancing" },
     nodes,
+    ...(layers ? { layers } : {}),
     design: {
       ids: "extras.protoboard on every node (partInstanceId relative to the owner; instanced nodes carry extras.protoboard.instances[i] per GPU instance). Verified (test/view-model.test.ts): three r187's GLTFLoader copies node extras to the node object's userData; a mesh with several primitives becomes a Group, so the ids sit on the Mesh's or InstancedMesh's parent and a picker walks up to the first ancestor with userData.protoboard; InstancedMesh instanceId indexes instances[]. glTF-Transform 4.5.1 keeps node extras on read and write.",
       faces: "_FEATURE_ID_0 vertex attribute (EXT_mesh_features, featureIds[0].attribute = 0, label face): the source primitive (B-rep face) index within the part. Verified: three's GLTFLoader keeps it as geometry attribute _feature_id_0 (the extension object itself is not read); glTF-Transform 4.5.1 reads and writes EXT_mesh_features.",
@@ -810,6 +867,11 @@ export async function writeViewSidecar(glb: string, options: ViewSidecarOptions 
       reorder: "per face (meshopt reorderMesh) instead of glTF-Transform reorder(), which reorders across faces and would break the face-range table (DEFAULT).",
       quantization: "POSITION 14 bit per mesh volume (KHR_mesh_quantization, node transforms and instance attributes adjusted by glTF-Transform quantize); NORMAL float, meshopt octahedral filter; _FEATURE_ID_0 unquantized.",
       units: "glTF metres, Y-up, as the source GLB; bounds are in the GLB's world frame.",
+      ...(layers
+        ? {
+            layers: `board layer sheets (copper, mask, paste, silkscreen) moved outward from the substrate along the board normal by rank x ${LAYER_STEP_MM} mm (model mm, converted to the part frame: glTF metres here; DEFAULT), so coplanar layers 0.01 mm apart no longer z-fight in the geometry; the side comes from the substrate's mid-plane, not the triangle winding. X.glb keeps the original heights. Layer materials carry extras.protoboard.layer and layerRank for a render-side polygonOffset.`,
+          }
+        : {}),
     },
     ...(warnings.length ? { warnings: [...new Set(warnings)].slice(0, 50) } : {}),
   };

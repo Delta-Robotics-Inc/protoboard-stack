@@ -70,6 +70,7 @@ describe("quadcopter reference project", async () => {
       "uhd/geometryBindings:ran",
       // the one model resolver's findings (PB-1174), once the providers' outputs are attached
       "protoboard/part-files:ran",
+      "protoboard/model-size:ran",
       "ext:@protoboardai/ext-hardware/evidence:ran",
       "ext:@protoboardai/ext-frame-cad/frames:ran",
       "ext:@protoboardai/ext-frame-cad/hardware:ran",

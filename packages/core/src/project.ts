@@ -21,6 +21,7 @@ import { bomFileDiagnostics } from "./bom-files.js";
 import { formerScopeDiagnostics } from "./scope.js";
 import { isInsideReal } from "./paths.js";
 import { PART_FILES_VALIDATOR, bodyArtifact, partFileDiagnostics } from "./part-files.js";
+import { runModelSizeCheck } from "./model-size.js";
 import { artifactBaseDir, artifactBaseLabel, findProjectRoot, freshImporter, importTs, loadConfig, loadDefinitions, locateId, originEntry, type TsImporter } from "./load.js";
 import type {
   CheckRun,
@@ -311,6 +312,7 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
     if (options.checks !== false) {
       runModelChecks(project);
       runPartFileChecks(project);
+      runModelSizeCheck(project);
     }
   } else {
     const { loadExtensions, runExtensionChecks } = await import("./extensions.js");
@@ -333,6 +335,8 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
       runModelChecks(project);
       // after the providers' outputs are attached: a body a provider exported counts
       runPartFileChecks(project);
+      // a placed 3D model far off its package body size (PB_MODEL_SIZE_MISMATCH; reads the build's view sidecars)
+      runModelSizeCheck(project);
       await runExtensionChecks(project, extensions);
       await capabilities.runCapabilityChecks(project);
     }

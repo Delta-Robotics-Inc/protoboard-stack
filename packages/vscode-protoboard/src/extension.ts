@@ -40,7 +40,7 @@ import { nonce } from "./html.js";
 import { BUNDLE_FILE, indexProject, linkFromViewer, localLinkId, readBuild, RESOLVED_FILE, viewerMessages, type BuildOutput, type ProjectIndex } from "./model.js";
 import { IGNORED_DIRS, chooseProject, projectOf, projectRoots } from "./project.js";
 import type { ViewerCommand as HostToViewer } from "../../web-viewer/src/vscode/protocol.js";
-import { boardSection, groupCard, interfaceCard, libraryPartCard, linkCard, linkHarnessDefs, moduleCard, partCard, type DetailFiles, type InspectorCard } from "./inspector.js";
+import { boardSection, findingMessages, groupCard, holderOf, interfaceCard, libraryPartCard, linkCard, linkHarnessDefs, moduleCard, partCard, selectionPath, THREE_D_OWN, type DetailFiles, type InspectorCard } from "./inspector.js";
 import { detailFiles, interfaceArtifacts, resourceRoots, smallModel } from "./inspectorFiles.js";
 import { InspectorViewProvider, type InspectorAction, type InspectorContent } from "./inspectorView.js";
 import { displayFile, saveLayout } from "./display.js";
@@ -412,7 +412,10 @@ class ProtoboardExtension {
       focusPath: (path) => this.guard(() => this.current && this.toViewer(this.current, viewerMessages({ path }), true)),
       // something picked inside the details: the viewer shows it, and the Inspector follows the viewer's selection
       select: (sel) => this.guard(() => this.current && this.toViewer(this.current, sel.kind === "node" ? viewerMessages({ path: sel.id }) : [{ type: "uhd-viewer:select", ids: [`link:${sel.id}`] }], true)),
-      finding: (key) => this.guard(() => this.locateFinding(key)),
+      // a check row (D7): the finding shown on the model in the focused viewer tab (its part framed, its callout pinned)
+      finding: (key) => this.guard(() => this.showFinding(key)),
+      // a board part's 3D cards (F5)
+      open3d: (card, which) => this.guard(() => this.openIn3d(card, which)),
       explain: (key) => this.guard(() => this.explainFinding(key)),
       openArtifact: (card, defId, artifactId) => this.guard(() => this.openCardArtifact(card, defId, artifactId)),
       openLink: (url) => this.guard(() => openWeb(url)),
@@ -2703,7 +2706,8 @@ class ProtoboardExtension {
         ? { card: moduleCard(data.index, node, data.findings, level, node.defId ? this.filesOf(root, data.index, node.defId) : undefined, level ? undefined : boardSection(data.index, node, (f) => this.readCached(root, f)), this.costLines(root)), project, ...bundle }
         : undefined;
     };
-    if (sel?.kind === "node") return at(sel.id) ?? at(editor.path, true) ?? { empty: "Select a module or a link in the viewer.", project };
+    // M2: a component picked in the 3D view is the component (not the board that draws it, not the level)
+    if (sel?.kind === "node") return at(selectionPath(sel, (p) => !!this.fullNode(data, p))) ?? at(editor.path, true) ?? { empty: "Select a module or a link in the viewer.", project };
     return at(editor.path, true) ?? { empty: "Select a module or a link in the viewer.", project };
   }
 
@@ -2767,7 +2771,12 @@ class ProtoboardExtension {
   }
 
   private showInspector() {
-    this.inspector.show(this.inspectorContent());
+    // M2 (the walkthrough's 26 s): nothing here waits; a slow card is said in the log with what it was
+    const t0 = Date.now();
+    const content = this.inspectorContent();
+    const ms = Date.now() - t0;
+    if (ms > 250) this.log.warn(`the Inspector's card took ${ms} ms (${"card" in content ? `${content.card.kind} ${content.card.path || content.card.title}` : "empty"})`);
+    this.inspector.show(content);
   }
 
   /** A project file's text, read again only when it changed (the routed board's files are large and read on every selection). */
@@ -2869,6 +2878,47 @@ class ProtoboardExtension {
   private async locateFinding(key: string) {
     const f = this.current ? this.data.get(this.current)?.findings.find((x) => x.key === key) : undefined;
     if (f) await this.locate(f);
+  }
+
+  /**
+   * A check row of the Inspector (D7, walkthrough 45:11 "this should go towards the issue"): the finding in the
+   * project's focused viewer tab. In 3D its part is selected and framed and its callout pinned open; on the diagram
+   * its module or link is shown as Locate does.
+   */
+  private async showFinding(key: string) {
+    const root = this.current;
+    const data = root ? this.data.get(root) : undefined;
+    const f = data?.findings.find((x) => x.key === key);
+    if (!root || !data || !f) return;
+    const editor = this.viewers.of(root)[0];
+    const messages = findingMessages(data.index, f, editor?.state?.view ?? editor?.document.target.view);
+    if (!messages.length) return this.locate(f);
+    await this.toViewer(root, messages, true);
+  }
+
+  /**
+   * A board part's 3D cards (F5, walkthrough 19:30 "it doesn't give me the 3D model"). `3d:holder`: the part where
+   * its board draws it, selected and framed: in the focused viewer tab when that tab's level holds it (switched to
+   * 3D in place), else in the board's own 3D tab. `3d:own`: the part's own model, as a tab of its own.
+   */
+  private async openIn3d(card: InspectorCard, which: string) {
+    const root = this.current;
+    const data = root ? this.data.get(root) : undefined;
+    if (!root || !data || !card.path) return;
+    if (which === THREE_D_OWN) return void (await this.openViewer({ root, path: card.path, view: "3d" }));
+    const holder = holderOf(data.index, card.path);
+    if (!holder) throw new Error(`${card.title} is not drawn inside another module's model`);
+    const focus = { type: "command" as const, command: { type: "uhd-viewer:focus" as const, path: card.path } };
+    const tab = this.viewers.of(root)[0];
+    const holds = tab && (tab.path === "" || card.path.startsWith(`${tab.path}/`));
+    if (tab && holds) {
+      tab.panel.reveal(undefined, false);
+      if ((tab.state?.view ?? tab.document.target.view) !== "3d") tab.post({ type: "showView", view: "3d" });
+      tab.post(focus);
+      return;
+    }
+    const board = await this.openViewer({ root, path: holder, view: "3d" });
+    board.post(focus);
   }
 
   /** Save a tab's layout edits into the project's display file (the dev server reports which file that is). */
