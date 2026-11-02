@@ -35,10 +35,12 @@ const TOOLS = [
   "view_observe", "view_select", "view_highlight", "view_isolate", "view_camera", "view_callout", "view_mark", "view_arrow", "view_unannotate", "view_explode", "view_undo", "view_claim", "view_release", "view_capture", "view_review",
   // W4-D (deliberate change): faces and placements, then the exact tier and issue reports (PB-1187, PB-1197)
   "view_pick", "view_place_on_face", "view_orient_by_face", "view_tour", "geometry_measure", "report_issue", "request_feature", "report_send", "report_list",
+  // R2-E (deliberate change): the user's settings
+  "settings_get", "settings_set",
 ];
 const WRITES = ["project_init", "project_build", "project_layout", "parts_add"];
 /** Tools that run no project code (W4-D): the exact tier and the issue reports. */
-const NO_PROJECT_CODE = ["geometry_measure", "report_issue", "request_feature", "report_send", "report_list"];
+const NO_PROJECT_CODE = ["geometry_measure", "report_issue", "request_feature", "report_send", "report_list", "settings_get", "settings_set"];
 
 const PART: UhdModuleDef = {
   id: "test-mcp-regulator",

@@ -43,6 +43,8 @@
     "./mates": "./src/mates/index.ts",
     "./reference-tool": "./src/reference-tool/index.ts",
     "./findings-anchors": "./src/findings-anchors.ts",
+    "./findings-text": "./src/findings-text.ts",
+    "./settings": "./src/settings.ts",
     "./reference/*": "./reference/*"
   },
   "files": [

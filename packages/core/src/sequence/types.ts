@@ -59,6 +59,18 @@ export interface Motion {
   hand?: "right" | "left";
 }
 
+/**
+ * How a part leaves in the exploded view when the assembly script says so (R2-E and R2-B, walkthrough H2,
+ * 2026-11-02): along `direction` (the assembly root's frame, mm, Z up; the viewer normalises it) by `distance` mm at
+ * explode amount 1. On a step (every member) or a member (wins over the step). The build's radial explode
+ * (`explode: "radial"` in the assembly script) writes one per moving part from its mounting face; `explode` patch
+ * edits set or adjust it. Absent: the viewer's own radial rule (uhd-viewer `cad/explode.ts`).
+ */
+export interface ExplodeOverride {
+  direction?: Vec3;
+  distance?: number;
+}
+
 export interface Member {
   ref: PartRef;
   /**
@@ -71,6 +83,8 @@ export interface Member {
   parent?: PartRef;
   /** Per-member override of the step motion (a nut that leaves the other way). */
   motion?: Partial<Motion>;
+  /** How this member leaves in the exploded view (wins over the step's). */
+  explode?: ExplodeOverride;
 }
 
 export interface Group {
@@ -91,6 +105,8 @@ export interface SeqStep {
   members: Member[];
   /** Default motion for every member. */
   motion?: Motion;
+  /** How every member leaves in the exploded view (a member's own wins). */
+  explode?: ExplodeOverride;
   /** A sub-assembly built first (another sequence in the same file) and fitted as one unit. */
   sequence?: string;
   /** UHD link ids this step makes (coverage; ext-docs `mates`). */
@@ -214,7 +230,12 @@ export type SequenceEdit =
   | { insert: Omit<SeqStep, "source"> & { source?: SeqStep["source"] }; before?: string; after?: string }
   | { remove: string }
   /** Add or replace a drivable joint (limits as hard stops). */
-  | { joint: JointDef };
+  | { joint: JointDef }
+  /**
+   * How a member leaves in the exploded view (`@group` refs: each of its members): a direction or a distance left
+   * out keeps the one it has (the radial explode's, or none).
+   */
+  | { explode: PartRef; direction?: Vec3; distance?: number };
 
 export interface SequencePatch {
   /** Default: the main sequence. */

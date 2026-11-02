@@ -22,6 +22,8 @@ import { formerScopeDiagnostics } from "./scope.js";
 import { isInsideReal } from "./paths.js";
 import { PART_FILES_VALIDATOR, bodyArtifact, partFileDiagnostics } from "./part-files.js";
 import { runModelSizeCheck } from "./model-size.js";
+import { runModelOrientationCheck } from "./model-orientation.js";
+import { annotateFindings, projectNames } from "./findings-text.js";
 import { artifactBaseDir, artifactBaseLabel, findProjectRoot, freshImporter, importTs, loadConfig, loadDefinitions, locateId, originEntry, type TsImporter } from "./load.js";
 import type {
   CheckRun,
@@ -313,6 +315,7 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
       runModelChecks(project);
       runPartFileChecks(project);
       runModelSizeCheck(project);
+      runModelOrientationCheck(project);
     }
   } else {
     const { loadExtensions, runExtensionChecks } = await import("./extensions.js");
@@ -337,10 +340,14 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
       runPartFileChecks(project);
       // a placed 3D model far off its package body size (PB_MODEL_SIZE_MISMATCH; reads the build's view sidecars)
       runModelSizeCheck(project);
+      // a board's part whose 3D model sits upside down or through the board (PB_MODEL_ORIENTATION; the same sidecars)
+      runModelOrientationCheck(project);
       await runExtensionChecks(project, extensions);
       await capabilities.runCapabilityChecks(project);
     }
   }
+  // plain words for people on every finding (wave R2, D3): `title` and `summary` from docs/reference/diagnostic-codes.md
+  annotateFindings(project.diagnostics, projectNames(project));
   return project;
 }
 

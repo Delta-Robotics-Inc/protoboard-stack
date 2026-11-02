@@ -217,7 +217,7 @@ function Row({ row, actions }: { row: InspectorRow; actions: InspectorActions })
       role={go ? "button" : undefined}
       tabIndex={go ? 0 : undefined}
       // a finding's row shows its whole message already: no tooltip repeating it (D7); a click shows it on the model
-      {...(finding ? { title: act?.type === "finding" ? "Show on the model" : undefined } : { "data-tooltip": `${row.label}${row.detail ? ` · ${row.detail}` : ""}`, "data-tooltip-clamp": "3", "data-tooltip-delay": "600" })}
+      {...(finding ? { title: act?.type === "finding" ? "Show on the model" : undefined } : { "data-tooltip": row.hint ?? `${row.label}${row.detail ? ` · ${row.detail}` : ""}`, "data-tooltip-clamp": "3", "data-tooltip-delay": "600" })}
       data-row-finding={row.code}
       onClick={go}
       onKeyDown={
@@ -239,6 +239,8 @@ function Row({ row, actions }: { row: InspectorRow; actions: InspectorActions })
       {finding ? (
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="leading-[1.4]">{row.label}</span>
+          {/* a finding's plain sentence (wave R2, D3), under its title */}
+          {row.detail && <span className="text-[11px] leading-[1.4] text-fg-muted">{row.detail}</span>}
           {row.code && <span className="font-code text-[9.5px] leading-none text-fg-faint">{row.code}</span>}
         </span>
       ) : (

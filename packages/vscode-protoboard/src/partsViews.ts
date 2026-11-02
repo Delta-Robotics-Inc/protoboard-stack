@@ -29,6 +29,8 @@ import { showApp, tabIcon } from "./appView.js";
 import { parseJsonOutput, runCli, type CliCommand } from "./cli.js";
 import { bomFileProblems, projectBom, writeBomSettings } from "./cost.js";
 import { answer, type LibraryController } from "./libraryView.js";
+import { exportToast, writeExport } from "./exportFiles.js";
+import { exportFolder } from "@protoboardai/core/settings";
 import type { ProjectIndex } from "./model.js";
 
 /** What the parts surfaces need of the extension. */
@@ -632,11 +634,10 @@ class BomEditorProvider implements vscode.CustomTextEditorProvider, vscode.Webvi
         if (!shown) return;
         // as the project holds it now: the units and offers the reader chose are already written
         const model = tab.read();
-        const name = model.source.kind === "release" ? `bom-${model.source.version}.csv` : `${model.project || basename(shown.root)}-bom.csv`;
-        const target = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file(join(shown.root, name)), filters: { CSV: ["csv"] }, title: "Export the bill of materials" });
-        if (!target) return;
-        writeFileSync(target.fsPath, bomCsv(model));
-        void vscode.window.showInformationMessage(`Protoboard: the bill of materials (${model.units} unit${model.units === 1 ? "" : "s"}) was written to ${relative(shown.root, target.fsPath) || target.fsPath}.`);
+        // R2-E (G3, Kevin: "export goes to the Downloads folder, don't even ask"): the export folder, no dialog
+        const what = model.source.kind === "release" ? `bom-${model.source.version}` : "bom";
+        const file = writeExport(exportFolder(), model.project || basename(shown.root), what, "csv", Buffer.from(bomCsv(model), "utf8"));
+        void exportToast(file, this.host.log);
         return;
       }
       case "openLink":

@@ -22,7 +22,10 @@ export interface InspectorRow {
   /** Lucide icon name. */
   icon: string;
   label: string;
+  /** A muted second part: beside the label, or under it for a finding (its plain sentence, wave R2 D3). */
   detail?: string;
+  /** What the row's tooltip says instead of label and detail: the ids behind a name for people (D7). */
+  hint?: string;
   chips?: InspectorChip[];
   /** A dot in the severity colour. */
   tone?: string;
@@ -54,7 +57,10 @@ export interface InspectorSection {
 export interface InspectorFinding {
   key: string;
   code: string;
+  /** The finding's plain sentence for people (wave R2, D3), else its message's first clause. */
   message: string;
+  /** Its plain title (wave R2, D3), when the check wrote one. */
+  title?: string;
   severity: "error" | "warning" | "info";
   /** Links as the viewer selects them (`owner/local`, `local` at the root; a derived link by its own id), interfaces as `path:id`. */
   refs: string[];
@@ -187,6 +193,9 @@ export interface DrcRowModel {
   key: string;
   code: string;
   summary: string;
+  /** Plain words for people (wave R2, D3): the row shows the title, the open row the sentence before the detail. */
+  title?: string;
+  plain?: string;
   message: string;
   reasons: string[];
   module: string;

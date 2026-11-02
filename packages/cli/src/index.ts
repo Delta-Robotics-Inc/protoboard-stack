@@ -233,6 +233,9 @@ const cli = meow(
                             Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where
                             one exists)
     inventory [--json]      What is installed: the CLI, the stack, extensions and their packages (PB-1168)
+    settings get [<key>] | set <key> <value> | reset <key> | log
+                            Your Protoboard settings (viewer defaults, the STEP viewer, the export folder), the same
+                            ones the extension's Settings page and the agent's settings tools change (R2-E)
     update check [--json] [--force] | status | on | off
                             Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the
                             background after a command (off in CI)
@@ -833,9 +836,9 @@ async function main() {
   // The account's own commands and `setup` do not: a sign-in is the user's, and its service is read without loading
   // the project (projectService), so asking who is signed in never changes a project (first builds review, item 23)
   // `upgrade` changes the ranges first and links after, so it does not link to a copy the old ranges choose
-  const linked = command && !["init", "stack", "login", "logout", "whoami", "account", "setup", "upgrade"].includes(command) ? linkIfCarried() : undefined;
+  const linked = command && !["init", "stack", "login", "logout", "whoami", "account", "setup", "upgrade", "settings"].includes(command) ? linkIfCarried() : undefined;
   // PB-1024: the CLI and the stack the project links to are different versions (`stack` says it in its own report)
-  if (command && !["stack", "setup", "login", "logout", "whoami", "account", "upgrade"].includes(command)) {
+  if (command && !["stack", "setup", "login", "logout", "whoami", "account", "upgrade", "settings"].includes(command)) {
     const root = findProjectRoot(cwd);
     const mismatch = root ? stackVersionMismatch(root, String(cli.pkg.version)) : undefined;
     if (mismatch) process.stderr.write(`protoboard: warning: ${mismatch}\n`);
@@ -1045,6 +1048,10 @@ async function main() {
       await runSequenceChecks(p);
       // the mates (PB-1185): traits and sidecars validated, problems under protoboard/mates (wave 4 gate)
       await runMateChecks(p);
+      // R2-D (D3), applied at the R2 integration: the findings pushed after loading (the diagram's layout, the sequence
+      // patches, the mates) get their plain title and summary too; one already worded is kept
+      const { annotateFindings, projectNames } = await import("@protoboardai/core/findings-text");
+      annotateFindings(p.diagnostics, projectNames(p));
       const min = SEV_RANK[cli.flags.severity as keyof typeof SEV_RANK] ?? 1;
       const shown = p.diagnostics.filter((d) => SEV_RANK[d.severity] <= min).sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity]);
       out({ checks: p.checks, diagnostics: p.diagnostics }, () =>
@@ -1578,6 +1585,11 @@ async function main() {
         },
       );
       process.exitCode = process.exitCode || setupExitCode(r);
+      return;
+    }
+    case "settings": {
+      // R2-E (J1): the user's settings (core settings.ts), local work
+      process.exitCode = (await import("./settings.js")).settingsCommand(args, out);
       return;
     }
     case "mcp": {

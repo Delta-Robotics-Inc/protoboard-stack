@@ -61,6 +61,26 @@ Refs are instance paths (`stack/fc/u3`) or a unique tail of one (`u3`,
 `fc/u3`, any case). An ambiguous tail is listed under `unresolved` with its
 candidates.
 
+### Highlight colour (R2-A, 2026-11-02)
+
+The view state's `highlight` op takes an optional `color`:
+`{ op: "highlight", paths: string[], color?: string }`. `color` is a theme
+token name (`accent`, `highlight`, `drcError`, `drcWarning`, `drcInfo`,
+`drcRisk`, `drcPass`, or any colour token of uhd-viewer
+`src/theme/tokens.ts`) or a hex colour (`#rgb`, `#rrggbb`); omitted, the
+theme's highlight glow is used. Each highlight call replaces the colour (it
+is the live key `highlightColor`). The selection itself stays the theme's
+accent; a part whose own colour is close to the accent is selected in the
+theme's `highlight` colour instead. `view_highlight` takes `color` and passes
+it through; its `add` and `remove` keep the colour in force.
+
+### Settings an agent may change
+
+`settings_get` and `settings_set` read and change the user's Protoboard
+settings (the viewer's defaults, the STEP viewer, the export folder): see
+[settings.md](settings.md). Change one only when the person asks, and say
+what you changed; each change is logged as yours.
+
 ## Results
 
 `status` is `applied`, `read`, `refused`, `invalid`, `not-run` (nothing
@@ -165,6 +185,65 @@ burned in and drawn in the SVG as before. `inline:
 true` also returns the image; it is checked against the route's limits
 first and, if it would fail, captured again once smaller
 (`sendWithRetryOnce`). Capture only when the person asked to see something.
+
+## The assembly script and the exploded view
+
+The 3D toolbar has two controls (R2-B, walkthrough H2): **Explode** (every
+part at once, each along the outward normal of its mounting face, as if
+pushed from the assembly's centre) and **Assemble** (the sequence played step
+by step). Both read the project's assembly sequence,
+`.protoboard/build/sequence.json`, which every build writes from the mates
+and fastener stacks; the agent writes the **assembly script** that adjusts
+it. The script is `src/assembly.sequence.json` (or the export
+`sequencePatches` of `src/assembly.uhd.ts`); never edit `sequence.json`
+itself, the next build replaces it.
+
+```json
+{
+  "explode": "radial",
+  "patches": [
+    {
+      "edits": [
+        { "explode": "cube/lid", "direction": [0, 0, 1], "distance": 120 },
+        { "explode": "@fan_unit_1/screws", "distance": 40 },
+        { "step": "fit:lid_mount", "set": { "title": "Put the lid on" } },
+        { "move": "fit:filter_1", "before": "fit:lid_mount" }
+      ]
+    }
+  ]
+}
+```
+
+- `"explode": "radial"` asks the build to write, on every moving part, its
+  way out: `explode: { direction, distance }` on the part's member in
+  `sequence.json` (core `sequence/radial.ts`). The direction is the
+  area-weighted normal of the part's largest face that looks away from the
+  assembly's centre (dot 0.3 or more with the line from the centre), else
+  that line, else up for a part at the centre; the distance is 0.6 times the
+  assembly's bounding radius, the same for every part. Directions are in the
+  assembly root's frame, mm, Z up. Fasteners get none: they ride the body
+  they hold. Parts with no model (placeholders) are left to the viewer,
+  which applies the same rule at view time.
+- An `explode` edit sets or adjusts one part's way out (or every member of an
+  `@group`): `direction` (three numbers, not all zero; the viewer normalises
+  it) and `distance` (mm at explode amount 1, 0 or more). A field left out
+  keeps what the part had. Edits apply after the radial explode, so they win.
+  A ref no step moves (a base part) is a `SEQUENCE_PATCH_UNKNOWN_MEMBER`
+  warning; a bad vector or distance is `SEQUENCE_PATCH_BAD_EXPLODE`.
+- The other edits order the Assemble steps: `set` (title, callout, camera,
+  motion, duration), `rename`, `move` (before or after a step), `merge`,
+  `split`, `insert` (a manual action), `remove`, `joint` (a drivable joint
+  with stops). Steps are keyed by ids made from link ids (`fit:<link>`,
+  `fasten:<link>`, `place:<key>`), so an edit survives a rebuild while the
+  link is there; an edit naming a step that is gone is reported, never
+  guessed.
+
+How an agent writes it: build once (`project_build`), read
+`.protoboard/build/sequence.json` for the step ids and member refs (and, with
+`"explode": "radial"`, the directions the build chose), write the script, run
+`project_check` (it reports every edit that did not apply), then show the
+result with `view_explode` (amount 1) and `view_capture` when the person asks
+to see it.
 
 ## The op log on disk
 

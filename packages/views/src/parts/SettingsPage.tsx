@@ -4,10 +4,10 @@
  * entry for any other MCP client, and a way into VS Code's own settings (they
  * are linked, not repeated). A list of sections, so it can grow.
  */
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Icon, ScrollArea, cx } from "@deltarobotics/uhd-viewer/components";
 import { AccountCard } from "./LibrariesManager.js";
-import type { AgentRowModel, SettingsActions, SettingsModel } from "./model.js";
+import type { AgentRowModel, SettingRowModel, SettingsActions, SettingsModel } from "./model.js";
 import { PartsSurface } from "./Surface.js";
 import { BODY, Button, Card, RowAction, StatusText, type Tone } from "./ui.js";
 
@@ -156,6 +156,99 @@ function OtherClients({ model, actions }: { model: NonNullable<SettingsModel["ot
   );
 }
 
+/** A switch (the Viewer section's on/off settings): the track and knob in the theme's tokens. */
+function Switch({ on, label, onChange }: { on: boolean; label: string; onChange: (on: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      onClick={() => onChange(!on)}
+      className={cx(
+        "relative inline-flex h-[18px] w-8 shrink-0 cursor-pointer items-center rounded-full border transition-colors",
+        on ? "border-transparent bg-accent" : "border-[var(--pb-control-border)] bg-sunken",
+        "outline-1 -outline-offset-1 outline-contrast focus-visible:outline focus-visible:outline-focus",
+      )}
+    >
+      <span className={cx("inline-block size-3 rounded-full shadow-sm transition-transform", on ? "translate-x-[15px] bg-surface" : "translate-x-[2px] bg-fg-muted")} />
+    </button>
+  );
+}
+
+/** A number setting: typed, kept on Enter or when the box loses focus; empty puts the default back. */
+function NumberSetting({ row, onSet }: { row: SettingRowModel; onSet: (v: number | null) => void }) {
+  const [text, setText] = useState(String(row.value ?? ""));
+  useEffect(() => setText(String(row.value ?? "")), [row.value]);
+  const n = Number(text);
+  const ok = !text.trim() || (/^\d+$/.test(text.trim()) && (row.min === undefined || n >= row.min) && (row.max === undefined || n <= row.max));
+  const commit = () => {
+    if (!ok) return;
+    const next = text.trim() ? n : null;
+    if (next !== row.value) onSet(next);
+  };
+  return (
+    <span className="flex items-center gap-1.5">
+      <input
+        type="number"
+        inputMode="numeric"
+        aria-label={row.title}
+        aria-invalid={!ok || undefined}
+        min={row.min}
+        max={row.max}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") setText(String(row.value ?? ""));
+        }}
+        title={row.min !== undefined && row.max !== undefined ? `${row.min} to ${row.max}${row.unit ? ` ${row.unit}` : ""}` : undefined}
+        className={cx(
+          "h-7 w-[84px] rounded-[4px] border bg-sunken px-2 text-right font-ui text-[12.5px] text-fg",
+          ok ? "border-[var(--pb-control-border)]" : "border-error",
+          "outline-1 -outline-offset-1 outline-contrast focus-visible:outline focus-visible:outline-focus",
+        )}
+      />
+      {row.unit && <span className="text-[12px] text-fg-muted">{row.unit}</span>}
+    </span>
+  );
+}
+
+/**
+ * The Viewer section (R2-E's J1 settings; built at the R2 integration, R2-E's handoff to the views owner): how the 3D
+ * viewer behaves, where exports go, which app opens STEP files. The same settings `protoboard settings` and an
+ * agent's `settings_set` change; a change from any of them shows here.
+ */
+function ViewerSettings({ rows, actions }: { rows: SettingRowModel[]; actions: SettingsActions }) {
+  return (
+    <Card className={cx(BODY, "flex flex-col text-[13px] text-fg")}>
+      {rows.map((r, i) => (
+        <div key={r.key} data-setting={r.key} data-default={r.isDefault || undefined} className={cx("flex min-h-11 items-center gap-3 px-4 py-2", i > 0 && "border-t border-line-subtle")}>
+          <Icon name={r.icon ?? "settings"} size={15} strokeWidth={1.75} className="shrink-0 text-fg-muted" aria-hidden />
+          <span className="min-w-0 flex-1">
+            {r.title}
+            <span className="block text-[12px] leading-snug break-words text-fg-muted">{r.description}</span>
+            {(r.kind === "folder" || r.kind === "app") && (
+              <span className="mt-0.5 block font-ui text-[12px] break-all text-fg" title={r.text}>
+                {r.text}
+              </span>
+            )}
+          </span>
+          {!r.isDefault && r.kind !== "boolean" && actions.setSetting && <RowAction icon="rotate-ccw" label={`Reset ${r.title} to the default`} onClick={() => actions.setSetting!(r.key, null)} />}
+          {r.kind === "boolean" && actions.setSetting && <Switch on={r.value === true} label={r.title} onChange={(on) => actions.setSetting!(r.key, on)} />}
+          {r.kind === "number" && actions.setSetting && <NumberSetting row={r} onSet={(v) => actions.setSetting!(r.key, v)} />}
+          {(r.kind === "folder" || r.kind === "app") && actions.chooseSetting && (
+            <Button size="sm" className="shrink-0" onClick={() => actions.chooseSetting!(r.key)}>
+              Choose…
+            </Button>
+          )}
+        </div>
+      ))}
+    </Card>
+  );
+}
+
 export function SettingsPage({ model, actions }: { model: SettingsModel; actions: SettingsActions }) {
   const a = model.agents;
   return (
@@ -218,6 +311,12 @@ export function SettingsPage({ model, actions }: { model: SettingsModel; actions
           </Card>
           {a.notFound.length > 0 && <p className={cx(BODY, "text-[12px] leading-snug text-fg-muted")}>Not found on this machine: {a.notFound.join(", ")}.</p>}
         </Section>
+
+        {model.viewer && model.viewer.length > 0 && (actions.setSetting || actions.chooseSetting) && (
+          <Section title="Viewer" note="How the 3D viewer behaves, where exports go and which app opens STEP files. Agents and the protoboard command change the same settings.">
+            <ViewerSettings rows={model.viewer} actions={actions} />
+          </Section>
+        )}
 
         {model.other && (
           <Section title="Other MCP clients" note="Add this entry to any other agent's MCP configuration.">

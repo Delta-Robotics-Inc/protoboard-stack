@@ -14,6 +14,7 @@ import { attachedArtifacts, withArtifacts } from "./capabilities.js";
 import type { Project } from "./project.js";
 import { modelTable, projectHas3d, writeModelFiles, type ModelTable } from "./part-files.js";
 import { projectRelative } from "./paths.js";
+import { annotateFindings, projectNames } from "./findings-text.js";
 
 interface ProjectScenario {
   id: string;
@@ -99,7 +100,20 @@ export async function uhdBundle(p: Project, models?: ModelTable): Promise<UhdBun
     // `location` (a provider's finding on a design: board mm, pads, vias) is kept so the viewer pins the finding to
     // the 3D model (W3-B, PB-1184). It is an extra field beyond UHD's `UhdBundleDiagnostic` (UHD is read only: the
     // field is noted in for-mark.md); readers that do not know it ignore it.
-    diagnostics: p.diagnostics.map((d) => ({ code: d.code, severity: d.severity, message: d.message, entity: d.entity, ...(d.source ? { source: d.source } : {}), ...(d.location ? { location: d.location } : {}), validator: d.validator })),
+    // `title` and `summary` (wave R2, D3: plain words for people, findings-text.ts) are extra fields too: the 3D view's
+    // callouts show them, `message` stays the raw detail; a finding added after loading (the diagram's layout) gets
+    // them here. Additive: readers that do not know them ignore them.
+    diagnostics: annotateFindings(p.diagnostics, projectNames(p)).map((d) => ({
+      code: d.code,
+      severity: d.severity,
+      message: d.message,
+      ...(d.title ? { title: d.title } : {}),
+      ...(d.summary ? { summary: d.summary } : {}),
+      entity: d.entity,
+      ...(d.source ? { source: d.source } : {}),
+      ...(d.location ? { location: d.location } : {}),
+      validator: d.validator,
+    })),
     ...(display ? { display } : {}),
     meta: { name: p.name, producer: "@protoboardai/core", producerVersion: FRAMEWORK_VERSION },
   };

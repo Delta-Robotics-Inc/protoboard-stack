@@ -31,6 +31,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `mates list\|suggest\|validate [--json]` | Mates from traits and sidecars; heuristic suggestions (.protoboard/build/mates-suggested.json) |
 | `interference [--at <keyframe\|t>] [--json]` | Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where one exists) |
 | `inventory [--json]` | What is installed: the CLI, the stack, extensions and their packages (PB-1168) |
+| `settings get [<key>] \| set <key> <value> \| reset <key> \| log` | Your Protoboard settings (viewer defaults, the STEP viewer, the export folder), the same ones the extension's Settings page and the agent's settings tools change (R2-E) |
 | `update check [--json] [--force] \| status \| on \| off` | Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the background after a command (off in CI) |
 | `package write` | A part as one .uhdpkg (PB-1195): its revision envelope, unchanged, and its files, zipped: write <part-id \| folder> [--out <file>] [--exclude <path>] [--allow-unpinned] [--created-at <iso>] [--stored]; read <file.uhdpkg> <folder> unpacks after every check; verify <file.uhdpkg> checks without writing (exit 1 on any failure) |
 | `views doctor` | Can this machine render headless: the browser, the GL backend (GPU or SwiftShader; --backend auto\|gpu\|swiftshader), WebGL 2, a test frame, the capture encoders |
@@ -250,6 +251,9 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where
                             one exists)
     inventory [--json]      What is installed: the CLI, the stack, extensions and their packages (PB-1168)
+    settings get [<key>] | set <key> <value> | reset <key> | log
+                            Your Protoboard settings (viewer defaults, the STEP viewer, the export folder), the same
+                            ones the extension's Settings page and the agent's settings tools change (R2-E)
     update check [--json] [--force] | status | on | off
                             Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the
                             background after a command (off in CI)

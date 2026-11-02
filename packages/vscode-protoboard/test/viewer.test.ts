@@ -237,9 +237,15 @@ describe("the Inspector's card (PB-895)", () => {
     // the checks open, the links closed; a parent lists no children (PB-1088): the summary row counts them
     expect(titles).toEqual(["Checks", "Links"]);
     expect(card.sections.find((s) => s.title === "Links")).toMatchObject({ collapsed: true });
+    // wave R2 (D7): a link row names the link for people, the ids on hover
+    expect(card.sections.find((s) => s.title === "Links")!.rows[0]).toEqual({ icon: "link", label: "gpio1 (MCU) to anode (Status LED)", hint: "mcu_led: mcu:gpio1 ↔ led:anode" });
     const checks = card.sections.find((s) => s.title === "Checks")!;
     // every severity, each with its code
     expect(checks.rows[0]).toMatchObject({ tone: "error", code: "UHD_LINK_STATE", action: { type: "finding" } });
+    // wave R2 (D3): a finding's row is its plain title with its plain sentence under it; the raw message in the explanation
+    expect(checks.rows[0].label).toBe(list.find((f) => f.code === "UHD_LINK_STATE")!.title);
+    expect(checks.rows[0].detail).toBe(list.find((f) => f.code === "UHD_LINK_STATE")!.plain);
+    expect(checks.rows[0].explain?.message).toBe(list.find((f) => f.code === "UHD_LINK_STATE")!.message);
     expect(checks.count).toBe(checks.rows.length);
     // the module as the viewer's inspector shows it (its facts, artifacts, interfaces), by its path, with the findings
     // its interface cards show: the link inside the board, by the id the viewer selects it with
@@ -279,10 +285,12 @@ describe("the Inspector's card (PB-895)", () => {
 
   it("shows a link by its ends, each leading to its module", () => {
     const card = linkCard(index, "board/mcu_led", list)!;
-    expect(card).toMatchObject({ kind: "link", title: "mcu_led", path: "board", linkId: "board:mcu_led", counts: { error: 1 }, actions: { pair: true } });
+    // wave R2 (deliberate change, D7): an unnamed link by its ends for people, each end by its holder's name, the ids on hover
+    expect(card).toMatchObject({ kind: "link", title: "gpio1 (MCU) to anode (Status LED)", path: "board", linkId: "board:mcu_led", counts: { error: 1 }, actions: { pair: true } });
+    expect(card.subtitle).toBe("mcu_led in board");
     expect(card.sections[0].rows).toEqual([
-      { icon: "plug", label: "gpio1", detail: "mcu", action: { type: "focus", path: "board/mcu" } },
-      { icon: "plug", label: "anode", detail: "led", action: { type: "focus", path: "board/led" } },
+      { icon: "plug", label: "gpio1", detail: "MCU", hint: "mcu:gpio1", action: { type: "focus", path: "board/mcu" } },
+      { icon: "plug", label: "anode", detail: "Status LED", hint: "led:anode", action: { type: "focus", path: "board/led" } },
     ]);
     // the link on its owner's level, by the ids the viewer selects it with
     expect(card.details?.target).toEqual({ kind: "link", owner: "board", ids: ["board/mcu_led", "board"] });

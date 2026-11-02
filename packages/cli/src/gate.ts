@@ -62,6 +62,8 @@ const PARTS: Record<string, GateEntry> = {
 export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   init: LOCAL,
   upgrade: LOCAL,
+  // R2-E's user settings (wave R2 gate: listed, a local file under the Protoboard home)
+  settings: LOCAL,
   inspect: LOCAL,
   artifacts: LOCAL,
   check: LOCAL,

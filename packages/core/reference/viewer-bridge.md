@@ -21,6 +21,7 @@ One object, schema `uhd-viewer.view-state/v1` (uhd-viewer `src/api.ts`,
 | `camera` | `{ position, target, up, fov? }`, mm, the root's coordinates (Z up); `null` until the view has placed one | live |
 | `selection` | `{ body?, iface?, component?, mate?, harness? }`, instance paths from the root (a body may be `path#artifact`) | live |
 | `highlight` | instance paths drawn with a glow besides the selection (what an agent points at) | live |
+| `highlightColor` | the highlight's colour: a theme token name (`drcError`, ...) or `#rgb` / `#rrggbb`; absent, the theme's highlight glow (R2-A, 2026-11-02) | live |
 | `isolation` | instance paths drawn alone, or `null` | live |
 | `visibility` | `labels`, `labelKinds`, `frames`, `wires`, `hardware`, `findings` (`null`: automatic), `xray`, `hidden` (paths) | live |
 | `direction` | interface geometry by `feature`, `artifact` or `procedural` binding | live |
@@ -78,7 +79,7 @@ agent writes is data):
 | `set` | `path` (`"selection"`, `"visibility.labels"`, `["namedViews", "Front"]`), `value` (`undefined` removes an entry) |
 | `camera` | `camera` |
 | `select` | `selection` |
-| `highlight` | `paths` |
+| `highlight` | `paths`, optional `color` (a token name or a hex colour; a highlight op without it clears the colour) |
 | `isolate` | `paths` or `null` |
 | `hide` | `paths`, `hidden` (default true; false shows them again) |
 | `explode` | `t`, `step?` |

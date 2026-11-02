@@ -21,7 +21,43 @@ export type ViewerCommand =
    * open. `id` is the viewer's finding id (`drc:<code>:<entity kind>:<entity id>`, findings-anchors.ts); `path`
    * the module it is about. A viewer that does not know this message ignores it (the host sends a focus too).
    */
-  | { type: "uhd-viewer:openFinding"; id: string; code: string; path?: string };
+  | { type: "uhd-viewer:openFinding"; id: string; code: string; path?: string }
+  /** R2-A (F1): move through the viewer's own 3D history (-1 Back, +1 Forward). */
+  | { type: "uhd-viewer:historyGo"; delta: number };
+
+/**
+ * The viewer settings the extension passes to a tab (R2-E, J1: core settings.ts, the user's
+ * `<home>/settings.json`), at the start (`WebviewConfig.settings`) and on every change (`settings`). Each a DEFAULT
+ * there: models open in place, zoom toward the pointer, model info on, the long hover after 900 ms.
+ */
+export interface ViewerSettings {
+  openModelsInPlace: boolean;
+  zoomToCursor: boolean;
+  modelInfo: boolean;
+  hoverLongDelayMs: number;
+}
+
+export const DEFAULT_VIEWER_SETTINGS: ViewerSettings = { openModelsInPlace: true, zoomToCursor: true, modelInfo: true, hoverLongDelayMs: 900 };
+
+/** A tab's place for its own back and forward (R2-E, F1): the module it is on and the view (a registry view id, or `diagram`, `3d`). */
+export interface TabLocation {
+  path: string;
+  view: string;
+}
+
+/** What a navigation opens (R2-A's `NavigateTarget`): a module's 3D level, or a model artifact of a part. */
+export type NavigateTarget = { module: string } | { model: { defId: string; artifactId: string; path?: string } };
+
+/** One place of the viewer's own history (R2-A's `ViewerHistoryEntry`). */
+export interface ViewerHistoryEntry {
+  scope: string;
+  label: string;
+  kind: "open" | "drill" | "frame" | "isolate";
+}
+
+/** The formats an export writes (G3): a picture of the view, or a part's model file. */
+export type ExportFormat = "png" | "glb" | "step" | "stl";
+export const EXPORT_FORMATS: readonly ExportFormat[] = ["png", "glb", "step", "stl"];
 
 export interface ViewerSelection {
   kind: "node" | "link";
@@ -78,6 +114,8 @@ export interface WebviewConfig {
   source?: ModuleSource;
   /** The project's saved live 3D view state (`.protoboard/local/viewer-state.json`, PB-1178); the tab's own state wins over it. */
   viewState?: ViewerStateFile;
+  /** The user's viewer settings (R2-E, J1). */
+  settings?: ViewerSettings;
 }
 
 /** uhd-viewer's `ViewerStateFile` (src/cad/state/serialize.ts): the live view state per scope, as the viewer hands it over. */
@@ -142,7 +180,19 @@ export type ToWebview =
    * A live-tab bridge batch for this tab's viewer (PB-1178): uhd-viewer's `BridgeRequest`, from an agent session the
    * dev server authenticated; the page answers with `bridgeReply`.
    */
-  | { type: "bridge"; request: Record<string, unknown> };
+  | { type: "bridge"; request: Record<string, unknown> }
+  /**
+   * R2-E (F1): show a module (its level, or the part the tab is on) on a view in this tab, in place: an in-place
+   * navigation the extension decided (`uhd-viewer:navigate` with `replace`, an Inspector card). The tab's back
+   * returns.
+   */
+  | { type: "go"; path: string; view: string }
+  /** R2-E (F1): VS Code's Alt+Left / Alt+Right (or the Go Back command) in this tab: the header's back or forward. */
+  | { type: "historyStep"; delta: -1 | 1 }
+  /** R2-E (J1): the user's viewer settings changed. */
+  | { type: "settings"; settings: ViewerSettings }
+  /** R2-E: the answer to a `parts` request of the in-place BOM (by its `ask`). */
+  | { type: "partsAnswer"; ask: number; ok: boolean; value?: unknown; error?: string };
 
 export type HierarchyAction = "reveal" | "filter" | "open" | "close" | "toggle";
 
@@ -236,7 +286,25 @@ export type FromWebview =
    * suppressed there): where, in CSS pixels of the tab, and what the 3D view has under the pointer (`pick`:
    * uhd-viewer's `__cad.pick`, paths in the tab's scope). The hook for R2's context menu; today it is only kept.
    */
-  | { type: "contextmenu"; x: number; y: number; view?: string; pick?: ContextMenuPick };
+  | { type: "contextmenu"; x: number; y: number; view?: string; pick?: ContextMenuPick }
+  /**
+   * R2-E (F1): the BOM view's data, in the tab (it has its tab bar and breadcrumbs there): asked of the extension,
+   * which reads and writes the project's bill of materials as the BOM editor does; answered with `partsAnswer`.
+   */
+  | { type: "parts"; ask: number; op: PartsOp; args?: Record<string, unknown> }
+  /**
+   * R2-E (G3): a file the page would download (a view's "Export CSV"): VS Code webviews cannot save one, so the
+   * extension writes it to the export folder (DEFAULT: Downloads) without asking. `data` is base64.
+   */
+  | { type: "download"; name: string; data: string }
+  /** R2-E (F1): whether the header's back and forward have somewhere to go (the extension's Go Back keys follow). */
+  | { type: "historyState"; back: boolean; forward: boolean };
+
+/** What the in-place BOM asks the extension (R2-E). */
+export type PartsOp = "bom" | "saveBom" | "refreshOffers" | "openSource" | "openLink";
+const PARTS_OPS: readonly PartsOp[] = ["bom", "saveBom", "refreshOffers", "openSource", "openLink"];
+/** DEFAULT (R2-E): a download the page hands the extension is at most 16 MiB of base64. */
+export const DOWNLOAD_MAX_CHARS = 16 * 1024 * 1024;
 
 /** What the 3D view has under a right-click (uhd-viewer's `__cad.pick`, the fields a menu needs). */
 export interface ContextMenuPick {
@@ -268,7 +336,16 @@ export type ViewerEvent =
   | { type: "uhd-viewer:openModule"; path: string; view?: "3d" }
   | { type: "uhd-viewer:openPair"; linkId: string; a: string; b: string }
   /** INSPECT in a module's context menu: the Protoboard Inspector, in front and focused. */
-  | { type: "uhd-viewer:inspect"; path: string; defId?: string };
+  | { type: "uhd-viewer:inspect"; path: string; defId?: string }
+  /** R2-A (F1, F3): open a part's own 3D model, in place (`replace`) or in a new tab (`newTab`); the extension decides with the setting. */
+  | { type: "uhd-viewer:navigate"; target: NavigateTarget; how: "replace" | "newTab"; view?: "3d"; from?: string }
+  /** R2-A (F1): the viewer's own back and forward history (the header's buttons). */
+  | { type: "uhd-viewer:history"; index: number; length: number; canBack: boolean; canForward: boolean; entries: ViewerHistoryEntry[] }
+  /**
+   * R2-E (G3), for R2-B's toolbar Export button: write the view as a PNG, or a part's model, to the export folder
+   * without asking (`target`: an instance path from the root; absent: the module the tab is on).
+   */
+  | { type: "uhd-viewer:export"; format: ExportFormat; target?: string };
 
 /** DEFAULT (wave 2 gate item 9): JSON characters of one bridge reply from the webview (the viewer's own reply cap). */
 export const BRIDGE_REPLY_MAX_CHARS = 2 * 1024 * 1024;
@@ -338,9 +415,60 @@ function parseEvent(v: unknown): ViewerEvent | undefined {
       return str(v.linkId) && str(v.a) && str(v.b) ? { type: v.type, linkId: v.linkId, a: v.a, b: v.b } : undefined;
     case "uhd-viewer:inspect":
       return str(v.path) ? { type: v.type, path: v.path, ...(str(v.defId) ? { defId: v.defId } : {}) } : undefined;
+    case "uhd-viewer:navigate":
+      return parseNavigate(v);
+    case "uhd-viewer:history": {
+      const n = (x: unknown): x is number => Number.isInteger(x) && (x as number) >= -1 && (x as number) <= 1000;
+      if (!n(v.index) || !n(v.length) || typeof v.canBack !== "boolean" || typeof v.canForward !== "boolean" || !Array.isArray(v.entries)) return undefined;
+      const KINDS = ["open", "drill", "frame", "isolate"];
+      const entries = v.entries
+        .slice(-50)
+        .filter((e): e is Record<string, unknown> => obj(e) && pathLike(e.scope) && str(e.label) && KINDS.includes(e.kind as string))
+        .map((e) => ({ scope: e.scope as string, label: (e.label as string).slice(0, 200), kind: e.kind as ViewerHistoryEntry["kind"] }));
+      return { type: v.type, index: v.index, length: v.length, canBack: v.canBack, canForward: v.canForward, entries };
+    }
+    case "uhd-viewer:export":
+      if (!(EXPORT_FORMATS as readonly unknown[]).includes(v.format) || (v.target !== undefined && !pathLike(v.target))) return undefined;
+      return { type: v.type, format: v.format as ExportFormat, ...(v.target !== undefined ? { target: v.target as string } : {}) };
     default:
       return undefined;
   }
+}
+
+/** An instance path as a message carries it: a string of at most 1024 characters, no control characters ("" is the root). */
+const pathLike = (x: unknown): x is string => typeof x === "string" && x.length <= 1024 && !/[\u0000-\u001f]/.test(x);
+
+/** A `uhd-viewer:navigate` event, checked as uhd-viewer's own relay checks it (R2-A `parseNavigateEvent`). */
+function parseNavigate(v: Record<string, unknown>): Extract<ViewerEvent, { type: "uhd-viewer:navigate" }> | undefined {
+  if (v.how !== "replace" && v.how !== "newTab") return undefined;
+  if (v.view !== undefined && v.view !== "3d") return undefined;
+  if (v.from !== undefined && !pathLike(v.from)) return undefined;
+  const t = v.target;
+  if (!obj(t)) return undefined;
+  let target: NavigateTarget;
+  if ("module" in t) {
+    if (!pathLike(t.module)) return undefined;
+    target = { module: t.module };
+  } else {
+    const a = t.model;
+    const id = (x: unknown): x is string => pathLike(x) && x.length > 0;
+    if (!obj(a) || !id(a.defId) || !id(a.artifactId) || (a.path !== undefined && !pathLike(a.path))) return undefined;
+    target = { model: { defId: a.defId, artifactId: a.artifactId, ...(a.path !== undefined ? { path: a.path as string } : {}) } };
+  }
+  return { type: "uhd-viewer:navigate", target, how: v.how, ...(v.view ? { view: "3d" as const } : {}), ...(v.from !== undefined ? { from: v.from as string } : {}) };
+}
+
+/** Viewer settings as a message or a config carries them; the defaults for anything missing or wrong. */
+export function parseViewerSettings(v: unknown): ViewerSettings {
+  const o = obj(v) ? v : {};
+  const b = (x: unknown, d: boolean) => (typeof x === "boolean" ? x : d);
+  const ms = typeof o.hoverLongDelayMs === "number" && Number.isFinite(o.hoverLongDelayMs) ? Math.min(5000, Math.max(200, Math.round(o.hoverLongDelayMs))) : DEFAULT_VIEWER_SETTINGS.hoverLongDelayMs;
+  return {
+    openModelsInPlace: b(o.openModelsInPlace, DEFAULT_VIEWER_SETTINGS.openModelsInPlace),
+    zoomToCursor: b(o.zoomToCursor, DEFAULT_VIEWER_SETTINGS.zoomToCursor),
+    modelInfo: b(o.modelInfo, DEFAULT_VIEWER_SETTINGS.modelInfo),
+    hoverLongDelayMs: ms,
+  };
 }
 
 /** A message from the webview, checked field by field; anything else is undefined. */
@@ -438,6 +566,18 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
         : undefined;
       return { type: "contextmenu", x: Math.round(data.x), y: Math.round(data.y), ...(str(data.view) && data.view.length <= 64 ? { view: data.view } : {}), ...(pick && Object.keys(pick).length ? { pick } : {}) };
     }
+    case "parts": {
+      if (!Number.isInteger(data.ask) || !(PARTS_OPS as readonly unknown[]).includes(data.op)) return undefined;
+      const args = obj(data.args) && JSON.stringify(data.args).length <= 4096 ? data.args : undefined;
+      return { type: "parts", ask: data.ask as number, op: data.op as PartsOp, ...(args ? { args } : {}) };
+    }
+    case "download":
+      // a name with no folder in it, and base64 under the cap
+      if (!str(data.name) || !data.name.trim() || data.name.length > 200 || /[\\/\u0000-\u001f]/.test(data.name)) return undefined;
+      if (!str(data.data) || data.data.length > DOWNLOAD_MAX_CHARS || !/^[A-Za-z0-9+/=]*$/.test(data.data)) return undefined;
+      return { type: "download", name: data.name, data: data.data };
+    case "historyState":
+      return typeof data.back === "boolean" && typeof data.forward === "boolean" ? { type: "historyState", back: data.back, forward: data.forward } : undefined;
     case "presence":
       // DEFAULT: 64 kB of JSON (presence is a few leases and intents; anything larger is not ours)
       if (!obj(data.presence) || JSON.stringify(data.presence).length > PRESENCE_MAX_CHARS) return undefined;

@@ -14,7 +14,7 @@ import { join } from "node:path";
 import * as vscode from "vscode";
 import { agentMachine, listAgents, removeAgent, setupAgent, type AgentMachine, type AgentState } from "@protoboardai/core/agents";
 import { launcherDir, type LauncherPlace } from "@protoboardai/core/agent-launcher";
-import type { AccountModel, AgentRowModel, SettingsLinkModel, SettingsModel } from "@protoboardai/views/parts-model";
+import type { AccountModel, AgentRowModel, SettingRowModel, SettingsLinkModel, SettingsModel } from "@protoboardai/views/parts-model";
 import { changeText, cliEntry, cliToRecord, launcherCommand, machineCli, offerText, offerable, recordCli, settingsModel, shouldOffer } from "./agents.js";
 import { showApp, tabIcon } from "./appView.js";
 import { runCli, type CliSettings } from "./cli.js";
@@ -33,7 +33,11 @@ export type SettingsPageMessage =
   | { type: "openVsCodeSettings" }
   | { type: "openLibraries" }
   | { type: "showLog" }
-  | { type: "run"; id: string };
+  | { type: "run"; id: string }
+  /** R2-E (J1), the Viewer section: a switch or a number set, or null for the default. */
+  | { type: "setSetting"; key: string; value: boolean | number | null }
+  /** The Viewer section's Choose… (a folder, the STEP app). */
+  | { type: "chooseSetting"; key: string };
 
 /** A row of the page that runs a command of the extension (what the other parts of it offer). */
 export interface SettingsLink extends SettingsLinkModel {
@@ -60,6 +64,12 @@ export interface SettingsHost {
   openLibraries(): unknown;
   /** What else is reached from the page, for the window as it is now (a project open or not, a stack carried or not). */
   links?(): SettingsLink[];
+  /** R2-E (J1): the person's Protoboard settings as the page's Viewer section shows them. */
+  viewerSettings?(): SettingRowModel[];
+  /** Set one (a switch, a number; null: the default). Only keys the section listed. */
+  setSetting?(key: string, value: boolean | number | null): unknown;
+  /** Ask for one the host's way (a folder picker, the STEP app question). */
+  chooseSetting?(key: string): unknown;
   guard(fn: () => unknown): Promise<unknown>;
 }
 
@@ -119,8 +129,10 @@ export class SettingsController implements vscode.Disposable {
     const folder = this.folder();
     const settings = this.host.cliSettings(folder);
     const found = machineCli(folder, settings);
+    const viewer = this.host.viewerSettings?.();
     return settingsModel({
       links: (this.host.links?.() ?? []).map(({ command: _command, args: _args, ...l }) => l),
+      ...(viewer?.length ? { viewer } : {}),
       account: this.host.account(),
       version: this.host.version,
       cli: { command: found.cli, ...(found.origin ? { origin: found.origin } : {}) },
@@ -156,6 +168,11 @@ export class SettingsController implements vscode.Disposable {
 
   /** The account changed: the page's card follows. */
   accountChanged() {
+    this.post();
+  }
+
+  /** R2-E (J1): the user's settings changed (here, in the CLI or by an agent): the page's rows follow. */
+  refresh() {
     this.post();
   }
 
@@ -197,6 +214,15 @@ export class SettingsController implements vscode.Disposable {
         return this.host.openLibraries();
       case "showLog":
         return this.host.log.show();
+      // R2-E (J1), the Viewer section: only keys the section lists; the value is checked again by core's settings
+      case "setSetting": {
+        if (typeof m.key !== "string" || !this.host.viewerSettings?.().some((r) => r.key === m.key)) return;
+        if (!(m.value === null || typeof m.value === "boolean" || (typeof m.value === "number" && Number.isFinite(m.value)))) return;
+        return this.host.setSetting?.(m.key, m.value);
+      }
+      case "chooseSetting":
+        if (typeof m.key !== "string" || !this.host.viewerSettings?.().some((r) => r.key === m.key)) return;
+        return this.host.chooseSetting?.(m.key);
       case "run": {
         // only what the host listed: the page names a row, never a command
         const link = this.host.links?.().find((l) => l.id === m.id);

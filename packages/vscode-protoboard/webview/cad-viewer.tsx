@@ -17,6 +17,8 @@ interface Config {
   via?: string;
   occt: string;
   wasm: string;
+  /** The person's `viewer.modelInfo` (R2-E, J1): false starts the model info card closed. Absent: open. */
+  modelInfo?: boolean;
 }
 
 interface OcctMesh {
@@ -94,6 +96,7 @@ function App() {
         object={config.kind === "step" ? object : undefined}
         name={config.name}
         detail={detail}
+        infoOpen={config.modelInfo !== false}
         error={error}
         onReady={(info) => vscode.postMessage({ type: "ready", message: `${info.meshes} meshes` })}
         actions={

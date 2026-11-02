@@ -112,8 +112,11 @@ function FindingRow({ f, lane, flat, open, onToggle, actions }: { f: DrcRowModel
       >
         <Chevron open={open} />
         <span className={cx("shrink-0 font-code text-[11.5px]", LANE[lane].tone)}>{f.code}</span>
-        <span title={f.message} className="min-w-0 flex-1 truncate">
-          {f.summary}
+        {/* plain words for people (wave R2, D3): the title, the raw message on hover */}
+        <span title={f.plain ? `${f.plain}
+
+${f.message}` : f.message} className="min-w-0 flex-1 truncate">
+          {f.title ?? f.summary}
         </span>
         <span className="max-w-[35%] min-w-0 shrink truncate text-fg-muted">{f.module}</span>
         <span className={cx("flex shrink-0 gap-px", !open && "invisible group-focus-within/row:visible group-hover/row:visible")}>
@@ -125,8 +128,9 @@ function FindingRow({ f, lane, flat, open, onToggle, actions }: { f: DrcRowModel
       </div>
       {open && (
         <div className={cx(BODY, "mb-1.5 border-l-2 border-line-strong py-1 pl-2.5 text-[12.5px] leading-[1.45] text-fg", flat ? "ml-[18px]" : "ml-[30px]")}>
-          {/* the row's line is cut to fit; here it is whole, with the reasons under it */}
-          <p>{f.summary}</p>
+          {/* the plain sentence first (wave R2, D3), then the raw message whole, with the reasons under it */}
+          {f.plain && <p>{f.plain}</p>}
+          <p className={cx(f.plain && "pt-0.5 text-fg-muted")}>{f.summary}</p>
           {f.reasons.length > 0 && (
             <ul className="list-disc pl-4">
               {f.reasons.map((r, i) => (
