@@ -184,6 +184,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     },
     // G3, for R2-B's toolbar Export button (`ViewerOptions.onExport`, handoffs.md): the extension writes the file
     onExport: (r: Record<string, unknown>) => post({ type: "event", event: { ...r, type: "uhd-viewer:export" } as Extract<FromWebview, { type: "event" }>["event"] }),
+    // wave R4 gate (R4-B's handoff): the toolbar's scale chooser and units go to the settings file (the extension logs the person)
+    onSetting: (r: { key: string; value: unknown }) => post({ type: "event", event: { type: "uhd-viewer:setting", key: r.key, value: r.value } as Extract<FromWebview, { type: "event" }>["event"] }),
   };
   const options = (): Omit<VsCodeViewerOptions, "bundle" | "bundleUrl"> => ({
     bridge,

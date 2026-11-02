@@ -35,7 +35,7 @@ export type SettingsPageMessage =
   | { type: "showLog" }
   | { type: "run"; id: string }
   /** R2-E (J1), the Viewer section: a switch or a number set, or null for the default. */
-  | { type: "setSetting"; key: string; value: boolean | number | null }
+  | { type: "setSetting"; key: string; value: boolean | number | string | null }
   /** The Viewer section's Choose… (a folder, the STEP app). */
   | { type: "chooseSetting"; key: string };
 
@@ -67,7 +67,7 @@ export interface SettingsHost {
   /** R2-E (J1): the person's Protoboard settings as the page's Viewer section shows them. */
   viewerSettings?(): SettingRowModel[];
   /** Set one (a switch, a number; null: the default). Only keys the section listed. */
-  setSetting?(key: string, value: boolean | number | null): unknown;
+  setSetting?(key: string, value: boolean | number | string | null): unknown;
   /** Ask for one the host's way (a folder picker, the STEP app question). */
   chooseSetting?(key: string): unknown;
   guard(fn: () => unknown): Promise<unknown>;
@@ -216,8 +216,11 @@ export class SettingsController implements vscode.Disposable {
         return this.host.log.show();
       // R2-E (J1), the Viewer section: only keys the section lists; the value is checked again by core's settings
       case "setSetting": {
-        if (typeof m.key !== "string" || !this.host.viewerSettings?.().some((r) => r.key === m.key)) return;
-        if (!(m.value === null || typeof m.value === "boolean" || (typeof m.value === "number" && Number.isFinite(m.value)))) return;
+        const row = typeof m.key === "string" ? this.host.viewerSettings?.().find((r) => r.key === m.key) : undefined;
+        if (!row) return;
+        // a choice's value is a string (R4-B: units, for scale), and only a choice's (wave R4 gate: a folder or the STEP
+        // app is set through the host's own pickers, `chooseSetting`); core's checkSetting refuses anything not listed
+        if (!(m.value === null || typeof m.value === "boolean" || (typeof m.value === "string" && row.kind === "choice" && m.value.length <= 64) || (typeof m.value === "number" && Number.isFinite(m.value)))) return;
         return this.host.setSetting?.(m.key, m.value);
       }
       case "chooseSetting":

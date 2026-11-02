@@ -2676,6 +2676,15 @@ class ProtoboardExtension {
         // G3 (R2-B's toolbar Export button): to the export folder, no dialog
         await this.exportFromTab(editor, m.format, m.target);
         return;
+      case "uhd-viewer:setting":
+        // wave R4 gate (R4-B's handoff): the 3D toolbar's scale chooser or units, to the settings file as the person
+        // (protocol.ts lets only VIEWER_SAVABLE_SETTINGS through; core's checkSetting checks the value; a bad one is logged)
+        try {
+          this.userSettings.set(m.key, m.value);
+        } catch (e) {
+          this.log.warn(`settings: ${m.key} from the 3D view was not saved: ${(e as Error).message}`);
+        }
+        return;
       case "uhd-viewer:openPair": {
         // the pair view of a link (PB-894 §3, PB-905): an editor tab of its own, at the level that holds the link, beside this one
         const at = m.linkId.includes("/") ? m.linkId.slice(0, m.linkId.lastIndexOf("/")) : "";

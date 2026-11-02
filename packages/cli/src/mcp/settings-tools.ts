@@ -23,7 +23,7 @@ export function settingsTools(): ToolSpec[] {
       name: "settings_get",
       title: "Read Protoboard settings",
       description:
-        "The user's Protoboard settings (one or all): viewer.openModelsInPlace (open a model in the same viewer tab, Ctrl+click for a new tab), viewer.zoomToCursor, viewer.modelInfo, viewer.hoverLongDelayMs, tools.stepViewer (the app STEP files open with), files.exportFolder (exports go there without asking; unset: Downloads), files.importFolder. Each with its value, default and meaning. Reads only. Runs no project code.",
+        "The user's Protoboard settings (one or all): viewer.openModelsInPlace (open a model in the same viewer tab, Ctrl+click for a new tab), viewer.zoomToCursor, viewer.modelInfo, viewer.hoverLongDelayMs, viewer.units (mm or in), viewer.scaleReference (banana, cube or benchy: what the 3D view's scale button shows), tools.stepViewer (the app STEP files open with), files.exportFolder (exports go there without asking; unset: Downloads), files.importFolder. Each with its value, default and meaning. Reads only. Runs no project code.",
       input: { key: KEY.optional().describe("One setting; omit for all.") },
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       async handler({ key }) {
@@ -37,7 +37,7 @@ export function settingsTools(): ToolSpec[] {
         "Change one of the user's Protoboard settings (see settings_get for the keys and values), or reset it with value null. Do this when the user asks for it: say what you change. The change is logged as yours; an executable you choose for tools.stepViewer runs only after the user confirms it once in VS Code. Runs no project code.",
       input: {
         key: KEY,
-        value: z.union([z.boolean(), z.number(), z.string(), z.null()]).describe("true/false, a number, an app id (fusion360, onshape, kicad, freecad, protoboard, system) or an absolute path; null resets to the default."),
+        value: z.union([z.boolean(), z.number(), z.string(), z.null()]).describe("true/false, a number, one of a choice's values (viewer.units: mm or in; viewer.scaleReference: banana, cube or benchy), an app id (fusion360, onshape, kicad, freecad, protoboard, system) or an absolute path; null resets to the default."),
       },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       async handler({ key, value }, ctx) {

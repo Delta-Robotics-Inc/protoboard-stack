@@ -40,11 +40,14 @@ describe("settings (R2-E)", () => {
       "viewer.zoomToCursor": true,
       "viewer.modelInfo": true,
       "viewer.hoverLongDelayMs": 900,
+      // R4-B (2026-11-02): units and the scale reference
+      "viewer.units": "mm",
+      "viewer.scaleReference": "banana",
       "tools.stepViewer": null,
       "files.exportFolder": null,
       "files.importFolder": null,
     });
-    expect(SETTING_KEYS).toHaveLength(7);
+    expect(SETTING_KEYS).toHaveLength(9);
   });
 
   it("reads every default when there is no file", () => {

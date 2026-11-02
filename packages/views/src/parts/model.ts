@@ -513,8 +513,8 @@ export interface SettingRowModel {
   key: string;
   title: string;
   description: string;
-  /** A switch, a number box, a folder picker or the STEP app picker. */
-  kind: "boolean" | "number" | "folder" | "app";
+  /** A switch, a number box, a folder picker, the STEP app picker, or a choice of a few values (R4-B: units, for scale). */
+  kind: "boolean" | "number" | "folder" | "app" | "choice";
   /** The value: on or off, the number, the folder or app chosen (null: none chosen, the default applies). */
   value: boolean | number | string | null;
   /** The value in words ("900 ms", "Downloads (~/Downloads)", "Autodesk Fusion"). */
@@ -527,6 +527,8 @@ export interface SettingRowModel {
   unit?: string;
   /** A lucide icon name. */
   icon?: string;
+  /** A choice's values and their words (kind "choice"). */
+  options?: readonly { value: string; label: string }[];
 }
 
 /** A row of the settings page that opens something of the host's. */
@@ -562,7 +564,7 @@ export interface SettingsActions {
   /** One of `links`, by id. */
   run?(id: string): void;
   /** A setting of the Viewer section to a value (a switch, a number); null resets it to its default (R2-E, J1). */
-  setSetting?(key: string, value: boolean | number | null): void;
+  setSetting?(key: string, value: boolean | number | string | null): void;
   /** Ask for a setting's value the host's way: a folder picker, the STEP app question (R2-E, J1). */
   chooseSetting?(key: string): void;
 }

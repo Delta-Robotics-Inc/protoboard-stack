@@ -85,6 +85,31 @@ export const SETTING_DEFS = [
     description: "How long the pointer rests on a part or a finding before the larger tooltip shows (the short one shows at once).",
   },
   {
+    key: "viewer.units",
+    kind: "choice",
+    default: "mm",
+    options: [
+      { value: "mm", label: "mm" },
+      { value: "in", label: "in" },
+    ],
+    title: "Units",
+    // DEFAULT (R4-B): mm
+    description: "The 3D view's floor grid, its scale label and the cube for scale measure in millimetres (mm) or inches (in).",
+  },
+  {
+    key: "viewer.scaleReference",
+    kind: "choice",
+    default: "banana",
+    options: [
+      { value: "banana", label: "Banana" },
+      { value: "cube", label: "Cube" },
+      { value: "benchy", label: "Benchy" },
+    ],
+    title: "For scale",
+    // DEFAULT (R4-B): banana
+    description: "What the 3D view's scale button stands beside the model, at true size: a banana (a scanned one), a cube of the units with a grid on its faces, or a #3DBenchy (banana, cube or benchy).",
+  },
+  {
     key: "tools.stepViewer",
     kind: "app",
     default: null,
@@ -108,13 +133,15 @@ export const SETTING_DEFS = [
 ] as const;
 
 export type SettingKey = (typeof SETTING_DEFS)[number]["key"];
-export type SettingKind = "boolean" | "number" | "app" | "folder";
+export type SettingKind = "boolean" | "number" | "app" | "folder" | "choice";
 export interface SettingDef {
   key: SettingKey;
   kind: SettingKind;
   default: boolean | number | string | null;
   min?: number;
   max?: number;
+  /** A choice's values and their words (R4-B, kind "choice"). */
+  options?: readonly { value: string; label: string }[];
   title: string;
   description: string;
 }
@@ -125,6 +152,10 @@ export interface ProtoboardSettings {
   "viewer.zoomToCursor": boolean;
   "viewer.modelInfo": boolean;
   "viewer.hoverLongDelayMs": number;
+  /** R4-B: the 3D view's units (floor grid, scale label, cube for scale). */
+  "viewer.units": "mm" | "in";
+  /** R4-B: what the 3D view's scale button shows beside the model. */
+  "viewer.scaleReference": "banana" | "cube" | "benchy";
   /** A `STEP_VIEWERS` id or an absolute path to an executable; null: not chosen yet (asked once). */
   "tools.stepViewer": string | null;
   /** An absolute folder; null: the Downloads folder (`downloadsFolder`). */
@@ -207,6 +238,10 @@ export function checkSetting(key: string, value: unknown): { ok: true; value: Se
     case "folder": {
       if (typeof value !== "string" || !safePath(value.trim())) return { ok: false, message: `${key} is the absolute path of a folder` };
       return { ok: true, value: resolve(value.trim()) };
+    }
+    case "choice": {
+      const values = (def.options ?? []).map((o) => o.value);
+      return typeof value === "string" && values.includes(value) ? { ok: true, value: value as SettingValue } : { ok: false, message: `${key} is one of ${values.join(", ")}` };
     }
   }
 }
