@@ -10,7 +10,7 @@
  *   - an envelope keep-out the board module states can let a module's own body lie over it
  */
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import type { BoardNetlist } from "@protoboardai/core";
@@ -191,7 +191,8 @@ describe("the build digest (PB-1013 item 10)", () => {
       "src/boards/b/tscircuit/widths.json": `{ "gnd": 0.4 }\n`,
       "src/boards/shared/hand.tsx": `export const note = "shared"\n`,
     });
-    expect(result.files.map((f) => f.slice(root.length + 1)).sort()).toEqual(["src/boards/b/tscircuit/board.gen.tsx", "src/boards/b/tscircuit/board.tsx", "src/boards/b/tscircuit/widths.json", "src/boards/shared/hand.tsx"]);
+    // result.files are native absolute paths (backslashes on Windows); compare them project-relative with "/"
+    expect(result.files.map((f) => relative(root, f).split(sep).join("/")).sort()).toEqual(["src/boards/b/tscircuit/board.gen.tsx", "src/boards/b/tscircuit/board.tsx", "src/boards/b/tscircuit/widths.json", "src/boards/shared/hand.tsx"]);
     const loaded = loadedFiles(root, native, result.files);
     expect(loaded).toEqual(["src/boards/b/tscircuit/widths.json", "src/boards/shared/hand.tsx"]);
     const was = sourceDigest(root, native, loaded);

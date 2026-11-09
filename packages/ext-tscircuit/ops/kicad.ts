@@ -20,7 +20,7 @@ import { readConstraints, type BoardConstraints } from "../lib/config.ts";
 import { boardLands } from "../lib/footprints.ts";
 import { chooseBodies, applyBodies, boxStep } from "../lib/models.ts";
 import { digestOf, files as nativeFiles, readNative, readOverrides, sourceDigest, type Native } from "../lib/native.ts";
-import { boardManifest, bomCsv, renders, type PartEdgeFrame } from "../lib/outputs.ts";
+import { boardManifest, bomCsv, jlcAssembly, renders, type PartEdgeFrame } from "../lib/outputs.ts";
 import { projectOffers, supplierColumns, supplierNumbers } from "../lib/suppliers.ts";
 import { packageVersion } from "../lib/runtime.ts";
 import { shiftStepAssembly, withoutShapes } from "../lib/stepfile.ts";
@@ -498,6 +498,14 @@ export async function exportLocked(ctx: CapabilityContext): Promise<CapabilityRe
     ctx.writeOutput(`${out}/netlist.json`, JSON.stringify(report, null, 2) + "\n", "nets as laid out in KiCad");
     ctx.writeOutput(`${out}/bom.csv`, bomCsv(netlist, suppliers), "bill of materials by UHD instance");
 
+    // ---- JLCPCB's upload format, by designator; positions in the Gerbers' frame (KiCad's page origin, as written above)
+    mustKicad(["pcb", "export", "pos", "--format", "csv", "--units", "mm", "--side", "both", "--output", join(tmp, "pos-page.csv"), pcb]);
+    const placements = [...readPosCsv(readFileSync(join(tmp, "pos-page.csv"), "utf8"))].map(([ref, p]) => ({ instance: byRef.get(ref) ?? ref, x: p.x, y: p.y, rotation_deg: p.rot, side: p.side }));
+    const jlc = jlcAssembly(netlist, refdes.assigned, suppliers, placements);
+    ctx.writeOutput(`${out}/jlcpcb/bom.csv`, jlc.bom, "JLCPCB assembly BOM: Comment, Designator, Footprint, LCSC Part #");
+    ctx.writeOutput(`${out}/jlcpcb/cpl.csv`, jlc.cpl, "JLCPCB pick-and-place from KiCad: Designator, Mid X, Mid Y, Layer, Rotation (mm, the Gerbers' frame; rotation not corrected for JLC's library)");
+    if (jlc.withoutLcsc.length) notes.push(`jlcpcb/bom.csv: no LCSC part number for ${jlc.withoutLcsc.join(", ")}; the field is left empty`);
+
     // ---- manifest: the locked build's, components moved to where KiCad has them
     if (native) {
       const constraints = constraintsOf(ctx, netlist);
@@ -543,7 +551,7 @@ export async function exportLocked(ctx: CapabilityContext): Promise<CapabilityRe
       if (moved) notes.push(`manifest positions of ${moved} component(s) taken from KiCad (their footprint origin differs from the locked tscircuit build)`);
       if (turned) notes.push(`${turned} component(s) turned in KiCad: their manifest features carry KiCad's orientation`);
     }
-    return { status: "succeeded", summary: `${board} is locked: fabrication outputs from KiCad ${kicadVersion()} (${folder}/): Gerber + drill, pick-and-place, STEP, GLB, renders, netlist; BOM from the model. ${drcSummary}${sum.errors || unconnected ? " (exported with --force)" : ""}${notes.length ? `; ${notes.join("; ")}` : ""}`, data: { locked: true, drc: { errors: sum.errors, warnings: sum.warnings, unconnected, parity }, notes } };
+    return { status: "succeeded", summary: `${board} is locked: fabrication outputs from KiCad ${kicadVersion()} (${folder}/): Gerber + drill, pick-and-place, STEP, GLB, renders, netlist; BOM from the model. ${drcSummary}${sum.errors || unconnected ? " (exported with --force)" : ""}${notes.length ? `; ${notes.join("; ")}` : ""}`, data: { locked: true, drc: { errors: sum.errors, warnings: sum.warnings, unconnected, parity }, ...(jlc.withoutLcsc.length ? { withoutLcsc: jlc.withoutLcsc } : {}), notes } };
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }

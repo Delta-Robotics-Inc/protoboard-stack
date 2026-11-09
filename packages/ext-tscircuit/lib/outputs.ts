@@ -4,6 +4,7 @@
  *
  *   gerber/*.gbr, gerber/*.drl   Gerber RS-274X (X2 attributes) and Excellon
  *   bom.csv, pnp.csv             keyed by UHD instance path, with the part's MPN
+ *   jlcpcb/bom.csv, cpl.csv      JLCPCB's assembly upload format, by reference designator
  *   board.glb, board.step        board and component bodies (see models.ts)
  *   board.manifest.json          UHD geometry manifest: outline, holes, a feature
  *                                per component instance and per board export
@@ -13,7 +14,7 @@
  * Everything runs locally from @tscircuit's converter libraries, with the
  * offline fetch guard installed.
  */
-import { formatPassiveValue, NETLIST_SCHEMA, type BoardNetlist, type NetlistReport } from "@protoboardai/core";
+import { formatPassiveValue, NETLIST_SCHEMA, type BoardComponent, type BoardNetlist, type NetlistReport } from "@protoboardai/core";
 import type { GeometryFrame } from "@deltarobotics/uhd";
 import { convertCircuitJsonToExcellonDrillCommandLayers, convertCircuitJsonToGerberCommands, stringifyExcellonDrill, stringifyGerberCommandLayers } from "circuit-json-to-gerber";
 import { convertCircuitJsonToGltf } from "circuit-json-to-gltf";
@@ -49,7 +50,8 @@ export function fabricationFiles(cj: CircuitElement[]): Record<string, string> {
   // circuit-json-to-gerber flashes a rotated paste aperture unrotated: those are written here as regions
   const rotated = cj.filter((e) => e.type === "pcb_solder_paste" && e.shape === "rotated_rect" && Math.abs(((e.ccw_rotation ?? 0) % 90)) > 1e-6);
   const gerbers = stringifyGerberCommandLayers(convertCircuitJsonToGerberCommands(cj.filter((e) => !rotated.includes(e)) as never)) as Record<string, string>;
-  for (const [name, text] of Object.entries(gerbers)) out[`gerber/${name}.gbr`] = withRotatedPaste(name, withPours(name, text, cj), rotated).replace(/^%TF\.CreationDate,[^*]*\*%\r?\n/gm, "").replace(/^(G04 Created by [^*]*?) date [^*]*\*/gm, "$1*");
+  // copper pours: the converter writes pcb_copper_pour itself (brep, rect and polygon), before traces and pads
+  for (const [name, text] of Object.entries(gerbers)) out[`gerber/${name}.gbr`] = withRotatedPaste(name, text, rotated).replace(/^%TF\.CreationDate,[^*]*\*%\r?\n/gm, "").replace(/^(G04 Created by [^*]*?) date [^*]*\*/gm, "$1*");
   const drills = convertCircuitJsonToExcellonDrillCommandLayers({ circuitJson: cj as never }) as Record<string, unknown>;
   for (const [name, cmds] of Object.entries(drills)) {
     const text = stringifyExcellonDrill(cmds as never)
@@ -81,33 +83,6 @@ export function withRotatedPaste(layerName: string, text: string, rotated: Circu
   return text.replace(/M02\*\s*$/, `${block}\nM02*\n`);
 }
 
-const POUR_LAYER: Record<string, string> = { F_Cu: "top", B_Cu: "bottom", In1_Cu: "inner1", In2_Cu: "inner2" };
-
-/**
- * Copper pours as Gerber regions. circuit-json-to-gerber leaves
- * `pcb_copper_pour` out, so each pour on the file's layer is written here:
- * its outer ring dark, its inner rings (the clearances around other nets)
- * clear, before any pad or trace is drawn, so the clears never cut them.
- */
-export function withPours(layerName: string, text: string, cj: CircuitElement[]): string {
-  const layer = POUR_LAYER[layerName];
-  const pours = cj.filter((e) => e.type === "pcb_copper_pour" && e.layer === layer && e.shape === "brep");
-  if (!layer || !pours.length) return text;
-  const xy = (v: number) => String(Math.round(v * 1e6));
-  const region = (vs: { x: number; y: number }[]) => {
-    const pts = [...vs, vs[0]];
-    return ["G36*", `X${xy(pts[0].x)}Y${xy(pts[0].y)}D02*`, ...pts.slice(1).map((p) => `X${xy(p.x)}Y${xy(p.y)}D01*`), "G37*"].join("\n");
-  };
-  const block = [
-    "G04 copper pours (ext-tscircuit)*",
-    ...pours.flatMap((p) => ["%LPD*%", region(p.brep_shape.outer_ring.vertices), ...(p.brep_shape.inner_rings ?? []).flatMap((r: { vertices: { x: number; y: number }[] }) => ["%LPC*%", region(r.vertices)]), "%LPD*%"]),
-  ].join("\n");
-  const at = text.indexOf("G04 aperture END LIST*");
-  if (at < 0) return text.replace(/M02\*\s*$/, `${block}\nM02*\n`);
-  const end = text.indexOf("\n", at) + 1;
-  return text.slice(0, end) + block + "\n" + text.slice(end);
-}
-
 /** The bill of materials: one row per component, with its supplier part numbers (LCSC first) when the project holds them. */
 export const bomCsv = (netlist: BoardNetlist, suppliers: Record<string, SupplierNumbers> = {}) =>
   csv(
@@ -127,6 +102,56 @@ export const pnpCsv = (netlist: BoardNetlist, geometry: BoardGeometry, suppliers
       return [g.instance, g.center[0], g.center[1], g.rotation_deg, g.side, g.part, c?.mpn, c?.package?.name, supplierColumns(suppliers[g.instance]).lcsc];
     }),
   );
+
+/** JLCPCB's assembly upload columns (jlcpcb.com/help, "How to generate the BOM and Centroid file from KiCad"). */
+export const JLC_BOM_HEADER = ["Comment", "Designator", "Footprint", "LCSC Part #"];
+export const JLC_CPL_HEADER = ["Designator", "Mid X", "Mid Y", "Layer", "Rotation"];
+
+/** One placed part for the CPL: board frame, mm, rotation in degrees counter-clockwise seen from the top. */
+export interface Placement {
+  instance: string;
+  x: number;
+  y: number;
+  rotation_deg: number;
+  side: "top" | "bottom";
+}
+
+const natural = (a: string, b: string) => a.localeCompare(b, "en", { numeric: true });
+
+/** A BOM comment in ASCII, as JLC's library writes values: 4.7k and 330 (ohms), 100nF, 1.5uH; else the MPN, else the name. */
+export function jlcComment(c: Pick<BoardComponent, "value" | "mpn" | "name">): string {
+  if (c.value) return formatValue(c.value).replace(/\s+/g, "").replace(/[µμ]/g, "u").replace(/[ΩΩ]$/, "");
+  return c.mpn ?? c.name;
+}
+
+/**
+ * The JLCPCB assembly files: `bom.csv` with one row per part (designators
+ * grouped, natural order) and `cpl.csv` with one row per placement (mm, `Top`
+ * or `Bottom`). The LCSC number comes from the project's offers only; a part
+ * without one keeps the field empty and is listed in `withoutLcsc`, never
+ * filled with a guess. Rotation is written as the layout has it: no
+ * correction for JLC's own library zero is applied (that is per part, checked
+ * in JLC's placement preview).
+ */
+export function jlcAssembly(netlist: BoardNetlist, designators: Record<string, string>, suppliers: Record<string, SupplierNumbers>, placements: Placement[]) {
+  const ref = (instance: string) => designators[instance] ?? instance;
+  const groups = new Map<string, { comment: string; footprint: string; lcsc: string; refs: string[] }>();
+  for (const c of netlist.components) {
+    const row = { comment: jlcComment(c), footprint: c.package?.name ?? "", lcsc: supplierColumns(suppliers[c.instance]).lcsc };
+    const key = JSON.stringify([row.lcsc, row.comment, row.footprint]);
+    const g = groups.get(key) ?? { ...row, refs: [] };
+    g.refs.push(ref(c.instance));
+    groups.set(key, g);
+  }
+  const rows = [...groups.values()].map((g) => ({ ...g, refs: g.refs.sort(natural) })).sort((a, b) => natural(a.refs[0], b.refs[0]));
+  const mm = (v: number) => `${(Math.round(v * 1e4) / 1e4 + 0).toFixed(4)}mm`;
+  const deg = (v: number) => String(+((((v % 360) + 360) % 360).toFixed(4)));
+  return {
+    bom: csv(JLC_BOM_HEADER, rows.map((g) => [g.comment, g.refs.join(","), g.footprint, g.lcsc])),
+    cpl: csv(JLC_CPL_HEADER, placements.map((p) => [ref(p.instance), mm(p.x), mm(p.y), p.side === "bottom" ? "Bottom" : "Top", deg(p.rotation_deg)]).sort((a, b) => natural(a[0], b[0]))),
+    withoutLcsc: rows.filter((g) => !g.lcsc).flatMap((g) => g.refs).sort(natural),
+  };
+}
 
 /** The nets as the copper joins them, named by the UHD net each piece carries. */
 export function laidOutNetlist(cj: CircuitElement[], map: NameMap, netlist: BoardNetlist): NetlistReport {

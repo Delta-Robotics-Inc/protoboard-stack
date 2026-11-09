@@ -158,7 +158,8 @@ describe("generate", () => {
 describe("export", () => {
   it("writes every standard output and the three renders, under fixed names", () => {
     const files = readdirSync(join(root, OUT)).sort();
-    expect(files).toEqual(["board.glb", "board.manifest.json", "board.step", "bom.csv", "gerber", "netlist.json", "pcb-bottom.svg", "pcb-top.svg", "pnp.csv", "schematic.svg"]);
+    expect(files).toEqual(["board.glb", "board.manifest.json", "board.step", "bom.csv", "gerber", "jlcpcb", "netlist.json", "pcb-bottom.svg", "pcb-top.svg", "pnp.csv", "schematic.svg"]);
+    expect(readdirSync(join(root, OUT, "jlcpcb")).sort()).toEqual(["bom.csv", "cpl.csv"]);
     for (const f of ["schematic.svg", "pcb-top.svg", "pcb-bottom.svg"]) expect(text(`${OUT}/${f}`)).toMatch(/^<svg/);
   });
 
@@ -270,6 +271,22 @@ describe("export", () => {
     expect(at("u2")).toEqual(["5", "5", "0", "top"]);
     expect(at("u1")).toEqual(["-4", "2", "0", "top"]);
     expect(at("c3")).toEqual(["4.3", "0.3", "90", "top"]);
+  });
+
+  it("JLCPCB's BOM and CPL name the parts by the designators the silkscreen prints, at the same places as pnp.csv", () => {
+    const refdes = JSON.parse(text(`${NATIVE}/refdes.json`)).assigned as Record<string, string>;
+    const bom = parseCsv(text(`${OUT}/jlcpcb/bom.csv`)).rows;
+    expect(bom[0]).toEqual(["Comment", "Designator", "Footprint", "LCSC Part #"]);
+    const listed = bom.slice(1).flatMap((r) => r[1].split(","));
+    expect(listed.sort()).toEqual(Object.values(refdes).sort()); // every component once
+    expect(bom.find((r) => r[1].split(",").includes(refdes.r3))!.slice(0, 1)).toEqual(["4.7k"]);
+    expect(bom.find((r) => r[1].split(",").includes(refdes.c3))![0]).toBe("22uF");
+    const cpl = parseCsv(text(`${OUT}/jlcpcb/cpl.csv`)).rows;
+    expect(cpl[0]).toEqual(["Designator", "Mid X", "Mid Y", "Layer", "Rotation"]);
+    const at = (i: string) => cpl.find((r) => r[0] === refdes[i])!.slice(1);
+    expect(at("u2")).toEqual(["5.0000mm", "5.0000mm", "Top", "0"]);
+    expect(at("c3")).toEqual(["4.3000mm", "0.3000mm", "Top", "90"]);
+    expect(cpl.length).toBe(parseCsv(text(`${OUT}/pnp.csv`)).rows.length);
   });
 
   it("board.glb: glTF metres, Y up; one node per instance placed where the PnP says, with the part's own body or a package box", () => {

@@ -128,6 +128,13 @@ describe.skipIf(!kicadCli())("KiCad handoff with KiCad 10 (smart-bottle cap boar
     expect(readFileSync(join(out, "bom.csv"), "utf8").split("\n").find((l) => l.startsWith("u1,"))).toMatch(/,C\d+,lcsc:C\d+/);
     // in the board frame: u1 where the config fixes it
     expect(pnp.find((l) => l.startsWith("u1,"))).toMatch(/^u1,22\.8,0,270,top,/);
+    // JLCPCB's files: by designator, in the Gerbers' frame (KiCad's page origin; the board frame's origin is at (100, 100) there)
+    const jlcBom = readFileSync(join(out, "jlcpcb/bom.csv"), "utf8").split("\n");
+    expect(jlcBom[0]).toBe("Comment,Designator,Footprint,LCSC Part #");
+    expect(jlcBom.find((l) => /(^|[,"])U1([,"]|$)/.test(l))).toMatch(/,C\d+$/);
+    const cpl = readFileSync(join(out, "jlcpcb/cpl.csv"), "utf8").split("\n");
+    expect(cpl[0]).toBe("Designator,Mid X,Mid Y,Layer,Rotation");
+    expect(cpl.find((l) => l.startsWith("U1,"))).toBe("U1,122.8000mm,-100.0000mm,Top,270");
     expect(JSON.parse(readFileSync(join(out, "board.manifest.json"), "utf8")).tool).toBe("kicad");
   }, 300_000);
 

@@ -1,11 +1,11 @@
 /**
  * Copper pours (a ground plane on the inner layers): the config, the pour areas
- * (the outline less every keep-out), and the Gerber regions written for them,
- * since circuit-json-to-gerber leaves pcb_copper_pour out.
+ * (the outline less every keep-out), and the Gerber regions circuit-json-to-gerber
+ * writes for them, once each.
  */
 import { describe, expect, it } from "vitest";
 import { circlePolygon, readConstraints } from "../lib/config.ts";
-import { withPours } from "../lib/outputs.ts";
+import { fabricationFiles } from "../lib/outputs.ts";
 import { pourOutlines } from "../lib/source.ts";
 
 const base = { layers: 4, thickness_mm: 0.8, outline: { circle: { diameter_mm: 40 } } };
@@ -45,25 +45,29 @@ describe("pour areas", () => {
 });
 
 describe("pours in the Gerber files", () => {
-  const gerber = ["%FSLAX46Y46*%", "%MOMM*%", "G04 aperture START LIST*", "%ADD10C,0.2*%", "%TD*%", "G04 aperture END LIST*", "D10*", "X0Y0D03*", "M02*", ""].join("\n");
-  const pour = {
-    type: "pcb_copper_pour",
-    layer: "inner1",
-    shape: "brep",
-    brep_shape: { outer_ring: { vertices: [{ x: -1, y: -1 }, { x: 1, y: -1 }, { x: 1, y: 1 }, { x: -1, y: 1 }] }, inner_rings: [{ vertices: [{ x: -0.2, y: -0.2 }, { x: 0.2, y: -0.2 }, { x: 0.2, y: 0.2 }] }] },
-  };
+  // circuit-json-to-gerber (0.0.111) writes pcb_copper_pour itself; the export must not add a second copy
+  const ring = (h: number) => ({ vertices: [{ x: -h, y: -h }, { x: h, y: -h }, { x: h, y: h }, { x: -h, y: h }] });
+  const board = (layers: number) => ({ type: "pcb_board", pcb_board_id: "b", center: { x: 0, y: 0 }, width: 10, height: 10, thickness: 1.6, num_layers: layers });
+  const pour = (layer: string) => ({ type: "pcb_copper_pour", pcb_copper_pour_id: `p_${layer}`, layer, shape: "brep", source_net_id: "gnd", brep_shape: { outer_ring: ring(4), inner_rings: [ring(0.5)] } });
+  const pad = { type: "pcb_smtpad", pcb_smtpad_id: "pad1", shape: "rect", x: 2, y: 2, width: 0.6, height: 0.6, layer: "bottom", port_hints: ["1"] };
+  const regions = (text: string) => (text.match(/^G36\*$/gm) ?? []).length;
+  // a closed ring of the outer outline: its 4 corners and the closing point, at ±4 mm (the converter pads with zeros)
+  const outer = /^X-?0*4000000Y-?0*4000000D0[12]\*$/gm;
 
-  it("are dark regions with their clearances cleared, before anything is drawn", () => {
-    const out = withPours("In1_Cu", gerber, [pour]);
-    const block = out.slice(out.indexOf("G04 aperture END LIST*"), out.indexOf("D10*"));
-    expect(block).toMatch(/%LPD\*%\nG36\*\nX-1000000Y-1000000D02\*\nX1000000Y-1000000D01\*/);
-    expect(block).toMatch(/%LPC\*%\nG36\*\nX-200000Y-200000D02\*/);
-    expect(block.trim().endsWith("%LPD*%")).toBe(true);
-    expect(out.indexOf("G36*")).toBeLessThan(out.indexOf("X0Y0D03*"));
+  it("are drawn once: the outer ring dark, its clearance cleared, before the pads", () => {
+    const b = fabricationFiles([board(2), pour("bottom"), pad] as never)["gerber/B_Cu.gbr"];
+    expect(regions(b)).toBe(2); // the outer ring and one clearance, not twice that
+    expect(b.match(outer)).toHaveLength(5);
+    expect(b).not.toContain("G04 copper pours (ext-tscircuit)*");
+    const clear = b.indexOf("%LPC*%");
+    expect(clear).toBeGreaterThan(b.indexOf("G36*"));
+    expect(b.lastIndexOf("G37*")).toBeLessThan(b.search(/X0*2000000Y0*2000000D03\*/)); // the pad is flashed after the pour
   });
 
-  it("go only on their own layer", () => {
-    expect(withPours("In2_Cu", gerber, [pour])).toBe(gerber);
-    expect(withPours("F_Cu", gerber, [pour])).toBe(gerber);
+  it("go only on their own layer, inner layers included", () => {
+    const files = fabricationFiles([board(4), pour("inner1")] as never);
+    expect(regions(files["gerber/In1_Cu.gbr"])).toBe(2);
+    expect(files["gerber/In1_Cu.gbr"].match(outer)).toHaveLength(5);
+    for (const other of ["F_Cu", "In2_Cu", "B_Cu"]) expect(regions(files[`gerber/${other}.gbr`])).toBe(0);
   });
 });

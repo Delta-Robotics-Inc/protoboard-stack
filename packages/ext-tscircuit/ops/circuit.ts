@@ -19,7 +19,7 @@ import { boardDigest, boardProjection, EXPORT_SCHEMA, exportDrift, exportFile, e
 import { applyBodies, boxStep, cadModels, chooseBodies, withMeshes, type ComponentBody } from "../lib/models.ts";
 import { projectOffers, supplierNumbers } from "../lib/suppliers.ts";
 import { buildAndRecord, buildErrors, digestOf, files, inputsDigest, readLayout, readNative, readOverrides, sourceDigest, type Native } from "../lib/native.ts";
-import { boardGlb, boardManifest, boardStep, bomCsv, fabricationFiles, laidOutNetlist, pnpCsv, renders, type PartEdgeFrame } from "../lib/outputs.ts";
+import { boardGlb, boardManifest, boardStep, bomCsv, fabricationFiles, jlcAssembly, laidOutNetlist, pnpCsv, renders, type PartEdgeFrame } from "../lib/outputs.ts";
 import { ENTRY_SOURCE, generateSource } from "../lib/source.ts";
 import { withoutShapes } from "../lib/stepfile.ts";
 import { isLocked } from "../lib/kicad/handoff.ts";
@@ -165,6 +165,11 @@ export const exportOutputs: CapabilityOperationFn = async (ctx) => {
   const suppliers = supplierNumbers(root, netlist.components, projectOffers(ctx.project));
   ctx.writeOutput(`${out}/bom.csv`, bomCsv(netlist, suppliers), "bill of materials by UHD instance, with supplier part numbers");
   ctx.writeOutput(`${out}/pnp.csv`, pnpCsv(netlist, geometry, suppliers), "pick-and-place by UHD instance");
+  // the same parts in JLCPCB's upload format, by the designators generate recorded (and the silkscreen prints)
+  const jlc = jlcAssembly(netlist, refdesFor(ctx, netlist, false).assigned, suppliers, geometry.components.map((g) => ({ instance: g.instance, x: g.center[0], y: g.center[1], rotation_deg: g.rotation_deg, side: g.side })));
+  ctx.writeOutput(`${out}/jlcpcb/bom.csv`, jlc.bom, "JLCPCB assembly BOM: Comment, Designator, Footprint, LCSC Part #");
+  ctx.writeOutput(`${out}/jlcpcb/cpl.csv`, jlc.cpl, "JLCPCB pick-and-place: Designator, Mid X, Mid Y, Layer, Rotation (mm, the Gerbers' frame; rotation not corrected for JLC's library)");
+  if (jlc.withoutLcsc.length) ctx.log(`warning: jlcpcb/bom.csv: no LCSC part number for ${jlc.withoutLcsc.join(", ")}; the field is left empty (add the part's LCSC offer, or supply it yourself)`);
   ctx.writeOutput(`${out}/board.manifest.json`, JSON.stringify(manifest, null, 2) + "\n", "geometry manifest");
   ctx.writeOutput(`${out}/netlist.json`, JSON.stringify(laidOutNetlist(cj, build.map, netlist), null, 2) + "\n", "nets as laid out");
   ctx.writeOutput(`${out}/board.glb`, glb.glb, "board with component bodies (glTF binary, metres, Y up)");
@@ -180,7 +185,7 @@ export const exportOutputs: CapabilityOperationFn = async (ctx) => {
   for (const f of glb.failed) ctx.log(`warning: board.glb: could not load the body ${f}; the converter drew a box in its place`);
   const count = (s: string) => Object.entries(used).filter(([i, u]) => u === s && !unloaded.includes(i)).length;
   const summary = `exported ${netlist.components.length} components: Gerber + drill, BOM, PnP, GLB/STEP (${count("part")} part bodies, ${count("box")} package boxes${count("tscircuit") ? `, ${count("tscircuit")} tscircuit bodies` : ""}${count("none") ? `, ${count("none")} without a body` : ""}${unloaded.length ? `; board.glb could not load ${unloaded.length} bodies and drew boxes for ${unloaded.slice(0, 5).join(", ")}${unloaded.length > 5 ? ", …" : ""}` : ""}), manifest, netlist, renders`;
-  const data = { bodies: used, ...(unloaded.length ? { bodiesNotLoaded: unloaded, filesNotLoaded: glb.failed } : {}), notes, ...(stale ? { stale: "generate inputs changed since the last generate" } : {}) };
+  const data = { bodies: used, ...(unloaded.length ? { bodiesNotLoaded: unloaded, filesNotLoaded: glb.failed } : {}), ...(jlc.withoutLcsc.length ? { withoutLcsc: jlc.withoutLcsc } : {}), notes, ...(stale ? { stale: "generate inputs changed since the last generate" } : {}) };
   return { status: "succeeded", summary: stale ? `${summary}. Stale: generate inputs changed since the last generate; run circuit:generate` : summary, data };
 };
 

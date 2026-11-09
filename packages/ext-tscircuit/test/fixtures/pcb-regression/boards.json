@@ -1,0 +1,12 @@
+{
+  "about": "The PCB editor regression set (PCB editor overhaul, Phase 0). Only shareable boards are listed here and live in this folder. Local boards (internal or confidential) are defined only in local/manifest.json, which is Git-ignored; the runner adds every board it lists and skips one whose file is absent. Runner and how to add a board: test/pcb-regression/README.md.",
+  "boards": [
+    {
+      "id": "airnode-c3",
+      "name": "Airnode C3 (sample: ESP32-C3-MINI-1, USB-C, AP2112K-3.3, SHT40, 2 LEDs, BOOT; 40 x 30 mm, 2 layers; placed, not routed; not for fab)",
+      "tracked": true,
+      "root": "airnode-c3",
+      "pcb": "airnode-c3.kicad_pcb"
+    }
+  ]
+}

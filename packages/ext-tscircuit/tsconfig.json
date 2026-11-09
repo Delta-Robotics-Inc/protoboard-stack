@@ -1,1 +1,1 @@
-{ "extends": "../../tsconfig.base.json", "include": ["ops", "lib", "test", "evals"], "exclude": ["test/.tmp", "test/fixtures/**/tscircuit"] }
+{ "extends": "../../tsconfig.base.json", "include": ["ops", "lib", "test", "evals"], "exclude": ["test/.tmp", "test/fixtures/**/tscircuit", "test/fixtures/pcb-regression/local"] }

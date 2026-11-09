@@ -55,3 +55,6 @@ packages/vscode-protoboard/.bundle-meta.json
 *.view.glb
 *.view.coarse.glb
 *.view.json
+
+# PCB regression set: local copies of client and internal boards, their baselines and the research corpus (never committed)
+packages/ext-tscircuit/test/fixtures/pcb-regression/local/

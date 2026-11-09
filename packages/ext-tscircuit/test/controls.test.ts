@@ -102,7 +102,8 @@ describe("bodies in the generated board (cadModel)", () => {
     // the provider's exports set absolute paths on a copy: the STEP, the box for board.step, the mesh for board.glb
     const { circuitJson: withBodies, used } = applyBodies(cj, g.map, bodies, root);
     expect(used).toEqual({ u1: "part", r1: "part" });
-    expect(withBodies.filter((e) => e.type === "cad_component").map((c) => c.model_step_url).sort()).toEqual([join(root, bodies[1].box!.path), step].sort());
+    // applyBodies names a box `${root}/${box path}` (ops/circuit.ts matches failed loads by that same string), not join()
+    expect(withBodies.filter((e) => e.type === "cad_component").map((c) => c.model_step_url).sort()).toEqual([`${root}/${bodies[1].box!.path}`, step].sort());
     const meshed = withMeshes(withBodies, g.map, bodies).filter((e) => e.type === "cad_component");
     expect(meshed.map((c) => c.model_glb_url ?? c.model_step_url).sort()).toEqual([glb, step].sort());
     const withMesh = await boardGlb(withMeshes(withBodies, g.map, bodies), g.map);

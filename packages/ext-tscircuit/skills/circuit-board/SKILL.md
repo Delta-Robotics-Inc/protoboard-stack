@@ -308,7 +308,9 @@ npx protoboard run circuit:export --module <board>
 
 `out/` is replaced (rebuilding first if the native source changed; the
 export is staged, so a failed export leaves the last good `out/` in place): `gerber/*.gbr` and `gerber/*.drl`, `bom.csv` and `pnp.csv` keyed by
-UHD instance path, `board.glb`, `board.step`, `board.manifest.json` (outline,
+UHD instance path, `jlcpcb/bom.csv` and `jlcpcb/cpl.csv` in JLCPCB's upload
+format by designator (an empty LCSC field means the project has no LCSC offer
+for that part: report it, never fill one in by guess), `board.glb`, `board.step`, `board.manifest.json` (outline,
 `board_top`, mounting holes, every component and export with its frame),
 `netlist.json`, and `schematic.svg`, `pcb-top.svg`, `pcb-bottom.svg` for the
 viewer. Read the summary for which body each component got (its part's STEP,

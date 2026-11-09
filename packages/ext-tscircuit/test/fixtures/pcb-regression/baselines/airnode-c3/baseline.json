@@ -1,0 +1,79 @@
+{
+  "schema": "pb-pcb-regression-baseline/1",
+  "board": "airnode-c3",
+  "name": "Airnode C3 (sample: ESP32-C3-MINI-1, USB-C, AP2112K-3.3, SHT40, 2 LEDs, BOOT; 40 x 30 mm, 2 layers; placed, not routed; not for fab)",
+  "pcb": "airnode-c3.kicad_pcb",
+  "pcbSha256": "1337635abc01080399ce6e63b5cdc74fc4e15b7cbab6bec6e747f917494e028f",
+  "file": {
+    "format": "20241229",
+    "copperLayers": 2,
+    "copperLayerNames": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "footprints": 20,
+    "tracks": 0,
+    "vias": 0,
+    "zones": 0,
+    "nets": 15,
+    "boardWidthMm": 40,
+    "boardHeightMm": 30
+  },
+  "kicad": {
+    "version": "10.0.5",
+    "drc": {
+      "errors": 0,
+      "warnings": 38,
+      "unconnected": 75,
+      "parity": 127,
+      "byType": {
+        "warning lib_footprint_issues": 20,
+        "warning silk_overlap": 1,
+        "warning text_height": 17
+      }
+    },
+    "stats": {
+      "widthMm": 40,
+      "heightMm": 30,
+      "components": 20,
+      "vias": 0,
+      "smdPads": 117,
+      "thPads": 4,
+      "npthPads": 2
+    },
+    "images": {
+      "render-top.png": {
+        "sha256": "dfc07defbd697386ae4d8ea700d07470eff7bcf3b4ca0e055a2dc7ace619529f",
+        "bytes": 23264
+      },
+      "layers/B_Cu.svg": {
+        "sha256": "866a3ff95bd22676282e5da075cb469bca12644e386da989cf1f9f80a31cbe02",
+        "bytes": 1996
+      },
+      "layers/B_Mask.svg": {
+        "sha256": "81c5279a0210484b4ea285de130037602a3c639722e9dcb00b9d6caba6edd9fd",
+        "bytes": 2165
+      },
+      "layers/B_Silkscreen.svg": {
+        "sha256": "5e9a70e7307ea09883bd6ac73737b86bb7fbf6cacc465412079926d4cc3ce97b",
+        "bytes": 1264
+      },
+      "layers/Edge_Cuts.svg": {
+        "sha256": "a8d5228661287467612c991f8b22061ae0bd5ef69e29fcee3e044b210fc90b92",
+        "bytes": 1591
+      },
+      "layers/F_Cu.svg": {
+        "sha256": "663eb6db4a0e9afd66482f548f251f949a49f4b4f6021d9754f462da7144200b",
+        "bytes": 22138
+      },
+      "layers/F_Mask.svg": {
+        "sha256": "a9528c507a231e35006ad22e84a208c4ce4baa04a2e0f80884b8a9a0f3673ebb",
+        "bytes": 22307
+      },
+      "layers/F_Silkscreen.svg": {
+        "sha256": "0b4f5f92fbcbbb20b2d5da616dfb69ec258615c71b506c1e5db9f346e807c5d6",
+        "bytes": 32631
+      }
+    }
+  }
+}
