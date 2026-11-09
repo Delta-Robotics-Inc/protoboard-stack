@@ -2,13 +2,13 @@
  * The board service (contract section 10): one owner per board, save only what changed, refuse files changed by
  * someone else, journal and crash recovery, change events, snapshots and the query index.
  */
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { airnodeC3 } from "../src/fixtures/airnode-c3.js";
-import { BoardIndex, BoardLockedError, boardKey, HUMAN, mm, openBoardService, type Actor, type BoardEvent, type FootprintRec } from "../src/index.js";
+import { BoardIndex, BoardLockedError, boardKey, findProjectRoot, HUMAN, loadBoardDir, mm, openBoardService, type Actor, type BoardEvent, type FootprintRec } from "../src/index.js";
 
 const FIXTURE = fileURLToPath(new URL("./fixtures/airnode-c3/", import.meta.url));
 const AGENT: Actor = { kind: "agent", id: "s9", name: "placer" };
@@ -32,6 +32,24 @@ describe("board service", () => {
     expect(boardKey(root, dir)).toBe("src__modules__main__board");
     expect(svc.localDir).toBe(join(root, ".protoboard", "local", "board", "src__modules__main__board"));
     svc.close();
+  });
+
+  it("keeps the state of a board outside any project next to the board folder, never inside it", () => {
+    const outer = mkdtempSync(join(tmpdir(), "pb-board-lone-"));
+    const dir = join(outer, "imported-board");
+    cpSync(FIXTURE, dir, { recursive: true });
+    // a state folder an older version left inside the board folder is ignored by the loader
+    mkdirSync(join(dir, ".protoboard"));
+    writeFileSync(join(dir, ".protoboard", "junk.jsonl"), "not a board file\n");
+    expect(findProjectRoot(dir)).toBe(outer);
+    const svc = openBoardService({ dir });
+    expect(svc.localDir).toBe(join(outer, ".protoboard", "local", "board", "imported-board"));
+    const fp = [...svc.snapshot().doc.records.values()].find((r): r is FootprintRec => r.kind === "footprint")!;
+    expect(svc.apply(move(fp.id, mm(1)), HUMAN).status).toBe("applied");
+    svc.close();
+    expect(readdirSync(join(dir, ".protoboard"))).toEqual(["junk.jsonl"]);
+    expect(existsSync(join(outer, ".protoboard", "local", "board", "imported-board", "journal.jsonl"))).toBe(true);
+    expect(loadBoardDir(dir).doc.records.get(fp.id)).toMatchObject({ x: fp.x + mm(1) });
   });
 
   it("is the single owner: a second open of the same board is refused until the first closes", () => {

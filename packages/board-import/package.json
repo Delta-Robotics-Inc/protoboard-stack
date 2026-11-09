@@ -1,0 +1,47 @@
+{
+  "name": "@protoboardai/board-import",
+  "version": "0.2.2",
+  "description": "Protoboard board importers: KiCad boards (.kicad_pcb) and Circuit JSON into the board document of the PCB editor, and the board document back to Circuit JSON.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/board-import"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@protoboardai/board": "^0.2.2",
+    "circuit-json": "0.0.510",
+    "polygon-clipping": "0.15.7",
+    "zod": "3.25.76"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "pcb",
+    "eda",
+    "kicad",
+    "circuit-json"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

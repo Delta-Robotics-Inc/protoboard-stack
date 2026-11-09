@@ -1,0 +1,21 @@
+(version 1)
+# A hand-written custom rules file for the importer's tests.
+(rule "power wide"
+	(condition "A.NetClass == 'Power Rail'")
+	(constraint track_width (min 0.4mm) (opt 0.6mm)))
+(rule "via holes"
+	(condition "A.Type == 'Via'")
+	(constraint hole_size (min 0.25mm)))
+(rule "all holes"
+	(constraint hole_size (min 0.2mm)))
+(rule "outer clearance"
+	(layer outer)
+	(constraint clearance (min 6mil)))
+(rule "courtyard area"
+	(condition "A.intersectsCourtyard('U1')")
+	(constraint clearance (min 1mm)))
+(rule "skew"
+	(constraint skew (max 1mm)))
+(rule "edge"
+	(severity warning)
+	(constraint edge_clearance (min 0.5mm)))

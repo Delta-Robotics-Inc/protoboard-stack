@@ -1,0 +1,1185 @@
+{
+ "schema": "protoboard.board-scene/v1",
+ "detail": "region",
+ "legend": {
+  "units": "mm and degrees; +X right, +Y up; origin at the board center; boxes are [minX, minY, maxX, maxY]",
+  "ids": "the board core's ids; rat:<net>:<n> ratsnest lines are scene-only",
+  "m": "marker number: the same number is drawn in the image; markers lists [n, id] for every marker; footprints are found in the image by the reference drawn on them",
+  "near": "nearest footprint in each direction: [ref, edge-to-edge gap mm] (direction by center offset, 90 degree cones)",
+  "by": "provenance: generated, imported, routed, hand, agent, system (+ how it was edited later)",
+  "status": "complete | partial (some copper, links missing) | unrouted (no copper) | single (one pad) | empty",
+  "pads": "[number, x, y, net or null, pin name when known]",
+  "copper": "other nets' tracks at this footprint: [under | through | beside, net, layer, gap mm]; under = on a layer the part has no pads on",
+  "tracks": "one polyline per chained run of a net on one layer and width; arcs add their midpoint; ids are the segments",
+  "congestion": "per layer, rows top (max Y) to bottom, columns left to right: copper = % of board area; hFree / vFree = tracks of width w with the clearance that fit across the cell left to right / bottom to top"
+ },
+ "board": {
+  "name": "Airnode C3",
+  "box": [
+   -20,
+   -15,
+   20,
+   15
+  ],
+  "size": [
+   40,
+   30
+  ],
+  "thickness": 1.6,
+  "copper": [
+   "top",
+   "bottom"
+  ],
+  "rules": {
+   "trackWidth": 0.25,
+   "clearance": 0.2,
+   "edgeClearance": 0.3
+  }
+ },
+ "view": {
+  "box": [
+   -18,
+   4,
+   0,
+   14
+  ],
+  "layers": [
+   "top",
+   "bottom"
+  ],
+  "filters": {
+   "region": [
+    -18,
+    4,
+    0,
+    14
+   ]
+  }
+ },
+ "counts": {
+  "footprints": 19,
+  "pads": 87,
+  "tracks": 10,
+  "vias": 3,
+  "nets": 15,
+  "zones": 1,
+  "keepouts": 1,
+  "incomplete": 15,
+  "missingLinks": 41,
+  "inView": {
+   "footprints": 8,
+   "tracks": 3,
+   "vias": 0,
+   "rats": 17
+  }
+ },
+ "markers": [
+  [
+   1,
+   "rat:+3V3:4"
+  ],
+  [
+   2,
+   "rat:+3V3:5"
+  ],
+  [
+   3,
+   "rat:+3V3:6"
+  ],
+  [
+   4,
+   "rat:+3V3:7"
+  ],
+  [
+   5,
+   "rat:+3V3:8"
+  ],
+  [
+   6,
+   "rat:GND:12"
+  ],
+  [
+   7,
+   "rat:GND:13"
+  ],
+  [
+   8,
+   "rat:GND:14"
+  ],
+  [
+   9,
+   "rat:GND:15"
+  ],
+  [
+   10,
+   "rat:I2C_SCL:1"
+  ],
+  [
+   11,
+   "rat:I2C_SCL:2"
+  ],
+  [
+   12,
+   "rat:I2C_SDA:1"
+  ],
+  [
+   13,
+   "rat:LED1:1"
+  ],
+  [
+   14,
+   "rat:LED1_A:1"
+  ],
+  [
+   15,
+   "rat:LED2:1"
+  ],
+  [
+   16,
+   "rat:LED2_A:1"
+  ],
+  [
+   17,
+   "rat:USB_DP:1"
+  ],
+  [
+   18,
+   "corridor:1"
+  ],
+  [
+   19,
+   "zone:f.gnd_bottom"
+  ]
+ ],
+ "connectivity": "estimated from geometry by the scene (copper overlap on a shared layer; zone fill not computed: an item inside a zone of its net on a zone layer counts as joined)",
+ "footprints": [
+  {
+   "id": "fp:sensor/c_dec",
+   "ref": "C4",
+   "value": "100 nF",
+   "side": "top",
+   "at": [
+    -4,
+    11.5
+   ],
+   "rot": 0,
+   "box": [
+    -4.8,
+    11.05,
+    -3.2,
+    11.95
+   ],
+   "pads": [
+    [
+     "1",
+     -4.48,
+     11.5,
+     "+3V3"
+    ],
+    [
+     "2",
+     -3.52,
+     11.5,
+     "GND"
+    ]
+   ],
+   "near": {
+    "left": [
+     "R3",
+     2.2
+    ],
+    "right": [
+     "U1",
+     6.4
+    ],
+    "down": [
+     "U3",
+     0.95
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:C_0402"
+  },
+  {
+   "id": "fp:status/led1",
+   "ref": "D1",
+   "value": "green",
+   "side": "top",
+   "at": [
+    -16,
+    10
+   ],
+   "rot": 0,
+   "box": [
+    -17.2,
+    9.35,
+    -14.8,
+    10.65
+   ],
+   "pads": [
+    [
+     "1",
+     -16.8,
+     10,
+     "LED1_A"
+    ],
+    [
+     "2",
+     -15.2,
+     10,
+     "GND"
+    ]
+   ],
+   "near": {
+    "right": [
+     "R1",
+     1
+    ],
+    "down": [
+     "D2",
+     1.7
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:LED_0603"
+  },
+  {
+   "id": "fp:status/led2",
+   "ref": "D2",
+   "value": "amber",
+   "side": "top",
+   "at": [
+    -16,
+    7
+   ],
+   "rot": 0,
+   "box": [
+    -17.2,
+    6.35,
+    -14.8,
+    7.65
+   ],
+   "pads": [
+    [
+     "1",
+     -16.8,
+     7,
+     "LED2_A"
+    ],
+    [
+     "2",
+     -15.2,
+     7,
+     "GND"
+    ]
+   ],
+   "near": {
+    "right": [
+     "R2",
+     1
+    ],
+    "up": [
+     "D1",
+     1.7
+    ],
+    "down": [
+     "SW1",
+     4.65
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:LED_0603"
+  },
+  {
+   "id": "fp:status/r1",
+   "ref": "R1",
+   "value": "1 k",
+   "side": "top",
+   "at": [
+    -13,
+    10
+   ],
+   "rot": 0,
+   "box": [
+    -13.8,
+    9.55,
+    -12.2,
+    10.45
+   ],
+   "pads": [
+    [
+     "1",
+     -13.48,
+     10,
+     "LED1"
+    ],
+    [
+     "2",
+     -12.52,
+     10,
+     "LED1_A"
+    ]
+   ],
+   "near": {
+    "left": [
+     "D1",
+     1
+    ],
+    "right": [
+     "R3",
+     3.9
+    ],
+    "down": [
+     "R2",
+     2.1
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:R_0402"
+  },
+  {
+   "id": "fp:status/r2",
+   "ref": "R2",
+   "value": "1 k",
+   "side": "top",
+   "at": [
+    -13,
+    7
+   ],
+   "rot": 0,
+   "box": [
+    -13.8,
+    6.55,
+    -12.2,
+    7.45
+   ],
+   "pads": [
+    [
+     "1",
+     -13.48,
+     7,
+     "LED2"
+    ],
+    [
+     "2",
+     -12.52,
+     7,
+     "LED2_A"
+    ]
+   ],
+   "near": {
+    "left": [
+     "D2",
+     1
+    ],
+    "right": [
+     "R4",
+     3.9
+    ],
+    "up": [
+     "R1",
+     2.1
+    ],
+    "down": [
+     "SW1",
+     4.85
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:R_0402"
+  },
+  {
+   "id": "fp:sensor/r_sda",
+   "ref": "R3",
+   "value": "4.7 k",
+   "side": "top",
+   "at": [
+    -7.5,
+    9.5
+   ],
+   "rot": 0,
+   "box": [
+    -8.3,
+    9.05,
+    -6.7,
+    9.95
+   ],
+   "pads": [
+    [
+     "1",
+     -7.98,
+     9.5,
+     "+3V3"
+    ],
+    [
+     "2",
+     -7.02,
+     9.5,
+     "I2C_SDA"
+    ]
+   ],
+   "near": {
+    "left": [
+     "R1",
+     3.9
+    ],
+    "right": [
+     "U3",
+     1.5
+    ],
+    "down": [
+     "R4",
+     0.6
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:R_0402"
+  },
+  {
+   "id": "fp:sensor/r_scl",
+   "ref": "R4",
+   "value": "4.7 k",
+   "side": "top",
+   "at": [
+    -7.5,
+    8
+   ],
+   "rot": 0,
+   "box": [
+    -8.3,
+    7.55,
+    -6.7,
+    8.45
+   ],
+   "pads": [
+    [
+     "1",
+     -7.98,
+     8,
+     "+3V3"
+    ],
+    [
+     "2",
+     -7.02,
+     8,
+     "I2C_SCL"
+    ]
+   ],
+   "near": {
+    "left": [
+     "R2",
+     3.9
+    ],
+    "right": [
+     "U3",
+     1.5
+    ],
+    "up": [
+     "R3",
+     0.6
+    ],
+    "down": [
+     "SW1",
+     7.2
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:R_0402"
+  },
+  {
+   "id": "fp:sensor/ic",
+   "ref": "U3",
+   "value": "I2C humidity sensor",
+   "side": "top",
+   "at": [
+    -4,
+    9
+   ],
+   "rot": 0,
+   "box": [
+    -5.2,
+    7.9,
+    -2.8,
+    10.1
+   ],
+   "pads": [
+    [
+     "1",
+     -4.75,
+     9.4,
+     "I2C_SDA"
+    ],
+    [
+     "2",
+     -4.75,
+     8.6,
+     "I2C_SCL"
+    ],
+    [
+     "3",
+     -3.25,
+     8.6,
+     "+3V3"
+    ],
+    [
+     "4",
+     -3.25,
+     9.4,
+     "GND"
+    ]
+   ],
+   "near": {
+    "left": [
+     "R3",
+     1.5
+    ],
+    "right": [
+     "U1",
+     6
+    ],
+    "up": [
+     "C4",
+     0.95
+    ],
+    "down": [
+     "U2",
+     9.63
+    ]
+   },
+   "by": "generated",
+   "footprint": "Airnode:DFN-4-1.5mm"
+  }
+ ],
+ "nets": [
+  {
+   "name": "+3V3",
+   "class": "power",
+   "pads": 9,
+   "len": {
+    "top": 2.47
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 8,
+   "islands": 9
+  },
+  {
+   "name": "GND",
+   "class": "power",
+   "pads": 22,
+   "vias": 3,
+   "status": "partial",
+   "missing": 15,
+   "zones": [
+    "zone:f.gnd_bottom"
+   ],
+   "islands": 16
+  },
+  {
+   "name": "I2C_SCL",
+   "class": "default",
+   "pads": 3,
+   "len": {
+    "bottom": 16.99
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 2,
+   "islands": 3,
+   "floating": 1
+  },
+  {
+   "name": "I2C_SDA",
+   "class": "default",
+   "pads": 3,
+   "len": {
+    "top": 17.61
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 1,
+   "islands": 2
+  },
+  {
+   "name": "LED1",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1,
+   "islands": 2
+  },
+  {
+   "name": "LED1_A",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1,
+   "islands": 2
+  },
+  {
+   "name": "LED2",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1,
+   "islands": 2
+  },
+  {
+   "name": "LED2_A",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1,
+   "islands": 2
+  }
+ ],
+ "rats": [
+  {
+   "id": "rat:+3V3:4",
+   "net": "+3V3",
+   "from": [
+    "trk:f.3v3.arc",
+    -9.95,
+    -1.8
+   ],
+   "to": [
+    "pad:sensor/r_scl:1",
+    -7.98,
+    8
+   ],
+   "len": 10,
+   "m": 1
+  },
+  {
+   "id": "rat:+3V3:5",
+   "net": "+3V3",
+   "from": [
+    "pad:sensor/r_scl:1",
+    -7.98,
+    8
+   ],
+   "to": [
+    "pad:sensor/r_sda:1",
+    -7.98,
+    9.5
+   ],
+   "len": 1.5,
+   "m": 2
+  },
+  {
+   "id": "rat:+3V3:6",
+   "net": "+3V3",
+   "from": [
+    "pad:sensor/r_sda:1",
+    -7.98,
+    9.5
+   ],
+   "to": [
+    "pad:sensor/c_dec:1",
+    -4.48,
+    11.5
+   ],
+   "len": 4.03,
+   "m": 3
+  },
+  {
+   "id": "rat:+3V3:7",
+   "net": "+3V3",
+   "from": [
+    "pad:sensor/c_dec:1",
+    -4.48,
+    11.5
+   ],
+   "to": [
+    "pad:sensor/ic:3",
+    -3.25,
+    8.6
+   ],
+   "len": 3.15,
+   "m": 4
+  },
+  {
+   "id": "rat:+3V3:8",
+   "net": "+3V3",
+   "from": [
+    "pad:sensor/ic:3",
+    -3.25,
+    8.6
+   ],
+   "to": [
+    "pad:mcu/module:3",
+    3.8,
+    7.7
+   ],
+   "len": 7.11,
+   "m": 5
+  },
+  {
+   "id": "rat:GND:12",
+   "net": "GND",
+   "from": [
+    "pad:mcu/module:1",
+    3.8,
+    9.3
+   ],
+   "to": [
+    "pad:sensor/ic:4",
+    -3.25,
+    9.4
+   ],
+   "len": 7.05,
+   "m": 6
+  },
+  {
+   "id": "rat:GND:13",
+   "net": "GND",
+   "from": [
+    "pad:sensor/ic:4",
+    -3.25,
+    9.4
+   ],
+   "to": [
+    "pad:sensor/c_dec:2",
+    -3.52,
+    11.5
+   ],
+   "len": 2.12,
+   "m": 7
+  },
+  {
+   "id": "rat:GND:14",
+   "net": "GND",
+   "from": [
+    "pad:ui/boot_button:3",
+    -16.9,
+    -1
+   ],
+   "to": [
+    "pad:status/led2:2",
+    -15.2,
+    7
+   ],
+   "len": 8.18,
+   "m": 8
+  },
+  {
+   "id": "rat:GND:15",
+   "net": "GND",
+   "from": [
+    "pad:status/led2:2",
+    -15.2,
+    7
+   ],
+   "to": [
+    "pad:status/led1:2",
+    -15.2,
+    10
+   ],
+   "len": 3,
+   "m": 9
+  },
+  {
+   "id": "rat:I2C_SCL:1",
+   "net": "I2C_SCL",
+   "from": [
+    "pad:mcu/module:16",
+    9.2,
+    -1.1
+   ],
+   "to": [
+    "pad:sensor/ic:2",
+    -4.75,
+    8.6
+   ],
+   "len": 16.99,
+   "crosses": [
+    [
+     "trk:f.i2c_sda.1",
+     "I2C_SDA",
+     "top"
+    ]
+   ],
+   "m": 10
+  },
+  {
+   "id": "rat:I2C_SCL:2",
+   "net": "I2C_SCL",
+   "from": [
+    "pad:sensor/ic:2",
+    -4.75,
+    8.6
+   ],
+   "to": [
+    "pad:sensor/r_scl:2",
+    -7.02,
+    8
+   ],
+   "len": 2.35,
+   "crosses": [
+    [
+     "trk:f.i2c_sda.1",
+     "I2C_SDA",
+     "top"
+    ]
+   ],
+   "m": 11
+  },
+  {
+   "id": "rat:I2C_SDA:1",
+   "net": "I2C_SDA",
+   "from": [
+    "pad:sensor/ic:1",
+    -4.75,
+    9.4
+   ],
+   "to": [
+    "pad:sensor/r_sda:2",
+    -7.02,
+    9.5
+   ],
+   "len": 2.27,
+   "m": 12
+  },
+  {
+   "id": "rat:LED1:1",
+   "net": "LED1",
+   "from": [
+    "pad:mcu/module:18",
+    10.8,
+    -1.1
+   ],
+   "to": [
+    "pad:status/r1:1",
+    -13.48,
+    10
+   ],
+   "len": 26.7,
+   "crosses": [
+    [
+     "trk:f.i2c_scl.1",
+     "I2C_SCL",
+     "bottom"
+    ],
+    [
+     "trk:f.i2c_sda.2",
+     "I2C_SDA",
+     "top"
+    ]
+   ],
+   "m": 13
+  },
+  {
+   "id": "rat:LED1_A:1",
+   "net": "LED1_A",
+   "from": [
+    "pad:status/led1:1",
+    -16.8,
+    10
+   ],
+   "to": [
+    "pad:status/r1:2",
+    -12.52,
+    10
+   ],
+   "len": 4.28,
+   "m": 14
+  },
+  {
+   "id": "rat:LED2:1",
+   "net": "LED2",
+   "from": [
+    "pad:mcu/module:19",
+    11.6,
+    -1.1
+   ],
+   "to": [
+    "pad:status/r2:1",
+    -13.48,
+    7
+   ],
+   "len": 26.36,
+   "crosses": [
+    [
+     "trk:f.i2c_scl.1",
+     "I2C_SCL",
+     "bottom"
+    ],
+    [
+     "trk:f.i2c_sda.2",
+     "I2C_SDA",
+     "top"
+    ]
+   ],
+   "m": 15
+  },
+  {
+   "id": "rat:LED2_A:1",
+   "net": "LED2_A",
+   "from": [
+    "pad:status/led2:1",
+    -16.8,
+    7
+   ],
+   "to": [
+    "pad:status/r2:2",
+    -12.52,
+    7
+   ],
+   "len": 4.28,
+   "m": 16
+  },
+  {
+   "id": "rat:USB_DP:1",
+   "net": "USB_DP",
+   "from": [
+    "pad:mcu/module:27",
+    16.2,
+    4.5
+   ],
+   "to": [
+    "trk:f.usb_dp.1",
+    0,
+    -6.5
+   ],
+   "len": 19.58,
+   "crosses": [
+    [
+     "trk:f.i2c_scl.1",
+     "I2C_SCL",
+     "bottom"
+    ],
+    [
+     "trk:f.i2c_sda.2",
+     "I2C_SDA",
+     "top"
+    ]
+   ],
+   "m": 17
+  }
+ ],
+ "tracks": [
+  {
+   "net": "I2C_SCL",
+   "layer": "bottom",
+   "w": 0.2,
+   "pts": [
+    [
+     -4.75,
+     8.6
+    ],
+    [
+     9.2,
+     -1.1
+    ]
+   ],
+   "len": 16.99,
+   "ids": [
+    "trk:f.i2c_scl.1"
+   ],
+   "by": "agent"
+  },
+  {
+   "net": "I2C_SDA",
+   "layer": "top",
+   "w": 0.2,
+   "pts": [
+    [
+     -4.75,
+     9.4
+    ],
+    [
+     -4.75,
+     7.5
+    ],
+    [
+     8.4,
+     -1.1
+    ]
+   ],
+   "len": 17.61,
+   "ids": [
+    "trk:f.i2c_sda.1",
+    "trk:f.i2c_sda.2"
+   ],
+   "by": "agent"
+  }
+ ],
+ "zones": [
+  {
+   "id": "zone:f.gnd_bottom",
+   "name": "GND bottom",
+   "net": "GND",
+   "layers": [
+    "bottom"
+   ],
+   "priority": 0,
+   "box": [
+    -19.5,
+    -14.5,
+    19.5,
+    14.5
+   ],
+   "area": 1131,
+   "fill": "solid",
+   "connect": "thermal",
+   "filled": "not computed",
+   "by": "generated",
+   "m": 19
+  }
+ ],
+ "corridors": [
+  {
+   "from": [
+    -7.02,
+    9.5
+   ],
+   "to": [
+    -4.75,
+    9.4
+   ],
+   "layer": "top",
+   "net": "I2C_SDA",
+   "w": 0.25,
+   "clearance": 0.2,
+   "found": true,
+   "len": 2.33,
+   "maxWidth": 0.8,
+   "path": [
+    [
+     -7.02,
+     9.5
+    ],
+    [
+     -6.995,
+     9.425
+    ],
+    [
+     -6.445,
+     9.375
+    ],
+    [
+     -4.75,
+     9.4
+    ]
+   ],
+   "shift": [
+    0.035,
+    0.025
+   ],
+   "res": 0.05,
+   "id": "corridor:1",
+   "m": 18
+  }
+ ],
+ "congestion": {
+  "box": [
+   -18,
+   4,
+   2,
+   14
+  ],
+  "cell": 5,
+  "cols": 4,
+  "rows": 2,
+  "res": 0.05,
+  "w": 0.25,
+  "clearance": 0.2,
+  "layers": {
+   "top": {
+    "copper": [
+     [
+      7,
+      2,
+      6,
+      0
+     ],
+     [
+      8,
+      2,
+      6,
+      3
+     ]
+    ],
+    "hFree": [
+     [
+      9,
+      8,
+      7,
+      8
+     ],
+     [
+      8,
+      7,
+      5,
+      3
+     ]
+    ],
+    "vFree": [
+     [
+      4,
+      8,
+      3,
+      11
+     ],
+     [
+      4,
+      8,
+      3,
+      3
+     ]
+    ]
+   },
+   "bottom": {
+    "copper": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      2,
+      5
+     ]
+    ],
+    "hFree": [
+     [
+      12,
+      12,
+      12,
+      12
+     ],
+     [
+      12,
+      12,
+      7,
+      3
+     ]
+    ],
+    "vFree": [
+     [
+      12,
+      12,
+      12,
+      12
+     ],
+     [
+      12,
+      12,
+      7,
+      0
+     ]
+    ]
+   }
+  }
+ },
+ "budget": {
+  "chars": 40000
+ }
+}

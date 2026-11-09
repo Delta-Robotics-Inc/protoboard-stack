@@ -114,7 +114,11 @@ export interface LoadedBoard {
   netlistText?: string;
 }
 
-/** Read a board folder. `board.jsonl` must exist; other missing files count as empty. */
+/**
+ * Read a board folder. `board.jsonl` must exist; other missing files count as empty. Only the board files and
+ * `netlist.jsonl` are read: anything else in the folder (a `.protoboard` state folder left by an older version,
+ * notes, exports) is ignored.
+ */
 export function loadBoardDir(dir: string, options: { netlist?: Netlist } = {}): LoadedBoard {
   if (!existsSync(join(dir, fileName("board")))) throw new BoardFormatError(join(dir, fileName("board")), 0, "not a board folder (no board.jsonl)");
   const texts = {} as Record<BoardFile, string | undefined>;

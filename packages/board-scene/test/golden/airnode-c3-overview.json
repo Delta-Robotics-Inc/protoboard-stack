@@ -1,0 +1,1639 @@
+{
+ "schema": "protoboard.board-scene/v1",
+ "detail": "overview",
+ "legend": {
+  "units": "mm and degrees; +X right, +Y up; origin at the board center; boxes are [minX, minY, maxX, maxY]",
+  "ids": "the board core's ids; rat:<net>:<n> ratsnest lines are scene-only",
+  "m": "marker number: the same number is drawn in the image; markers lists [n, id] for every marker; footprints are found in the image by the reference drawn on them",
+  "near": "nearest footprint in each direction: [ref, edge-to-edge gap mm] (direction by center offset, 90 degree cones)",
+  "by": "provenance: generated, imported, routed, hand, agent, system (+ how it was edited later)",
+  "status": "complete | partial (some copper, links missing) | unrouted (no copper) | single (one pad) | empty",
+  "rats": "missing links: [id, from id, to id, length mm, ids of other nets' tracks the line crosses]",
+  "congestion": "per layer, rows top (max Y) to bottom, columns left to right: copper = % of board area; hFree / vFree = tracks of width w with the clearance that fit across the cell left to right / bottom to top"
+ },
+ "board": {
+  "name": "Airnode C3",
+  "box": [
+   -20,
+   -15,
+   20,
+   15
+  ],
+  "size": [
+   40,
+   30
+  ],
+  "thickness": 1.6,
+  "copper": [
+   "top",
+   "bottom"
+  ],
+  "rules": {
+   "trackWidth": 0.25,
+   "clearance": 0.2,
+   "edgeClearance": 0.3
+  }
+ },
+ "view": {
+  "box": [
+   -20.5,
+   -15.5,
+   20.5,
+   15.5
+  ],
+  "layers": [
+   "top",
+   "bottom"
+  ]
+ },
+ "counts": {
+  "footprints": 19,
+  "pads": 87,
+  "tracks": 10,
+  "vias": 3,
+  "nets": 15,
+  "zones": 1,
+  "keepouts": 1,
+  "incomplete": 15,
+  "missingLinks": 41,
+  "inView": {
+   "footprints": 19,
+   "tracks": 10,
+   "vias": 3,
+   "rats": 41
+  }
+ },
+ "markers": [
+  [
+   1,
+   "kpo:f.antenna"
+  ],
+  [
+   2,
+   "zone:f.gnd_bottom"
+  ]
+ ],
+ "connectivity": "estimated from geometry by the scene (copper overlap on a shared layer; zone fill not computed: an item inside a zone of its net on a zone layer counts as joined)",
+ "footprints": [
+  {
+   "id": "fp:power/c_in",
+   "ref": "C1",
+   "value": "1 uF",
+   "side": "top",
+   "at": [
+    -12.5,
+    -3
+   ],
+   "rot": 90,
+   "box": [
+    -13.15,
+    -4.2,
+    -11.85,
+    -1.8
+   ],
+   "pads": 2,
+   "near": {
+    "right": [
+     "U2",
+     0.05
+    ],
+    "up": [
+     "SW1",
+     0.1
+    ],
+    "down": [
+     "J1",
+     4.6
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:power/c_out",
+   "ref": "C2",
+   "value": "1 uF",
+   "side": "top",
+   "at": [
+    -7.5,
+    -3
+   ],
+   "rot": 90,
+   "box": [
+    -8.15,
+    -4.2,
+    -6.85,
+    -1.8
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "U2",
+     0.05
+    ],
+    "right": [
+     "R7",
+     7.05
+    ],
+    "up": [
+     "R2",
+     9.28
+    ],
+    "down": [
+     "J1",
+     4.6
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:mcu/c_bulk",
+   "ref": "C3",
+   "value": "10 uF",
+   "side": "top",
+   "at": [
+    6,
+    -5
+   ],
+   "rot": 0,
+   "box": [
+    4.55,
+    -5.85,
+    7.45,
+    -4.15
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "C5",
+     2.75
+    ],
+    "up": [
+     "U1",
+     2.15
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:sensor/c_dec",
+   "ref": "C4",
+   "value": "100 nF",
+   "side": "top",
+   "at": [
+    -4,
+    11.5
+   ],
+   "rot": 0,
+   "box": [
+    -4.8,
+    11.05,
+    -3.2,
+    11.95
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "R3",
+     2.2
+    ],
+    "right": [
+     "U1",
+     6.4
+    ],
+    "down": [
+     "U3",
+     0.95
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:mcu/c_en",
+   "ref": "C5",
+   "value": "1 uF",
+   "side": "top",
+   "at": [
+    1,
+    -6
+   ],
+   "rot": 0,
+   "box": [
+    0.2,
+    -6.45,
+    1.8,
+    -5.55
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "R5",
+     4.28
+    ],
+    "right": [
+     "C3",
+     2.75
+    ],
+    "up": [
+     "R7",
+     1.1
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:status/led1",
+   "ref": "D1",
+   "value": "green",
+   "side": "top",
+   "at": [
+    -16,
+    10
+   ],
+   "rot": 0,
+   "box": [
+    -17.2,
+    9.35,
+    -14.8,
+    10.65
+   ],
+   "pads": 2,
+   "near": {
+    "right": [
+     "R1",
+     1
+    ],
+    "down": [
+     "D2",
+     1.7
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:status/led2",
+   "ref": "D2",
+   "value": "amber",
+   "side": "top",
+   "at": [
+    -16,
+    7
+   ],
+   "rot": 0,
+   "box": [
+    -17.2,
+    6.35,
+    -14.8,
+    7.65
+   ],
+   "pads": 2,
+   "near": {
+    "right": [
+     "R2",
+     1
+    ],
+    "up": [
+     "D1",
+     1.7
+    ],
+    "down": [
+     "SW1",
+     4.65
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:usb/connector",
+   "ref": "J1",
+   "value": "USB-C",
+   "side": "top",
+   "at": [
+    -10,
+    -12.5
+   ],
+   "rot": 0,
+   "box": [
+    -14.9,
+    -16.2,
+    -5.1,
+    -8.8
+   ],
+   "pads": 12,
+   "near": {
+    "right": [
+     "R5",
+     0.3
+    ],
+    "up": [
+     "U2",
+     4.05
+    ]
+   },
+   "lock": true,
+   "by": "generated"
+  },
+  {
+   "id": "fp:status/r1",
+   "ref": "R1",
+   "value": "1 k",
+   "side": "top",
+   "at": [
+    -13,
+    10
+   ],
+   "rot": 0,
+   "box": [
+    -13.8,
+    9.55,
+    -12.2,
+    10.45
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "D1",
+     1
+    ],
+    "right": [
+     "R3",
+     3.9
+    ],
+    "down": [
+     "R2",
+     2.1
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:status/r2",
+   "ref": "R2",
+   "value": "1 k",
+   "side": "top",
+   "at": [
+    -13,
+    7
+   ],
+   "rot": 0,
+   "box": [
+    -13.8,
+    6.55,
+    -12.2,
+    7.45
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "D2",
+     1
+    ],
+    "right": [
+     "R4",
+     3.9
+    ],
+    "up": [
+     "R1",
+     2.1
+    ],
+    "down": [
+     "SW1",
+     4.85
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:sensor/r_sda",
+   "ref": "R3",
+   "value": "4.7 k",
+   "side": "top",
+   "at": [
+    -7.5,
+    9.5
+   ],
+   "rot": 0,
+   "box": [
+    -8.3,
+    9.05,
+    -6.7,
+    9.95
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "R1",
+     3.9
+    ],
+    "right": [
+     "U3",
+     1.5
+    ],
+    "down": [
+     "R4",
+     0.6
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:sensor/r_scl",
+   "ref": "R4",
+   "value": "4.7 k",
+   "side": "top",
+   "at": [
+    -7.5,
+    8
+   ],
+   "rot": 0,
+   "box": [
+    -8.3,
+    7.55,
+    -6.7,
+    8.45
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "R2",
+     3.9
+    ],
+    "right": [
+     "U3",
+     1.5
+    ],
+    "up": [
+     "R3",
+     0.6
+    ],
+    "down": [
+     "SW1",
+     7.2
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:usb/r_cc1",
+   "ref": "R5",
+   "value": "5.1 k",
+   "side": "top",
+   "at": [
+    -4,
+    -9.5
+   ],
+   "rot": 0,
+   "box": [
+    -4.8,
+    -9.95,
+    -3.2,
+    -9.05
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "J1",
+     0.3
+    ],
+    "right": [
+     "C5",
+     4.28
+    ],
+    "up": [
+     "C2",
+     5.27
+    ],
+    "down": [
+     "R6",
+     0.6
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:usb/r_cc2",
+   "ref": "R6",
+   "value": "5.1 k",
+   "side": "top",
+   "at": [
+    -4,
+    -11
+   ],
+   "rot": 0,
+   "box": [
+    -4.8,
+    -11.45,
+    -3.2,
+    -10.55
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "J1",
+     0.3
+    ],
+    "right": [
+     "C5",
+     5.33
+    ],
+    "up": [
+     "R5",
+     0.6
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:mcu/r_en",
+   "ref": "R7",
+   "value": "10 k",
+   "side": "top",
+   "at": [
+    1,
+    -4
+   ],
+   "rot": 0,
+   "box": [
+    0.2,
+    -4.45,
+    1.8,
+    -3.55
+   ],
+   "pads": 2,
+   "near": {
+    "left": [
+     "J1",
+     6.86
+    ],
+    "right": [
+     "C3",
+     2.75
+    ],
+    "up": [
+     "U1",
+     2.09
+    ],
+    "down": [
+     "C5",
+     1.1
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:ui/boot_button",
+   "ref": "SW1",
+   "value": "BOOT",
+   "side": "top",
+   "at": [
+    -15,
+    0
+   ],
+   "rot": 0,
+   "box": [
+    -17.5,
+    -1.7,
+    -12.5,
+    1.7
+   ],
+   "pads": 4,
+   "near": {
+    "right": [
+     "U2",
+     0.7
+    ],
+    "up": [
+     "D2",
+     4.65
+    ],
+    "down": [
+     "C1",
+     0.1
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:mcu/module",
+   "ref": "U1",
+   "value": "ESP32-C3 module",
+   "side": "top",
+   "at": [
+    10,
+    6.5
+   ],
+   "rot": 0,
+   "box": [
+    3.2,
+    -2,
+    16.8,
+    15
+   ],
+   "pads": 34,
+   "near": {
+    "left": [
+     "U3",
+     6
+    ],
+    "down": [
+     "R7",
+     2.09
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:power/ldo",
+   "ref": "U2",
+   "value": "LDO 3.3 V",
+   "side": "top",
+   "at": [
+    -10,
+    -3
+   ],
+   "rot": 0,
+   "box": [
+    -11.8,
+    -4.75,
+    -8.2,
+    -1.25
+   ],
+   "pads": 5,
+   "near": {
+    "left": [
+     "C1",
+     0.05
+    ],
+    "right": [
+     "C2",
+     0.05
+    ],
+    "up": [
+     "R2",
+     7.81
+    ],
+    "down": [
+     "J1",
+     4.05
+    ]
+   },
+   "by": "generated"
+  },
+  {
+   "id": "fp:sensor/ic",
+   "ref": "U3",
+   "value": "I2C humidity sensor",
+   "side": "top",
+   "at": [
+    -4,
+    9
+   ],
+   "rot": 0,
+   "box": [
+    -5.2,
+    7.9,
+    -2.8,
+    10.1
+   ],
+   "pads": 4,
+   "near": {
+    "left": [
+     "R3",
+     1.5
+    ],
+    "right": [
+     "U1",
+     6
+    ],
+    "up": [
+     "C4",
+     0.95
+    ],
+    "down": [
+     "U2",
+     9.63
+    ]
+   },
+   "by": "generated"
+  }
+ ],
+ "nets": [
+  {
+   "name": "+3V3",
+   "class": "power",
+   "pads": 9,
+   "len": {
+    "top": 2.47
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 8
+  },
+  {
+   "name": "BOOT",
+   "class": "default",
+   "pads": 3,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 2
+  },
+  {
+   "name": "CC1",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1
+  },
+  {
+   "name": "CC2",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1
+  },
+  {
+   "name": "EN",
+   "class": "default",
+   "pads": 3,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 2
+  },
+  {
+   "name": "GND",
+   "class": "power",
+   "pads": 22,
+   "vias": 3,
+   "status": "partial",
+   "missing": 15,
+   "zones": [
+    "zone:f.gnd_bottom"
+   ]
+  },
+  {
+   "name": "I2C_SCL",
+   "class": "default",
+   "pads": 3,
+   "len": {
+    "bottom": 16.99
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 2
+  },
+  {
+   "name": "I2C_SDA",
+   "class": "default",
+   "pads": 3,
+   "len": {
+    "top": 17.61
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 1
+  },
+  {
+   "name": "LED1",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1
+  },
+  {
+   "name": "LED1_A",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1
+  },
+  {
+   "name": "LED2",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1
+  },
+  {
+   "name": "LED2_A",
+   "class": "default",
+   "pads": 2,
+   "vias": 0,
+   "status": "unrouted",
+   "missing": 1
+  },
+  {
+   "name": "USB_DN",
+   "class": "usb",
+   "pads": 2,
+   "len": {
+    "top": 10.4
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 1
+  },
+  {
+   "name": "USB_DP",
+   "class": "usb",
+   "pads": 2,
+   "len": {
+    "top": 10.82
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 1
+  },
+  {
+   "name": "VBUS",
+   "class": "power",
+   "pads": 5,
+   "len": {
+    "top": 5.85
+   },
+   "vias": 0,
+   "status": "partial",
+   "missing": 3
+  }
+ ],
+ "rats": [
+  [
+   "rat:+3V3:1",
+   "pad:mcu/c_bulk:1",
+   "pad:mcu/r_en:1",
+   4.64
+  ],
+  [
+   "rat:+3V3:2",
+   "pad:mcu/r_en:1",
+   "pad:power/c_out:1",
+   8.02
+  ],
+  [
+   "rat:+3V3:3",
+   "pad:power/c_out:1",
+   "trk:f.3v3.arc",
+   3.16
+  ],
+  [
+   "rat:+3V3:4",
+   "trk:f.3v3.arc",
+   "pad:sensor/r_scl:1",
+   10
+  ],
+  [
+   "rat:+3V3:5",
+   "pad:sensor/r_scl:1",
+   "pad:sensor/r_sda:1",
+   1.5
+  ],
+  [
+   "rat:+3V3:6",
+   "pad:sensor/r_sda:1",
+   "pad:sensor/c_dec:1",
+   4.03
+  ],
+  [
+   "rat:+3V3:7",
+   "pad:sensor/c_dec:1",
+   "pad:sensor/ic:3",
+   3.15
+  ],
+  [
+   "rat:+3V3:8",
+   "pad:sensor/ic:3",
+   "pad:mcu/module:3",
+   7.11
+  ],
+  [
+   "rat:BOOT:1",
+   "pad:mcu/module:13",
+   "pad:ui/boot_button:2",
+   20.01
+  ],
+  [
+   "rat:BOOT:2",
+   "pad:ui/boot_button:2",
+   "pad:ui/boot_button:1",
+   3.8
+  ],
+  [
+   "rat:CC1:1",
+   "pad:usb/connector:A5",
+   "pad:usb/r_cc1:1",
+   6.72,
+   [
+    "trk:f.usb_dn.1",
+    "trk:f.usb_dp.1"
+   ]
+  ],
+  [
+   "rat:CC2:1",
+   "pad:usb/connector:B5",
+   "pad:usb/r_cc2:1",
+   4.57
+  ],
+  [
+   "rat:EN:1",
+   "pad:mcu/c_en:1",
+   "pad:mcu/r_en:2",
+   2.22
+  ],
+  [
+   "rat:EN:2",
+   "pad:mcu/r_en:2",
+   "pad:mcu/module:8",
+   8.04,
+   [
+    "trk:f.i2c_scl.1",
+    "trk:f.i2c_sda.2"
+   ]
+  ],
+  [
+   "rat:GND:1",
+   "pad:mcu/c_bulk:2",
+   "pad:mcu/c_en:2",
+   5.56
+  ],
+  [
+   "rat:GND:2",
+   "pad:mcu/c_en:2",
+   "pad:usb/r_cc1:2",
+   6.1,
+   [
+    "trk:f.usb_dn.1"
+   ]
+  ],
+  [
+   "rat:GND:3",
+   "pad:usb/r_cc1:2",
+   "pad:usb/r_cc2:2",
+   1.5
+  ],
+  [
+   "rat:GND:4",
+   "pad:usb/r_cc1:2",
+   "pad:usb/connector:S~2",
+   2.22
+  ],
+  [
+   "rat:GND:5",
+   "via:f.gnd.1",
+   "pad:power/ldo:2",
+   1.1
+  ],
+  [
+   "rat:GND:6",
+   "pad:usb/connector:S",
+   "pad:usb/connector:A1",
+   1.36
+  ],
+  [
+   "rat:GND:7",
+   "pad:usb/connector:S~2",
+   "pad:usb/connector:B1",
+   1.36
+  ],
+  [
+   "rat:GND:8",
+   "pad:power/ldo:2",
+   "pad:power/c_out:2",
+   3.14
+  ],
+  [
+   "rat:GND:9",
+   "pad:ui/boot_button:4",
+   "pad:ui/boot_button:3",
+   3.8
+  ],
+  [
+   "rat:GND:10",
+   "pad:mcu/module:34",
+   "pad:mcu/module:2",
+   7.12
+  ],
+  [
+   "rat:GND:11",
+   "pad:mcu/module:2",
+   "pad:mcu/module:1",
+   0.8
+  ],
+  [
+   "rat:GND:12",
+   "pad:mcu/module:1",
+   "pad:sensor/ic:4",
+   7.05
+  ],
+  [
+   "rat:GND:13",
+   "pad:sensor/ic:4",
+   "pad:sensor/c_dec:2",
+   2.12
+  ],
+  [
+   "rat:GND:14",
+   "pad:ui/boot_button:3",
+   "pad:status/led2:2",
+   8.18
+  ],
+  [
+   "rat:GND:15",
+   "pad:status/led2:2",
+   "pad:status/led1:2",
+   3
+  ],
+  [
+   "rat:I2C_SCL:1",
+   "pad:mcu/module:16",
+   "pad:sensor/ic:2",
+   16.99,
+   [
+    "trk:f.i2c_sda.1"
+   ]
+  ],
+  [
+   "rat:I2C_SCL:2",
+   "pad:sensor/ic:2",
+   "pad:sensor/r_scl:2",
+   2.35,
+   [
+    "trk:f.i2c_sda.1"
+   ]
+  ],
+  [
+   "rat:I2C_SDA:1",
+   "pad:sensor/ic:1",
+   "pad:sensor/r_sda:2",
+   2.27
+  ],
+  [
+   "rat:LED1:1",
+   "pad:mcu/module:18",
+   "pad:status/r1:1",
+   26.7,
+   [
+    "trk:f.i2c_scl.1",
+    "trk:f.i2c_sda.2"
+   ]
+  ],
+  [
+   "rat:LED1_A:1",
+   "pad:status/led1:1",
+   "pad:status/r1:2",
+   4.28
+  ],
+  [
+   "rat:LED2:1",
+   "pad:mcu/module:19",
+   "pad:status/r2:1",
+   26.36,
+   [
+    "trk:f.i2c_scl.1",
+    "trk:f.i2c_sda.2"
+   ]
+  ],
+  [
+   "rat:LED2_A:1",
+   "pad:status/led2:1",
+   "pad:status/r2:2",
+   4.28
+  ],
+  [
+   "rat:USB_DN:1",
+   "pad:mcu/module:26",
+   "trk:f.usb_dn.1",
+   19,
+   [
+    "trk:f.i2c_scl.1"
+   ]
+  ],
+  [
+   "rat:USB_DP:1",
+   "pad:mcu/module:27",
+   "trk:f.usb_dp.1",
+   19.58,
+   [
+    "trk:f.i2c_scl.1",
+    "trk:f.i2c_sda.2"
+   ]
+  ],
+  [
+   "rat:VBUS:1",
+   "pad:power/c_in:1",
+   "pad:power/ldo:1",
+   1.58
+  ],
+  [
+   "rat:VBUS:2",
+   "pad:power/ldo:1",
+   "pad:power/ldo:3",
+   1.9
+  ],
+  [
+   "rat:VBUS:3",
+   "pad:usb/connector:A4",
+   "pad:usb/connector:B4",
+   4.4,
+   [
+    "trk:f.usb_dn.1",
+    "trk:f.usb_dp.1"
+   ]
+  ]
+ ],
+ "copper": {
+  "top": {
+   "segments": 8,
+   "len": 47.16,
+   "nets": 5
+  },
+  "bottom": {
+   "segments": 2,
+   "len": 19.99,
+   "nets": 2
+  }
+ },
+ "vias": {
+  "top-bottom": 3
+ },
+ "zones": [
+  {
+   "id": "zone:f.gnd_bottom",
+   "name": "GND bottom",
+   "net": "GND",
+   "layers": [
+    "bottom"
+   ],
+   "priority": 0,
+   "box": [
+    -19.5,
+    -14.5,
+    19.5,
+    14.5
+   ],
+   "area": 1131,
+   "fill": "solid",
+   "connect": "thermal",
+   "filled": "not computed",
+   "by": "generated",
+   "m": 2
+  }
+ ],
+ "keepouts": [
+  {
+   "id": "kpo:f.antenna",
+   "name": "antenna clearance",
+   "layers": [
+    "top",
+    "bottom"
+   ],
+   "blocks": [
+    "tracks",
+    "vias",
+    "pours"
+   ],
+   "tier": "no_go",
+   "box": [
+    3.4,
+    9.8,
+    16.6,
+    15
+   ],
+   "owner": "fp:mcu/module",
+   "by": "generated",
+   "m": 1
+  }
+ ],
+ "locks": {
+  "footprints": {
+   "locked": 1,
+   "by": {
+    "generated": 19
+   }
+  },
+  "tracks": {
+   "locked": 2,
+   "by": {
+    "agent": 3,
+    "hand": 3,
+    "routed": 4
+   }
+  },
+  "vias": {
+   "locked": 0,
+   "by": {
+    "generated": 1,
+    "routed": 2
+   }
+  },
+  "zones": {
+   "locked": 0,
+   "by": {
+    "generated": 1
+   }
+  },
+  "keepouts": {
+   "locked": 0,
+   "by": {
+    "generated": 1
+   }
+  }
+ },
+ "congestion": {
+  "box": [
+   -20,
+   -15,
+   20,
+   15
+  ],
+  "cell": 5,
+  "cols": 8,
+  "rows": 6,
+  "res": 0.05,
+  "w": 0.25,
+  "clearance": 0.2,
+  "layers": {
+   "top": {
+    "copper": [
+     [
+      3,
+      2,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      8,
+      5,
+      5,
+      8,
+      8,
+      17,
+      17,
+      8
+     ],
+     [
+      3,
+      3,
+      0,
+      1,
+      11,
+      18,
+      16,
+      6
+     ],
+     [
+      3,
+      20,
+      13,
+      0,
+      4,
+      12,
+      7,
+      0
+     ],
+     [
+      0,
+      22,
+      21,
+      13,
+      4,
+      4,
+      0,
+      0
+     ],
+     [
+      0,
+      11,
+      11,
+      3,
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "hFree": [
+     [
+      7,
+      10,
+      10,
+      9,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      7,
+      7,
+      5,
+      1,
+      0,
+      5,
+      5,
+      0
+     ],
+     [
+      9,
+      9,
+      12,
+      9,
+      2,
+      3,
+      6,
+      2
+     ],
+     [
+      9,
+      1,
+      4,
+      10,
+      8,
+      5,
+      9,
+      12
+     ],
+     [
+      9,
+      0,
+      4,
+      3,
+      6,
+      9,
+      12,
+      12
+     ],
+     [
+      6,
+      4,
+      4,
+      5,
+      12,
+      12,
+      12,
+      9
+     ]
+    ],
+    "vFree": [
+     [
+      5,
+      6,
+      8,
+      7,
+      7,
+      0,
+      0,
+      5
+     ],
+     [
+      7,
+      6,
+      7,
+      1,
+      7,
+      0,
+      0,
+      7
+     ],
+     [
+      9,
+      9,
+      12,
+      8,
+      0,
+      1,
+      6,
+      9
+     ],
+     [
+      9,
+      3,
+      5,
+      11,
+      5,
+      0,
+      2,
+      12
+     ],
+     [
+      11,
+      0,
+      0,
+      0,
+      5,
+      6,
+      12,
+      12
+     ],
+     [
+      9,
+      0,
+      0,
+      7,
+      12,
+      12,
+      12,
+      9
+     ]
+    ]
+   },
+   "bottom": {
+    "copper": [
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      5,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0,
+      0,
+      4,
+      3,
+      0,
+      0
+     ],
+     [
+      0,
+      1,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0
+     ],
+     [
+      0,
+      4,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      10,
+      10,
+      0,
+      0,
+      0,
+      1,
+      3
+     ]
+    ],
+    "hFree": [
+     [
+      9,
+      12,
+      12,
+      12,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      12,
+      12,
+      11,
+      3,
+      9,
+      9,
+      9,
+      10
+     ],
+     [
+      12,
+      12,
+      12,
+      11,
+      3,
+      5,
+      10,
+      12
+     ],
+     [
+      12,
+      8,
+      11,
+      12,
+      12,
+      8,
+      12,
+      12
+     ],
+     [
+      9,
+      7,
+      7,
+      9,
+      12,
+      12,
+      12,
+      12
+     ],
+     [
+      6,
+      4,
+      4,
+      7,
+      12,
+      12,
+      10,
+      8
+     ]
+    ],
+    "vFree": [
+     [
+      9,
+      12,
+      12,
+      12,
+      7,
+      0,
+      0,
+      5
+     ],
+     [
+      12,
+      12,
+      11,
+      0,
+      5,
+      0,
+      0,
+      7
+     ],
+     [
+      12,
+      12,
+      12,
+      11,
+      0,
+      3,
+      10,
+      12
+     ],
+     [
+      12,
+      8,
+      10,
+      12,
+      12,
+      6,
+      12,
+      12
+     ],
+     [
+      11,
+      7,
+      7,
+      11,
+      12,
+      12,
+      12,
+      12
+     ],
+     [
+      9,
+      8,
+      8,
+      11,
+      12,
+      12,
+      8,
+      4
+     ]
+    ]
+   }
+  }
+ },
+ "budget": {
+  "chars": 24000
+ }
+}

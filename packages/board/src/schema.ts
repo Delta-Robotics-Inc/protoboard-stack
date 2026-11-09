@@ -128,6 +128,13 @@ export const OutlineRec = z
 
 export const CutoutRec = z.object({ kind: z.literal("cutout"), id: ObjectId, outline: Contour, locked: Locked, provenance: Provenance.optional() }).strict();
 
+/**
+ * The side of an SMD pad in its footprint's frame: `top` is the footprint's own side, `bottom` the side opposite to
+ * it (a footprint with copper on both faces). Absent means `top`.
+ */
+export const PadLayer = z.enum(["top", "bottom"]);
+export type PadLayer = z.infer<typeof PadLayer>;
+
 export const Pad = z
   .object({
     number: z.string().min(1).max(40),
@@ -141,7 +148,8 @@ export const Pad = z
     corner_radius: NonNegativeNm.optional(),
     radius: PositiveNm.optional(),
     points: Contour.optional(),
-    layer: z.literal("top").optional(),
+    /** SMD pads only: `top` (the footprint's own side, the default) or `bottom` (the opposite side), footprint frame. */
+    layer: PadLayer.optional(),
     outer_diameter: PositiveNm.optional(),
     hole_diameter: PositiveNm.optional(),
     outer_width: PositiveNm.optional(),
@@ -157,8 +165,8 @@ export const Pad = z
     const need = (field: keyof typeof p, why: string) => {
       if (p[field] === undefined) ctx.addIssue({ code: z.ZodIssueCode.custom, path: [field], message: `${why} needs ${String(field)}` });
     };
+    if (p.type !== "smd" && p.layer === "bottom") ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["layer"], message: "only an smd pad names a side (a drilled pad is on every copper layer)" });
     if (p.type === "smd") {
-      need("layer", "an smd pad");
       if (p.shape === "circle") need("radius", "a circle smd pad");
       else if (p.shape === "polygon") need("points", "a polygon pad");
       else {

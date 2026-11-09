@@ -1,0 +1,18 @@
+Protoboard Stack: @protoboardai/board-import-easyeda
+Copyright 2026 Delta Robotics, Inc.
+
+This product includes software developed at Delta Robotics, Inc.
+(https://deltaroboticsinc.com).
+
+Licensed under the Apache License, Version 2.0 (the "License").
+See the LICENSE file in this package for full terms.
+
+"Protoboard", the Protoboard logo and the "0" mark are trademarks of
+Delta Robotics, Inc. The License grants no rights to them (section 6);
+see TRADEMARKS.md in the Protoboard Stack repository
+(https://github.com/Delta-Robotics-Inc/protoboard-stack).
+
+The EasyEDA Pro reader is written from EasyEDA's published file-format
+documentation (see README.md for the documents used). No EasyEDA code is
+included. EasyEDA is a trademark of its owner; this package is not
+affiliated with or endorsed by it.

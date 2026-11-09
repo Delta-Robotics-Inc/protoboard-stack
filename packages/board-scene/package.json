@@ -1,0 +1,45 @@
+{
+  "name": "@protoboardai/board-scene",
+  "version": "0.2.2",
+  "description": "Protoboard board scene: a compact, deterministic description of a board for agents, with matching SVG and PNG images, crops and change diffs. Runs in plain Node, no GPU or window.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/board-scene"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./fixtures/synthetic": "./src/fixtures/synthetic.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@protoboardai/board": "^0.2.2",
+    "@resvg/resvg-js": "2.6.2"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "pcb",
+    "eda",
+    "agents"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

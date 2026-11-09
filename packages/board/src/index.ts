@@ -14,6 +14,7 @@ export * from "./journal.js";
 export * from "./format.js";
 export * from "./index-spatial.js";
 export * from "./service.js";
+export * from "./derived.js";
 export * from "./extensions.js";
 export { deterministicKey } from "./keys.js";
 export * from "./transport/index.js";

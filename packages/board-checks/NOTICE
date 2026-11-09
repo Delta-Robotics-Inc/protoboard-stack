@@ -1,0 +1,19 @@
+Protoboard Stack: @protoboardai/board-checks
+Copyright 2026 Delta Robotics, Inc.
+
+This product includes software developed at Delta Robotics, Inc.
+(https://deltaroboticsinc.com).
+
+Licensed under the Apache License, Version 2.0 (the "License").
+See the LICENSE file in this package for full terms.
+
+"Protoboard", the Protoboard logo and the "0" mark are trademarks of
+Delta Robotics, Inc. The License grants no rights to them (section 6);
+see TRADEMARKS.md in the Protoboard Stack repository
+(https://github.com/Delta-Robotics-Inc/protoboard-stack).
+
+The geometry, connectivity and rule checks are original work written for
+this package. No code from KiCad or any other GPL or proprietary tool is
+included. KiCad (GPL) is an external program the user installs; the
+cross-check only runs its command-line tool and reads its published JSON
+report format.

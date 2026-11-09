@@ -1,0 +1,43 @@
+{
+  "name": "@protoboardai/board-checks",
+  "version": "0.2.2",
+  "description": "Protoboard board checks: copper connectivity, design rule checks in four tiers, the status line, and a KiCad DRC cross-check for the PCB editor.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/board-checks"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@protoboardai/board": "^0.2.0"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "pcb",
+    "eda",
+    "drc"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

@@ -33,6 +33,8 @@ Package layout:
 | `src/leases.ts` | leases with fencing tokens (ported from the 3D viewer's store) |
 | `src/journal.ts` | the on-disk journal and crash recovery |
 | `src/format.ts` | load and save of the on-disk files |
+| `src/paths.ts` | the project root, board key, local state and derived data folders (section 7) |
+| `src/derived.ts` | the shared derived data types: zone fill (section 4.3) |
 | `src/index-spatial.ts` | the query index (region, point, net) |
 | `src/service.ts` | the board service |
 | `src/extensions.ts` | importer, check, renderer and finding types |
@@ -56,6 +58,14 @@ Import everything from `@protoboardai/board` (`src/index.ts`).
   rotated. A point `p` of a footprint lands at `T(x, y) * R(rotation) * M(side) * p`, with
   `M(top) = identity` and `M(bottom) = (x, y) -> (-x, y)`. Flipping keeps `x, y`, toggles
   `side` and negates `rotation`, so flipping twice is the identity.
+- **Pads on both faces**: an SMD pad's `layer` names its side in the footprint frame: `top` (absent means
+  `top`) is the footprint's own side, `bottom` the opposite side. Its copper lands on
+  `padWorldSide(fp, pad)`: the footprint's side for `top`, the other outer layer for `bottom`. Every pad,
+  either face, goes through the same transform above, so a flip moves both faces to the other side and
+  flipping twice is still the identity.
+- **Rotations of footprint children in the world**: a pad's or text's frame rotation `r` shows at
+  `rotation + r` on a top footprint and `rotation - r` on a bottom one (`padsOf` gives pads' world rotation;
+  texts follow the same rule, which is the angle KiCad and Circuit JSON report for mirrored text).
 
 ### 2.1 Field names and Circuit JSON
 
@@ -66,7 +76,7 @@ degrees). The projection is a field copy with `toMm` and `toDeg`.
 |---|---|---|
 | `footprint.x, y, rotation, side` | `pcb_component.center.{x,y}`, `rotation`, `layer` | `side` is `top` or `bottom` |
 | `footprint.ref` | `source_component.name` | reference designator |
-| `pad` (`smd`, rect, circle) | `pcb_smtpad` `shape, x, y, width, height, radius, layer` | pad x, y are footprint-relative here, world in Circuit JSON |
+| `pad` (`smd`, rect, circle) | `pcb_smtpad` `shape, x, y, width, height, radius, layer` | pad x, y are footprint-relative here, world in Circuit JSON; Circuit JSON's `layer` is the world side (`padWorldSide`), ours the frame side |
 | `pad` (`th`) | `pcb_plated_hole` `outer_diameter, hole_diameter` or `outer_width, outer_height, hole_width, hole_height` | |
 | `pad` (`np`) | `pcb_hole` `hole_diameter` | |
 | `track` | `pcb_trace.route[]` wire points `x, y, width, layer` | ours is one record per segment; connected segments of a net chain into one `pcb_trace` |
@@ -167,13 +177,16 @@ a straight edge.
 `Airnode:SOT-23-5`), `value?`, `supplier_part?` (LCSC number, `C` and digits), `x, y,
 rotation, side`, `pads: Pad[]`, `courtyard?: Vertex[]`, `graphics?: FootprintGraphic[]`,
 `texts?: FootprintText[]` (each with `role?: "ref" | "value" | "user"`), `locked?`, `provenance`. Pad, graphic and text coordinates are in the
-footprint frame; their layers name the footprint's own side (`top`, `top_silkscreen`) and land
-on the opposite side when the footprint is on the bottom.
+footprint frame; their layers name the footprint's own side (`top`, `top_silkscreen`) or, for an
+SMD pad on the other face, the opposite side (`bottom`), and every one of them lands on the other
+side when the footprint is on the bottom.
 
 **Pad**: `number` (string), `type: "smd" | "th" | "np"`, `shape: "rect" | "roundrect" |
 "circle" | "oval" | "polygon"`, `x, y`, `rotation?`, and per shape: `width, height` (rect,
 roundrect, oval smd), `corner_radius?` (roundrect), `radius` (circle smd), `points?: Vertex[]`
-(polygon); `layer?: "top"` for smd (footprint frame); `outer_diameter, hole_diameter` (round
+(polygon); `layer?: "top" | "bottom"` for smd (footprint frame: `top`, the default when absent, is the
+footprint's own side, `bottom` the opposite side; section 2; a drilled pad may not say `bottom`);
+`outer_diameter, hole_diameter` (round
 `th`), `outer_width, outer_height, hole_width, hole_height` (slotted `th`), `hole_diameter`
 (`np`); `mask_margin?`, `paste_margin?`, `pin?` (UHD pin name). A pad never stores its net.
 
@@ -230,8 +243,38 @@ is not in the netlist is refused when a netlist is loaded.
 
 Zone fills, ratsnest, copper connectivity and findings are derived. They are keyed by the
 input they came from (`inputHash` over the records they read), cached under
-`.protoboard/build/board/<board key>/`, and marked stale when a commit changes any record they
-read. They never enter the board files or the journal.
+`<root>/.protoboard/build/board/<board key>/` (`boardBuildDir`; section 7 says which root), and
+marked stale when a commit changes any record they read. They never enter the board files or the
+journal.
+
+**Zone fill** (`src/derived.ts`, one definition for importers, checks and renderers): the copper each
+zone is filled with, cached as `zone-fill.json` in that folder (`zoneFillPath(boardDir)`).
+
+```ts
+interface DerivedZoneFill {
+  schema: "protoboard.zone-fill/v1";
+  source: "kicad" | "easyeda-pro" | "circuit-json" | "computed";   // who produced it
+  inputHash: string;              // zoneFillInputHash(doc) of the document it belongs to
+  units: { length: "nm" };
+  fills: {
+    zone?: string;                // the zone record; absent for fill without one (a Circuit JSON pour), which takes `net`
+    source: string;               // the producer's id of the filled object (KiCad zone uuid, EasyEDA record, pour id)
+    net?: string;
+    layer: CopperLayer;           // one entry per zone and copper layer
+    polygons: { outer: number[]; holes: number[][] }[];   // flat x0, y0, x1, y1, ... in nm, board frame
+  }[];
+}
+```
+
+`outer` is counterclockwise, each hole clockwise; rings are implicitly closed and have at least three
+points. `zoneFillInputHash(doc)` is SHA-256 over the canonical JSON of every zone record sorted by id; a
+fill whose `inputHash` differs from the document's is stale (`zoneFillIsCurrent`). An imported fill is
+the source tool's last fill: it goes stale only when a zone record changes, and copper moved under a zone
+leaves it current but out of date, as in the source tool until it refills. A `computed` fill (a fill
+engine, not built yet) uses the same hash. Helpers: `DerivedZoneFillSchema` (zod), `createZoneFill(doc,
+source, fills)` (stamps the hash, drops rings under three points), `parseZoneFill`, `readZoneFill(path)`,
+`writeZoneFill(boardDir, fill, projectRoot?)` (validated, canonical JSON, through a temporary file),
+`loadZoneFill(boardDir, doc)` (`{ fill, current, path }` or undefined).
 
 ## 5. Rules in four tiers
 
@@ -303,7 +346,9 @@ Each file:
 - UTF-8, `\n` line ends, a final newline; a file with no records is still written (header
   only) so the set of files is fixed.
 
-Loading then saving an unchanged board is byte-identical (a test). API: `loadBoardDir(dir)`,
+Loading then saving an unchanged board is byte-identical (a test). The loader reads only the files
+above; anything else in a board folder (a `.protoboard` folder an older version left there, notes,
+exports) is ignored. API: `loadBoardDir(dir)`,
 `writeBoardDir(dir, doc, expected?)`, `serializeDocument(doc)`, `parseFile(file, text)`,
 `serializeNetlist`, `parseNetlist`, `writeNetlist`, `filesHash(texts)`. Local, ignored state:
 
@@ -316,7 +361,14 @@ Loading then saving an unchanged board is byte-identical (a test). API: `loadBoa
 | derived data | `.protoboard/build/board/<board key>/` |
 
 `<board key>` is the board folder's path relative to the project root with `/` replaced by
-`__`.
+`__` (`boardKey`).
+
+**Which root** (`findProjectRoot(dir)`, `src/paths.ts`): the nearest folder at or above the board folder
+holding `protoboard.config.ts`; without one (a board outside any project, such as a freshly imported
+board), the board folder's **parent**. So the state of a lone board is a sibling `.protoboard` next to
+its folder (`<parent>/.protoboard/local/board/<folder name>/`), never inside the board folder. A board
+folder with no parent (the top of a drive) is its own root. The service, the transport, the importers'
+fill cache and the CLI all use this one rule.
 
 ## 8. Operations
 
@@ -468,7 +520,7 @@ token rises on every grant and every revocation. A person's edit inside a lease 
 const svc = openBoardService({
   dir?,                    // board folder
   document?,               // or an in-memory board (no folder: save is refused)
-  projectRoot?,            // default: nearest folder up with protoboard.config.ts, else dir
+  projectRoot?,            // default: nearest folder at or above dir with protoboard.config.ts, else dir's parent (section 7)
   netlist?: Netlist,       // else netlist.jsonl in dir, else none
   journal?: boolean,       // default true
   ownerLock?: boolean,     // default true: refuses to open a board another live process owns
@@ -566,12 +618,20 @@ interface Renderer {               // and the agent scene exporter; never writes
 }
 ```
 
+**Importer registry.** `@protoboardai/board-import` exports `availableImporters(): Promise<Importer[]>`:
+its own importers (`kicad`, `circuit-json`) then those of installed optional importer packages
+(`easyeda-pro` from `@protoboardai/board-import-easyeda`), one per id; a host loads that one package and
+picks the first importer whose `accepts` says yes. Importers of whole boards also return the derived zone
+fill (`fill`, section 4.3); a host that saves the board writes it with `writeZoneFill`.
+
 Helpers: `runChecks(snapshot, checks, ctx?)` validates each finding against `FindingSchema`, drops
 duplicates by id and sorts by severity, then id. `findingId(...)` hashes the check, rule, sorted
 objects and the location rounded to 1 µm. `importResultToTransaction(importerId, result, label?)`
 builds the host transaction for `ops` (batch id from the content, provenance `imported`).
 `boundsOf(record)` and `layersOf(doc, record)` give every record's box and layers;
-`padsOf(footprint, copperLayers?)` gives world pads (id, center, rotation, layers, box);
+`padsOf(footprint, copperLayers?)` gives world pads (id, center, rotation, layers, box; an SMD pad's one
+layer is `padWorldSide(fp, pad)`, so read pad sides from it, not from `pad.layer`);
+`padFrameSide(pad)` and `padWorldSide(fp, pad)` give an SMD pad's side in the frame and on the board;
 `footprintToWorld(fp, point)` is the section 2 transform. The fixture is
 `airnodeC3()` and `AIRNODE_C3_NETLIST` from `@protoboardai/board/fixtures/airnode-c3`, with its
 files in `packages/board/test/fixtures/airnode-c3/`.
@@ -580,7 +640,8 @@ files in `packages/board/test/fixtures/airnode-c3/`.
 
 Implemented in Phase 1: everything in sections 2 to 9 (all 26 operations of the Phase 1 table),
 the service API in section 10 except the wire transport, the owner lock, the journal with recovery, save with external-change
-refusal, the query index, the finding and importer helpers, and the Airnode C3 fixture.
+refusal, the query index, the finding and importer helpers, the shared zone fill type with its cache
+(section 4.3), and the Airnode C3 fixture.
 Specified only: the wire transport and `service.json` (CLI track), proposal mode and the ghost
-overlay, drag hold (`busy` while a person drags), the Phase 2 operations, `netlist.sync`, derived
-data (fills, ratsnest, connectivity), and reload on external change.
+overlay, drag hold (`busy` while a person drags), the Phase 2 operations, `netlist.sync`, computing
+derived data (a fill engine, ratsnest, connectivity), and reload on external change.

@@ -1,0 +1,5 @@
+{
+  // the dev page (browser) and its Node scripts: `npx tsc --noEmit -p packages/views/bench/pcb-screen`
+  "extends": "../../tsconfig.json",
+  "include": ["."]
+}

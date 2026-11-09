@@ -1,0 +1,34 @@
+{
+  "board": {
+    "design_settings": {
+      "rules": {
+        "min_clearance": 0.1,
+        "min_track_width": 0.127,
+        "min_via_diameter": 0.45,
+        "min_through_hole_diameter": 0.2,
+        "min_via_annular_width": 0.1,
+        "min_hole_clearance": 0.2,
+        "min_hole_to_hole": 0.25,
+        "min_copper_edge_clearance": 0.3,
+        "min_silk_clearance": 0.05,
+        "min_microvia_diameter": 0,
+        "max_error": 0.005,
+        "allow_microvias": false
+      }
+    }
+  },
+  "net_settings": {
+    "classes": [
+      { "name": "Default", "clearance": 0.2, "track_width": 0.25, "via_diameter": 0.6, "via_drill": 0.3, "priority": 2147483647 },
+      { "name": "Power Rail", "clearance": 0.3, "track_width": 0.5, "via_diameter": 0.8, "via_drill": 0.4, "uvia_diameter": 0.3, "priority": 0 },
+      { "name": "Signal", "clearance": 0.15, "track_width": 0.2, "diff_pair_gap": 0.18, "diff_pair_width": 0.2, "priority": 1 }
+    ],
+    "netclass_patterns": [
+      { "netclass": "Power Rail", "pattern": "VCC*" },
+      { "netclass": "Signal", "pattern": "S?G" },
+      { "netclass": "Signal", "pattern": "/^UN.*/" }
+    ],
+    "netclass_assignments": { "GND": "Power Rail" },
+    "meta": { "version": 5 }
+  }
+}

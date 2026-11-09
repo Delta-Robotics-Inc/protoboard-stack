@@ -4,12 +4,11 @@
  * editor tab, the CLI, MCP tools, routers and importers are all its clients; a wire transport (the CLI's
  * `protoboard board serve`) exposes the same calls over JSON-RPC.
  */
-import { existsSync } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
-import { sha1Hex } from "./canonical.js";
+import { join, resolve } from "node:path";
 import type { BoardDocument } from "./document.js";
 import { filesHash, loadBoardDir, writeBoardDir } from "./format.js";
 import { BoardIndex, type BoardQuery } from "./index-spatial.js";
+import { boardLocalDir, findProjectRoot } from "./paths.js";
 import { acquireOwnerLock, BoardJournal, pendingEntries, type JournalLine } from "./journal.js";
 import type { EndedLease, LeaseClaim } from "./leases.js";
 import type { Actor } from "./ops/registry.js";
@@ -51,7 +50,7 @@ export interface BoardServiceOptions {
   /** The board folder. Absent: an in-memory board (`document` required; save is refused). */
   dir?: string;
   document?: BoardDocument;
-  /** Default: the nearest folder up from `dir` with protoboard.config.ts, else `dir`. */
+  /** Default: the nearest folder at or above `dir` with protoboard.config.ts, else the parent of `dir` (state never lands inside a board folder). */
   projectRoot?: string;
   netlist?: Netlist;
   /** Default true when there is a folder. */
@@ -90,27 +89,7 @@ export interface BoardService {
   close(options?: { save?: boolean }): void;
 }
 
-/** The nearest folder up from `dir` holding protoboard.config.ts, else `dir`. */
-export function findProjectRoot(dir: string): string {
-  let d = resolve(dir);
-  for (;;) {
-    if (existsSync(join(d, "protoboard.config.ts"))) return d;
-    const up = dirname(d);
-    if (up === d) return resolve(dir);
-    d = up;
-  }
-}
-
-/** `<board key>`: the board folder relative to the project root, `/` replaced by `__`. */
-export function boardKey(projectRoot: string, dir: string): string {
-  const rel = relative(resolve(projectRoot), resolve(dir)).split(/[\\/]+/).filter(Boolean).join("__");
-  if (!rel) return "board";
-  if (rel.startsWith("..") || isAbsolute(rel)) return `outside-${sha1Hex(resolve(dir)).slice(0, 12)}`;
-  return rel.replace(/[^A-Za-z0-9_.-]/g, "_");
-}
-
-/** The local state folder of a board. */
-export const boardLocalDir = (projectRoot: string, dir: string): string => join(projectRoot, ".protoboard", "local", "board", boardKey(projectRoot, dir));
+export { boardBuildDir, boardKey, boardLocalDir, findProjectRoot, STATE_DIR } from "./paths.js";
 
 export function openBoardService(options: BoardServiceOptions): BoardService {
   const dir = options.dir ? resolve(options.dir) : undefined;

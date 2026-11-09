@@ -57,6 +57,16 @@ export function sideLayer<L extends string>(layer: L, side: Side): L {
   return layer;
 }
 
+/** An SMD pad's side in its footprint's frame: `top` (its own side, also when absent) or `bottom` (the opposite side). */
+export const padFrameSide = (pad: Pick<Pad, "layer">): Side => (pad.layer === "bottom" ? "bottom" : "top");
+
+/**
+ * The copper side an SMD pad lands on: its frame side through the footprint's side (a bottom footprint's own side is
+ * the bottom, so a frame-`bottom` pad of a bottom footprint lands on the top). Flipping the footprint moves it to the
+ * other side; flipping twice brings it back.
+ */
+export const padWorldSide = (fp: Pick<FootprintRec, "side">, pad: Pick<Pad, "layer">): Side => sideLayer(padFrameSide(pad), fp.side);
+
 /** The center of an arc from `start` to `end` with a signed sweep (millidegrees). */
 export function arcCenter(start: Point, end: Point, sweep: number): { x: number; y: number; r: number } {
   const theta = (sweep / 1000) * (Math.PI / 180);
@@ -134,7 +144,10 @@ export interface WorldPad {
   y: number;
   /** World rotation of the pad shape, millidegrees (mirror applied for bottom). */
   rotation: number;
-  /** Copper layers the pad has copper on. */
+  /**
+   * Copper layers the pad has copper on: every copper layer for a plated hole, none for a plain hole, and one outer
+   * layer for an SMD pad (`top` or `bottom`, from the footprint's side and the pad's own `layer`; see `padWorldSide`).
+   */
   layers: CopperLayer[];
   box: Box;
   /** Whether the pad has a drilled hole. */
@@ -155,7 +168,7 @@ export function padsOf(fp: FootprintRec, copper: readonly CopperLayer[] = ["top"
     }
     const mirrored = fp.side === "bottom";
     const rotation = normAngle(fp.rotation + (mirrored ? -(p.rotation ?? 0) : p.rotation ?? 0));
-    const layers: CopperLayer[] = p.type === "smd" ? [sideLayer("top", fp.side) as CopperLayer] : p.type === "th" ? [...copper] : [];
+    const layers: CopperLayer[] = p.type === "smd" ? [padWorldSide(fp, p)] : p.type === "th" ? [...copper] : [];
     return { id: padId(fk, keys[i]), footprint: fp.id, key: keys[i], pad: p, x: Math.round(c.x), y: Math.round(c.y), rotation, layers, box: roundOut(b), drilled: p.type !== "smd" };
   });
 }
