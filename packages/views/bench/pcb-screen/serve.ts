@@ -3,9 +3,12 @@
  * parts) and serves it on 127.0.0.1 with the viewer's Kode Mono faces, and is the board service's client for the
  * page through the same routes `protoboard dev` mounts (@protoboardai/views/pcb/host: `/__protoboard/board/...`).
  *
- * - The default board is the Airnode C3 fixture, copied to a temporary folder and served there as a live board
- *   service (`serveBoard`), so the page sees commits as they happen; `/api/move` commits a footprint move on it as
- *   a person (the screenshot script's way to make commits). The tracked fixture is never written.
+ * - The default board is the Airnode C3 fixture, copied to a temporary folder (a Git repository, so checkpoints
+ *   commit) and served there as a live board service (`serveBoard`), so the page sees commits as they happen and
+ *   writes through it as a person (`/__protoboard/board/request`); `/api/move` commits a footprint move on it as a
+ *   person and `/api/agent` makes an agent claim a lease and commit (the screenshot script's way to make
+ *   commits). The tracked fixture is never written.
+ * - `?fixture=files` opens a second copy with no service: the host opens it for writing on the page's first write.
  * - `?board=<folder>` (any folder holding board.jsonl) opens that board through its live service when one runs
  *   (`protoboard board serve`), else from its files.
  *
@@ -14,14 +17,15 @@
  *
  * The bundle is rebuilt on every page load, so an edit shows on reload.
  */
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createServer, type Server } from "node:http";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { HUMAN, openBoardService, serveBoard, type BoardServer, type BoardService } from "@protoboardai/board/node";
+import { agentActor, HUMAN, openBoardService, serveBoard, type BoardServer, type BoardService } from "@protoboardai/board/node";
 import { bundleBrowser } from "../../src/pcb/headless/bundle.js";
 import { BOARD_ROUTE_PREFIX, createBoardRoutes, entryOf } from "../../src/pcb/host/index.js";
 import type { BoardEntry } from "../../src/pcb/types.js";
@@ -47,18 +51,34 @@ const HTML = `<!doctype html><html><head><meta charset="utf-8"><title>layout</ti
 html, body, #root { margin: 0; height: 100%; background: #0b0b0b; }
 </style></head><body><div id="root"></div><script src="/app.js"></script></body></html>`;
 
-export async function startDevServer(port = 5470, options: { log?: (line: string) => void } = {}): Promise<{ url: string; server: Server; close(): Promise<void> }> {
+export async function startDevServer(port = 5470, options: { log?: (line: string) => void } = {}): Promise<{ url: string; server: Server; close(): Promise<void>; fixture: BoardService; fixtureDir: string; filesDir: string; root: string }> {
   const fonts = fontsDir();
   // the fixture as a live board service, on a copy
   const tmp = mkdtempSync(join(tmpdir(), "pcb-screen-"));
   const fixtureDir = join(tmp, "airnode-c3");
   cpSync(FIXTURE, fixtureDir, { recursive: true });
+  const filesDir = join(tmp, "airnode-c3-files");
+  cpSync(FIXTURE, filesDir, { recursive: true });
+  writeFileSync(join(tmp, ".gitignore"), ".protoboard/\n");
+  // a Git repository, so a checkpoint's commit has somewhere to go (no remote: nothing can be pushed)
+  try {
+    const git = (args: string[]) => execFileSync("git", args, { cwd: tmp, stdio: "ignore", windowsHide: true });
+    git(["init", "-q"]);
+    git(["config", "user.name", "Layout dev page"]);
+    git(["config", "user.email", "dev@localhost"]);
+    git(["add", "-A"]);
+    git(["commit", "-q", "-m", "the Airnode C3 fixture"]);
+  } catch {
+    options.log?.("git is not available: checkpoints will save but not commit");
+  }
   const fixture: BoardService = openBoardService({ dir: fixtureDir });
   const fixtureServer: BoardServer = await serveBoard(fixture);
   const opened = new Map<string, { entry: BoardEntry; dir: string; service?: BoardService }>();
   const fixtureEntry = { ...entryOf(tmp, fixtureDir), key: "fixture" };
   opened.set("fixture", { entry: fixtureEntry, dir: fixtureDir, service: fixture });
-  const routes = createBoardRoutes({ root: tmp, extra: () => [...opened.values()], mayRecheck: (req) => !req.headers.origin || /^http:\/\/127\.0\.0\.1:\d+$/.test(String(req.headers.origin)), ...(options.log ? { log: options.log } : {}) });
+  opened.set("fixture-files", { entry: { ...entryOf(tmp, filesDir), key: "fixture-files" }, dir: filesDir });
+  const samePage = (req: { headers: { origin?: string } }) => !req.headers.origin || /^http:\/\/127\.0\.0\.1:\d+$/.test(String(req.headers.origin));
+  const routes = createBoardRoutes({ root: tmp, extra: () => [...opened.values()], mayRecheck: samePage, mayWrite: samePage, ...(options.log ? { log: options.log } : {}) });
 
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://127.0.0.1");
@@ -85,6 +105,10 @@ export async function startDevServer(port = 5470, options: { log?: (line: string
       }
       if (url.pathname === "/api/open") {
         const path = url.searchParams.get("path");
+        if (url.searchParams.get("fixture") === "files") {
+          res.writeHead(200, { "content-type": "application/json" });
+          return res.end(JSON.stringify({ key: "fixture-files", name: fixtureEntry.name }));
+        }
         if (!path) {
           res.writeHead(200, { "content-type": "application/json" });
           return res.end(JSON.stringify({ key: "fixture", name: fixtureEntry.name }));
@@ -113,6 +137,16 @@ export async function startDevServer(port = 5470, options: { log?: (line: string
         res.writeHead(200, { "content-type": "application/json" });
         return res.end(JSON.stringify(r));
       }
+      if (url.pathname === "/api/agent" && req.method === "POST") {
+        // an agent at work on the fixture: a lease on a subtree, then a move inside it (the agent bar's feed)
+        const agent = agentActor(url.searchParams.get("name") ?? "placer");
+        const c = fixture.claim(agent, { roots: [url.searchParams.get("root") ?? "sensor"], purpose: url.searchParams.get("purpose") ?? "tidy the sensor section", ttlMs: 240_000 });
+        let r: unknown = c;
+        const move = url.searchParams.get("move");
+        if (c.status === "granted" && move) r = fixture.apply({ batchId: `agent-${Date.now()}`, label: "nudge the sensor pull-up", leaseToken: c.lease.token, ops: [{ op: "footprint.move", ids: [move], dx: 500_000, dy: 0, tracks: "stay" }] }, agent);
+        res.writeHead(200, { "content-type": "application/json" });
+        return res.end(JSON.stringify({ claim: c, reply: r }));
+      }
       res.writeHead(url.pathname === "/favicon.ico" ? 204 : 404);
       res.end();
     } catch (e) {
@@ -127,6 +161,10 @@ export async function startDevServer(port = 5470, options: { log?: (line: string
   return {
     url: `http://127.0.0.1:${p}/`,
     server,
+    fixture,
+    fixtureDir,
+    filesDir,
+    root: tmp,
     close: () =>
       (closing ??= (async () => {
         server.closeAllConnections();

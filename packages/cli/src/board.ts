@@ -20,12 +20,14 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import type * as ChecksModule from "@protoboardai/board-checks";
 import type * as ImportModule from "@protoboardai/board-import";
+import type * as RouteModule from "@protoboardai/board-route";
 import type * as SceneModule from "@protoboardai/board-scene";
 import type * as HostModule from "@protoboardai/views/pcb/host";
 import {
   agentActor,
   BoardLockedError,
   boardBuildDir,
+  canonicalRecord,
   connectBoard,
   describeOperations,
   findProjectRoot,
@@ -67,6 +69,16 @@ export interface BoardIo {
   signal?: AbortSignal;
   /** `serve`: called once listening, with the JSON it printed. */
   onServing?: (info: Record<string, unknown>) => void;
+  /** `route` and `diagnose`: routers and a scorer instead of the product's (tests inject the built-in router). */
+  routing?: RoutingDeps;
+}
+
+/** Routers and a scorer for `route` and `diagnose` (default: tscircuit then Freerouting, scored by the board checks). */
+export interface RoutingDeps {
+  routers?: RouteModule.Router[];
+  scorer?: RouteModule.BoardScorer;
+  /** What the injected scorer is, for the report. */
+  scorerName?: string;
 }
 
 export const BOARD_EXIT = { ok: 0, invalid: 1, usage: 2, refused: 3 } as const;
@@ -99,6 +111,9 @@ export const BOARD_COMMANDS: readonly Spec[] = [
   { name: "check", args: "<dir>", summary: "Connectivity and design rule checks with the board's zone fill, and KiCad's DRC beside them when the board came from KiCad; exit 1 on errors", flags: ["kicad", "kicad-root", "no-cross-check"] },
   { name: "render", args: "<dir>", summary: "A PNG of the board (headless Chrome) with its fill, ratsnest and findings; --out, --region, --layers, --flip, --net, --width, --height", flags: ["out", "region", "layers", "flip", "net", "width", "height"] },
   { name: "describe", args: "<dir>", summary: "The agent scene (JSON and PNG) of the whole board, or of one --region (mm), --net, --object or --finding, with the checks' connectivity", flags: ["region", "net", "object", "finding", "out", "image"] },
+  { name: "route", args: "<dir>", summary: "Autoroute (tscircuit first, Freerouting as the fallback) and print the scored proposal; --nets or --region, --budget <s>; changes nothing unless --apply", flags: ["nets", "region", "budget", "apply", "as"] },
+  { name: "diagnose", args: "<dir> <net>", summary: "Why a net does not route: rules or placement, the attempts, the probe, what blocks it, and relaxations test-run on copies; changes nothing", flags: ["budget"] },
+  { name: "import-dxf", args: "<dir> <file.dxf>", summary: "Set the board outline and cutouts from a DXF drawing (one outline.import_dxf op); prints what was read and skipped", flags: ["units", "layers", "tolerance", "as"] },
 ];
 
 export const BOARD_USAGE = [
@@ -108,12 +123,12 @@ export const BOARD_USAGE = [
   "",
   "  --as human | agent:<name>        who acts (default: the agent this runs under, else a person)",
   "  lengths are integer nanometers; a number with mm (1.5mm) is converted",
-  "  exit codes: 0 applied or valid, 1 invalid (check: errors), 3 refused, 2 usage or failure",
+  "  exit codes: 0 applied or valid, 1 invalid (check: errors; route: nothing proposed), 3 refused, 2 usage or failure",
 ].join("\n");
 
 class UsageError extends Error {}
 
-const BOOLEAN = new Set(["json", "dry-run", "all", "records", "recover", "autosave", "no-cross-check", "flip"]);
+const BOOLEAN = new Set(["json", "dry-run", "all", "records", "recover", "autosave", "no-cross-check", "flip", "apply"]);
 const MULTI = new Set(["id", "origin"]);
 const GLOBAL = new Set(["json", "format", "cwd"]);
 
@@ -763,6 +778,51 @@ const COMMANDS = {
     );
     return BOARD_EXIT.ok;
   },
+
+  async "import-dxf"(c: Ctx): Promise<number> {
+    const dir = c.path(c.pos[0]);
+    const file = c.path(c.pos[1], "<file.dxf>");
+    if (!existsSync(file) || !statSync(file).isFile()) throw new UsageError(`no file ${file}`);
+    const units = c.a.one("units");
+    if (units !== undefined && !["mm", "in", "auto"].includes(units)) throw new UsageError("--units takes mm, in or auto (the default: $INSUNITS, else mm)");
+    const layers = list(c.a.one("layers"));
+    const tolerance = c.a.one("tolerance") !== undefined ? parseLength(c.a.one("tolerance")!, "--tolerance") : undefined;
+    if (tolerance !== undefined && tolerance <= 0) throw new UsageError("--tolerance must be more than 0");
+    const actor = resolveActor(c.a.one("as"), c.env);
+    const op = { op: "outline.import_dxf", dxf: readFileSync(file, "utf8"), ...(units ? { units } : {}), ...(layers ? { layers } : {}), ...(tolerance !== undefined ? { tolerance } : {}) };
+    const tx = { batchId: `cli-${randomBytes(6).toString("hex")}`, label: "import the board outline from DXF", ops: [op] } as Transaction;
+    const { r, mode } = await withBoard(dir, async (b) => ({ r: await b.apply(tx, actor), mode: b.mode }));
+    const report = r.status === "applied" || r.status === "valid" ? (r.reports?.find((x) => x.op === "outline.import_dxf")?.report as DxfReport | undefined) : undefined;
+    c.out({ ...r, file, ...(report ? { report } : {}) }, () => replyText(r, mode) + (report ? `\n${dxfReportText(report)}` : ""));
+    return exitOf(r);
+  },
+
+  async route(c: Ctx): Promise<number> {
+    const dir = c.path(c.pos[0]);
+    const nets = list(c.a.one("nets"));
+    const regionFlag = c.a.one("region");
+    if (nets && regionFlag) throw new UsageError("board route takes --nets or --region, not both (neither: every net with open connections)");
+    const box = regionFlag ? boxOf(lengths(regionFlag, 4, "--region")) : undefined;
+    if (box && (box.minX === box.maxX || box.minY === box.maxY)) throw new UsageError("--region: the box has no area");
+    const region = box ? [{ x: box.minX, y: box.minY }, { x: box.maxX, y: box.minY }, { x: box.maxX, y: box.maxY }, { x: box.minX, y: box.maxY }] : undefined;
+    const budgetMs = seconds(c.a.one("budget"), 60);
+    const by = resolveActor(c.a.one("as"), c.env);
+    const r = await boardRoute(dir, { ...c.io.routing, ...(nets ? { nets } : {}), ...(region ? { region } : {}), budgetMs, apply: c.a.has("apply"), by });
+    if (r.status === "not-available") return notAvailable(c, "route", r.message);
+    c.out(r, () => routeText(r));
+    return r.exit;
+  },
+
+  async diagnose(c: Ctx): Promise<number> {
+    const dir = c.path(c.pos[0]);
+    const net = c.pos[1];
+    if (!net) throw new UsageError("usage: protoboard board diagnose <dir> <net>  (missing <net>)");
+    const budgetMs = seconds(c.a.one("budget"), 30);
+    const r = await boardDiagnose(dir, net, { ...c.io.routing, budgetMs });
+    if (r.status === "not-available") return notAvailable(c, "diagnose", r.message);
+    c.out(r, () => diagnoseText(r));
+    return BOARD_EXIT.ok;
+  },
 } satisfies Record<string, (c: Ctx) => Promise<number>>;
 
 async function undoRedo(c: Ctx, which: "undo" | "redo"): Promise<number> {
@@ -986,6 +1046,253 @@ function crossCheckLines(c: CrossCheckResult, format: ((c: CrossCheckResult) => 
   if (c.differences.length) lines.push(`differences (${c.differences.length}):`, ...c.differences.map((d) => `  - ${d}`));
   else lines.push("differences: none (every count and item matched)");
   return lines;
+}
+
+// ---------------------------------------------------------------- import-dxf
+
+/** What `outline.import_dxf` reports (the board package's `DxfOutlineReport`). */
+interface DxfReport {
+  entities: number;
+  loops: number;
+  outline: { vertices: number; area: number };
+  cutouts: number;
+  skipped: { type: string; count: number; reason: string }[];
+  open: number;
+  units: string;
+}
+
+function dxfReportText(d: DxfReport): string {
+  return [
+    `  read: ${d.entities} entit${d.entities === 1 ? "y" : "ies"} in ${d.units}, ${d.loops} closed loop(s), ${d.open} open chain(s)`,
+    `  outline: ${d.outline.vertices} vertices, ${+(d.outline.area / 1e12).toFixed(3)} mm²; cutouts: ${d.cutouts}`,
+    ...(d.skipped.length ? d.skipped.map((s) => `  SKIPPED ${s.count} ${s.type}: ${s.reason}`) : ["  skipped: nothing"]),
+  ].join("\n");
+}
+
+// ---------------------------------------------------------------- route and diagnose
+
+/** A time budget in seconds (a positive number, at most an hour) as milliseconds; `fallback` seconds when absent. */
+function seconds(s: string | undefined, fallback: number): number {
+  if (s === undefined) return fallback * 1000;
+  const v = Number(s);
+  if (!/^\s*\d+(\.\d+)?\s*$/.test(s) || !(v > 0) || v > 3600) throw new UsageError(`--budget takes seconds, more than 0 and at most 3600 (got ${s.slice(0, 20)})`);
+  return Math.round(v * 1000);
+}
+
+type NotAvailable = { status: "not-available"; message: string };
+const scoreOf = (s: RouteModule.BoardScore) => ({ open: s.open, errors: s.errors, vias: s.vias, length: s.length, openNets: [...s.openNets] });
+const ghostCount = (g: { segments: unknown[]; vias: unknown[] }) => ({ segments: g.segments.length, vias: g.vias.length });
+
+/** The routing pieces a command needs: the host module, the router package, the routers and how they are described. */
+async function routing(deps: RoutingDeps): Promise<NotAvailable | { host: typeof HostModule; route: typeof RouteModule; routers: RouteModule.Router[]; info: HostModule.RouterInfo[] }> {
+  const host = await loadHost();
+  if (!host || typeof host.loadRouteModule !== "function") return { status: "not-available", message: "the board analysis with routing is not installed (package views, pcb/host)" };
+  const route = await host.loadRouteModule();
+  if (!route) return { status: "not-available", message: "the autorouter is not installed (package board-route)" };
+  const routers = deps.routers ?? (await host.defaultRouterList());
+  if (!routers.length) return { status: "not-available", message: "no router is installed" };
+  return { host, route, routers, info: await host.routerInfo(routers) };
+}
+
+export interface RouteOptions extends RoutingDeps {
+  /** Route these nets (default: every net with open connections). */
+  nets?: string[];
+  /** Route the open connections inside this polygon, nanometers. */
+  region?: { x: number; y: number }[];
+  /** Wall clock per router run (default 60 s). */
+  budgetMs?: number;
+  /** Apply the proposal when its status is `proposed`, each step as its router. */
+  apply?: boolean;
+  /** Who asked for the run (the steps are applied as their routers, never as this actor). */
+  by?: Actor;
+}
+
+export type RouteReport = Awaited<ReturnType<typeof runRoute>>;
+
+/**
+ * `board route`: run the orchestrator on the board and report the scored proposal; with `apply`, apply a `proposed`
+ * one step by step as each router (stopping at the first refusal) and verify every locked record byte for byte.
+ * A rejected, unchanged, failed or cancelled proposal is never applied. Exported for tests (inject routers and a scorer).
+ */
+export async function boardRoute(dir: string, o: RouteOptions = {}): Promise<NotAvailable | RouteReport> {
+  const r = await routing(o);
+  if ("status" in r) return r;
+  const scored = o.scorer ? { name: o.scorerName ?? "injected", scorer: o.scorer } : await r.host.productScorer();
+  if (!scored) return { status: "not-available", message: "no scorer: the board checks and the router package are both missing" };
+  return runRoute(dir, o, r.host, r.route, r.routers, r.info, scored);
+}
+
+async function runRoute(dir: string, o: RouteOptions, host: typeof HostModule, route: typeof RouteModule, routers: RouteModule.Router[], info: HostModule.RouterInfo[], scored: { name: string; scorer: RouteModule.BoardScorer }) {
+  const budgetMs = o.budgetMs ?? 60_000;
+  const scope = host.routeScope(o.region ? { kind: "region", region: o.region } : o.nets?.length ? { kind: "nets", nets: o.nets } : { kind: "open" });
+  const by = o.by ?? HUMAN;
+  // a run that only proposes reads the board (it is never opened for writing, so its files cannot change)
+  return withBoard(
+    dir,
+    async (b) => {
+      const s = await b.snapshot();
+      for (const n of o.nets ?? []) if (!s.doc.nets.has(n)) throw new UsageError(`--nets: the board has no net ${n}`);
+      const t0 = performance.now();
+      const p = await route.routeBoard(s, { scope, routers, scorer: scored.scorer, budget: { timeMs: budgetMs }, diagnose: false });
+      const routeMs = Math.round(performance.now() - t0);
+      const locked = host.lockedRecords(s.doc);
+      let applied: { by: string; replies: { actor: string; batchId: string; reply: Reply }[]; complete: boolean; locked: { checked: number; changed: string[] }; mode: string } | null = null;
+      let exit: number = p.status === "proposed" ? BOARD_EXIT.ok : BOARD_EXIT.invalid;
+      if (o.apply && p.status === "proposed") {
+        const before = new Map(locked.map((id) => [id, canonicalRecord(s.doc.records.get(id)!)]));
+        const replies: { actor: string; batchId: string; reply: Reply }[] = [];
+        for (const st of p.steps) {
+          // the label stays within the core's 3 to 8 words
+          const tx: Transaction = { ...st.transaction, label: `${st.transaction.label} (accepted)` };
+          const reply = await b.apply(tx, st.actor);
+          replies.push({ actor: st.actor.id, batchId: tx.batchId, reply });
+          if (reply.status !== "applied") break;
+        }
+        const after = (await b.snapshot()).doc;
+        const changed = locked.filter((id) => {
+          const rec = after.records.get(id);
+          return !rec || canonicalRecord(rec) !== before.get(id);
+        });
+        const complete = replies.length === p.steps.length && replies.every((x) => x.reply.status === "applied");
+        applied = { by: by.id, replies, complete, locked: { checked: locked.length, changed }, mode: b.mode };
+        const bad = replies.find((x) => x.reply.status !== "applied");
+        exit = changed.length ? BOARD_EXIT.usage : bad ? exitOf(bad.reply) : BOARD_EXIT.ok;
+      }
+      return {
+        status: p.status,
+        runId: p.runId,
+        dir,
+        epoch: s.epoch,
+        seq: s.seq,
+        reasons: [...p.reasons],
+        scope: p.scope,
+        budgetMs,
+        scorer: scored.name,
+        routers: info,
+        current: scoreOf(p.current),
+        candidate: scoreOf(p.candidate),
+        nets: [...p.nets],
+        openNets: [...p.openNets],
+        stages: p.stages.map((st) => ({
+          stage: st.stage,
+          router: st.router,
+          version: st.version,
+          status: st.status,
+          kept: st.kept,
+          ...(st.reason ? { reason: st.reason } : {}),
+          durationMs: st.durationMs,
+          nets: st.nets.length,
+          added: { ...st.added },
+          ...(st.routerReportedOpen !== undefined ? { routerReportedOpen: st.routerReportedOpen } : {}),
+          messages: st.messages.slice(0, 10),
+        })),
+        fallback: p.fallback ? { from: p.fallback.from, to: [...p.fallback.to], reasons: [...p.fallback.reasons] } : null,
+        added: { ...p.added },
+        lockCheck: { ok: p.lockCheck.ok, changed: [...p.lockCheck.changed], checked: locked.length },
+        locked,
+        unexpressed: [...p.unexpressed],
+        notes: [...p.notes],
+        steps: p.steps.map((st) => ({ actor: st.actor.id, batchId: st.transaction.batchId, label: st.transaction.label, ops: st.transaction.ops.length })),
+        applyRequested: !!o.apply,
+        applied,
+        ms: { route: routeMs },
+        exit,
+      };
+    },
+    o.apply ? "write" : "read",
+  );
+}
+
+const scoreText = (s: { open: number; errors: number; vias: number; length: number }) => `${s.open} open, ${s.errors} error${s.errors === 1 ? "" : "s"}, ${s.vias} via${s.vias === 1 ? "" : "s"}, ${mmText(s.length)} of track`;
+
+function routeText(r: RouteReport): string {
+  const title = (id: string) => {
+    const t = r.routers.find((x) => x.id === id)?.title;
+    return t && t !== id ? `${id} (${t})` : id;
+  };
+  const head =
+    r.status === "proposed"
+      ? r.applied
+        ? r.applied.complete
+          ? "APPLIED"
+          : "PROPOSED, APPLY STOPPED"
+        : "PROPOSED  (nothing changed; --apply applies it)"
+      : `${r.status.toUpperCase()}  (nothing changed${r.applyRequested ? "; a result that is not proposed is never applied" : ""})`;
+  const lines = [`${head}  ${r.runId}, seq ${r.seq}, epoch ${r.epoch}`];
+  for (const x of r.reasons) lines.push(`  reason: ${x}`);
+  lines.push(`  current:   ${scoreText(r.current)}`, `  candidate: ${scoreText(r.candidate)}`);
+  lines.push(`  scope: ${r.scope.kind === "nets" ? `nets ${r.scope.nets.join(", ")}` : r.scope.kind === "region" ? "a region" : "every open net"}; ${r.nets.length} net(s) to route; budget ${r.budgetMs / 1000} s per router; scored by ${r.scorer}`);
+  lines.push("  stages:");
+  for (const st of r.stages) lines.push(`    ${st.stage + 1}. ${st.router} ${st.version || "?"}  ${st.status}${st.kept ? ", kept" : ", not kept"}${st.reason ? ` (${st.reason})` : ""}  ${st.nets} net(s), ${st.added.segments} segment(s), ${st.added.vias} via(s), ${st.durationMs} ms`);
+  if (r.fallback) lines.push(`  FALLBACK: ${title(r.fallback.from)} ran first; ${r.fallback.to.map(title).join(", then ")} ran as the fallback`, ...r.fallback.reasons.map((x) => `    because ${x}`));
+  else lines.push("  fallback: none ran");
+  lines.push(`  copper added: ${r.added.segments} segment(s), ${r.added.vias} via(s), ${mmText(r.added.length)}`);
+  lines.push(r.lockCheck.ok ? `  locked copper: no router changed any of the ${r.lockCheck.checked} locked record(s)` : `  locked copper: A ROUTER TRIED TO CHANGE ${r.lockCheck.changed.join(", ")}; that result was not kept`);
+  if (r.openNets.length) lines.push(`  still open: ${r.openNets.join(", ")} (\`protoboard board diagnose <dir> <net>\` says why)`);
+  if (r.unexpressed.length) lines.push("  unexpressed (checked after the run, not given to a router):", ...r.unexpressed.map((u) => `    - ${u}`));
+  for (const n of r.notes) lines.push(`  note: ${n}`);
+  if (r.applied) {
+    lines.push(`  applied as the routers (accepted by ${r.applied.by}${r.applied.mode === "local" ? "; no running service: opened here and saved" : ""}):`);
+    for (const x of r.applied.replies) lines.push(`    ${x.actor}: ${replyText(x.reply, "service").split("\n")[0]}`);
+    if (!r.applied.complete && r.applied.replies.at(-1)?.reply.status !== "applied") lines.push("    stopped at the first refusal; the steps after it were not applied");
+    lines.push(r.applied.locked.changed.length ? `  LOCKED RECORDS CHANGED: ${r.applied.locked.changed.join(", ")}` : `  ${r.applied.locked.checked} locked records verified unchanged`);
+  }
+  return lines.join("\n");
+}
+
+export type DiagnoseReport = Awaited<ReturnType<typeof runDiagnose>>;
+
+/** `board diagnose`: why one net does not route (the host's diagnosis). Changes nothing. Exported for tests (inject routers and a scorer). */
+export async function boardDiagnose(dir: string, net: string, o: RoutingDeps & { budgetMs?: number } = {}): Promise<NotAvailable | DiagnoseReport> {
+  const r = await routing(o);
+  if ("status" in r) return r;
+  return runDiagnose(dir, net, o, r.host, r.routers, r.info);
+}
+
+const VERDICT = { routes: "routes as is", rules: "rules, not placement", placement: "placement" } as const;
+const TIERS = ["floor", "no_go", "target", "policy"] as const;
+
+async function runDiagnose(dir: string, net: string, o: RoutingDeps & { budgetMs?: number }, host: typeof HostModule, routers: RouteModule.Router[], info: HostModule.RouterInfo[]) {
+  const budgetMs = o.budgetMs ?? 30_000;
+  const s = await withBoard(dir, (b) => b.snapshot(), "read");
+  if (!s.doc.nets.has(net)) throw new UsageError(`the board has no net ${net} (\`protoboard board inspect\` lists them)`);
+  const v = await host.diagnoseNet(s, net, { budgetMs, routers, ...(o.scorer ? { scorer: o.scorer } : {}) });
+  return {
+    status: "diagnosed" as const,
+    dir,
+    epoch: s.epoch,
+    seq: s.seq,
+    net,
+    verdict: v.verdict,
+    verdictText: VERDICT[v.verdict],
+    summary: v.summary,
+    budgetMs,
+    routers: info,
+    attempts: v.attempts.map((a) => ({ router: a.router, status: a.status, ...(a.reason ? { reason: a.reason } : {}), ms: a.ms, copper: ghostCount(a.ghost) })),
+    probe: v.probe ? { router: v.probe.router, routed: v.probe.routed, length: v.probe.length, vias: v.probe.vias, floorViolations: v.probe.floorViolations, ms: v.probe.ms, copper: ghostCount(v.probe.ghost) } : null,
+    blockers: v.blockers,
+    areas: TIERS.map((tier) => ({ tier, areas: v.areas.filter((a) => a.tier === tier) })),
+    options: v.options,
+    ms: v.ms,
+  };
+}
+
+function diagnoseText(r: DiagnoseReport): string {
+  const lines = [`${r.net}: ${r.verdictText.toUpperCase()}  (seq ${r.seq}, epoch ${r.epoch}; nothing changed)`, `  ${r.summary}`, "  attempts (every rule as it is):"];
+  for (const a of r.attempts) lines.push(`    ${a.router}  ${a.status}${a.reason ? ` (${a.reason})` : ""}  ${a.copper.segments} segment(s), ${a.copper.vias} via(s), ${a.ms} ms`);
+  if (r.probe) lines.push(`  probe (the fab floor and no-go areas only): ${r.probe.router} ${r.probe.routed ? "routed" : "did not route"} the net, ${mmText(r.probe.length)}, ${r.probe.vias} via(s), ${r.probe.floorViolations} pair(s) under the floor clearance, ${r.probe.ms} ms`);
+  else lines.push("  probe: not run (the net routes as is)");
+  lines.push("  what blocks it:", ...r.blockers.map((b) => `    ${b.tier.padEnd(7)} ${b.rule}: ${b.what !== b.rule ? `${b.what}; ` : ""}${b.blocks}`));
+  lines.push("  rule areas by tier:");
+  for (const t of r.areas) lines.push(`    ${t.tier}: ${t.areas.length ? t.areas.map((a) => `${a.id}${a.name !== a.id ? ` (${a.name})` : ""}${a.blocks ? ` blocks ${a.blocks}` : ""}`).join("; ") : "none"}`);
+  if (r.options.length) {
+    lines.push("  relaxations (test-run on copies; none applied):");
+    for (const x of r.options) {
+      const res = x.result;
+      lines.push(`    ${x.title}: ${x.detail}`, `      -> ${res.routed ? "routed" : "did not route"}: ${res.open} open, ${res.errors} error(s), ${res.vias} via(s), ${mmText(res.length)}, ${res.newFindings} new finding(s), ${res.ms} ms${res.note ? ` (${res.note})` : ""}`);
+    }
+  } else lines.push(`  relaxations: ${r.verdict === "routes" ? "none needed" : "none to try (the plan is already at the floor; the floor is never relaxed)"}`);
+  return lines.join("\n");
 }
 
 // ---------------------------------------------------------------- optional packages, loaded when present

@@ -142,6 +142,17 @@ export const METHOD_PARAMS = {
   "board.changeSets": z.object({}).strict().optional(),
   /** Stop the serving process (it saves and closes the board). Offered only by a server given `onShutdown` (`protoboard board serve`). */
   "board.shutdown": z.object({}).strict().optional(),
+  // ---- Phase 2 (contract phase2-editing.md, sections 4 to 6)
+  "board.propose": z.object({ actor: WireActor, proposal: z.record(z.unknown()) }).strict(),
+  "board.proposals": z.object({ status: z.enum(["open", "stale", "accepted", "partial", "rejected"]).optional() }).strict().optional(),
+  "board.proposal": z.object({ id: z.string().min(1).max(200) }).strict(),
+  "board.previewProposal": z.object({ id: z.string().min(1).max(200), items: z.array(z.string().min(1).max(40)).max(200).optional() }).strict(),
+  "board.acceptProposal": z.object({ actor: WireActor, id: z.string().min(1).max(200), items: z.array(z.string().min(1).max(40)).max(200).optional(), allowStale: z.boolean().optional(), batchId: z.string().min(1).max(200).optional() }).strict(),
+  "board.rejectProposal": z.object({ actor: WireActor, id: z.string().min(1).max(200), items: z.array(z.string().min(1).max(40)).max(200).optional(), reason: z.string().max(500).optional() }).strict(),
+  "board.hold": z.object({ actor: WireActor, ids: z.array(z.string().min(1).max(300)).min(1).max(5000), margin: z.number().int().nonnegative().optional(), ttlMs: z.number().int().positive().optional() }).strict(),
+  "board.releaseHold": z.object({ actor: WireActor, id: z.string().min(1).max(200).optional() }).strict(),
+  /** The last derived state a live checker published (contract 6.1), or null. */
+  "board.derived": z.object({}).strict().optional(),
 } as const;
 export type BoardMethod = keyof typeof METHOD_PARAMS;
 export const BOARD_METHODS = Object.keys(METHOD_PARAMS) as BoardMethod[];
@@ -295,5 +306,31 @@ export function callService(svc: BoardService, method: BoardMethod, params: unkn
       return svc.changeSets();
     case "board.shutdown":
       throw new Error("only a serving process can be stopped (protoboard board serve); this board is open in this process");
+    case "board.propose":
+      return svc.propose(p.actor, p.proposal as never);
+    case "board.proposals":
+      return svc.proposals((p as { status?: never }).status ? { status: (p as { status: never }).status } : {});
+    case "board.proposal":
+      return svc.proposal(p.id) ?? null;
+    case "board.previewProposal": {
+      const items = (p as unknown as { items?: string[] }).items;
+      return svc.previewProposal(p.id, items ? { items } : {}) ?? null;
+    }
+    case "board.acceptProposal": {
+      const a = p as unknown as { actor: Actor; id: string; items?: string[]; allowStale?: boolean; batchId?: string };
+      return svc.acceptProposal(a.actor, a.id, { ...(a.items ? { items: a.items } : {}), ...(a.allowStale !== undefined ? { allowStale: a.allowStale } : {}), ...(a.batchId ? { batchId: a.batchId } : {}) });
+    }
+    case "board.rejectProposal": {
+      const a = p as unknown as { actor: Actor; id: string; items?: string[]; reason?: string };
+      return svc.rejectProposal(a.actor, a.id, { ...(a.items ? { items: a.items } : {}), ...(a.reason ? { reason: a.reason } : {}) });
+    }
+    case "board.hold": {
+      const a = p as unknown as { actor: Actor; ids: string[]; margin?: number; ttlMs?: number };
+      return svc.hold(a.actor, { ids: a.ids, ...(a.margin !== undefined ? { margin: a.margin } : {}), ...(a.ttlMs !== undefined ? { ttlMs: a.ttlMs } : {}) });
+    }
+    case "board.releaseHold":
+      return svc.releaseHold(p.actor, (p as { id?: string }).id);
+    case "board.derived":
+      return svc.derived() ?? null;
   }
 }

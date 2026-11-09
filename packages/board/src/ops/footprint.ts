@@ -3,7 +3,8 @@ import { z } from "zod";
 import { boxCenter, emptyBox, footprintBox, rotateAbout, unionBox } from "../geometry.js";
 import { Nm, ObjectId, Point, Side, type FootprintRec } from "../schema.js";
 import { normAngle } from "../units.js";
-import { change, distinct, edited, need, OpError, registerOperation } from "./registry.js";
+import { planFootprintMove } from "../edit-plan.js";
+import { change, distinct, edited, need, registerOperation } from "./registry.js";
 
 const Ids = z.array(ObjectId).min(1).max(1000);
 const Angle = z.number().int().min(-360_000).max(360_000);
@@ -12,14 +13,18 @@ registerOperation({
   name: "footprint.move",
   title: "Move footprints",
   description:
-    "Translate footprints by dx, dy (nanometers). Pads, courtyard and footprint graphics move with them. `tracks` says what happens to copper attached to their pads: \"stay\" (Phase 1) leaves it in place; \"attached\" (Phase 2, then the default) drags it along. Pass `tracks` explicitly.",
+    "Translate footprints by dx, dy (nanometers). Pads, courtyard and footprint graphics move with them. `tracks` says what happens to copper attached to their pads: \"attached\" (the default) brings it along: tracks between moved pads and vias on them follow, tracks with one end on a moved pad stretch (with a 45 degree corner when needed), and a track that would short another net, or locked copper an agent may not change, is left in place and listed as detached in the report; \"stay\" leaves all copper where it is.",
   input: z.object({ ids: Ids, dx: Nm, dy: Nm, tracks: z.enum(["stay", "attached"]).optional() }).strict(),
   audience: "all",
   phase: 1,
-  example: { ids: ["fp:power/ldo"], dx: 500_000, dy: 0, tracks: "stay" },
+  example: { ids: ["fp:power/ldo"], dx: 500_000, dy: 0 },
   apply(doc, input, ctx) {
-    if (input.tracks === "attached") throw new OpError('tracks: "attached" arrives in Phase 2; pass tracks: "stay"');
-    const puts = distinct(input.ids).map((id) => {
+    const ids = distinct(input.ids);
+    if ((input.tracks ?? "attached") === "attached") {
+      const plan = planFootprintMove(doc, ids, input.dx, input.dy, ctx);
+      return change(doc, plan.puts, plan.removes, undefined, { followed: plan.followed, stretched: plan.stretched, detached: plan.detached });
+    }
+    const puts = ids.map((id) => {
       const fp = need(doc, id, ["footprint"]);
       return edited({ ...fp, x: fp.x + input.dx, y: fp.y + input.dy }, ctx);
     });

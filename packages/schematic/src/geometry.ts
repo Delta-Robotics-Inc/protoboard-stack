@@ -83,11 +83,13 @@ function worldBox(b: LBox, rot: Rotation, mirror: boolean, at: XY): LBox {
   return box(a[0], a[1], c[0], c[1]);
 }
 
-/** Where a symbol's fields go (derived, contract 4.1): two-terminal parts above and below, or beside when vertical; boxes at a free corner. */
+/** Where a symbol's fields go (derived, contract 4.1): two-terminal parts above and below, or beside when vertical, unless `fields` places them; boxes at a free corner. */
 function fields(rec: SymbolRecT, part: CircuitPart, r: ResolvedSymbol, bodyW: LBox, pins: { at: XY; dir: Dir }[]): { ref: TextBox; value?: TextBox } {
   const value = part.value ?? (part.class === "ic" || part.class === "mcu" || part.class === "module" || part.class === "regulator" || part.class === "connector" ? (part.mpn ?? part.name) : undefined);
   const two = r.pins.length <= 2 && r.family.startsWith("pack:");
   const [cx, cy] = boxCenter(bodyW);
+  // a two-terminal part's fields are derived unless the layout or a person placed them (`fields`, as for a box)
+  if (two && rec.fields) return boxFields(rec.ref, value, [rec.x + rec.fields.dx, rec.y + rec.fields.dy], rec.fields.anchor);
   if (two) {
     const vertical = rec.rotation === 90 || rec.rotation === 270;
     if (!vertical) {
@@ -236,6 +238,47 @@ export function onSegment(p: XY, s: { a: XY; b: XY }, tol = 1e-6): boolean {
   return Math.abs(p[1] - s.a[1]) <= tol && p[0] >= x0 - tol && p[0] <= x1 + tol;
 }
 
+/**
+ * Segments indexed for point and box queries: horizontal ones by their y, vertical ones by their x (exact, for
+ * integer points), and every segment in buckets of 4 units for box queries.
+ */
+export class SegmentLookup<S extends { a: XY; b: XY }> {
+  private byY = new Map<number, S[]>();
+  private byX = new Map<number, S[]>();
+  private cells = new Map<string, S[]>();
+  constructor(readonly all: readonly S[]) {
+    for (const s of all) {
+      if (s.a[1] === s.b[1]) push(this.byY, s.a[1], s);
+      if (s.a[0] === s.b[0]) push(this.byX, s.a[0], s);
+      for (const k of cellsOf(Math.min(s.a[0], s.b[0]), Math.min(s.a[1], s.b[1]), Math.max(s.a[0], s.b[0]), Math.max(s.a[1], s.b[1]))) push(this.cells, k, s);
+    }
+  }
+  /** Segments the point lies on (ends included). */
+  at(p: XY): S[] {
+    const out: S[] = [];
+    for (const s of this.byY.get(p[1]) ?? []) if (onSegment(p, s)) out.push(s);
+    for (const s of this.byX.get(p[0]) ?? []) if (s.a[1] !== s.b[1] && onSegment(p, s)) out.push(s);
+    if (!Number.isInteger(p[0]) || !Number.isInteger(p[1])) return this.all.filter((s) => onSegment(p, s));
+    return out;
+  }
+  /** Segments whose box meets the box (a superset of those that pass through it). */
+  near(b: LBox): S[] {
+    const out = new Set<S>();
+    for (const k of cellsOf(b.x0, b.y0, b.x1, b.y1)) for (const s of this.cells.get(k) ?? []) out.add(s);
+    return [...out];
+  }
+}
+function push<K, V>(m: Map<K, V[]>, k: K, v: V) {
+  const l = m.get(k);
+  if (l) l.push(v);
+  else m.set(k, [v]);
+}
+function cellsOf(x0: number, y0: number, x1: number, y1: number): string[] {
+  const out: string[] = [];
+  for (let x = Math.floor(x0 / 4); x <= Math.floor(x1 / 4); x++) for (let y = Math.floor(y0 / 4); y <= Math.floor(y1 / 4); y++) out.push(`${x},${y}`);
+  return out;
+}
+
 /** Whether a segment passes through the inside of a box (touching its edge is not through). */
 export function segmentThroughBox(s: { a: XY; b: XY }, b: LBox, tol = 0.05): boolean {
   const [x0, x1] = [Math.min(s.a[0], s.b[0]), Math.max(s.a[0], s.b[0])];
@@ -258,6 +301,8 @@ export function crossing(s: Segment, t: Segment): XY | undefined {
 }
 
 export interface SheetGeometry {
+  /** the segments indexed */
+  lookup: SegmentLookup<Segment>;
   symbols: Map<string, PlacedSymbol>;
   /** every part pin key -> its placed symbol pin */
   pins: Map<string, PlacedPin>;
@@ -282,7 +327,7 @@ export function geometryOf(doc: SchematicDocument): SheetGeometry {
   const wires = recordsOfKind(doc, "wire");
   const segments = wires.flatMap(segmentsOf);
   const cards = new Map(recordsOfKind(doc, "card").map((c) => [c.id, c]));
-  const g: SheetGeometry = { symbols, pins, segments, junctions: junctionsOf(segments, [...symbols.values()].flatMap((s) => s.pins)), cards };
+  const g: SheetGeometry = { lookup: new SegmentLookup(segments), symbols, pins, segments, junctions: junctionsOf(segments, [...symbols.values()].flatMap((s) => s.pins)), cards };
   geoCache.set(doc, g);
   return g;
 }
@@ -395,12 +440,12 @@ export function drawnNetlist(doc: SchematicDocument, opts: { byName?: boolean } 
     }
   for (const [k, owners] of vertexOwners) {
     const [x, y] = k.split(",").map(Number) as XY;
-    for (const s of segs) if (onSegment([x, y], s)) for (const o of owners) uf.union(`w:${o}`, `w:${s.wire}`);
+    for (const s of g.lookup.at([x, y])) for (const o of owners) uf.union(`w:${o}`, `w:${s.wire}`);
   }
   // pins on wires
   for (const [key, pin] of g.pins) {
     uf.find(`p:${key}`);
-    for (const s of segs) if (onSegment(pin.at, s)) uf.union(`p:${key}`, `w:${s.wire}`);
+    for (const s of g.lookup.at(pin.at)) uf.union(`p:${key}`, `w:${s.wire}`);
   }
   // two pins on one anchor point
   const pinAt = new Map<string, string[]>();
@@ -417,7 +462,7 @@ export function drawnNetlist(doc: SchematicDocument, opts: { byName?: boolean } 
   ];
   for (const n of named) {
     if (byName) uf.union(`n:${n.id}`, `name:${n.net}`);
-    for (const s of segs) if (onSegment(n.at, s)) uf.union(`n:${n.id}`, `w:${s.wire}`);
+    for (const s of g.lookup.at(n.at)) uf.union(`n:${n.id}`, `w:${s.wire}`);
     for (const k of pinAt.get(ptKey(n.at)) ?? []) uf.union(`n:${n.id}`, `p:${k}`);
   }
   const roots = new Map<string, number>();

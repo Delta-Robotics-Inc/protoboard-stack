@@ -280,6 +280,60 @@ export function boardTools(): ToolSpec[] {
         return r.ok ? { data: r.data } : failure(r.message, dir, r.code);
       },
     }),
+    tool({
+      name: "board_import_dxf",
+      title: "Import the board outline from DXF",
+      description:
+        "Set a board's outline and cutouts from an ASCII DXF drawing (one outline.import_dxf operation). LINE, ARC, CIRCLE, LWPOLYLINE and POLYLINE are read (bulges become arcs); ends within the tolerance join into closed loops; the largest loop becomes the outline, centered on (0, 0), and the loops inside it replace the board's cutouts. Returns the reply and the report: entities read, loops, the outline (vertices, area in nm²), cutouts, what was skipped and why, open chains, and the units used. CHANGES FILES (the board's outline and cutouts). You act as agent:<your client name>.",
+      input: {
+        dir: DIR,
+        path: z.string().describe("The .dxf file, absolute or relative to the folder the agent works in."),
+        units: z.enum(["mm", "in", "auto"]).optional().describe("Drawing units (default auto: the file's $INSUNITS, else mm)."),
+        layers: z.array(z.string()).optional().describe("DXF layer names to read (default: all)."),
+        tolerance: z.number().int().positive().optional().describe("Join ends closer than this, nanometers (default 10000)."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        const file = await ctx.dir(a.path);
+        return board(ctx, dir, "import-dxf", { as: boardActor(ctx).id, units: a.units, layers: a.layers?.length ? a.layers.join(",") : undefined, tolerance: a.tolerance }, [file]);
+      },
+    }),
+    tool({
+      name: "board_route",
+      title: "Autoroute the board",
+      description:
+        "Run the autorouter on a board and return its scored proposal: status (proposed, rejected, unchanged, failed, cancelled) with the reasons, the current and candidate scores (open connections, errors, vias, track length in nm), each router stage (router, version, status, kept, reason, duration), the fallback when one ran (tscircuit's autorouter runs first, Freerouting as the fallback), the copper added, the locked-copper check, the nets still open, and what the routers could not express. Scope: every open net (default), some nets, or the open connections in a region (mm box). Each router run takes up to `budget` seconds (default 60). Without apply it writes nothing. With apply: true, a proposed result is applied step by step as each router (router:<id>), stopping at the first refusal, and every locked record is verified byte-identical afterwards (applied.locked); CHANGES THE BOARD (only with apply). A rejected or otherwise unproposed result is never applied. For a net that stays open, board_diagnose says why.",
+      input: {
+        dir: DIR,
+        nets: z.array(z.string()).optional().describe("Route these nets only."),
+        region: z.array(z.number()).length(4).optional().describe("Route the open connections in this box, millimeters: [x1, y1, x2, y2]."),
+        budget: z.number().positive().max(3600).optional().describe("Seconds per router run (default 60)."),
+        apply: z.boolean().optional().describe("Apply the proposal when its status is proposed (default false: report only)."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        if (a.nets?.length && a.region) return { data: { error: "give nets or region, not both (neither: every open net)" }, isError: true };
+        return board(ctx, dir, "route", { as: boardActor(ctx).id, nets: a.nets?.length ? a.nets.join(",") : undefined, region: a.region ? `[${a.region.map((v) => `${v}mm`).join(",")}]` : undefined, budget: a.budget, apply: a.apply ? "true" : undefined }, []);
+      },
+    }),
+    tool({
+      name: "board_diagnose",
+      title: "Why a net does not route",
+      description:
+        "Diagnose one net that does not route: the verdict (routes: it routes as is; rules: with only the fab floor and no-go areas it routes, so a rule above the floor blocks it; placement: even then it does not route, so the parts or a no-go area block it), a summary sentence, the router attempts, the probe run with the fab floor and no-go areas only, what blocks it (rules by tier), the rule areas by tier (outlines in nm), and relaxations (target rules for this net only) test-run on copies with their results. Each router run takes up to `budget` seconds (default 30). Writes nothing; a relaxation takes effect only if its rules (rule.set inputs) are then applied with board_apply, which is a design decision to confirm with the person first.",
+      input: {
+        dir: DIR,
+        net: z.string().min(1).describe("The net name."),
+        budget: z.number().positive().max(3600).optional().describe("Seconds per router run (default 30)."),
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        return board(ctx, dir, "diagnose", { budget: a.budget }, [a.net]);
+      },
+    }),
   ];
   for (const s of specs) s.description = `${s.description} ${BOARD_NO_PROJECT_CODE}`;
   return specs;

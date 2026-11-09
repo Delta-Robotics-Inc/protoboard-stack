@@ -9,9 +9,15 @@
  * A commit carries the records it changed, so the page applies it to its document (`withChanges`) and the renderer
  * updates only those objects; a `snapshot` after the first replaces the whole board (the host reloaded it) and is
  * passed on as an `external-change` event.
+ *
+ * Writes go the other way as requests (`BoardChannel.request`: a POST to the dev server's route, or a postMessage
+ * the VS Code extension answers); the host decides who acts, and the effects come back on the feed.
  */
 import { BoardIndex, snapshotFromWire, withChanges, type BoardEvent, type BoardSnapshot, type LogEntry, type Presence } from "./board.js";
-import type { BoardDerived, BoardEntry, BoardFeedMessage, BoardSource } from "./types.js";
+import type { BoardDerived, BoardEntry, BoardFeedMessage, BoardReplyMessage, BoardRequest, BoardSource } from "./types.js";
+
+/** Feed messages beside the board itself: checkpoints and autoroute runs. */
+export type SideMessage = Extract<BoardFeedMessage, { type: "checkpoint" | "route" }>;
 
 type SnapshotMessage = Extract<BoardFeedMessage, { type: "snapshot" }>;
 
@@ -22,6 +28,7 @@ export class RemoteBoardSource implements BoardSource {
   private entries: LogEntry[] | undefined;
   private readonly listeners = new Set<(e: BoardEvent) => void>();
   private readonly derivedListeners = new Set<(d: BoardDerived | undefined, error?: string) => void>();
+  private readonly sideListeners = new Set<(m: SideMessage) => void>();
   /** `service`: a live board service; `files`: the host reads the board's files. */
   mode: "service" | "files";
   derived: BoardDerived | undefined;
@@ -47,7 +54,8 @@ export class RemoteBoardSource implements BoardSource {
     return () => void this.listeners.delete(listener);
   }
   presence(): Presence {
-    return this.pres ?? { epoch: this.snap.epoch, seq: this.snap.seq, leases: [], intents: [] };
+    // a host without a presence feed: no leases, no intents (and no holds, once the core lists them)
+    return this.pres ?? ({ epoch: this.snap.epoch, seq: this.snap.seq, leases: [], intents: [], holds: [] } as unknown as Presence);
   }
   log(since?: number): LogEntry[] {
     const l = this.entries ?? [];
@@ -58,6 +66,12 @@ export class RemoteBoardSource implements BoardSource {
     this.derivedListeners.add(listener);
     listener(this.derived, this.error);
     return () => void this.derivedListeners.delete(listener);
+  }
+
+  /** Checkpoints and autoroute runs as the host reports them. */
+  onSide(listener: (m: SideMessage) => void): () => void {
+    this.sideListeners.add(listener);
+    return () => void this.sideListeners.delete(listener);
   }
 
   /** Apply one message of the host's feed. */
@@ -108,6 +122,10 @@ export class RemoteBoardSource implements BoardSource {
         this.error = m.message;
         for (const l of [...this.derivedListeners]) l(this.derived, m.message);
         return;
+      case "checkpoint":
+      case "route":
+        for (const l of [...this.sideListeners]) l(m);
+        return;
     }
   }
 
@@ -127,6 +145,8 @@ export interface BoardChannel {
   subscribe(onMessage: (m: BoardFeedMessage) => void): () => void;
   /** Ask the host to run the checks (and the cross-check) again. */
   recheck?(): void;
+  /** Ask the host to write or run something (absent: the host is read only). The host decides who acts. */
+  request?(req: BoardRequest): Promise<BoardReplyMessage>;
 }
 
 /** What a host offers the layout view: the project's board folders, and a feed of one. */
@@ -136,7 +156,7 @@ export interface BoardHost {
 }
 
 /** A board source over a channel: resolves at the first snapshot; `close` ends the feed. */
-export function openBoardSource(key: string, channel: BoardChannel, options: { timeoutMs?: number } = {}): Promise<{ source: RemoteBoardSource; close(): void; recheck?: () => void }> {
+export function openBoardSource(key: string, channel: BoardChannel, options: { timeoutMs?: number } = {}): Promise<{ source: RemoteBoardSource; close(): void; recheck?: () => void; request?: (req: BoardRequest) => Promise<BoardReplyMessage> }> {
   return new Promise((resolve, reject) => {
     let source: RemoteBoardSource | undefined;
     const timer = setTimeout(() => {
@@ -156,7 +176,7 @@ export function openBoardSource(key: string, channel: BoardChannel, options: { t
         if (m.type !== "snapshot") return;
         clearTimeout(timer);
         source = new RemoteBoardSource(key, m);
-        return resolve({ source, close: unsub, ...(channel.recheck ? { recheck: channel.recheck } : {}) });
+        return resolve({ source, close: unsub, ...(channel.recheck ? { recheck: channel.recheck } : {}), ...(channel.request ? { request: channel.request } : {}) });
       }
       source.receive(m);
     });
@@ -166,7 +186,8 @@ export function openBoardSource(key: string, channel: BoardChannel, options: { t
 /**
  * The dev servers' board host: `GET <base>__protoboard/board/list` for the folders, an event stream
  * (`__protoboard/board/events?board=<key>`) per open board, `POST __protoboard/board/check?board=<key>` (with the
- * page's token header, when the server asks for one) to run the checks again.
+ * page's token header, when the server asks for one) to run the checks again, and `POST
+ * __protoboard/board/request?board=<key>` for a page's request (`BoardRequest`, JSON).
  */
 export function createEventStreamBoardHost(options: { base: string; token?: string; tokenHeader?: string }): BoardHost {
   const url = (path: string, key?: string) => `${options.base}${path}${key ? `?board=${encodeURIComponent(key)}` : ""}`;
@@ -191,6 +212,16 @@ export function createEventStreamBoardHost(options: { base: string; token?: stri
         },
         recheck() {
           void fetch(url("__protoboard/board/check", key), { method: "POST", headers: { "content-type": "application/json", ...(options.token && options.tokenHeader ? { [options.tokenHeader]: options.token } : {}) }, body: "{}" });
+        },
+        async request(req) {
+          const r = await fetch(url("__protoboard/board/request", key), { method: "POST", headers: { "content-type": "application/json", ...(options.token && options.tokenHeader ? { [options.tokenHeader]: options.token } : {}) }, body: JSON.stringify(req) });
+          const text = await r.text();
+          try {
+            const j = JSON.parse(text) as Partial<BoardReplyMessage> & { error?: string };
+            return typeof j.ok === "boolean" ? (j as BoardReplyMessage) : { ok: false, error: j.error ?? `the host answered ${r.status}` };
+          } catch {
+            return { ok: false, error: `the host answered ${r.status}: ${text.slice(0, 200)}` };
+          }
         },
       };
     },

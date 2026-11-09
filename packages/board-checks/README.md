@@ -147,6 +147,47 @@ radius is checked as a sharp rectangle.
 its frozen object), the netlist and the fill. `isStale(hash, doc, fills)` compares. Results also
 carry the snapshot's `epoch` and `seq`.
 
+## Incremental checks
+
+For live checks while editing (contract `docs/specs/pcb-editor/phase2-editing.md`, section 6.2):
+
+```ts
+import { createIncrementalChecks } from "@protoboardai/board-checks";
+
+const live = createIncrementalChecks(doc, { fills });  // a full run; live.result as runBoardChecks returns
+const u = live.update(nextDoc, reply.changed);          // a transaction's changed ids
+u.result;              // equals runBoardChecks(nextDoc, { fills }): findings, order, summary, connectivity
+u.added; u.removed;    // findings by id against the previous result (a changed finding is in both)
+u.mode; u.ms;          // "incremental" or "full"
+live.update(nextDoc, changed, { fills: refilled, fillChanged: ["zone:gnd"] }); // a refill
+```
+
+The check model is kept per record (a footprint with its pads, holes, courtyard and silkscreen; a
+track; a via; a silkscreen graphic or text). An update rebuilds the records that changed (the
+given ids plus every record that is not the same frozen object as before, plus footprints whose
+pads changed net), measures only the added copper against its neighbors, recomputes connectivity
+from the kept pair scan (linear), and has each check measure again only where copper, pads,
+holes or courtyards were added or removed within its search distance, or where an object's
+carried net changed. New zone fill is compared with the kept fill polygon by polygon and hole by
+hole (holes matched by content): copper pairs and per-object results away from the holes that
+changed stand, and only copper near those holes is measured against the new fill.
+
+A full run (`mode: "full"`) replaces it for edits with board-wide reach: rules and net classes,
+the outline and cutouts, the board record and the stackup, zones and keep-outs, the netlist, any
+record kind not rebuilt per record, and footprint changes while a rule condition tests
+courtyards. For fill: fill going from absent to present (or back), a change in which zones have
+fill or in the fill's notes, more than half of the rings changed (a new plane outline), new fill
+while a rule tests an object's shape against an area (a region, a courtyard or area condition),
+and `fillChanged` without new fill. `analyzeBoard`'s cache is never read or written.
+
+The equality is a tested property (`test/incremental.test.ts`): random edit sequences applied
+through the board engine (tracks, vias, footprints moved, rotated and flipped, nets set and
+cleared, silkscreen, zones, rules and refills) on the Airnode C3 fixture and a small four-layer
+board (antipad holes moved, added, removed and reordered in its plane fill), each step compared
+with a full run. On the 6-layer performance board a single track move, and a via move whose
+antipads move in both plane fills, update in under 50 ms (`test/incremental-perf.test.ts` prints
+the timings).
+
 ## KiCad cross-check
 
 `findKicadCli()` looks at `PROTOBOARD_KICAD_CLI`, then PATH, then `Program Files\KiCad\<version>\bin`

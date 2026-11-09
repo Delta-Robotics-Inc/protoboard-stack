@@ -165,8 +165,9 @@ export interface DevEndpoint {
 
 /** Extension → webview. */
 /** The layout tab's boards (PCB editor Phase 1): the extension host is the board service's client and relays its feed. */
-export type { BoardEntry, BoardFeedMessage } from "@protoboardai/views/pcb/types";
-import type { BoardEntry, BoardFeedMessage } from "@protoboardai/views/pcb/types";
+export type { BoardEntry, BoardFeedMessage, BoardReplyMessage, BoardRequest } from "@protoboardai/views/pcb/types";
+import type { BoardEntry, BoardFeedMessage, BoardReplyMessage, BoardRequest } from "@protoboardai/views/pcb/types";
+import { parseBoardRequest } from "@protoboardai/views/pcb/requests";
 
 export type ToWebview =
   /** The dev server to load from (`null`: there is none; `message` says why). */
@@ -210,7 +211,9 @@ export type ToWebview =
   /** The project's board folders (an answer to `boards`, and again when they change). */
   | { type: "boards"; boards: BoardEntry[] }
   /** One message of an open board's feed (`boardOpen`). */
-  | { type: "boardFeed"; message: BoardFeedMessage };
+  | { type: "boardFeed"; message: BoardFeedMessage }
+  /** The extension host's answer to a `boardRequest` (PCB editor Phase 2). */
+  | { type: "boardReply"; id: number; reply: BoardReplyMessage };
 
 export type HierarchyAction = "reveal" | "filter" | "open" | "close" | "toggle";
 
@@ -320,7 +323,13 @@ export type FromWebview =
   /** The layout tab asks for the project's board folders. */
   | { type: "boards" }
   /** The layout tab opens a board's feed (by key), closes it, or asks for a new check run. */
-  | { type: "boardOpen" | "boardClose" | "boardCheck"; board: string };
+  | { type: "boardOpen" | "boardClose" | "boardCheck"; board: string }
+  /**
+   * The layout tab asks the extension host to write or run something on an open board (PCB editor Phase 2): a
+   * transaction, undo, a save, an autoroute run. The host decides who acts (the person at the screen); a request
+   * that names an actor is refused here.
+   */
+  | { type: "boardRequest"; board: string; id: number; request: BoardRequest };
 
 /** What the in-place BOM asks the extension (R2-E). */
 export type PartsOp = "bom" | "saveBom" | "refreshOffers" | "openSource" | "openLink";
@@ -516,6 +525,11 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
     case "boardCheck":
       // a board key (contract section 7: the folder relative to the project, `/` as `__`), never a path
       return str(data.board) && /^[A-Za-z0-9_.-]{1,300}$/.test(data.board) ? { type: data.type, board: data.board } : undefined;
+    case "boardRequest": {
+      if (!str(data.board) || !/^[A-Za-z0-9_.-]{1,300}$/.test(data.board) || typeof data.id !== "number" || !Number.isInteger(data.id)) return undefined;
+      const parsed = parseBoardRequest(data.request);
+      return parsed.ok ? { type: "boardRequest", board: data.board, id: data.id, request: parsed.request } : undefined;
+    }
     case "log": {
       if (!str(data.message)) return undefined;
       const level = data.level === "warn" || data.level === "error" ? data.level : "info";

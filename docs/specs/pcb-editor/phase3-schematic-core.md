@@ -43,6 +43,8 @@ transaction engine itself can be shared.
 | `src/service.ts` | the schematic service |
 | `src/layout/` | the layout pipeline (classify, cards, patterns, settle, connect, route) |
 | `src/score.ts` | the readability score and its numbered defects |
+| `src/layout/text.ts` | the text placement search (labels, power symbols and fields moved clear on stubs) |
+| `src/cleanup.ts` | the agent's cleanup tools: `listDefects`, `proposeFixes`, `applyFix`, `explainDefect`, `cleanupPass`, `revertCleanup`, `CLEANUP_TOOLS` |
 | `src/checks.ts` | the electrical checks (unconnected pins, single-pin nets, conflicting outputs, voltage) |
 | `src/scene.ts` | the agent scene description |
 | `src/render/` | the pure SVG renderer, dark and paper themes, PNG |
@@ -164,9 +166,11 @@ the layout never moves it) and `provenance = { by, tool?, actor?, edited? }` wit
   `symbol` overrides the resolved symbol (`pack:<id>` or a code-built family: `box`, `mcu`, `module`,
   `regulator`, `connector`); `variant` picks a variant of a pack symbol (`iec`). `ref` is the reference
   designator, assigned once and kept (section 6.3). `hide_unused` folds pins on no net into a note inside
-  the body (large modules). `fields` places a box symbol's reference (the value is the line below) at an offset
+  the body (large modules). `fields` places a symbol's reference (the value is the line below) at an offset
   from the symbol origin; the layout picks the first spot clear of stubs and parts. Two-terminal parts derive
-  their fields: above and below when horizontal, to the right when vertical. The layout sets `hide_unused` on every
+  their fields (above and below when horizontal, to the right when vertical) unless `fields` is set: the text search
+  (section 7, stage 7) sets it when the derived place is taken, and a capacitor in a bank left of the pins it serves
+  gets its fields on its left. The layout sets `hide_unused` on every
   generated symbol (not a pack symbol) that has pins on no net which UHD does not mark as left open.
 - **wire**: an orthogonal polyline. Junctions are derived, never stored: a dot sits wherever a wire end or
   vertex lies on another wire of the same net, or three or more wire ends of one net meet.
@@ -273,10 +277,10 @@ places every card anew. `layout.run` (section 8) is the operation that applies i
 | 1 classify | circuit, settings | net classes (`ground`, `rail`, `bus`, `signal`; local to one card or crossing), part roles (`anchor`: a part with more than one symbol pin that is not a two-terminal part; satellites `decoupling`, `pull_up`, `pull_down`, `series`, `power_series` (in line between two supply rails: a fuse, a ferrite, a reverse-polarity diode), `rail_shunt`, `probe` (a one-pin part: a test point)) with the pin each serves. Decoupling capacitors are shared out over the supply pins of their rail in their card in natural order of reference (sixteen LEDs and sixteen capacitors: each LED its own); a part with several supply pins on the rail takes that many shares. A signal satellite serves the pin of the anchor the layout reaches first (most pins, then path) |
 | 2 group | circuit groups, existing cards | one card per first-level UHD sub-module; **a first-level sub-module of more than 20 parts with nested sub-modules splits into one card per nested sub-module** (its own parts keep the first-level card); nested sub-modules below that fold into theirs; the board's root parts get one card per anchor with its satellites (decided from the circuit alone, so a part's home card never depends on where it is drawn); regrouped symbols stay in their card |
 | 3 clusters | each card's anchors | each anchor (most pins first) with what hangs on its pins is laid out on its own, in its own frame. Every side pin with something to hang is a **lane** along its lead. Shunts (decoupling, pull-ups, pull-downs, an LED, a button or a capacitor to a rail, a TVS from a rail to ground, a probe) stand on or hang from the lane with the rail pin toward the rail; series parts sit in line and the lane continues past them (an LED with its resistor; an RC filter); a **power path** continues in line through a fuse, ferrite or diode to the next rail, naming the rail it leaves before the series part and the rail it reaches at its end. On one side each shunt gets its own column (pitch 5); a shunt whose body would stand over a neighbor lane's row goes to a bank above (or below) the neighbors with a drop wire; labels-only lanes keep their label on the pin; power symbols on stubs go out until clear of their neighbors' labels. A satellite belongs to the first lane that reaches it. **Supply rows**: supply pins on top of a part (and ground pins at its bottom), when more than one or with capacitors, rise (drop) straight to one rail row per rail, stacked away from the body with the narrowest row nearest, each row's power symbol at its outer end; the row's capacitors hang from it in a bank, the first right of the last top pin and the second left of the first (both within reach of the pins), the rest further right, every row's bank in the same columns. **Crystal**: a crystal between two pins of one part on one side lies across below them, out from the part, the lower pin's net to its near end and the upper pin's to its far end (so the two wires never cross), each load capacitor beside its end hanging to ground. A port with no anchor pin in the card starts its own cluster from its label |
-| 4 patterns and packing | the clusters | clusters with one anchor definition linked output to input (pin types, else names such as `DOUT`/`DIN`, `Q7S`/`SER`) form a **chain**, drawn in chain order in rows of equal whole-unit pitch, every member the same way round (the head and tail may carry extra parts). Clusters drawn exactly alike (same anchor definition, same members at the same offsets and rotations) that are not a chain form a **repeated-channel array**, drawn in rows of equal pitch in natural order of reference. The column count makes the block about twice as wide as tall, at most 8 per row, with few empty cells. Blocks and single clusters are packed in columns in signal-flow order (connectors first among equals, then the longest path from the cluster that drives each net), the column height chosen for an aspect near 1.4, with a 4-unit gap for the wires between them. With pinned content in the card, the main anchor is built where it was (the card's origin) and the rest packs beside the fixed content |
+| 4 patterns and packing | the clusters | clusters with one anchor definition linked output to input (pin types, else names such as `DOUT`/`DIN`, `Q7S`/`SER`) form a **chain**, drawn in chain order in rows of equal whole-unit pitch, every member the same way round (the head and tail may carry extra parts). Clusters drawn exactly alike (same anchor definition, same members at the same offsets and rotations) that are not a chain form a **repeated-channel array**, drawn in rows of equal pitch in natural order of reference. The column count makes the block about twice as wide as tall, at most 8 per row, with few empty cells. Blocks and single clusters are packed in columns in signal-flow order (connectors first among equals, then the longest path from the cluster that drives each net; analog outputs and pins named like `OUTP` and `OUTN` drive, so a speaker connector fed by an amplifier comes after it), the column height chosen for an aspect near 1.4, with a 4-unit gap for the wires between them. Then **pin rows line up**: each unit after the first moves up or down by the smallest step that puts one of its signal pins on the row of the pin it joins in a unit placed before (staying clear), then slides toward the units it joins, staying wholly on its side of their pins and a gap away. With pinned content in the card, the main anchor is built where it was (the card's origin) and the rest packs beside the fixed content |
 | 5 settle | parts no pattern placed, pinned items | a constrained force pass: strong springs for pin-to-pin signal nets, weak springs for shared rails, repulsion between all boxes, rail pins pulled toward their rail side, fixed iterations, then snap to the grid and resolve overlaps by the nearest free spot (pinned items are fixed obstacles) |
 | 6 connect | nets per card | per net and card: a rail becomes power symbols (one per wired cluster: a decoupling capacitor shares its pin's symbol); a net whose pins in the card are two or more becomes wire; a net crossing cards gets one port label per card: when several clusters each labeled it, every pin of it in the card is wired and one label stays (at a lane's end, else on a short stub from the first pin); a net whose wire would exceed `bend_limit` bends becomes local labels |
-| 7 route | card-local geometry | orthogonal wires by A* on a dense grid (step 1, bend 4, crossing 6, along a body 0.4; the heuristic is the distance to the tree's box), avoiding symbol bodies, text and other nets' pins; multi-pin nets grow a tree from the first pin (T junctions). Then a **tidy** pass: a power symbol or label that landed on something moves out along its own direction on a stub of its net to the first spot where it touches nothing and the stub crosses nothing |
+| 7 route | card-local geometry | orthogonal wires by A* on a dense grid (step 1, bend 4, crossing 6, along a body 0.4; the heuristic is the distance to the tree's box), avoiding symbol bodies, text and other nets' pins; multi-pin nets grow a tree from the first pin (T junctions); a path that would bend more than `bend_limit` counts as failed. **Fallback ladder**: a net that fails is ripped up and routed again from up to three other starting terminals (another tree order); the best partial tree is kept and only the terminals that still fail are named (a label, or a power symbol on a rail), plus one name on the tree when it carries none (before: every pin of the net was labeled). Then a **tidy** pass (a power symbol or label that landed on something moves out along its own direction on a stub to the first clear spot) and the **text search** (`src/layout/text.ts`): every label, power symbol and field still overlapping a body or text, crossed by a wire, or over a foreign pin tries candidate places around its anchor: straight out on a stub of its own net up to 12 units, with one bend, or (when nothing clean was found) with two bends over its neighbors. A stub never runs through a body or text, never touches another net's pin, anchor, wire point or wire, and never runs along a wire; a label reads outward along the stub's last leg; fields try the clear sides of their body, nearest first, counting rule C23. Cost: 1000 per conflict (gates C02 to C04), then stub length, bends, crossings and vertical text; four min-conflicts passes, most conflicted first; a move is kept only when it lowers the item's cost. Staggering of power symbols at pitch 1 falls out of the search (the next symbol goes past its neighbor's) |
 | 8 cards | card sizes, cross-card nets | card sizes from content (bounding box, a 3-unit title band, a 2-unit margin). A fresh sheet: signal flow between two cards goes the way most of their output-to-input pin pairs go (else from the card that drives the net); ranks by the longest path; a card that makes a rail and drives no signal takes its supplier's rank, above the cards it feeds. Two packings are tried and the one that reads best kept: columns in rank order at a range of column heights (a column shares its width when that stretches a card by at most a quarter; the last card of a column reaches the tallest column's bottom when within 8 units), and a bottom-left fill in rank order where each card takes the free corner that keeps the sheet compact, right of the cards that feed it, below the cards that power it, and near the cards it shares nets with. "Reads best": area with an aspect penalty around 1.5, waste, the distance between cards weighted by the nets they share (label fan-out), and a heavy penalty per card pair whose signals flow right to left. A sheet laid out before keeps its places (above). Gutters of `settings.gutter` |
 | 9 score | the result | the readability score (section 11) |
 
@@ -301,7 +305,7 @@ records, so applying an operation then its inverse returns an equal document (a 
 
 | Name | Input | Effect |
 |---|---|---|
-| `symbol.place` | `id`, `x?`, `y?`, `rotation?`, `mirror?`, `variant?`, `symbol?` | absolute placement and look |
+| `symbol.place` | `id`, `x?`, `y?`, `rotation?`, `mirror?`, `variant?`, `symbol?`, `fields?` (`null` restores the derived place) | absolute placement and look, and where the reference and value sit |
 | `symbol.rotate` | `ids`, `angle: 90 \| 180 \| 270` | rotate each about its body center (snapped to the grid) |
 | `symbol.mirror` | `ids` | mirror each left to right about its body center |
 | `item.move` | `ids` (symbols, labels, power symbols, text, frames, cards), `dx`, `dy`, `pin?` | translate; a card moves with its members and their wires; a person's move pins what it moved unless `pin: false` |
@@ -333,6 +337,19 @@ An agent never rewrites the sheet directly when cleaning up a person's view: it 
 sends `proposal.add` with a few operations, and the service answers with the score each proposal buys
 (dry run). A person accepts all, some (`only`) or none. Accepting applies the operations as the person's
 transaction, so the person's undo removes them. Net changes never travel in a proposal (they are UHD edits).
+
+### 8.4 The cleanup tools (built)
+
+What the layout leaves, an agent finishes with ordinary operations through typed tools (`src/cleanup.ts`; names,
+descriptions and input schemas for CLI and MCP bindings in `CLEANUP_TOOLS`):
+
+| Tool | Function | Returns |
+|---|---|---|
+| `schematic_list_defects` | `listDefects(doc, { card?, rules?, includeInfo?, limit? })` | the numbered defects, gates first then by `points` (the score points the defect alone costs: the rule's weight over its floored opportunities), each with location, rule, objects and `crop: { card, box }` for `renderDefectCrop` (SVG; PNG through `svgToPng`) |
+| `schematic_propose_fixes` | `proposeFixes(doc, defect, { max? })` | up to four `FixCandidate`s `{ title, rule, defect, ops, predicted: { before, after, delta, gatesBefore, gatesAfter, resolved } }`, each predicted by applying its operations to a copy and scoring it; candidates that touch a pinned item, fail to apply or open a gate are left out. Generators: the text search for one label, power symbol or field (as `item.move`, `label.delete` with `label.add`, `symbol.place` with `fields`, and `wire.add` for the stub); a satellite moved beside the pin it serves plus `layout.run` tidy of its card (C12, C13); the score's own `suggest`; the card's wiring redrawn (`layout.run` tidy) |
+| `schematic_apply_fix` | `applyFix(svc, fix, { actor?, changeSet? })` | the engine's reply: one ordinary transaction by the agent actor (one undo step) |
+| `schematic_explain_defect` | `explainDefect(doc, defect)` | one paragraph: what is wrong, where, why the rule exists, what fixes it |
+| `schematic_cleanup_pass` | `cleanupPass(svc, { budget?, maxPasses?, perPass?, actor?, changeSet? })` | greedy: list, take the first defect not yet tried in this pass, apply its best candidate that closes gates or raises the score, list again; a defect with no improving candidate is skipped for the rest of the pass. Stops when a pass improves nothing, when the next fix would exceed `budget` operations (default 60), or after `maxPasses` passes (default 12, a strict bound), each pass looking at no more than `perPass` defects (default 30). Never touches a pinned item (the engine refuses it too) and never opens a gate. Returns the change set `{ id, title, transactions, ops }`, the score and gates before and after, the passes used, the candidates scored and each step; `revertCleanup(svc, result)` undoes the whole change set |
 
 ## 9. Transactions, versions, undo
 
@@ -411,10 +428,23 @@ card with a one-card halo. Same document in, same bytes out.
 
 `scoreSchematic(doc)` returns `{ score, gates: { open, rules }, rules: RuleResult[], defects: Defect[],
 cards: Record<card id, number> }`. Each rule measures a count over its opportunities; its failure fraction is
-`f = min(1, count / opportunities)` (0 when there are no opportunities). Weights: **gate 10, error 5, warning 2,
+`f = min(1, count / opportunities)` for a gate and `f = min(1, count / max(opportunities, 10))` for every other
+rule (0 when there are no opportunities; `failFraction`, `OPPORTUNITY_FLOOR`). Weights: **gate 10, error 5, warning 2,
 info 0.5**. The score is `clamp(round(100 - 10 * sum(weight * f)), 0, 100)`; a card's score is the same sum over
 the defects located in it and its own opportunities. A sheet with an open gate (C01 to C06) is not
 presentable whatever its score.
+
+**The opportunity floor (changed 2026-11-09).** Before, every rule used `f = min(1, count / opportunities)`, so a
+rule with one or two chances on a sheet swung the score by 10 to 20 points for one defect: C14 with one directed pair
+(one defect cost 20 points), C27 with two instances (10 points), C30's four title block fields (two missing cost 2.5
+points). After, a non-gate rule's fraction is taken over at least ten opportunities, so one defect costs at most a
+tenth of its rule's weight (a warning 2 points, an error 5); rules with ten or more opportunities score exactly as
+before. The gates are not floored and stay absolute: any open gate keeps the sheet unpresentable. Two definitions now
+say what they meant: C11 measures parts drawn with a two-terminal symbol (a two-way terminal block is a generated box
+whose contacts all leave one side, with no rail side to face), and C26 leaves out the connector family (contacts are
+drawn in pad order on one side whatever their type). On the seven real boards the floor and these two definitions
+together moved the scores by +2 to +22 (C most, where C14 had one opportunity); the other gains of section 15 came from
+the layout.
 
 | Id | Rule | Count | Opportunities | Severity |
 |---|---|---|---|---|
@@ -428,7 +458,7 @@ presentable whatever its score.
 | C08 | Wire inside a card (no label islands) | nets drawn with labels between pins of one card | nets with two or more pins in one card | error |
 | C09 | Labels across cards, not wires | wire segments crossing a card border | wire segments | warning |
 | C10 | Ground points down, supplies up | power symbols pointing the wrong way | power symbols | error |
-| C11 | Rail pin faces its rail | two-pin parts whose ground pin is not below or whose supply pin is not above | two-pin parts on a rail | warning |
+| C11 | Rail pin faces its rail | two-terminal symbols whose ground pin is not below or whose supply pin is not above | two-terminal symbols on a rail | warning |
 | C12 | Decoupling beside its supply pin | decoupling capacitors whose body is farther than 6 gu from the pin, in another card, or not wired to it | decoupling capacitors | warning |
 | C13 | Satellites beside the pin they serve | pull-ups, pull-downs and series parts whose body is farther than 8 gu from the pin (or port label) they serve | satellites | warning |
 | C14 | Signal flow left to right | directed pin pairs (output to input) whose destination is left of the source (by card when they cross cards) | directed pairs | warning |
@@ -443,7 +473,7 @@ presentable whatever its score.
 | C23 | Fields nearest their part | reference or value fields closer to another part's body | fields | warning |
 | C24 | Designators unique; values with units | repeated or `?` designators, values without a unit | symbols | error |
 | C25 | On grid | off-grid pins or wire vertices (0 by construction; still measured) | pins and vertices | error |
-| C26 | Generated symbol pin sides | supply inputs not on top, ground not at the bottom, inputs not left, outputs not right | generated symbol pins | info |
+| C26 | Generated symbol pin sides | supply inputs not on top, ground not at the bottom, inputs not left, outputs not right | generated symbol pins (not connectors) | info |
 | C27 | Repeated subcircuits alike | instances of one pattern on one card whose relative placement differs | pattern instances | warning |
 | C28 | Net named once at a point | a wired conductor in one card carrying two labels, or a label and a power symbol | labels and power symbols | warning |
 | C29 | Sheet fill | card whitespace outside 0.35 to 0.7 (ink: symbol boxes with a 1-unit halo, wires 1.5 units wide, labels, power symbols), sheet aspect outside 1.2 to 1.8 | cards plus one | info |
@@ -538,6 +568,13 @@ divider is a pull-up and a pull-down on one lane; a filter is a series part then
 of their own; differential pairs stay together because their pins sit together on the generated symbol and their
 lanes are adjacent, with no rule that measures it.
 
+Built in the third pass: the text placement search (stage 7), the routing fallback ladder (rip up and retry, partial
+trees, names only where routes fail), pin rows lined up between clusters, series parts beside their pins where no rail
+lane needs the room, ground contacts with long names kept on a connector's contact side, `fields` on two-terminal
+parts and in `symbol.place`, the opportunity floor of the score (section 11), and the cleanup tools (section 8.4).
+Still not built: dedicated patterns for dividers, RC and LC filters, differential pairs and the small transistor
+switch (the lane rules draw them, as above); pull-up banks on a bus.
+
 Specified only: the journal, leases, the wire transport and reload on external change (as the board core);
 writing a regroup back to UHD; splitting a part with many pins into functional units (large parts get supply
 rows, folded unused pins and function-ordered sides instead); a rail drawn once as a bus across an array (each
@@ -558,3 +595,26 @@ closed. What keeps them below: rails and signals mixed on one side of a part at 
 transistors), where a power symbol has no room between its neighbors' labels; routes that fail and fall back to a
 label at every pin, placed without a search; and rules with very few opportunities on a sheet (C14, C15, C27),
 where one defect costs 10 to 20 points.
+
+Measured in the third pass (text search, fallback ladder, pin rows lined up between clusters, series parts beside their
+pins, the opportunity floor, and the cleanup tools), on the same seven real boards, algorithm alone then after
+`cleanupPass` with a budget of 60 operations:
+
+| Board | Parts | Layout | Algorithm: score, gates open | After cleanup: score, gates open | Cleanup operations |
+|---|---|---|---|---|---|
+| A | 138 | about 0.5 s | 69, 0 | 70, 0 | 2 |
+| B | 108 | about 1.2 s | 35, 2 (C02) | 40, 2 (C02) | 2 |
+| C | 197 | about 1.6 s | 46, 9 (C02, C03) | 49, 5 (C02, C03) | 2 |
+| D | 90 | about 0.5 s | 53, 0 | 56, 0 | 2 |
+| E | 26 | under 0.1 s | 76, 0 | 79, 0 | 1 |
+| F | 23 | under 0.1 s | 83, 0 | 84, 0 | 2 |
+| G | 29 | about 0.2 s | 66, 2 (C02) | 66, 1 (C02) | 2 |
+
+Gates closed on four boards (before: none); the drawn netlist equals UHD and no merge is drawn on all seven. One board
+reaches 80 with every gate closed. The cleanup stops after two passes on every board because its candidates (text
+moved, a satellite moved and the card redrawn, labels replaced by a wire, the card redrawn) rarely raise the score once
+the layout has run its own text search; what remains needs moves no generator proposes yet. Open on the real boards:
+power symbols among signal labels at pitch 1 on connectors (a ground contact second from the top of a 24-contact
+socket, the supply contacts of a USB-C receptacle), a buck converter's pins at pitch 1 whose switch-node wires pass
+the body, decoupling capacitors of a part with eight supply pins on four rails (rule C12 asks for 6 units; the rail
+rows put them 20 to 40 away), crossings (C16) and label islands (C08) where routes still fail.

@@ -18,6 +18,8 @@ export { Grid, routeNet, COST, type Terminal, type RouteResult } from "./layout/
 export * from "./score.ts";
 export * from "./checks.ts";
 export * from "./scene.ts";
+export * from "./cleanup.ts";
+export { placeText, itemBoxes, type TextState, type TextOptions, type TextResult, type TLabel, type TPower, type TSym, type TWire } from "./layout/text.ts";
 export * from "./render/svg.ts";
 export { svgToPng } from "@protoboardai/board-scene";
 export * from "./export/kicad.ts";

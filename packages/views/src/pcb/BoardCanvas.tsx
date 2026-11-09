@@ -12,7 +12,7 @@ import type { Hit } from "./pick.js";
 import type { PcbFinding } from "./types.js";
 import { panBy, zoomAbout, type Insets } from "./view.js";
 
-export type Tool = "select" | "measure";
+export type Tool = "select" | "measure" | "region" | "text";
 
 export interface CanvasRect {
   x: number;
@@ -41,11 +41,29 @@ export interface BoardCanvasProps {
   calloutTitle?: string;
   /** Show the origin mark (board center). */
   origin?: boolean;
+  /** Whether a press on an object can drag it (editing on): the screen says which hits move. */
+  canDrag?: (hit: Hit) => boolean;
+  /** A drag of `hit` begins (after 4 px of travel); return false to box-select instead. */
+  onDragStart?: (hit: Hit, additive: boolean) => boolean;
+  /** The drag's delta from the press point, board millimeters. */
+  onDragMove?: (dx: number, dy: number) => void;
+  /** The drag ended: released (`cancel` false) or Esc (`cancel` true). */
+  onDragEnd?: (cancel: boolean) => void;
+  /** A click with the text tool: where (board millimeters) and on screen (canvas pixels). */
+  onPlace?: (x: number, y: number, sx: number, sy: number) => void;
+  /** A rectangle drawn with the region tool (board millimeters: x1, y1, x2, y2). */
+  onRegion?: (rect: [number, number, number, number]) => void;
+  /** More SVG drawn over the board (ghosts, rule areas, lease frames), rebuilt as the view moves. */
+  overlay?: (view: BoardView) => string;
+  /** More nodes placed over the board (the proposal card), rebuilt as the view moves. */
+  nodes?: (view: BoardView) => ReactNode;
 }
 
 type Drag =
   | { kind: "pan"; x: number; y: number }
-  | { kind: "press"; x0: number; y0: number; x: number; y: number; moved: boolean; shift: boolean }
+  | { kind: "press"; x0: number; y0: number; x: number; y: number; moved: boolean; shift: boolean; hit?: Hit }
+  | { kind: "move"; w0: { x: number; y: number } }
+  | { kind: "region"; x0: number; y0: number; x: number; y: number }
   | { kind: "measure"; x0: number; y0: number; x: number; y: number };
 
 export function BoardCanvas(props: BoardCanvasProps) {
@@ -67,7 +85,16 @@ export function BoardCanvas(props: BoardCanvasProps) {
     const c = canvas.current!;
     const v = new BoardView(c);
     viewRef.current = v;
-    const off = v.onChange(() => setTick((t) => (t + 1) % 1_000_000));
+    // the overlay follows the view: it is laid out again when the view moved, not on every frame drawn (a drag's
+    // preview redraws the board each frame; thousands of markers need not be rebuilt for it)
+    let last = "";
+    const off = v.onChange(() => {
+      const w = v.view;
+      const key = `${w.cx},${w.cy},${w.s},${w.flip},${v.width},${v.height},${v.scene?.rect.join(",")}`;
+      if (key === last) return;
+      last = key;
+      setTick((t) => (t + 1) % 1_000_000);
+    });
     const ro = new ResizeObserver(() => {
       const r = host.current!.getBoundingClientRect();
       v.resize(r.width, r.height);
@@ -87,14 +114,21 @@ export function BoardCanvas(props: BoardCanvasProps) {
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.code === "Space" && !(e.target instanceof HTMLInputElement)) space.current = true;
+      // Esc during a drag puts everything back where it was
+      if (e.key === "Escape" && drag.current?.kind === "move") {
+        drag.current = null;
+        props_.current.onDragEnd?.(true);
+        e.stopPropagation();
+        e.preventDefault();
+      }
     };
     const up = (e: KeyboardEvent) => {
       if (e.code === "Space") space.current = false;
     };
-    window.addEventListener("keydown", down);
+    window.addEventListener("keydown", down, true);
     window.addEventListener("keyup", up);
     return () => {
-      window.removeEventListener("keydown", down);
+      window.removeEventListener("keydown", down, true);
       window.removeEventListener("keyup", up);
     };
   }, []);
@@ -124,7 +158,17 @@ export function BoardCanvas(props: BoardCanvasProps) {
       setMeasure({ x0: p.x, y0: p.y, x: p.x, y: p.y });
       return;
     }
-    drag.current = { kind: "press", x0: p.x, y0: p.y, x: p.x, y: p.y, moved: false, shift: e.shiftKey || e.ctrlKey || e.metaKey };
+    if (props.tool === "region") {
+      drag.current = { kind: "region", x0: p.x, y0: p.y, x: p.x, y: p.y };
+      return;
+    }
+    if (props.tool === "text") {
+      const w = v.toWorld(p.x, p.y);
+      props.onPlace?.(w.x, w.y, p.x, p.y);
+      return;
+    }
+    const top = props.canDrag ? v.pickScreen(p.x, p.y)[0] : undefined;
+    drag.current = { kind: "press", x0: p.x, y0: p.y, x: p.x, y: p.y, moved: false, shift: e.shiftKey || e.ctrlKey || e.metaKey, ...(top && !top.interior && props.canDrag?.(top) ? { hit: top } : {}) };
   };
 
   const onPointerMove = (e: RPointerEvent) => {
@@ -146,10 +190,28 @@ export function BoardCanvas(props: BoardCanvasProps) {
       setMeasure({ x0: d.x0, y0: d.y0, x: p.x, y: p.y });
       return;
     }
+    if (d?.kind === "move") {
+      props.onDragMove?.(w.x - d.w0.x, w.y - d.w0.y);
+      return;
+    }
+    if (d?.kind === "region") {
+      d.x = p.x;
+      d.y = p.y;
+      setBox({ x: Math.min(d.x0, p.x), y: Math.min(d.y0, p.y), w: Math.abs(p.x - d.x0), h: Math.abs(p.y - d.y0) });
+      return;
+    }
     if (d?.kind === "press") {
       d.x = p.x;
       d.y = p.y;
-      if (!d.moved && Math.hypot(p.x - d.x0, p.y - d.y0) > 4) d.moved = true;
+      if (!d.moved && Math.hypot(p.x - d.x0, p.y - d.y0) > 4) {
+        d.moved = true;
+        if (d.hit && props.onDragStart?.(d.hit, d.shift)) {
+          const w0 = v.toWorld(d.x0, d.y0);
+          drag.current = { kind: "move", w0 };
+          props.onDragMove?.(w.x - w0.x, w.y - w0.y);
+          return;
+        }
+      }
       if (d.moved) setBox({ x: Math.min(d.x0, p.x), y: Math.min(d.y0, p.y), w: Math.abs(p.x - d.x0), h: Math.abs(p.y - d.y0) });
       return;
     }
@@ -168,6 +230,17 @@ export function BoardCanvas(props: BoardCanvasProps) {
     const d = drag.current;
     drag.current = null;
     if (!v || !d) return;
+    if (d.kind === "move") {
+      props.onDragEnd?.(false);
+      return;
+    }
+    if (d.kind === "region") {
+      setBox(null);
+      const a = v.toWorld(d.x0, d.y0);
+      const b = v.toWorld(d.x, d.y);
+      if (Math.hypot(d.x - d.x0, d.y - d.y0) > 6) props.onRegion?.([Math.min(a.x, b.x), Math.min(a.y, b.y), Math.max(a.x, b.x), Math.max(a.y, b.y)]);
+      return;
+    }
     if (d.kind === "press") {
       if (d.moved) {
         setBox(null);
@@ -217,7 +290,10 @@ export function BoardCanvas(props: BoardCanvasProps) {
   const overlay: string[] = [];
   let calloutNode: ReactNode = null;
   let findingCard: ReactNode = null;
+  let extraNodes: ReactNode = null;
   if (v?.scene) {
+    if (props.overlay) overlay.push(props.overlay(v));
+    if (props.nodes) extraNodes = props.nodes(v);
     if (props.origin !== false) {
       const o = v.toScreen(0, 0);
       overlay.push(`<g transform="translate(${o.x.toFixed(1)},${o.y.toFixed(1)})">${originSvg()}</g>`);
@@ -277,7 +353,7 @@ export function BoardCanvas(props: BoardCanvasProps) {
       ref={host}
       className="pcb-canvas"
       tabIndex={-1}
-      style={{ cursor: props.tool === "measure" ? "crosshair" : "default" }}
+      style={{ cursor: props.tool === "measure" || props.tool === "region" ? "crosshair" : props.tool === "text" ? "text" : "default" }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -309,6 +385,7 @@ export function BoardCanvas(props: BoardCanvasProps) {
       {measure && v && <MeasureLine m={measure} view={v} />}
       {calloutNode}
       {findingCard}
+      {extraNodes}
     </div>
   );
 }

@@ -191,6 +191,10 @@ export function connectorInputs(part: CircuitPart): PinInput[] {
     out.push(q);
   }
   for (const q of out) if (q.pads) delete q.number;
+  // ground contacts go to the bottom only with short names (a bottom pin's name runs across the body; long ones
+  // would run past it): otherwise they stay on the contact side with the rest, in pad order
+  const grounds = out.filter((q) => q.ground ?? /^(GND|VSS|AGND|DGND|PGND|SHIELD|SHLD|0V)/i.test(pinName(q.name)));
+  if (grounds.some((q) => pinName(q.name).length > 5)) for (const q of grounds) q.ground = false;
   // power first, then data, then configuration and sideband (their shunts hang below without crossing the data lines)
   const rank = (q: PinInput) => ({ power: 0, data: 1, config: 2, sideband: 3 })[q.group ?? ""] ?? 1.5;
   return out.map((q, i) => ({ q, i })).sort((a, b) => rank(a.q) - rank(b.q) || a.i - b.i).map((x) => x.q);

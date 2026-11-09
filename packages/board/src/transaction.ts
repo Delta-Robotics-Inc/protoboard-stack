@@ -10,7 +10,7 @@
  */
 import { byCodeUnit, canonicalRecord } from "./canonical.js";
 import { copperLayers, footprintByRef, footprintKey, padKeys, padId, type BoardDocument } from "./document.js";
-import { boundsOf, boxesMeet, layersOf, type Box } from "./geometry.js";
+import { boundsOf, boxesMeet, inflate, layersOf, unionBox, type Box } from "./geometry.js";
 import { createLeaseTable, type EndedLease, type Lease, type LeaseClaim, type Scope } from "./leases.js";
 import { getOperation, OpError, type Actor, type ApplyContext, type OpCall } from "./ops/index.js";
 import { ID_PREFIX, idMatchesKind, RECORD_SCHEMAS, type BoardRecord, type Provenance, type RecordKind } from "./schema.js";
@@ -70,6 +70,41 @@ export interface LogEntry {
   revertOf?: string;
   undoneBy?: number;
   redoneBy?: number;
+  /** The entry changed the netlist (`netlist.sync`). */
+  netlist?: true;
+  /** The proposal this entry accepted. */
+  proposal?: string;
+}
+
+/** What an operation reported (detached tracks, skipped locked copper, a DXF read). */
+export interface OpReport {
+  index: number;
+  op: string;
+  report: Record<string, unknown>;
+}
+
+/** A person's hold on objects while dragging them (Phase 2 contract, section 5). */
+export interface Hold {
+  id: string;
+  holder: Actor;
+  ids: string[];
+  box: Box;
+  layers: string[];
+  margin: number;
+  until: number;
+}
+
+/** DEFAULT: a drag hold lasts this long unless renewed. */
+export const HOLD_TTL_MS = 10_000;
+/** DEFAULT: the longest a hold may be asked for. */
+export const HOLD_MAX_MS = 60_000;
+
+/** Options only the service passes (never a client): a person accepting a proposal keeps the proposer's provenance. */
+export interface ApplyOptions {
+  provenance?: Provenance;
+  edited?: "hand" | "agent" | "routed";
+  lockCopper?: boolean;
+  proposal?: string;
 }
 
 export interface MissedEntry {
@@ -98,11 +133,14 @@ export type RefusalReason =
   | "needs-person"
   | "stale-undo"
   | "nothing-to-undo"
-  | "nothing-to-redo";
+  | "nothing-to-redo"
+  | "held"
+  | "stale-proposal"
+  | "not-a-person";
 
 export type Reply =
-  | { status: "applied" | "valid"; batchId: string; epoch: string; seq: number; changed: string[]; created: Record<string, string>; removed: string[]; versions: Record<string, number>; duplicate?: true }
-  | { status: "refused"; batchId: string; epoch: string; seq: number; reason: RefusalReason; message: string; missed?: MissedEntry[]; conflicts?: Conflict[]; lease?: Lease | EndedLease; ids?: string[]; duplicate?: true }
+  | { status: "applied" | "valid"; batchId: string; epoch: string; seq: number; changed: string[]; created: Record<string, string>; removed: string[]; versions: Record<string, number>; reports?: OpReport[]; netlist?: true; duplicate?: true }
+  | { status: "refused"; batchId: string; epoch: string; seq: number; reason: RefusalReason; message: string; missed?: MissedEntry[]; conflicts?: Conflict[]; lease?: Lease | EndedLease; ids?: string[]; hold?: Hold; retryAfterMs?: number; proposal?: string; duplicate?: true }
   | { status: "invalid"; batchId: string; epoch: string; seq: number; error: string; index?: number; issues?: unknown; duplicate?: true };
 
 export interface Intent {
@@ -117,6 +155,8 @@ export interface Presence {
   seq: number;
   leases: Lease[];
   intents: Intent[];
+  /** A person's live drag holds. */
+  holds: Hold[];
 }
 
 export interface ChangeSetInfo {
@@ -146,7 +186,12 @@ export interface Engine {
   readonly epoch: string;
   version(id: string): number;
   versions(ids?: readonly string[]): Record<string, number>;
-  apply(tx: Transaction, actor: Actor): Reply;
+  /** `options` is for the service only (a person accepting a proposal); clients never reach it. */
+  apply(tx: Transaction, actor: Actor, options?: ApplyOptions): Reply;
+  /** A person's hold on objects for a drag: agent, router and host writes touching them or their halo are refused (`held`). */
+  hold(actor: Actor, claim: { ids: string[]; margin?: number; ttlMs?: number }): { status: "held"; hold: Hold } | { status: "invalid"; error: string };
+  releaseHold(actor: Actor, id?: string): Hold[];
+  holds(): Hold[];
   undo(actor: Actor, meta?: { batchId?: string; leaseToken?: number }): Reply;
   redo(actor: Actor, meta?: { batchId?: string; leaseToken?: number }): Reply;
   revertChangeSet(actor: Actor, id: string, meta?: { batchId?: string; leaseToken?: number }): Reply;
@@ -169,6 +214,14 @@ export function newEpoch(): string {
 }
 
 const sameActor = (a: Actor, b: Actor) => a.kind === b.kind && a.id === b.id;
+
+/** A hold's default halo: the board's largest clearance minimum (any tier) plus 0.1 mm. */
+export function defaultHoldMargin(doc: BoardDocument): number {
+  let m = 0;
+  for (const r of doc.records.values()) if (r.kind === "rule" && r.enabled !== false && (r.check === "clearance" || r.check === "physical_clearance") && r.min !== undefined) m = Math.max(m, r.min);
+  for (const r of doc.records.values()) if (r.kind === "zone" && r.clearance !== undefined) m = Math.max(m, r.clearance);
+  return m + 100_000;
+}
 const HANDLE_REF = /^\$([A-Za-z0-9_]{1,40})$/;
 
 /** The provenance the engine gives records an actor creates. */
@@ -327,7 +380,31 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
     revertOf?: string;
     /** Skip locks, leases and policy (journal replay by the system). */
     replay?: boolean;
+    edited?: "hand" | "agent" | "routed";
+    lockCopper?: boolean;
+    proposal?: string;
   }
+
+  const holdTable = new Map<string, Hold>();
+  let holdSerial = 0;
+  const liveHolds = (): Hold[] => {
+    const t = now();
+    for (const [k, h] of holdTable) if (h.until <= t) holdTable.delete(k);
+    return [...holdTable.values()];
+  };
+  /** The live hold a changed record runs into, if any. */
+  const holdBlocking = (scopes: Scope[]): Hold | undefined => {
+    const hs = liveHolds();
+    if (!hs.length) return undefined;
+    for (const h of hs) {
+      const halo = inflate(h.box, h.margin);
+      for (const s of scopes) {
+        if (h.ids.includes(s.id)) return h;
+        if (s.box && boxesMeet(s.box, halo) && (!s.layers.length || !h.layers.length || s.layers.some((l) => h.layers.includes(l)))) return h;
+      }
+    }
+    return undefined;
+  };
 
   function execute(actor: Actor, calls: OpCall[], meta: ExecMeta): Reply & { entry?: LogEntry } {
     const id = meta.batchId;
@@ -337,12 +414,13 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       actor,
       issueId: (kind) => `${ID_PREFIX[kind]}:${epoch}.${nextKey++}`,
       provenance: meta.provenance ?? provenanceFor(actor),
-      edited: editedFor(actor),
-      lockCopper: actor.kind === "human",
+      edited: meta.edited ?? editedFor(actor),
+      lockCopper: meta.lockCopper ?? actor.kind === "human",
     };
     const handles: Record<string, string> = {};
     const inverse: OpCall[] = [];
     const applied: OpCall[] = [];
+    const reports: OpReport[] = [];
     const candidates = new Set<string>();
     for (let i = 0; i < calls.length; i++) {
       const raw = calls[i];
@@ -368,6 +446,7 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
           if (handles[h]) return invalid(id, `handle ${h} is used twice in this transaction`, { index: i });
           handles[h] = v;
         }
+        if (r.report) reports.push({ index: i, op: raw.op, report: r.report });
         applied.push(call as OpCall);
       } catch (e) {
         if (e instanceof OpError) return invalid(id, `${raw.op}: ${e.message}`, { index: i });
@@ -420,22 +499,28 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       if (nets.length && actor.kind === "agent") return refused(id, "needs-person", `net changes from an agent wait for a person (${nets.slice(0, 5).join(", ")})`, { ids: nets });
     }
     if (!meta.replay && (actor.kind === "agent" || actor.kind === "router" || actor.kind === "host")) {
+      // the person's live drag wins: writes into what they hold, or its halo, wait
+      const held = holdBlocking(scopes);
+      if (held) return refused(id, "held", `a person is dragging ${held.ids.slice(0, 5).join(", ")}${held.ids.length > 5 ? ", ..." : ""}; this transaction changes what they hold or its clearance halo: retry after the drag`, { hold: { ...held, holder: { ...held.holder }, ids: [...held.ids], layers: [...held.layers] }, retryAfterMs: Math.max(0, held.until - now()) });
       const other = leases.blocking(actor, scopes);
       if (other) return refused(id, "leased", `lease ${other.id} of ${other.holder.kind} ${other.holder.id} covers what this transaction changes until ${new Date(other.expiresAt).toISOString()} (its roots, nets, region and purpose are in lease, as data); reads stay open`, { lease: other });
       const fenced = leases.fence(actor, scopes, meta.leaseToken);
       if (fenced) return refused(id, "lease-revoked", fenced.message, fenced.lease ? { lease: fenced.lease } : {});
     }
     const created: Record<string, string> = { ...handles };
-    if (meta.dryRun) return { status: "valid", batchId: id, epoch, seq, changed, created, removed, versions: Object.fromEntries(changed.map((c) => [c, version(c) + 1])) };
-    if (!changed.length) {
+    const netlistChanged = before.netlist !== work.netlist && JSON.stringify(before.netlist ?? null) !== JSON.stringify(work.netlist ?? null);
+    const extra = { ...(reports.length ? { reports } : {}), ...(netlistChanged ? { netlist: true as const } : {}) };
+    if (meta.dryRun) return { status: "valid", batchId: id, epoch, seq, changed, created, removed, versions: Object.fromEntries(changed.map((c) => [c, version(c) + 1])), ...extra };
+    if (!changed.length && !netlistChanged) {
       if (meta.leaseToken !== undefined) leases.renew(actor, meta.leaseToken);
-      return { status: "applied", batchId: id, epoch, seq, changed, created, removed, versions: {} };
+      return { status: "applied", batchId: id, epoch, seq, changed, created, removed, versions: {}, ...extra };
     }
     // ---- commit
     doc = work;
     seq++;
     for (const c of changed) versions.set(c, version(c) + 1);
     const forward: OpCall[] = [];
+    if (netlistChanged) forward.push({ op: "netlist.sync", netlist: work.netlist ?? null, rename: "none" });
     if (removed.length) forward.push({ op: "record.remove", ids: removed });
     const puts = changed.filter((c) => work.records.has(c)).map((c) => work.records.get(c)!);
     if (puts.length) forward.push({ op: "record.put", records: puts });
@@ -459,6 +544,8 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       ...(meta.undoOf !== undefined ? { undoOf: meta.undoOf } : {}),
       ...(meta.redoOf !== undefined ? { redoOf: meta.redoOf } : {}),
       ...(meta.revertOf !== undefined ? { revertOf: meta.revertOf } : {}),
+      ...(netlistChanged ? { netlist: true as const } : {}),
+      ...(meta.proposal !== undefined ? { proposal: meta.proposal } : {}),
     };
     entries.push(entry);
     if (entries.length > LOG_CAP) entries = entries.slice(-LOG_CAP);
@@ -473,7 +560,12 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
     if (meta.leaseToken !== undefined) leases.renew(actor, meta.leaseToken);
     if (actor.kind === "agent" || actor.kind === "router") recent.set(`${actor.kind}:${actor.id}`, { actor: { ...actor }, label: meta.label, ids: changed.slice(0, 20), at: entry.time, from: "recent" });
     let revoked: EndedLease[] = [];
-    if (actor.kind === "human") revoked = leases.revokeCovering(scopes, actor, `the person changed ${changed.slice(0, 3).join(", ")}${changed.length > 3 ? ", ..." : ""}`);
+    let dropped = false;
+    if (actor.kind === "human") {
+      revoked = leases.revokeCovering(scopes, actor, `the person changed ${changed.slice(0, 3).join(", ")}${changed.length > 3 ? ", ..." : ""}`);
+      // the drop of a drag ends the person's hold on what it changed
+      for (const [k, h] of holdTable) if (sameActor(h.holder, actor) && h.ids.some((x) => changed.includes(x))) dropped = holdTable.delete(k) || dropped;
+    }
     for (const l of [...commitListeners]) {
       try {
         l({ entry, before, after: doc });
@@ -481,8 +573,8 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
         console.error("[board] a commit listener failed", e);
       }
     }
-    if (revoked.length) emitLeases();
-    return { status: "applied", batchId: id, epoch, seq, changed, created, removed, versions: Object.fromEntries(changed.map((c) => [c, version(c)])), entry };
+    if (revoked.length || dropped) emitLeases();
+    return { status: "applied", batchId: id, epoch, seq, changed, created, removed, versions: Object.fromEntries(changed.map((c) => [c, version(c)])), ...extra, entry };
   }
 
   const strip = (r: Reply & { entry?: LogEntry }): Reply => {
@@ -550,7 +642,44 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
     versions(ids) {
       return Object.fromEntries((ids ?? [...versions.keys()].sort(byCodeUnit)).map((i) => [i, version(i)]));
     },
-    apply(tx, actor) {
+    hold(actor, claim) {
+      if (actor.kind !== "human") return { status: "invalid", error: "only a person holds objects for a drag" };
+      const ids = Array.isArray(claim?.ids) ? [...new Set(claim.ids.filter((x) => typeof x === "string"))] : [];
+      if (!ids.length || ids.length > 5000) return { status: "invalid", error: "a hold names 1 to 5000 object ids" };
+      let box: Box | undefined;
+      const layers = new Set<string>();
+      for (const hid of ids) {
+        const r = doc.records.get(hid);
+        if (!r) return { status: "invalid", error: `no object ${hid} on this board` };
+        const b = boundsOf(r);
+        if (b) box = box ? unionBox(box, b) : b;
+        for (const l of layersOf(doc, r)) layers.add(l);
+      }
+      if (!box) return { status: "invalid", error: "the held objects have no place on the board" };
+      const ttl = Math.min(HOLD_MAX_MS, Math.max(100, claim.ttlMs ?? HOLD_TTL_MS));
+      const margin = claim.margin !== undefined && Number.isFinite(claim.margin) && claim.margin >= 0 ? Math.round(claim.margin) : defaultHoldMargin(doc);
+      // the same person holding the same objects renews the hold
+      const key = [...ids].sort(byCodeUnit).join("\n");
+      let h = [...holdTable.values()].find((x) => sameActor(x.holder, actor) && [...x.ids].sort(byCodeUnit).join("\n") === key);
+      if (h) Object.assign(h, { box, layers: [...layers].sort(byCodeUnit), margin, until: now() + ttl });
+      else {
+        h = { id: `hold.${epoch}.${++holdSerial}`, holder: { ...actor }, ids, box, layers: [...layers].sort(byCodeUnit), margin, until: now() + ttl };
+        holdTable.set(h.id, h);
+      }
+      emitLeases();
+      return { status: "held", hold: { ...h, holder: { ...h.holder }, ids: [...h.ids], layers: [...h.layers] } };
+    },
+    releaseHold(actor, hid) {
+      const out: Hold[] = [];
+      for (const [k, h] of holdTable) if (sameActor(h.holder, actor) && (hid === undefined || hid === k)) {
+        holdTable.delete(k);
+        out.push(h);
+      }
+      if (out.length) emitLeases();
+      return out;
+    },
+    holds: () => liveHolds().map((h) => ({ ...h, holder: { ...h.holder }, ids: [...h.ids], layers: [...h.layers] })),
+    apply(tx, actor, options = {}) {
       const bid = typeof tx?.batchId === "string" ? tx.batchId : "";
       const hit = bid ? replies.get(bid) : undefined;
       if (hit) return { ...hit, duplicate: true };
@@ -585,6 +714,10 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
         ...(tx.leaseToken !== undefined ? { leaseToken: tx.leaseToken } : {}),
         ...(tx.dryRun ? { dryRun: true } : {}),
         ...(tx.provenance ? { provenance: tx.provenance } : {}),
+        ...(options.provenance ? { provenance: options.provenance } : {}),
+        ...(options.edited ? { edited: options.edited } : {}),
+        ...(options.lockCopper !== undefined ? { lockCopper: options.lockCopper } : {}),
+        ...(options.proposal !== undefined ? { proposal: options.proposal } : {}),
         ...(tx.expectSeq !== undefined ? { baseSeq: tx.expectSeq } : {}),
       });
       // a dry run is not remembered: the same id may be sent again for real
@@ -663,7 +796,7 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       const t = now();
       const intents: Intent[] = live.map((l) => ({ actor: { ...l.holder }, label: l.purpose, ids: [], at: l.grantedAt, from: "lease" as const }));
       for (const r of recent.values()) if (t - r.at <= INTENT_MS && !intents.some((i) => sameActor(i.actor, r.actor))) intents.push({ ...r, actor: { ...r.actor }, ids: [...r.ids] });
-      return { epoch, seq, leases: live, intents };
+      return { epoch, seq, leases: live, intents, holds: engine.holds() };
     },
     log: (since) => (since === undefined ? [...entries] : entries.filter((e) => e.seq > since)),
     changeSets: () => [...changeSets.values()].map((c) => ({ ...c, actors: c.actors.map((a) => ({ ...a })), entries: [...c.entries] })),

@@ -11,9 +11,9 @@ export interface BoardSource {
   snapshot(): BoardSnapshot;
   subscribe(listener: (e: BoardEvent) => void): () => void;
   /** Leases and recent agent intents (the agent bar). Absent: the bar says it has no presence feed. */
-  presence?(): Presence;
-  /** The transaction log (the timeline). Absent: the timeline says it has no log. */
-  log?(since?: number): LogEntry[];
+  presence?(): Presence | undefined;
+  /** The transaction log (the timeline). Absent (or undefined): the timeline says it has no log. */
+  log?(since?: number): LogEntry[] | undefined;
 }
 
 /** One ratsnest line: an unrouted connection between two points of a net (nanometers, board coordinates). */
@@ -118,10 +118,182 @@ export interface BoardDerived {
   ratsnest: RatsnestPair[];
   /** The board's zone fill in the core's shared form (imported from the source tool, or computed). */
   fills: ZoneFillEntry[];
-  /** Where the fill came from and whether it matches the board's zones now; absent when there is none. */
-  fill?: { source: string; current: boolean };
+  /**
+   * Where the fill came from and whether it matches the board's zones now; absent when there is none. `seq`: the
+   * board version it was filled at (a fill older than the board is stale, and the screen says so); `ms`: how long a
+   * computed fill took.
+   */
+  fill?: { source: string; current: boolean; seq?: number; ms?: number };
   /** What the host could not do (no checks package, a cross-check that failed), for the screen to show. */
   notes?: string[];
+  /** The counts of each check run this session, by the board version it read (the timeline's error line). */
+  history?: CheckPoint[];
+  /** Findings a person marked "not a problem", with the reason (they are left out of `findings` and the counts). */
+  waived?: WaivedFinding[];
+}
+
+/** One check run's counts at one board version. */
+export interface CheckPoint {
+  seq: number;
+  errors: number;
+  warnings: number;
+  unconnected: number;
+}
+
+/** A finding a waiver covers: the finding as the checks found it, the waiver's rule record and its reason. */
+export interface WaivedFinding {
+  finding: PcbFinding;
+  rule: string;
+  reason: string;
+}
+
+// ---------------------------------------------------------------- writes and runs a page asks its host for
+
+/** An operation call as the core takes it (`{ op: "footprint.move", ids, dx, dy }`). */
+export type PageOpCall = { op: string } & Record<string, unknown>;
+
+/** A transaction as a page sends it: no actor and no provenance (the host decides who acts). */
+export interface PageTransaction {
+  batchId: string;
+  label: string;
+  ops: PageOpCall[];
+  changeSet?: { id: string; title?: string };
+  expectEpoch?: string;
+  expectSeq?: number;
+  expectVersions?: Record<string, number>;
+  dryRun?: boolean;
+}
+
+/** What to route: open nets, chosen nets, or a drawn region (nanometers, board frame). */
+export type PageRouteScope = { kind: "open" } | { kind: "nets"; nets: string[] } | { kind: "region"; region: { x: number; y: number }[] };
+
+/**
+ * What a page asks its host to do with a board. A request never names an actor: the host decides who acts (a person
+ * at the screen acts as `human`), so a page can never pass itself off as an agent, a router or a host.
+ */
+export type BoardRequest =
+  | { method: "apply"; tx: PageTransaction }
+  | { method: "undo"; batchId?: string }
+  | { method: "redo"; batchId?: string }
+  | { method: "revertChangeSet"; id: string; batchId?: string }
+  /** Revoke every agent and router lease (Take over). */
+  | { method: "takeOver" }
+  | { method: "save" }
+  /** Save and prepare a checkpoint's commit message (the service's `checkpoint`); nothing is committed. */
+  | { method: "checkpoint"; label: string }
+  /** `git add` and `git commit` of the board folder only, with this message; never a push. */
+  | { method: "commit"; message: string }
+  /** The board as it was at an earlier version, read only (the timeline's replay). */
+  | { method: "at"; seq: number }
+  /** Which routers this host can run, in order, and whether each is available. */
+  | { method: "routers" }
+  /** Start an autoroute run; progress and the proposal come on the feed (`route` messages). */
+  | { method: "route"; scope: PageRouteScope; budgetMs?: number; preset?: "balanced" }
+  | { method: "routeCancel"; run: string }
+  /** Apply a proposal the host holds, each step as its router; the reply has every step's reply. */
+  | { method: "routeAccept"; run: string }
+  | { method: "routeReject"; run: string }
+  /** Why a net does not route: attempts, the probe with the fab floor and no-go areas only, and test-run relaxations. */
+  | { method: "diagnose"; net: string; budgetMs?: number }
+  /** Mark a finding "not a problem" with a reason (a waiver rule entry, applied as a transaction). */
+  | { method: "waive"; finding: string; reason: string }
+  | { method: "unwaive"; finding: string };
+
+export type BoardRequestMethod = BoardRequest["method"];
+
+/** The host's answer to a request: the result, or why it was not done. */
+export type BoardReplyMessage = { ok: true; result: unknown } | { ok: false; error: string };
+
+/** One router as the autoroute panel lists it. */
+export interface RouterInfo {
+  id: string;
+  title: string;
+  version: string;
+  available: boolean;
+  reason?: string;
+}
+
+/** A score the router orchestrator gives a board: open connections, then errors, then vias, then length (nm). */
+export interface PageScore {
+  open: number;
+  errors: number;
+  vias: number;
+  length: number;
+  openNets: string[];
+}
+
+/** The copper a proposal adds, for the blue ghost (nanometers). */
+export interface GhostCopper {
+  segments: { net?: string; layer: string; width: number; start: { x: number; y: number }; end: { x: number; y: number } }[];
+  vias: { net?: string; x: number; y: number; outer_diameter: number }[];
+}
+
+/** An autoroute run's result as the page draws and scores it (the host keeps the transactions to apply). */
+export interface ProposalView {
+  run: string;
+  /** The change set its transactions carry (the orchestrator's run id): reverting it takes the whole run back. */
+  changeSet: string;
+  status: "proposed" | "rejected" | "unchanged" | "failed" | "cancelled";
+  reasons: string[];
+  base: { epoch?: string; seq?: number };
+  current: PageScore;
+  candidate: PageScore;
+  nets: string[];
+  openNets: string[];
+  stages: { router: string; version: string; status: string; kept: boolean; reason?: string; durationMs: number; added: { segments: number; vias: number; length: number } }[];
+  fallback?: { from: string; to: string[]; reasons: string[] };
+  added: { segments: number; vias: number; length: number };
+  lockCheck: { ok: boolean; changed: string[]; checked: number };
+  ghost: GhostCopper;
+  unexpressed: string[];
+  notes: string[];
+  ms: number;
+}
+
+/** A route run's progress as the feed sends it. */
+export interface RouteProgressView {
+  run: string;
+  stage: number;
+  router: string;
+  phase: string;
+  fraction?: number;
+  elapsedMs: number;
+  message?: string;
+  fallback?: { from: string; to: string; reason: string };
+}
+
+/** A rule area as the diagnosis shades it: its tier, outline (nm) and what it blocks. */
+export interface DiagnosisArea {
+  id: string;
+  name: string;
+  tier: "floor" | "target" | "policy" | "no_go";
+  outline: { x: number; y: number }[];
+  blocks: string;
+}
+
+/** One relaxation the diagnosis test-ran: the rule change, and what routing did with it. */
+export interface RelaxOption {
+  id: string;
+  title: string;
+  detail: string;
+  /** The rule records it writes (`rule.set` inputs), applied as the person's transaction when accepted. */
+  rules: Record<string, unknown>[];
+  result: { routed: boolean; open: number; errors: number; vias: number; length: number; newFindings: number; ms: number; note?: string };
+}
+
+/** Why a net does not route (L4). */
+export interface DiagnosisView {
+  net: string;
+  seq: number;
+  /** `routes`: it routes with every rule as it is (no diagnosis needed); `rules`: rules block it; `placement`: the parts or a no-go area do. */
+  verdict: "routes" | "rules" | "placement";
+  summary: string;
+  attempts: { router: string; status: string; reason?: string; ghost: GhostCopper; ms: number }[];
+  probe?: { router: string; routed: boolean; ghost: GhostCopper; length: number; vias: number; floorViolations: number; ms: number };
+  blockers: { rule: string; tier: string; what: string; blocks: string }[];
+  areas: DiagnosisArea[];
+  options: RelaxOption[];
+  ms: number;
 }
 
 /** A board folder the host can open. */
@@ -146,4 +318,8 @@ export type BoardFeedMessage =
   | { type: "presence"; board: string; presence: Presence }
   | { type: "saved"; board: string; seq: number; files: string[] }
   | { type: "derived"; board: string; derived: BoardDerived }
-  | { type: "error"; board: string; message: string };
+  | { type: "error"; board: string; message: string }
+  /** A checkpoint was prepared (the service saved and wrote its marker) or committed to Git. */
+  | { type: "checkpoint"; board: string; seq: number; label: string; committed?: string }
+  /** An autoroute run: progress while it runs, then its proposal (or why there is none). */
+  | { type: "route"; board: string; run: string; progress?: RouteProgressView; proposal?: ProposalView; error?: string; ended?: "accepted" | "rejected" | "cancelled" };

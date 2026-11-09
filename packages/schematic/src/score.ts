@@ -29,6 +29,15 @@ import type { XY } from "./units.ts";
 
 export type RuleSeverity = "gate" | "error" | "warning" | "info";
 export const WEIGHT: Record<RuleSeverity, number> = { gate: 10, error: 5, warning: 2, info: 0.5 };
+/**
+ * The fewest opportunities a non-gate rule's failure fraction is taken over: `f = min(1, count / max(opportunities,
+ * OPPORTUNITY_FLOOR))`. A rule with one or two chances on a sheet (signal flow between two cards, two instances of a
+ * channel, four title block fields) would otherwise cost 10 to 20 points for a single defect; with the floor one
+ * defect costs at most a tenth of the rule's weight. Gates are not floored: any open gate keeps the sheet unpresentable.
+ */
+export const OPPORTUNITY_FLOOR = 10;
+/** A rule's failure fraction (contract section 11). */
+export const failFraction = (severity: RuleSeverity, count: number, opportunities: number): number => (opportunities ? Math.min(1, count / (severity === "gate" ? opportunities : Math.max(opportunities, OPPORTUNITY_FLOOR))) : 0);
 
 export interface RuleDef {
   id: string;
@@ -183,8 +192,22 @@ export function scoreSchematic(doc: SchematicDocument): Score {
   // ---- C03 wire through a body or text
   opp("C03", segs.length);
   const solid: Owned[] = boxes.filter((b) => !b.what.endsWith("subtitle"));
+  const labelNet = new Map(labels.map((l) => [l.id, l.net]));
+  const powerNet = new Map(powers.map((p) => [p.id, p.net]));
+  const solidCells = new Map<string, Owned[]>();
+  const cellKeys = (b: LBox) => {
+    const out: string[] = [];
+    for (let x = Math.floor(b.x0 / 4); x <= Math.floor(b.x1 / 4); x++) for (let y = Math.floor(b.y0 / 4); y <= Math.floor(b.y1 / 4); y++) out.push(`${x},${y}`);
+    return out;
+  };
+  for (const b of solid) for (const k of cellKeys(b.box)) solidCells.set(k, [...(solidCells.get(k) ?? []), b]);
+  const solidLookup = (s: Segment): Owned[] => {
+    const seen = new Set<Owned>();
+    for (const k of cellKeys({ x0: Math.min(s.a[0], s.b[0]), y0: Math.min(s.a[1], s.b[1]), x1: Math.max(s.a[0], s.b[0]), y1: Math.max(s.a[1], s.b[1]) })) for (const b of solidCells.get(k) ?? []) seen.add(b);
+    return solid.filter((b) => seen.has(b));
+  };
   for (const s of segs) {
-    const hit = solid.find((b) => segmentThroughBox(s, b.box, 0.12) && !(b.owner.startsWith("lbl:") && labels.find((l) => l.id === b.owner)?.net === s.net) && !(b.owner.startsWith("pwr:") && powers.find((p) => p.id === b.owner)?.net === s.net));
+    const hit = solidLookup(s).find((b) => segmentThroughBox(s, b.box, 0.12) && !(b.owner.startsWith("lbl:") && labelNet.get(b.owner) === s.net) && !(b.owner.startsWith("pwr:") && powerNet.get(b.owner) === s.net));
     if (hit) defect("C03", mid(s), [s.wire, hit.owner], `a ${s.net} wire runs through ${hit.what}`);
   }
   // ---- C04 label or text on a foreign pin
@@ -208,7 +231,7 @@ export function scoreSchematic(doc: SchematicDocument): Score {
     for (const end of [w.points[0], w.points[w.points.length - 1]] as XY[]) {
       opp("C05", 1, end);
       if (anchors.has(`${end[0]},${end[1]}`)) continue;
-      const onOther = segs.some((s) => s.wire !== w.id && onSegment(end, s));
+      const onOther = g.lookup.at(end).some((s) => s.wire !== w.id);
       const onSelf = segmentsOf(w).slice(1, -1).some((s) => onSegment(end, s));
       if (!onOther && !onSelf) defect("C05", end, [w.id], `a ${w.net} wire ends on nothing`);
     }
@@ -227,7 +250,7 @@ export function scoreSchematic(doc: SchematicDocument): Score {
   for (const w of wires)
     for (const v of w.points as XY[]) {
       opp("C06", 1, v);
-      const s = segs.find((x) => x.net !== w.net && onSegment(v, x));
+      const s = g.lookup.at(v).find((x) => x.net !== w.net);
       const p = pinList.find((q) => q.net !== w.net && q.at[0] === v[0] && q.at[1] === v[1]);
       if (s || p) defect("C06", v, [w.id, ...(s ? [s.wire] : []), ...(p ? [`pin:${p.key}`] : [])], `a ${w.net} wire point lies on ${s ? `a ${s.net} wire` : `pin ${p!.number} of ${p!.part}`}`);
     }
@@ -279,7 +302,9 @@ export function scoreSchematic(doc: SchematicDocument): Score {
   }
   // ---- C11 two-pin parts face their rails
   for (const s of symbols) {
-    if (s.pins.length !== 2) continue;
+    // two-terminal parts drawn with their own symbol (a resistor, a capacitor, an LED); a generated box with two
+    // contacts (a two-way terminal block) draws its contacts on one side and has no rail side to face
+    if (s.pins.length !== 2 || !s.resolved.family.startsWith("pack:")) continue;
     const railPins = s.pins.filter((p) => p.net && isRail(doc, p.net));
     if (!railPins.length || railPins.length === 2 && railPins[0].net === railPins[1].net) continue;
     opp("C11", 1, s.center);
@@ -433,7 +458,8 @@ export function scoreSchematic(doc: SchematicDocument): Score {
   for (const w of wires) opp("C25", w.points.length, w.card);
   // ---- C26 generated symbol pin sides (in the symbol's own frame)
   for (const s of symbols) {
-    if (s.resolved.family.startsWith("pack:")) continue;
+    // connectors draw their contacts in pad order on one side, whatever their type
+    if (s.resolved.family.startsWith("pack:") || s.resolved.family === "connector") continue;
     for (const sp of s.resolved.pins) {
       opp("C26", 1, s.center);
       const bad = (sp.type === "power_in" && sp.dir !== "up" && sp.dir !== "down") || (sp.type === "input" && sp.dir !== "left" && s.resolved.family !== "connector") || (sp.type === "output" && sp.dir !== "right");
@@ -487,7 +513,7 @@ export function scoreSchematic(doc: SchematicDocument): Score {
   // ---- totals
   const rules: RuleResult[] = RULES.map((r) => {
     const a = acc.get(r.id)!;
-    return { id: r.id, title: r.title, severity: r.severity, count: a.count, opportunities: a.opp, f: a.opp ? Math.min(1, a.count / a.opp) : 0 };
+    return { id: r.id, title: r.title, severity: r.severity, count: a.count, opportunities: a.opp, f: failFraction(r.severity, a.count, a.opp) };
   });
   const total = (fs: { severity: RuleSeverity; f: number }[]) => Math.max(0, Math.min(100, Math.round(100 - 10 * fs.reduce((s, x) => s + WEIGHT[x.severity] * x.f, 0))));
   const score = total(rules);
@@ -497,7 +523,7 @@ export function scoreSchematic(doc: SchematicDocument): Score {
       RULES.map((r) => {
         const a = acc.get(r.id)!;
         const o = a.oppByCard.get(c.id) ?? 0;
-        return { severity: r.severity, f: o ? Math.min(1, (a.countByCard.get(c.id) ?? 0) / o) : 0 };
+        return { severity: r.severity, f: failFraction(r.severity, a.countByCard.get(c.id) ?? 0, o) };
       }),
     );
   const order: Record<RuleSeverity, number> = { gate: 0, error: 1, warning: 2, info: 3 };

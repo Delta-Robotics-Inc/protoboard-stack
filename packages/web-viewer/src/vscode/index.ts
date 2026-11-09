@@ -35,6 +35,7 @@ import { parseTabHistory, type TabHistory, type ViewerHistoryFlags } from "./tab
 import { applyHubSettings, extensionPartsData, interceptDownloads } from "./host-io.js";
 import type { PartsData } from "@protoboardai/views";
 import { setKnownBoards, type BoardEntry, type BoardFeedMessage, type BoardHost } from "@protoboardai/views";
+import type { BoardReplyMessage } from "@protoboardai/views/pcb/types";
 
 export { VsCodeShell, vscodeShellThemeAdapter, isProtoboardTheme } from "./Shell.js";
 export * from "./tab-history.js";
@@ -175,6 +176,9 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   // the layout tab's boards: the extension host is the board service's client and relays its feed (PCB editor Phase 1)
   const boardListeners = new Set<(m: BoardFeedMessage) => void>();
   const boardWaiters: ((b: BoardEntry[]) => void)[] = [];
+  // a request's answer comes back by id (`boardReply`); the extension host decides who acts
+  let boardRequestId = 0;
+  const boardReplies = new Map<number, (r: BoardReplyMessage) => void>();
   const boards: BoardHost = {
     list: () =>
       new Promise<BoardEntry[]>((resolve) => {
@@ -192,6 +196,12 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
         };
       },
       recheck: () => post({ type: "boardCheck", board: key }),
+      request: (request) =>
+        new Promise<BoardReplyMessage>((resolve) => {
+          const id = ++boardRequestId;
+          boardReplies.set(id, resolve);
+          post({ type: "boardRequest", board: key, id, request });
+        }),
     }),
   };
   let partStatus: VsCodeViewerOptions["partStatus"];
@@ -384,6 +394,12 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       case "boardFeed":
         for (const l of [...boardListeners]) l(m.message);
         return;
+      case "boardReply": {
+        const done = boardReplies.get(m.id);
+        boardReplies.delete(m.id);
+        done?.(m.reply);
+        return;
+      }
       case "bridge": {
         // an agent's batch, relayed by the extension from the dev server (PB-1178): the viewer's store answers it
         const out = viewer?.bridge(m.request as unknown as Parameters<ViewerHandle["bridge"]>[0]);

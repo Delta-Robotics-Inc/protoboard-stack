@@ -31,9 +31,9 @@ import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type PartsOp, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection, type ViewerSettings, type BoardFeedMessage } from "../../web-viewer/src/vscode/protocol.js";
+import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type PartsOp, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection, type ViewerSettings, type BoardFeedMessage, type BoardReplyMessage } from "../../web-viewer/src/vscode/protocol.js";
 import { nonce } from "./html.js";
-import { BoardFeed, findBoards } from "../../views/src/pcb/host/index.js";
+import { BoardFeed, findBoards, PERSON } from "../../views/src/pcb/host/index.js";
 import { writeViewerTelemetry } from "./telemetry.js";
 import { ProjectRelay, presenceChip, readViewerState, saveTabViewState, savePresentation, saveViewerSnapshot, takeOverRequest } from "./viewerBridge.js";
 import { devOrigins, distinctTitles, originCovered, parseBackup, parseViewerUri, viewerPageHtml, viewerTitle, viewerUri, SOURCE_COMMANDS, VIEWER_SCHEME, VIEWER_TYPE, type ViewerBackup, type ViewerTarget } from "./viewerPage.js";
@@ -663,6 +663,17 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
       case "boardCheck":
         void editor.boardFeeds.get(m.board)?.feed.then((f) => f.recheck());
         return;
+      case "boardRequest": {
+        // the person at this tab writes (PCB editor Phase 2): the extension host decides the actor, never the page
+        const reply = (r: BoardReplyMessage) => void editor.panel.webview.postMessage({ type: "boardReply", id: m.id, reply: r } satisfies ToWebview);
+        const slot = editor.boardFeeds.get(m.board);
+        if (!slot) return reply({ ok: false, error: `board ${m.board} is not open in this tab` });
+        void slot.feed.then(
+          (f) => f.request(m.request, PERSON).then(reply),
+          (e: Error) => reply({ ok: false, error: e.message }),
+        );
+        return;
+      }
     }
   }
 

@@ -12,4 +12,7 @@ export { pickAt, pickBox, RANK, type Hit, type PickContext } from "./pick.js";
 export { inspect, classTargets, fmtMm, type Inspection, type Field } from "./inspect.js";
 export { drawLayers, drawOrder, layerGroups, presetGroups, defaultGroups, PRESETS, type PresetId, type DrawLayerId } from "./layers.js";
 export { fitRect, toScreen, toWorld, zoomAbout, panBy, type View, type Insets } from "./view.js";
-export type { BoardSource, RatsnestPair, PcbFinding, ZoneFill, CheckSummary, DepthView } from "./types.js";
+export { EditSession, outcomeOf, newBatchId, type Outcome, type RequestFn, type SessionStatus } from "./edit/session.js";
+export { buildQueue, exportState, type QueueItem, type QueueGroup } from "./review.js";
+export { parseBoardRequest } from "./requests.js";
+export type { BoardSource, RatsnestPair, PcbFinding, ZoneFill, CheckSummary, DepthView, BoardRequest, BoardReplyMessage, ProposalView, DiagnosisView, RouterInfo } from "./types.js";

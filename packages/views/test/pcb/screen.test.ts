@@ -48,9 +48,9 @@ describe("inspect", () => {
 describe("agent bar", () => {
   it("says plainly when there is no feed, no agent work, or a lease", () => {
     expect(agentState(undefined, undefined, 0).sub).toMatch(/no presence feed/);
-    expect(agentState({ epoch: "e", seq: 0, leases: [], intents: [] }, [], 0).sub).toMatch(/no agent has changed/);
+    expect(agentState({ epoch: "e", seq: 0, leases: [], intents: [], holds: [] } as never, [], 0).sub).toMatch(/no agent has changed/);
     const lease = { id: "l1", token: 1, holder: { kind: "agent" as const, id: "a1", name: "placer" }, roots: ["power"], nets: [], purpose: "place the LDO", grantedAt: 0, expiresAt: 30_000, ttlMs: 30_000 };
-    const s = agentState({ epoch: "e", seq: 0, leases: [lease], intents: [] }, [], 10_000);
+    const s = agentState({ epoch: "e", seq: 0, leases: [lease], intents: [], holds: [] } as never, [], 10_000);
     expect(s).toMatchObject({ working: true, title: "placer is working" });
     expect(s.sub).toContain("20 s left");
   });

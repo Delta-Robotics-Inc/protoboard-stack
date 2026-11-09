@@ -26,6 +26,7 @@
     "./pcb/headless": "./src/pcb/headless/render.ts",
     "./pcb/host": "./src/pcb/host/index.ts",
     "./pcb/remote": "./src/pcb/remote.ts",
+    "./pcb/requests": "./src/pcb/requests.ts",
     "./pcb/types": "./src/pcb/types.ts",
     "./package.json": "./package.json"
   },

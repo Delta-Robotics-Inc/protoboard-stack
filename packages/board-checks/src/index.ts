@@ -4,6 +4,7 @@
  * docs/specs/pcb-editor/phase1-board-core.md (sections 4.3, 5 and 11).
  */
 export { runBoardChecks, createBoardChecks, analyzeBoard, type RunOptions, type BoardCheckResult } from "./run.js";
+export { createIncrementalChecks, type IncrementalChecks, type IncrementalUpdate } from "./incremental.js";
 export { summarize, type Summary, type Timing, type CheckCounts } from "./summary.js";
 export { CHECKS, coverage, makeFinding, type Analysis } from "./checks.js";
 export * from "./connectivity.js";

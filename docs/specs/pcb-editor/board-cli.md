@@ -17,8 +17,8 @@ copied into a project at `airnode/board` (a folder holding `board.jsonl`, under 
 - Lengths are integer nanometers (a number with `mm`, such as `1.5mm`, is converted), angles
   integer millidegrees, +Y up, origin at the board center.
 - Text for people by default; `--json` (or `--format json`) on every command.
-- Exit codes: `0` applied (or valid in a dry run), `1` invalid (for `check`: errors found),
-  `3` refused, `2` a usage error or a failure.
+- Exit codes: `0` applied (or valid in a dry run), `1` invalid (for `check`: errors found; for
+  `route`: nothing proposed), `3` refused, `2` a usage error or a failure.
 
 ### Who acts
 
@@ -339,6 +339,115 @@ call (the image is read from its file, or returned by the MCP tool):
 }
 ```
 
+### import-dxf (Phase 2)
+
+```
+$ protoboard board import-dxf airnode/board outline.dxf
+APPLIED  seq 1, epoch r8km1t, batch cli-a5a31e099bfb (no running service: opened here and saved)
+  changed: cutout:dxf.1, outline
+  read: 2 entities in mm, 2 closed loop(s), 0 open chain(s)
+  outline: 4 vertices, 1500 mm²; cutouts: 1
+  SKIPPED 1 TEXT: not an outline entity (LINE, ARC, CIRCLE, LWPOLYLINE, POLYLINE are read)
+```
+
+Reads the drawing and applies one `outline.import_dxf` operation (its `dxf` input is the file's
+text): LINE, ARC, CIRCLE, LWPOLYLINE and POLYLINE are read, ends within the tolerance join into
+closed loops, the largest loop becomes the outline (centered on the origin) and the loops inside it
+replace the board's cutouts. `--units mm|in|auto` (default `auto`: the file's `$INSUNITS`, else
+mm), `--layers a,b` (DXF layer names; default all), `--tolerance <length>` (nanometers, or a number
+with `mm`; default 10000 nm), `--as`. Prints the reply and the operation's report: entities, loops,
+the outline (vertices, area), cutouts, what was skipped and why, open chains, and the units used.
+`--json` gives the reply with `report` and `file`. A drawing with no closed loop, or an outline
+driven by CAD, is `invalid` (exit 1). CHANGES FILES.
+
+### route and diagnose (Phase 2)
+
+These use the autorouter (`@protoboardai/board-route`) through the layout screen's host module
+(`@protoboardai/views/pcb/host`); when either is not installed the command prints `not available`
+(exit 2). The routers run in the product's order: the tscircuit autorouter first, Freerouting (when
+installed) as the fallback. Every candidate is scored by the board checks (open connections, then
+errors, then vias, then track length).
+
+#### route
+
+```
+$ protoboard board route airnode/board
+PROPOSED  (nothing changed; --apply applies it)  run-d6c85ca9040d, seq 0, epoch awozfx
+  current:   42 open, 11 errors, 3 vias, 67.1557 mm of track
+  candidate: 24 open, 11 errors, 7 vias, 261.5392 mm of track
+  scope: every open net; 14 net(s) to route; budget 60 s per router; scored by board checks
+  stages:
+    1. tscircuit 0.0.953  complete, not kept (worse than the board it started from: errors rise from 11 to 48)  14 net(s), 270 segment(s), 18 via(s), 52377 ms
+    2. freerouting 2.4.1  partial, kept  14 net(s), 89 segment(s), 4 via(s), 65261 ms
+  FALLBACK: tscircuit (tscircuit autorouter) ran first; freerouting (Freerouting (installed separately)) ran as the fallback
+    because tscircuit: worse than the board it started from: errors rise from 11 to 48
+  copper added: 89 segment(s), 4 via(s), 194.3835 mm
+  locked copper: no router changed any of the 3 locked record(s)
+  still open: BOOT, CC1, CC2, EN, I2C_SCL, USB_DP, VBUS (`protoboard board diagnose <dir> <net>` says why)
+  unexpressed (checked after the run, not given to a router):
+    - edge clearance 0.3 mm: passed as a router setting; checked after
+    - locked copper: the autorouter has no lock flag; locked copper is an obstacle and is verified after the run
+    - …
+  note: left to their pours (a zone of the net exists): GND
+```
+
+Runs the orchestrator on a snapshot of the board and prints the scored proposal: the status
+(`proposed`, `rejected`, `unchanged`, `failed`, `cancelled`) and its reasons, the current and
+candidate scores, each router stage (router, version, status, whether its copper was kept and why
+not, duration), the fallback when one ran, the copper added, the locked-copper check, the nets
+still open, and what the routers could not express. Scope: every net with open connections, or
+`--nets a,b`, or `--region x1,y1,x2,y2` (nanometers, or numbers with `mm`; the open connections
+inside that rectangle). `--budget <seconds>` is the wall clock per router run (default 60).
+
+It changes nothing unless `--apply` is given. With `--apply` and status `proposed`, each step's
+transaction is applied as its router (`router:<id>`, never as the caller), through the running
+service or the board opened for the call, stopping at the first refusal; afterwards every locked
+record is compared byte for byte with the snapshot the run started from (`N locked records verified
+unchanged`, or the changed ids named). A proposal that is not `proposed` is never applied: a result
+worse than the board is never offered. `--as` names who asked (reported as `applied.by`).
+`--json` gives the whole report, with the steps (actor, batch id, label, operation count) and, after
+`--apply`, every step's reply.
+
+Exit codes: `0` proposed (or applied, with the locks verified), `1` not proposed (rejected,
+unchanged, failed or cancelled; nothing applied), `3` a step was refused on apply (the steps after
+it were not applied), `2` a usage error, not available, or a locked record changed after applying.
+
+#### diagnose
+
+```
+$ protoboard board diagnose airnode/board USB_DP
+USB_DP: PLACEMENT  (seq 0, epoch vzpsiw; nothing changed)
+  Placement: the probe routed USB_DP only by breaking the floor clearance (20 pairs); move parts or a no-go area
+  attempts (every rule as it is):
+    tscircuit  complete (worse than the board it started from: errors rise from 11 to 29)  0 segment(s), 0 via(s), 6428 ms
+    freerouting  partial (no copper (partial))  0 segment(s), 0 via(s), 34139 ms
+  probe (the fab floor and no-go areas only): tscircuit routed the net, 35.6144 mm, 0 via(s), 20 pair(s) under the floor clearance, 13670 ms
+  what blocks it:
+    target  rule:target.clearance: clearance plan 0.2 mm (rule:target.clearance); above the floor 0.127 mm
+    target  rule:target.track_width: track width plan 0.25 mm (rule:target.track_width); above the floor 0.127 mm
+    no_go   kpo:f.antenna: antenna clearance; a wall for pours, tracks, vias on top, bottom
+    policy  rule:policy.via_under_module: a cost (5) in its region
+    floor   fab floor: clearance 0.127 mm, width 0.127 mm; never relaxed
+  rule areas by tier:
+    floor: none
+    no_go: kpo:f.antenna (antenna clearance) blocks pours, tracks, vias
+    target: none
+    policy: rule:policy.via_under_module blocks via_under_footprint
+  relaxations (test-run on copies; none applied):
+    Plan USB_DP at the floor clearance: a target rule for this net only: 0.2 mm to 0.127 mm
+      -> did not route: 41 open, 29 error(s), 0 via(s), 35.3782 mm, 18 new finding(s), 13046 ms (errors rise from 11 to 29)
+    …
+```
+
+Why one net does not route: the verdict (`routes as is`; `rules, not placement`: with only the
+fab floor and no-go areas it routes within the floor clearance; `placement`: even then it does
+not, so the parts or a no-go area block it), the summary sentence, the attempts with every rule,
+the probe with the fab floor and no-go areas only, what blocks it, the rule areas by tier, and the
+relaxations (target rules for this net only; the floor is never relaxed) with their test-run
+results on copies of the board. `--budget <seconds>` per router run (default 30). It changes
+nothing: a relaxation takes effect only when its rules are applied (`board apply` with `rule.set`).
+Exit `0` when the diagnosis ran, `2` for a usage error (an unknown net) or not available.
+
 ## MCP tools
 
 The Protoboard MCP server (`protoboard mcp`) offers the board as tools generated from the
@@ -358,9 +467,13 @@ Each runs `protoboard board …` as `agent:<client name>`:
 | `board_describe` | `board describe --json` (region in mm, net, object, finding; `image: true` also returns the PNG) |
 | `board_render` | `board render` (region in nm, layers, flip, nets, width, height; `image: true` also returns the PNG) |
 | `board_import` | `board import` (source, dir, format is `--kind`); CHANGES FILES |
+| `board_import_dxf` | `board import-dxf` (dir, path, units, layers, tolerance in nm); CHANGES FILES |
+| `board_route` | `board route` (nets, region in mm, budget in seconds, apply); CHANGES THE BOARD only with `apply: true`, each step as its router |
+| `board_diagnose` | `board diagnose` (net, budget in seconds); writes nothing |
 
 `board_describe` and `board_render` write only derived files under `.protoboard/build`, so
-they are not marked read-only; `board_check` is. A region goes to the CLI in brackets
+they are not marked read-only; `board_check` and `board_diagnose` are. `board_route` is not, since
+`apply` changes the board. A region goes to the CLI in brackets
 (`--region=[-10,-5,10,5]`), since a value a tool passes never starts with a dash.
 
 ## Wire protocol
@@ -385,19 +498,35 @@ shapes but not the server or the client; `@protoboardai/board/browser` is what r
 ### The layout screen's path to the board
 
 A page never connects to the board service: it would need the token, and the service allows no
-browser origin by default. The host is the service's client and passes a read-only feed on
+browser origin by default. The host is the service's client and passes a feed on
 (`@protoboardai/views/pcb/host`, `BoardFeed`): the snapshot first, then each commit with the
-records it changed, presence, saves, and the derived data (the checks with the board's zone fill,
-the ratsnest, and KiCad's cross-check once kicad-cli has run on the source file). With no service
+records it changed, presence, saves, checkpoints, autoroute progress and proposals, and the
+derived data (the checks with the zone fill, the ratsnest, each check run's counts by seq, waived
+findings, and KiCad's cross-check once kicad-cli has run on the source file). With no service
 running, the host reads the board's files (no owner lock, no journal) and reloads them when they
 change; it switches to a service when one starts.
 
+Writes go the other way as requests (`BoardRequest`): a transaction, undo, redo, a change set's
+revert, Take over, save, checkpoint (the service saves and prepares the message), commit (`git add`
+and `git commit` of the board folder only; never a push), the board at an earlier seq (replay,
+read only), the routers and an autoroute run (its proposal held by the host until accepted, then
+applied as each router's transaction and checked for locked records byte for byte), a routing
+diagnosis, and a waiver ("not a problem" with a reason, stored as a disabled rules entry
+`rule:waiver.*` that the host's analysis leaves out of the counts and lists). **The host decides
+who acts**: a person at the screen is `human`; a request that names an actor, a `by`, a
+`provenance` or a lease token is refused (`parseBoardRequest`). With no service running, the first
+write opens the board in the host as its owner and serves it (`service.json`), so the CLI and
+agents become its clients; closing the feed saves the board, as `board stop` does.
+
 - `protoboard dev` serves the feed at `/__protoboard/board/list`, `/events?board=<key>` (an event
-  stream), `/derived?board=<key>` and `POST /check?board=<key>` (the page's token), for its own
-  page only; boards are named by key, never by path. The web viewer's `layout` tab opens on them.
+  stream), `/derived?board=<key>`, `POST /check?board=<key>` and `POST /request?board=<key>` (the
+  page's token and origin), for its own page only; boards are named by key, never by path. The web
+  viewer's `layout` tab opens on them.
 - In VS Code, the extension host opens the feed itself and relays it to the viewer tab by
-  postMessage (`boards`, `boardOpen`, `boardClose`, `boardCheck`; `boards`, `boardFeed`).
-- The layout screen's dev page (`packages/views/bench/pcb-screen/serve.ts`) mounts the same routes.
+  postMessage (`boards`, `boardOpen`, `boardClose`, `boardCheck`, `boardRequest`; `boards`,
+  `boardFeed`, `boardReply`).
+- The layout screen's dev page (`packages/views/bench/pcb-screen/serve.ts`) mounts the same routes;
+  `session.ts` there drives scripted editing sessions on it and `latency.ts` measures a drag.
 
 ## Security review of the wire transport (Phase 1)
 

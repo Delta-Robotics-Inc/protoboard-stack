@@ -462,7 +462,8 @@ host actors only (importers); anyone else passes a `handle`.
 | `record.put` | `records` | system: write whole records (importers, undo, recovery) |
 | `record.remove` | `ids` | system: remove records (importers, undo) |
 
-Phase 2 (named here, not registered yet; `PLANNED_OPERATIONS` lists them for bindings):
+Phase 2 (registered now; inputs, effects, proposals, the drag hold and live checks are in `phase2-editing.md`,
+and `PLANNED_OPERATIONS` is empty):
 `footprint.move` with `tracks: "attached"` (default), `track.drag` (segment or via with
 connected copper following), `track.route` (commit of an interactive route: a chain of segments
 and vias in one op), `track.set_width`, `copper.rip` (`nets` or `region`, unlocked only),

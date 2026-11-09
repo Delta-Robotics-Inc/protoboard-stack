@@ -32,6 +32,18 @@ const P: Record<string, string> = {
   download: "M8 2.5 V10.5 M4.5 7 L8 10.5 L11.5 7 M2.5 13.5 H13.5",
   bom: "M2.5 3 H13.5 V13 H2.5 Z M2.5 6.5 H13.5 M2.5 10 H13.5 M6.5 3 V13",
   library: "M3 2.5 V13.5 M6 2.5 V13.5 M9 3 L12.5 13",
+  redo: "M11 4 L13.5 6.5 L11 9 M13.5 6.5 H6 a3.5 3.5 0 0 0 0 7 H9",
+  pause: "M5.5 3.5 V12.5 M10.5 3.5 V12.5",
+  hand: "M5 8.5 V4 a1 1 0 0 1 2 0 V7.5 M7 7 V3 a1 1 0 0 1 2 0 V7 M9 7 V4 a1 1 0 0 1 2 0 V8.5 M11 6.5 a1 1 0 0 1 2 0 V10 a4 4 0 0 1 -4 4 H8 a4 4 0 0 1 -3.5 -2 L2.8 9.2 a1 1 0 0 1 1.7 -1 L5 9",
+  close: "M4 4 L12 12 M12 4 L4 12",
+  rotate: "M12.5 6 a5 5 0 1 0 0.5 3.5 M12.8 2.5 V6 H9.3",
+  trash: "M3 4.5 H13 M6 4.5 V3 H10 V4.5 M4.5 4.5 L5.3 13.5 H10.7 L11.5 4.5",
+  unlock: "M4 7.5 H12 V14 H4 Z M5.8 7.5 V5.3 a2.2 2.2 0 0 1 4.3 -0.6",
+  save: "M3 2.5 H11 L13.5 5 V13.5 H2.5 V3 Z M5 2.5 V6 H10 V2.5 M5 13.5 V9.5 H11 V13.5",
+  flag: "M3.5 14 V2.5 M3.5 3 H12 L10 6 L12 9 H3.5",
+  stop: "M4 4 H12 V12 H4 Z",
+  reroute: "M2.5 12.5 C5 12.5 5 3.5 8 3.5 C11 3.5 11 12.5 13.5 12.5 M11.5 10.5 L13.5 12.5 L11.5 14.5",
+  why: "M5.5 6 a2.5 2.5 0 1 1 3.5 2.3 C8.3 8.6 8 9.2 8 10 M8 12.3 V12.5",
 };
 
 export function Icon({ name, size = 16, strokeWidth = 1.3 }: { name: keyof typeof P | string; size?: number; strokeWidth?: number }): ReactElement {

@@ -36,6 +36,8 @@ export interface ApplyResult {
   changed: string[];
   /** Handle to id, for records created with a handle. */
   created?: Record<string, string>;
+  /** What the operation wants its caller to know (detached tracks, skipped locked copper, a DXF read report). Plain JSON. */
+  report?: Record<string, unknown>;
 }
 
 export interface OperationDef<S extends z.ZodTypeAny = z.ZodTypeAny> {
@@ -78,7 +80,7 @@ export const getOperation = (name: string): OperationDef | undefined => registry
  * Apply records to a document and compute the exact inverse: the previous version of every record written or
  * removed. Every operation ends here.
  */
-export function change(doc: BoardDocument, puts: BoardRecord[], removes: string[] = [], created?: Record<string, string>): ApplyResult {
+export function change(doc: BoardDocument, puts: BoardRecord[], removes: string[] = [], created?: Record<string, string>, report?: Record<string, unknown>): ApplyResult {
   const touched = new Set<string>();
   const restore: BoardRecord[] = [];
   const unmake: string[] = [];
@@ -93,7 +95,7 @@ export function change(doc: BoardDocument, puts: BoardRecord[], removes: string[
   const inverse: OpCall[] = [];
   if (unmake.length) inverse.push({ op: "record.remove", ids: unmake });
   if (restore.length) inverse.push({ op: "record.put", records: restore });
-  return { doc: next, inverse, changed: [...touched], ...(created && Object.keys(created).length ? { created } : {}) };
+  return { doc: next, inverse, changed: [...touched], ...(created && Object.keys(created).length ? { created } : {}), ...(report ? { report } : {}) };
 }
 
 /** A record by id, of the expected kind, or an OpError. */
@@ -115,7 +117,7 @@ export function distinct(ids: readonly string[]): string[] {
 }
 
 /** A record after an edit by `ctx`: `provenance.edited` set when a different kind of actor made it. */
-export function edited<R extends BoardRecord>(rec: R, ctx: ApplyContext): R {
+export function edited<R extends BoardRecord>(rec: R, ctx: Pick<ApplyContext, "edited">): R {
   const p = (rec as { provenance?: Provenance }).provenance;
   if (!ctx.edited || !p) return rec;
   const madeBy = p.by === "hand" ? "hand" : p.by === "agent" ? "agent" : p.by === "routed" ? "routed" : undefined;

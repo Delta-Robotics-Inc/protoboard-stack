@@ -4,6 +4,8 @@
  */
 import { expect } from "vitest";
 import type { BoardDocument, BoardRecord, FootprintRec, TrackRec, ViaRec, ZoneRec } from "../src/index.js";
+import { OP_CASES_EDIT } from "./op-cases-edit.js";
+import { OP_CASES_P2 } from "./op-cases-p2.js";
 
 export interface OpCase {
   name: string;
@@ -17,7 +19,7 @@ export interface OpCase {
 
 const rec = <T extends BoardRecord>(d: BoardDocument, id: string) => d.records.get(id) as T;
 
-export const OP_CASES: Record<string, OpCase[]> = {
+const OP_CASES_P1: Record<string, OpCase[]> = {
   "footprint.move": [
     {
       name: "moves by dx, dy",
@@ -28,7 +30,6 @@ export const OP_CASES: Record<string, OpCase[]> = {
         expect(rec<FootprintRec>(a, "fp:power/ldo").provenance.edited).toBe("hand");
       },
     },
-    { name: "attached tracks wait for Phase 2", call: { op: "footprint.move", ids: ["fp:power/ldo"], dx: 1, dy: 0, tracks: "attached" }, fails: "Phase 2", check() {} },
     { name: "a track is not a footprint", call: { op: "footprint.move", ids: ["trk:f.spare.1"], dx: 1, dy: 0 }, fails: "not a footprint", check() {} },
   ],
   "footprint.place": [
@@ -203,3 +204,7 @@ export const OP_CASES: Record<string, OpCase[]> = {
   ],
   "record.remove": [{ name: "a host removes any record", actor: "host", call: { op: "record.remove", ids: ["txt:f.title", "fp:ui/boot_button"] }, check: (_b, a) => expect(a.records.has("fp:ui/boot_button")).toBe(false) }],
 };
+
+/** Every case by operation: Phase 1, then the Phase 2 sets (a name in two sets gets both lists). */
+export const OP_CASES: Record<string, OpCase[]> = {};
+for (const set of [OP_CASES_P1, OP_CASES_P2, OP_CASES_EDIT]) for (const [name, cases] of Object.entries(set)) OP_CASES[name] = [...(OP_CASES[name] ?? []), ...cases];

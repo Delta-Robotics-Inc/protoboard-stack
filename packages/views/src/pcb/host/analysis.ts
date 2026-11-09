@@ -13,6 +13,7 @@ import { dirname, join, resolve } from "node:path";
 import { boardBuildDir, findProjectRoot, loadZoneFill, parseZoneFill, type BoardSnapshot, type DerivedZoneFill } from "@protoboardai/board/node";
 import type * as ChecksModule from "@protoboardai/board-checks";
 import type { BoardDerived, CheckSummary, CrossCheckSummary, PcbFinding, RatsnestPair } from "../types.js";
+import { applyWaivers, readWaivers } from "../waivers.js";
 
 export type BoardCheckResult = ChecksModule.BoardCheckResult;
 export type CrossCheckResult = ChecksModule.CrossCheckResult;
@@ -224,27 +225,34 @@ export function toBoardDerived(snapshot: BoardSnapshot, a: BoardAnalysis, option
     return { epoch: snapshot.epoch, seq: snapshot.seq, checks: { ran: false, ...(a.reason ? { reason: a.reason } : {}) }, findings: [], ratsnest: [], fills, ...(a.fill ? { fill: { source: a.fill.fill.source, current: a.fill.current } } : {}), ...(notes.length ? { notes } : {}) };
   }
   const r = a.result;
+  // waivers (a person's "not a problem", ../waivers.ts): left out of the findings and the counts, listed apart
+  const { open, waived } = applyWaivers(r.findings as PcbFinding[], readWaivers(snapshot.doc));
+  const waivedUnconnected = waived.filter((w) => w.finding.check === "unconnected").length;
+  const waivedErrors = waived.filter((w) => w.finding.check !== "unconnected" && w.finding.severity === "error").length;
+  const waivedWarnings = waived.filter((w) => w.finding.check !== "unconnected" && w.finding.severity === "warning").length;
+  const waivedLinks = new Set(waived.filter((w) => w.finding.check === "unconnected").map((w) => w.finding.objects.join("|")));
   const ratsnest: RatsnestPair[] = r.connectivity.links.map((l) => ({ net: l.net, a: { x: l.from.x, y: l.from.y }, b: { x: l.to.x, y: l.to.y }, from: l.from.object, to: l.to.object }));
   const checks: CheckSummary = {
     ran: true,
     ...(options.at ? { at: options.at } : {}),
     ms: r.summary.timing?.totalMs ?? a.ms.checks ?? 0,
     seq: snapshot.seq,
-    unconnected: r.summary.unconnected,
-    errors: r.summary.errors,
-    warnings: r.summary.warnings,
+    unconnected: r.summary.unconnected - waivedUnconnected,
+    errors: r.summary.errors - waivedErrors,
+    warnings: r.summary.warnings - waivedWarnings,
     ...(r.summary.incomplete ? { incomplete: true } : {}),
-    ...(r.summary.caveats.length ? { caveats: r.summary.caveats } : {}),
+    ...(r.summary.caveats.length || waived.length ? { caveats: [...r.summary.caveats, ...(waived.length ? [`${waived.length} finding(s) waived as not a problem, with a reason (Checks tab)`] : [])] } : {}),
     ...(a.crossCheck ? { crossCheck: crossCheckSummary(a.crossCheck, options.crossCheckSeq) } : {}),
   };
   return {
     epoch: snapshot.epoch,
     seq: snapshot.seq,
     checks,
-    findings: r.findings as PcbFinding[],
-    ratsnest,
+    findings: open,
+    ratsnest: waivedLinks.size ? ratsnest.filter((p) => !waivedLinks.has([p.from, p.to].filter(Boolean).sort().join("|"))) : ratsnest,
     fills,
     ...(a.fill ? { fill: { source: a.fill.fill.source, current: a.fill.current } } : {}),
     ...(notes.length ? { notes } : {}),
+    ...(waived.length ? { waived } : {}),
   };
 }

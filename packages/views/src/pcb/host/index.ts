@@ -22,7 +22,11 @@ export {
   type ImportRecord,
   type KicadReference,
 } from "./analysis.js";
-export { BoardFeed, type BoardFeedOptions } from "./feed.js";
-export { BOARD_ROUTE_PREFIX, createBoardRoutes, entryOf, findBoards, type BoardRoutes, type BoardRoutesOptions } from "./routes.js";
+export { BoardFeed, docAtSeq, type BoardFeedOptions } from "./feed.js";
+export { BOARD_ROUTE_PREFIX, createBoardRoutes, entryOf, findBoards, PERSON, type BoardRoutes, type BoardRoutesOptions } from "./routes.js";
+export { diagnoseNet, ghostOf, lockedRecords, loadFillModule, loadRouteModule, productScorer, proposalView, routerInfo, routeScope, RouteRuns, defaultRouterList, type DiagnoseOptions, type RouteMessage, type RunOptions } from "./route.js";
+export { commitBoardFolder, type CommitResult } from "./git.js";
+export { parseBoardRequest } from "../requests.js";
+export { applyWaivers, readWaivers, waiverRule, waiverRuleId, WAIVER_ID_PREFIX } from "../waivers.js";
 export { zoneFillsFromEntries } from "../fills.js";
-export type { BoardDerived, BoardEntry, BoardFeedMessage, CheckSummary, CrossCheckSummary, PcbFinding, RatsnestPair } from "../types.js";
+export type { BoardDerived, BoardEntry, BoardFeedMessage, BoardReplyMessage, BoardRequest, CheckSummary, CrossCheckSummary, DiagnosisView, PcbFinding, ProposalView, RatsnestPair, RouterInfo } from "../types.js";

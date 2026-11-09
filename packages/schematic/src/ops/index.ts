@@ -60,8 +60,8 @@ function rotatedAboutCenter(doc: SchematicDocument, s: SymbolRecT, next: Partial
 registerOperation({
   name: "symbol.place",
   title: "Place a symbol",
-  description: "Absolute placement and look of one symbol: position (grid units, +Y down), rotation (0, 90, 180, 270), mirror, the pack variant or a symbol override.",
-  input: z.object({ id: z.string(), x: Gu.optional(), y: Gu.optional(), rotation: z.union([z.literal(0), z.literal(90), z.literal(180), z.literal(270)]).optional(), mirror: z.boolean().optional(), variant: z.string().max(60).nullable().optional(), symbol: z.string().max(120).nullable().optional(), pin: z.boolean().optional() }).strict(),
+  description: "Absolute placement and look of one symbol: position (grid units, +Y down), rotation (0, 90, 180, 270), mirror, the pack variant or a symbol override, and where its reference and value sit (fields: offset from the symbol origin and text anchor; null returns them to the derived place).",
+  input: z.object({ id: z.string(), x: Gu.optional(), y: Gu.optional(), rotation: z.union([z.literal(0), z.literal(90), z.literal(180), z.literal(270)]).optional(), mirror: z.boolean().optional(), variant: z.string().max(60).nullable().optional(), symbol: z.string().max(120).nullable().optional(), fields: z.object({ dx: Gu, dy: Gu, anchor: z.enum(["left", "right"]) }).strict().nullable().optional(), pin: z.boolean().optional() }).strict(),
   audience: "all",
   phase: 3,
   example: { id: "sym:sensor/r_sda", x: 120, y: 10 },
@@ -74,6 +74,8 @@ registerOperation({
     else if (input.variant) r.variant = input.variant;
     if (input.symbol === null) delete r.symbol;
     else if (input.symbol) r.symbol = input.symbol;
+    if (input.fields === null) delete r.fields;
+    else if (input.fields) r.fields = { ...input.fields };
     if (input.x !== undefined || input.y !== undefined) r = pinIfMoved(r, ctx, input.pin);
     return change(doc, [edited(r, ctx)]);
   },

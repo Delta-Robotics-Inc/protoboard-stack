@@ -10,7 +10,8 @@ import type { Actor } from "../ops/registry.js";
 import { BoardLockedError } from "../journal.js";
 import type { Netlist } from "../schema.js";
 import { boardLocalDir, findProjectRoot, openBoardService, type BoardEvent, type BoardService, type BoardSnapshot, type CheckpointResult, type SaveResult } from "../service.js";
-import type { ChangeSetInfo, ClaimReply, LogEntry, Presence, Reply, Transaction } from "../transaction.js";
+import type { ChangeSetInfo, ClaimReply, Hold, LogEntry, Presence, Reply, Transaction } from "../transaction.js";
+import type { DerivedState, Proposal, ProposalPreview, ProposeInput, ProposeReply } from "../editing-types.js";
 import { BOARD_PROTOCOL, BoardRpcError, TOKEN_PROTOCOL_PREFIX, callService, describeOperations, METHOD_PARAMS, RPC_ERRORS, SERVICE_FILE, snapshotFromWire, type BoardMethod, type QueryParams, type QueryResult, type ServiceFile, type WireSnapshot } from "./protocol.js";
 
 export interface ConnectOptions {
@@ -52,6 +53,18 @@ export interface BoardClient {
   operations(options?: { all?: boolean }): Promise<OperationsResult>;
   log(since?: number): Promise<LogEntry[]>;
   changeSets(): Promise<ChangeSetInfo[]>;
+  // ---- Phase 2 (contract phase2-editing.md, sections 4 to 6)
+  propose(actor: Actor, proposal: ProposeInput): Promise<ProposeReply>;
+  proposals(filter?: { status?: Proposal["status"] }): Promise<Proposal[]>;
+  proposal(id: string): Promise<Proposal | null>;
+  previewProposal(id: string, options?: { items?: string[] }): Promise<ProposalPreview | null>;
+  acceptProposal(actor: Actor, id: string, options?: { items?: string[]; allowStale?: boolean; batchId?: string }): Promise<Reply & { proposalState?: Proposal }>;
+  rejectProposal(actor: Actor, id: string, options?: { items?: string[]; reason?: string }): Promise<{ status: "rejected"; proposal: Proposal } | { status: "invalid"; error: string }>;
+  hold(actor: Actor, claim: { ids: string[]; margin?: number; ttlMs?: number }): Promise<{ status: "held"; hold: Hold } | { status: "invalid"; error: string }>;
+  releaseHold(actor: Actor, id?: string): Promise<Hold[]>;
+  derived(): Promise<DerivedState | null>;
+  /** A host's extra method (oard.diagnose): service mode only; local mode refuses it. */
+  callExtension(method: string, params?: unknown): Promise<unknown>;
   /** Service mode: `board.event` notifications; local mode: the service's own events. */
   subscribe(listener: (e: BoardEvent) => void): () => void;
   /** Service mode: disconnect. Local mode: close the board, saving it when this client changed it. */
@@ -98,9 +111,9 @@ function checkParams(method: BoardMethod, params: unknown): unknown {
   return parsed.data;
 }
 
-const WRITES: ReadonlySet<BoardMethod> = new Set(["board.apply", "board.undo", "board.redo", "board.revertChangeSet"]);
+const WRITES: ReadonlySet<BoardMethod> = new Set(["board.apply", "board.undo", "board.redo", "board.revertChangeSet", "board.acceptProposal"]);
 
-function typed(dir: string, mode: "service" | "local", recoverable: number, call: (m: BoardMethod, p?: unknown) => Promise<unknown>, rest: { serviceFile?: string; snapshot(): Promise<BoardSnapshot>; subscribe(l: (e: BoardEvent) => void): () => void; close(): Promise<void> }): BoardClient {
+function typed(dir: string, mode: "service" | "local", recoverable: number, call: (m: BoardMethod, p?: unknown) => Promise<unknown>, rest: { serviceFile?: string; callExtension(method: string, params?: unknown): Promise<unknown>; snapshot(): Promise<BoardSnapshot>; subscribe(l: (e: BoardEvent) => void): () => void; close(): Promise<void> }): BoardClient {
   return {
     mode,
     dir,
@@ -122,6 +135,16 @@ function typed(dir: string, mode: "service" | "local", recoverable: number, call
     operations: (o) => call("board.operations", o?.all ? { all: true } : {}) as Promise<OperationsResult>,
     log: (since) => call("board.log", since !== undefined ? { since } : {}) as Promise<LogEntry[]>,
     changeSets: () => call("board.changeSets", {}) as Promise<ChangeSetInfo[]>,
+    propose: (actor, proposal) => call("board.propose", { actor, proposal }) as Promise<ProposeReply>,
+    proposals: (f) => call("board.proposals", f?.status ? { status: f.status } : {}) as Promise<Proposal[]>,
+    proposal: (id) => call("board.proposal", { id }) as Promise<Proposal | null>,
+    previewProposal: (id, o) => call("board.previewProposal", { id, ...(o?.items ? { items: o.items } : {}) }) as Promise<ProposalPreview | null>,
+    acceptProposal: (actor, id, o) => call("board.acceptProposal", { actor, id, ...(o ?? {}) }) as Promise<Reply & { proposalState?: Proposal }>,
+    rejectProposal: (actor, id, o) => call("board.rejectProposal", { actor, id, ...(o ?? {}) }) as Promise<{ status: "rejected"; proposal: Proposal } | { status: "invalid"; error: string }>,
+    hold: (actor, claim) => call("board.hold", { actor, ...claim }) as Promise<{ status: "held"; hold: Hold } | { status: "invalid"; error: string }>,
+    releaseHold: (actor, id) => call("board.releaseHold", { actor, ...(id ? { id } : {}) }) as Promise<Hold[]>,
+    derived: () => call("board.derived", {}) as Promise<DerivedState | null>,
+    callExtension: rest.callExtension,
     subscribe: rest.subscribe,
     close: rest.close,
   };
@@ -141,6 +164,9 @@ export function localClient(svc: BoardService, options: { dir?: string; closeSer
     }
   };
   return typed(options.dir ?? svc.dir ?? "", "local", svc.recoverable(), call, {
+    callExtension: async (method) => {
+      throw new BoardRpcError(RPC_ERRORS.methodNotFound, `no method ${method.slice(0, 80)} on a board opened in this process (extension methods need a serving process)`);
+    },
     snapshot: async () => svc.snapshot(),
     subscribe: (l) => svc.subscribe(l),
     close: async () => {
@@ -213,7 +239,7 @@ export async function wireClient(url: string, token: string, options: { timeoutM
     pending.clear();
   });
 
-  const call = (method: BoardMethod, params?: unknown) =>
+  const call = (method: BoardMethod | string, params?: unknown) =>
     new Promise<unknown>((done, fail) => {
       if (closedWith || ws.readyState !== WebSocket.OPEN) return fail(closedWith ?? new Error("the connection to the board service is closed"));
       const id = next++;
@@ -227,6 +253,7 @@ export async function wireClient(url: string, token: string, options: { timeoutM
 
   return typed(options.dir ?? "", "service", 0, call, {
     ...(options.serviceFile ? { serviceFile: options.serviceFile } : {}),
+    callExtension: (method, params) => call(method, params),
     snapshot: async () => snapshotFromWire((await call("board.snapshot", {})) as WireSnapshot),
     subscribe: (l) => {
       listeners.add(l);

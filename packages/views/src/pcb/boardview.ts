@@ -252,6 +252,14 @@ export class BoardView {
     });
   }
 
+  /** Draw now what a pending frame would draw (a drag's preview is drawn in the frame that computed it). */
+  flush(): void {
+    if (!this.frame) return;
+    cancelAnimationFrame(this.frame);
+    this.frame = 0;
+    this.renderNow();
+  }
+
   renderNow(): void {
     this.renderer.render();
     this.changed();

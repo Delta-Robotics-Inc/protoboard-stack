@@ -25,6 +25,14 @@ export interface TopBarProps {
   onReview: () => void;
   onCheck?: () => void;
   onExport?: () => void;
+  /** Save the board now (Ctrl+S); absent: the host is read only. */
+  onSave?: () => void;
+  /** Review mode: how many items are left of how many, shown in place of the Review button. */
+  toFinish?: { left: number; total: number };
+  /** The screen's one main action is elsewhere now (a proposal's Accept, a dialog's Commit): Review is a plain button. */
+  mainElsewhere?: boolean;
+  /** Whether Export is allowed now and why (dim until the review queue is empty or every leftover has a reason). */
+  exportState?: { allowed: boolean; why: string };
 }
 
 export function TopBar(p: TopBarProps) {
@@ -50,18 +58,26 @@ export function TopBar(p: TopBarProps) {
         ))}
       </div>
       <div className="pcb-topright">
-        <span className="pcb-chip" title="The board's version in this session and its last save">
-          seq {p.seq} · {p.saved === undefined ? "not saved this session" : p.saved === p.seq ? "saved" : `saved at ${p.saved}`}
-        </span>
-        {p.reviewCount > 0 && (
-          <button className="pcb-btn main" onClick={p.onReview} title="Go through the findings one by one">
+        {p.toFinish ? (
+          <span className="pcb-finish caps" title="Items left in review">
+            {p.toFinish.left} to finish
+            <i>
+              <i style={{ width: `${p.toFinish.total ? Math.round(((p.toFinish.total - p.toFinish.left) / p.toFinish.total) * 100) : 100}%` }} />
+            </i>
+          </span>
+        ) : null}
+        <button className={`pcb-chip${p.onSave && p.saved !== p.seq ? " dashed" : ""}`} disabled={!p.onSave} onClick={p.onSave} title={p.onSave ? "Save the board files now (Ctrl+S)" : "The board's version in this session and its last save"}>
+          seq {p.seq} · {p.saved === undefined ? (p.seq === 0 ? "nothing to save" : "not saved") : p.saved === p.seq ? "saved" : `saved at ${p.saved}`}
+        </button>
+        {!p.toFinish && p.reviewCount > 0 && (
+          <button className={`pcb-btn${p.mainElsewhere ? "" : " main"}`} onClick={p.onReview} title="Go through the findings one by one">
             <Icon name="list" size={13} /> Review {p.reviewCount}
           </button>
         )}
         <button className="pcb-btn" disabled={!p.onCheck} onClick={p.onCheck} title={p.onCheck ? "Run the checks" : "No checker is attached to this screen"}>
           <Icon name="check" size={13} /> Check
         </button>
-        <button className="pcb-btn" disabled={!p.onExport} onClick={p.onExport} title={p.onExport ? "Export" : "Export comes with the release flow"}>
+        <button className="pcb-btn" disabled={!p.onExport || (p.exportState ? !p.exportState.allowed : false)} onClick={p.onExport} title={p.exportState ? `Export: ${p.exportState.why}` : p.onExport ? "Export" : "Export comes with the release flow"}>
           <Icon name="download" size={13} /> Export
         </button>
       </div>
@@ -103,13 +119,20 @@ export interface RailProps {
   markers: boolean;
   onMarkers: () => void;
   errors: number;
+  /** The text tool (absent: the core has no text.add, or the host is read only). */
+  onText?: () => void;
+  /** Set the outline from a DXF file (absent: the core has no outline.import_dxf, or the host is read only). */
+  onDxf?: () => void;
+  /** Open the autoroute panel (absent: the host runs no routers). */
+  onAutoroute?: () => void;
+  autorouteOn?: boolean;
 }
 
-const PLANNED = "Phase 2: editing tools come with interactive routing";
+const PLANNED = "kernel not available: the interactive tools need the editing kernel (@protoboardai/board-edit), which is not built yet";
 
 export function Rail(p: RailProps) {
-  const B = ({ icon, k, title, on, disabled, onClick, badge }: { icon: string; k?: string; title: string; on?: boolean; disabled?: boolean; onClick?: () => void; badge?: ReactNode }) => (
-    <button className={on ? "on" : ""} title={disabled ? `${title} (${PLANNED})` : k ? `${title} (${k})` : title} disabled={disabled} onClick={onClick} aria-pressed={on}>
+  const B = ({ icon, k, title, on, disabled, planned, onClick, badge }: { icon: string; k?: string; title: string; on?: boolean; disabled?: boolean; planned?: boolean; onClick?: () => void; badge?: ReactNode }) => (
+    <button className={on ? "on" : ""} title={planned ? `${title} (${PLANNED})` : k ? `${title} (${k})` : title} disabled={disabled || planned} onClick={onClick} aria-pressed={on}>
       <Icon name={icon} />
       {k && <span className="k">{k.toLowerCase()}</span>}
       {badge}
@@ -118,12 +141,14 @@ export function Rail(p: RailProps) {
   return (
     <div className="pcb-float pcb-rail" onPointerDown={(e) => e.stopPropagation()}>
       <B icon="select" k="V" title="Select" on={p.tool === "select"} onClick={() => p.onTool("select")} />
-      <B icon="route" k="X" title="Route" disabled />
-      <B icon="via" title="Via" disabled />
-      <B icon="zone" title="Zone" disabled />
-      <B icon="keepout" title="Keep-out" disabled />
-      <B icon="text" title="Text" disabled />
+      <B icon="route" k="X" title="Route" planned />
+      <B icon="via" title="Via" planned />
+      <B icon="zone" title="Zone" planned />
+      <B icon="keepout" title="Keep-out" planned />
+      {p.onText ? <B icon="text" k="T" title="Text: click on the board to place it" on={p.tool === "text"} onClick={p.onText} /> : <B icon="text" title="Text" planned />}
+      {p.onDxf && <B icon="file" title="Board outline from a DXF file" onClick={p.onDxf} />}
       <B icon="measure" k="M" title="Measure" on={p.tool === "measure"} onClick={() => p.onTool(p.tool === "measure" ? "select" : "measure")} />
+      <B icon="reroute" title={p.onAutoroute ? "Autoroute: tscircuit first, Freerouting as the fallback; the result is a proposal" : "Autoroute (this host runs no routers)"} on={!!p.autorouteOn} {...(p.onAutoroute ? { onClick: p.onAutoroute } : { disabled: true })} />
       <span className="sep" />
       <B icon="flip" k="B" title={p.flipped ? "View from the top" : "View from the bottom"} on={p.flipped} onClick={p.onFlip} />
       <B icon="fit" k="F" title="Fit the board" onClick={p.onFit} />
@@ -249,6 +274,8 @@ export interface StatusProps {
   flipped: boolean;
   scale: number;
   active: string;
+  /** The mode's hint chip (review mode, autoroute, replay), blue: the active mode. */
+  mode?: string;
 }
 
 export function StatusLine(p: StatusProps) {
@@ -309,6 +336,7 @@ export function StatusLine(p: StatusProps) {
           No check has run on this board yet: there are no counts to show{c.reason ? ` (${c.reason})` : ""}.
         </span>
       )}
+      {p.mode && <span className="pcb-chip on dashed">{p.mode}</span>}
       <span className="right">
         <span>
           active <b>{p.active}</b>

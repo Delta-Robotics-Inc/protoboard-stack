@@ -8,6 +8,11 @@ export { byCodeUnit, canonical, canonicalRecord, deepFreeze, sameValue, sha1Hex,
 export * from "./document.js";
 export * from "./geometry.js";
 export * from "./ops/index.js";
+export * from "./editing-types.js";
+export * from "./proposals.js";
+export * from "./copper-geom.js";
+export * from "./edit-plan.js";
+export { readDxf, dxfOutline, joinEdges, bulgeToSweep, DxfError, type DxfRead, type DxfReadOptions, type DxfOutline, type DxfOutlineOptions, type DxfOutlineReport, type DxfSkipped, type DxfUnits } from "./dxf.js";
 export * from "./leases.js";
 export * from "./transaction.js";
 export * from "./journal.js";

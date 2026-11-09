@@ -34,6 +34,7 @@ import { resolveSymbol, type LBox } from "../symbols.ts";
 import { dirVec, opposite, type Dir, type Rotation, type XY } from "../units.ts";
 import { natural, type Classification } from "./classify.ts";
 import { Grid, routeNet, type Terminal } from "./route.ts";
+import { placeText, type TLabel, type TPower, type TSym, type TWire } from "./text.ts";
 
 export interface LabelSpec {
   net: string;
@@ -216,11 +217,18 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
     return { rot: 0, spinAt: [0, 0] };
   };
   /** Place a two-terminal part so its pin `pinId` lands at `at` pointing `want`; shift along `step` until free. */
-  const placeTwo = (path: string, pinId: string, at: XY, want: Dir, step: XY): PlacedSymbol => {
+  const placeTwo = (path: string, pinId: string, at: XY, want: Dir, step: XY, fieldsLeft = false): PlacedSymbol => {
     const fixed = opts.fixed.get(path);
     if (fixed) return commit(path, fixed);
     const part = doc.parts.get(path)!;
     const { rot, spinAt } = orient(part, pinId, want);
+    // a vertical part's fields go to its left when its right side faces what it serves (a bank capacitor left of the pins)
+    const mkTwo = (p: string, x: number, y: number, r: Rotation): SymbolRecT => {
+      const rec = mkRec(p, x, y, r);
+      if (!fieldsLeft || (r !== 90 && r !== 270) || rec.fields) return rec;
+      const g = geom(rec);
+      return { ...rec, fields: { dx: Math.floor(g.body.x0 - 0.4) - x, dy: Math.round((g.body.y0 + g.body.y1) / 2 - 0.5) - y, anchor: "right" } };
+    };
     let [x, y] = [at[0] - spinAt[0], at[1] - spinAt[1]];
     // the power symbol a shunt's far pin will carry counts as part of it
     const farPower = (g: PlacedSymbol): LBox[] => {
@@ -230,13 +238,13 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
       return [b.glyph, ...(b.text ? [b.text] : [])];
     };
     for (let k = 0; k < 40; k++) {
-      const rec = mkRec(path, x, y, rot);
+      const rec = mkTwo(path, x, y, rot);
       const g = geom(rec);
       if (free([...boxesOf(g), ...farPower(g)])) return commit(path, rec);
       x += step[0];
       y += step[1];
     }
-    return commit(path, mkRec(path, at[0] - spinAt[0], at[1] - spinAt[1], rot));
+    return commit(path, mkTwo(path, at[0] - spinAt[0], at[1] - spinAt[1], rot));
   };
 
   /** satellites a lane has taken (placed or about to be): no other lane takes them */
@@ -277,6 +285,8 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
     pin?: SymPin;
     virtual?: boolean;
     extent?: number;
+    /** a plain lane beside a lane with a series part: its label moves past that part instead of sitting on the pin */
+    yields?: boolean;
   }
 
   /** What hangs on a lane, in order: shunts, then a series part and what hangs past it. */
@@ -389,7 +399,7 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
       const side: Dir = s > 0 ? "right" : "left";
       for (let k = 0; k < 30; k++) {
         const b = labelBox({ net: curNet, x: at[0], y: at[1], side, scope: "port" }, doc);
-        if (free([b], 0.1) || (k === 0 && !l.elems.length)) break;
+        if (free([b], 0.1) || (k === 0 && !l.elems.length && !l.yields)) break;
         at = [at[0] + s, row];
       }
       const net = curNet;
@@ -507,7 +517,7 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
         const capPins: XY[] = [];
         bank.forEach((e, i) => {
           const toLeft = i === 1 && first0;
-          const g2 = placeTwo(e.path, e.pin, [toLeft ? left : right, row], "up", [toLeft ? -1 : 1, 0]);
+          const g2 = placeTwo(e.path, e.pin, [toLeft ? left : right, row], "up", [toLeft ? -1 : 1, 0], toLeft);
           const near = g2.pins.find((p) => p.keys.includes(pinKey(e.path, e.pin)))!;
           const far = g2.pins.find((p) => p !== near);
           if (far?.net && isRailNet(far.net)) directPower(far);
@@ -597,7 +607,14 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
       const plain = side.filter((l) => !l.elems.length);
       const rich = side.filter((l) => l.elems.length && l.elems.every((e) => e.kind !== "inline"));
       const chained = side.filter((l) => l.elems.some((e) => e.kind === "inline"));
-      // plain lanes: a label on the pin first, then the power symbols on stubs long enough to clear them
+      // chains with series parts first, the series part beside its pin (rule C13), and what runs on neighboring rows
+      // goes past it; only where no rail lane runs on a neighboring row (a power symbol there needs the room)
+      const near = chained.filter((c) => !side.some((o) => o !== c && o.rail && Math.abs(o.row - c.row) <= 2));
+      const far = chained.filter((c) => !near.includes(c));
+      for (const l of near) placeLane(l, l.start[0] + s * 2);
+      for (const l of plain) if (near.some((c) => Math.abs(c.row - l.row) <= 2)) l.yields = true;
+      // plain lanes: a label on the pin (or past a neighbor's series part), then the power symbols on stubs long
+      // enough to clear them
       for (const l of plain.filter((x) => x.terminal !== "power")) placeLane(l, l.start[0]);
       for (const l of plain.filter((x) => x.terminal === "power")) placeLane(l, l.start[0]);
       // shunt lanes: each shunt its own column; a shunt that would stand over a neighbor's row goes to a bank above
@@ -614,7 +631,7 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
           for (const l of order)
             for (const e of l.elems.filter((x) => x.kind === kind)) {
               const inSpan = (r: number) => (kind === "up" ? r >= l.row - 7 && r < l.row : r > l.row && r <= l.row + 7.8);
-              for (const o of plain) if (inSpan(o.row) && o.extent !== undefined) cursor = beyond(o.extent);
+              for (const o of [...plain, ...near]) if (inSpan(o.row) && o.extent !== undefined) cursor = beyond(o.extent);
               const covered = rich.filter((o) => o !== l && inSpan(o.row) && reaches(o)).map((o) => o.row);
               const y = covered.length ? (kind === "up" ? Math.min(...covered) - 1 : Math.max(...covered) + 1) : l.row;
               const at = placeShunt(l, e, [cursor, y]);
@@ -640,10 +657,10 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
           l.extent = X;
         }
       }
-      // chains with series parts: beyond everything they cover
-      for (const l of chained) {
+      // the other chains: beyond everything they cover
+      for (const l of far) {
         let from = l.start[0] + s * 2;
-        for (const o of [...plain, ...rich]) if (o.row > l.row - l.u && o.row < l.row + l.d && o.extent !== undefined) from = s > 0 ? Math.max(from, Math.ceil(o.extent) + 3) : Math.min(from, Math.floor(o.extent) - 3);
+        for (const o of [...plain, ...rich, ...near]) if (o.row > l.row - l.u && o.row < l.row + l.d && o.extent !== undefined) from = s > 0 ? Math.max(from, Math.ceil(o.extent) + 3) : Math.min(from, Math.floor(o.extent) - 3);
         placeLane(l, from);
       }
     }
@@ -883,11 +900,11 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
     };
     const isOutPin = (k: string) => {
       const t = pinType(k);
-      return t.type === "output" || /(^|[^A-Z])(D?OUT|DO|SDO|MISO|QH'?|Q7S|CO|TXD?)\d*$/i.test(t.name);
+      return t.type === "output" || t.type === "analog_out" || /(^|[^A-Z])(D?OUT[PN+-]?|DO|SDO|MISO|QH'?|Q7S|CO|TXD?)\d*$/i.test(t.name);
     };
     const isInPin = (k: string) => {
       const t = pinType(k);
-      return t.type === "input" || /(^|[^A-Z])(D?IN|DI|SDI|MOSI|SER|DS|CI|RXD?)\d*$/i.test(t.name);
+      return t.type === "input" || t.type === "analog_in" || /(^|[^A-Z])(D?IN[PN+-]?|DI|SDI|MOSI|SER|DS|CI|RXD?)\d*$/i.test(t.name);
     };
     // ---- chains: identical clusters linked output to input
     const units: { members: number[]; w: number; h: number; pos: Map<number, XY>; key: string }[] = [];
@@ -1039,6 +1056,7 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
       const cost = W * maxY * (1 + 0.6 * Math.abs(Math.log(aspect / 1.4)));
       if (!best || cost < best.cost - 1e-9) best = { pos, cost };
     }
+    if (!fixedBox) alignUnits(best!.pos);
     // fixed content stays: when the main anchor moves, it lands where it was (the card's origin) and the rest packs
     // around it; when it is fixed, packed units go to the right of the fixed content
     let ox = 0;
@@ -1065,6 +1083,78 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
       }
     }
     return out;
+
+    /**
+     * Pin rows lined up: each unit after the first moves up or down so a signal pin of it sits on the row of the pin
+     * it connects to in a unit placed before (the shortest such move that stays clear), then slides toward the units
+     * it connects to until it would come nearer than the cluster gap. Shorter, straighter wires between clusters.
+     */
+    function alignUnits(pos: Map<number, XY>) {
+      const boxOf = (u: number, p = pos.get(u)!): LBox => ({ x0: p[0], y0: p[1], x1: p[0] + units[u].w, y1: p[1] + units[u].h });
+      const clear = (u: number, p: XY, done: number[]) => {
+        const b = inflateBox(boxOf(u, p), CLUSTER_GAP - 0.01);
+        return done.every((o) => o === u || !boxesOverlap(b, boxOf(o), 0));
+      };
+      // signal pins of a unit, in the unit's frame
+      const pinsOf = (u: number): { net: string; at: XY }[] => {
+        const out: { net: string; at: XY }[] = [];
+        for (const c of units[u].members) {
+          const [cx, cy] = units[u].pos.get(c)!;
+          const b = boxOfCluster.get(c)!;
+          for (const path of partsOf.get(c) ?? []) {
+            const g = placed.get(path);
+            if (!g) continue;
+            for (const p of g.pins) if (p.net && linkNets.has(p.net)) out.push({ net: p.net, at: [Math.round(cx) - Math.floor(b.x0) + p.at[0], Math.round(cy) - Math.floor(b.y0) + p.at[1]] });
+          }
+        }
+        return out;
+      };
+      const pins = new Map(order.map((u) => [u, pinsOf(u)]));
+      const done: number[] = [];
+      for (const u of order) {
+        if (!done.length) {
+          done.push(u);
+          continue;
+        }
+        const p0 = pos.get(u)!;
+        const mine = pins.get(u)!;
+        const dys = new Set<number>();
+        const targets: XY[] = [];
+        for (const o of done)
+          for (const q of pins.get(o)!) {
+            const qa: XY = [pos.get(o)![0] + q.at[0], pos.get(o)![1] + q.at[1]];
+            for (const m of mine) if (m.net === q.net) {
+              dys.add(qa[1] - (p0[1] + m.at[1]));
+              targets.push(qa);
+            }
+          }
+        dys.add(0);
+        let p: XY | undefined;
+        for (const dy of [...dys].sort((a, b) => Math.abs(a) - Math.abs(b) || a - b)) {
+          const c: XY = [p0[0], p0[1] + dy];
+          if (c[1] >= 0 && clear(u, c, done)) {
+            p = c;
+            break;
+          }
+        }
+        // its packed place was taken by a unit moved before it: the nearest clear place down its column
+        for (let k = 1; !p && k < 2000; k++) if (clear(u, [p0[0], p0[1] + k], done)) p = [p0[0], p0[1] + k];
+        p ??= p0;
+        // slide toward what it connects to (left, keeping the flow), up to the gap
+        if (targets.length) {
+          const lo = Math.min(...mine.map((m) => m.at[0]));
+          const hi = Math.max(...mine.map((m) => m.at[0]));
+          const tmax = Math.max(...targets.map((t) => t[0]));
+          const tmin = Math.min(...targets.map((t) => t[0]));
+          // the whole unit stays on its side of the pins it joins, a gap away (it never slides under them)
+          const W = units[u].w;
+          if (p[0] + lo > tmax) while (p[0] - 1 >= 0 && p[0] - 1 > tmax + CLUSTER_GAP && clear(u, [p[0] - 1, p[1]], done)) p = [p[0] - 1, p[1]];
+          else if (p[0] + hi < tmin) while (p[0] + W + 1 < tmin - CLUSTER_GAP && clear(u, [p[0] + 1, p[1]], done)) p = [p[0] + 1, p[1]];
+        }
+        pos.set(u, p);
+        done.push(u);
+      }
+    }
   }
 
   // ---------------------------------------------------------------- settle: what no pattern placed
@@ -1261,34 +1351,75 @@ export function layoutCard(doc: SchematicDocument, cls: Classification, card: st
   const wires: { net: string; points: XY[] }[] = fixedWires.map((w) => ({ net: w.net, points: w.points }));
   const fallbacks: string[] = [];
   const ordered = [...jobs.values()].filter((j) => j.terms.length >= 2).sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "rail" ? -1 : 1) || a.terms.length - b.terms.length || byCodeUnit(a.key, b.key));
+  // the fallback ladder: route; on failure rip the net up and retry from two other terminals (a different tree order);
+  // then keep the best partial tree and name only the terminals that still fail (a label, or a power symbol on a
+  // rail), plus one name on the tree when it carries none
   for (const j of ordered) {
-    const r = routeNet(grid, j.key, j.terms);
-    const tooBent = r.maxBends > opts.bendLimit;
-    if (!r.failed.length && !tooBent) {
-      for (const p of r.paths) wires.push({ net: j.net, points: p });
-      continue;
-    }
-    grid.removeNet(j.key);
-    fallbacks.push(j.net);
-    // label each pin instead (a rail: a symbol on each pin)
-    for (const t of j.terms) {
-      if (!t.pin) {
-        // drop the lane's own terminal
-        const li = labels.findIndex((l) => l.at[0] === t.at[0] && l.at[1] === t.at[1] && l.net === j.net);
-        if (li >= 0) labels.splice(li, 1);
-        const pi = powers.findIndex((p) => p.at[0] === t.at[0] && p.at[1] === t.at[1] && p.net === j.net);
-        if (pi >= 0) powers.splice(pi, 1);
-        continue;
+    const starts = j.terms.map((_, i) => i).slice(0, 3);
+    let best: { order: Term[]; failed: number } | undefined;
+    let done = false;
+    for (const s of starts) {
+      const order = s === 0 ? j.terms : [j.terms[s], ...j.terms.filter((_, i) => i !== s)];
+      // a retry looks less far than the first try (a net that fails from three starts fails from more)
+      const r = routeNet(grid, j.key, order, s === 0 ? 60_000 : 20_000, opts.bendLimit);
+      if (!r.failed.length) {
+        for (const p of r.paths) wires.push({ net: j.net, points: p });
+        done = true;
+        break;
       }
+      grid.removeNet(j.key);
+      if (!best || r.failed.length < best.failed) best = { order, failed: r.failed.length };
+    }
+    if (done) continue;
+    fallbacks.push(j.net);
+    const order = best!.order;
+    const r = routeNet(grid, j.key, order, 60_000, opts.bendLimit);
+    const joined = new Set(r.joined);
+    const tree = r.joined.length >= 2;
+    if (tree) for (const p of r.paths) wires.push({ net: j.net, points: p });
+    else grid.removeNet(j.key);
+    const nameAt = (t: Term) => {
       if (j.kind === "rail") powers.push({ net: j.net, at: t.at, ...railStyle(j.net), cl: FIXED });
       else labels.push({ net: j.net, at: t.at, side: t.exit ?? "right", scope: crosses(j.net) ? "port" : "local", cl: FIXED });
-    }
+    };
+    let named = false;
+    order.forEach((t, i) => {
+      const inTree = tree && joined.has(i);
+      if (!t.pin) {
+        if (inTree) named = true;
+        else {
+          // a lane's own terminal left on nothing: drop it
+          const li = labels.findIndex((l) => l.at[0] === t.at[0] && l.at[1] === t.at[1] && l.net === j.net);
+          if (li >= 0) labels.splice(li, 1);
+          const pi = powers.findIndex((p) => p.at[0] === t.at[0] && p.at[1] === t.at[1] && p.net === j.net);
+          if (pi >= 0) powers.splice(pi, 1);
+        }
+        return;
+      }
+      if (!inTree) nameAt(t);
+    });
+    if (tree && !named) nameAt(order[r.joined.find((i) => order[i].pin) ?? 0]);
   }
 
   // ---------------------------------------------------------------- tidy: power symbols and labels that landed on something
   // move out along their own direction on a stub of their net, to the first spot where they touch nothing and the
   // stub crosses nothing (a symbol on a pin that points its way, a fallback label on a pin, a lane's label)
   repairText();
+  // then a search: every label, power symbol and field still in conflict tries places around its anchor (./text.ts)
+  {
+    const tl: TLabel[] = labels.map((l) => ({ kind: "label", net: l.net, at: l.at, side: l.side, scope: l.scope, movable: true }));
+    const tp: TPower[] = powers.map((p) => ({ kind: "power", net: p.net, at: p.at, dir: p.dir, style: p.style, movable: true }));
+    const ts: TSym[] = [...syms].map(([path, rec]) => ({ rec, g: placed.get(path)!, movableFields: !opts.fixed.get(path)?.pinned }));
+    const tw: TWire[] = wires.map((w) => ({ net: w.net, points: w.points }));
+    placeText(doc, { symbols: ts, labels: tl, powers: tp, wires: tw });
+    tl.forEach((t, i) => Object.assign(labels[i], { at: t.at, side: t.side }));
+    tp.forEach((t, i) => Object.assign(powers[i], { at: t.at }));
+    for (const t of ts) {
+      syms.set(t.rec.part, t.rec);
+      placed.set(t.rec.part, t.g);
+    }
+    for (const w of tw.slice(wires.length)) wires.push({ net: w.net, points: w.points });
+  }
   function repairText() {
     type Item = { kind: "label"; l: (typeof labels)[number] } | { kind: "power"; p: (typeof powers)[number] };
     const boxesOfItem = (it: Item): LBox[] => {

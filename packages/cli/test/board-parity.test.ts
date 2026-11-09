@@ -13,12 +13,15 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { listOperations, type Reply } from "@protoboardai/board";
+import { builtinRouter } from "@protoboardai/board-route";
 import { BOARD_COMMANDS, boardCommand, resolveActor } from "../src/board.js";
 import { agentOperations, boardTools } from "../src/mcp/board-tools.js";
 import type { CliRun, ToolContext } from "../src/mcp/tools.js";
 
 const FIXTURE = fileURLToPath(new URL("../../board/test/fixtures/airnode-c3/", import.meta.url));
 const CLI = fileURLToPath(new URL("../bin/protoboard.mjs", import.meta.url));
+/** A 40 x 30 mm rectangle as an ASCII DXF (one closed LWPOLYLINE, millimeters). */
+const DXF_RECT = ["0", "SECTION", "2", "HEADER", "9", "$INSUNITS", "70", "4", "0", "ENDSEC", "0", "SECTION", "2", "ENTITIES", "0", "LWPOLYLINE", "8", "OUTLINE", "90", "4", "70", "1", "10", "0", "20", "0", "10", "40", "20", "0", "10", "40", "20", "30", "10", "0", "20", "30", "0", "ENDSEC", "0", "EOF"].join("\n") + "\n";
 
 function project() {
   const root = mkdtempSync(join(tmpdir(), "pb-board-parity-"));
@@ -57,7 +60,23 @@ describe("every operation open to all actors is reachable through the CLI and MC
 
   it("the registry has operations of both audiences", () => {
     expect(all.length).toBeGreaterThan(20);
-    expect(system.map((d) => d.name).sort()).toEqual(["record.put", "record.remove"]);
+    expect(system.map((d) => d.name).sort()).toEqual(["netlist.sync", "record.put", "record.remove"]);
+  });
+
+  it("every Phase 2 operation has an example (the dry runs below cover each one)", () => {
+    const p2 = listOperations().filter((d) => d.phase === 2);
+    expect(p2.length).toBeGreaterThan(0);
+    for (const d of p2) expect(d.example, d.name).toBeTruthy();
+    for (const d of p2.filter((x) => x.audience === "all")) expect(all.map((x) => x.name)).toContain(d.name);
+  });
+
+  it("footprint.move without tracks moves the attached copper (Phase 2 default)", async () => {
+    const { root, dir } = project();
+    const file = join(root, "move.json");
+    writeFileSync(file, JSON.stringify({ op: "footprint.move", ids: ["fp:power/ldo"], dx: 1000000, dy: 0 }));
+    const reply = JSON.parse((await run(["apply", dir, file, "--dry-run", "--json"], root)).stdout) as Reply & { reports?: { op: string; report: Record<string, unknown> }[] };
+    expect(reply.status).toBe("valid");
+    expect(reply.reports?.find((r) => r.op === "footprint.move")?.report).toHaveProperty("followed");
   });
 
   it.each(all.map((d) => [d.name, d] as const))("%s through `board apply` (a dry run, as a person)", async (_name, d) => {
@@ -168,12 +187,17 @@ describe("every board command has a --json mode", () => {
       check: ["--no-cross-check"],
       describe: ["--image", "none"],
       render: ["--width", "200", "--height", "150"],
+      route: ["--budget", "5"],
+      diagnose: ["I2C_SCL", "--budget", "5"],
+      "import-dxf": [join(root, "outline.dxf")],
     };
+    writeFileSync(join(root, "outline.dxf"), DXF_RECT);
     writeFileSync(join(root, "tx.json"), JSON.stringify({ op: "footprint.move", ids: ["fp:power/ldo"], dx: 1000, dy: 0, tracks: "stay" }));
     const argv = name === "ops" ? ["ops", "--json"] : name === "import" ? ["import", join(dir, "board.jsonl"), join(root, "imported"), "--json"] : [name, dir, ...(extra[name] ?? []), "--json"];
     let stdout = "";
     const stop = new AbortController();
-    const code = await boardCommand(argv, { cwd: root, env: {}, write: (s) => (stdout += s), stderr: () => {}, signal: stop.signal, onServing: () => stop.abort() });
+    // route and diagnose run the built-in router: the parity check never waits on the real routers
+    const code = await boardCommand(argv, { cwd: root, env: {}, write: (s) => (stdout += s), stderr: () => {}, signal: stop.signal, onServing: () => stop.abort(), routing: { routers: [builtinRouter()] } });
     const lines = stdout.trim().split("\n");
     // serve prints one JSON line when it starts and one when it stops; every other command one JSON document
     if (name === "serve") for (const l of lines) expect(() => JSON.parse(l), l).not.toThrow();
@@ -182,17 +206,18 @@ describe("every board command has a --json mode", () => {
   }, 120_000);
 });
 
-describe("the import, check, describe and render commands have MCP tools", () => {
-  const pairs = { import: "board_import", check: "board_check", describe: "board_describe", render: "board_render" } as const;
+describe("the import, check, describe, render, route and diagnose commands have MCP tools", () => {
+  const pairs = { import: "board_import", check: "board_check", describe: "board_describe", render: "board_render", route: "board_route", diagnose: "board_diagnose", "import-dxf": "board_import_dxf" } as const;
 
   it.each(Object.entries(pairs))("board %s is the %s tool", (command, name) => {
     expect(BOARD_COMMANDS.map((c) => c.name)).toContain(command);
     const t = tool(name);
     expect(t, name).toBeDefined();
     expect(t.annotations.destructiveHint).toBe(false);
-    // check writes nothing; describe and render write derived files only; import changes files
-    expect(t.annotations.readOnlyHint).toBe(command === "check");
-    if (command === "import") expect(t.description).toMatch(/CHANGES FILES/);
+    // check and diagnose write nothing; describe and render write derived files only; import changes files; route only with apply
+    expect(t.annotations.readOnlyHint).toBe(command === "check" || command === "diagnose");
+    if (command === "import" || command === "import-dxf") expect(t.description).toMatch(/CHANGES FILES/);
+    if (command === "route") expect(t.description).toMatch(/CHANGES THE BOARD \(only with apply\)/);
   });
 
   it("each tool runs its command with the flags the command takes", async () => {

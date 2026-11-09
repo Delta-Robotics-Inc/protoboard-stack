@@ -29,6 +29,8 @@ export interface RouteResult {
   failed: number[];
   /** most bends in one path */
   maxBends: number;
+  /** the terminals joined to the tree (the first terminal always) */
+  joined: number[];
 }
 
 /** The routing grid of one card: walls, other nets' wires, and the trees routed so far. */
@@ -230,10 +232,11 @@ function simplify(pts: XY[]): XY[] {
  * Route one net's terminals as a tree. `tree` starts with the first terminal; each other terminal, nearest first,
  * is joined by the cheapest path that leaves it along its exit and meets the tree without overlapping it.
  */
-export function routeNet(grid: Grid, net: string, terminals: Terminal[], maxExpand = 60_000): RouteResult {
+export function routeNet(grid: Grid, net: string, terminals: Terminal[], maxExpand = 60_000, bendLimit = Infinity): RouteResult {
   const paths: XY[][] = [];
   const failed: number[] = [];
-  if (terminals.length < 2) return { paths, failed, maxBends: 0 };
+  const joined: number[] = [0];
+  if (terminals.length < 2) return { paths, failed, maxBends: 0, joined };
   for (const t of terminals) grid.own(t.at, net);
   const tree = new Map<number, number>();
   const pts: XY[] = [];
@@ -258,20 +261,23 @@ export function routeNet(grid: Grid, net: string, terminals: Terminal[], maxExpa
     if (t.exit) addTree(t.at, opposite(t.exit));
   };
   lead(first);
-  const left = terminals.slice(1).map((t, i) => ({ t, i: i + 1 }));
+  const left = terminals.slice(1).map((t, i) => ({ t, i: i + 1, d: Infinity }));
+  /** tree points already counted in each terminal's distance */
+  let seenPts = 0;
   let maxBends = 0;
   while (left.length) {
-    // nearest terminal to the tree
+    // nearest terminal to the tree (each terminal's distance is updated with the points added since)
+    for (const e of left)
+      for (let k = seenPts; k < pts.length; k++) {
+        const v = Math.abs(pts[k][0] - e.t.at[0]) + Math.abs(pts[k][1] - e.t.at[1]);
+        if (v < e.d) e.d = v;
+      }
+    seenPts = pts.length;
     let best = 0;
     let bestD = Infinity;
     left.forEach((e, j) => {
-      let d = Infinity;
-      for (const [x, y] of pts) {
-        const v = Math.abs(x - e.t.at[0]) + Math.abs(y - e.t.at[1]);
-        if (v < d) d = v;
-      }
-      if (d < bestD) {
-        bestD = d;
+      if (e.d < bestD) {
+        bestD = e.d;
         best = j;
       }
     });
@@ -279,16 +285,18 @@ export function routeNet(grid: Grid, net: string, terminals: Terminal[], maxExpa
     const pending = new Map<number, Dir | undefined>();
     for (const e of left) if (grid.inBounds(e.t.at[0], e.t.at[1])) pending.set(grid.idx(e.t.at[0], e.t.at[1]), e.t.exit);
     const path = grid.inBounds(t.at[0], t.at[1]) ? astar(grid, net, t, tree, bbox, maxExpand, pending) : undefined;
-    if (!path) {
+    if (!path || bendCount(simplify(path)) > bendLimit) {
       failed.push(i);
       continue;
     }
+    joined.push(i);
     lead(t);
     // terminals the path ran through (across their lead axis) are joined too
     const onPath = new Set(path.map((p) => grid.idx(p[0], p[1])));
     for (let j = left.length - 1; j >= 0; j--) {
       if (!grid.inBounds(left[j].t.at[0], left[j].t.at[1]) || !onPath.has(grid.idx(left[j].t.at[0], left[j].t.at[1]))) continue;
       const e = left.splice(j, 1)[0];
+      joined.push(e.i);
       lead(e.t);
     }
     const simple = simplify(path);
@@ -303,7 +311,7 @@ export function routeNet(grid: Grid, net: string, terminals: Terminal[], maxExpa
       addTree(b, opposite(d));
     }
   }
-  return { paths, failed, maxBends };
+  return { paths, failed, maxBends, joined };
 }
 
 const popcount = (b: number) => (b & 1) + ((b >> 1) & 1) + ((b >> 2) & 1) + ((b >> 3) & 1);

@@ -7,15 +7,26 @@
  *   GET  <prefix>events?board=<key>     an event stream of `BoardFeedMessage`s (the snapshot first)
  *   GET  <prefix>derived?board=<key>    the derived data now (checks, ratsnest, fill), JSON
  *   POST <prefix>check?board=<key>      run the checks and the cross-check again (the server says who may)
+ *   POST <prefix>request?board=<key>    a page's request (`BoardRequest`: a transaction, undo, redo, save,
+ *                                       checkpoint, replay, autoroute, diagnosis, waiver), JSON in and out; the
+ *                                       server says who may (`mayWrite`) and who acts (`actor`, DEFAULT a person)
  *
- * Only board folders found under the project root are served, by key: no route takes a path.
+ * Only board folders found under the project root are served, by key: no route takes a path. A request never names
+ * its actor: the host decides (../requests.ts refuses a request that tries).
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { basename, join, relative, resolve, sep } from "node:path";
 import { boardKey } from "@protoboardai/board/node";
+import type { Actor } from "@protoboardai/board/node";
+import { parseBoardRequest } from "../requests.js";
 import type { BoardEntry, BoardFeedMessage } from "../types.js";
 import { BoardFeed, type BoardFeedOptions } from "./feed.js";
+
+/** The actor a person at a host's screen acts as. */
+export const PERSON: Actor = { kind: "human", id: "user" };
+/** The largest request body a page may send (a 200-operation transaction is far smaller). */
+const MAX_BODY = 1024 * 1024;
 
 export const BOARD_ROUTE_PREFIX = "/__protoboard/board/";
 
@@ -62,7 +73,11 @@ export interface BoardRoutesOptions {
   extra?: () => { entry: BoardEntry; dir: string }[];
   /** Whether a request may ask for a new check run (the dev server's page token and origin). DEFAULT: no one. */
   mayRecheck?: (req: IncomingMessage) => boolean;
-  feed?: Pick<BoardFeedOptions, "analyze" | "debounceMs" | "servicePollMs">;
+  /** Whether a request may write or run (the dev server's page token and origin). DEFAULT: `mayRecheck`, else no one. */
+  mayWrite?: (req: IncomingMessage) => boolean;
+  /** Who acts for a page's request: the host's decision, never the page's. DEFAULT a person (`human`). */
+  actor?: (req: IncomingMessage) => Actor;
+  feed?: Pick<BoardFeedOptions, "analyze" | "debounceMs" | "servicePollMs" | "ownOnWrite" | "origins">;
   /** Feeds without a subscriber close after this long (DEFAULT 30 s). */
   idleMs?: number;
   log?: (line: string) => void;
@@ -177,6 +192,45 @@ export function createBoardRoutes(options: BoardRoutesOptions): BoardRoutes {
           },
           (e: Error) => json(res, 404, { error: e.message }),
         );
+        return true;
+      }
+      if (route === "request" && req.method === "POST") {
+        const may = options.mayWrite ?? options.mayRecheck;
+        if (!(may?.(req) ?? false)) {
+          json(res, 403, { error: "a board request needs the page's own request (its token and origin)" });
+          return true;
+        }
+        const chunks: Buffer[] = [];
+        let size = 0;
+        let refused = false;
+        req.on("data", (c: Buffer) => {
+          size += c.length;
+          if (size > MAX_BODY && !refused) {
+            refused = true;
+            json(res, 413, { error: "the request is too large" });
+            req.destroy();
+          } else if (!refused) chunks.push(c);
+        });
+        req.on("end", () => {
+          if (refused) return;
+          let body: unknown;
+          try {
+            body = JSON.parse(Buffer.concat(chunks).toString("utf8") || "null");
+          } catch {
+            return json(res, 400, { ok: false, error: "the request body is not JSON" });
+          }
+          const parsed = parseBoardRequest(body);
+          if (!parsed.ok) return json(res, 400, { ok: false, error: parsed.error });
+          const actor = options.actor?.(req) ?? PERSON;
+          feed(key).then(
+            (f) =>
+              f.request(parsed.request, actor).then((r) => {
+                json(res, 200, r);
+                release(key);
+              }),
+            (e: Error) => json(res, 404, { ok: false, error: e.message }),
+          );
+        });
         return true;
       }
       json(res, 404, { error: `no board route ${route.slice(0, 40)}` });

@@ -14,6 +14,7 @@
  * connection's message size, fragments, pings and unsent bytes are bounded in `ws.ts`; a keepalive ping frees the
  * slot of a client that stopped answering.
  */
+import type { z } from "zod";
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type Server } from "node:http";
@@ -73,6 +74,18 @@ export interface ServeOptions {
   log?: (line: string) => void;
   /** Offer `board.shutdown`: called (after the reply is sent) when a client asks the serving process to stop. */
   onShutdown?: () => void;
+  /**
+   * Extra methods a host offers beside the board's own (`@protoboardai/board-edit/service`'s `board.diagnose`, for
+   * example). Each checks its params with a zod schema; an `actor` or `by` param passes the actor policy. A method may
+   * answer with a promise.
+   */
+  methods?: Record<string, ExtensionMethod>;
+}
+
+/** A host's extra wire method. */
+export interface ExtensionMethod {
+  params: z.ZodTypeAny;
+  run(params: unknown): unknown;
 }
 
 export interface BoardServer {
@@ -200,7 +213,7 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
     }
   });
 
-  const handle = (msg: unknown): object | undefined => {
+  const handle = (msg: unknown): object | undefined | Promise<object | undefined> => {
     try {
       return handleOne(msg);
     } catch (e) {
@@ -211,17 +224,38 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
     }
   };
 
-  const handleOne = (msg: unknown): object | undefined => {
+  const handleOne = (msg: unknown): object | undefined | Promise<object | undefined> => {
     if (!msg || typeof msg !== "object" || Array.isArray(msg)) return rpcError(null, { code: RPC_ERRORS.invalidRequest, message: "a request is a JSON object" });
     const m = msg as { jsonrpc?: unknown; id?: unknown; method?: unknown; params?: unknown };
     const hasId = "id" in m;
     const id = m.id;
     if (m.jsonrpc !== "2.0" || typeof m.method !== "string" || (hasId && id !== null && typeof id !== "string" && typeof id !== "number")) return rpcError(hasId ? id : null, { code: RPC_ERRORS.invalidRequest, message: "expected { jsonrpc: \"2.0\", id, method, params }" });
     const reply = (body: { result: unknown } | { error: RpcError }) => (hasId ? { jsonrpc: "2.0" as const, id, ...body } : undefined);
+    const ext = options.methods && Object.prototype.hasOwnProperty.call(options.methods, m.method) && !Object.prototype.hasOwnProperty.call(METHOD_PARAMS, m.method) ? options.methods[m.method] : undefined;
+    if (ext) {
+      const parsed = ext.params.safeParse(m.params ?? undefined);
+      if (!parsed.success) return reply({ error: { code: RPC_ERRORS.invalidParams, message: parsed.error.issues.map((i: z.ZodIssue) => `${i.path.join(".") || "params"}: ${i.message}`).join("; "), data: parsed.error.issues } });
+      const params = parsed.data as { actor?: Actor; by?: Actor } | undefined;
+      for (const a of [params?.actor, params?.by]) {
+        const why = a ? policy(a) : undefined;
+        if (why) return reply({ error: { code: RPC_ERRORS.actor, message: why } });
+      }
+      try {
+        const out = ext.run(params);
+        if (out && typeof (out as Promise<unknown>).then === "function")
+          return (out as Promise<unknown>).then(
+            (v) => reply({ result: v ?? null }),
+            (e) => reply({ error: { code: RPC_ERRORS.service, message: (e as Error)?.message ?? String(e) } }),
+          );
+        return reply({ result: out ?? null });
+      } catch (e) {
+        return reply({ error: { code: RPC_ERRORS.service, message: (e as Error).message } });
+      }
+    }
     if (!Object.prototype.hasOwnProperty.call(METHOD_PARAMS, m.method)) return reply({ error: { code: RPC_ERRORS.methodNotFound, message: `no method ${m.method.slice(0, 80)}` } });
     const method = m.method as BoardMethod;
     const parsed = METHOD_PARAMS[method].safeParse(m.params ?? undefined);
-    if (!parsed.success) return reply({ error: { code: RPC_ERRORS.invalidParams, message: parsed.error.issues.map((i) => `${i.path.join(".") || "params"}: ${i.message}`).join("; "), data: parsed.error.issues } });
+    if (!parsed.success) return reply({ error: { code: RPC_ERRORS.invalidParams, message: parsed.error.issues.map((i: z.ZodIssue) => `${i.path.join(".") || "params"}: ${i.message}`).join("; "), data: parsed.error.issues } });
     const params = parsed.data as { actor?: Actor; by?: Actor } | undefined;
     for (const a of [params?.actor, params?.by]) {
       const why = a ? policy(a) : undefined;
@@ -266,12 +300,18 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
     }
     if (Array.isArray(msg)) {
       if (!msg.length || msg.length > MAX_BATCH) return sendJson(conn, rpcError(null, { code: RPC_ERRORS.invalidRequest, message: `a batch holds 1 to ${MAX_BATCH} requests` }));
-      const replies = msg.map((m) => handle(m)).filter((r): r is object => r !== undefined);
-      if (replies.length) sendJson(conn, replies);
+      const all = msg.map((m) => handle(m));
+      const send = (rs: (object | undefined)[]) => {
+        const replies = rs.filter((r): r is object => r !== undefined);
+        if (replies.length) sendJson(conn, replies);
+      };
+      if (all.some((r) => r instanceof Promise)) void Promise.all(all).then(send);
+      else send(all as (object | undefined)[]);
       return;
     }
     const r = handle(msg);
-    if (r) sendJson(conn, r);
+    if (r instanceof Promise) void r.then((x) => x && sendJson(conn, x));
+    else if (r) sendJson(conn, r);
   };
 
   const unsubscribe = service.subscribe((event: BoardEvent) => {
