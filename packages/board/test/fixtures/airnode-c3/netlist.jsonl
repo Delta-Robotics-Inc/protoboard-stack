@@ -1,0 +1,16 @@
+{"file":"netlist","schema":"protoboard.netlist/v1","source":"fixture","units":{"angle":"mdeg","length":"nm"}}
+{"kind":"net","id":"net:+3V3","class":"power","name":"+3V3","pins":["C2.1","C3.1","C4.1","R3.1","R4.1","R7.1","U1.3","U2.5","U3.3"]}
+{"kind":"net","id":"net:BOOT","name":"BOOT","pins":["SW1.1","SW1.2","U1.13"]}
+{"kind":"net","id":"net:CC1","name":"CC1","pins":["J1.A5","R5.1"]}
+{"kind":"net","id":"net:CC2","name":"CC2","pins":["J1.B5","R6.1"]}
+{"kind":"net","id":"net:EN","name":"EN","pins":["C5.1","R7.2","U1.8"]}
+{"kind":"net","id":"net:GND","class":"power","name":"GND","pins":["C1.2","C2.2","C3.2","C4.2","C5.2","D1.2","D2.2","J1.A1","J1.B1","J1.S","R5.2","R6.2","SW1.3","SW1.4","U1.1","U1.2","U1.34","U2.2","U3.4"]}
+{"kind":"net","id":"net:I2C_SCL","name":"I2C_SCL","pins":["R4.2","U1.16","U3.2"]}
+{"kind":"net","id":"net:I2C_SDA","name":"I2C_SDA","pins":["R3.2","U1.15","U3.1"]}
+{"kind":"net","id":"net:LED1","name":"LED1","pins":["R1.1","U1.18"]}
+{"kind":"net","id":"net:LED1_A","name":"LED1_A","pins":["D1.1","R1.2"]}
+{"kind":"net","id":"net:LED2","name":"LED2","pins":["R2.1","U1.19"]}
+{"kind":"net","id":"net:LED2_A","name":"LED2_A","pins":["D2.1","R2.2"]}
+{"kind":"net","id":"net:USB_DN","name":"USB_DN","pins":["J1.A7","U1.26"]}
+{"kind":"net","id":"net:USB_DP","name":"USB_DP","pins":["J1.A6","U1.27"]}
+{"kind":"net","id":"net:VBUS","class":"power","name":"VBUS","pins":["C1.1","J1.A4","J1.B4","U2.1","U2.3"]}

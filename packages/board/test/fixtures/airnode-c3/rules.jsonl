@@ -1,0 +1,12 @@
+{"file":"rules","schema":"protoboard.board/v1","units":{"angle":"mdeg","length":"nm"}}
+{"kind":"netclass","id":"class:power","name":"power","nets":["+3V3","GND","VBUS"]}
+{"kind":"netclass","id":"class:usb","name":"usb","patterns":["USB_*"]}
+{"kind":"rule","id":"rule:floor.clearance","applies":{},"check":"clearance","min":127000,"note":"illustrative fab limit","tier":"floor"}
+{"kind":"rule","id":"rule:floor.edge_clearance","applies":{},"check":"edge_clearance","min":300000,"tier":"floor"}
+{"kind":"rule","id":"rule:floor.track_width","applies":{},"check":"track_width","min":127000,"tier":"floor"}
+{"kind":"rule","id":"rule:floor.via_hole","applies":{},"check":"via_hole","min":300000,"tier":"floor"}
+{"kind":"rule","id":"rule:no_go.via_in_pad_usb","applies":{"classes":["usb"]},"check":"via_in_pad","tier":"no_go"}
+{"kind":"rule","id":"rule:policy.via_under_module","applies":{"region":[{"x":3400000,"y":-1800000},{"x":16600000,"y":-1800000},{"x":16600000,"y":14800000},{"x":3400000,"y":14800000}]},"check":"via_under_footprint","cost":5,"severity":"warning","tier":"policy"}
+{"kind":"rule","id":"rule:target.clearance","applies":{},"check":"clearance","min":200000,"preferred":200000,"tier":"target"}
+{"kind":"rule","id":"rule:target.power_track_width","applies":{"classes":["power"]},"check":"track_width","min":400000,"preferred":500000,"tier":"target"}
+{"kind":"rule","id":"rule:target.track_width","applies":{},"check":"track_width","min":200000,"preferred":250000,"tier":"target"}

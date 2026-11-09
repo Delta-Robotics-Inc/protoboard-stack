@@ -1,0 +1,8 @@
+{"file":"board","schema":"protoboard.board/v1","units":{"angle":"mdeg","length":"nm"}}
+{"kind":"board","id":"board","copper_layers":2,"name":"Airnode C3","origin":"center","thickness":1600000,"workflow":{"order":"board-first"}}
+{"kind":"layer","id":"layer:bottom","copper_weight_oz":1,"name":"bottom","order":3,"thickness":35000,"type":"copper"}
+{"kind":"layer","id":"layer:bottom_mask","name":"bottom_mask","order":4,"thickness":10000,"type":"soldermask"}
+{"kind":"layer","id":"layer:core1","epsilon_r":4.5,"loss_tangent":0.02,"material":"FR4","name":"core1","order":2,"thickness":1510000,"type":"dielectric"}
+{"kind":"layer","id":"layer:top","copper_weight_oz":1,"name":"top","order":1,"thickness":35000,"type":"copper"}
+{"kind":"layer","id":"layer:top_mask","name":"top_mask","order":0,"thickness":10000,"type":"soldermask"}
+{"kind":"outline","id":"outline","outline":[{"x":-19000000,"y":-15000000},{"sweep":90000,"x":19000000,"y":-15000000},{"x":20000000,"y":-14000000},{"sweep":90000,"x":20000000,"y":14000000},{"x":19000000,"y":15000000},{"sweep":90000,"x":-19000000,"y":15000000},{"x":-20000000,"y":14000000},{"sweep":90000,"x":-20000000,"y":-14000000}],"provenance":{"by":"generated","tool":"airnode-c3-fixture"},"source":{"kind":"board"}}

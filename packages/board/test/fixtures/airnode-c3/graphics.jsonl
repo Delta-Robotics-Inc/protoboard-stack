@@ -1,0 +1,3 @@
+{"file":"graphics","schema":"protoboard.board/v1","units":{"angle":"mdeg","length":"nm"}}
+{"kind":"graphic","id":"gfx:f.logo_box","center":{"x":14000000,"y":-11000000},"height":4000000,"layer":"top_silkscreen","provenance":{"by":"hand"},"shape":"rect","stroke_width":150000,"width":8000000}
+{"kind":"text","id":"txt:f.title","height":1200000,"layer":"top_silkscreen","provenance":{"by":"hand"},"stroke_width":150000,"text":"Airnode C3","x":14000000,"y":-11000000}

@@ -1,0 +1,43 @@
+{
+  "name": "@protoboardai/board",
+  "version": "0.2.2",
+  "description": "Protoboard board core: the headless board document, operations, transactions, journal and board service of the PCB editor.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/board"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./fixtures/airnode-c3": "./src/fixtures/airnode-c3.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "zod": "3.25.76"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "pcb",
+    "eda"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

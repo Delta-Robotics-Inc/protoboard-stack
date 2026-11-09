@@ -1,0 +1,14 @@
+{"file":"copper","schema":"protoboard.board/v1","units":{"angle":"mdeg","length":"nm"}}
+{"kind":"track","id":"trk:f.3v3.1","end":{"x":-10950000,"y":-2800000},"layer":"top","net":"+3V3","provenance":{"by":"routed","tool":"fixture-router"},"start":{"x":-10950000,"y":-1900000},"width":400000}
+{"kind":"track","id":"trk:f.3v3.arc","end":{"x":-9950000,"y":-1800000},"layer":"top","net":"+3V3","provenance":{"by":"routed","tool":"fixture-router"},"start":{"x":-10950000,"y":-2800000},"sweep":-90000,"width":400000}
+{"kind":"track","id":"trk:f.i2c_scl.1","end":{"x":9200000,"y":-1100000},"layer":"bottom","net":"I2C_SCL","provenance":{"actor":"agent:fixture","by":"agent"},"start":{"x":-4750000,"y":8600000},"width":200000}
+{"kind":"track","id":"trk:f.i2c_sda.1","end":{"x":-4750000,"y":7500000},"layer":"top","net":"I2C_SDA","provenance":{"actor":"agent:fixture","by":"agent"},"start":{"x":-4750000,"y":9400000},"width":200000}
+{"kind":"track","id":"trk:f.i2c_sda.2","end":{"x":8400000,"y":-1100000},"layer":"top","net":"I2C_SDA","provenance":{"actor":"agent:fixture","by":"agent"},"start":{"x":-4750000,"y":7500000},"width":200000}
+{"kind":"track","id":"trk:f.spare.1","end":{"x":17000000,"y":-12000000},"layer":"bottom","provenance":{"by":"hand"},"start":{"x":14000000,"y":-12000000},"width":300000}
+{"kind":"track","id":"trk:f.usb_dn.1","end":{"x":500000,"y":-7000000},"layer":"top","net":"USB_DN","provenance":{"by":"routed","tool":"fixture-router"},"start":{"x":-9600000,"y":-9500000},"width":250000}
+{"kind":"track","id":"trk:f.usb_dp.1","end":{"x":0,"y":-6500000},"layer":"top","net":"USB_DP","provenance":{"by":"routed","tool":"fixture-router"},"start":{"x":-10400000,"y":-9500000},"width":250000}
+{"kind":"track","id":"trk:f.vbus.1","end":{"x":-12200000,"y":-5600000},"layer":"top","locked":true,"net":"VBUS","provenance":{"by":"hand"},"start":{"x":-12200000,"y":-9500000},"width":500000}
+{"kind":"track","id":"trk:f.vbus.2","end":{"x":-10950000,"y":-4100000},"layer":"top","locked":true,"net":"VBUS","provenance":{"by":"hand"},"start":{"x":-12200000,"y":-5600000},"width":500000}
+{"kind":"via","id":"via:f.gnd.1","from_layer":"top","hole_diameter":300000,"net":"GND","outer_diameter":600000,"provenance":{"by":"routed","tool":"fixture-router"},"to_layer":"bottom","x":-10000000,"y":-5200000}
+{"kind":"via","id":"via:f.gnd.2","from_layer":"top","hole_diameter":300000,"net":"GND","outer_diameter":600000,"provenance":{"by":"routed","tool":"fixture-router"},"to_layer":"bottom","x":-12500000,"y":-1500000}
+{"kind":"via","id":"via:f.gnd.3","from_layer":"top","hole_diameter":300000,"net":"GND","outer_diameter":600000,"provenance":{"by":"generated","tool":"airnode-c3-fixture"},"tented":"both","to_layer":"bottom","x":10000000,"y":5000000}
