@@ -1,0 +1,19 @@
+{
+  "schema": "protoboard.board-style.theme/v1",
+  "id": "neutral",
+  "name": "Conventional",
+  "description": "A plain, conventional board: green mask, white silkscreen, lead-free HASL, every designator that fits, plain text, the name and revision on top with the date. No frames, hazard patterns or marks.",
+  "tokens": {
+    "brand.mode": "neutral",
+    "designator.policy": "all",
+    "fab.finish": "HASL-LF",
+    "fab.mask.color.bottom": "green",
+    "fab.mask.color.top": "green",
+    "frame.style": "none",
+    "frame.title": "plain",
+    "nameplate.date": "full",
+    "nameplate.side": "top",
+    "nameplate.style": "plain",
+    "nameplate.text": "${NAME} rev ${REV}"
+  }
+}

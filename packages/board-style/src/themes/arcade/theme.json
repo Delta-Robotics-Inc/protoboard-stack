@@ -1,0 +1,31 @@
+{
+  "schema": "protoboard.board-style.theme/v1",
+  "id": "arcade",
+  "name": "Arcade",
+  "extends": "neutral",
+  "description": "Playful: purple mask, white silkscreen, ENIG, rounded group frames with plain titles, every designator that fits, a dashed-looking wide stripe on declared antenna keep-outs, text all around the edge, and an easter egg on top.",
+  "tokens": {
+    "brand.mode": "house",
+    "edgeText.items": ["HELLO FROM ${NAME}", "PLAY NICE"],
+    "edgeText.mode": "on",
+    "fab.finish": "ENIG",
+    "fab.mask.color.bottom": "purple",
+    "fab.mask.color.top": "purple",
+    "frame.chamfer": [0.6, 1.5],
+    "frame.style": "round",
+    "frame.title": "plain",
+    "hazard.angle": -45,
+    "hazard.gap": 0.7,
+    "hazard.outline": true,
+    "hazard.stripe": 0.6,
+    "hazard.tag.antennaKeepout": "RADIO ZONE",
+    "hazard.zones": ["antennaKeepout", "hotSurface"],
+    "marks.easterEgg": "placeholder-egg",
+    "marks.side": "top",
+    "nameplate.date": "off",
+    "nameplate.text": "${NAME} v${REV}",
+    "preview.maskHex": "#4F2A85",
+    "type.class.groupTitle": { "height": 1, "width": 1, "stroke": 0.15, "case": "asis", "knockout": false },
+    "type.class.nameplate": { "height": 1.5, "width": 1.5, "stroke": 0.25, "case": "asis", "knockout": false }
+  }
+}

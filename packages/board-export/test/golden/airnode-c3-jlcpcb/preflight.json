@@ -1,0 +1,467 @@
+{
+  "schema": "protoboard.preflight/v1",
+  "board": "Airnode-C3",
+  "profile": "jlcpcb",
+  "verdict": "not-ready",
+  "counts": {
+    "pass": 22,
+    "warn": 5,
+    "fail": 5,
+    "info": 7,
+    "skip": 1
+  },
+  "items": [
+    {
+      "id": "board.stackup",
+      "group": "board",
+      "title": "Stackup: 2 copper layers, 1.6 mm thick",
+      "status": "info",
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "fill.state",
+      "group": "board",
+      "title": "Zone fill: computed now: no fill was at hand",
+      "status": "pass"
+    },
+    {
+      "id": "profile.closed",
+      "group": "board",
+      "title": "Outline closed: one loop, 1199.1 mm2",
+      "status": "pass",
+      "detail": [
+        "1 closed chain of 8 edges; the board has 1 outline and cutout"
+      ],
+      "image": "images/mech/Airnode-C3-outline.dxf.svg"
+    },
+    {
+      "id": "drill.readback",
+      "group": "board",
+      "title": "Drill read-back: 7 holes (4 slots) in 2 tool sizes, positions and sizes equal",
+      "status": "pass",
+      "counts": {
+        "holes": 7,
+        "read": 7,
+        "missing": 0,
+        "unexpected": 0,
+        "plated": 7,
+        "nonPlated": 0
+      },
+      "detail": [
+        "tool sizes: 0.3, 0.6 mm"
+      ],
+      "image": "images/drill-map.svg"
+    },
+    {
+      "id": "drill.registration",
+      "group": "board",
+      "title": "Every plated hole lies inside its pad or via on each layer of its span",
+      "status": "pass",
+      "image": "images/drill-map.svg"
+    },
+    {
+      "id": "fab.size",
+      "group": "board",
+      "title": "Board 40 x 30 mm, within the fab's size range",
+      "status": "pass"
+    },
+    {
+      "id": "gerber.copper",
+      "group": "copper and nets",
+      "title": "Copper read-back: all 107 pads, vias and tracks present once, on the right layers",
+      "status": "pass",
+      "counts": {
+        "expected": 107,
+        "matched": 107,
+        "missing": 0,
+        "duplicated": 0,
+        "unexpected": 0
+      },
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "gerber.fill",
+      "group": "copper and nets",
+      "title": "Zone fill drawn once as regions: area equal to the computed fill on every layer",
+      "status": "pass",
+      "detail": [
+        "fab/files/Airnode-C3-B_Cu.gbl: 1 regions (fill has 1), area 1046.521 mm2 (fill 1046.521 mm2)"
+      ],
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "nets.attributes",
+      "group": "copper and nets",
+      "title": "CAD netlist in the Gerbers: 91 pad flashes carry the board's net (.N) and pin (.P)",
+      "status": "pass",
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "netlist.ipc356",
+      "group": "copper and nets",
+      "title": "IPC-D-356 netlist: 90 test records, 15 nets, read back equal",
+      "status": "pass",
+      "image": "images/netlist/Airnode-C3.ipc356.svg"
+    },
+    {
+      "id": "board.unconnected",
+      "group": "copper and nets",
+      "title": "42 unconnected items on 15 nets: I2C_SDA, LED1, GND, USB_DN, +3V3, LED1_A, ...",
+      "status": "fail",
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "board.errors",
+      "group": "copper and nets",
+      "title": "Board rule check: 11 errors (clearance 1, edge_clearance 2, short 8)",
+      "status": "fail",
+      "detail": [
+        "Clearance 0.0228 mm between pad:mcu/module:11 (no net) and trk:f.i2c_sda.2 (net I2C_SDA) on top is below 0.1270 mm (rule:floor.clearance, floor).",
+        "pad:usb/connector:S~3 (net GND) on top crosses the board edge (outline); the limit is 0.3000 mm (rule:floor.edge_clearance, floor).",
+        "pad:usb/connector:S~4 (net GND) on top crosses the board edge (outline); the limit is 0.3000 mm (rule:floor.edge_clearance, floor).",
+        "pad:usb/connector:B4 and trk:f.usb_dn.1 touch on top at (-7.550, -8.993) mm, joining nets USB_DN and VBUS.",
+        "pad:usb/connector:B4 and trk:f.usb_dp.1 touch on top at (-8.050, -8.900) mm, joining nets USB_DP and VBUS.",
+        "pad:usb/connector:B1 and trk:f.usb_dn.1 touch on top at (-7.176, -8.900) mm, joining nets GND and USB_DN.",
+        "pad:usb/connector:B5 and trk:f.usb_dn.1 touch on top at (-8.550, -9.240) mm, joining nets CC2 and USB_DN.",
+        "pad:usb/connector:A7 and trk:f.usb_dp.1 touch on top at (-9.350, -9.197) mm, joining nets USB_DN and USB_DP.",
+        "pad:usb/connector:B5 and trk:f.usb_dp.1 touch on top at (-8.550, -8.966) mm, joining nets CC2 and USB_DP.",
+        "trk:f.usb_dn.1 and trk:f.usb_dp.1 touch on top at (-9.635, -9.380) mm, joining nets USB_DN and USB_DP."
+      ],
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "board.warnings",
+      "group": "copper and nets",
+      "title": "Board rule check: 16 warnings (clearance 2, dangling 8, silk_to_pad 3, unassigned_copper 2, via_under_footprint 1)",
+      "status": "warn",
+      "detail": [
+        "Clearance 0.1811 mm between pad:mcu/c_en:1 (net EN) and trk:f.usb_dp.1 (net USB_DP) on top is below 0.2000 mm (rule:target.clearance, target).",
+        "Clearance 0.1716 mm between pad:usb/connector:B1 (net GND) and trk:f.usb_dp.1 (net USB_DP) on top is below 0.2000 mm (rule:target.clearance, target).",
+        "Via via:f.gnd.1 (net GND) at (-10.000, -5.200) mm meets other copper on 1 of its layers.",
+        "Track end of trk:f.usb_dp.1 (net USB_DP) at (0.000, -6.500) mm on top touches no other copper.",
+        "Track end of trk:f.usb_dn.1 (net USB_DN) at (0.500, -7.000) mm on top touches no other copper.",
+        "Track end of trk:f.3v3.arc (net +3V3) at (-9.950, -1.800) mm on top touches no other copper.",
+        "Track end of trk:f.spare.1 (no net) at (17.000, -12.000) mm on bottom touches no other copper.",
+        "Track end of trk:f.i2c_scl.1 (net I2C_SCL) at (-4.750, 8.600) mm on bottom touches no other copper.",
+        "Track end of trk:f.i2c_scl.1 (net I2C_SCL) at (9.200, -1.100) mm on bottom touches no other copper.",
+        "Track end of trk:f.spare.1 (no net) at (14.000, -12.000) mm on bottom touches no other copper."
+      ],
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "board.caveats",
+      "group": "copper and nets",
+      "title": "What the board check did not cover",
+      "status": "info",
+      "detail": [
+        "via_diameter not checked: no enabled via_diameter rule on the board",
+        "annular_ring not checked: no enabled annular_ring rule on the board",
+        "hole_to_hole not checked: no enabled hole_to_hole rule on the board",
+        "hole_clearance not checked: no enabled hole_clearance rule on the board"
+      ],
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "mask.web",
+      "group": "silk and mask",
+      "title": "Mask web at least 0.1 mm (green mask) between every pair of openings",
+      "status": "pass",
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "silk.size",
+      "group": "silk and mask",
+      "title": "Silkscreen: 58 strokes under 0.15 mm (narrowest 0.12 mm), 19 texts under 1 mm",
+      "status": "warn",
+      "detail": [
+        "C3 ref 0.8 mm",
+        "C5 ref 0.8 mm",
+        "U1 ref 0.8 mm",
+        "R7 ref 0.8 mm",
+        "C1 ref 0.8 mm",
+        "C2 ref 0.8 mm",
+        "U2 ref 0.8 mm",
+        "C4 ref 0.8 mm",
+        "U3 ref 0.8 mm",
+        "R4 ref 0.8 mm",
+        "R3 ref 0.8 mm",
+        "D1 ref 0.8 mm",
+        "D2 ref 0.8 mm",
+        "R1 ref 0.8 mm",
+        "R2 ref 0.8 mm",
+        "SW1 ref 0.8 mm",
+        "J1 ref 0.8 mm",
+        "R5 ref 0.8 mm",
+        "R6 ref 0.8 mm"
+      ],
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "bom.supplier",
+      "group": "parts and BOM",
+      "title": "13 BOM lines without an LCSC part number: C1, C2, C3, C4, C5, D1, R1, R2, R3, R4, R5, R6, ...",
+      "status": "fail",
+      "detail": [
+        "line 1 (C1,C2, 1 uF): no supplier part number; not guessed",
+        "line 2 (C3, 10 uF): no supplier part number; not guessed",
+        "line 3 (C4, 100 nF): no supplier part number; not guessed",
+        "line 4 (C5, 1 uF): no supplier part number; not guessed",
+        "line 5 (D1, green): no supplier part number; not guessed",
+        "line 8 (R1,R2, 1 k): no supplier part number; not guessed",
+        "line 9 (R3,R4, 4.7 k): no supplier part number; not guessed",
+        "line 10 (R5,R6, 5.1 k): no supplier part number; not guessed",
+        "line 11 (R7, 10 k): no supplier part number; not guessed",
+        "line 12 (SW1, BOOT): no supplier part number; not guessed",
+        "line 13 (U1, ESP32-C3 module): no supplier part number; not guessed",
+        "line 14 (U2, LDO 3.3 V): no supplier part number; not guessed",
+        "line 15 (U3, I2C humidity sensor): no supplier part number; not guessed"
+      ],
+      "image": "images/assembly/Airnode-C3-bom-jlcpcb.csv.svg"
+    },
+    {
+      "id": "bom.consigned",
+      "group": "parts and BOM",
+      "title": "1 consigned line (supplied by you): J1",
+      "status": "info",
+      "image": "images/assembly/Airnode-C3-bom-jlcpcb.csv.svg"
+    },
+    {
+      "id": "bom.dnp",
+      "group": "parts and BOM",
+      "title": "1 parts not placed (DNP): D2",
+      "status": "info",
+      "image": "images/assembly/Airnode-C3-bom-jlcpcb.csv.svg"
+    },
+    {
+      "id": "bom.designators",
+      "group": "parts and BOM",
+      "title": "BOM and placement designators agree (14 lines)",
+      "status": "pass",
+      "image": "images/assembly/Airnode-C3-bom-jlcpcb.csv.svg"
+    },
+    {
+      "id": "board.origin",
+      "group": "placement and files",
+      "title": "Origin of every file: center, board point (0, 0) mm; +Y up, seen from the top",
+      "status": "info",
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "gerber.parse",
+      "group": "placement and files",
+      "title": "Gerber read-back: 9 files parse, file functions and 4.6 mm format as written",
+      "status": "pass",
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "layers.aligned",
+      "group": "placement and files",
+      "title": "All layers share the profile's origin and lie within the outline",
+      "status": "pass",
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "placement.rotations",
+      "group": "placement and files",
+      "title": "18 parts with rotations not verified for JLCPCB",
+      "status": "warn",
+      "detail": [
+        "check in the placement preview: C1, C2, C3, C4, C5, D1, J1, R1, R2, R3, R4, R5, R6, R7, SW1, U1, U2, U3"
+      ],
+      "image": "images/assembly/Airnode-C3-cpl-jlcpcb.csv.svg"
+    },
+    {
+      "id": "placement.rows",
+      "group": "placement and files",
+      "title": "Placement file: 18 rows, one per placed footprint, positions equal to the board",
+      "status": "pass",
+      "image": "images/assembly/Airnode-C3-cpl-jlcpcb.csv.svg"
+    },
+    {
+      "id": "placement.centroid",
+      "group": "placement and files",
+      "title": "Every placement point lies within its part's pads",
+      "status": "pass",
+      "image": "images/assembly/Airnode-C3-cpl-jlcpcb.csv.svg"
+    },
+    {
+      "id": "dxf.readback",
+      "group": "placement and files",
+      "title": "DXF read back: outline 1199.1 mm2 and 0 cutouts, as on the board",
+      "status": "pass",
+      "image": "images/mech/Airnode-C3-outline.dxf.svg"
+    },
+    {
+      "id": "profile.note.0",
+      "group": "placement and files",
+      "title": "JLCPCB places each part from its CPL row and lets you check every rotation in its placement preview before paying; check the parts flagged here there.",
+      "status": "info",
+      "image": "images/mech/Airnode-C3-outline.dxf.svg"
+    },
+    {
+      "id": "profile.note.1",
+      "group": "placement and files",
+      "title": "X2 attributes are written in the comment form (G04 #@! ...), as KiCad writes them by default; JLCPCB's guide is based on that output.",
+      "status": "info",
+      "image": "images/mech/Airnode-C3-outline.dxf.svg"
+    },
+    {
+      "id": "fab.track_width.1-2",
+      "group": "fab capability",
+      "title": "min trace width 0.10 mm (1 oz, 1-2 layers): met",
+      "status": "pass",
+      "counts": {
+        "findings": 0
+      },
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "fab.clearance.1-2",
+      "group": "fab capability",
+      "title": "min spacing 0.10 mm (1 oz, 1-2 layers): 1 finding, worst 0.023 mm",
+      "status": "fail",
+      "detail": [
+        "Clearance 0.0228 mm between pad:mcu/module:11 (no net) and trk:f.i2c_sda.2 (net I2C_SDA) on top is below 0.1000 mm (rule:fab.jlcpcb.clearance.1-2, floor)."
+      ],
+      "counts": {
+        "findings": 1
+      },
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "fab.via_diameter.via_diameter",
+      "group": "fab capability",
+      "title": "min via diameter 0.25 mm (0.2 mm only for boards up to 1 mm thick with ENIG or OSP): met",
+      "status": "pass",
+      "counts": {
+        "findings": 0
+      },
+      "image": "images/drill-map.svg"
+    },
+    {
+      "id": "fab.hole_size.hole_size",
+      "group": "fab capability",
+      "title": "min drill 0.15 mm, vias and plated holes (0.1 mm only for thin boards with ENIG or OSP): met",
+      "status": "pass",
+      "counts": {
+        "findings": 0
+      },
+      "image": "images/drill-map.svg"
+    },
+    {
+      "id": "fab.hole_to_hole.hole_to_hole",
+      "group": "fab capability",
+      "title": "via hole to hole 0.2 mm: met",
+      "status": "pass",
+      "counts": {
+        "findings": 0
+      },
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "fab.hole_to_hole.pad_hole_to_hole",
+      "group": "fab capability",
+      "title": "pad hole to hole 0.45 mm: met",
+      "status": "pass",
+      "counts": {
+        "findings": 0
+      },
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "fab.edge_clearance.edge_clearance",
+      "group": "fab capability",
+      "title": "routed board edge to copper 0.2 mm: 2 findings, worst 0 mm",
+      "status": "fail",
+      "detail": [
+        "pad:usb/connector:S~3 (net GND) on top crosses the board edge (outline); the limit is 0.2000 mm (rule:fab.jlcpcb.edge_clearance, floor).",
+        "pad:usb/connector:S~4 (net GND) on top crosses the board edge (outline); the limit is 0.2000 mm (rule:fab.jlcpcb.edge_clearance, floor)."
+      ],
+      "counts": {
+        "findings": 2
+      },
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "fab.silk_to_pad.silk_to_pad",
+      "group": "fab capability",
+      "title": "pad to silkscreen 0.15 mm (JLCPCB clips silkscreen that is nearer): 5 findings, worst 0 mm",
+      "status": "warn",
+      "detail": [
+        "Silkscreen of fp:sensor/ic on top_silkscreen is 0.0300 mm from 2 pads (pad:sensor/c_dec:1, pad:sensor/c_dec:2), below 0.1500 mm (text checked as its box) (rule:fab.jlcpcb.silk_to_pad, target).",
+        "Silkscreen of fp:power/c_out on top_silkscreen is 0.0300 mm from 2 pads (pad:power/ldo:3, pad:power/ldo:4), below 0.1500 mm (text checked as its box) (rule:fab.jlcpcb.silk_to_pad, target).",
+        "Silkscreen of fp:usb/r_cc2 on top_silkscreen is 0.0000 mm from 2 pads (pad:usb/r_cc1:1, pad:usb/r_cc1:2), below 0.1500 mm (text checked as its box) (rule:fab.jlcpcb.silk_to_pad, target).",
+        "Silkscreen of fp:sensor/r_scl on top_silkscreen is 0.0000 mm from 2 pads (pad:sensor/r_sda:1, pad:sensor/r_sda:2), below 0.1500 mm (text checked as its box) (rule:fab.jlcpcb.silk_to_pad, target).",
+        "Silkscreen of fp:mcu/module on top_silkscreen is 0.0000 mm from 22 pads (pad:mcu/module:1, pad:mcu/module:10, pad:mcu/module:11, pad:mcu/module:2, pad:mcu/module:23 and 17 more), below 0.1500 mm (rule:fab.jlcpcb.silk_to_pad, target)."
+      ],
+      "counts": {
+        "findings": 5
+      },
+      "image": "images/top-composite.svg"
+    },
+    {
+      "id": "fab.holes",
+      "group": "fab capability",
+      "title": "Non-plated holes and slots within the fab's minimums",
+      "status": "pass",
+      "image": "images/drill-map.svg"
+    },
+    {
+      "id": "fab.pad_ring",
+      "group": "fab capability",
+      "title": "4 plated pads under the recommended 0.25 mm ring (above the 0.18 mm minimum)",
+      "status": "warn",
+      "detail": [
+        "J1.S: ring 0.2 mm",
+        "J1.S: ring 0.2 mm",
+        "J1.S: ring 0.2 mm",
+        "J1.S: ring 0.2 mm"
+      ],
+      "image": "images/drill-map.svg"
+    },
+    {
+      "id": "kicad.cross",
+      "group": "cross-check",
+      "title": "KiCad cross-check: needs KiCad: the board document has no KiCad writer yet, and no KiCad board file it was imported from was named",
+      "status": "skip"
+    }
+  ],
+  "costDrivers": [
+    {
+      "id": "extended",
+      "title": "Extended part types",
+      "value": "1 (J1); 13 lines with no library class in the part data",
+      "implication": "each Extended part type adds a loading fee per order at JLCPCB (see its fee schedule; not read live here); Basic parts do not"
+    },
+    {
+      "id": "tht",
+      "title": "Through-hole parts",
+      "value": "1 (J1)",
+      "implication": "a hand or wave soldering step on top of SMT assembly"
+    },
+    {
+      "id": "mask",
+      "title": "Green solder mask",
+      "value": "the fab's default color",
+      "implication": "minimum mask web 0.1 mm at this color"
+    },
+    {
+      "id": "via-in-pad",
+      "title": "Vias in pads",
+      "value": "1",
+      "implication": "via-in-pad needs filled and capped vias, an extra fabrication process"
+    },
+    {
+      "id": "size",
+      "title": "Board size class",
+      "value": "40 x 30 mm, within 100 x 100 mm",
+      "implication": "fabs price by area and panel use; the quote decides"
+    },
+    {
+      "id": "layers",
+      "title": "Copper layers",
+      "value": "2",
+      "implication": "a standard two-layer process"
+    }
+  ]
+}

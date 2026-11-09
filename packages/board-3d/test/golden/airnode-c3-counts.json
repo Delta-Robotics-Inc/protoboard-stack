@@ -1,0 +1,32 @@
+{
+  "full": {
+    "bodies": 20,
+    "drilledHoles": 7,
+    "slabs": []
+  },
+  "mechanical": {
+    "bodies": 20,
+    "drilledHoles": 4,
+    "slabs": []
+  },
+  "envelope": {
+    "bodies": 2,
+    "drilledHoles": 4,
+    "slabs": [
+      "top 3.2599999999999993"
+    ]
+  },
+  "board": {
+    "bodies": 1,
+    "drilledHoles": 7,
+    "slabs": []
+  },
+  "render": {
+    "bodies": 20,
+    "layers": {
+      "copper top": 98,
+      "copper bottom": 9,
+      "silkscreen top": 301
+    }
+  }
+}

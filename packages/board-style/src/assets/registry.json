@@ -1,0 +1,57 @@
+{
+  "schema": "protoboard.board-style.assets/v1",
+  "assets": [
+    {
+      "id": "placeholder-egg",
+      "kind": "easterEgg",
+      "file": "placeholder-egg.json",
+      "sha256": "9d65b6fc720e014499593f4ccfc5ac5fc0bcab411f3f288e33bb2d605f3bd03f",
+      "source": "drawn for this package as a placeholder: register your own mark in your user or project layer",
+      "license": "Apache-2.0",
+      "status": "placeholder",
+      "traced": false,
+      "minHeight": 1.5,
+      "maxHeight": 8.0,
+      "minFeature": 0.2
+    },
+    {
+      "id": "placeholder-logo",
+      "kind": "company",
+      "file": "placeholder-logo.json",
+      "sha256": "d0312a370370282160428d369d922b8f9c3488a6103c6a4d35a5d00ec5927999",
+      "source": "drawn for this package as a placeholder: register your own mark in your user or project layer",
+      "license": "Apache-2.0",
+      "status": "placeholder",
+      "traced": false,
+      "minHeight": 2.0,
+      "maxHeight": 8.0,
+      "minFeature": 0.12
+    },
+    {
+      "id": "placeholder-maker",
+      "kind": "maker",
+      "file": "placeholder-maker.json",
+      "sha256": "26a3aab0d68098e45cfdb03595f5b8349613024409d474d548241c3b6f9db6dd",
+      "source": "drawn for this package as a placeholder: register your own mark in your user or project layer",
+      "license": "Apache-2.0",
+      "status": "placeholder",
+      "traced": false,
+      "minHeight": 2.0,
+      "maxHeight": 10.0,
+      "minFeature": 0.15
+    },
+    {
+      "id": "placeholder-oshw",
+      "kind": "oshw",
+      "file": "placeholder-oshw.json",
+      "sha256": "5178473f9983870049e14ef4d07cf51de4d509931785d9dd58e1524120d61e8e",
+      "source": "drawn for this package as a placeholder: register your own mark in your user or project layer",
+      "license": "Apache-2.0",
+      "status": "placeholder",
+      "traced": false,
+      "minHeight": 3.0,
+      "maxHeight": 10.0,
+      "minFeature": 0.12
+    }
+  ]
+}

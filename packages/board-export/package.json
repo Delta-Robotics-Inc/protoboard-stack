@@ -1,0 +1,49 @@
+{
+  "name": "@protoboardai/board-export",
+  "version": "0.2.2",
+  "description": "Protoboard board export: manufacturing outputs from the board document (Gerber X2, Excellon drill, IPC-D-356, BOM and placement per fab profile, DXF), each paired with an image, validated by reading them back, with a pre-flight report.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/board-export"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@protoboardai/board": "^0.2.2",
+    "@protoboardai/board-checks": "^0.2.2",
+    "@protoboardai/board-fill": "^0.2.2",
+    "@protoboardai/board-import": "^0.2.2",
+    "@protoboardai/board-scene": "^0.2.2",
+    "zod": "3.25.76"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "pcb",
+    "eda",
+    "gerber",
+    "manufacturing"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

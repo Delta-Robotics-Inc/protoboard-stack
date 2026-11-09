@@ -1,0 +1,16 @@
+Item,Quantity,Designators,Value,Footprint,Manufacturer,MPN,Supplier,Supplier Part,Library Class,Process,Side,DNP,Consigned,Hand,Board,Scope,Function,Flags
+1,2,"C1,C2",1 uF,C_0603,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+2,1,C3,10 uF,C_0805,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+3,1,C4,100 nF,C_0402,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+4,1,C5,1 uF,C_0402,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+5,1,D1,green,LED_0603,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+6,1,D2,amber,LED_0603,,,,,,smt,Top,yes,,,Airnode-C3,pcb,,
+7,1,J1,USB-C,USB-C-receptacle,,,,,extended,mixed,Top,,yes,,Airnode-C3,consigned,,
+8,2,"R1,R2",1 k,R_0402,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+9,2,"R3,R4",4.7 k,R_0402,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+10,2,"R5,R6",5.1 k,R_0402,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+11,1,R7,10 k,R_0402,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+12,1,SW1,BOOT,SW-tact-4pad,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+13,1,U1,ESP32-C3 module,ESP32-C3-module,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+14,1,U2,LDO 3.3 V,SOT-23-5,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number
+15,1,U3,I2C humidity sensor,DFN-4-1.5mm,,,,,,smt,Top,,,,Airnode-C3,pcb,,no LCSC part number

@@ -1,0 +1,366 @@
+{
+  "schema": "protoboard.fab-package/v1",
+  "generator": {
+    "vendor": "Protoboard",
+    "name": "board-export",
+    "version": "0.2.2"
+  },
+  "board": {
+    "name": "Airnode C3",
+    "fileStem": "Airnode-C3",
+    "revision": null,
+    "documentHash": "d009e4d8eda44362d2f0262e12ca5728bebaa85d757168febb520bdf4a07b549",
+    "copperLayers": 2,
+    "sizeMm": [
+      "40",
+      "30"
+    ]
+  },
+  "profile": {
+    "id": "jlcpcb",
+    "title": "JLCPCB (PCB and PCBA)",
+    "sources": [
+      {
+        "title": "JLCPCB PCB capabilities (rigid)",
+        "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+        "checked": "2026-11-09",
+        "note": "trace/space, via, drill, annular ring, slots, hole spacing, edge clearance, mask bridge by color, silkscreen, board size"
+      },
+      {
+        "title": "JLCPCB: generate the BOM and centroid file from KiCad",
+        "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+        "checked": "2026-11-08",
+        "note": "BOM columns Comment, Designator, Footprint, LCSC Part #; CPL columns Designator, Mid X, Mid Y, Layer, Rotation"
+      },
+      {
+        "title": "JLCPCB: generate Gerber and drill files in KiCad 8",
+        "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+        "checked": "2026-11-08",
+        "note": "Protel extensions, subtract mask from silkscreen, alternate drill mode for oval holes (G85), absolute origin, millimeters"
+      }
+    ]
+  },
+  "units": {
+    "files": "mm",
+    "coordinates": "file = board - origin, +Y up, seen from the top"
+  },
+  "origin": {
+    "mode": "center",
+    "boardPointNm": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "fill": {
+    "source": "computed",
+    "current": true,
+    "note": "computed now: no fill was at hand"
+  },
+  "settings": {
+    "x2": "comments",
+    "clipSilkToMask": true,
+    "maskColor": "green",
+    "maskExpansionNm": 0,
+    "pasteExpansionNm": 0,
+    "tentVias": true,
+    "netAttributes": true,
+    "drill": {
+      "split": "separate",
+      "slotMode": "g85",
+      "names": {
+        "pth": "{board}-PTH.drl",
+        "npth": "{board}-NPTH.drl",
+        "mixed": "{board}.drl",
+        "span": "{board}-PTH-{i}-{j}.drl"
+      }
+    },
+    "rotationConvention": "kicad",
+    "userRotations": 0,
+    "creationDate": null
+  },
+  "upload": null,
+  "files": [
+    {
+      "path": "fab/files/Airnode-C3-F_Cu.gtl",
+      "role": "gerber Copper,L1,Top",
+      "sha256": "9645880e7002e84641936c5a69b1f904c05a3ef42f6ad46eec82ebf7ff756dab",
+      "bytes": 7433,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-F_Cu.gtl.svg",
+        "svgSha256": "75c093e297f393671b25b8c41e5b2b3fa24aa082ca85d298b6a6f9d7dea613a7"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-B_Cu.gbl",
+      "role": "gerber Copper,L2,Bot",
+      "sha256": "57bfb15db662fd31b4c22f88fc3d5fa7e8fecbc976adae8aa03b5ddcb5032516",
+      "bytes": 6098,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-B_Cu.gbl.svg",
+        "svgSha256": "8ac8439e488271178f94112defc1983bacfab3c4f7759818750dc8dc63ee0b57"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-F_Mask.gts",
+      "role": "gerber Soldermask,Top",
+      "sha256": "9ae25fab12a258d028a68671f4cf01dbe23ade852ca1d9fcb6a1e45ca028af8e",
+      "bytes": 2907,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-F_Mask.gts.svg",
+        "svgSha256": "8a4880ab084abe9d89584f5839f3dc691b46fe11b998995d43c106ab2df43f08"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-F_Paste.gtp",
+      "role": "gerber Paste,Top",
+      "sha256": "4ecf2e1f913c7a58e0efef7e0d0e085841ec77e1437aeb3b4f67bbe8784acb6c",
+      "bytes": 2787,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-F_Paste.gtp.svg",
+        "svgSha256": "945c33be6e8b24c4063d04aefd42526fca12367c292f136cd1bd44580b3e3e22"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-F_Silkscreen.gto",
+      "role": "gerber Legend,Top",
+      "sha256": "330c937ff803198a05071e9c832c7694b8f33b2d7d2ead26b1bce72c158e7e92",
+      "bytes": 11653,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-F_Silkscreen.gto.svg",
+        "svgSha256": "4674eaab6616a19856b4bffeb9eeb5b25b9ac3cbd4f497ca8add60d55738ac54"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-B_Mask.gbs",
+      "role": "gerber Soldermask,Bot",
+      "sha256": "b09f3b12177da5132b18dadb6dc065cc123755ef74d395f50552c702a0cff5c0",
+      "bytes": 449,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-B_Mask.gbs.svg",
+        "svgSha256": "90946afe603ae173ca54c3a5f15544719cb92a1e5fbdc66f5f3062776319d744"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-B_Paste.gbp",
+      "role": "gerber Paste,Bot",
+      "sha256": "2ef7e9f50c6c3662d34b5d8a25c11220fdf5d879fcb81b178089c099e0df7a7d",
+      "bytes": 300,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-B_Paste.gbp.svg",
+        "svgSha256": "19743c67e0d9b7d7d4dcb26f7fd5ff83e483bc50574985b201a287d28bd500ae"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-B_Silkscreen.gbo",
+      "role": "gerber Legend,Bot",
+      "sha256": "b2136fe9d8d722c2253c1f445d11cc357d7907847fc89209579cca87716adbe0",
+      "bytes": 301,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-B_Silkscreen.gbo.svg",
+        "svgSha256": "9cbf69a28919b4c44b1684c5e9f12a4945170304b545b38e0585b1f61d3ff89e"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-Edge_Cuts.gm1",
+      "role": "gerber Profile,NP",
+      "sha256": "a4c95982dabff24485e71eeec3649fcf46f05c6a1b8c57d8cfb5447022de7ed6",
+      "bytes": 682,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-Edge_Cuts.gm1.svg",
+        "svgSha256": "f2628e40a9e6fd307e1bc4711eb0b2b8d1a8e480e7a893c3abd2a0668a10f876"
+      }
+    },
+    {
+      "path": "fab/files/Airnode-C3-PTH.drl",
+      "role": "drill Plated,1,2,PTH",
+      "sha256": "716a4f9bc3c858104a433d9c00e3684e2a6a11f25d418fac74e211c667c66836",
+      "bytes": 459,
+      "image": {
+        "svg": "images/fab/files/Airnode-C3-PTH.drl.svg",
+        "svgSha256": "e38479636296496e537b43785f2065d5f9fe83b988f456bcf2bd4d19add2ecd6"
+      }
+    },
+    {
+      "path": "assembly/Airnode-C3-bom-jlcpcb.csv",
+      "role": "BOM (jlcpcb format)",
+      "sha256": "80f5c1f5d61d043373e9d00fdb892dd0a663110520e08192f75c59a13cfa8711",
+      "bytes": 369,
+      "image": {
+        "svg": "images/assembly/Airnode-C3-bom-jlcpcb.csv.svg",
+        "svgSha256": "68edfdcdc00290e107a573a6009a6444e941152eaaee9252042cbbd26c075b48"
+      }
+    },
+    {
+      "path": "assembly/Airnode-C3-bom.csv",
+      "role": "BOM (generic, designator-grouped)",
+      "sha256": "352ad9adac10c8ec03b0e728389ec737f1308ee4173f904401ff637daebd6b8e",
+      "bytes": 1305,
+      "image": {
+        "svg": "images/assembly/Airnode-C3-bom.csv.svg",
+        "svgSha256": "4be05dded934385975b94910bea98924bf10f6ecbd1cc66ec469bee714abdb9b"
+      }
+    },
+    {
+      "path": "data/Airnode-C3-bom.json",
+      "role": "BOM data (JSON)",
+      "sha256": "b0478b5b2820568742ead3d5d612e6b0b176056923eb11e720334d3f54582661",
+      "bytes": 5675
+    },
+    {
+      "path": "assembly/Airnode-C3-cpl-jlcpcb.csv",
+      "role": "placement (jlcpcb format)",
+      "sha256": "a807720e052ec8ccec9c0eb28d98f42fa3415db22d67d3c2a704bee5b22e65a7",
+      "bytes": 563,
+      "image": {
+        "svg": "images/assembly/Airnode-C3-cpl-jlcpcb.csv.svg",
+        "svgSha256": "66f97886329c6aaaa528807b50f9018f70929d4cbddd62094026d0d0e4b51c25"
+      }
+    },
+    {
+      "path": "assembly/Airnode-C3-pnp.csv",
+      "role": "placement (generic)",
+      "sha256": "5ece4ebe933fa36f8b00e51555685c1e224b101060c7475c282a5ddca0abcbab",
+      "bytes": 884,
+      "image": {
+        "svg": "images/assembly/Airnode-C3-pnp.csv.svg",
+        "svgSha256": "b92bd4a5e13260c7fd58c8f4a71a2bb0f4357ec5ba5d0d6f2fa82f16e6b6f434"
+      }
+    },
+    {
+      "path": "data/Airnode-C3-placements.json",
+      "role": "placement data (JSON)",
+      "sha256": "b9723f1f98837202e337a354dd82d50a4f11932bce3a2ad26be645d8ff866fc5",
+      "bytes": 10396
+    },
+    {
+      "path": "netlist/Airnode-C3.ipc356",
+      "role": "IPC-D-356A netlist (bare-board test)",
+      "sha256": "cb2a1381700d886fbbf4fd021b287cbe521004d28c00b074188745742ec1296f",
+      "bytes": 6839,
+      "image": {
+        "svg": "images/netlist/Airnode-C3.ipc356.svg",
+        "svgSha256": "833ce8f4cedf1289257943d7c644e5aedd1189bc903c658e085f1afae5349cd9"
+      }
+    },
+    {
+      "path": "mech/Airnode-C3-outline.dxf",
+      "role": "DXF outline for mechanical CAD",
+      "sha256": "62bc9b9c6f47140225b8a9a5f8ac10132d46bd4eda9445207035635c7ca7aa86",
+      "bytes": 902,
+      "image": {
+        "svg": "images/mech/Airnode-C3-outline.dxf.svg",
+        "svgSha256": "fb4e4488955bf71d9ce0b2560b915e8b2ebe3190f00878ec3771421eaa02f7f0"
+      }
+    }
+  ],
+  "images": [
+    {
+      "svg": "images/top-composite.svg",
+      "svgSha256": "1f419abc2c2e447cdd4383601ec10b1535c73f92f1c97c990b8cb876ab03131a"
+    },
+    {
+      "svg": "images/bottom-composite.svg",
+      "svgSha256": "cea0c833bd745394d92623290845565ad4d8836076a466cbb9ebf33e97f46ac1"
+    },
+    {
+      "svg": "images/drill-map.svg",
+      "svgSha256": "47e98c6576d33df2e5adc2927b70f6ce1bb5a85e324dcc5908cfc678d0d327d4"
+    },
+    {
+      "svg": "images/preflight.svg",
+      "svgSha256": "31dd3085b926d216cb1c0d9a4a0a6f9a1a62f03c0ab65c0f56fb696ed11b9c82"
+    }
+  ],
+  "written": [
+    "images/fab/files/Airnode-C3-F_Cu.gtl.svg",
+    "fab/files/Airnode-C3-F_Cu.gtl",
+    "images/fab/files/Airnode-C3-B_Cu.gbl.svg",
+    "fab/files/Airnode-C3-B_Cu.gbl",
+    "images/fab/files/Airnode-C3-F_Mask.gts.svg",
+    "fab/files/Airnode-C3-F_Mask.gts",
+    "images/fab/files/Airnode-C3-F_Paste.gtp.svg",
+    "fab/files/Airnode-C3-F_Paste.gtp",
+    "images/fab/files/Airnode-C3-F_Silkscreen.gto.svg",
+    "fab/files/Airnode-C3-F_Silkscreen.gto",
+    "images/fab/files/Airnode-C3-B_Mask.gbs.svg",
+    "fab/files/Airnode-C3-B_Mask.gbs",
+    "images/fab/files/Airnode-C3-B_Paste.gbp.svg",
+    "fab/files/Airnode-C3-B_Paste.gbp",
+    "images/fab/files/Airnode-C3-B_Silkscreen.gbo.svg",
+    "fab/files/Airnode-C3-B_Silkscreen.gbo",
+    "images/fab/files/Airnode-C3-Edge_Cuts.gm1.svg",
+    "fab/files/Airnode-C3-Edge_Cuts.gm1",
+    "images/top-composite.svg",
+    "images/bottom-composite.svg",
+    "images/fab/files/Airnode-C3-PTH.drl.svg",
+    "fab/files/Airnode-C3-PTH.drl",
+    "images/drill-map.svg",
+    "images/assembly/Airnode-C3-bom-jlcpcb.csv.svg",
+    "assembly/Airnode-C3-bom-jlcpcb.csv",
+    "images/assembly/Airnode-C3-bom.csv.svg",
+    "assembly/Airnode-C3-bom.csv",
+    "data/Airnode-C3-bom.json",
+    "images/assembly/Airnode-C3-cpl-jlcpcb.csv.svg",
+    "assembly/Airnode-C3-cpl-jlcpcb.csv",
+    "images/assembly/Airnode-C3-pnp.csv.svg",
+    "assembly/Airnode-C3-pnp.csv",
+    "data/Airnode-C3-placements.json",
+    "images/netlist/Airnode-C3.ipc356.svg",
+    "netlist/Airnode-C3.ipc356",
+    "images/mech/Airnode-C3-outline.dxf.svg",
+    "mech/Airnode-C3-outline.dxf",
+    "images/preflight.svg",
+    "preflight.json",
+    "summary.md",
+    "manifest.json"
+  ],
+  "preflight": {
+    "verdict": "not-ready",
+    "counts": {
+      "pass": 22,
+      "warn": 5,
+      "fail": 5,
+      "info": 7,
+      "skip": 1
+    },
+    "file": "preflight.json"
+  },
+  "costDrivers": [
+    {
+      "id": "extended",
+      "title": "Extended part types",
+      "value": "1 (J1); 13 lines with no library class in the part data",
+      "implication": "each Extended part type adds a loading fee per order at JLCPCB (see its fee schedule; not read live here); Basic parts do not"
+    },
+    {
+      "id": "tht",
+      "title": "Through-hole parts",
+      "value": "1 (J1)",
+      "implication": "a hand or wave soldering step on top of SMT assembly"
+    },
+    {
+      "id": "mask",
+      "title": "Green solder mask",
+      "value": "the fab's default color",
+      "implication": "minimum mask web 0.1 mm at this color"
+    },
+    {
+      "id": "via-in-pad",
+      "title": "Vias in pads",
+      "value": "1",
+      "implication": "via-in-pad needs filled and capped vias, an extra fabrication process"
+    },
+    {
+      "id": "size",
+      "title": "Board size class",
+      "value": "40 x 30 mm, within 100 x 100 mm",
+      "implication": "fabs price by area and panel use; the quote decides"
+    },
+    {
+      "id": "layers",
+      "title": "Copper layers",
+      "value": "2",
+      "implication": "a standard two-layer process"
+    }
+  ]
+}

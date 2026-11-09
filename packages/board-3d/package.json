@@ -1,0 +1,49 @@
+{
+  "name": "@protoboardai/board-3d",
+  "version": "0.2.2",
+  "description": "Protoboard board 3D: the 3D model of a board (board body, seated component bodies, detail tiers) and its export as STEP, STL, 3MF and GLB with a sidecar and images. Runs in plain Node; the CAD runtime (OCCT) is optional, for re-reading STEP and placing part STEP models.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/board-3d"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "py",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@protoboardai/board": "^0.2.2",
+    "@protoboardai/board-scene": "^0.2.2",
+    "@resvg/resvg-js": "2.6.2",
+    "zod": "3.25.76"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "pcb",
+    "eda",
+    "step",
+    "3mf",
+    "cad"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

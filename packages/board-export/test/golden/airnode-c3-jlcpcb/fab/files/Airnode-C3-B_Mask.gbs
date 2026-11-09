@@ -1,0 +1,18 @@
+G04 #@! TF.GenerationSoftware,Protoboard,board-export,0.2.2*
+G04 #@! TF.ProjectId,Airnode-C3,0158b9f5-bcce-5d8e-a4d0-62df559bccc1,rev?*
+G04 #@! TF.SameCoordinates,Original*
+G04 #@! TF.FileFunction,Soldermask,Bot*
+G04 #@! TF.FilePolarity,Negative*
+G04 #@! TF.Part,Single*
+%FSLAX46Y46*%
+%MOMM*%
+%LPD*%
+%ADD10O,1X2*%
+G04 #@! TO.C,J1*
+D10*
+X-14300000Y-9900000D03*
+X-5700000Y-9900000D03*
+X-14300000Y-14100000D03*
+X-5700000Y-14100000D03*
+G04 #@! TD*
+M02*

@@ -1,0 +1,494 @@
+[
+  {
+    "ref": "C1",
+    "id": "fp:power/c_in",
+    "value": "1 uF",
+    "footprint": "Airnode:C_0603",
+    "package": "C_0603",
+    "side": "top",
+    "x": -12500000,
+    "y": -3000000,
+    "rotation": 90000,
+    "rotationOut": 90000,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "C2",
+    "id": "fp:power/c_out",
+    "value": "1 uF",
+    "footprint": "Airnode:C_0603",
+    "package": "C_0603",
+    "side": "top",
+    "x": -7500000,
+    "y": -3000000,
+    "rotation": 90000,
+    "rotationOut": 90000,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "C3",
+    "id": "fp:mcu/c_bulk",
+    "value": "10 uF",
+    "footprint": "Airnode:C_0805",
+    "package": "C_0805",
+    "side": "top",
+    "x": 6000000,
+    "y": -5000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "C4",
+    "id": "fp:sensor/c_dec",
+    "value": "100 nF",
+    "footprint": "Airnode:C_0402",
+    "package": "C_0402",
+    "side": "top",
+    "x": -4000000,
+    "y": 11500000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "C5",
+    "id": "fp:mcu/c_en",
+    "value": "1 uF",
+    "footprint": "Airnode:C_0402",
+    "package": "C_0402",
+    "side": "top",
+    "x": 1000000,
+    "y": -6000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "D1",
+    "id": "fp:status/led1",
+    "value": "green",
+    "footprint": "Airnode:LED_0603",
+    "package": "LED_0603",
+    "side": "top",
+    "x": -16000000,
+    "y": 10000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "D2",
+    "id": "fp:status/led2",
+    "value": "amber",
+    "footprint": "Airnode:LED_0603",
+    "package": "LED_0603",
+    "side": "top",
+    "x": -16000000,
+    "y": 7000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": true,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": []
+  },
+  {
+    "ref": "J1",
+    "id": "fp:usb/connector",
+    "value": "USB-C",
+    "footprint": "Airnode:USB-C-receptacle",
+    "package": "USB-C-receptacle",
+    "side": "top",
+    "x": -10000000,
+    "y": -12500000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "libraryClass": "extended",
+    "process": "mixed",
+    "dnp": false,
+    "consigned": true,
+    "consignedReason": "USB-C receptacle supplied by the customer",
+    "hand": false,
+    "noBom": false,
+    "pads": 12,
+    "flags": [
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "R1",
+    "id": "fp:status/r1",
+    "value": "1 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "side": "top",
+    "x": -13000000,
+    "y": 10000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "R2",
+    "id": "fp:status/r2",
+    "value": "1 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "side": "top",
+    "x": -13000000,
+    "y": 7000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "R3",
+    "id": "fp:sensor/r_sda",
+    "value": "4.7 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "side": "top",
+    "x": -7500000,
+    "y": 9500000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "R4",
+    "id": "fp:sensor/r_scl",
+    "value": "4.7 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "side": "top",
+    "x": -7500000,
+    "y": 8000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "R5",
+    "id": "fp:usb/r_cc1",
+    "value": "5.1 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "side": "top",
+    "x": -4000000,
+    "y": -9500000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "R6",
+    "id": "fp:usb/r_cc2",
+    "value": "5.1 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "side": "top",
+    "x": -4000000,
+    "y": -11000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "R7",
+    "id": "fp:mcu/r_en",
+    "value": "10 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "side": "top",
+    "x": 1000000,
+    "y": -4000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 2,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "SW1",
+    "id": "fp:ui/boot_button",
+    "value": "BOOT",
+    "footprint": "Airnode:SW-tact-4pad",
+    "package": "SW-tact-4pad",
+    "side": "top",
+    "x": -15000000,
+    "y": 0,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 4,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "U1",
+    "id": "fp:mcu/module",
+    "value": "ESP32-C3 module",
+    "footprint": "Airnode:ESP32-C3-module",
+    "package": "ESP32-C3-module",
+    "side": "top",
+    "x": 10000000,
+    "y": 6500000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 34,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "U2",
+    "id": "fp:power/ldo",
+    "value": "LDO 3.3 V",
+    "footprint": "Airnode:SOT-23-5",
+    "package": "SOT-23-5",
+    "side": "top",
+    "x": -10000000,
+    "y": -3000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 5,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  },
+  {
+    "ref": "U3",
+    "id": "fp:sensor/ic",
+    "value": "I2C humidity sensor",
+    "footprint": "Airnode:DFN-4-1.5mm",
+    "package": "DFN-4-1.5mm",
+    "side": "top",
+    "x": -4000000,
+    "y": 9000000,
+    "rotation": 0,
+    "rotationOut": 0,
+    "correction": {
+      "degrees": 0,
+      "source": "none"
+    },
+    "process": "smt",
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "noBom": false,
+    "pads": 4,
+    "flags": [
+      "no LCSC part number",
+      "rotation not verified for this fab: check the placement preview"
+    ]
+  }
+]

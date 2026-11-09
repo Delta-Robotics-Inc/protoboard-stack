@@ -1,0 +1,1808 @@
+{
+  "schema": "protoboard.board-3d/v0",
+  "generator": "@protoboardai/board-3d",
+  "board": "Airnode C3",
+  "tier": "full",
+  "render": {
+    "copper": false,
+    "silkscreen": false,
+    "mask": false
+  },
+  "options": {
+    "tier": "full",
+    "render": {
+      "copper": false,
+      "silkscreen": false,
+      "mask": false
+    },
+    "formats": [
+      "step",
+      "stl",
+      "3mf",
+      "glb"
+    ],
+    "instances": "unique",
+    "vias": true,
+    "minHoleMm": 1.5,
+    "seat": "fix",
+    "origin": "board-center"
+  },
+  "frame": {
+    "units": "mm",
+    "up": "+Z",
+    "origin": "board-center",
+    "z0": "board bottom face",
+    "note": "X right and Y up seen from the top; z = 0 on the board's bottom face, the top face at z = thicknessMm; a component's transform maps its footprint frame (z up from its seating plane) into this frame; bottom-side parts are turned 180 degrees about Y",
+    "toDocument": [
+      0,
+      0,
+      0
+    ]
+  },
+  "outline": {
+    "thicknessMm": 1.6,
+    "outer": [
+      [
+        -19,
+        -15
+      ],
+      [
+        19,
+        -15
+      ],
+      [
+        19.258819,
+        -14.965926
+      ],
+      [
+        19.5,
+        -14.866025
+      ],
+      [
+        19.707107,
+        -14.707107
+      ],
+      [
+        19.866025,
+        -14.5
+      ],
+      [
+        19.965926,
+        -14.258819
+      ],
+      [
+        20,
+        -14
+      ],
+      [
+        20,
+        14
+      ],
+      [
+        19.965926,
+        14.258819
+      ],
+      [
+        19.866025,
+        14.5
+      ],
+      [
+        19.707107,
+        14.707107
+      ],
+      [
+        19.5,
+        14.866025
+      ],
+      [
+        19.258819,
+        14.965926
+      ],
+      [
+        19,
+        15
+      ],
+      [
+        -19,
+        15
+      ],
+      [
+        -19.258819,
+        14.965926
+      ],
+      [
+        -19.5,
+        14.866025
+      ],
+      [
+        -19.707107,
+        14.707107
+      ],
+      [
+        -19.866025,
+        14.5
+      ],
+      [
+        -19.965926,
+        14.258819
+      ],
+      [
+        -20,
+        14
+      ],
+      [
+        -20,
+        -14
+      ],
+      [
+        -19.965926,
+        -14.258819
+      ],
+      [
+        -19.866025,
+        -14.5
+      ],
+      [
+        -19.707107,
+        -14.707107
+      ],
+      [
+        -19.5,
+        -14.866025
+      ],
+      [
+        -19.258819,
+        -14.965926
+      ]
+    ],
+    "cutouts": [],
+    "bounds": {
+      "min": [
+        -20,
+        -15,
+        0
+      ],
+      "max": [
+        20,
+        15,
+        1.6
+      ]
+    },
+    "stackup": [
+      {
+        "name": "top_mask",
+        "type": "soldermask",
+        "thicknessMm": 0.01
+      },
+      {
+        "name": "top",
+        "type": "copper",
+        "thicknessMm": 0.035
+      },
+      {
+        "name": "core1",
+        "type": "dielectric",
+        "thicknessMm": 1.51
+      },
+      {
+        "name": "bottom",
+        "type": "copper",
+        "thicknessMm": 0.035
+      },
+      {
+        "name": "bottom_mask",
+        "type": "soldermask",
+        "thicknessMm": 0.01
+      }
+    ],
+    "colors": {
+      "mask": "#1e5a3c",
+      "silkscreen": "#f2f2ee",
+      "copper": "#c9a24b",
+      "copperUnderMask": "#2f7a52",
+      "substrateEdge": "#c8b88a"
+    }
+  },
+  "holes": [
+    {
+      "id": "pad:usb/connector:S",
+      "kind": "pad",
+      "at": [
+        -14.3,
+        -9.9
+      ],
+      "d": 0.6,
+      "slot": {
+        "w": 0.6,
+        "h": 1.6,
+        "rotationDeg": 0
+      },
+      "plated": true,
+      "drilled": true
+    },
+    {
+      "id": "pad:usb/connector:S~2",
+      "kind": "pad",
+      "at": [
+        -5.7,
+        -9.9
+      ],
+      "d": 0.6,
+      "slot": {
+        "w": 0.6,
+        "h": 1.6,
+        "rotationDeg": 0
+      },
+      "plated": true,
+      "drilled": true
+    },
+    {
+      "id": "pad:usb/connector:S~3",
+      "kind": "pad",
+      "at": [
+        -14.3,
+        -14.1
+      ],
+      "d": 0.6,
+      "slot": {
+        "w": 0.6,
+        "h": 1.6,
+        "rotationDeg": 0
+      },
+      "plated": true,
+      "drilled": true
+    },
+    {
+      "id": "pad:usb/connector:S~4",
+      "kind": "pad",
+      "at": [
+        -5.7,
+        -14.1
+      ],
+      "d": 0.6,
+      "slot": {
+        "w": 0.6,
+        "h": 1.6,
+        "rotationDeg": 0
+      },
+      "plated": true,
+      "drilled": true
+    },
+    {
+      "id": "via:f.gnd.1",
+      "kind": "via",
+      "at": [
+        -10,
+        -5.2
+      ],
+      "d": 0.3,
+      "plated": true,
+      "drilled": true
+    },
+    {
+      "id": "via:f.gnd.2",
+      "kind": "via",
+      "at": [
+        -12.5,
+        -1.5
+      ],
+      "d": 0.3,
+      "plated": true,
+      "drilled": true
+    },
+    {
+      "id": "via:f.gnd.3",
+      "kind": "via",
+      "at": [
+        10,
+        5
+      ],
+      "d": 0.3,
+      "plated": true,
+      "drilled": true
+    }
+  ],
+  "mountingHoles": [],
+  "counts": {
+    "bodies": 20,
+    "components": 19,
+    "withBody": 19,
+    "bySource": {
+      "parametric": 19
+    },
+    "renderSolids": 0,
+    "stepSolids": 20
+  },
+  "components": [
+    {
+      "id": "fp:mcu/c_bulk",
+      "ref": "C3",
+      "path": "mcu/c_bulk",
+      "name": "C3 10 uF",
+      "value": "10 uF",
+      "footprint": "Airnode:C_0805",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        6,
+        0,
+        1,
+        0,
+        -5,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#b8956a",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0805: two equal SMD pads 1.90 mm apart: EIA 0805 (size in the library name)",
+        "heightMm": 1.35,
+        "heightSource": "EIA 0805: MLCC, most common thickness for the size plus tolerance (Murata GRM series outline); typical, capacitors of high value are thicker",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 1.35,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          5,
+          -5.625,
+          1.6
+        ],
+        "max": [
+          7,
+          -4.375,
+          2.95
+        ]
+      },
+      "heightAboveFaceMm": 1.35,
+      "interfaces": [],
+      "files": {
+        "step": "C3 10 uF",
+        "stl": "C3 10 uF.stl",
+        "3mf": "C3 10 uF",
+        "glb": "mcu/c_bulk"
+      }
+    },
+    {
+      "id": "fp:mcu/c_en",
+      "ref": "C5",
+      "path": "mcu/c_en",
+      "name": "C5 1 uF",
+      "value": "1 uF",
+      "footprint": "Airnode:C_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        -6,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#b8956a",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.55,
+        "heightSource": "EIA 0402: MLCC, most common thickness for the size plus tolerance (Murata GRM series outline); typical, capacitors of high value are thicker",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.55,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          0.5,
+          -6.2945,
+          1.6
+        ],
+        "max": [
+          1.5,
+          -5.7055,
+          2.15
+        ]
+      },
+      "heightAboveFaceMm": 0.55,
+      "interfaces": [],
+      "files": {
+        "step": "C5 1 uF",
+        "stl": "C5 1 uF.stl",
+        "3mf": "C5 1 uF",
+        "glb": "mcu/c_en"
+      }
+    },
+    {
+      "id": "fp:mcu/module",
+      "ref": "U1",
+      "path": "mcu/module",
+      "name": "U1 ESP32-C3 module",
+      "value": "ESP32-C3 module",
+      "footprint": "Airnode:ESP32-C3-module",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        10,
+        0,
+        1,
+        0,
+        6.5,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#26343d",
+      "body": {
+        "source": "parametric",
+        "kind": "module",
+        "detail": "module module: library name matches module",
+        "heightMm": 2.5,
+        "heightSource": "default module height 2.5 mm (assumption: no series match)",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 2.5,
+        "contacts": 1,
+        "padsHit": 34,
+        "pads": 34,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 2.5,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          3.4,
+          -1.8,
+          1.6
+        ],
+        "max": [
+          16.6,
+          14.8,
+          4.1
+        ]
+      },
+      "heightAboveFaceMm": 2.5,
+      "interfaces": [
+        {
+          "kind": "antenna",
+          "note": "antenna end of the module (the side without pads); keep metal and copper away",
+          "sizeMm": [
+            13.2,
+            4.98
+          ],
+          "frame": {
+            "origin": [
+              10,
+              12.31,
+              2.4
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ]
+          },
+          "local": {
+            "origin": [
+              0,
+              5.81,
+              0.8
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "files": {
+        "step": "U1 ESP32-C3 module",
+        "stl": "U1 ESP32-C3 module.stl",
+        "3mf": "U1 ESP32-C3 module",
+        "glb": "mcu/module"
+      }
+    },
+    {
+      "id": "fp:mcu/r_en",
+      "ref": "R7",
+      "path": "mcu/r_en",
+      "name": "R7 10 k",
+      "value": "10 k",
+      "footprint": "Airnode:R_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        -4,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#161616",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.4,
+        "heightSource": "EIA 0402: thick-film chip resistor, nominal thickness plus tolerance (Yageo RC series outline); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.4,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          0.5,
+          -4.2945,
+          1.6
+        ],
+        "max": [
+          1.5,
+          -3.7055,
+          2
+        ]
+      },
+      "heightAboveFaceMm": 0.4,
+      "interfaces": [],
+      "files": {
+        "step": "R7 10 k",
+        "stl": "R7 10 k.stl",
+        "3mf": "R7 10 k",
+        "glb": "mcu/r_en"
+      }
+    },
+    {
+      "id": "fp:power/c_in",
+      "ref": "C1",
+      "path": "power/c_in",
+      "name": "C1 1 uF",
+      "value": "1 uF",
+      "footprint": "Airnode:C_0603",
+      "side": "top",
+      "transform": [
+        0,
+        -1,
+        0,
+        -12.5,
+        1,
+        0,
+        0,
+        -3,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#b8956a",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0603: two equal SMD pads 1.60 mm apart: EIA 0603 (size in the library name)",
+        "heightMm": 0.9,
+        "heightSource": "EIA 0603: MLCC, most common thickness for the size plus tolerance (Murata GRM series outline); typical, capacitors of high value are thicker",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.9,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -12.95125,
+          -3.8,
+          1.6
+        ],
+        "max": [
+          -12.04875,
+          -2.2,
+          2.5
+        ]
+      },
+      "heightAboveFaceMm": 0.9,
+      "interfaces": [],
+      "files": {
+        "step": "C1 1 uF",
+        "stl": "C1 1 uF.stl",
+        "3mf": "C1 1 uF",
+        "glb": "power/c_in"
+      }
+    },
+    {
+      "id": "fp:power/c_out",
+      "ref": "C2",
+      "path": "power/c_out",
+      "name": "C2 1 uF",
+      "value": "1 uF",
+      "footprint": "Airnode:C_0603",
+      "side": "top",
+      "transform": [
+        0,
+        -1,
+        0,
+        -7.5,
+        1,
+        0,
+        0,
+        -3,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#b8956a",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0603: two equal SMD pads 1.60 mm apart: EIA 0603 (size in the library name)",
+        "heightMm": 0.9,
+        "heightSource": "EIA 0603: MLCC, most common thickness for the size plus tolerance (Murata GRM series outline); typical, capacitors of high value are thicker",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.9,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -7.95125,
+          -3.8,
+          1.6
+        ],
+        "max": [
+          -7.04875,
+          -2.2,
+          2.5
+        ]
+      },
+      "heightAboveFaceMm": 0.9,
+      "interfaces": [],
+      "files": {
+        "step": "C2 1 uF",
+        "stl": "C2 1 uF.stl",
+        "3mf": "C2 1 uF",
+        "glb": "power/c_out"
+      }
+    },
+    {
+      "id": "fp:power/ldo",
+      "ref": "U2",
+      "path": "power/ldo",
+      "name": "U2 LDO 3.3 V",
+      "value": "LDO 3.3 V",
+      "footprint": "Airnode:SOT-23-5",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -10,
+        0,
+        1,
+        0,
+        -3,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#1f1f1f",
+      "body": {
+        "source": "parametric",
+        "kind": "sot",
+        "detail": "sot SOT-23-5/6: library name matches SOT-23-5/6; leads from the pad rows",
+        "heightMm": 1.45,
+        "heightSource": "JEDEC MO-178 (SOT-23-5, -6), A max 1.45 mm",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "contacts",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 5,
+        "padsHit": 5,
+        "pads": 5,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 1.45,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -11.4525,
+          -4.365,
+          1.6
+        ],
+        "max": [
+          -8.5475,
+          -1.635,
+          3.05
+        ]
+      },
+      "heightAboveFaceMm": 1.45,
+      "interfaces": [],
+      "files": {
+        "step": "U2 LDO 3.3 V",
+        "stl": "U2 LDO 3.3 V.stl",
+        "3mf": "U2 LDO 3.3 V",
+        "glb": "power/ldo"
+      }
+    },
+    {
+      "id": "fp:sensor/c_dec",
+      "ref": "C4",
+      "path": "sensor/c_dec",
+      "name": "C4 100 nF",
+      "value": "100 nF",
+      "footprint": "Airnode:C_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -4,
+        0,
+        1,
+        0,
+        11.5,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#b8956a",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.55,
+        "heightSource": "EIA 0402: MLCC, most common thickness for the size plus tolerance (Murata GRM series outline); typical, capacitors of high value are thicker",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.55,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -4.5,
+          11.2055,
+          1.6
+        ],
+        "max": [
+          -3.5,
+          11.7945,
+          2.15
+        ]
+      },
+      "heightAboveFaceMm": 0.55,
+      "interfaces": [],
+      "files": {
+        "step": "C4 100 nF",
+        "stl": "C4 100 nF.stl",
+        "3mf": "C4 100 nF",
+        "glb": "sensor/c_dec"
+      }
+    },
+    {
+      "id": "fp:sensor/ic",
+      "ref": "U3",
+      "path": "sensor/ic",
+      "name": "U3 I2C humidity sensor",
+      "value": "I2C humidity sensor",
+      "footprint": "Airnode:DFN-4-1.5mm",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -4,
+        0,
+        1,
+        0,
+        9,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#1f1f1f",
+      "body": {
+        "source": "parametric",
+        "kind": "no-lead",
+        "detail": "no-lead QFN/DFN: library name matches QFN/DFN",
+        "heightMm": 1,
+        "heightSource": "JEDEC MO-220 and MO-229 very-thin (V) outline, A max 1.0 mm",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 4,
+        "pads": 4,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 1,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -5,
+          8.4,
+          1.6
+        ],
+        "max": [
+          -3,
+          9.6,
+          2.6
+        ]
+      },
+      "heightAboveFaceMm": 1,
+      "interfaces": [],
+      "files": {
+        "step": "U3 I2C humidity sensor",
+        "stl": "U3 I2C humidity sensor.stl",
+        "3mf": "U3 I2C humidity sensor",
+        "glb": "sensor/ic"
+      }
+    },
+    {
+      "id": "fp:sensor/r_scl",
+      "ref": "R4",
+      "path": "sensor/r_scl",
+      "name": "R4 4.7 k",
+      "value": "4.7 k",
+      "footprint": "Airnode:R_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -7.5,
+        0,
+        1,
+        0,
+        8,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#161616",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.4,
+        "heightSource": "EIA 0402: thick-film chip resistor, nominal thickness plus tolerance (Yageo RC series outline); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.4,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -8,
+          7.7055,
+          1.6
+        ],
+        "max": [
+          -7,
+          8.2945,
+          2
+        ]
+      },
+      "heightAboveFaceMm": 0.4,
+      "interfaces": [],
+      "files": {
+        "step": "R4 4.7 k",
+        "stl": "R4 4.7 k.stl",
+        "3mf": "R4 4.7 k",
+        "glb": "sensor/r_scl"
+      }
+    },
+    {
+      "id": "fp:sensor/r_sda",
+      "ref": "R3",
+      "path": "sensor/r_sda",
+      "name": "R3 4.7 k",
+      "value": "4.7 k",
+      "footprint": "Airnode:R_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -7.5,
+        0,
+        1,
+        0,
+        9.5,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#161616",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.4,
+        "heightSource": "EIA 0402: thick-film chip resistor, nominal thickness plus tolerance (Yageo RC series outline); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.4,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -8,
+          9.2055,
+          1.6
+        ],
+        "max": [
+          -7,
+          9.7945,
+          2
+        ]
+      },
+      "heightAboveFaceMm": 0.4,
+      "interfaces": [],
+      "files": {
+        "step": "R3 4.7 k",
+        "stl": "R3 4.7 k.stl",
+        "3mf": "R3 4.7 k",
+        "glb": "sensor/r_sda"
+      }
+    },
+    {
+      "id": "fp:status/led1",
+      "ref": "D1",
+      "path": "status/led1",
+      "name": "D1 green",
+      "value": "green",
+      "footprint": "Airnode:LED_0603",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -16,
+        0,
+        1,
+        0,
+        10,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#f1f1ec",
+      "body": {
+        "source": "parametric",
+        "kind": "chip-led",
+        "detail": "chip-led 0603: two equal SMD pads 1.60 mm apart: EIA 0603 (size in the library name)",
+        "heightMm": 0.8,
+        "heightSource": "EIA 0603: chip LED (Kingbright APT and APTD series outlines); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.8,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -16.8,
+          9.54875,
+          1.6
+        ],
+        "max": [
+          -15.2,
+          10.45125,
+          2.4
+        ]
+      },
+      "heightAboveFaceMm": 0.8,
+      "interfaces": [],
+      "files": {
+        "step": "D1 green",
+        "stl": "D1 green.stl",
+        "3mf": "D1 green",
+        "glb": "status/led1"
+      }
+    },
+    {
+      "id": "fp:status/led2",
+      "ref": "D2",
+      "path": "status/led2",
+      "name": "D2 amber",
+      "value": "amber",
+      "footprint": "Airnode:LED_0603",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -16,
+        0,
+        1,
+        0,
+        7,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#f1f1ec",
+      "body": {
+        "source": "parametric",
+        "kind": "chip-led",
+        "detail": "chip-led 0603: two equal SMD pads 1.60 mm apart: EIA 0603 (size in the library name)",
+        "heightMm": 0.8,
+        "heightSource": "EIA 0603: chip LED (Kingbright APT and APTD series outlines); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.8,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -16.8,
+          6.54875,
+          1.6
+        ],
+        "max": [
+          -15.2,
+          7.45125,
+          2.4
+        ]
+      },
+      "heightAboveFaceMm": 0.8,
+      "interfaces": [],
+      "files": {
+        "step": "D2 amber",
+        "stl": "D2 amber.stl",
+        "3mf": "D2 amber",
+        "glb": "status/led2"
+      }
+    },
+    {
+      "id": "fp:status/r1",
+      "ref": "R1",
+      "path": "status/r1",
+      "name": "R1 1 k",
+      "value": "1 k",
+      "footprint": "Airnode:R_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -13,
+        0,
+        1,
+        0,
+        10,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#161616",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.4,
+        "heightSource": "EIA 0402: thick-film chip resistor, nominal thickness plus tolerance (Yageo RC series outline); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.4,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -13.5,
+          9.7055,
+          1.6
+        ],
+        "max": [
+          -12.5,
+          10.2945,
+          2
+        ]
+      },
+      "heightAboveFaceMm": 0.4,
+      "interfaces": [],
+      "files": {
+        "step": "R1 1 k",
+        "stl": "R1 1 k.stl",
+        "3mf": "R1 1 k",
+        "glb": "status/r1"
+      }
+    },
+    {
+      "id": "fp:status/r2",
+      "ref": "R2",
+      "path": "status/r2",
+      "name": "R2 1 k",
+      "value": "1 k",
+      "footprint": "Airnode:R_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -13,
+        0,
+        1,
+        0,
+        7,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#161616",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.4,
+        "heightSource": "EIA 0402: thick-film chip resistor, nominal thickness plus tolerance (Yageo RC series outline); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.4,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -13.5,
+          6.7055,
+          1.6
+        ],
+        "max": [
+          -12.5,
+          7.2945,
+          2
+        ]
+      },
+      "heightAboveFaceMm": 0.4,
+      "interfaces": [],
+      "files": {
+        "step": "R2 1 k",
+        "stl": "R2 1 k.stl",
+        "3mf": "R2 1 k",
+        "glb": "status/r2"
+      }
+    },
+    {
+      "id": "fp:ui/boot_button",
+      "ref": "SW1",
+      "path": "ui/boot_button",
+      "name": "SW1 BOOT",
+      "value": "BOOT",
+      "footprint": "Airnode:SW-tact-4pad",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -15,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#2b2b2b",
+      "body": {
+        "source": "parametric",
+        "kind": "switch-tact",
+        "detail": "switch-tact tact switch: tactile switch",
+        "heightMm": 2.5,
+        "heightSource": "small SMD tactile switch with plunger, 2.5 mm (common 4 x 3 mm and 5.2 x 5.2 mm outlines); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 4,
+        "pads": 4,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 2.5,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -17.3,
+          -1.5,
+          1.6
+        ],
+        "max": [
+          -12.7,
+          1.5,
+          4.1
+        ]
+      },
+      "heightAboveFaceMm": 2.5,
+      "interfaces": [
+        {
+          "kind": "button",
+          "note": "plunger top, actuation along -Z",
+          "sizeMm": [
+            1.2,
+            1.2
+          ],
+          "frame": {
+            "origin": [
+              -15,
+              0,
+              4.1
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ]
+          },
+          "local": {
+            "origin": [
+              0,
+              0,
+              2.5
+            ],
+            "zAxis": [
+              0,
+              0,
+              1
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "files": {
+        "step": "SW1 BOOT",
+        "stl": "SW1 BOOT.stl",
+        "3mf": "SW1 BOOT",
+        "glb": "ui/boot_button"
+      }
+    },
+    {
+      "id": "fp:usb/connector",
+      "ref": "J1",
+      "path": "usb/connector",
+      "name": "J1 USB-C",
+      "value": "USB-C",
+      "footprint": "Airnode:USB-C-receptacle",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -10,
+        0,
+        1,
+        0,
+        -12.5,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#c9c9c9",
+      "body": {
+        "source": "parametric",
+        "kind": "usb-c",
+        "detail": "usb-c USB-C: library name says USB Type-C",
+        "heightMm": 3.26,
+        "heightSource": "USB Type-C receptacle shell 8.94 x 3.26 mm (USB Type-C specification receptacle outline, typical top-mount)",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0.525,
+        "contacts": 1,
+        "padsHit": 12,
+        "pads": 12,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 3.26,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -14.461071,
+          -16.2,
+          1.6
+        ],
+        "max": [
+          -5.538929,
+          -8.85,
+          4.86
+        ]
+      },
+      "heightAboveFaceMm": 3.26,
+      "interfaces": [
+        {
+          "kind": "connector-mouth",
+          "note": "USB Type-C receptacle mouth: plug inserts along -zAxis; opening 8.34 x 2.56 mm, shell 8.94 x 3.26 mm",
+          "sizeMm": [
+            8.34,
+            2.56
+          ],
+          "frame": {
+            "origin": [
+              -10,
+              -16.2,
+              3.23
+            ],
+            "zAxis": [
+              0,
+              -1,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ]
+          },
+          "local": {
+            "origin": [
+              0,
+              -3.7,
+              1.63
+            ],
+            "zAxis": [
+              0,
+              -1,
+              0
+            ],
+            "xAxis": [
+              1,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "files": {
+        "step": "J1 USB-C",
+        "stl": "J1 USB-C.stl",
+        "3mf": "J1 USB-C",
+        "glb": "usb/connector"
+      }
+    },
+    {
+      "id": "fp:usb/r_cc1",
+      "ref": "R5",
+      "path": "usb/r_cc1",
+      "name": "R5 5.1 k",
+      "value": "5.1 k",
+      "footprint": "Airnode:R_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -4,
+        0,
+        1,
+        0,
+        -9.5,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#161616",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.4,
+        "heightSource": "EIA 0402: thick-film chip resistor, nominal thickness plus tolerance (Yageo RC series outline); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.4,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -4.5,
+          -9.7945,
+          1.6
+        ],
+        "max": [
+          -3.5,
+          -9.2055,
+          2
+        ]
+      },
+      "heightAboveFaceMm": 0.4,
+      "interfaces": [],
+      "files": {
+        "step": "R5 5.1 k",
+        "stl": "R5 5.1 k.stl",
+        "3mf": "R5 5.1 k",
+        "glb": "usb/r_cc1"
+      }
+    },
+    {
+      "id": "fp:usb/r_cc2",
+      "ref": "R6",
+      "path": "usb/r_cc2",
+      "name": "R6 5.1 k",
+      "value": "5.1 k",
+      "footprint": "Airnode:R_0402",
+      "side": "top",
+      "transform": [
+        1,
+        0,
+        0,
+        -4,
+        0,
+        1,
+        0,
+        -11,
+        0,
+        0,
+        1,
+        1.6
+      ],
+      "color": "#161616",
+      "body": {
+        "source": "parametric",
+        "kind": "chip",
+        "detail": "chip 0402: two equal SMD pads 0.96 mm apart: EIA 0402 (size in the library name)",
+        "heightMm": 0.4,
+        "heightSource": "EIA 0402: thick-film chip resistor, nominal thickness plus tolerance (Yageo RC series outline); typical",
+        "placeholder": false
+      },
+      "seating": {
+        "method": "bounds",
+        "planeMm": 0,
+        "gapMm": 0,
+        "xyResidualMm": 0,
+        "contacts": 1,
+        "padsHit": 2,
+        "pads": 2,
+        "rotationDeg": 0,
+        "mirrored": false,
+        "inCourtyard": true,
+        "heightMm": 0.4,
+        "status": "ok",
+        "notes": []
+      },
+      "bounds": {
+        "min": [
+          -4.5,
+          -11.2945,
+          1.6
+        ],
+        "max": [
+          -3.5,
+          -10.7055,
+          2
+        ]
+      },
+      "heightAboveFaceMm": 0.4,
+      "interfaces": [],
+      "files": {
+        "step": "R6 5.1 k",
+        "stl": "R6 5.1 k.stl",
+        "3mf": "R6 5.1 k",
+        "glb": "usb/r_cc2"
+      }
+    }
+  ],
+  "interfaces": [
+    {
+      "component": "fp:mcu/module",
+      "ref": "U1",
+      "kind": "antenna",
+      "origin": [
+        10,
+        12.31,
+        2.4
+      ],
+      "zAxis": [
+        0,
+        0,
+        1
+      ],
+      "xAxis": [
+        1,
+        0,
+        0
+      ],
+      "sizeMm": [
+        13.2,
+        4.98
+      ]
+    },
+    {
+      "component": "fp:ui/boot_button",
+      "ref": "SW1",
+      "kind": "button",
+      "origin": [
+        -15,
+        0,
+        4.1
+      ],
+      "zAxis": [
+        0,
+        0,
+        1
+      ],
+      "xAxis": [
+        1,
+        0,
+        0
+      ],
+      "sizeMm": [
+        1.2,
+        1.2
+      ]
+    },
+    {
+      "component": "fp:usb/connector",
+      "ref": "J1",
+      "kind": "connector-mouth",
+      "origin": [
+        -10,
+        -16.2,
+        3.23
+      ],
+      "zAxis": [
+        0,
+        -1,
+        0
+      ],
+      "xAxis": [
+        1,
+        0,
+        0
+      ],
+      "sizeMm": [
+        8.34,
+        2.56
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "code": "PCB3D_OVERHANG",
+      "severity": "info",
+      "id": "fp:usb/connector",
+      "ref": "J1",
+      "message": "J1: the body reaches past the board outline (expected for an edge connector)"
+    }
+  ],
+  "terms": {
+    "distribution": "redistributable",
+    "note": "every body was made in code from the board: no third-party geometry",
+    "restricted": []
+  }
+}

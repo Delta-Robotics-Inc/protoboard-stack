@@ -1,0 +1,24 @@
+M48
+; DRILL file, Protoboard board-export
+; FORMAT={-:-/ absolute / metric / decimal}
+; #@! TF.GenerationSoftware,Protoboard,board-export,0.2.2
+; #@! TF.FileFunction,Plated,1,2,PTH
+FMAT,2
+METRIC
+; #@! TA.AperFunction,Plated,PTH,ViaDrill
+T1C0.3
+; #@! TA.AperFunction,Plated,PTH,ComponentDrill
+T2C0.6
+%
+G90
+G05
+T1
+X-12.5Y-1.5
+X-10.0Y-5.2
+X10.0Y5.0
+T2
+X-14.3Y-14.6G85X-14.3Y-13.6
+X-14.3Y-10.4G85X-14.3Y-9.4
+X-5.7Y-14.6G85X-5.7Y-13.6
+X-5.7Y-10.4G85X-5.7Y-9.4
+M30

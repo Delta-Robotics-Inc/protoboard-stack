@@ -1,0 +1,333 @@
+[
+  {
+    "item": 1,
+    "refs": [
+      "C1",
+      "C2"
+    ],
+    "quantity": 2,
+    "value": "1 uF",
+    "footprint": "Airnode:C_0603",
+    "package": "C_0603",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 2,
+    "refs": [
+      "C3"
+    ],
+    "quantity": 1,
+    "value": "10 uF",
+    "footprint": "Airnode:C_0805",
+    "package": "C_0805",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 3,
+    "refs": [
+      "C4"
+    ],
+    "quantity": 1,
+    "value": "100 nF",
+    "footprint": "Airnode:C_0402",
+    "package": "C_0402",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 4,
+    "refs": [
+      "C5"
+    ],
+    "quantity": 1,
+    "value": "1 uF",
+    "footprint": "Airnode:C_0402",
+    "package": "C_0402",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 5,
+    "refs": [
+      "D1"
+    ],
+    "quantity": 1,
+    "value": "green",
+    "footprint": "Airnode:LED_0603",
+    "package": "LED_0603",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 6,
+    "refs": [
+      "D2"
+    ],
+    "quantity": 1,
+    "value": "amber",
+    "footprint": "Airnode:LED_0603",
+    "package": "LED_0603",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": true,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": []
+  },
+  {
+    "item": 7,
+    "refs": [
+      "J1"
+    ],
+    "quantity": 1,
+    "value": "USB-C",
+    "footprint": "Airnode:USB-C-receptacle",
+    "package": "USB-C-receptacle",
+    "libraryClass": "extended",
+    "process": "mixed",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": true,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "consigned",
+    "flags": []
+  },
+  {
+    "item": 8,
+    "refs": [
+      "R1",
+      "R2"
+    ],
+    "quantity": 2,
+    "value": "1 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 9,
+    "refs": [
+      "R3",
+      "R4"
+    ],
+    "quantity": 2,
+    "value": "4.7 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 10,
+    "refs": [
+      "R5",
+      "R6"
+    ],
+    "quantity": 2,
+    "value": "5.1 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 11,
+    "refs": [
+      "R7"
+    ],
+    "quantity": 1,
+    "value": "10 k",
+    "footprint": "Airnode:R_0402",
+    "package": "R_0402",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 12,
+    "refs": [
+      "SW1"
+    ],
+    "quantity": 1,
+    "value": "BOOT",
+    "footprint": "Airnode:SW-tact-4pad",
+    "package": "SW-tact-4pad",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 13,
+    "refs": [
+      "U1"
+    ],
+    "quantity": 1,
+    "value": "ESP32-C3 module",
+    "footprint": "Airnode:ESP32-C3-module",
+    "package": "ESP32-C3-module",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 14,
+    "refs": [
+      "U2"
+    ],
+    "quantity": 1,
+    "value": "LDO 3.3 V",
+    "footprint": "Airnode:SOT-23-5",
+    "package": "SOT-23-5",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  },
+  {
+    "item": 15,
+    "refs": [
+      "U3"
+    ],
+    "quantity": 1,
+    "value": "I2C humidity sensor",
+    "footprint": "Airnode:DFN-4-1.5mm",
+    "package": "DFN-4-1.5mm",
+    "process": "smt",
+    "sides": [
+      "top"
+    ],
+    "dnp": false,
+    "consigned": false,
+    "hand": false,
+    "board": "Airnode-C3",
+    "scope": "pcb",
+    "flags": [
+      "no LCSC part number"
+    ]
+  }
+]

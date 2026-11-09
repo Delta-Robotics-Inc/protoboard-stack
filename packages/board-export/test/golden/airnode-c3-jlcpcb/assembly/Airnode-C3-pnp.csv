@@ -1,0 +1,19 @@
+Designator,Value,Footprint,X (mm),Y (mm),Rotation (deg),Side,Process
+C1,1 uF,C_0603,-12.5000,-3.0000,90,Top,smt
+C2,1 uF,C_0603,-7.5000,-3.0000,90,Top,smt
+C3,10 uF,C_0805,6.0000,-5.0000,0,Top,smt
+C4,100 nF,C_0402,-4.0000,11.5000,0,Top,smt
+C5,1 uF,C_0402,1.0000,-6.0000,0,Top,smt
+D1,green,LED_0603,-16.0000,10.0000,0,Top,smt
+J1,USB-C,USB-C-receptacle,-10.0000,-12.5000,0,Top,mixed
+R1,1 k,R_0402,-13.0000,10.0000,0,Top,smt
+R2,1 k,R_0402,-13.0000,7.0000,0,Top,smt
+R3,4.7 k,R_0402,-7.5000,9.5000,0,Top,smt
+R4,4.7 k,R_0402,-7.5000,8.0000,0,Top,smt
+R5,5.1 k,R_0402,-4.0000,-9.5000,0,Top,smt
+R6,5.1 k,R_0402,-4.0000,-11.0000,0,Top,smt
+R7,10 k,R_0402,1.0000,-4.0000,0,Top,smt
+SW1,BOOT,SW-tact-4pad,-15.0000,0.0000,0,Top,smt
+U1,ESP32-C3 module,ESP32-C3-module,10.0000,6.5000,0,Top,smt
+U2,LDO 3.3 V,SOT-23-5,-10.0000,-3.0000,0,Top,smt
+U3,I2C humidity sensor,DFN-4-1.5mm,-4.0000,9.0000,0,Top,smt
