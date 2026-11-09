@@ -102,6 +102,9 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   interference: LOCAL,
   // W4-C (PB-1190): drawings to CAD, the CAD runtime on this machine
   drawing: LOCAL,
+  // PCB editor Phase 1 (board.ts): the board service on a board folder on this machine; import, check, route and fill
+  // read and write local files only
+  board: LOCAL,
   stack: LOCAL,
   agents: LOCAL,
   setup: LOCAL,

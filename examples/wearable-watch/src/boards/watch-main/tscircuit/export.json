@@ -24,7 +24,7 @@
       "ti-tps7a0230pdbv#cad_step": "sha256:ccd3b9ff6bb5b087082112e9a3c00ac03a7b324b0878ca828f1d289745419ca3",
       "yageo-rc0402#cad_step": "sha256:2eae825f92a47818aa3a9895cfd0a06ca08dd24edcebf15237266469952206ec"
     },
-    "provider": "sha256:6b067310590809293be115d2144492a72417cbf1cbe1235fc02e878edd9abed0",
+    "provider": "sha256:aa728ec823c3980d7daee5575e7c203ab63154e6558edb08472821aff508849c",
     "converters": {
       "circuit-json-to-gerber": "0.0.111",
       "circuit-json-to-gltf": "0.0.141",

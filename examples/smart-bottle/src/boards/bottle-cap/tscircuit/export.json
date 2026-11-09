@@ -23,7 +23,7 @@
       "ti-tps63020dsjr#cad_step": "sha256:02b747716b9b342d52a9c750c045cb82603e4fa1b1287e6a087d8005bedab918",
       "yageo-rc0402#cad_step": "sha256:2eae825f92a47818aa3a9895cfd0a06ca08dd24edcebf15237266469952206ec"
     },
-    "provider": "sha256:6b067310590809293be115d2144492a72417cbf1cbe1235fc02e878edd9abed0",
+    "provider": "sha256:aa728ec823c3980d7daee5575e7c203ab63154e6558edb08472821aff508849c",
     "converters": {
       "circuit-json-to-gerber": "0.0.111",
       "circuit-json-to-gltf": "0.0.141",
