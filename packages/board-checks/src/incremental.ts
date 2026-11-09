@@ -27,7 +27,11 @@
  * from absent to present or back, fill whose notes or filled zones change or where more than half the rings
  * changed, new fill while a rule tests an object's shape against an area (a region, a courtyard or area
  * condition), `fillChanged` without new fill, a footprint change while a rule tests courtyards in a condition,
- * and any record kind this mode does not rebuild per record. Nothing here reads or writes `analyzeBoard`'s cache.
+ * and any record kind this mode does not rebuild per record (a waiver among them: adding or removing one runs in
+ * full). Nothing here reads or writes `analyzeBoard`'s cache.
+ *
+ * Waivers: the state keeps every finding, waived or not, so the next update diffs like with like; the result
+ * handed out has the board's waivers applied (`applyWaivers`), and the diff it reports covers counted findings only.
  */
 import { byCodeUnit, canonical, canonicalRecord, FindingSchema, recordsOfKind, sha1Hex, sha256Hex, type BoardDocument, type BoardRecord, type Box, type CopperLayer, type Finding, type RuleCondition } from "@protoboardai/board";
 import { coverage, makeFinding, type Analysis } from "./checks.js";
@@ -41,6 +45,7 @@ import { buildModel, type CheckModel, type CopperItem } from "./model.js";
 import { RuleBook } from "./rules.js";
 import type { BoardCheckResult } from "./run.js";
 import { summarize, type Timing } from "./summary.js";
+import { applyWaivers } from "./waivers.js";
 
 export interface IncrementalChecks {
   /** The current result, as `runBoardChecks` returns it for the current document. */
@@ -269,9 +274,11 @@ function check(s: Working, rules: RuleBook, hash: string, stages: Record<string,
   s.byId = fin.byId;
   s.diff = { added: fin.added, removed: fin.removed };
   const timing: Timing = { totalMs: ms(t0), stages };
+  // every finding, waived or not: the state keeps them all and the public result applies the waivers (applyWaivers)
   return {
     inputHash: hash,
     findings,
+    waived: [],
     connectivity,
     summary: summarize(findings, connectivity, { timing, notRun: analysis.notRun }),
     notRun: analysis.notRun,
@@ -556,7 +563,7 @@ export function createIncrementalChecks(doc: BoardDocument, options: { fills?: Z
   const join = options.join ?? "ends";
   let fills = normalizeFills(options.fills);
   let state: State | undefined = fullState(doc, fills, join);
-  let result = state.result;
+  let result = applyWaivers(state.result, doc);
   return {
     get result() {
       return result;
@@ -589,8 +596,15 @@ export function createIncrementalChecks(doc: BoardDocument, options: { fills?: Z
       }
       state = s;
       fills = nextFills;
-      result = s.result;
+      result = applyWaivers(s.result, next);
       let { added, removed } = s.diff;
+      if (mode === "incremental" && (result.waived.length || before.waived.length)) {
+        // the state's diff is over every finding: keep what counts (an incremental update never changes the waivers)
+        const now = new Set(result.waived.map((w) => w.finding.id));
+        const was = new Set(before.waived.map((w) => w.finding.id));
+        added = added.filter((f) => !now.has(f.id));
+        removed = removed.filter((id) => !was.has(id));
+      }
       if (mode === "full") {
         // a full run has no previous findings of its own: the diff is against the result before
         added = [];
@@ -604,7 +618,8 @@ export function createIncrementalChecks(doc: BoardDocument, options: { fills?: Z
             removed.push(f.id);
           }
         }
-        for (const f of before.findings) if (!s.byId.has(f.id)) removed.push(f.id);
+        const nowById = new Set(result.findings.map((f) => f.id));
+        for (const f of before.findings) if (!nowById.has(f.id)) removed.push(f.id);
       }
       return { result, added, removed, mode, ms: Math.round((now() - t0) * 100) / 100 };
     },

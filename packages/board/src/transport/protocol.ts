@@ -153,6 +153,9 @@ export const METHOD_PARAMS = {
   "board.releaseHold": z.object({ actor: WireActor, id: z.string().min(1).max(200).optional() }).strict(),
   /** The last derived state a live checker published (contract 6.1), or null. */
   "board.derived": z.object({}).strict().optional(),
+  /** A person pauses agents and routers (their writes are refused `paused`); `ttlMs` ends it on its own. */
+  "board.pause": z.object({ actor: WireActor, reason: z.string().max(200).optional(), ttlMs: z.number().int().positive().max(86_400_000).optional() }).strict(),
+  "board.resume": z.object({ actor: WireActor }).strict(),
 } as const;
 export type BoardMethod = keyof typeof METHOD_PARAMS;
 export const BOARD_METHODS = Object.keys(METHOD_PARAMS) as BoardMethod[];
@@ -257,6 +260,10 @@ export interface OperationInfo {
   audience: "all" | "system";
   phase: 1 | 2;
   example: Record<string, unknown>;
+  /** Calls to run first, in the same transaction, when the example needs something the sample board lacks. */
+  exampleBefore?: { op: string }[];
+  /** Only a person makes this change; an agent's call is refused needs-person (and kept as a proposal). */
+  person?: true;
   input: JsonSchema;
 }
 
@@ -265,7 +272,7 @@ export function describeOperations(options: { all?: boolean } = {}): { operation
   return {
     operations: listOperations()
       .filter((d) => options.all || d.audience === "all")
-      .map((d) => ({ name: d.name, title: d.title, description: d.description, audience: d.audience, phase: d.phase, example: d.example, input: toJsonSchema(d.input) })),
+      .map((d) => ({ name: d.name, title: d.title, description: d.description, audience: d.audience, phase: d.phase, example: d.example, ...(d.exampleBefore ? { exampleBefore: d.exampleBefore } : {}), ...(d.person ? { person: true as const } : {}), input: toJsonSchema(d.input) })),
     planned: PLANNED_OPERATIONS.map((p) => ({ ...p })),
   };
 }
@@ -332,5 +339,11 @@ export function callService(svc: BoardService, method: BoardMethod, params: unkn
       return svc.releaseHold(p.actor, (p as { id?: string }).id);
     case "board.derived":
       return svc.derived() ?? null;
+    case "board.pause": {
+      const a = p as unknown as { actor: Actor; reason?: string; ttlMs?: number };
+      return svc.pause(a.actor, { ...(a.reason !== undefined ? { reason: a.reason } : {}), ...(a.ttlMs !== undefined ? { ttlMs: a.ttlMs } : {}) });
+    }
+    case "board.resume":
+      return svc.resume(p.actor);
   }
 }

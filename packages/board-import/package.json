@@ -32,6 +32,9 @@
     "polygon-clipping": "0.15.7",
     "zod": "3.25.76"
   },
+  "devDependencies": {
+    "@protoboardai/board-checks": "^0.2.2"
+  },
   "keywords": [
     "protoboard",
     "hardware",

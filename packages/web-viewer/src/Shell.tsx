@@ -28,6 +28,7 @@ import {
 import type { ResolvedView } from "@protoboardai/core";
 import { PartStatusStyles, PartsDataProvider, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, themeAdapterFor, themeChoiceOf, type HostAdapter, type PartTrust, type PartsData, type ViewDefinition } from "@protoboardai/views";
 import { knownBoards, onKnownBoards, setKnownBoards, type BoardEntry, type BoardHost } from "@protoboardai/views";
+import { knownSchematics, onKnownSchematics, setKnownSchematics, type SchematicEntry, type SchematicHost } from "@protoboardai/views";
 import { Logo, markSvg } from "./Logo.js";
 
 export interface WebViewerOptions extends UhdViewerOptions {
@@ -51,6 +52,10 @@ export interface WebViewerOptions extends UhdViewerOptions {
   boards?: BoardHost;
   /** The board folders the host already knows (the dev server's state): the layout tab is offered while there are any. */
   knownBoards?: BoardEntry[];
+  /** The project's schematics, one per UHD board, and a feed of each (the schematic tab's editor; `createEventStreamSchematicHost`). */
+  schematics?: SchematicHost;
+  /** The schematics the host already knows (the dev server's state): the editor is offered while there are any. */
+  knownSchematics?: SchematicEntry[];
 }
 
 const THEME_KEY = "protoboard-web:theme";
@@ -103,6 +108,7 @@ function useThemeChoice(given?: string): [string, (next: string) => void] {
 export function WebShell(props: WebViewerOptions) {
   // the layout tab's `applies` reads the known board folders (views pcb/known-boards.ts): set before the tabs are read
   useMemo(() => props.knownBoards && setKnownBoards(props.knownBoards), [props.knownBoards]);
+  useMemo(() => props.knownSchematics && setKnownSchematics(props.knownSchematics), [props.knownSchematics]);
   const [choice, setChoice] = useThemeChoice(props.themeChoice);
   const adapter = useMemo(() => themeAdapterFor(choice), [choice]);
   // the viewer knows marks, not parts: the status becomes a tone and a tooltip here
@@ -113,7 +119,7 @@ export function WebShell(props: WebViewerOptions) {
       <PartStatusStyles />
       <PartsDataProvider data={props.partsData ?? null}>
         <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
-          <Shell views={props.views} registry={props.registry} pairRequests={props.pairRequests} theme={choice} onTheme={props.themeChoice ? undefined : setChoice} {...(props.boards ? { boards: props.boards } : {})} />
+          <Shell views={props.views} registry={props.registry} pairRequests={props.pairRequests} theme={choice} onTheme={props.themeChoice ? undefined : setChoice} {...(props.boards ? { boards: props.boards } : {})} {...(props.schematics ? { schematics: props.schematics } : {})} />
         </UhdViewer>
       </PartsDataProvider>
     </ThemeProvider>
@@ -165,11 +171,12 @@ function useRegistry(views: ResolvedView[] | undefined, given?: ViewRegistry): V
 /** Space the floating header covers at the top of the view (the viewer's floating cards sit below it). */
 const INSETS = { "--uhd-inset-top": "44px", "--uhd-inset-left": "0px" } as CSSProperties;
 
-function Shell({ views, registry: given, pairRequests, theme, onTheme, boards }: { views?: ResolvedView[]; registry?: ViewRegistry; pairRequests?: EventTarget; theme: string; onTheme?: (t: string) => void; boards?: BoardHost }) {
+function Shell({ views, registry: given, pairRequests, theme, onTheme, boards, schematics }: { views?: ResolvedView[]; registry?: ViewRegistry; pairRequests?: EventTarget; theme: string; onTheme?: (t: string) => void; boards?: BoardHost; schematics?: SchematicHost }) {
   const c = useViewer();
   const registry = useRegistry(views, given);
   // the tabs again when the host's board folders change (the layout tab comes and goes with them)
   useSyncExternalStore(onKnownBoards, () => knownBoards().length);
+  useSyncExternalStore(onKnownSchematics, () => knownSchematics().length);
   const path = c.drill.join("/");
   const tabs = registry.forModule(c.levelDef, c.source.bundle, path);
   // a domain tab (schematic, BOM, …) when one is open; the viewer's own view (diagram, 3D) otherwise
@@ -216,9 +223,10 @@ function Shell({ views, registry: given, pairRequests, theme, onTheme, boards }:
       },
       artifactUrl: (defId, filePath) => c.source.resolveArtifact(defId, filePath),
       ...(boards ? { boards } : {}),
+      ...(schematics ? { schematics } : {}),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [c.hostActions, registry, c.source, c.drill, boards],
+    [c.hostActions, registry, c.source, c.drill, boards, schematics],
   );
   const View = active?.component ?? PlannedView;
   const diagram = active?.id === "diagram";

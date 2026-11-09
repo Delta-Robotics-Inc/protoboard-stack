@@ -417,6 +417,10 @@ const cli = meow(
     board <command> <dir>   The PCB board without a window: serve, stop, inspect, query, ops, apply, undo, redo,
                             revert, claim, release, presence, save, checkpoint, import, check, render
                             (\`protoboard board help\`; docs/specs/pcb-editor/board-cli.md)
+    schematic <command> <dir>
+                            The pin-level schematic of a UHD board, <module folder>/schematic: serve, stop,
+                            inspect, query, ops, apply, undo, redo, save, checkpoint, layout, check, render,
+                            describe, cleanup, export-kicad (\`protoboard schematic help\`)
     telemetry [status|show|export|clear|on|off]
                             Local crash and performance records of the viewer (.protoboard/local/telemetry/, never
                             sent): status, show (--days), export prints the redacted bundle and writes it (--out
@@ -1593,6 +1597,11 @@ async function main() {
     case "board": {
       // PCB editor Phase 1: the board service's CLI (board.ts); its flags are read from the raw argv there
       process.exitCode = await (await import("./board.js")).boardCommand(process.argv.slice(process.argv.indexOf("board") + 1), { cwd });
+      return;
+    }
+    case "schematic": {
+      // PCB editor Phase 3: the schematic service's CLI (schematic.ts); its flags are read from the raw argv there
+      process.exitCode = await (await import("./schematic.js")).schematicCommand(process.argv.slice(process.argv.indexOf("schematic") + 1), { cwd });
       return;
     }
     case "settings": {

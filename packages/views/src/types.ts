@@ -7,6 +7,7 @@ import type { ComponentType } from "react";
 import type { ModuleDef, UhdBundle } from "@deltarobotics/uhd";
 import type { Theme, ThemeAdapter, ViewerSelection } from "@deltarobotics/uhd-viewer/components";
 import type { BoardHost } from "./pcb/remote.js";
+import type { SchematicHost } from "./schematic/remote.js";
 
 export type { Theme, ThemeAdapter };
 
@@ -90,6 +91,8 @@ export interface HostAdapter {
   fetchParts?(): void;
   /** The project's board folders and a read-only feed of each, for the layout view (pcb/remote.ts). */
   boards?: BoardHost;
+  /** The project's schematics (one per UHD board) and a feed of each, for the schematic editor (schematic/remote.ts). */
+  schematics?: SchematicHost;
 }
 
 /** A host that offers nothing (tests, static pages). */

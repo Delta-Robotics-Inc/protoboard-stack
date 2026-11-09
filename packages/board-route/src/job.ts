@@ -4,7 +4,7 @@ import { byCodeUnit, canonical, copperLayers, recordsOfKind, sha1Hex, type Board
 import { resolveConstraints } from "./constraints.js";
 import { copperModel, islandAnchors, openNetIslands } from "./connectivity.js";
 import { flattenContour, pointInPolygon } from "./geom.js";
-import type { NetToRoute, ResolvedConstraints, RouteBudget, RouteJob, RouteScope } from "./types.js";
+import type { IslandAnchor, IslandSource, NetToRoute, ResolvedConstraints, RouteBudget, RouteJob, RouteScope } from "./types.js";
 
 export interface JobRequest {
   scope: RouteScope;
@@ -15,6 +15,8 @@ export interface JobRequest {
   options?: Record<string, unknown>;
   /** `floor-and-no-go` for the diagnostic rerun. */
   tiers?: ResolvedConstraints["tiers"];
+  /** The islands to join as the caller's connectivity sees them (zone fill included); default this package's copper model. */
+  islands?: IslandSource;
 }
 
 /** DEFAULT: a router run's wall clock (5 minutes), memory and threads from this machine (one heavy job at a time). */
@@ -36,35 +38,46 @@ export function lockedIds(doc: BoardDocument): string[] {
   return out.sort(byCodeUnit);
 }
 
-/** The nets and islands a scope asks to route. */
-export function netsInScope(doc: BoardDocument, scope: RouteScope): { nets: NetToRoute[]; notes: string[] } {
+/** The nets and islands a scope asks to route (`islands`: the caller's connectivity instead of this package's copper model). */
+export function netsInScope(doc: BoardDocument, scope: RouteScope, islands?: IslandSource): { nets: NetToRoute[]; notes: string[] } {
   const notes: string[] = [];
   const model = copperModel(doc);
-  const open = openNetIslands(doc, model);
   const pours = pourNets(doc);
   let names: string[];
   if (scope.kind === "nets") {
     const unknown = scope.nets.filter((n) => !doc.nets.has(n));
     if (unknown.length) notes.push(`not in the netlist: ${unknown.join(", ")}`);
-    names = [...new Set(scope.nets)].filter((n) => open.has(n));
-  } else {
-    names = [...open.keys()];
-    if (!scope.includePourNets) {
-      const skipped = names.filter((n) => pours.has(n));
-      if (skipped.length) notes.push(`left to their pours (a zone of the net exists): ${skipped.join(", ")}`);
-      names = names.filter((n) => !pours.has(n));
+    names = [...new Set(scope.nets)].filter((n) => doc.nets.has(n));
+  } else names = [...doc.nets.keys()];
+  // the anchors to join per net: the caller's (with the zone fill) or this package's islands (zones connect nothing)
+  const open = new Map<string, { anchors: IslandAnchor[]; objects: string[] }>();
+  if (islands) {
+    const given = islands(doc, names);
+    for (const net of names) {
+      const a = given.get(net);
+      if (a && a.length > 1) open.set(net, { anchors: a.map((x) => ({ object: x.object, x: x.x, y: x.y, layers: [...x.layers] })), objects: (model.byNet.get(net) ?? []).map((x) => x.id).sort(byCodeUnit) });
     }
+  } else {
+    const wanted = new Set(names);
+    for (const [net, isl] of openNetIslands(doc, model))
+      if (wanted.has(net)) open.set(net, { anchors: islandAnchors(isl), objects: isl.flatMap((i) => i.items.map((x) => x.id)).sort(byCodeUnit) });
+  }
+  names = names.filter((n) => open.has(n));
+  if (scope.kind !== "nets" && !scope.includePourNets) {
+    const skipped = names.filter((n) => pours.has(n));
+    if (skipped.length) notes.push(`left to their pours (a zone of the net exists): ${skipped.join(", ")}`);
+    names = names.filter((n) => !pours.has(n));
   }
   const region = scope.kind === "region" ? flattenContour(scope.region).points : undefined;
   const nets: NetToRoute[] = [];
   for (const net of names.sort(byCodeUnit)) {
-    const islands = open.get(net)!;
-    let anchors = islandAnchors(islands);
+    const o = open.get(net)!;
+    let anchors = o.anchors;
     if (region) {
       anchors = anchors.filter((a) => pointInPolygon(a, region));
       if (anchors.length < 2) continue;
     }
-    nets.push({ net, islands: anchors, objects: islands.flatMap((i) => i.items.map((x) => x.id)).sort(byCodeUnit) });
+    nets.push({ net, islands: anchors, objects: o.objects });
   }
   return { nets, notes };
 }
@@ -73,7 +86,7 @@ export function netsInScope(doc: BoardDocument, scope: RouteScope): { nets: NetT
 export function buildJob(doc: BoardDocument, request: JobRequest): Omit<RouteJob, "unexpressed"> & { notes: string[] } {
   const stack = copperLayers(doc);
   const layers: CopperLayer[] = request.scope.layers?.length ? stack.filter((l) => request.scope.layers!.includes(l)) : stack;
-  const { nets, notes } = netsInScope(doc, request.scope);
+  const { nets, notes } = netsInScope(doc, request.scope, request.islands);
   const constraints = resolveConstraints(doc, nets.map((n) => n.net), { tiers: request.tiers ?? "all", layers });
   const locked = [...new Set([...lockedIds(doc), ...(request.freeze ?? [])])].sort(byCodeUnit);
   const budget = { ...defaultBudget(), ...(request.budget ?? {}) };

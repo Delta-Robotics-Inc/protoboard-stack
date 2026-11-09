@@ -27,6 +27,14 @@ export interface IslandAnchor {
   layers: CopperLayer[];
 }
 
+/**
+ * The islands each of `nets` still has to join, as the caller's connectivity sees them (with the zone fill, which
+ * this package does not compute): one anchor per island. A net missing from the map, or with fewer than two
+ * islands, has nothing open. Given to a job (`JobRequest.islands`), it replaces this package's own islands, so a
+ * net a pour partly joins is routed only where the pour does not reach.
+ */
+export type IslandSource = (doc: BoardDocument, nets: readonly string[]) => ReadonlyMap<string, IslandAnchor[]>;
+
 /** A net in scope and the islands it still has to join (two or more). */
 export interface NetToRoute {
   net: string;
@@ -184,6 +192,8 @@ export interface RouterCapabilities {
   incremental: boolean;
   /** Threads it can use. */
   maxThreads: number;
+  /** Typical time before it routes anything (a program or a JVM starting), ms: under a deadline it is not started with less time than this left. */
+  startupMs?: number;
 }
 
 export type Availability = { ok: true } | { ok: false; reason: string };

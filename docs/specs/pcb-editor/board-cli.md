@@ -43,6 +43,10 @@ serving <project>/airnode/board
   Ctrl+C or `protoboard board stop` saves the board and stops; nothing is saved until `board save`, `board checkpoint` or the stop
 ```
 
+With the editing kernel installed (`@protoboardai/board-edit`), the service also runs the live checks: after
+every commit it rechecks what changed (incremental checks), refills affected zones and publishes a `derived`
+event (`board.derived` returns the last one), and it offers the `board.diagnose` wire method.
+
 `--port <n>` (default: a free port), `--origin <origin>` (a browser origin allowed to connect,
 such as the dev server's; repeatable), `--autosave` (save 2 s after the last change),
 `--recover` (replay journal entries of an earlier session that never reached the files).
@@ -115,7 +119,9 @@ only, never open to the CLI's `apply` or MCP).
 The file holds a transaction (`{ batchId, label, ops, expectSeq?, … }`), a list of ops, or one
 op; `-` (or no file) reads stdin. `--dry-run`, `--label`, `--batch-id`, `--change-set
 <id>[:<title>]`, `--expect-seq`, `--expect-epoch`, `--lease <token>` fill or override the
-envelope. A resent batch id returns its first reply.
+envelope. A resent batch id returns its first reply (except a `paused` or `held` refusal, which is not
+remembered, so the same batch may be sent again). `--wait <seconds>` retries while the reply is `paused` or `held`
+(see pause and resume below).
 
 ```
 $ cat move.json
@@ -278,6 +284,19 @@ items included). `--json` gives the findings, the summary, connectivity counts, 
 cross-check (our findings by id, KiCad's entries in full), the fill state, the import record
 and the timings.
 
+Before a change is made (Phase 2): `--with <file>` checks the board as it would be with that change applied on a
+copy (a transaction, ops or one op as `apply` takes them, or a proposal file as `propose` takes it, all its items or
+`--items a,b`; applied as the CLI's actor), and `--proposal <id>` with the stored proposal's items applied (all, or
+`--items`). Nothing changes; the output ends `the board now: ...` with the counts as they are, and `--json` adds
+`with: { kind, file | id, items?, now }`. KiCad does not run on a board that is not on disk. A person reads a
+proposal's counts this way before `board accept`; an agent checks its own plan before `board propose`.
+
+`--refill` fills the zones again with the fill engine (`@protoboardai/board-fill`) instead of using the cached fill.
+An imported board's cached fill is the source tool's last fill: it stays current while the zones are unchanged, but
+copper moved or added since is not cleared from it, so `board check` reports it touching the old pour until the zones
+are refilled, as the source tool would. The board service's live checks and the layout screen refill once the board
+is edited; `--refill` gives the CLI the same answer.
+
 #### render
 
 ```
@@ -360,6 +379,55 @@ the outline (vertices, area), cutouts, what was skipped and why, open chains, an
 `--json` gives the reply with `report` and `file`. A drawing with no closed loop, or an outline
 driven by CAD, is `invalid` (exit 1). CHANGES FILES.
 
+### export-kicad (Phase 2)
+
+```
+$ protoboard board export-kicad airnode/board kicad/airnode-c3.kicad_pcb
+WRITTEN  <project>/airnode/board -> <project>/kicad/airnode-c3.kicad_pcb
+  files: <project>/kicad/airnode-c3.kicad_pcb, <project>/kicad/airnode-c3.kicad_pro, <project>/kicad/airnode-c3.kicad_dru
+  board: 20 footprints, 123 pads, 0 tracks (0 arcs), 0 vias, 0 zones, 0 rule areas, 0 graphics, 2 texts, 15 nets, 0 net classes, 0 custom rules
+  offset: the import record's: a board point plus (100 mm, -100 mm) is the KiCad point, Y turned down
+  zone fill: 0 polygon(s) from <project>/.protoboard/build/board/airnode__board/zone-fill.json (kicad)
+  report: 0 dropped, 3 approximated, 8 info line(s)
+  APPROXIMATED 20 text: written with its glyph width equal to its height (the document keeps the height only)
+  APPROXIMATED 4 polygon pad: written as a custom pad (a small round anchor inside the polygon, the polygon as its primitive); KiCad's trapezoid and chamfered shapes come back as polygons
+  APPROXIMATED 4 Edge.Cuts line: drawn 0.05 mm wide (the document keeps the outline's line, not its drawn width)
+  INFO 1 board offset: coordinates are the board's plus (100, -100) mm (the import record's offset: the export lands where the source was), Y turned down
+  …
+  cross-check it: protoboard board check <project>/airnode/board --kicad <project>/kicad/airnode-c3.kicad_pcb
+  took 278 ms
+$ protoboard board check airnode/board --kicad kicad/airnode-c3.kicad_pcb
+…
+like with like: ours 75 unconnected, 0 errors, 0 warnings; KiCad 75 unconnected, 0 errors, 0 warnings  (KiCad 10.0.5, 5536 ms)
+```
+
+Writes the board as a KiCad board (`exportKicadBoard` of `@protoboardai/board-import`, written from
+KiCad's published file format and as the importer's inverse): the `.kicad_pcb` (KiCad 9 format,
+which KiCad 9 and 10 open), and beside it the `.kicad_pro` (board setup minimums, net classes with
+their values, nets and patterns, the severities the board's rules set) and the `.kicad_dru` (the
+custom rules, in precedence order; written with no rules when the board has none, so a stale file
+is never left beside the export). In the `.kicad_pcb`: the stackup and layers, the outline and
+cutouts on Edge.Cuts, footprints with their pads (shapes, drills, layers, nets, angles, side),
+graphics and texts, tracks and arcs, vias (blind and buried by their layers), zones with their
+settings and the board's cached zone fill (holes joined by zero-width bridges, as KiCad saves fill;
+without a cached fill zones are written unfilled and `kicad-cli pcb drc --refill-zones` fills them),
+keep-outs as rule areas, board graphics and texts, the netlist and locked flags. Coordinates go
+through the import record's offset when the board has one, so the export lands where the source
+was and `board check <dir> --kicad <export>` cross-checks it as it would the source; without one
+the board's origin goes to (150, 100) mm. Objects the source gave one KiCad UUID (the import
+record's `sharedIds`, such as the front and back copies of a castellated pad) share one UUID again,
+so KiCad reports each group once as it did on the source; `--unique-ids` gives every object its own.
+The export is noted in the import record (`exports`: path, time, whether it keeps the shared
+identities), and the cross-check reads a noted export as it reads the source: in the source's frame,
+with the shared identities folded when the export keeps them. Lengths are written exactly (integer nanometers as
+millimeters). The report names everything approximated or dropped (text glyph width, polygon pads
+as custom pads, the Edge.Cuts line width, rules KiCad cannot express, the source rules the import
+could not express, and so on). Imported, exported and imported again, a board comes back record
+by record except for explained differences (a polygon pad's ring may start at another vertex, and
+its arcs read back in straight steps; custom rules renumber when a source rule could not be
+imported). `--json` gives the files, stats, offset, fill and every report line. CHANGES FILES (the
+three files; the board is not changed).
+
 ### route and diagnose (Phase 2)
 
 These use the autorouter (`@protoboardai/board-route`) through the layout screen's host module
@@ -399,7 +467,36 @@ still open, and what the routers could not express. Scope: every net with open c
 `--nets a,b`, or `--region x1,y1,x2,y2` (nanometers, or numbers with `mm`; the open connections
 inside that rectangle). `--budget <seconds>` is the wall clock per router run (default 60).
 
-It changes nothing unless `--apply` is given. With `--apply` and status `proposed`, each step's
+It changes nothing unless `--apply` or `--propose` is given. With `--propose` and status `proposed`, the result is
+stored as board proposals through `@protoboardai/board-edit/service`'s `proposeRouteResult`: one proposal per
+router step, one item per net, the scores kept, proposed as the router. A person reads them with `board proposal
+--preview` and accepts only what scores better (`board accept <dir> <id> --items n0,...`):
+
+```
+$ protoboard board route airnode/board --propose --nets LED1,LED2 --budget 20
+PROPOSED  (nothing changed; stored for a person to accept)  run-46f7db82b01d, seq 3, epoch yf3n59
+  current:   42 open, 11 errors, 3 vias, 67.1557 mm of track
+  candidate: 40 open, 11 errors, 3 vias, 126.2136 mm of track
+  scope: nets LED1, LED2; 2 net(s) to route; budget 20 s per router; scored by board checks
+  stages:
+    1. tscircuit 0.0.953  complete, kept  2 net(s), 8 segment(s), 0 via(s), 3003 ms
+  …
+  stored as proposal p.yf3n59.3: "route 2 nets with tscircuit", 2 item(s) (n0 LED2, n1 LED1)
+  a person accepts what scores better: `protoboard board proposal <dir> <id> --preview`, then `board accept <dir> <id> [--items ...]`
+$ protoboard board proposal airnode/board p.yf3n59.3
+p.yf3n59.3  OPEN  "route 2 nets with tscircuit"
+  by router router:tscircuit (source router), computed on seq 3, epoch yf3n59; change set run-46f7db82b01d
+  items:
+    n0     open     route LED2  nets LED2
+           added 4 track; +29.5393 mm of track; 1 op(s)
+    n1     open     route LED1  nets LED1
+           added 4 track; +29.5187 mm of track; 1 op(s)
+  before: 55 records, 10 tracks, 3 vias; after: 63 records, 18 tracks, 3 vias
+  scores: current 42 open, 11 error(s), 3 via(s), 67.1557 mm; candidate 40 open, 11 error(s), 3 via(s), 126.2136 mm (run run-46f7db82b01d)
+  --preview shows the diff against the board now
+```
+
+`--propose` and `--apply` exclude each other. With `--apply` and status `proposed`, each step's
 transaction is applied as its router (`router:<id>`, never as the caller), through the running
 service or the board opened for the call, stopping at the first refusal; afterwards every locked
 record is compared byte for byte with the snapshot the run started from (`N locked records verified
@@ -416,12 +513,19 @@ it were not applied), `2` a usage error, not available, or a locked record chang
 
 ```
 $ protoboard board diagnose airnode/board USB_DP
-USB_DP: PLACEMENT  (seq 0, epoch vzpsiw; nothing changed)
+  diagnose USB_DP: connectivity 2%  0.1 of 8 s: the board's checks and zone fill, once
+  diagnose USB_DP: attempt 8%  0.2 of 8 s: every rule as it is; the probe beside it
+  diagnose USB_DP: attempt 72%  3.6 of 8 s  tscircuit: complete: worse than the board it started from: errors rise from 11 to 29
+  diagnose USB_DP: relaxations 75%  4.0 of 8 s  tscircuit: Plan USB_DP at the floor clearance and width
+  diagnose USB_DP: done 100%  7.4 of 8 s: the budget cut part of it
+USB_DP: PLACEMENT  (seq 0, epoch q8qo3c; nothing changed)
   Placement: the probe routed USB_DP only by breaking the floor clearance (20 pairs); move parts or a no-go area
+  budget 8 s for the whole diagnosis; took 7.4 s; 1 open link(s) diagnosed
+  STOPPED attempt: freerouting: not started, the time budget ran out (2384 ms left)
   attempts (every rule as it is):
-    tscircuit  complete (worse than the board it started from: errors rise from 11 to 29)  0 segment(s), 0 via(s), 6428 ms
-    freerouting  partial (no copper (partial))  0 segment(s), 0 via(s), 34139 ms
-  probe (the fab floor and no-go areas only): tscircuit routed the net, 35.6144 mm, 0 via(s), 20 pair(s) under the floor clearance, 13670 ms
+    tscircuit  complete (worse than the board it started from: errors rise from 11 to 29)  0 segment(s), 0 via(s), 3398 ms
+    freerouting  skipped (the time budget ran out (2384 ms left))  0 segment(s), 0 via(s), 0 ms
+  probe (the fab floor and no-go areas only): tscircuit routed the net, 35.6144 mm, 0 via(s), 20 pair(s) under the floor clearance, 3757 ms
   what blocks it:
     target  rule:target.clearance: clearance plan 0.2 mm (rule:target.clearance); above the floor 0.127 mm
     target  rule:target.track_width: track width plan 0.25 mm (rule:target.track_width); above the floor 0.127 mm
@@ -435,18 +539,201 @@ USB_DP: PLACEMENT  (seq 0, epoch vzpsiw; nothing changed)
     policy: rule:policy.via_under_module blocks via_under_footprint
   relaxations (test-run on copies; none applied):
     Plan USB_DP at the floor clearance: a target rule for this net only: 0.2 mm to 0.127 mm
-      -> did not route: 41 open, 29 error(s), 0 via(s), 35.3782 mm, 18 new finding(s), 13046 ms (errors rise from 11 to 29)
-    …
+      -> did not route: 41 open, 29 error(s), 0 via(s), 35.3782 mm, 18 new finding(s), 3418 ms (errors rise from 11 to 29)
+    Plan USB_DP at the floor width: a target rule for this net only: 0.25 mm to 0.127 mm
+      -> not test-run: relaxing both did not route USB_DP, so relaxing one alone will not
+    Plan USB_DP at the floor clearance and width: both target rules, this net only
+      -> did not route: 41 open, 29 error(s), 0 via(s), 35.3782 mm, 18 new finding(s), 3313 ms (errors rise from 11 to 29)
+  note: scored by what changed: 5 full and 3 incremental check run(s), 216 ms
+
+$ protoboard board diagnose airnode/board USB_DP
+USB_DP: PLACEMENT  (seq 0, epoch whfa2h; nothing changed; from the cache)
+  …
+
+$ protoboard board diagnose airnode/board GND
+GND: ROUTES AS IS  (seq 0, epoch ksnc6o; nothing changed)
+  left to its pour (zone:f.gnd_bottom): its fill joins the rest; only the 15 links it does not make are diagnosed
+  GND routes with every rule as it is: run the autorouter on it
+  budget 8 s for the whole diagnosis; took 4.7 s; 15 open link(s) diagnosed
+  …
 ```
 
-Why one net does not route: the verdict (`routes as is`; `rules, not placement`: with only the
-fab floor and no-go areas it routes within the floor clearance; `placement`: even then it does
-not, so the parts or a no-go area block it), the summary sentence, the attempts with every rule,
-the probe with the fab floor and no-go areas only, what blocks it, the rule areas by tier, and the
-relaxations (target rules for this net only; the floor is never relaxed) with their test-run
-results on copies of the board. `--budget <seconds>` per router run (default 30). It changes
-nothing: a relaxation takes effect only when its rules are applied (`board apply` with `rule.set`).
-Exit `0` when the diagnosis ran, `2` for a usage error (an unknown net) or not available.
+(Progress lines abridged; they go to stderr. Times are from a laptop with other work running.)
+
+Why one net does not route, within one time budget for the whole diagnosis: `--budget <seconds>`
+(default 8). The verdict (`routes as is`; `rules, not placement`: with only the fab floor and
+no-go areas it routes within the floor clearance; `placement`: even then it does not, so the parts
+or a no-go area block it; `connected`: nothing of the net is open; `not known`: the budget ran out
+before the probe could say), the summary sentence, the attempts with every rule, the probe with the
+fab floor and no-go areas only, what blocks it, the rule areas by tier, and the relaxations (target
+rules for this net only; the floor is never relaxed) with their test-run results on copies of the
+board.
+
+It is bounded to the net's open links: the board checks run once (with the zone fill when the board
+has zones) and give the net's missing connections; only those are routed, and every candidate is
+scored by what changed since the last board scored (incremental checks and refill), not by a full
+check run. A net with a zone is left to its pour: the first line says so, and only the links its
+fill does not make are diagnosed (none: no router runs, verdict `connected`). The attempt runs the
+routers in order (the fallback only while time is left; Freerouting needs a few seconds to start
+and is not started with less); the probe runs beside it (the first available router) and is
+dropped when the attempt routes. The attempt and the probe may use three quarters of the budget;
+the relaxations get the rest, two at a time, the most relaxed first: when the probe or the most
+relaxed one does not route, the others are not test-run, nor is one that cannot finish in the time
+left. Every stage stops at the budget and the answer says what was cut (`STOPPED`, `not test-run`).
+
+Progress (stage, percent, time against the budget, router) goes to stderr, not with `--json`. The
+answer is cached by an input hash (the board's records other than drawings and text, the netlist,
+the net, the budget, the routers and the scorer) in
+`.protoboard/build/board/<board key>/diagnosis/<hash>.json`, and a repeat says `from the cache`
+(`cached: true` and `hash` in `--json`, which also gives `links`, `pour`, `stopped`, `notes`). It
+changes nothing on the board: a relaxation takes effect only when its rules are applied (`board
+apply` with `rule.set`). Exit `0` when the diagnosis ran, `2` for a usage error (an unknown net)
+or not available.
+
+### Proposals, waivers, pause and the corridor (Phase 2)
+
+The commands of [phase2-editing.md](phase2-editing.md) section 9 and of the waivers and pause. A proposal is a
+change stored, not applied, until a person accepts it (all of it or some items) as their own transaction; an
+agent's net change, unlock or waiver is refused `needs-person` and stored as one by the service. Proposals live
+in `.protoboard/local/board/<board key>/proposals/` beside the journal. With no running service a command opens
+the board for the one call, so a proposal stored by an earlier call reads as stale (its seq belongs to another
+session): `accept --allow-stale` revalidates it and applies what still applies. With `board serve` running,
+proposals stay open until the board changes under them.
+
+#### propose, proposals and proposal
+
+```
+$ cat move-leds.json
+{ "title": "nudge the two LED resistors right", "items": [ { "key": "r2", "label": "move R2 right", "ops": [ { "op": "footprint.move", "ids": ["fp:status/r2"], "dx": 100000, "dy": 0, "tracks": "stay" } ] }, { "key": "r1", "label": "move R1 right", "ops": [ { "op": "footprint.move", "ids": ["fp:status/r1"], "dx": 100000, "dy": 0, "tracks": "stay" } ] } ] }
+$ PROTOBOARD_AGENT=planner protoboard board propose airnode/board move-leds.json
+PROPOSED  p.yf3n59.1  OPEN     "nudge the two LED resistors right"  by agent agent:planner; 2 item(s); changed 2 footprint
+  nothing changed; a person accepts it with `protoboard board accept airnode/board p.yf3n59.1`
+$ protoboard board proposals airnode/board
+1 proposal(s)
+  p.yf3n59.1  OPEN     "nudge the two LED resistors right"  by agent agent:planner; 2 item(s); changed 2 footprint
+$ protoboard board proposal airnode/board p.yf3n59.1 --preview
+p.yf3n59.1  OPEN  "nudge the two LED resistors right"
+  by agent agent:planner (source agent), computed on seq 0, epoch yf3n59; change set proposal.p.yf3n59.1
+  items:
+    r2     open     move R2 right
+           changed 1 footprint; 1 op(s)
+    r1     open     move R1 right
+           changed 1 footprint; 1 op(s)
+  before: 54 records, 10 tracks, 3 vias; after: 54 records, 10 tracks, 3 vias
+  preview on seq 0: applies
+    added 0
+    removed 0
+    changed 2: fp:status/r1, fp:status/r2
+```
+
+`propose <dir> <proposal.json>` stores `{ title (3 to 12 words), items: [{ key?, label, ops }], changeSet?,
+scores? }` as the actor the CLI resolves (`--as`, or the agent it runs under); every item must apply on its own
+and all together, else `INVALID` (exit 1). It changes nothing. `proposals <dir> [--status open|stale|accepted|
+partial|rejected]` lists them newest first. `proposal <dir> <id>` shows the title, the proposer, the status, each
+item with its nets and change summary (records added, removed and changed by kind, track length added and
+removed), the counts before and after, the scores (a router's current and candidate), why it is stale or who
+rejected it; `--preview` adds the diff against the board as it is now. `--json` gives the stored proposal.
+
+#### accept and reject
+
+```
+$ PROTOBOARD_AGENT=planner protoboard board accept airnode/board p.yf3n59.1
+REFUSED  not-a-person: board accept is a person's call; this command runs as agent:planner, and an agent never acts as a person
+$ protoboard board accept airnode/board p.yf3n59.1 --items r2
+APPLIED  seq 1, epoch yf3n59, batch accept.p.yf3n59.1.0
+  changed: fp:status/r2
+  proposal p.yf3n59.1 is now open: r2 accepted, r1 open
+$ protoboard board reject airnode/board p.yf3n59.1 --items r1 --reason "R1 stays where it is"
+REJECTED  p.yf3n59.1  PARTIAL  "nudge the two LED resistors right"  by agent agent:planner; 2 item(s), 0 open; changed 2 footprint
+```
+
+`accept <dir> <id> [--items a,b] [--allow-stale] [--as human]` is a person's call only: under an agent it is refused
+`not-a-person` (exit 3) without touching the board, `--as human` included (as for `pause` and `resume`, which take it
+too). `board check <dir> --proposal <id>` gives its counts first. The accepted items apply as one ordinary transaction of the
+person (undoable by them), the records keeping the proposer's provenance; a stale proposal is refused
+`stale-proposal` (exit 3) unless `--allow-stale`. `reject <dir> <id> [--items a,b] [--reason <text>]` marks
+items rejected (a person, or the proposer withdrawing its own).
+
+#### waivers
+
+A waiver is a person's "not a problem" on a finding, with a reason: a `waiver` record stored with the rules
+(`rules.jsonl`), added and removed by the operations `waiver.add` and `waiver.remove` through `board apply`.
+`finding` waives one finding id; `rule` (a rule id or a check name) with `objects` waives that rule's findings on
+exactly those objects (it survives them moving); `rule` alone waives every finding of that rule. An agent's
+waiver is refused `needs-person` and stored as a proposal:
+
+```
+$ cat waive.json
+{ "op": "waiver.add", "waiver": { "rule": "dangling", "objects": ["trk:f.spare.1"], "reason": "a spare stub for a rework wire" } }
+$ PROTOBOARD_AGENT=planner protoboard board apply airnode/board waive.json
+REFUSED  needs-person: waiver.add from an agent waits for a person; stored as proposal p.yf3n59.2 for a person to accept
+$ protoboard board accept airnode/board p.yf3n59.2
+APPLIED  seq 3, epoch yf3n59, batch accept.p.yf3n59.2.2
+  changed: waiver:yf3n59.2
+  proposal p.yf3n59.2 is now accepted: i0 accepted
+$ protoboard board check airnode/board --no-cross-check
+…
+WAIVED  dangling (f:dangling:b6234125fe0a) by waiver:yf3n59.2: out of the counts
+WAIVED  dangling (f:dangling:f77be6fe2eb9) by waiver:yf3n59.2: out of the counts
+…
+ours:  48 unconnected, 11 errors, 13 warnings, 2 waived (incomplete: see caveats)  (seq 3, checks 30 ms)
+```
+
+The checks leave a waived finding out of `findings` and every count and list it in `waived` (`--json`: `{
+finding, waiver }`); the summary line ends in `N waived`. The KiCad cross-check matches waived findings too and
+leaves them and the KiCad items matched to them out of the like-with-like counts, listing them apart
+(`crossCheck.waived`, and `waived N (M matched to a KiCad item)` on the `apart:` line).
+
+#### pause and resume
+
+```
+$ protoboard board pause airnode/board --reason "reviewing the power section" --ttl 20
+PAUSED  agents and routers are refused until 2026-11-09T14:06:09.480Z; reason: reviewing the power section
+  proposals are still taken; people and hosts write as before
+$ PROTOBOARD_AGENT=planner protoboard board apply airnode/board nudge.json
+REFUSED  paused: a person paused agents and routers (reviewing the power section) until 2026-11-09T14:06:09.480Z; proposals are still taken: retry later, or propose the change for a person
+$ PROTOBOARD_AGENT=planner protoboard board apply airnode/board nudge.json --wait 60
+APPLIED  seq 2, epoch yf3n59, batch cli-8a3cfb839ba8
+  changed: fp:status/led2
+  waited 11.0 s, 2 tries
+$ protoboard board presence airnode/board
+seq 2, epoch yf3n59
+  PAUSED by user (reviewing the power section) since 2026-11-09T14:07:15.353Z until 2026-11-09T14:09:15.353Z: agents and routers are refused
+  no leases
+$ protoboard board resume airnode/board
+RESUMED  agents and routers may write again (paused since 2026-11-09T14:07:15.353Z by person user)
+```
+
+(The presence lines are from a second pause with `--ttl 2m`.) `pause <dir> [--reason <text>] [--ttl <seconds>]`
+(a number of seconds, or with `s`, `m` or `ms`; at most a day) and `resume <dir>` are a person's calls on a
+running service (with none: exit 2; under an agent: `not-a-person`, exit 3). While paused, every transaction of an
+agent or router (apply, undo, redo, revert, claim) is refused `paused` with the pause and, when it has an end,
+`retryAfterMs`; dry runs and proposals go through, and people and hosts write as before. A `presence` event fires
+on pause, on resume and when a pause with a ttl ends. `apply --wait <seconds>` sends the same transaction again
+while it is refused `paused` or `held` (the service does not remember those refusals by batch id), until it goes
+through or the time runs out; `--json` adds `waited: { ms, tries }`.
+
+#### corridor
+
+```
+$ protoboard board corridor airnode/board --from -16mm,10mm --to -13mm,7mm --layer top
+FOUND  a free corridor on top: 5.95 mm through 8 point(s); the widest track along it is 0.27 mm
+  from -16, 10 to -13, 7 mm, track 0.25 mm at 0.2 mm clearance (grid 0.05 mm); the ends moved 0.035 and 0.576 mm to free space
+  path: -16, 10 -> -15.975, 9.425 -> -15.875, 9.275 -> -13.975, 7.375 -> -13.925, 6.475 -> -13.775, 6.375 -> -12.975, 6.375 -> -13, 7
+  millimeters, +Y up; changes nothing (a guide, not a route: `board apply` with track.route commits one)
+$ protoboard board corridor airnode/board --from pad:status/led1:1 --to pad:power/ldo:2 --layer top --width 0.5mm
+BLOCKED  no free corridor on top for LED1_A: stuck at -10, -4.1 mm, blocked by pad:power/ldo:1, pad:power/ldo:2, pad:power/ldo:3, trk:f.vbus.2
+  from -16.8, 10 to -10, -4.1 mm, track 0.5 mm at 0.2 mm clearance (grid 0.05 mm); the ends moved 0.035 and 0 mm to free space
+  millimeters, +Y up; changes nothing (a guide, not a route: `board apply` with track.route commits one)
+```
+
+`corridor <dir> --from <x,y | id> --to <x,y | id> --layer <copper layer> [--net] [--width] [--clearance]` asks the
+agent scene (`@protoboardai/board-scene`'s `findCorridor`, a grid search at 0.05 mm) whether a track of that width
+fits between the two ends at that clearance (defaults: the board's target width and clearance). Lengths take
+nanometers or `mm`; an end may be a pad, via or footprint id (its center; a pad or via end gives the net). The
+answer is in millimeters: `found`, the simplified centerline `path`, its `length`, the widest track that fits
+along it (`maxWidth`), or where it got stuck (`stuckAt`) and the objects blocking it (`blockedBy`). Exit 0 found,
+1 blocked, 2 usage (a layer or net the board lacks). It changes nothing.
 
 ## MCP tools
 
@@ -468,11 +755,21 @@ Each runs `protoboard board …` as `agent:<client name>`:
 | `board_render` | `board render` (region in nm, layers, flip, nets, width, height; `image: true` also returns the PNG) |
 | `board_import` | `board import` (source, dir, format is `--kind`); CHANGES FILES |
 | `board_import_dxf` | `board import-dxf` (dir, path, units, layers, tolerance in nm); CHANGES FILES |
+| `board_export_kicad` | `board export-kicad` (dir, out, uniqueIds is `--unique-ids`); CHANGES FILES: it writes the export only (and notes it in the import record) |
 | `board_route` | `board route` (nets, region in mm, budget in seconds, apply); CHANGES THE BOARD only with `apply: true`, each step as its router |
-| `board_diagnose` | `board diagnose` (net, budget in seconds); writes nothing |
+| `board_diagnose` | `board diagnose` (net, budget in seconds for the whole diagnosis); writes nothing but its cache under `.protoboard/build` |
+| `board_propose` | `board propose` (title, items, changeSet); stores a proposal, changes nothing |
+| `board_proposals` | `board proposals` (status); writes nothing |
+| `board_proposal` | `board proposal` (id, preview); writes nothing |
+| `board_corridor` | `board corridor` (from and to as `[x, y]` in mm or an id, layer, net, width and clearance in mm); writes nothing |
+
+`board_apply` also takes `waitSeconds` (`--wait`), and `board_route` `propose` (`--propose`). No tool accepts or
+rejects a proposal, pauses or resumes, or takes a hold: those are a person's calls (the editor, or the CLI in a
+person's terminal).
 
 `board_describe` and `board_render` write only derived files under `.protoboard/build`, so
-they are not marked read-only; `board_check` and `board_diagnose` are. `board_route` is not, since
+they are not marked read-only; `board_check` and `board_diagnose` are (the diagnosis's cache only
+answers a repeat sooner). `board_route` is not, since
 `apply` changes the board. A region goes to the CLI in brackets
 (`--region=[-10,-5,10,5]`), since a value a tool passes never starts with a dash.
 
@@ -489,8 +786,12 @@ it was not given, a wrong token, and messages over 4 MiB.
 Methods mirror the service: `board.snapshot`, `board.query`, `board.apply`, `board.undo`,
 `board.redo`, `board.revertChangeSet`, `board.claim`, `board.release`, `board.takeOver`,
 `board.presence`, `board.save`, `board.checkpoint`, `board.operations`, `board.log`,
-`board.changeSets`, and `board.shutdown` (offered by `protoboard board serve` only). The server
-sends `board.event` notifications (`commit`, `presence`, `saved`, `external-change`). In Node,
+`board.changeSets`, and `board.shutdown` (offered by `protoboard board serve` only); Phase 2 adds
+`board.propose`, `board.proposals`, `board.proposal`, `board.previewProposal`, `board.acceptProposal`,
+`board.rejectProposal`, `board.hold`, `board.releaseHold`, `board.derived`, `board.pause` (`{ actor, reason?,
+ttlMs? }`) and `board.resume` (`{ actor }`), each a typed client method of the same name, and the extension method
+`board.diagnose` when `board serve` attached the editing kernel. The server sends `board.event` notifications
+(`commit`, `presence` (with `paused` while a pause lasts), `saved`, `external-change`, `proposal`, `derived`). In Node,
 `connectBoard(dir)` from `@protoboardai/board/node` finds a live service or opens the board
 itself, and `serveBoard(service, options)` serves one. The package's index carries the protocol's
 shapes but not the server or the client; `@protoboardai/board/browser` is what runs in a page.

@@ -126,6 +126,8 @@ export interface RailProps {
   /** Open the autoroute panel (absent: the host runs no routers). */
   onAutoroute?: () => void;
   autorouteOn?: boolean;
+  /** The drawing tools (route, via, zone, keep-out) are on: the editing kernel is there and the board is editable (ui/tools.tsx). */
+  drawTools?: boolean;
 }
 
 const PLANNED = "kernel not available: the interactive tools need the editing kernel (@protoboardai/board-edit), which is not built yet";
@@ -141,10 +143,9 @@ export function Rail(p: RailProps) {
   return (
     <div className="pcb-float pcb-rail" onPointerDown={(e) => e.stopPropagation()}>
       <B icon="select" k="V" title="Select" on={p.tool === "select"} onClick={() => p.onTool("select")} />
-      <B icon="route" k="X" title="Route" planned />
-      <B icon="via" title="Via" planned />
-      <B icon="zone" title="Zone" planned />
-      <B icon="keepout" title="Keep-out" planned />
+      {(["route", "via", "zone", "keepout"] as const).map((t) => (
+        <B key={t} icon={t} {...(t === "route" ? { k: "X" } : {})} title={{ route: "Route: walk around, one callout on the active segment", via: "Via", zone: "Zone on the active layer", keepout: "Keep-out" }[t]} on={p.tool === t} {...(p.drawTools ? { onClick: () => p.onTool(p.tool === t ? "select" : t) } : { planned: true })} />
+      ))}
       {p.onText ? <B icon="text" k="T" title="Text: click on the board to place it" on={p.tool === "text"} onClick={p.onText} /> : <B icon="text" title="Text" planned />}
       {p.onDxf && <B icon="file" title="Board outline from a DXF file" onClick={p.onDxf} />}
       <B icon="measure" k="M" title="Measure" on={p.tool === "measure"} onClick={() => p.onTool(p.tool === "measure" ? "select" : "measure")} />
@@ -278,55 +279,78 @@ export interface StatusProps {
   mode?: string;
 }
 
+/** A check run's time as the status line says it: an ISO time as the local clock (14:02:11), any other text as given. */
+export function clock(at: string): string {
+  if (!/^\d{4}-\d\d-\d\dT/.test(at)) return at;
+  const d = new Date(at);
+  return Number.isNaN(d.getTime()) ? at : d.toTimeString().slice(0, 8);
+}
+
 export function StatusLine(p: StatusProps) {
   const c = p.checks;
   const x = c.ran ? c.crossCheck : undefined;
+  // the truthful line (L1): our counts first, then whose they are and when, then KiCad's counts beside them with any
+  // difference named; the long account (like with like, ours only, KiCad only, not evaluated) is on hover
+  const sameAsTotals = (o?: { unconnected: number; errors: number; warnings: number }) => !o || (c.ran && o.unconnected === c.unconnected && o.errors === c.errors && o.warnings === c.warnings);
+  const triple = (o: { unconnected: number; errors: number; warnings: number }) => `${o.unconnected} · ${o.errors} · ${o.warnings}`;
+  // KiCad ran on another version than the one our counts are for (the source file, before this session's edits):
+  // its counts are shown as that, never compared with ours as a difference
+  const stale = !!x?.ran && c.ran && c.seq !== undefined && (x.seq !== undefined ? x.seq !== c.seq : c.seq > 0);
   return (
     <footer className="pcb-status">
       {c.ran ? (
         <>
-          <span className="item">ours</span>
-          <span className="item" style={{ color: "var(--pcb-warn)" }}>
-            ▲ <b>{c.unconnected}</b> <span className="mute">unconnected</span>
+          <span className="item" title="Open connections (ratsnest)">
+            <span className="sev warn">▲</span> <b>{c.unconnected}</b> unconnected
           </span>
-          <span className="item" style={{ color: "var(--pcb-fail)" }}>
-            ✖ <b>{c.errors}</b> <span className="mute">errors</span>
+          <span className="item">
+            <span className="sev fail">✖</span> <b>{c.errors}</b> {c.errors === 1 ? "error" : "errors"}
           </span>
-          <span className="item" style={{ color: "var(--pcb-body)" }}>
-            ◌ <b>{c.warnings}</b> <span className="mute">warnings</span>
+          <span className="item">
+            <span className="sev">◌</span> <b>{c.warnings}</b> {c.warnings === 1 ? "warning" : "warnings"}
           </span>
-          <span className="item mute">
-            {c.seq !== undefined ? `seq ${c.seq}` : ""}
+          <span className="item" title="Our checks: when they ran, on which board version, and how long they took">
+            ours{c.at ? ` · ${clock(c.at)}` : ""}
+            {c.seq !== undefined ? ` · seq ${c.seq}` : ""}
             {c.ms !== undefined ? ` · ${Math.round(c.ms)} ms` : ""}
           </span>
           {c.incomplete && (
             <span className="pcb-chip warn" title={(c.caveats ?? []).join("\n")}>
-              incomplete{c.caveats?.length ? ` · ${c.caveats.length} caveat${c.caveats.length === 1 ? "" : "s"} (Checks tab)` : ""}
+              incomplete{c.caveats?.length ? ` · ${c.caveats.length} caveat${c.caveats.length === 1 ? "" : "s"}` : ""}
             </span>
           )}
           {x?.ran ? (
-            <span className="item" data-cross-check="ran" title={[`${x.tool}, like with like (the categories both check)`, ...(x.differences ?? []), ...(x.raw ? [`raw totals: ours ${x.raw.ours.unconnected} / ${x.raw.ours.errors} / ${x.raw.ours.warnings}, KiCad ${x.raw.kicad.unconnected} / ${x.raw.kicad.errors} / ${x.raw.kicad.warnings}`] : [])].join("\n")}>
-              {x.tool}
-              {x.seq !== undefined && c.seq !== undefined && x.seq !== c.seq ? <span className="mute"> (source file, at seq {x.seq})</span> : null}
-              <span className="mute"> like with like:</span>
-              {x.ours ? (
-                <>
-                  {" "}ours ▲ <b>{x.ours.unconnected}</b> ✖ <b>{x.ours.errors}</b> ◌ <b>{x.ours.warnings}</b> ·
-                </>
-              ) : null}{" "}
-              KiCad ▲ <b>{x.unconnected}</b> ✖ <b>{x.errors}</b> ◌ <b>{x.warnings}</b>
-              {x.difference ? <span className="pcb-chip warn">{x.difference}</span> : <span className="pcb-chip">same</span>}
-              <span className="mute">
-                {" "}
-                · ours only {x.oursOnly?.count ?? "?"} · KiCad only {x.kicadOnly?.count ?? "?"} · not evaluated {x.notEvaluated ? `${x.notEvaluated.rules} rule${x.notEvaluated.rules === 1 ? "" : "s"}` : "?"}
-              </span>
+            <span
+              className="item"
+              data-cross-check="ran"
+              title={[
+                `${x.tool} cross-check, like with like (the categories both tools check): unconnected · errors · warnings`,
+                ...(x.ours ? [`ours ${triple(x.ours)}`] : []),
+                `KiCad ${triple(x)}`,
+                ...(x.differences ?? []),
+                `ours only ${x.oursOnly?.count ?? "?"} · KiCad only ${x.kicadOnly?.count ?? "?"} · not evaluated ${x.notEvaluated ? `${x.notEvaluated.rules} rule${x.notEvaluated.rules === 1 ? "" : "s"}` : "?"}`,
+                ...(x.raw ? [`raw totals: ours ${triple(x.raw.ours)}, KiCad ${triple(x.raw.kicad)}`] : []),
+              ].join("\n")}
+            >
+              {x.tool} cross-check
+              {stale ? <span className="mute"> of the source file{x.seq !== undefined ? ` (seq ${x.seq})` : ""}, before this session's edits · KiCad</span> : null}
+              {!stale && !sameAsTotals(x.ours) && x.ours ? <span className="mute"> · like with like ours {triple(x.ours)} · KiCad</span> : null} <b>{triple(x)}</b>
+              {stale ? (
+                <span className="pcb-chip" title="KiCad ran on the file the board came from; export the board and run Check to compare this version">
+                  not this version
+                </span>
+              ) : x.difference ? (
+                <span className="pcb-chip warn">{x.difference}</span>
+              ) : (
+                <span className="pcb-chip">same counts</span>
+              )}
             </span>
           ) : x ? (
-            <span className="item mute" data-cross-check="not-run" title={x.reason}>
+            <span className="item" data-cross-check="not-run" title={x.reason}>
               no {x.tool} cross-check: {x.reason}
             </span>
           ) : (
-            <span className="item mute" data-cross-check="none">
+            <span className="item" data-cross-check="none">
               no cross-check has run
             </span>
           )}

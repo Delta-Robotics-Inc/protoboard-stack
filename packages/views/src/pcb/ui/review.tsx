@@ -6,6 +6,8 @@
  */
 import { useMemo, useState } from "react";
 import type { BoardDocument } from "../board.js";
+import { checkWords, describeFinding } from "../findings-text.js";
+import { dotSvg, markerKind } from "../markers.js";
 import { cropSvg } from "../overlay.js";
 import { GROUP_LABEL, queueCounts, type QueueGroup, type QueueItem } from "../review.js";
 import type { WaivedFinding } from "../types.js";
@@ -75,11 +77,11 @@ export function ReviewPanel(p: ReviewPanelProps) {
       </div>
       {cur ? (
         <div className="pcb-sec">
-          <div className="pcb-card on" data-item={cur.id}>
+          <div className="pcb-card on" data-item={cur.id} title={[...cur.findings.map((f) => f.id), ...cur.objects].join("\n")}>
             <div className="row1">
               <span className="num">{p.index + 1}</span>
               <span className={`pcb-chip ${cur.severity === "error" ? "fail" : cur.severity === "warning" ? "warn" : ""}`}>{cur.severity}</span>
-              <span className="mono mute caps">{cur.findings[0]?.check.replace(/_/g, " ") ?? "unconnected"}</span>
+              <span className="mono mute caps">{cur.findings[0] ? checkWords(cur.findings[0].check) : "unconnected"}</span>
               <span className="mono mute grow">{GROUP_LABEL[cur.group]}</span>
             </div>
             <p className="sentence">{cur.sentence}</p>
@@ -114,7 +116,7 @@ export function ReviewPanel(p: ReviewPanelProps) {
                   setReason(undefined);
                 }}
               >
-                <textarea className="pcb-search" autoFocus maxLength={400} placeholder="Why it is not a problem (kept with the board)" value={reason} onChange={(e) => setReason(e.target.value)} onKeyDown={(e) => {
+                <textarea className="pcb-search" autoFocus maxLength={500} placeholder="Why it is not a problem (kept with the board as a waiver, with your name)" value={reason} onChange={(e) => setReason(e.target.value)} onKeyDown={(e) => {
                   if (e.key === "Escape") setReason(undefined);
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -146,38 +148,60 @@ export function ReviewPanel(p: ReviewPanelProps) {
           {next.map((it) => {
             const i = p.items.indexOf(it);
             return (
-              <button key={it.id} className="pcb-qrow" onClick={() => p.onPick(i)}>
+              <button key={it.id} className="pcb-qrow" onClick={() => p.onPick(i)} title={`${it.sentence}\n${[...it.findings.map((f) => f.id), ...it.objects].join("\n")}`}>
                 <span className="num">{i + 1}</span>
                 <Crop doc={p.doc} item={it} w={56} h={40} />
                 <span className="txt">
-                  <b>{it.title}</b>
+                  <b>
+                    <svg width="9" height="9" viewBox="-4.5 -4.5 9 9" dangerouslySetInnerHTML={{ __html: dotSvg(markerKind({ severity: it.severity, ...(it.findings[0]?.tier ? { tier: it.findings[0].tier } : {}) }), 3) }} />
+                    {it.title}
+                  </b>
                   <span>{it.meta}</span>
                 </span>
-                <span className={`pcb-chip ${it.group === "fab" ? "fail" : it.group === "unconnected" ? "warn" : ""}`}>{it.group === "unconnected" ? "why?" : GROUP_LABEL[it.group]}</span>
+                <span className="pcb-chip">{it.group === "unconnected" ? "why?" : GROUP_LABEL[it.group]}</span>
               </button>
             );
           })}
         </div>
       )}
-      {p.waived.length > 0 && (
-        <div className="pcb-sec">
-          <h4>
-            <span>Not a problem</span>
-            <i>{p.waived.length} with a reason</i>
-          </h4>
-          {p.waived.map((w) => (
-            <div key={w.finding.id} className="pcb-waived">
-              <div>
-                <b>{w.finding.check.replace(/_/g, " ")}</b> <span className="mono mute">{w.finding.id}</span>
-              </div>
-              <div className="why">{w.reason}</div>
-              <button className="pcb-btn ghost" disabled={!p.writable} onClick={() => p.onUnwaive(w.finding.id)}>
-                Take back
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <WaivedList doc={p.doc} waived={p.waived} writable={p.writable} onUnwaive={p.onUnwaive} />
     </>
+  );
+}
+
+/**
+ * The waived findings, apart from the open ones: what each was, the reason, who waived it, and Take back
+ * (`waiver.remove`). Shown under the review queue and under the Checks tab's findings.
+ */
+export function WaivedList({ doc, waived, writable, onUnwaive }: { doc: BoardDocument; waived: readonly WaivedFinding[]; writable: boolean; onUnwaive: (finding: string) => void }) {
+  if (!waived.length) return null;
+  return (
+    <div className="pcb-sec" data-waived={waived.length}>
+      <h4>
+        <span>Not a problem</span>
+        <i>
+          {waived.length} waived · not counted
+        </i>
+      </h4>
+      {waived.map((w) => {
+        const t = describeFinding(w.finding, doc);
+        return (
+          <div key={`${w.rule}|${w.finding.id}`} className="pcb-waived" title={[...t.ids, w.rule].join(" · ")}>
+            <div>
+              <b>{t.title}</b>
+            </div>
+            <div className="why">“{w.reason}”</div>
+            <div className="mono mute small">
+              {w.by ? `waived by ${w.by}` : "waived"}
+              {w.at ? ` · ${w.at.slice(0, 10)}` : ""}
+              {w.legacy ? " · an older rules entry: becomes a waiver record on your next change" : ""}
+            </div>
+            <button className="pcb-btn ghost" disabled={!writable} onClick={() => onUnwaive(w.finding.id)} title="Take the waiver back: the finding counts again">
+              Take back
+            </button>
+          </div>
+        );
+      })}
+    </div>
   );
 }

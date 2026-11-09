@@ -463,6 +463,40 @@ export const RuleRec = z
   })
   .strict();
 
+/** Who waived a finding (the actor of the transaction that added the waiver). */
+export const WaiverBy = z
+  .object({ kind: z.enum(["human", "agent", "router", "host", "system"]), id: z.string().min(1).max(120), name: z.string().min(1).max(120).optional() })
+  .strict();
+/** A finding id as the checks issue it (`f:<check>:<hash>`). */
+export const FindingId = z.string().regex(/^f:[\w.-]+:[0-9a-f]{12}$/, "a finding id is f:<check>:<12 hex digits>");
+/** A rule id (`rule:...`) or a check name (`clearance`, `unconnected`, ...). */
+export const WaiverRule = z
+  .string()
+  .min(1)
+  .max(260)
+  .refine((s) => /^rule:.+$/.test(s) || /^[\w.-]+$/.test(s), "a rule id (rule:<name>) or a check name");
+
+/**
+ * A person's "not a problem" on a finding (Phase 2 contract, section 3; stored with the rules): the checks leave a
+ * waived finding out of the findings and the counts and list it apart. `finding` waives that one finding id;
+ * `rule` with `objects` waives that rule's (or check's) findings on exactly these objects; `rule` alone every
+ * finding of that rule or check. At least one of `finding` and `rule` (the engine and `waiver.add` refuse a waiver
+ * with neither; the schema stays a plain object for the record union).
+ */
+export const WaiverRec = z
+  .object({
+    kind: z.literal("waiver"),
+    id: ObjectId,
+    finding: FindingId.optional(),
+    rule: WaiverRule.optional(),
+    objects: z.array(z.string().min(1).max(300)).max(50),
+    reason: z.string().min(1).max(500),
+    by: WaiverBy,
+    at: z.string().min(1).max(40).optional(),
+    provenance: Provenance,
+  })
+  .strict();
+
 export const RECORD_SCHEMAS = {
   board: BoardRec,
   layer: LayerRec,
@@ -477,6 +511,7 @@ export const RECORD_SCHEMAS = {
   text: TextRec,
   netclass: NetclassRec,
   rule: RuleRec,
+  waiver: WaiverRec,
 } as const;
 
 export type RecordKind = keyof typeof RECORD_SCHEMAS;
@@ -495,11 +530,12 @@ export type GraphicRec = z.infer<typeof GraphicRec>;
 export type TextRec = z.infer<typeof TextRec>;
 export type NetclassRec = z.infer<typeof NetclassRec>;
 export type RuleRec = z.infer<typeof RuleRec>;
-export type BoardRecord = BoardRec | LayerRec | OutlineRec | CutoutRec | FootprintRec | TrackRec | ViaRec | ZoneRec | KeepoutRec | GraphicRec | TextRec | NetclassRec | RuleRec;
+export type WaiverRec = z.infer<typeof WaiverRec>;
+export type BoardRecord = BoardRec | LayerRec | OutlineRec | CutoutRec | FootprintRec | TrackRec | ViaRec | ZoneRec | KeepoutRec | GraphicRec | TextRec | NetclassRec | RuleRec | WaiverRec;
 export type RecordOf<K extends RecordKind> = z.infer<(typeof RECORD_SCHEMAS)[K]>;
 
 /** Any record, discriminated by `kind`. */
-export const AnyRecord = z.discriminatedUnion("kind", [BoardRec, LayerRec, OutlineRec, CutoutRec, FootprintRec, TrackRec, ViaRec, ZoneRec, KeepoutRec, GraphicRec, TextRec, NetclassRec, RuleRec]);
+export const AnyRecord = z.discriminatedUnion("kind", [BoardRec, LayerRec, OutlineRec, CutoutRec, FootprintRec, TrackRec, ViaRec, ZoneRec, KeepoutRec, GraphicRec, TextRec, NetclassRec, RuleRec, WaiverRec]);
 
 /** The id prefix of each kind (singletons have none). */
 export const ID_PREFIX: Record<RecordKind, string> = {
@@ -516,6 +552,7 @@ export const ID_PREFIX: Record<RecordKind, string> = {
   text: "txt",
   netclass: "class",
   rule: "rule",
+  waiver: "waiver",
 };
 
 /** Which file each kind is saved in (contract section 7). */
@@ -533,6 +570,7 @@ export const FILE_OF: Record<RecordKind, BoardFile> = {
   text: "graphics",
   netclass: "rules",
   rule: "rules",
+  waiver: "rules",
 };
 export const BOARD_FILES = ["board", "placement", "copper", "zones", "graphics", "rules"] as const;
 export type BoardFile = (typeof BOARD_FILES)[number];

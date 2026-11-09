@@ -16,6 +16,8 @@ export { WebShell, type WebViewerOptions };
 export { createDevPartsData, type DevPartsOptions } from "./partsData.js";
 // the layout tab's board feed for `protoboard dev` (the page's script builds it; views pcb/remote.ts)
 export { createEventStreamBoardHost, setKnownBoards } from "@protoboardai/views";
+// the schematic tab's editor feed for `protoboard dev` (views schematic/remote.ts)
+export { createEventStreamSchematicHost, setKnownSchematics } from "@protoboardai/views";
 export type { ViewerHandle };
 
 export function mountWebViewer(element: HTMLElement, options: WebViewerOptions): ViewerHandle {

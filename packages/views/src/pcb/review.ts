@@ -5,6 +5,7 @@
  */
 import type { BoardDocument } from "./board.js";
 import { parsePadId } from "./board.js";
+import { describeFinding, describeOpenNet, mmPair } from "./findings-text.js";
 import type { PcbFinding, WaivedFinding } from "./types.js";
 
 export type QueueGroup = "fab" | "unconnected" | "style" | "note";
@@ -75,13 +76,14 @@ export function buildQueue(doc: BoardDocument, findings: readonly PcbFinding[]):
       continue;
     }
     const group: QueueGroup = f.severity === "error" ? "fab" : f.severity === "warning" ? "style" : "note";
-    const who = f.objects.slice(0, 2).map((o) => shortName(doc, o));
+    // in plain language (findings-text.ts)
+    const said = describeFinding(f, doc);
     items.push({
       id: f.id,
       group,
-      title: `${f.check.replace(/_/g, " ")}${who.length ? `: ${who.join(", ")}` : ""}`,
-      sentence: f.message,
-      meta: [f.tier, f.check, f.measured !== undefined ? `${(f.measured / 1e6).toFixed(3)} mm` : "", f.required !== undefined ? `asks ${(f.required / 1e6).toFixed(3)}` : ""].filter(Boolean).join(" · "),
+      title: said.title,
+      sentence: said.sentence,
+      meta: [said.check, said.source?.replace(/^the /, ""), f.measured !== undefined && f.required !== undefined ? (([m, r]) => `${m} mm, asks ${r}`)(mmPair(f.measured, f.required)) : ""].filter(Boolean).join(" · "),
       findings: [f],
       objects: [...f.objects],
       box: boxOf([f]),
@@ -96,7 +98,7 @@ export function buildQueue(doc: BoardDocument, findings: readonly PcbFinding[]):
       id: `net:${net}`,
       group: "unconnected",
       title: `${net} is not joined`,
-      sentence: fs.length === 1 ? fs[0].message : `${net} has ${fs.length} open connections between ${refs.join(", ")}${pads.length > 4 ? " and others" : ""}.`,
+      sentence: describeOpenNet(doc, net, fs).sentence,
       meta: `${fs.length} link${fs.length === 1 ? "" : "s"} · ${refs.join(", ")}`,
       findings: fs,
       objects: pads,

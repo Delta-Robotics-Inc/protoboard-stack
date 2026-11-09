@@ -108,6 +108,17 @@ describe("board check", () => {
     expect(r.stdout).toMatch(/^zone fill: kicad/m);
   });
 
+  it("prints each finding in plain language, the ids left to --json", async () => {
+    const r = await run(["check", dir, "--no-cross-check"], root);
+    const lines = r.stdout.split("\n").filter((l) => /^(ERROR|WARNING|INFO) /.test(l));
+    expect(lines.length).toBeGreaterThan(0);
+    for (const l of lines) {
+      expect(l).toMatch(/^(ERROR|WARNING|INFO) +[a-z][a-z -]+: \S.*\. {2}at \(-?[\d.]+, -?[\d.]+\) mm$/);
+      expect(l).not.toMatch(/\b(pad|trk|via|fp|rule|zone|kpo):[\w./~+-]/);
+    }
+    expect(r.stdout).toContain("(finding, object and rule ids: --json)");
+  });
+
   it("refuses contradictory and missing flags", async () => {
     expect((await run(["check", dir, "--no-cross-check", "--kicad", join(root, "src", "airnode-c3.kicad_pcb")], root)).code).toBe(2);
     expect((await run(["check", dir, "--kicad", join(root, "nothing.kicad_pcb")], root)).code).toBe(2);

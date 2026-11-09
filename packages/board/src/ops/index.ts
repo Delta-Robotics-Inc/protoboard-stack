@@ -9,6 +9,7 @@ import "./placement.js";
 import "./rework.js";
 import "./outline-dxf.js";
 import "./netlist.js";
+import "./waiver.js";
 
 import { getOperation } from "./registry.js";
 

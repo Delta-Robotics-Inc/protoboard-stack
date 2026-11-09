@@ -5,7 +5,8 @@ import { groupSwatch } from "../colors.js";
 import type { Inspection } from "../inspect.js";
 import { fmtMm } from "../inspect.js";
 import { layerGroups, PRESETS, type PresetId } from "../layers.js";
-import { markerKind, markerSvg } from "../markers.js";
+import { checkWords, type FindingText } from "../findings-text.js";
+import { dotSvg, markerKind } from "../markers.js";
 import type { CheckSummary, PcbFinding } from "../types.js";
 import { Icon } from "./icons.js";
 
@@ -193,10 +194,33 @@ export function NetsPanel({ nets, lit, dim, onLight, onDim }: { nets: NetRow[]; 
 /** Where a rule came from in the source (board setup, a net class, a custom rule), when the board records it. */
 export type RuleFrom = (ruleId: string) => string | undefined;
 
-export function ChecksPanel({ findings, checks, notes, active, onLocate, ruleFrom }: { findings: readonly PcbFinding[] | undefined; checks: CheckSummary; notes?: readonly string[]; active?: string; onLocate: (f: PcbFinding) => void; ruleFrom?: RuleFrom }) {
-  const said = [...(notes ?? []), ...(checks.ran ? (checks.caveats ?? []) : [])];
+/** A finding in plain language (findings-text.ts), as the screen hands it to its panels and callouts. */
+export type Describe = (f: PcbFinding) => FindingText;
+
+/** The plain words of a finding: the formatter's, else (no document at hand) its own message. */
+const plain = (f: PcbFinding, describe?: Describe): FindingText => describe?.(f) ?? { title: f.check.replace(/_/g, " "), sentence: f.message, ids: [f.id, ...f.objects], check: f.check.replace(/_/g, " ") };
+
+/** The ids behind a finding, for a hover title (never for reading). */
+const idsTitle = (ids: readonly string[], from?: string) => `${ids.join("\n")}${from ? `\nrule from ${from}` : ""}`;
+
+const SEV_ORDER = { error: 0, warning: 1, info: 2 } as const;
+
+/** The checks' notes, the "not checked: no rule" ones gathered into one line. */
+export function gatherNotes(notes: readonly string[]): string[] {
+  const unruled: string[] = [];
+  const rest: string[] = [];
+  for (const n of [...new Set(notes)]) {
+    const m = /^(\w+) not checked: no enabled \1 rule on the board\.?$/.exec(n);
+    if (m) unruled.push(checkWords(m[1]));
+    else rest.push(n);
+  }
+  return [...(unruled.length ? [`Not checked, no rule on the board: ${unruled.join(", ")}.`] : []), ...rest];
+}
+
+export function ChecksPanel({ findings, checks, notes, active, onLocate, ruleFrom, describe }: { findings: readonly PcbFinding[] | undefined; checks: CheckSummary; notes?: readonly string[]; active?: string; onLocate: (f: PcbFinding) => void; ruleFrom?: RuleFrom; describe?: Describe }) {
+  const said = gatherNotes([...(notes ?? []), ...(checks.ran ? (checks.caveats ?? []) : [])]);
   const noteList = said.length ? (
-    <div className="mute" style={{ fontSize: 11.5, margin: "0 0 8px" }}>
+    <div className="pcb-notes">
       {said.map((n) => (
         <div key={n}>{n}</div>
       ))}
@@ -220,55 +244,84 @@ export function ChecksPanel({ findings, checks, notes, active, onLocate, ruleFro
         {noteList}
       </div>
     );
-  const order = { error: 0, warning: 1, info: 2 } as const;
-  const sorted = [...list].sort((a, b) => order[a.severity] - order[b.severity] || (a.id < b.id ? -1 : 1));
+  const sorted = [...list].sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity] || (a.check < b.check ? -1 : a.check > b.check ? 1 : a.id < b.id ? -1 : 1));
+  // counted as the status line counts them: open connections apart from errors
+  const open = list.filter((f) => f.check === "unconnected").length;
+  const e = list.filter((f) => f.severity === "error" && f.check !== "unconnected").length;
+  const w = list.filter((f) => f.severity === "warning").length;
   return (
     <div className="pcb-sec">
       <h4>
         <span>
           {list.length} {list.length === 1 ? "finding" : "findings"}
         </span>
-        <i>click to frame it</i>
+        <i>click one to frame it</i>
       </h4>
+      <div className="pcb-counts">
+        {e > 0 && <span className="fail">{e} {e === 1 ? "error" : "errors"}</span>}
+        {w > 0 && <span className="warn">{w} {w === 1 ? "warning" : "warnings"}</span>}
+        {open > 0 && <span>{open} open {open === 1 ? "connection" : "connections"}</span>}
+      </div>
       {noteList}
-      {sorted.map((f) => (
-        <div key={f.id} className={`pcb-finding${f.id === active ? " on" : ""}`} onClick={() => onLocate(f)}>
-          <svg width="18" height="18" viewBox="-9 -9 18 18" style={{ flex: "none", marginTop: 1 }} dangerouslySetInnerHTML={{ __html: markerSvg(markerKind(f), 7) }} />
-          <div style={{ minWidth: 0 }}>
-            <div className="msg">{f.message}</div>
-            <div className="meta">
-              {f.check}
-              {f.rule ? ` · ${f.rule}` : ""}
-              {f.rule && ruleFrom?.(f.rule) ? ` (from ${ruleFrom(f.rule)})` : ""}
-              {f.measured !== undefined ? ` · measured ${fmtMm(f.measured)} mm` : ""}
-              {f.required !== undefined ? ` · required ${fmtMm(f.required)} mm` : ""}
-              {f.location.layer ? ` · ${f.location.layer}` : ""}
+      {sorted.map((f) => {
+        const d = plain(f, describe);
+        return (
+          <div key={f.id} className={`pcb-finding${f.id === active ? " on" : ""}`} onClick={() => onLocate(f)} title={idsTitle(d.ids, f.rule ? ruleFrom?.(f.rule) : undefined)}>
+            <svg width="12" height="12" viewBox="-6 -6 12 12" className="sev" dangerouslySetInnerHTML={{ __html: dotSvg(markerKind(f), 3.6) }} />
+            <div style={{ minWidth: 0 }}>
+              <div className="ttl">{d.title}</div>
+              <div className="msg">{d.sentence}</div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
 
-export function InspectPanel({ items, total, onLook, finding, ruleFrom }: { items: Inspection[]; total: number; onLook: () => void; finding?: PcbFinding; ruleFrom?: RuleFrom }): ReactNode {
-  // the finding these objects were selected for, with the rule it names and where that rule came from
-  const about = finding ? (
-    <div className="pcb-sec" data-finding={finding.id}>
-      <h4>
-        <span>finding</span>
-        <i>{finding.check}</i>
-      </h4>
-      <div className="msg" style={{ marginBottom: 6 }}>{finding.message}</div>
-      <dl className="pcb-kv">
-        {finding.rule && <Kv label="Rule" value={finding.rule} />}
-        {finding.rule && ruleFrom?.(finding.rule) && <Kv label="From" value={ruleFrom(finding.rule)!} />}
-        {finding.tier && <Kv label="Tier" value={finding.tier} />}
-        {finding.measured !== undefined && <Kv label="Measured" value={fmtMm(finding.measured)} unit="mm" />}
-        {finding.required !== undefined && <Kv label="Required" value={fmtMm(finding.required)} unit="mm" />}
-      </dl>
+/** The one callout a finding gets on the canvas: quiet, its plain sentence, its ids on hover. */
+export function FindingCallout({ f, at, maxLeft, maxTop, hover, describe }: { f: PcbFinding; at: { x: number; y: number }; maxLeft: number; maxTop?: number; hover: boolean; describe?: Describe }) {
+  const d = plain(f, describe);
+  const left = Math.max(8, Math.min(at.x + 20, maxLeft));
+  // below the marker, or above it when it would run into the timeline
+  const above = maxTop !== undefined && at.y + 130 > maxTop;
+  return (
+    <div className="pcb-callout finding" style={above ? { left, top: at.y - 18, transform: "translateY(-100%)" } : { left, top: at.y + 22 }} title={idsTitle(d.ids)}>
+      <div className="shelf">
+        <svg width="10" height="10" viewBox="-5 -5 10 10" dangerouslySetInnerHTML={{ __html: dotSvg(markerKind(f), 3.2) }} />
+        <span>
+          {f.severity === "info" ? "note" : f.severity} · {d.check}
+        </span>
+        <i>{hover ? "hover" : "selected"}</i>
+      </div>
+      <p>{d.sentence}</p>
     </div>
-  ) : null;
+  );
+}
+
+export function InspectPanel({ items, total, onLook, finding, ruleFrom, describe }: { items: Inspection[]; total: number; onLook: () => void; finding?: PcbFinding; ruleFrom?: RuleFrom; describe?: Describe }): ReactNode {
+  // the finding these objects were selected for, in plain words, with the rule it names and where that rule came from
+  const d = finding ? plain(finding, describe) : undefined;
+  const about =
+    finding && d ? (
+      <div className="pcb-sec" data-finding={finding.id} title={idsTitle(d.ids)}>
+        <h4>
+          <span>finding</span>
+          <i>{d.check}</i>
+        </h4>
+        <div className="pcb-ftitle">{d.title}</div>
+        <div className="msg" style={{ marginBottom: 10 }}>
+          {d.sentence}
+        </div>
+        <dl className="pcb-kv">
+          {finding.measured !== undefined && <Kv label="Measured" value={fmtMm(finding.measured)} unit="mm" />}
+          {finding.required !== undefined && <Kv label="Required" value={fmtMm(finding.required)} unit="mm" />}
+          {d.source && <Kv label="Limit" value={d.source} />}
+          {finding.rule && ruleFrom?.(finding.rule) && <Kv label="From" value={ruleFrom(finding.rule)!} />}
+          {finding.location.layer && <Kv label="Layer" value={finding.location.layer.replace(/_/g, " ")} />}
+        </dl>
+      </div>
+    ) : null;
   if (about) {
     const rest: ReactNode = InspectPanel({ items, total, onLook });
     return (

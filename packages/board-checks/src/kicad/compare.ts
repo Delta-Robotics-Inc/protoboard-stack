@@ -13,6 +13,9 @@
  * It never hides a difference: every KiCad item we did not match and every finding of ours KiCad did not report is
  * listed by location.
  *
+ * Waivers: findings a person waived (`result.waived`) are matched like the others, but they and the KiCad items
+ * matched to them are left out of every like-with-like count and listed apart in `waived`.
+ *
  * Coordinates: KiCad reports millimeters with +Y down from its page origin; the board document is nanometers with
  * +Y up. `x = kx * 1e6 + tx`, `y = -ky * 1e6 + ty`. The importer may state `tx, ty`; otherwise
  * `estimateTransform` finds them from footprint positions (the median offset over footprints matched by
@@ -172,6 +175,8 @@ export interface CrossCheck {
   kicadOnly: KicadEntry[];
   /** One plain sentence per difference. Empty only when every comparable count and item matched. */
   differences: string[];
+  /** Findings a person waived, with the KiCad item matched to each (when one was): not counted on either side. */
+  waived: { finding: Finding; waiver: string; kicad?: KicadEntry }[];
   /** Board hash the comparison is about. */
   inputHash: string;
 }
@@ -260,15 +265,19 @@ export function compareWithKicad(
       }
     }
   }
+  // waived findings are matched too, so the KiCad items about them leave the counts with them
+  const waivedList = result.waived ?? [];
+  const waiverOf = new Map(waivedList.map((w) => [w.finding.id, w.waiver]));
+  const pool = [...ours, ...waivedList.map((w) => w.finding).filter((f) => !ours.some((o) => o.id === f.id))];
   const rowOf = (f: Finding) => OUR_CATEGORY[f.check] ?? f.check;
-  const matched: CrossCheck["matched"] = [];
+  const allMatched: CrossCheck["matched"] = [];
   const usedOurs = new Set<string>();
   const usedTheirs = new Set<KicadEntry>();
   // anchors of every ratsnest island, for matching unconnected items by island rather than exact pad
   const islandAnchors = result.connectivity.islands.map((i) => i.anchors);
   const linkByFinding = new Map<string, (typeof result.connectivity.links)[number]>();
   for (const l of result.connectivity.links) {
-    const f = ours.find((x) => x.check === "unconnected" && x.objects.length === 2 && x.objects.includes(l.from.object) && x.objects.includes(l.to.object));
+    const f = pool.find((x) => x.check === "unconnected" && x.objects.length === 2 && x.objects.includes(l.from.object) && x.objects.includes(l.to.object));
     if (f) linkByFinding.set(f.id, l);
   }
   // where KiCad places each of our objects (a track at its ends, a via, pad or footprint at its position), for
@@ -283,7 +292,7 @@ export function compareWithKicad(
   if (t)
     for (const def of CATEGORY_ROWS) {
       const cat = def.row;
-      const os = ours.filter((f) => rowOf(f) === cat);
+      const os = pool.filter((f) => rowOf(f) === cat);
       const ts = theirs.filter((e) => e.category === cat);
       const pairs: { f: Finding; e: KicadEntry; d: number }[] = [];
       for (const e of ts) {
@@ -307,7 +316,7 @@ export function compareWithKicad(
         if (usedOurs.has(p.f.id) || usedTheirs.has(p.e)) continue;
         usedOurs.add(p.f.id);
         usedTheirs.add(p.e);
-        matched.push({ finding: p.f.id, kicad: p.e, distance: Math.round(p.d) });
+        allMatched.push({ finding: p.f.id, kicad: p.e, distance: Math.round(p.d) });
       }
       if (cat !== "unconnected") continue;
       // equal-length alternatives: two minimum spanning trees may differ where links tie; the same net and length
@@ -320,11 +329,16 @@ export function compareWithKicad(
         if (!e) continue;
         usedOurs.add(f.id);
         usedTheirs.add(e);
-        matched.push({ finding: f.id, kicad: e, distance: Math.round(Math.hypot(f.location.x - (e.points[0].x + e.points[1].x) / 2, f.location.y - (e.points[0].y + e.points[1].y) / 2)), tie: true });
+        allMatched.push({ finding: f.id, kicad: e, distance: Math.round(Math.hypot(f.location.x - (e.points[0].x + e.points[1].x) / 2, f.location.y - (e.points[0].y + e.points[1].y) / 2)), tie: true });
       }
     }
+  // the matches of waived findings, and their KiCad items, leave every count
+  const matched = allMatched.filter((m) => !waiverOf.has(m.finding));
+  const waivedKicad = new Map(allMatched.filter((m) => waiverOf.has(m.finding)).map((m) => [m.finding, m.kicad]));
+  const waivedTheirs = new Set(waivedKicad.values());
+  const counted = theirs.filter((e) => !waivedTheirs.has(e));
   const comparableOurs = ours.filter((f) => OUR_CATEGORY[f.check] !== undefined);
-  const comparableTheirs = theirs.filter((e) => !e.category.startsWith("kicad:"));
+  const comparableTheirs = counted.filter((e) => !e.category.startsWith("kicad:"));
   const oursOnly = comparableOurs.filter((f) => !usedOurs.has(f.id));
   const borderline = oursOnly.filter((f) => f.measured !== undefined && f.required !== undefined && f.required > f.measured && f.required - f.measured <= BORDERLINE_NM);
   const kicadOnly = comparableTheirs.filter((e) => !usedTheirs.has(e));
@@ -333,7 +347,7 @@ export function compareWithKicad(
   const categories: CategoryRow[] = [];
   for (const def of CATEGORY_ROWS) {
     const os = ours.filter((f) => rowOf(f) === def.row);
-    const ts = theirs.filter((e) => e.category === def.row);
+    const ts = counted.filter((e) => e.category === def.row);
     if (!os.length && !ts.length) continue;
     categories.push({
       category: def.row,
@@ -356,11 +370,11 @@ export function compareWithKicad(
     oursOnlyByCheck[c] = os.length;
     categories.push({ category: c, ours: sevCount(os), kicad: null, checks: [c], kicadTypes: [], group: "ours only", matched: 0, oursOnly: os.length, kicadOnly: 0, note: OURS_ONLY[c] ?? "KiCad has no counterpart" });
   }
-  const kicadOnlyTypes = [...new Set(theirs.filter((e) => e.category.startsWith("kicad:")).map((e) => e.type))].sort(byCodeUnit);
+  const kicadOnlyTypes = [...new Set(counted.filter((e) => e.category.startsWith("kicad:")).map((e) => e.type))].sort(byCodeUnit);
   const kicadOnlyByType: Record<string, number> = {};
   let kicadOnlyReports = 0;
   for (const type of kicadOnlyTypes) {
-    const ts = theirs.filter((e) => e.type === type && e.category.startsWith("kicad:"));
+    const ts = counted.filter((e) => e.type === type && e.category.startsWith("kicad:"));
     kicadOnlyByType[type] = ts.length;
     kicadOnlyReports += ts.reduce((s, e) => s + e.reports, 0);
     categories.push({ category: `kicad:${type}`, ours: null, kicad: { ...sevCount(ts), excluded: ts.filter((e) => e.severity !== "error" && e.severity !== "warning").length }, kicadReports: ts.reduce((s, e) => s + e.reports, 0), checks: [], kicadTypes: [type], group: "KiCad only", matched: 0, oursOnly: 0, kicadOnly: ts.length, note: "not checked by Protoboard" });
@@ -368,9 +382,14 @@ export function compareWithKicad(
 
   // unconnected per net
   const kicadByNet = new Map<string, number>();
-  for (const e of theirs) if (e.category === "unconnected") kicadByNet.set(e.net ?? "(unknown net)", (kicadByNet.get(e.net ?? "(unknown net)") ?? 0) + 1);
+  for (const e of counted) if (e.category === "unconnected") kicadByNet.set(e.net ?? "(unknown net)", (kicadByNet.get(e.net ?? "(unknown net)") ?? 0) + 1);
   const oursByNet = new Map<string, number>();
   for (const n of result.connectivity.nets) if (n.missing) oursByNet.set(n.net, n.missing);
+  // a waived unconnected item is not counted on our side either
+  for (const w of waivedList) {
+    const l = w.finding.check === "unconnected" ? linkByFinding.get(w.finding.id) : undefined;
+    if (l && oursByNet.has(l.net)) oursByNet.set(l.net, oursByNet.get(l.net)! - 1);
+  }
   const unconnectedByNet = [...new Set([...kicadByNet.keys(), ...oursByNet.keys()])]
     .sort(byCodeUnit)
     .map((net) => ({ net, ours: oursByNet.get(net) ?? 0, kicad: kicadByNet.get(net) ?? 0 }))
@@ -425,6 +444,7 @@ export function compareWithKicad(
     borderline,
     kicadOnly,
     differences,
+    waived: waivedList.map((w) => ({ finding: w.finding, waiver: w.waiver, ...(waivedKicad.has(w.finding.id) ? { kicad: waivedKicad.get(w.finding.id)! } : {}) })),
     inputHash: result.inputHash,
   };
 }
@@ -452,6 +472,7 @@ export function formatCrossCheck(c: CrossCheckResult): string {
   lines.push(`  comparable: ours ${k.ours.unconnected} unconnected, ${k.ours.errors} errors, ${k.ours.warnings} warnings; KiCad ${k.kicad.unconnected} unconnected, ${k.kicad.errors} errors, ${k.kicad.warnings} warnings`);
   lines.push(`  ours only: ${c.oursOnlyCategories.count} (${Object.entries(c.oursOnlyCategories.byCheck).map(([x, n]) => `${x} ${n}`).join(", ") || "none"}); KiCad only: ${c.kicadOnlyCategories.count} items in ${c.kicadOnlyCategories.reports} reports (${Object.entries(c.kicadOnlyCategories.byType).map(([x, n]) => `${x} ${n}`).join(", ") || "none"})`);
   if (c.folded.length) lines.push(`  folded: ${c.folded.length} finding(s) on objects sharing one identity in the source (KiCad reports each group once)`);
+  if (c.waived?.length) lines.push(`  waived: ${c.waived.length} finding(s) a person marked not a problem, ${c.waived.filter((w) => w.kicad).length} of them matched to a KiCad item; neither side counts them`);
   if (c.notEvaluated.rules.length) lines.push(`  not evaluated: ${c.notEvaluated.rules.length} rule(s), ${c.notEvaluated.kicadItems.length} KiCad item(s) under them`);
   lines.push(`  raw totals: ours ${c.totals.ours.unconnected} unconnected, ${c.totals.ours.errors} errors, ${c.totals.ours.warnings} warnings; KiCad ${c.totals.kicad.unconnected} unconnected, ${c.totals.kicad.errors} errors, ${c.totals.kicad.warnings} warnings`);
   for (const r of c.categories) {

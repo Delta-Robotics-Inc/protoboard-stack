@@ -35,6 +35,7 @@ describe("operation registry", () => {
       it("has an example that applies to the fixture", () => {
         expect(def.input.safeParse(def.example).success).toBe(true);
         const engine = createEngine(airnodeC3(), { epoch: "test01" });
+        if (def.exampleBefore) expect(engine.apply({ batchId: `before-${def.name}`, label: `prepare the ${def.name} example`, ops: def.exampleBefore }, PERSON).status).toBe("applied");
         const r = engine.apply({ batchId: `example-${def.name}`, label: `run the ${def.name} example`, ops: [{ op: def.name, ...def.example }] }, def.audience === "system" ? HOST : PERSON);
         expect(r.status, JSON.stringify(r)).toBe("applied");
         if (r.status === "applied") expect(r.changed.length).toBeGreaterThan(0);

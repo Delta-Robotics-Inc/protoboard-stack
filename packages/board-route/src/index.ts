@@ -25,6 +25,7 @@ export {
   type DiagnosticReport,
   type DiagnosticNet,
 } from "./orchestrator.js";
+export { createLocalScoring, changedIds, islandAnchorsOf, type LocalScoring, type LocalScoringDeps, type CheckRunLike, type IncrementalChecksLike, type FillEngineLike } from "./local.js";
 export { createBuiltinRouter, BUILTIN_VERSION, type BuiltinOptions } from "./routers/builtin.js";
 export { createTscircuitRouter, TSCIRCUIT_AUTOROUTER_PIN, TSCIRCUIT_AUTOROUTER_PACKAGE } from "./routers/tscircuit/adapter.js";
 export { jobToSrj, srjTracesToRouted, netOfConnection, connectionName, type SimpleRouteJsonIn, type SrjTrace, type SrjConversion } from "./routers/tscircuit/srj.js";

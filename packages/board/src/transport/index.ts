@@ -3,3 +3,4 @@ export * from "./protocol.js";
 export { serveBoard, isLoopback, type BoardServer, type ExtensionMethod, type ServeOptions } from "./server.js";
 export { connectBoard, findService, localClient, serviceFileFor, wireClient, type BoardClient, type ConnectOptions, type OperationsResult } from "./client.js";
 export { toJsonSchema, type JsonSchema } from "./json-schema.js";
+export { CLOSE, refuseUpgrade, upgradeProblem, WsConnection, type WsConnectionOptions } from "./ws.js";

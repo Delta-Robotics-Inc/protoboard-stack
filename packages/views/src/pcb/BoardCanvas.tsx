@@ -3,16 +3,46 @@
  * finding markers, the box-select rectangle and the measure line, and the one open callout. Pan with the middle
  * or right button or Space and drag; the wheel zooms about the pointer; a click picks (again at the same spot
  * cycles through what is under it); a drag from empty space box-selects (left to right: wholly inside; right to
- * left: touching); a double click lights the net under the pointer.
+ * left: touching); a double click lights the net under the pointer. An interactive tool (route, via, zone, keep-out,
+ * outline, rip-up, line) takes the left button and the hover moves through `input`, and draws its draft in a layer
+ * of its own (`draftLayer`), which it updates per cursor move without re-rendering the screen.
  */
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent as RMouseEvent, type PointerEvent as RPointerEvent, type ReactNode } from "react";
 import { BoardView } from "./boardview.js";
-import { markerKind, markerSvg, originSvg } from "./markers.js";
+import { markerLayerSvg, originSvg } from "./markers.js";
 import type { Hit } from "./pick.js";
+import { FindingCallout } from "./ui/panels.js";
 import type { PcbFinding } from "./types.js";
 import { panBy, zoomAbout, type Insets } from "./view.js";
 
-export type Tool = "select" | "measure" | "region" | "text";
+export type Tool = "select" | "measure" | "region" | "text" | "route" | "via" | "zone" | "keepout" | "outline" | "rip" | "line";
+
+/** A pointer event as an interactive tool reads it: board millimeters, canvas pixels, modifiers, and what is under it. */
+export interface ToolPointer {
+  x: number;
+  y: number;
+  sx: number;
+  sy: number;
+  shift: boolean;
+  ctrl: boolean;
+  alt: boolean;
+  /** What is under the pointer, top first (computed on demand). */
+  pick: () => Hit[];
+}
+
+/** An interactive tool's hold on the pointer. */
+export interface ToolInput {
+  /** The CSS cursor over the board. */
+  cursor?: string;
+  /** A left press: true when the tool takes it (the moves and the release then go to the tool). */
+  down(p: ToolPointer): boolean;
+  /** A move, pressed or hovering. */
+  move(p: ToolPointer, pressed: boolean): void;
+  up(p: ToolPointer): void;
+  /** A double click: true when the tool used it. */
+  double?(p: ToolPointer): boolean;
+  leave?(): void;
+}
 
 export interface CanvasRect {
   x: number;
@@ -27,6 +57,10 @@ export interface BoardCanvasProps {
   findings: readonly PcbFinding[];
   /** The finding whose callout is open (from the Checks tab), if any. */
   activeFinding?: string;
+  /** A finding in plain language for its callout (findings-text.ts); absent, the finding's own message. */
+  describe?: (f: PcbFinding) => { title: string; sentence: string; ids: string[]; check: string };
+  /** Review mode: the other markers recede, and the item in hand gets a tag instead of a callout (its card is in the panel). */
+  quiet?: boolean;
   insets: Insets;
   onPick: (hits: Hit[], index: number, additive: boolean) => void;
   onBoxSelect: (ids: string[], additive: boolean) => void;
@@ -57,6 +91,10 @@ export interface BoardCanvasProps {
   overlay?: (view: BoardView) => string;
   /** More nodes placed over the board (the proposal card), rebuilt as the view moves. */
   nodes?: (view: BoardView) => ReactNode;
+  /** The active interactive tool's pointer handling (absent: select, measure, region and text as above). */
+  input?: ToolInput;
+  /** The draft layer (an SVG and an HTML layer over everything else) for a tool to draw into directly. */
+  draftLayer?: (layer: { svg: SVGSVGElement; html: HTMLDivElement } | null) => void;
 }
 
 type Drag =
@@ -64,11 +102,14 @@ type Drag =
   | { kind: "press"; x0: number; y0: number; x: number; y: number; moved: boolean; shift: boolean; hit?: Hit }
   | { kind: "move"; w0: { x: number; y: number } }
   | { kind: "region"; x0: number; y0: number; x: number; y: number }
-  | { kind: "measure"; x0: number; y0: number; x: number; y: number };
+  | { kind: "measure"; x0: number; y0: number; x: number; y: number }
+  | { kind: "tool" };
 
 export function BoardCanvas(props: BoardCanvasProps) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const draftSvg = useRef<SVGSVGElement>(null);
+  const draftHtml = useRef<HTMLDivElement>(null);
   const viewRef = useRef<BoardView | null>(null);
   const drag = useRef<Drag | null>(null);
   const space = useRef(false);
@@ -103,7 +144,9 @@ export function BoardCanvas(props: BoardCanvasProps) {
     const r = host.current!.getBoundingClientRect();
     v.resize(r.width, r.height);
     props_.current.onReady(v);
+    props_.current.draftLayer?.({ svg: draftSvg.current!, html: draftHtml.current! });
     return () => {
+      props_.current.draftLayer?.(null);
       ro.disconnect();
       off();
       v.dispose();
@@ -140,6 +183,11 @@ export function BoardCanvas(props: BoardCanvasProps) {
     const r = host.current!.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   };
+  const toolPointer = (v: BoardView, p: { x: number; y: number }, e: { shiftKey: boolean; ctrlKey: boolean; metaKey: boolean; altKey: boolean }): ToolPointer => {
+    const w = v.toWorld(p.x, p.y);
+    let hits: Hit[] | undefined;
+    return { x: w.x, y: w.y, sx: p.x, sy: p.y, shift: e.shiftKey, ctrl: e.ctrlKey || e.metaKey, alt: e.altKey, pick: () => (hits ??= v.pickScreen(p.x, p.y)) };
+  };
 
   const onPointerDown = (e: RPointerEvent) => {
     const v = viewRef.current;
@@ -153,6 +201,10 @@ export function BoardCanvas(props: BoardCanvasProps) {
       return;
     }
     if (e.button !== 0) return;
+    if (props.input) {
+      if (props.input.down(toolPointer(v, p, e))) drag.current = { kind: "tool" };
+      return;
+    }
     if (props.tool === "measure") {
       drag.current = { kind: "measure", x0: p.x, y0: p.y, x: p.x, y: p.y };
       setMeasure({ x0: p.x, y0: p.y, x: p.x, y: p.y });
@@ -178,6 +230,10 @@ export function BoardCanvas(props: BoardCanvasProps) {
     const w = v.toWorld(p.x, p.y);
     props.onCursor(w);
     const d = drag.current;
+    if (props.input && (!d || d.kind === "tool")) {
+      props.input.move(toolPointer(v, p, e), d?.kind === "tool");
+      return;
+    }
     if (d?.kind === "pan") {
       v.setView(panBy(v.view, p.x - d.x, p.y - d.y));
       d.x = p.x;
@@ -230,6 +286,10 @@ export function BoardCanvas(props: BoardCanvasProps) {
     const d = drag.current;
     drag.current = null;
     if (!v || !d) return;
+    if (d.kind === "tool") {
+      props.input?.up(toolPointer(v, local(e), e));
+      return;
+    }
     if (d.kind === "move") {
       props.onDragEnd?.(false);
       return;
@@ -262,6 +322,10 @@ export function BoardCanvas(props: BoardCanvasProps) {
 
   const onDoubleClick = (e: RMouseEvent) => {
     const v = viewRef.current;
+    if (v && props.input?.double) {
+      props.input.double(toolPointer(v, local(e), e));
+      return;
+    }
     if (!v || props.tool !== "select") return;
     const p = local(e);
     const hit = v.pickScreen(p.x, p.y).find((h) => v.scene?.objects.get(h.id)?.netName);
@@ -329,23 +393,11 @@ export function BoardCanvas(props: BoardCanvasProps) {
         );
       }
     }
-    for (const f of props.findings) {
-      const p = v.nmToScreen(f.location);
-      if (p.x < -20 || p.y < -20 || p.x > v.width + 20 || p.y > v.height + 20) continue;
-      const on = f.id === props.activeFinding || f.id === hoverFinding;
-      overlay.push(`<g class="marker" data-finding="${f.id}" transform="translate(${p.x.toFixed(1)},${p.y.toFixed(1)})">${markerSvg(markerKind(f), 7, on)}</g>`);
-      if (on) {
-        const left = Math.min(p.x + 22, v.width - props.insets.right - 250);
-        findingCard = (
-          <div className="pcb-callout finding" style={{ left, top: p.y + 34 }}>
-            <div className="shelf" style={{ color: f.severity === "error" ? "var(--pcb-fail)" : f.severity === "warning" ? "var(--pcb-warn)" : "var(--pcb-body)" }}>
-              {f.severity} · {f.check}
-            </div>
-            <p>{f.message}</p>
-          </div>
-        );
-      }
-    }
+    // findings: the one in hand in full, the rest quiet dots, clusters or counts by region (markers.ts)
+    overlay.push(markerLayerSvg(props.findings, (nm) => v.nmToScreen(nm), { width: v.width, height: v.height, scale: v.view.s, ...(props.activeFinding ? { active: props.activeFinding } : {}), ...(hoverFinding ? { hover: hoverFinding } : {}), ...(props.quiet ? { quiet: true, tag: true } : {}) }));
+    // one quiet callout: the finding under the pointer, else (outside review, whose card is in the panel) the one in hand
+    const cardFor = props.findings.find((f) => f.id === hoverFinding) ?? (props.quiet ? undefined : props.findings.find((f) => f.id === props.activeFinding));
+    if (cardFor) findingCard = <FindingCallout f={cardFor} at={v.nmToScreen(cardFor.location)} maxLeft={v.width - props.insets.right - 262} maxTop={v.height - props.insets.bottom} hover={cardFor.id === hoverFinding} {...(props.describe ? { describe: props.describe } : {})} />;
   }
 
   return (
@@ -353,13 +405,14 @@ export function BoardCanvas(props: BoardCanvasProps) {
       ref={host}
       className="pcb-canvas"
       tabIndex={-1}
-      style={{ cursor: props.tool === "measure" || props.tool === "region" ? "crosshair" : props.tool === "text" ? "text" : "default" }}
+      style={{ cursor: props.input?.cursor ?? (props.tool === "measure" || props.tool === "region" ? "crosshair" : props.tool === "text" ? "text" : "default") }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerLeave={() => {
         props.onCursor(undefined);
         props.onHover(undefined);
+        props.input?.leave?.();
       }}
       onDoubleClick={onDoubleClick}
       onContextMenu={(e) => e.preventDefault()}
@@ -377,6 +430,16 @@ export function BoardCanvas(props: BoardCanvasProps) {
           if (g) {
             e.stopPropagation();
             props.onFinding(g.getAttribute("data-finding")!);
+            return;
+          }
+          // a cluster or a region's count: zoom in on what it gathers
+          const c = (e.target as Element).closest("[data-cluster]");
+          const vw = viewRef.current;
+          if (c && vw) {
+            e.stopPropagation();
+            const [x0, y0, x1, y1] = c.getAttribute("data-cluster")!.split(",").map(Number);
+            const k = Math.min(6, Math.max(1.8, 220 / Math.max(x1 - x0, y1 - y0, 24)));
+            vw.setView(zoomAbout(vw.view, vw.width, vw.height, (x0 + x1) / 2, (y0 + y1) / 2, k));
           }
         }}
         dangerouslySetInnerHTML={{ __html: overlay.join("") }}
@@ -386,6 +449,8 @@ export function BoardCanvas(props: BoardCanvasProps) {
       {calloutNode}
       {findingCard}
       {extraNodes}
+      <svg ref={draftSvg} className="overlay pcb-draft" style={{ pointerEvents: "none" }} />
+      <div ref={draftHtml} className="pcb-draft-html" style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
     </div>
   );
 }

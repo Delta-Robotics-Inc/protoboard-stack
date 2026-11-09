@@ -15,4 +15,5 @@ export { fitRect, toScreen, toWorld, zoomAbout, panBy, type View, type Insets } 
 export { EditSession, outcomeOf, newBatchId, type Outcome, type RequestFn, type SessionStatus } from "./edit/session.js";
 export { buildQueue, exportState, type QueueItem, type QueueGroup } from "./review.js";
 export { parseBoardRequest } from "./requests.js";
+export { describeFinding, describeOpenNet, layerWords, mmText, type FindingLike, type FindingText } from "./findings-text.js";
 export type { BoardSource, RatsnestPair, PcbFinding, ZoneFill, CheckSummary, DepthView, BoardRequest, BoardReplyMessage, ProposalView, DiagnosisView, RouterInfo } from "./types.js";

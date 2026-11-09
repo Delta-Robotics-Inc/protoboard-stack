@@ -1,4 +1,4 @@
-/** The status line: "N unconnected, M errors, K warnings", computed here from findings and connectivity. */
+/** The status line: "N unconnected, M errors, K warnings" (", W waived" when a person waived some), computed here from findings and connectivity. */
 import type { Finding } from "@protoboardai/board";
 import type { ConnectivityResult } from "./connectivity.js";
 
@@ -23,6 +23,8 @@ export interface Summary {
   errors: number;
   warnings: number;
   infos: number;
+  /** Findings a person waived (left out of every count above and of byCheck). */
+  waived: number;
   byCheck: Record<string, CheckCounts>;
   inputHash: string;
   timing?: Timing;
@@ -34,8 +36,11 @@ export interface Summary {
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
-/** Count findings for the status line. `unconnected` comes from connectivity so the two can never disagree silently. */
-export function summarize(findings: readonly Finding[], connectivity: ConnectivityResult, extra: { timing?: Timing; notRun?: { check: string; reason: string }[] } = {}): Summary {
+/**
+ * Count findings for the status line. `unconnected` comes from connectivity so the two can never disagree silently
+ * (less the unconnected items a person waived). `waived`: the findings waivers left out of `findings`.
+ */
+export function summarize(findings: readonly Finding[], connectivity: ConnectivityResult, extra: { timing?: Timing; notRun?: { check: string; reason: string }[]; waived?: readonly Finding[] } = {}): Summary {
   const byCheck: Record<string, CheckCounts> = {};
   let errors = 0,
     warnings = 0,
@@ -50,7 +55,10 @@ export function summarize(findings: readonly Finding[], connectivity: Connectivi
     else if (f.severity === "warning") warnings++;
     else infos++;
   }
-  const reported = byCheck.unconnected ? byCheck.unconnected.errors + byCheck.unconnected.warnings + byCheck.unconnected.infos : 0;
+  const waived = extra.waived ?? [];
+  const waivedUnconnected = waived.filter((f) => f.check === "unconnected").length;
+  const unconnected = connectivity.unconnected - waivedUnconnected;
+  const reported = (byCheck.unconnected ? byCheck.unconnected.errors + byCheck.unconnected.warnings + byCheck.unconnected.infos : 0) + waivedUnconnected;
   const caveats: string[] = [];
   if (reported !== connectivity.unconnected) caveats.push(`the findings list ${reported} unconnected item(s) but connectivity counts ${connectivity.unconnected} (findings were filtered to a region)`);
   if (connectivity.zoneFill === "absent" || connectivity.zoneFill === "partial")
@@ -61,13 +69,14 @@ export function summarize(findings: readonly Finding[], connectivity: Connectivi
   const gaps = (extra.notRun ?? []).filter((n) => n.check !== "via_in_pad" && n.check !== "via_under_footprint");
   for (const n of gaps) caveats.push(`${n.check} not checked: ${n.reason}`);
   const incomplete = connectivity.zoneFill === "absent" || connectivity.zoneFill === "partial" || !connectivity.netlist || gaps.some((g) => g.check === "clearance");
-  const line = `${connectivity.unconnected} unconnected, ${plural(errors, "error")}, ${plural(warnings, "warning")}${incomplete ? " (incomplete: see caveats)" : ""}`;
+  const line = `${unconnected} unconnected, ${plural(errors, "error")}, ${plural(warnings, "warning")}${waived.length ? `, ${waived.length} waived` : ""}${incomplete ? " (incomplete: see caveats)" : ""}`;
   return {
     line,
-    unconnected: connectivity.unconnected,
+    unconnected,
     errors,
     warnings,
     infos,
+    waived: waived.length,
     byCheck: Object.fromEntries(Object.entries(byCheck).sort((a, b) => (a[0] < b[0] ? -1 : 1))),
     inputHash: connectivity.inputHash,
     ...(extra.timing ? { timing: extra.timing } : {}),

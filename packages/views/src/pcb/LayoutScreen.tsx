@@ -30,17 +30,20 @@ import { cu, defaultGroups, presetGroups, PRESETS, type PresetId } from "./layer
 import { areasSvg, boxOfIds, copperSvg, FAIL, frameSvg, leaseBox, PASS, SELECT, type ScreenMap } from "./overlay.js";
 import type { Hit } from "./pick.js";
 import { zoneFillsFromEntries } from "./fills.js";
+import { describeFinding, type FindingText } from "./findings-text.js";
 import { buildQueue, exportState, type QueueGroup, type QueueItem } from "./review.js";
 import type { SideMessage } from "./remote.js";
-import type { BoardDerived, BoardSource, CheckSummary, DepthView, DiagnosisView, PageOpCall, PcbFinding, ProposalView, RatsnestPair, RelaxOption, RouteProgressView, RouterInfo, ZoneFill } from "./types.js";
+import type { BoardDerived, BoardSource, CheckSummary, DepthView, DiagnosisProgress, DiagnosisView, PageOpCall, PcbFinding, ProposalView, RatsnestPair, RelaxOption, RouteProgressView, RouterInfo, ZoneFill } from "./types.js";
 import { AgentBar, presenceState, type AgentBarState } from "./ui/agent.js";
 import { CheckpointDialog, EditSection, TextPlacer, Toast } from "./ui/edit.js";
 import { ChecksPanel, InspectPanel, Kv, LayersPanel, NetsPanel, type NetRow } from "./ui/panels.js";
-import { ReviewPanel } from "./ui/review.js";
-import { AutoroutePanel, DiagnosisPanel, ProposalCard, type ScopeKind } from "./ui/route.js";
+import { ReviewPanel, WaivedList } from "./ui/review.js";
+import { ProposalReviewCard, ProposalsPanel, useAgentWork } from "./ui/proposals.js";
+import { AutoroutePanel, DiagnosisPanel, diagnosisVerdictText, ProposalCard, type ScopeKind } from "./ui/route.js";
 import { Gutter, Rail, StatusLine, TopBar } from "./ui/shell.js";
 import { SCREEN_CSS } from "./ui/styles.js";
 import { Timeline, type LaneBlock } from "./ui/timeline.js";
+import { useTools } from "./ui/tools.js";
 import { fitRect, panBy, zoomAbout, type Insets } from "./view.js";
 
 export interface LayoutScreenProps {
@@ -117,6 +120,8 @@ interface DragState {
   /** The delta asked for since the last frame: pointer moves are coalesced to one preview per display frame. */
   want?: { dx: number; dy: number };
   raf?: number;
+  /** The editing kernel drives this drag (ui/tools.tsx). */
+  kernel?: true;
 }
 
 export function LayoutScreen(props: LayoutScreenProps) {
@@ -186,7 +191,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
   const [accepted, setAccepted] = useState<{ run: string; message: string; ok: boolean; changeSet: string } | undefined>(undefined);
   const [busy, setBusy] = useState(false);
   // diagnosis (L4) and its relaxations, held in the page as a proposal until accepted
-  const [diag, setDiag] = useState<{ net: string; loading: boolean; view?: DiagnosisView; error?: string } | undefined>(undefined);
+  const [diag, setDiag] = useState<{ net: string; loading: boolean; view?: DiagnosisView; error?: string; progress?: DiagnosisProgress } | undefined>(undefined);
   const [relax, setRelax] = useState<{ option: RelaxOption; net: string } | undefined>(undefined);
   const dragRef = useRef<DragState | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -195,6 +200,10 @@ export function LayoutScreen(props: LayoutScreenProps) {
   const scaleBus = useBus<number>();
   const grid = props.grid ?? 0.25;
   const writable = status.writable;
+  // the interactive tools (route, via, zone, keep-out, outline, rip-up, line) and kernel drags: ui/tools.tsx
+  const tools = useTools({ session, ...(props.request ? { request: props.request } : {}), view: () => viewRef.current, tool, setTool, enabled: writable && mode === "edit" && !replaying, doc: snap.doc, seq: snap.seq, active, copper, lit, selection, setSelection, grid, toast: setToast });
+  // proposals, pausing agents and their refused writes: ui/proposals.tsx
+  const agents = useAgentWork({ session, onSide: props.onSide, writable, seq: snap.seq, toast: setToast, openList: () => setTab("inspect") });
 
   // the board: commits (the person's own drawn at once), presence, saves; during a drag only the canvas redraws
   useEffect(() => {
@@ -223,6 +232,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
       props.onSide?.((m) => {
         if (m.type === "checkpoint") setCheckpoints((c) => [...c.filter((x) => !(x.seq === m.seq && !x.committed && m.committed)), { seq: m.seq, label: m.label, ...(m.committed ? { committed: m.committed } : {}) }]);
         else if (m.type === "route") {
+          // a diagnosis in progress (the host's one budget, stage and fraction)
+          if (m.diagnosis) setDiag((d) => (d?.loading && d.net === m.diagnosis!.net ? { ...d, progress: m.diagnosis } : d));
           if (m.progress) setRunning((r) => (r && r.run === m.run ? { ...r, progress: [...r.progress, m.progress!].slice(-40) } : r));
           if (m.proposal) {
             setRunning((r) => (r?.run === m.run ? undefined : r));
@@ -233,6 +244,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
             setToast({ ok: false, status: "error", message: m.error, label: "autoroute", at: Date.now() });
           }
           if (m.ended === "cancelled") setRunning((r) => (r?.run === m.run ? undefined : r));
+          // accepted or rejected through the service's proposals (the Proposals list, or another screen)
+          else if (m.ended) setProposal((p) => (p?.run === m.run ? undefined : p));
         }
       }),
     [props.onSide],
@@ -309,6 +322,11 @@ export function LayoutScreen(props: LayoutScreenProps) {
   const exportOk = exportState(queue, derived?.waived, checks.ran);
   const openNets = useMemo(() => [...new Set(ratsnest.map((r) => r.net))].sort(), [ratsnest]);
   // where a finding's rule came from in the source (the importer's `provenance.from`)
+  // every finding a person reads is said in plain language (findings-text.ts), once per board version
+  const describe = useMemo(() => {
+    const said = new Map<string, FindingText>();
+    return (f: PcbFinding) => said.get(f.id) ?? (said.set(f.id, describeFinding(f, snap.doc)), said.get(f.id)!);
+  }, [snap.doc]);
   const ruleFrom = useCallback(
     (id: string) => {
       const r = snap.doc.records.get(id);
@@ -404,21 +422,6 @@ export function LayoutScreen(props: LayoutScreenProps) {
     if (!text || !at) return;
     void commitOps("add board text by hand", [{ op: "text.add", text: { layer: "top_silkscreen", text, x: Math.round(at.x * 1e6), y: Math.round(at.y * 1e6), height: 1_000_000, stroke_width: 150_000 } }]);
   };
-  const importDxf = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".dxf";
-    input.onchange = () => {
-      const f = input.files?.[0];
-      if (!f) return;
-      void f.text().then(async (dxf) => {
-        const o = await commitOps("set the outline from DXF", [{ op: "outline.import_dxf", dxf }]);
-        const rep = (o?.reply as { reports?: { report: { entities?: number; loops?: number; cutouts?: number; skipped?: { type: string; count: number }[] } }[] } | undefined)?.reports?.[0]?.report;
-        if (o?.ok && rep) setToast({ ok: true, status: "applied", label: "outline from DXF", message: `${rep.entities ?? "?"} entities, ${rep.loops ?? "?"} loops, ${rep.cutouts ?? 0} cutouts${rep.skipped?.length ? `; skipped ${rep.skipped.map((x) => `${x.count} ${x.type}`).join(", ")}` : ""}`, at: Date.now() });
-      });
-    };
-    input.click();
-  };
   const undo = () => void session.undo().then(say);
   const redo = () => void session.redo().then(say);
 
@@ -431,7 +434,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
     if (!rs.length) return false;
     if (!(selection.includes(h.id) || selection.includes(id))) setSelection(ids);
     setActiveFinding(undefined);
-    dragRef.current = { ids, anchor: anchorOf(session.confirmed().doc, ids), label: gestureLabel("move", session.confirmed().doc, ids) };
+    dragRef.current = { ids, anchor: anchorOf(session.confirmed().doc, ids), label: gestureLabel("move", session.confirmed().doc, ids), ...(tools.dragStart(rs.map((r) => r.id)) ? { kernel: true as const } : {}) };
     setDragging(true);
     return true;
   };
@@ -439,6 +442,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
     const d = dragRef.current;
     if (!d) return;
     d.want = snapDelta(d.anchor, dxMm * 1e6, dyMm * 1e6, grid);
+    if (d.kernel) return tools.dragMove(d.want.dx, d.want.dy);
     if (d.raf) return;
     // one preview per display frame, with the latest delta, drawn in that same frame: moves never queue up
     d.raf = requestAnimationFrame(() => {
@@ -457,6 +461,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
     setDragging(false);
     if (!d) return;
     if (d.raf) cancelAnimationFrame(d.raf);
+    if (d.kernel) return tools.dragEnd(cancel, d.label);
     // the release's own position counts (a quick drag can end before its last frame)
     if (!cancel && d.want && (!d.last || d.last.dx !== d.want.dx || d.last.dy !== d.want.dy) && session.preview(moveOps(session.confirmed().doc, d.ids, d.want.dx, d.want.dy).ops)) d.legal = d.want;
     if (cancel || !d.legal || (d.legal.dx === 0 && d.legal.dy === 0)) {
@@ -551,11 +556,11 @@ export function LayoutScreen(props: LayoutScreenProps) {
     const r = await session.request({ method: "routeAccept", run: proposal.run }, "accept the proposal");
     setBusy(false);
     if (!r.ok) return;
-    const x = r.result as { replies: { status: string; reason?: string; message?: string; seq?: number }[]; locked: { checked: number; changed: string[] } };
+    const x = r.result as { replies: { status: string; reason?: string; message?: string; seq?: number }[]; locked: { checked: number; changed: string[]; hand?: number } };
     const ok = x.replies.length > 0 && x.replies.every((y) => y.status === "applied") && !x.locked.changed.length;
     const refused = x.replies.find((y) => y.status !== "applied");
     const message = ok
-      ? `applied in ${x.replies.length} step${x.replies.length === 1 ? "" : "s"} (seq ${x.replies.at(-1)?.seq}); ${x.locked.checked} locked record${x.locked.checked === 1 ? "" : "s"} verified unchanged`
+      ? `accepted as your change (seq ${x.replies.at(-1)?.seq}); ${x.locked.hand ?? 0} hand track${x.locked.hand === 1 ? "" : "s"} verified unchanged (${x.locked.checked} locked record${x.locked.checked === 1 ? "" : "s"} byte for byte)`
       : refused
         ? `not applied: ${refused.reason ?? refused.status}${refused.message ? ` (${refused.message})` : ""}`
         : `locked records changed: ${x.locked.changed.join(", ")}`;
@@ -583,7 +588,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
     setRelax(undefined);
     setLit([net]);
     setDiag({ net, loading: true });
-    const r = await session.request({ method: "diagnose", net, budgetMs: 20_000 }, "diagnose");
+    const r = await session.request({ method: "diagnose", net }, "diagnose");
     setDiag((d) => (d?.net !== net ? d : r.ok ? { net, loading: false, view: r.result as DiagnosisView } : { net, loading: false, error: r.error }));
   };
   const acceptRelax = async () => {
@@ -682,6 +687,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
 
   const onKey = (e: KeyboardEvent) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    if (tools.onKey(e)) return e.preventDefault();
     const v = viewRef.current;
     const k = e.key;
     if (e.altKey && /^[1-4]$/.test(k)) {
@@ -820,7 +826,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
   };
 
   // ------------------------------------------------------------ the one open callout
-  const showProposalCard = !!proposal || !!relax;
+  const showProposalCard = !!proposal || !!relax || !!agents.proposals.selected;
   const calloutFor = selection.length === 1 && !activeFinding && !showProposalCard && !dragging && mode === "edit" ? selection[0] : undefined;
   const callout = () => {
     const i = calloutFor ? inspect(snap.doc, calloutFor) : undefined;
@@ -877,6 +883,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
       }
     }
     if (mode === "route" && scopeKind === "region" && region) out.push(frameSvg(region, m, "autoroute region"));
+    out.push(agents.proposals.overlay(m));
     for (const l of presence?.leases ?? []) {
       if (l.holder.kind === "human") continue;
       const b = leaseBox(snap.doc, l);
@@ -923,7 +930,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
       );
     return (
       <div style={{ position: "absolute", left, top: INSETS.top + 120 }}>
-        <ProposalCard proposal={proposal!} busy={busy} onAccept={() => void acceptRoute()} onReject={rejectRoute} />
+        {proposal ? <ProposalCard proposal={proposal} busy={busy} onAccept={() => void acceptRoute()} onReject={rejectRoute} /> : <ProposalReviewCard state={agents.proposals} writable={writable} />}
       </div>
     );
   };
@@ -931,6 +938,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
   // ------------------------------------------------------------ the agent bar and the timeline's fourth lane
   const queueItem = mode === "review" ? queue[rIndex] : undefined;
   const bar: AgentBarState = (() => {
+    if (tools.bar) return tools.bar;
     if (running) {
       const last = running.progress.at(-1);
       const stages = new Set(running.progress.map((p) => p.stage));
@@ -947,11 +955,12 @@ export function LayoutScreen(props: LayoutScreenProps) {
       const better = proposal.status === "proposed";
       return { who: "Router", title: better ? `Autoroute finished: the proposal beats the board you have` : `Autoroute finished: nothing to offer (${proposal.status})`, sub: `${proposal.stages.map((s) => `${s.router} ${(s.durationMs / 1000).toFixed(0)} s`).join(", then ")} · Balanced · nothing applied yet`, buttons: [{ label: "Run again", icon: "reroute", onClick: () => void runRoute() }] };
     }
-    if (mode === "diagnose" && diag) return { who: "Agent", title: diag.view ? `${diag.net}: ${diag.view.verdict === "rules" ? "a rule blocks it, not the parts" : diag.view.verdict === "placement" ? "the parts or a no-go area block it" : "it routes as the rules are"}` : `Probing ${diag.net}…`, sub: diag.view ? `constraint probe · fab floor and no-go only · ${diag.view.options.length} relaxation${diag.view.options.length === 1 ? "" : "s"} test-run in ${(diag.view.ms / 1000).toFixed(1)} s` : "attempt, probe and relaxations on copies; nothing changes", working: diag.loading };
+    if (mode === "diagnose" && diag) return { who: "Agent", title: diag.view ? `${diag.net}: ${diagnosisVerdictText(diag.view)}` : `Probing ${diag.net}…`, sub: diag.view ? `constraint probe · fab floor and no-go only · ${diag.view.options.length} relaxation${diag.view.options.length === 1 ? "" : "s"} test-run in ${(diag.view.ms / 1000).toFixed(1)} s` : "attempt, probe and relaxations on copies; nothing changes", working: diag.loading };
     if (queueItem) return { who: "Agent", title: `Item ${rIndex + 1} of ${queue.length} · ${queueItem.title}`, sub: "the canvas follows the queue · nothing applied yet", buttons: [{ label: "Skip", key: "J", onClick: () => pickItem(rIndex + 1) }] };
-    return presenceState(presence, log, now, writable ? { onTakeOver: () => void session.request({ method: "takeOver" }, "take over") } : {});
+    return presenceState(presence, log, now, agents.handlers);
   })();
   const lane: { name: string; blocks: LaneBlock[]; align?: "start" | "end" } | undefined = (() => {
+    if (tools.lane) return tools.lane;
     if (mode === "review") return { name: "Queue", blocks: queue.slice(0, 12).map((q, i) => ({ key: q.id, label: `${i + 1} ${q.title}`, seq: snap.seq, tone: i === rIndex ? "queue-on" : "queue", onClick: () => pickItem(i) })) };
     if (mode === "route" && (running || proposal)) {
       const stages = proposal ? proposal.stages.map((s, i) => ({ key: `st${i}`, label: `${s.router} ${(s.durationMs / 1000).toFixed(0)} s${s.kept ? " ✓" : ""}`, seq: snap.seq, tone: (s.kept ? "router" : "router-fail") as LaneBlock["tone"] })) : [...new Map(running!.progress.map((p) => [p.stage, p])).values()].map((p) => ({ key: `st${p.stage}`, label: `${p.router} · ${p.phase}`, seq: snap.seq, tone: "router" as const }));
@@ -992,6 +1001,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
           tool={tool}
           findings={markers ? findings : EMPTY}
           {...(activeFinding ? { activeFinding } : {})}
+          describe={describe}
+          quiet={mode === "review"}
           insets={INSETS}
           onPick={onPick}
           onBoxSelect={(ids, add) => {
@@ -1021,6 +1032,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
           }}
           overlay={overlay}
           nodes={nodes}
+          {...(tools.input ? { input: tools.input } : {})}
+          draftLayer={tools.draftLayer}
         />
         <Rail
           tool={tool}
@@ -1038,7 +1051,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
           {...(props.request ? { onAutoroute: () => (mode === "route" ? leaveMode() : openRoute()) } : {})}
           autorouteOn={mode === "route"}
           {...(writable && hasOperation("text.add") ? { onText: () => setTool((t) => (t === "text" ? "select" : "text")) } : {})}
-          {...(writable && hasOperation("outline.import_dxf") ? { onDxf: importDxf } : {})}
+          {...(writable && hasOperation("outline.import_dxf") ? { onDxf: tools.importDxf } : {})}
+          drawTools={writable && mode === "edit" && hasOperation("track.route")}
         />
         {placing && <TextPlacer x={placing.sx} y={placing.sy} onDone={placeText} />}
         <AgentBar state={bar} />
@@ -1055,6 +1069,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
           {tool === "measure" && <span className="pcb-chip on">measure · drag on the board · Esc</span>}
           {tool === "region" && <span className="pcb-chip on">draw the autoroute region · drag on the board · Esc</span>}
           {tool === "text" && <span className="pcb-chip on">text · click where it goes · Esc</span>}
+          {tools.chip && <span className="pcb-chip on">{tools.chip}</span>}
           {replaying && <span className="pcb-chip on">replay · seq {status.replay!.seq} · read only</span>}
           {!writable && !replaying && <span className="pcb-chip">read only</span>}
         </div>
@@ -1074,6 +1089,7 @@ export function LayoutScreen(props: LayoutScreenProps) {
             <Toast outcome={toast} onClose={() => setToast(undefined)} />
           </div>
         )}
+        {tools.nodes}
         {checkpoint && <CheckpointDialog seq={snap.seq} {...checkpoint} onPrepare={(l) => void prepareCheckpoint(l)} onCommit={() => void commitCheckpoint()} onClose={() => setCheckpoint(undefined)} />}
         <Timeline
           log={log}
@@ -1173,8 +1189,12 @@ export function LayoutScreen(props: LayoutScreenProps) {
                   onWhy={(it) => it.net && void diagnose(it.net)}
                 />
               ) : (
-                <ChecksPanel findings={findings} checks={checks} {...(notes?.length ? { notes } : {})} {...(activeFinding ? { active: activeFinding } : {})} onLocate={locate} ruleFrom={ruleFrom} />
+                <>
+                  <ChecksPanel findings={findings} checks={checks} {...(notes?.length ? { notes } : {})} {...(activeFinding ? { active: activeFinding } : {})} onLocate={locate} ruleFrom={ruleFrom} describe={describe} />
+                  <WaivedList doc={snap.doc} waived={derived?.waived ?? []} writable={writable} onUnwaive={(f) => void unwaive(f)} />
+                </>
               ))}
+            {tab === "inspect" && mode === "edit" && agents.proposals.open && <ProposalsPanel state={agents.proposals} writable={writable} now={now} onClose={() => agents.proposals.setOpen(false)} />}
             {tab === "inspect" && mode === "route" && (
               <AutoroutePanel
                 routers={routers}
@@ -1206,12 +1226,14 @@ export function LayoutScreen(props: LayoutScreenProps) {
                 loading={diag.loading}
                 {...(diag.error ? { error: diag.error } : {})}
                 {...(diag.view ? { view: diag.view } : {})}
+                {...(diag.progress ? { progress: diag.progress } : {})}
                 writable={writable}
+                {...(relax ? { pending: relax.option.id } : {})}
                 onApply={(o) => setRelax({ option: o, net: diag.net })}
                 onRun={() => void diagnose(diag.net)}
               />
             )}
-            {tab === "inspect" && (mode === "edit" || mode === "review") && (
+            {tab === "inspect" && (mode === "review" || (mode === "edit" && !agents.proposals.open)) && (
               <>
                 {writable && selection.length > 0 && mode === "edit" && (
                   <EditSection
@@ -1229,7 +1251,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
                     {...(ripNet ? { ripNet, onRip: rip } : {})}
                   />
                 )}
-                <InspectPanel items={inspections} total={selection.length} onLook={() => fitSelection(selection)} ruleFrom={ruleFrom} {...(activeFinding && findings.find((f) => f.id === activeFinding) ? { finding: findings.find((f) => f.id === activeFinding)! } : {})} />
+                {mode === "edit" && tools.panel}
+                <InspectPanel items={inspections} total={selection.length} onLook={() => fitSelection(selection)} ruleFrom={ruleFrom} describe={describe} {...(activeFinding && findings.find((f) => f.id === activeFinding) ? { finding: findings.find((f) => f.id === activeFinding)! } : {})} />
                 {writable && (() => {
                   const net = selection.map((id) => viewRef.current?.scene?.objects.get(id)?.netName).find((n): n is string => !!n && openNets.includes(n));
                   return net ? (

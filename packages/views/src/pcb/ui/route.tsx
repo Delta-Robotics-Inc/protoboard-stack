@@ -4,7 +4,7 @@
  * fallback flagged, Accept or Reject), the proposal card that sits on the canvas while a proposal is open, and the
  * routing diagnosis (L4: the verdict, what blocks the net, and relaxations already test-run).
  */
-import type { DiagnosisView, PageScore, ProposalView, RelaxOption, RouteProgressView, RouterInfo } from "../types.js";
+import type { DiagnosisProgress, DiagnosisView, PageScore, ProposalView, RelaxOption, RouteProgressView, RouterInfo } from "../types.js";
 import { Icon } from "./icons.js";
 
 const mm = (nm: number, d = 1) => `${(nm / 1e6).toFixed(d)}`;
@@ -194,7 +194,8 @@ export function AutoroutePanel(p: AutoroutePanelProps) {
             <i>scored</i>
           </h4>
           <ScoreTable now={pr.current} cand={pr.candidate} label={pr.stages.filter((s) => s.kept).map((s) => s.router).join(" + ") || "result"} />
-          <p className="pcb-p">{offered ? "Ranked by open connections, then errors, then vias. Accepting applies it as one run of the router; Revert takes the whole run back." : `Not offered: ${pr.reasons.join("; ") || pr.status}. A result worse than the board you have is never offered for Accept.`}</p>
+          <p className="pcb-p">{offered ? `Ranked by open connections, then errors, then vias. The board service holds it as ${pr.proposals?.length ? `${pr.proposals.length} proposal${pr.proposals.length === 1 ? "" : "s"}` : "a proposal"} (one item per net); accepting applies it as your change, and Revert takes the whole run back.` : `Not offered: ${pr.reasons.join("; ") || pr.status}. A result worse than the board you have is never offered for Accept.`}</p>
+          {offered && pr.proposalError && <div className="pcb-note fail">Not held as a service proposal: {pr.proposalError}</div>}
           {pr.unexpressed.length > 0 && <div className="mono mute small">checked after the run: {pr.unexpressed.slice(0, 4).join("; ")}</div>}
         </div>
       )}
@@ -233,7 +234,7 @@ export function ProposalCard({ proposal, onAccept, onReject, busy }: { proposal:
       </div>
       <div className="acts">
         {offered && (
-          <button className="pcb-btn main" disabled={busy} onClick={onAccept} title="Apply the proposal (A)">
+          <button className="pcb-btn main" disabled={busy || !pr.proposals?.length} onClick={onAccept} title={pr.proposals?.length ? "Apply the proposal as your change (A)" : `The board service does not hold it${pr.proposalError ? `: ${pr.proposalError}` : ""}`}>
             <Icon name="check" size={12} /> Accept <span className="kbd">A</span>
           </button>
         )}
@@ -250,22 +251,46 @@ export interface DiagnosisPanelProps {
   loading: boolean;
   error?: string;
   view?: DiagnosisView;
+  /** The host's progress while the diagnosis runs (stage, fraction, time against the budget). */
+  progress?: DiagnosisProgress;
   writable: boolean;
+  /** The relaxation whose card is open on the canvas: its Accept is the one main action, so no option here is orange. */
+  pending?: string;
   onApply: (o: RelaxOption) => void;
   onRun: () => void;
+}
+
+const VERDICT_TITLE: Record<DiagnosisView["verdict"], string> = { rules: "Rules, not placement", placement: "Placement", routes: "It routes as the rules are", connected: "Nothing is open", unknown: "Not known yet" };
+const STAGE_TEXT: Record<DiagnosisProgress["stage"], string> = { cache: "cache", connectivity: "open links", attempt: "attempt, every rule", probe: "probe, floor and no-go only", relaxations: "relaxations on copies", done: "done" };
+
+/** The verdict in a few words (the agent bar's title). */
+export function diagnosisVerdictText(v: DiagnosisView): string {
+  return v.verdict === "rules" ? "a rule blocks it, not the parts" : v.verdict === "placement" ? "the parts or a no-go area block it" : v.verdict === "connected" ? (v.pour ? "left to its pour, nothing is open" : "nothing is open") : v.verdict === "unknown" ? "not known, the time budget ran out" : "it routes as the rules are";
 }
 
 export function DiagnosisPanel(p: DiagnosisPanelProps) {
   const v = p.view;
   const best = v?.options.find((o) => o.result.routed && o.result.newFindings === 0) ?? v?.options.find((o) => o.result.routed);
+  const g = p.loading ? p.progress : undefined;
   return (
     <>
       <div className="pcb-sec">
         <h4>
           <span>Why {p.net} can't route</span>
-          <i>{v ? `${(v.ms / 1000).toFixed(1)} s · seq ${v.seq}` : p.loading ? "probing" : ""}</i>
+          <i>{v ? `${v.cached ? "cached · " : ""}${(v.ms / 1000).toFixed(1)} s${v.budgetMs ? ` of ${(v.budgetMs / 1000).toFixed(0)} s` : ""} · seq ${v.seq}` : g ? `${STAGE_TEXT[g.stage]} · ${(g.elapsedMs / 1000).toFixed(1)} of ${(g.budgetMs / 1000).toFixed(0)} s` : p.loading ? "probing" : ""}</i>
         </h4>
-        {p.loading && <div className="pcb-note">Running the attempt, the probe with only the fab floor and no-go areas, and the relaxations on copies of the board. Nothing changes.</div>}
+        {p.loading && <div className="pcb-note">Routing only the open links of {p.net}: the attempt, the probe with only the fab floor and no-go areas, and the relaxations on copies of the board, within one time budget. Nothing changes.</div>}
+        {g && (
+          <>
+            <i className="pcb-progress" title={`${Math.round(g.fraction * 100)}%`}>
+              <i style={{ width: `${Math.round(g.fraction * 100)}%` }} />
+            </i>
+            <div className="mono mute small" style={{ marginTop: 4 }}>
+              {g.router ? `${g.router} · ` : ""}
+              {g.message ?? STAGE_TEXT[g.stage]}
+            </div>
+          </>
+        )}
         {p.error && <div className="pcb-note fail">{p.error}</div>}
         {!p.loading && !v && !p.error && (
           <button className="pcb-btn" onClick={p.onRun} disabled={!p.writable}>
@@ -275,10 +300,16 @@ export function DiagnosisPanel(p: DiagnosisPanelProps) {
         {v && (
           <div className="pcb-verdict">
             <span className="caps">Verdict</span>
-            <b>{v.verdict === "rules" ? "Rules, not placement" : v.verdict === "placement" ? "Placement" : "It routes as the rules are"}</b>
+            <b>{VERDICT_TITLE[v.verdict] ?? v.verdict}</b>
             <p>{v.summary}.</p>
           </div>
         )}
+        {v?.pour && <div className="pcb-note">{v.pour.note}.</div>}
+        {v?.stopped?.length ? (
+          <div className="mono mute small" style={{ marginTop: 6 }} title={v.stopped.join("\n")}>
+            the {((v.budgetMs ?? 0) / 1000).toFixed(0)} s budget cut: {v.stopped.join("; ")}
+          </div>
+        ) : null}
       </div>
       {v && (
         <div className="pcb-sec">
@@ -323,13 +354,13 @@ export function DiagnosisPanel(p: DiagnosisPanelProps) {
               <div className="row1">
                 <span className="num">{i + 1}</span>
                 <b>{o.title}</b>
-                <button className={`pcb-btn${o === best ? " main" : ""}`} disabled={!p.writable} onClick={() => p.onApply(o)} title="A proposal you accept or reject; the rule is written to the board's rules with who and why">
+                <button className={`pcb-btn${o === best && !p.pending ? " main" : ""}`} disabled={!p.writable} onClick={() => p.onApply(o)} title="A proposal you accept or reject; the rule is written to the board's rules with who and why">
                   {o === best ? "Apply as proposal" : "Apply"}
                 </button>
               </div>
               <div className="mono mute small">{o.detail}</div>
-              <div className={`mono small ${o.result.routed ? "pass" : "fail"}`}>
-                {o.result.routed ? "✓" : "✗"} test-run: {o.result.routed ? `routes · ${o.result.vias} via${o.result.vias === 1 ? "" : "s"} · ${o.result.newFindings ? `${o.result.newFindings} new finding(s)` : "no new findings"}` : `still open${o.result.note ? ` · ${o.result.note}` : ""}`} · {(o.result.ms / 1000).toFixed(1)} s
+              <div className={`mono small ${o.result.skipped ? "mute" : o.result.routed ? "pass" : "fail"}`}>
+                {o.result.skipped ? `not test-run: ${o.result.skipped}` : <>{o.result.routed ? "✓" : "✗"} test-run: {o.result.routed ? `routes · ${o.result.vias} via${o.result.vias === 1 ? "" : "s"} · ${o.result.newFindings ? `${o.result.newFindings} new finding(s)` : "no new findings"}` : `still open${o.result.note ? ` · ${o.result.note}` : ""}`} · {(o.result.ms / 1000).toFixed(1)} s</>}
               </div>
             </div>
           ))}

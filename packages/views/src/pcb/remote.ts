@@ -16,8 +16,8 @@
 import { BoardIndex, snapshotFromWire, withChanges, type BoardEvent, type BoardSnapshot, type LogEntry, type Presence } from "./board.js";
 import type { BoardDerived, BoardEntry, BoardFeedMessage, BoardReplyMessage, BoardRequest, BoardSource } from "./types.js";
 
-/** Feed messages beside the board itself: checkpoints and autoroute runs. */
-export type SideMessage = Extract<BoardFeedMessage, { type: "checkpoint" | "route" }>;
+/** Feed messages beside the board itself: checkpoints, autoroute runs, the service's proposals, agents' refused writes. */
+export type SideMessage = Extract<BoardFeedMessage, { type: "checkpoint" | "route" | "proposal" | "refusal" }>;
 
 type SnapshotMessage = Extract<BoardFeedMessage, { type: "snapshot" }>;
 
@@ -68,7 +68,7 @@ export class RemoteBoardSource implements BoardSource {
     return () => void this.derivedListeners.delete(listener);
   }
 
-  /** Checkpoints and autoroute runs as the host reports them. */
+  /** Checkpoints, autoroute runs, proposals and agents' refused writes as the host reports them. */
   onSide(listener: (m: SideMessage) => void): () => void {
     this.sideListeners.add(listener);
     return () => void this.sideListeners.delete(listener);
@@ -124,6 +124,8 @@ export class RemoteBoardSource implements BoardSource {
         return;
       case "checkpoint":
       case "route":
+      case "proposal":
+      case "refusal":
         for (const l of [...this.sideListeners]) l(m);
         return;
     }
@@ -184,13 +186,25 @@ export function openBoardSource(key: string, channel: BoardChannel, options: { t
 }
 
 /**
+ * The folder a board host's routes hang from: the page's own query and hash dropped (a page opened as `/?drill=` must
+ * not send `/?drill=__protoboard/board/list`), and a trailing slash kept.
+ */
+export function boardHostBase(base: string): string {
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(base)) return new URL("./", base).href;
+  const cut = base.search(/[?#]/);
+  const b = cut < 0 ? base : base.slice(0, cut);
+  return b === "" || b.endsWith("/") ? b : b.slice(0, b.lastIndexOf("/") + 1);
+}
+
+/**
  * The dev servers' board host: `GET <base>__protoboard/board/list` for the folders, an event stream
  * (`__protoboard/board/events?board=<key>`) per open board, `POST __protoboard/board/check?board=<key>` (with the
  * page's token header, when the server asks for one) to run the checks again, and `POST
  * __protoboard/board/request?board=<key>` for a page's request (`BoardRequest`, JSON).
  */
 export function createEventStreamBoardHost(options: { base: string; token?: string; tokenHeader?: string }): BoardHost {
-  const url = (path: string, key?: string) => `${options.base}${path}${key ? `?board=${encodeURIComponent(key)}` : ""}`;
+  const base = boardHostBase(options.base);
+  const url = (path: string, key?: string) => `${base}${path}${key ? `?board=${encodeURIComponent(key)}` : ""}`;
   return {
     async list() {
       const r = await fetch(url("__protoboard/board/list"), { cache: "no-store" });

@@ -4,7 +4,8 @@
  * the extension host's postMessage relay in VS Code). `params.board` names a board by key; with several and none
  * named, the view lists them. Read only: the screen never writes to the board.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { layoutProbe } from "../shell/probe.js";
 import type { ViewProps } from "../types.js";
 import { LayoutScreen } from "./LayoutScreen.js";
 import { knownBoards, setKnownBoards } from "./known-boards.js";
@@ -66,6 +67,10 @@ export function LayoutView({ host, params, module }: ViewProps) {
     };
   }, [boards, key]);
 
+  // the cross-probe with the schematic editor (shell/probe.ts): its selection shown here, this screen's selection sent there
+  const probe = useMemo(() => (open ? layoutProbe(() => open.source.snapshot().doc.records.values() as Iterable<{ kind: string; id: string }>) : undefined), [open]);
+  useEffect(() => () => probe?.close(), [probe]);
+
   if (!boards) return <div style={box}>This host has no board feed: the layout screen opens in `protoboard dev` and in the VS Code extension.</div>;
   if (error && !open) return <div style={box}>The board did not open: {error}</div>;
   if (!list) return <div style={box}>Looking for board folders…</div>;
@@ -87,7 +92,7 @@ export function LayoutView({ host, params, module }: ViewProps) {
   const entry = list.find((b) => b.key === key);
   const navigate = (v: DepthView) => {
     const to = v === "system" ? "diagram" : v === "3d" ? "3d" : v === "schematic" ? "schematic" : undefined;
-    if (to) host.openView?.(to, "");
+    if (to) host.openView?.(to, "", to === "schematic" && key ? { layout: key } : undefined);
   };
   return (
     // below a shell's floating header (`--uhd-inset-top`), which would cover the screen's own top bar
@@ -99,6 +104,7 @@ export function LayoutView({ host, params, module }: ViewProps) {
         crumbs={[module.name, entry?.name ?? key]}
         {...(open.recheck ? { onCheck: open.recheck } : {})}
         {...(host.openView ? { onNavigate: navigate } : {})}
+        {...(probe ? { onView: (v: Parameters<typeof probe.attach>[0]) => probe.attach(v), onSelectionChange: (ids: string[]) => probe.selected(ids) } : {})}
       />
     </div>
   );

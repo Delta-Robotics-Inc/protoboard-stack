@@ -130,6 +130,12 @@ export interface BoardDerived {
   history?: CheckPoint[];
   /** Findings a person marked "not a problem", with the reason (they are left out of `findings` and the counts). */
   waived?: WaivedFinding[];
+  /**
+   * How the checks behind these numbers ran: `service` (the board service's live checks, contract section 6.1),
+   * `host` (the host's own incremental checks: a board read from its files, or a service without live checks) or
+   * `full` (one full run). `mode` and `ms` are the run's; `serviceMs` the service's own time when it published one.
+   */
+  live?: { source: "service" | "host" | "full"; mode: "incremental" | "full"; ms: number; serviceMs?: number };
 }
 
 /** One check run's counts at one board version. */
@@ -140,11 +146,19 @@ export interface CheckPoint {
   unconnected: number;
 }
 
-/** A finding a waiver covers: the finding as the checks found it, the waiver's rule record and its reason. */
+/**
+ * A finding a waiver covers: the finding as the checks found it, the record that waives it and its reason. `rule`
+ * is that record's id: a waiver record (`waiver:...`), or an older disabled rules entry (`rule:waiver.*`, `legacy`)
+ * that the host converts to a waiver record on the first write.
+ */
 export interface WaivedFinding {
   finding: PcbFinding;
   rule: string;
   reason: string;
+  /** Who waived it (a waiver record's `by`), when known. */
+  by?: string;
+  at?: string;
+  legacy?: true;
 }
 
 // ---------------------------------------------------------------- writes and runs a page asks its host for
@@ -161,6 +175,8 @@ export interface PageTransaction {
   expectEpoch?: string;
   expectSeq?: number;
   expectVersions?: Record<string, number>;
+  /** Refused `stale-region` when anything in this box (nm, on these layers) changed after `seq` (the route tool's commit). */
+  expectRegion?: { box: { minX: number; minY: number; maxX: number; maxY: number }; layers?: string[]; seq: number };
   dryRun?: boolean;
 }
 
@@ -195,9 +211,23 @@ export type BoardRequest =
   | { method: "routeReject"; run: string }
   /** Why a net does not route: attempts, the probe with the fab floor and no-go areas only, and test-run relaxations. */
   | { method: "diagnose"; net: string; budgetMs?: number }
-  /** Mark a finding "not a problem" with a reason (a waiver rule entry, applied as a transaction). */
+  /** Mark a finding "not a problem" with a reason (`waiver.add`, as the person). */
   | { method: "waive"; finding: string; reason: string }
-  | { method: "unwaive"; finding: string };
+  /** Take a "not a problem" back (`waiver.remove`). */
+  | { method: "unwaive"; finding: string }
+  /** The board service's proposals (contract section 4), newest first; DEFAULT open and stale ones. */
+  | { method: "proposals"; status?: "open" | "stale" | "accepted" | "partial" | "rejected" }
+  /** What a proposal (or some of its items) would add, remove and change on the board as it is now. */
+  | { method: "proposalPreview"; id: string; items?: string[] }
+  /** Accept a proposal (DEFAULT every open item) as the person's own transaction; `allowStale` revalidates a stale one. */
+  | { method: "proposalAccept"; id: string; items?: string[]; allowStale?: boolean }
+  | { method: "proposalReject"; id: string; items?: string[]; reason?: string }
+  /** A person's drag hold on objects (contract section 5); renewed by asking again with the same ids. */
+  | { method: "hold"; ids: string[]; ttlMs?: number }
+  | { method: "releaseHold"; id?: string }
+  /** Pause agents and routers (their writes are refused `paused` until resumed or `ttlMs` runs out). */
+  | { method: "pause"; reason?: string; ttlMs?: number }
+  | { method: "resume" };
 
 export type BoardRequestMethod = BoardRequest["method"];
 
@@ -248,6 +278,88 @@ export interface ProposalView {
   unexpressed: string[];
   notes: string[];
   ms: number;
+  /** The board service's proposals the run became (one per router step; accept and reject go through them). */
+  proposals?: string[];
+  /** Why the run's result is not a service proposal (no service, or the service refused it). */
+  proposalError?: string;
+}
+
+/** Who made or acted on something, as a page shows it. */
+export interface PageActor {
+  kind: "human" | "agent" | "router" | "host" | "system";
+  id: string;
+  name?: string;
+}
+
+/** Records added, removed and changed by kind, and track length added and removed (nanometers). */
+export interface PageChangeSummary {
+  added: Record<string, number>;
+  removed: Record<string, number>;
+  changed: Record<string, number>;
+  length: { added: number; removed: number };
+}
+
+/**
+ * A board service proposal (contract section 4) as a page lists it: everything but the items' operations, which
+ * stay with the service (the page asks for a preview to draw them).
+ */
+export interface PageProposal {
+  id: string;
+  title: string;
+  actor: PageActor;
+  source: "agent" | "router" | "host" | "person" | "needs-person";
+  base: { epoch: string; seq: number };
+  status: "open" | "stale" | "accepted" | "partial" | "rejected";
+  items: { key: string; label: string; status: "open" | "stale" | "accepted" | "rejected"; nets: string[]; summary: PageChangeSummary; ops: number; acceptedSeq?: number }[];
+  summary: PageChangeSummary;
+  before: { records: number; tracks: number; vias: number };
+  after: { records: number; tracks: number; vias: number };
+  /** How many ids the items change on the base board. */
+  touched: number;
+  /** The router's scores (`{ current, candidate }`, open connections first) when it gave them. */
+  scores?: { current?: PageScore; candidate?: PageScore };
+  changeSet: { id: string; title?: string };
+  /** The commit that made it stale: its seq, who, and what it changed that the proposal reads. */
+  stale?: { seq: number; actor: PageActor; changed: string[] };
+  /** Needs a person: why the agent's change waits. */
+  reason?: string;
+  rejected?: { by: PageActor; reason?: string };
+  createdAt: number;
+}
+
+/** A proposal's diff against the board as it is now: the ghost to draw and what it would take away. */
+export interface PageProposalPreview {
+  id: string;
+  seq: number;
+  stale: boolean;
+  /** Whether the asked items still apply to the current board (a stale proposal can be revalidated when true). */
+  valid: boolean;
+  error?: string;
+  items?: string[];
+  /** Copper it adds (the blue ghost). */
+  added: GhostCopper;
+  /** Copper it removes (marked on the board), with the record ids. */
+  removed: GhostCopper & { ids: string[] };
+  /** Ids of records it changes in place, and how many records it adds and removes of other kinds. */
+  changed: string[];
+  counts: { added: number; removed: number; changed: number };
+}
+
+/** A person's pause of agents and routers (presence carries it while it lasts). */
+export interface PagePause {
+  by: PageActor;
+  since: number;
+  reason?: string;
+  until?: number;
+}
+
+/** A write by an agent or a router the service refused while this host watched (a pause or a hold). */
+export interface PageRefusal {
+  actor: PageActor;
+  reason: string;
+  message: string;
+  at: number;
+  label?: string;
 }
 
 /** A route run's progress as the feed sends it. */
@@ -278,15 +390,19 @@ export interface RelaxOption {
   detail: string;
   /** The rule records it writes (`rule.set` inputs), applied as the person's transaction when accepted. */
   rules: Record<string, unknown>[];
-  result: { routed: boolean; open: number; errors: number; vias: number; length: number; newFindings: number; ms: number; note?: string };
+  result: { routed: boolean; open: number; errors: number; vias: number; length: number; newFindings: number; ms: number; note?: string; skipped?: string };
 }
 
 /** Why a net does not route (L4). */
 export interface DiagnosisView {
   net: string;
   seq: number;
-  /** `routes`: it routes with every rule as it is (no diagnosis needed); `rules`: rules block it; `placement`: the parts or a no-go area do. */
-  verdict: "routes" | "rules" | "placement";
+  /**
+   * `routes`: it routes with every rule as it is (no diagnosis needed); `rules`: rules block it; `placement`: the parts
+   * or a no-go area do; `connected`: nothing of it is open (its pour joins it, say); `unknown`: the time budget ran out
+   * before the probe could say.
+   */
+  verdict: "routes" | "rules" | "placement" | "connected" | "unknown";
   summary: string;
   attempts: { router: string; status: string; reason?: string; ghost: GhostCopper; ms: number }[];
   probe?: { router: string; routed: boolean; ghost: GhostCopper; length: number; vias: number; floorViolations: number; ms: number };
@@ -294,6 +410,29 @@ export interface DiagnosisView {
   areas: DiagnosisArea[];
   options: RelaxOption[];
   ms: number;
+  /** The open links diagnosed: the net's missing connections (with a pour, only those its fill does not make). */
+  links?: number;
+  /** The net has a zone (a pour): it is left to its pour, and only the links the fill does not make are routed. */
+  pour?: { zones: string[]; links: number; note: string };
+  /** The one time budget for the whole diagnosis (ms), and what it cut (a stage or router not run or stopped). */
+  budgetMs?: number;
+  stopped?: string[];
+  /** The input hash the answer is cached by, and whether this answer came from the cache. */
+  hash?: string;
+  cached?: boolean;
+  notes?: string[];
+}
+
+/** A diagnosis in progress, as the host reports it (on the feed as a `route` message's `diagnosis`). */
+export interface DiagnosisProgress {
+  net: string;
+  stage: "cache" | "connectivity" | "attempt" | "probe" | "relaxations" | "done";
+  /** 0 to 1 over the whole diagnosis. */
+  fraction: number;
+  elapsedMs: number;
+  budgetMs: number;
+  router?: string;
+  message?: string;
 }
 
 /** A board folder the host can open. */
@@ -322,4 +461,8 @@ export type BoardFeedMessage =
   /** A checkpoint was prepared (the service saved and wrote its marker) or committed to Git. */
   | { type: "checkpoint"; board: string; seq: number; label: string; committed?: string }
   /** An autoroute run: progress while it runs, then its proposal (or why there is none). */
-  | { type: "route"; board: string; run: string; progress?: RouteProgressView; proposal?: ProposalView; error?: string; ended?: "accepted" | "rejected" | "cancelled" };
+  | { type: "route"; board: string; run: string; progress?: RouteProgressView; proposal?: ProposalView; error?: string; ended?: "accepted" | "rejected" | "cancelled"; diagnosis?: DiagnosisProgress }
+  /** A board service proposal was created, changed (accepted, partly accepted, rejected) or went stale. */
+  | { type: "proposal"; board: string; change: "created" | "changed" | "stale"; proposal: PageProposal }
+  /** An agent's or a router's write the service refused while paused or held (as far as this host sees them). */
+  | { type: "refusal"; board: string; refusal: PageRefusal };

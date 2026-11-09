@@ -244,12 +244,25 @@ function randomStep(doc: BoardDocument, r: () => number): Step | undefined {
   }
 }
 
+/** A person waives a finding now counted (by id, or by its rule and objects), or removes a waiver: a full run. */
+function waiverStep(doc: BoardDocument, result: BoardCheckResult, r: () => number): Step | undefined {
+  const pick = <T>(xs: readonly T[]): T => xs[Math.floor(r() * xs.length)];
+  const ws = recordsOfKind(doc, "waiver");
+  if (ws.length && r() < 0.35) return { call: { op: "waiver.remove", ids: [pick(ws).id] }, actor: HUMAN, global: true };
+  if (!result.findings.length) return undefined;
+  const f = pick(result.findings);
+  const byRule = r() < 0.5 && f.objects.length <= 50;
+  const waiver = byRule ? { rule: f.rule ?? f.check, objects: [...f.objects], reason: "a random test waiver" } : { finding: f.id, reason: "a random test waiver" };
+  return { call: { op: "waiver.add", waiver }, actor: HUMAN, global: true };
+}
+
 /** The incremental result equals the full run (everything the result says, except timing). */
 function expectSame(inc: BoardCheckResult, full: BoardCheckResult, where: string): void {
   const strip = (r: BoardCheckResult) => ({ ...r.summary, timing: undefined });
   expect(inc.inputHash, where).toBe(full.inputHash);
   expect(inc.findings.map((f) => f.id), where).toEqual(full.findings.map((f) => f.id));
   expect(inc.findings, where).toEqual(full.findings);
+  expect(inc.waived, where).toEqual(full.waived);
   expect(strip(inc), where).toEqual(strip(full));
   expect(inc.connectivity, where).toEqual(full.connectivity);
   expect(inc.notRun, where).toEqual(full.notRun);
@@ -264,7 +277,7 @@ interface Walk {
 }
 
 /** Walk `steps` random applied edits from `start`, comparing every update with a full run. */
-function walk(start: BoardDocument, seed: number, steps: number, opts: { fills?: ZoneFill[]; join?: JoinRule; refill?: boolean } = {}): Walk {
+function walk(start: BoardDocument, seed: number, steps: number, opts: { fills?: ZoneFill[]; join?: JoinRule; refill?: boolean; waivers?: boolean } = {}): Walk {
   const r = rng(seed);
   const engine = createEngine(start, { epoch: `s${String(seed).padStart(5, "0")}`.slice(0, 6) });
   let fills = opts.fills;
@@ -272,7 +285,7 @@ function walk(start: BoardDocument, seed: number, steps: number, opts: { fills?:
   expectSame(inc.result, runBoardChecks(start, { ...(fills ? { fills } : {}), ...(opts.join ? { join: opts.join } : {}) }), `seed ${seed}: the first run`);
   const out: Walk = { steps: 0, incremental: 0, full: 0 };
   for (let attempt = 0; out.steps < steps && attempt < steps * 6; attempt++) {
-    const s = randomStep(engine.doc, r);
+    const s = opts.waivers && r() < 0.15 ? waiverStep(engine.doc, inc.result, r) : randomStep(engine.doc, r);
     if (!s) continue;
     const before = inc.result;
     const reply = engine.apply({ batchId: `b${seed}.${attempt}`, label: "apply one random test edit", ops: [s.call] }, s.actor);
@@ -342,6 +355,14 @@ describe("incremental checks equal a full run after every edit (property)", () =
       expect(w.incremental).toBeGreaterThan(STEPS / 2);
     });
   }
+  it(`Airnode C3 with waivers added and removed between the edits, ${STEPS} edits`, () => {
+    const w = walk(airnodeC3(), 5, STEPS, { waivers: true });
+    expect(w.incremental).toBeGreaterThan(STEPS / 2);
+  });
+  it(`a small four-layer board with fill and waivers, ${STEPS} edits`, () => {
+    const { records, nets, fills } = smallBoard();
+    walk(makeDoc(records, nets), 77, STEPS, { fills, refill: true, waivers: true });
+  });
   it(`Airnode C3 with the overlap join rule, ${STEPS} edits`, () => {
     walk(airnodeC3(), 7, STEPS, { join: "overlap" });
   });

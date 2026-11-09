@@ -1,7 +1,7 @@
 /**
  * A board feed (Node): one host process's view of one board folder, as `BoardFeedMessage`s for pages, and the
  * host's side of a page's requests (`request`: transactions, undo, redo, saves, checkpoints, replay, autoroute runs,
- * routing diagnosis, waivers).
+ * routing diagnosis, waivers, proposals, drag holds, pausing agents).
  *
  * - With a live board service (`protoboard board serve`, its `service.json`), it is that service's wire client:
  *   commits arrive as events, and the feed asks the service for the records they changed so the page applies
@@ -10,10 +10,22 @@
  *   a CLI call) and reloads them when they change on disk; it looks for a service now and then, and switches to it
  *   when one starts. The first write a page asks for opens the board here as its owner and serves it
  *   (`serveBoard`, `service.json`), so the CLI and agents become its clients; closing the feed saves and stops it.
- * - After every change it computes the zone fill (`@protoboardai/board-fill`, incrementally) when the board has
- *   zones and has been edited, runs the checks (./analysis.ts) and sends the derived data with each check run's
- *   counts by seq (the timeline's error line). KiCad's DRC of the source file runs once per feed (and on
- *   `recheck`); each new result of ours is compared with that one run.
+ * - Live checks (contract section 6): when this feed owns the board, the service's own live checks
+ *   (`attachEditing` of `@protoboardai/board-edit/service`: incremental checks and refill after every commit,
+ *   published as `derived` events to every client, and `board.diagnose` on the wire) give the numbers. As a
+ *   service's client, and with no service, the feed keeps its own incremental checks (./live.ts) on what each
+ *   commit or file change touched; a service's `derived` events come with its timing. The derived data goes out
+ *   with each check run's counts by seq (the timeline's error line). KiCad's DRC of the source file runs once per
+ *   feed (and on `recheck`); each new result of ours is compared with that one run.
+ * - Proposals (contract section 4) are the service's: router results become service proposals
+ *   (`proposeRouteResult`), and an agent's net change or `board propose` batch arrives the same way. The feed
+ *   relays the service's proposal events, previews, accepts and rejects through it, and after accepting a router's
+ *   proposal checks that every locked record is byte-identical.
+ * - Waivers are waiver records (`waiver.add`, `waiver.remove`, as the person); older disabled rules entries
+ *   (`rule:waiver.*`) are converted to waiver records in one transaction by the person on this feed's first write.
+ * - Pause: a person pauses agents and routers (`board.pause`, `board.resume`); presence carries it, and the writes
+ *   of agents and routers the service refuses while paused or held are passed on as `refusal` messages when this
+ *   feed serves the board.
  *
  * Who acts is the host's decision: `request(req, actor)` takes the actor from the host (a person at the screen is
  * `human`), never from the page.
@@ -26,6 +38,7 @@ import {
   connectBoard,
   findProjectRoot,
   findService,
+  getOperation,
   loadZoneFill,
   localClient,
   openBoardService,
@@ -36,19 +49,28 @@ import {
   type BoardClient,
   type BoardDocument,
   type BoardEvent,
+  type BoardMethod,
   type BoardServer,
   type BoardService,
   type BoardSnapshot,
+  type DerivedState,
+  type DerivedZoneFill,
   type LogEntry,
   type OpCall,
+  type Proposal,
+  type Reply,
   type Transaction,
 } from "@protoboardai/board/node";
 import type * as FillModule from "@protoboardai/board-fill";
-import type { BoardDerived, BoardFeedMessage, BoardReplyMessage, BoardRequest, CheckPoint } from "../types.js";
-import { readWaivers, waiverRule, waiverRuleId } from "../waivers.js";
-import { analyzeBoard, logTail, toBoardDerived, type AnalyzeOptions, type KicadReference } from "./analysis.js";
+import type * as RouteModule from "@protoboardai/board-route";
+import type * as EditService from "@protoboardai/board-edit/service";
+import type { BoardDerived, BoardFeedMessage, BoardReplyMessage, BoardRequest, CheckPoint, PageActor, PageRefusal } from "../types.js";
+import { boardWaivers, legacyWaiverMigration, unwaiveOps, waiverAddOp, waiverRule } from "../waivers.js";
+import { analyzeBoard, logTail, toBoardDerived, type AnalyzeOptions, type BoardCheckResult, type KicadReference } from "./analysis.js";
 import { commitBoardFolder } from "./git.js";
-import { diagnoseNet, loadFillModule, RouteRuns, routerInfo } from "./route.js";
+import { HostChecks, rebase } from "./live.js";
+import { loadEditModule, pageProposal, pagePreview, routeProposalInputs } from "./proposals.js";
+import { diagnoseNet, loadFillModule, lockFingerprint, RouteRuns, routerInfo } from "./route.js";
 
 export interface BoardFeedOptions {
   /** The board folder. */
@@ -77,6 +99,35 @@ const hasZones = (doc: BoardDocument) => {
   for (const r of doc.records.values()) if (r.kind === "zone") return true;
   return false;
 };
+const batch = (prefix: string) => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+const pageActor = (a: Actor): PageActor => ({ kind: a.kind, id: a.id, ...(a.name ? { name: a.name } : {}) });
+/** The service's proposal events as a page's: created, changed (accepted, partly, rejected) or stale. */
+const proposalChange = (c: string): "created" | "changed" | "stale" => (c === "created" ? "created" : c === "stale" ? "stale" : "changed");
+/** Transactions of agents and routers the service may refuse while a person pauses or holds (watched when this feed serves). */
+const WATCHED = new Set(["apply", "undo", "redo", "revertChangeSet", "claim"]);
+
+/**
+ * A service whose agent and router refusals (`paused`, `held`) are reported to `onRefusal`: what this feed serves,
+ * so a person sees an agent's writes stopped by the pause. A host that serves a board itself (the layout dev page)
+ * wraps its service the same way and passes them on with `BoardFeed.reportRefusal`.
+ */
+export function watchRefusals(svc: BoardService, onRefusal: (r: PageRefusal) => void): BoardService {
+  return new Proxy(svc, {
+    get(target, prop, receiver) {
+      const v = Reflect.get(target, prop, receiver) as unknown;
+      if (typeof prop !== "string" || !WATCHED.has(prop) || typeof v !== "function") return v;
+      return (...args: unknown[]) => {
+        const r = (v as (...a: unknown[]) => unknown).apply(target, args) as { status?: string; reason?: string; message?: string };
+        const actor = (prop === "apply" ? args[1] : args[0]) as Actor | undefined;
+        if (r?.status === "refused" && (r.reason === "paused" || r.reason === "held") && actor && (actor.kind === "agent" || actor.kind === "router")) {
+          const label = prop === "apply" ? (args[0] as { label?: string } | undefined)?.label : prop;
+          onRefusal({ actor: pageActor(actor), reason: r.reason, message: r.message ?? r.reason, at: Date.now(), ...(label ? { label } : {}) });
+        }
+        return r;
+      };
+    },
+  });
+}
 
 /** The board as it was at `seq`, rebuilt from the current document and the log's inverse operations. */
 export function docAtSeq(doc: BoardDocument, log: readonly LogEntry[], current: number, seq: number): BoardDocument {
@@ -102,8 +153,18 @@ export class BoardFeed {
   private mode: "service" | "files" = "files";
   private client: BoardClient | undefined;
   private unsubscribeClient: (() => void) | undefined;
-  /** When this feed owns the board (opened it for a write): the service and its server. */
-  private owned: { svc: BoardService; server: BoardServer } | undefined;
+  /** When this feed owns the board (opened it for a write): the service, its server and its live checks. */
+  private owned: { svc: BoardService; server: BoardServer; editing?: EditService.Editing } | undefined;
+  /** The host's own incremental checks (a service's client, or files). */
+  private readonly checks = new HostChecks();
+  /** The last derived state the service published (its live checks), when it has them. */
+  private serviceDerived: DerivedState | undefined;
+  /** The checks' result of the last run, by seq (the KiCad run reuses it). */
+  private lastResult: { epoch: string; seq: number; result: BoardCheckResult; live: NonNullable<BoardDerived["live"]> } | undefined;
+  /** The source tool's zone fill, read once per board version. */
+  private cachedFill: { epoch: string; fill: DerivedZoneFill } | undefined;
+  /** Whether the older waiver entries were converted (or found absent) on this feed's first write. */
+  private migrated = false;
   private snap!: BoardSnapshot;
   private presence: Extract<BoardFeedMessage, { type: "snapshot" }>["presence"];
   private log: Extract<BoardFeedMessage, { type: "snapshot" }>["log"];
@@ -133,7 +194,25 @@ export class BoardFeed {
     this.dir = resolve(options.dir);
     this.key = options.key ?? this.dir;
     this.root = options.projectRoot ?? findProjectRoot(this.dir);
-    this.routes = new RouteRuns((m) => this.broadcast({ type: "route", board: this.key, ...m }));
+    this.routes = new RouteRuns(
+      (m) => this.broadcast({ type: "route", board: this.key, ...m }),
+      (rp) => this.proposeRoute(rp),
+    );
+  }
+
+  /** A router's result as service proposals (the service holds them; a person accepts or rejects them there). */
+  private async proposeRoute(rp: RouteModule.RouteProposal): Promise<{ ids: string[]; error?: string }> {
+    const c = await this.ensureWritable();
+    const calls = await routeProposalInputs(rp, this.snap.epoch);
+    if ("error" in calls) return { ids: [], error: calls.error };
+    const ids: string[] = [];
+    const errors: string[] = [];
+    for (const { actor, input } of calls) {
+      const r = await c.propose(actor, input);
+      if (r.status === "proposed") ids.push(r.proposal.id);
+      else errors.push(r.error);
+    }
+    return { ids, ...(errors.length ? { error: errors.join("; ") } : {}) };
   }
 
   /** Open a feed: the live service when there is one, else the files. Resolves with the first snapshot read. */
@@ -166,6 +245,11 @@ export class BoardFeed {
     return this.listeners.size;
   }
 
+  /** Pass on an agent's or a router's write the service refused (a host serving the board itself saw it). */
+  reportRefusal(refusal: PageRefusal): void {
+    this.broadcast({ type: "refusal", board: this.key, refusal });
+  }
+
   /** Run the checks again, and KiCad's DRC of the source file too. */
   recheck(): void {
     this.kicad = undefined;
@@ -191,8 +275,9 @@ export class BoardFeed {
     const c = this.client;
     this.client = undefined;
     if (this.owned) {
-      const { svc, server } = this.owned;
+      const { svc, server, editing } = this.owned;
       this.owned = undefined;
+      editing?.stop();
       await server.close().catch(() => {});
       // the service saves on close (contract section 10), as `protoboard board serve` does when it stops
       try {
@@ -222,7 +307,7 @@ export class BoardFeed {
   private async handle(req: BoardRequest, actor: Actor): Promise<unknown> {
     switch (req.method) {
       case "apply": {
-        const c = await this.ensureWritable();
+        const c = await this.writer(actor);
         const t = req.tx;
         const tx: Transaction = {
           batchId: t.batchId,
@@ -232,6 +317,7 @@ export class BoardFeed {
           ...(t.expectEpoch !== undefined ? { expectEpoch: t.expectEpoch } : {}),
           ...(t.expectSeq !== undefined ? { expectSeq: t.expectSeq } : {}),
           ...(t.expectVersions ? { expectVersions: t.expectVersions } : {}),
+          ...(t.expectRegion ? { expectRegion: { box: { ...t.expectRegion.box }, ...(t.expectRegion.layers ? { layers: [...t.expectRegion.layers] } : {}), seq: t.expectRegion.seq } } : {}),
           ...(t.dryRun ? { dryRun: true } : {}),
         };
         return c.apply(tx, actor);
@@ -241,7 +327,7 @@ export class BoardFeed {
       case "redo":
         return (await this.ensureWritable()).redo(actor, req.batchId ? { batchId: req.batchId } : undefined);
       case "revertChangeSet":
-        return (await this.ensureWritable()).revertChangeSet(actor, req.id, req.batchId ? { batchId: req.batchId } : undefined);
+        return (await this.writer(actor)).revertChangeSet(actor, req.id, req.batchId ? { batchId: req.batchId } : undefined);
       case "takeOver":
         return (await this.ensureWritable()).takeOver(actor);
       case "save": {
@@ -271,33 +357,131 @@ export class BoardFeed {
       case "routers":
         return routerInfo();
       case "route":
+        // the result becomes service proposals: the board is opened for writing now when no service runs
+        await this.ensureWritable();
         return { run: await this.routes.start(this.snap, { scope: req.scope, ...(req.budgetMs ? { budgetMs: req.budgetMs } : {}) }) };
       case "routeCancel":
         return { cancelled: this.routes.cancel(req.run) };
-      case "routeReject":
-        return { rejected: this.routes.reject(req.run) };
-      case "routeAccept": {
-        const c = await this.ensureWritable();
-        const before = this.snap.doc;
-        return this.routes.accept(req.run, (tx, a) => c.apply(tx, a), before, async () => (await c.snapshot()).doc);
+      case "routeReject": {
+        // the run's proposals are rejected in the service
+        const ids = this.routes.get(req.run)?.proposal?.proposals ?? [];
+        const c = ids.length ? await this.ensureWritable() : undefined;
+        for (const id of ids) await c!.rejectProposal(actor, id, { reason: "rejected in the autoroute panel" });
+        return { rejected: this.routes.reject(req.run), proposals: ids };
       }
-      case "diagnose":
-        return diagnoseNet(this.snap, req.net, req.budgetMs ? { budgetMs: req.budgetMs } : {});
+      case "routeAccept": {
+        const ids = this.routes.get(req.run)?.proposal?.proposals ?? [];
+        if (!ids.length) throw new Error(`run ${req.run} has no open proposal in the board service${this.routes.get(req.run)?.proposal?.proposalError ? ` (${this.routes.get(req.run)!.proposal!.proposalError})` : ""}`);
+        const replies: (Reply & { proposalState?: Proposal })[] = [];
+        let locked = { checked: 0, changed: [] as string[], hand: 0 };
+        for (const id of ids) {
+          const r = await this.acceptProposal(id, actor, {});
+          replies.push(r.reply);
+          locked = { checked: Math.max(locked.checked, r.locked.checked), changed: [...new Set([...locked.changed, ...r.locked.changed])], hand: r.locked.hand };
+          if (r.reply.status !== "applied") break;
+        }
+        if (replies.length === ids.length && replies.every((x) => x.status === "applied")) this.routes.end(req.run, "accepted");
+        return { replies, locked };
+      }
+      case "diagnose": {
+        // one budget for the whole diagnosis; progress goes out on the feed as a `route` message's `diagnosis`; the
+        // answer is cached in memory and under the board's build folder
+        const run = `diagnose:${req.net}`;
+        return diagnoseNet(this.snap, req.net, { ...(req.budgetMs ? { budgetMs: req.budgetMs } : {}), dir: this.dir, projectRoot: this.root, onProgress: (p) => this.broadcast({ type: "route", board: this.key, run, diagnosis: p }) });
+      }
       case "waive": {
         const d = this.derived;
         const f = d?.findings.find((x) => x.id === req.finding);
         if (!f) throw new Error(`no open finding ${req.finding} at seq ${d?.seq ?? this.snap.seq} (it may be fixed already, or the board moved on)`);
-        const c = await this.ensureWritable();
-        return c.apply({ batchId: `waive-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`, label: `mark ${f.check} not a problem`, ops: [{ op: "rule.set", rule: waiverRule(f, req.reason) }] }, actor);
+        const c = await this.writer(actor);
+        // a waiver record when the core has them; the older rules entry otherwise
+        const op = getOperation("waiver.add") ? waiverAddOp(f, req.reason) : { op: "rule.set", rule: waiverRule(f, req.reason) };
+        return c.apply({ batchId: batch("waive"), label: `mark ${f.check.replace(/_/g, " ")} not a problem`, ops: [op] }, actor);
       }
       case "unwaive": {
-        const w = readWaivers(this.snap.doc).get(req.finding);
-        const id = w?.rule ?? waiverRuleId(req.finding);
-        if (!this.snap.doc.records.has(id)) throw new Error(`no waiver for ${req.finding}`);
+        const c = await this.writer(actor);
+        // by the record that waives it (a rule waiver names no finding id), else by the finding id
+        const listed = this.derived?.waived?.find((w) => w.finding.id === req.finding);
+        const doc = (await c.snapshot()).doc;
+        const ops = (listed ? unwaiveOps(doc, listed.rule) : []).length ? unwaiveOps(doc, listed!.rule) : unwaiveOps(doc, req.finding);
+        if (!ops.length) throw new Error(`no waiver for ${req.finding}`);
+        return c.apply({ batchId: batch("unwaive"), label: "take back a not a problem", ops }, actor);
+      }
+      case "proposals": {
+        // proposals live in a board service: none while the board is read from its files
+        if (this.mode !== "service" || !this.client) return [];
+        const list = req.status ? await this.client.proposals({ status: req.status }) : [...(await this.client.proposals({ status: "open" })), ...(await this.client.proposals({ status: "stale" }))];
+        return list.sort((a, b) => b.createdAt - a.createdAt).map(pageProposal);
+      }
+      case "proposalPreview": {
+        if (this.mode !== "service" || !this.client) throw new Error("no board service runs for this board, so it has no proposals");
+        const pv = await this.client.previewProposal(req.id, req.items ? { items: req.items } : {});
+        if (!pv) throw new Error(`no proposal ${req.id}`);
+        return pagePreview(pv, req.items);
+      }
+      case "proposalAccept": {
+        const r = await this.acceptProposal(req.id, actor, { ...(req.items ? { items: req.items } : {}), ...(req.allowStale ? { allowStale: true } : {}) });
+        const run = this.routes.runOf(req.id);
+        if (run && r.reply.status === "applied" && r.reply.proposalState?.status === "accepted") this.routes.end(run, "accepted");
+        return { ...r.reply, ...(r.reply.proposalState ? { proposalState: pageProposal(r.reply.proposalState) } : {}), locked: r.locked };
+      }
+      case "proposalReject": {
         const c = await this.ensureWritable();
-        return c.apply({ batchId: `unwaive-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`, label: "take back a not a problem", ops: [{ op: "rule.delete", ids: [id] }] }, actor);
+        const r = await c.rejectProposal(actor, req.id, { ...(req.items ? { items: req.items } : {}), ...(req.reason ? { reason: req.reason } : {}) });
+        const run = this.routes.runOf(req.id);
+        if (run && r.status === "rejected" && r.proposal.status === "rejected") this.routes.end(run, "rejected");
+        return r.status === "rejected" ? { status: "rejected", proposal: pageProposal(r.proposal) } : r;
+      }
+      case "hold":
+        return (await this.ensureWritable()).hold(actor, { ids: req.ids, ...(req.ttlMs ? { ttlMs: req.ttlMs } : {}) });
+      case "releaseHold":
+        // nothing to release while no service runs
+        return this.mode === "service" && this.client ? this.client.releaseHold(actor, req.id) : [];
+      case "pause":
+      case "resume": {
+        const c = await this.ensureWritable();
+        const typed = c as unknown as { pause?: (a: Actor, o: { reason?: string; ttlMs?: number }) => Promise<unknown>; resume?: (a: Actor) => Promise<unknown> };
+        const params = req.method === "pause" ? { actor, ...(req.reason ? { reason: req.reason } : {}), ...(req.ttlMs ? { ttlMs: req.ttlMs } : {}) } : { actor };
+        try {
+          if (req.method === "pause") return typed.pause ? await typed.pause(actor, { ...(req.reason ? { reason: req.reason } : {}), ...(req.ttlMs ? { ttlMs: req.ttlMs } : {}) }) : await c.call("board.pause" as BoardMethod, params);
+          return typed.resume ? await typed.resume(actor) : await c.call("board.resume" as BoardMethod, params);
+        } catch (e) {
+          const m = (e as Error).message;
+          throw new Error(/method|unknown|not found/i.test(m) ? `this board service cannot pause agents (${m})` : m);
+        }
       }
     }
+  }
+
+  /**
+   * Accept a service proposal as the person, and check that every locked record is byte-identical afterwards
+   * (`hand`: the locked hand tracks among them that are unchanged).
+   */
+  private async acceptProposal(id: string, actor: Actor, options: { items?: string[]; allowStale?: boolean }): Promise<{ reply: Reply & { proposalState?: Proposal }; locked: { checked: number; changed: string[]; hand: number } }> {
+    const c = await this.writer(actor);
+    const check = lockFingerprint((await c.snapshot()).doc);
+    const reply = await c.acceptProposal(actor, id, { ...options, batchId: batch("accept") });
+    const locked = check((await c.snapshot()).doc);
+    return { reply, locked };
+  }
+
+  /**
+   * A client for a person's forward write. On this feed's first one, older waiver entries (`rule:waiver.*`) are
+   * converted to waiver records in one transaction by that person (when the core has `waiver.add`).
+   */
+  private async writer(actor: Actor): Promise<BoardClient> {
+    const c = await this.ensureWritable();
+    if (this.migrated || actor.kind !== "human") return c;
+    this.migrated = true;
+    if (!getOperation("waiver.add")) return c;
+    const doc = (await c.snapshot()).doc;
+    const ops = legacyWaiverMigration(doc);
+    if (!ops.length) return c;
+    const n = ops.length - 1;
+    const r = await c.apply({ batchId: batch("waivers"), label: `convert ${n} older waiver${n === 1 ? "" : "s"} to records`, ops }, actor);
+    if (r.status !== "applied") this.say(`board feed ${this.key}: the older waiver entries were not converted: ${r.status === "refused" ? r.message : r.status === "invalid" ? r.error : r.status}`);
+    else this.say(`board feed ${this.key}: converted ${n} older waiver entr${n === 1 ? "y" : "ies"} to waiver records (seq ${r.seq})`);
+    return c;
   }
 
   /** A client that can write: the live service, or the board opened here as its owner and served. */
@@ -322,15 +506,25 @@ export class BoardFeed {
         }
         throw e;
       }
+      // the service's live checks (published as derived events to every client) and `board.diagnose`, as
+      // `protoboard board serve` attaches them
+      let editing: EditService.Editing | undefined;
+      try {
+        editing = (await loadEditModule())?.attachEditing(svc);
+      } catch (e) {
+        this.say(`board feed ${this.key}: live checks were not attached: ${(e as Error).message}`);
+      }
       let server: BoardServer;
       try {
-        server = await serveBoard(svc, { ...(this.options.origins ? { origins: this.options.origins } : {}), log: (l) => this.say(`board service ${this.key}: ${l}`) });
+        const served = watchRefusals(svc, (refusal) => this.broadcast({ type: "refusal", board: this.key, refusal }));
+        server = await serveBoard(served, { ...(this.options.origins ? { origins: this.options.origins } : {}), ...(editing ? { methods: editing.methods } : {}), log: (l) => this.say(`board service ${this.key}: ${l}`) });
       } catch (e) {
+        editing?.stop();
         svc.close({ save: false });
         throw e;
       }
       if (svc.recoverable()) this.notesExtra.push(`${svc.recoverable()} journal entr${svc.recoverable() === 1 ? "y" : "ies"} of an earlier session never reached the files; \`protoboard board serve --recover\` replays them`);
-      this.owned = { svc, server };
+      this.owned = { svc, server, ...(editing ? { editing } : {}) };
       this.attachClient(localClient(svc, { dir: this.dir, closeService: false }), await Promise.resolve(svc.snapshot()));
       this.say(`board feed ${this.key}: opened the board for writing and serving it (pid ${process.pid})`);
       return this.client!;
@@ -362,11 +556,16 @@ export class BoardFeed {
     this.client = client;
     this.mode = "service";
     const reloaded = !this.snap || this.snap.epoch !== snap.epoch || this.snap.seq !== snap.seq;
+    // a board from its files and the same board from a service are different documents: the checks start again
+    const prev = this.snap?.doc;
     this.snap = snap;
     if (reloaded) this.fillChanged = "all";
+    if (reloaded || prev !== snap.doc) this.checks.reset();
+    this.serviceDerived = undefined;
     void (async () => {
       this.presence = await client.presence();
       this.log = logTail(await client.log());
+      this.serviceDerived = (await client.derived().catch(() => null)) ?? undefined;
       this.broadcast(this.snapshotMessage());
     })().catch((e: Error) => this.fail(e));
     this.unsubscribeClient = client.subscribe((e) => {
@@ -410,8 +609,10 @@ export class BoardFeed {
       if (e.epoch !== this.snap.epoch || e.seq !== this.snap.seq + 1) {
         this.snap = await client.snapshot();
         this.fillChanged = "all";
+        this.checks.reset();
         this.broadcast(this.snapshotMessage());
       } else {
+        this.checks.noteChanged([...ids, ...e.removed]);
         // the board moves by the commit's records here too: no whole board crosses the wire per commit
         const doc = withChanges(this.snap.doc, puts, e.removed);
         const prev = this.snap;
@@ -436,8 +637,19 @@ export class BoardFeed {
     else if (e.type === "external-change") {
       this.snap = await client.snapshot();
       this.fillChanged = "all";
+      this.checks.reset();
       this.broadcast(this.snapshotMessage());
       this.scheduleCheck();
+    } else if (e.type === "proposal") this.broadcast({ type: "proposal", board: this.key, change: proposalChange(e.change), proposal: pageProposal(e.proposal) });
+    else if (e.type === "derived") {
+      // the service's live checks: their timing goes with our numbers at that seq (a derived event can come before
+      // its commit's, since the checks publish while the commit is announced)
+      const { type: _t, ...state } = e;
+      this.serviceDerived = state;
+      if (this.derived && this.derived.seq === state.seq && this.derived.epoch === state.epoch && this.derived.live && this.derived.live.serviceMs === undefined) {
+        this.derived = { ...this.derived, live: { ...this.derived.live, serviceMs: state.timing.totalMs } };
+        this.broadcast({ type: "derived", board: this.key, derived: this.derived });
+      }
     }
   }
 
@@ -445,10 +657,19 @@ export class BoardFeed {
     this.mode = "files";
     const svc = openBoardService({ dir: this.dir, projectRoot: this.root, journal: false, ownerLock: false });
     try {
-      this.snap = svc.snapshot();
+      const fresh = svc.snapshot();
+      // built on the board read before, so unchanged records stay the same objects and the checks recheck only
+      // what changed on disk
+      const r = this.snap ? rebase(this.snap.doc, fresh.doc) : { doc: fresh.doc, changed: [], whole: true };
+      if (r.whole) this.checks.reset();
+      else this.checks.noteChanged(r.changed);
+      let index: BoardIndex | undefined;
+      const doc = r.doc;
+      this.snap = r.doc === fresh.doc ? fresh : { epoch: fresh.epoch, seq: fresh.seq, doc, version: (id) => fresh.version(id), get query() { return (index ??= BoardIndex.build(doc)); } };
       this.presence = undefined;
       this.log = undefined;
       this.fillChanged = "all";
+      this.serviceDerived = undefined;
     } finally {
       svc.close({ save: false });
     }
@@ -485,18 +706,23 @@ export class BoardFeed {
   /**
    * The zone fill to check a snapshot with: the source tool's cached fill until the board is edited here (then it
    * would be silently out of date), a computed one after (incrementally from the last when the epoch is the same).
+   * `computed`: it was computed now; `refilled`: the zones it refilled.
    */
-  private async fillFor(s: BoardSnapshot, oneOff = false): Promise<{ fill?: FillModule.FillZonesResult["fill"] }> {
+  private async fillFor(s: BoardSnapshot, oneOff = false): Promise<{ fill?: DerivedZoneFill; computed?: boolean; refilled?: string[] }> {
     if (!hasZones(s.doc)) return {};
     // the source tool's own fill while it is current and the board is as imported; otherwise one is computed (a
     // board with zones and no fill would connect nothing through its pours)
     if (!this.edited && !oneOff) {
+      if (this.cachedFill?.epoch === s.epoch) return { fill: this.cachedFill.fill };
       const cached = loadZoneFill(this.dir, s.doc, this.root);
-      if (cached?.current) return {};
+      if (cached?.current) {
+        this.cachedFill = { epoch: s.epoch, fill: cached.fill };
+        return { fill: cached.fill };
+      }
     }
     const mod = await loadFillModule();
     if (!mod) return {};
-    if (oneOff) return { fill: mod.fillZones(s).fill };
+    if (oneOff) return { fill: mod.fillZones(s).fill, computed: true };
     const prev = this.fillResult;
     const changed = this.fillChanged;
     this.fillChanged = new Set();
@@ -504,7 +730,7 @@ export class BoardFeed {
     if (prev && prev.epoch === s.epoch && changed !== "all") r = mod.refillZones(s, prev, [...changed]);
     else r = mod.fillZones(s);
     this.fillResult = { ...r, seq: s.seq, epoch: s.epoch };
-    return { fill: r.fill };
+    return { fill: r.fill, computed: true, refilled: [...new Set(r.recomputed.map((z) => z.zone))] };
   }
 
   /** Write the computed fill beside the board's derived data (a save keeps the cache in step with the files). */
@@ -519,6 +745,26 @@ export class BoardFeed {
     }
   }
 
+  /**
+   * The checks for a snapshot: the service's live checks when this feed owns the board (their zone fill too),
+   * else the host's incremental checks with the fill `fillFor` gives. Undefined when the checks are not installed.
+   */
+  private async checksFor(snap: BoardSnapshot): Promise<{ result: BoardCheckResult; live: NonNullable<BoardDerived["live"]>; fill?: DerivedZoneFill; fillMs?: number } | undefined> {
+    const live = this.owned?.editing?.live?.current();
+    if (live && live.seq === snap.seq && live.derived.epoch === snap.epoch) {
+      if (live.fill) this.fillResult = { ...live.fill, seq: snap.seq, epoch: snap.epoch };
+      const t = live.derived.timing;
+      return { result: live.result, live: { source: "service", mode: t.mode, ms: t.checksMs, serviceMs: t.totalMs }, ...(live.fill ? { fill: live.fill.fill, fillMs: Math.round(t.fillMs) } : {}) };
+    }
+    const tf = performance.now();
+    const f = await this.fillFor(snap);
+    const fillMs = f.computed ? Math.round(performance.now() - tf) : undefined;
+    const h = await this.checks.run(snap, f.fill, f.refilled);
+    if (!h) return undefined;
+    const sd = this.serviceDerived && this.serviceDerived.seq === snap.seq && this.serviceDerived.epoch === snap.epoch ? this.serviceDerived : undefined;
+    return { result: h.result, live: { source: "host", mode: h.mode, ms: h.ms, ...(sd ? { serviceMs: sd.timing.totalMs } : {}) }, ...(f.fill ? { fill: f.fill } : {}), ...(fillMs !== undefined ? { fillMs } : {}) };
+  }
+
   private async runChecks(): Promise<void> {
     if (this.closed) return;
     const run = ++this.analyzing;
@@ -527,34 +773,35 @@ export class BoardFeed {
     // KiCad's DRC of the source file runs once and blocks this process for seconds (kicad-cli is run synchronously):
     // our own checks go out first, so the page draws and counts at once; KiCad's numbers follow a moment later
     const wantsKicad = fresh && this.options.analyze?.crossCheck !== false;
-    const tf = performance.now();
-    const fill = await this.fillFor(snap);
-    const fillMs = fill.fill ? Math.round(performance.now() - tf) : undefined;
-    const a = await analyzeBoard(snap, this.dir, { projectRoot: this.root, ...this.options.analyze, ...fill, ...(this.kicad ? { kicad: this.kicad } : wantsKicad ? { crossCheck: false } : {}) });
+    const c = await this.checksFor(snap);
+    if (c) this.lastResult = { epoch: snap.epoch, seq: snap.seq, result: c.result, live: c.live };
+    const a = await analyzeBoard(snap, this.dir, { projectRoot: this.root, ...this.options.analyze, ...(c?.fill ? { fill: c.fill } : {}), ...(c ? { result: c.result } : {}), ...(this.kicad ? { kicad: this.kicad } : wantsKicad ? { crossCheck: false } : {}) });
     if (run !== this.analyzing || this.closed || snap !== this.snap) return;
     if (a.kicad) this.kicad = a.kicad;
     if (fresh && a.kicad?.run) this.crossCheckSeq = snap.seq;
-    this.publish(snap, a, fillMs);
+    this.publish(snap, a, c?.fillMs, c?.live);
     if (wantsKicad && !this.kicad) {
       const t = setTimeout(() => {
         if (run !== this.analyzing || this.closed) return;
         void (async () => {
           const s = this.snap;
-          const k = await analyzeBoard(s, this.dir, { projectRoot: this.root, ...this.options.analyze, ...(this.fillResult && this.fillResult.seq === s.seq ? { fill: this.fillResult.fill } : {}) });
+          const same = this.lastResult && this.lastResult.seq === s.seq && this.lastResult.epoch === s.epoch ? this.lastResult : undefined;
+          const k = await analyzeBoard(s, this.dir, { projectRoot: this.root, ...this.options.analyze, ...(this.fillResult && this.fillResult.seq === s.seq ? { fill: this.fillResult.fill } : c?.fill && s === snap ? { fill: c.fill } : {}), ...(same ? { result: same.result } : {}) });
           if (this.closed) return;
           // no source file, no kicad-cli: remember that it was tried, so a commit does not try again
           this.kicad = k.kicad ?? { pcbPath: "", reason: k.crossCheck && !k.crossCheck.ran ? k.crossCheck.reason : "no KiCad board file is known for this board" };
           if (k.kicad?.run) this.crossCheckSeq = s.seq;
           if (run !== this.analyzing || s !== this.snap) return this.scheduleCheck(0);
-          this.publish(s, k, undefined);
+          this.publish(s, k, undefined, same?.live);
         })().catch((e: Error) => this.fail(e));
       }, 300);
       t.unref?.();
     }
   }
 
-  private publish(snap: BoardSnapshot, a: Awaited<ReturnType<typeof analyzeBoard>>, fillMs: number | undefined): void {
+  private publish(snap: BoardSnapshot, a: Awaited<ReturnType<typeof analyzeBoard>>, fillMs: number | undefined, live: BoardDerived["live"]): void {
     const d = toBoardDerived(snap, a, { at: new Date().toISOString(), ...(this.crossCheckSeq !== undefined ? { crossCheckSeq: this.crossCheckSeq } : {}) });
+    if (d.checks.ran && live) d.checks = { ...d.checks, ms: live.ms };
     if (d.checks.ran) {
       const point: CheckPoint = { seq: snap.seq, errors: d.checks.errors, warnings: d.checks.warnings, unconnected: d.checks.unconnected };
       const i = this.history.findIndex((h) => h.seq === snap.seq);
@@ -565,7 +812,11 @@ export class BoardFeed {
       if (this.history.length > HISTORY_CAP) this.history.splice(0, this.history.length - HISTORY_CAP);
     }
     if (d.fill) d.fill = { ...d.fill, seq: snap.seq, ...(fillMs !== undefined ? { ms: fillMs } : {}) };
-    this.derived = { ...d, history: [...this.history], ...(this.notesExtra.length ? { notes: [...(d.notes ?? []), ...this.notesExtra] } : {}) };
+    // a service's own live checks at this seq: say so when they count differently than the numbers shown
+    const notes = [...(d.notes ?? []), ...this.notesExtra];
+    const sd = this.serviceDerived;
+    if (sd && live?.source === "host" && sd.seq === snap.seq && sd.epoch === snap.epoch && a.result && sd.findings.total !== a.result.findings.length) notes.push(`the board service's live checks count ${sd.findings.total} finding(s) at seq ${sd.seq}, this host ${a.result.findings.length}`);
+    this.derived = { ...d, history: [...this.history], ...(notes.length ? { notes } : {}), ...(live ? { live } : {}) };
     this.broadcast({ type: "derived", board: this.key, derived: this.derived });
   }
 

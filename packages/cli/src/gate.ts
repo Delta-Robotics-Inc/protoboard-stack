@@ -105,6 +105,8 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   // PCB editor Phase 1 (board.ts): the board service on a board folder on this machine; import, check, route and fill
   // read and write local files only
   board: LOCAL,
+  // PCB editor Phase 3 (schematic.ts): the schematic service on a schematic folder; the circuit is the project's UHD
+  schematic: LOCAL,
   stack: LOCAL,
   agents: LOCAL,
   setup: LOCAL,

@@ -99,6 +99,8 @@ export interface DerivedSummary {
   errors: number;
   warnings: number;
   infos: number;
+  /** Findings a person waived (left out of the counts above); absent when none. */
+  waived?: number;
   incomplete: boolean;
   caveats: string[];
 }

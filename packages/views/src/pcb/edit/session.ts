@@ -14,10 +14,17 @@
  *
  * Who acts is the host's decision: nothing here names an actor.
  */
-import { BoardIndex, createEngine, getOperation, snapshotFromWire, type BoardDocument, type BoardEvent, type BoardSnapshot, type LogEntry, type Presence } from "../board.js";
+import { BoardIndex, createEngine, getOperation, snapshotFromWire, withChanges, type BoardDocument, type BoardEvent, type BoardRecord, type BoardSnapshot, type LogEntry, type Presence } from "../board.js";
 import type { BoardDerived, BoardReplyMessage, BoardRequest, BoardSource, PageOpCall, PageTransaction } from "../types.js";
 
 export type RequestFn = (req: BoardRequest) => Promise<BoardReplyMessage>;
+
+/** A region precondition (the kernel's, for a route): refused `stale-region` when copper there changed since `seq`. */
+export interface ExpectRegion {
+  box: { minX: number; minY: number; maxX: number; maxY: number };
+  layers?: string[];
+  seq: number;
+}
 
 /** What came of a write, in plain words. */
 export interface Outcome {
@@ -132,6 +139,8 @@ export class EditSession implements BoardSource {
   private shown: BoardSnapshot;
   private pending: Pending[] = [];
   private draft: PageOpCall[] | undefined;
+  /** A kernel drag's preview: the records after the drag (the planner's own output), drawn over the board. */
+  private recordDraft: { puts: readonly BoardRecord[]; removes: readonly string[] } | undefined;
   private overlayIds = new Set<string>();
   private replayState: { seq: number; snapshot?: BoardSnapshot; derived?: BoardDerived; loading: boolean; error?: string } | undefined;
   private readonly listeners = new Set<(e: BoardEvent) => void>();
@@ -194,13 +203,25 @@ export class EditSession implements BoardSource {
     return this.recompute([]);
   }
 
+  /**
+   * Draw a kernel drag's candidate (records after the drag, from the same planner the operation runs) over the
+   * board; nothing is sent. Empty puts and removes end it.
+   */
+  previewRecords(puts: readonly BoardRecord[], removes: readonly string[]): void {
+    if (this.replayState) return;
+    this.draft = undefined;
+    this.recordDraft = puts.length || removes.length ? { puts, removes } : undefined;
+    this.recompute([]);
+  }
+
   /** Send one transaction (one gesture) and draw it until the service's answer and the feed agree. */
-  async commit(label: string, ops: PageOpCall[], options: { expectFor?: string[]; changeSet?: { id: string; title?: string }; dryRun?: boolean } = {}): Promise<Outcome> {
+  async commit(label: string, ops: PageOpCall[], options: { expectFor?: string[]; changeSet?: { id: string; title?: string }; dryRun?: boolean; expectEpoch?: string; expectRegion?: ExpectRegion } = {}): Promise<Outcome> {
     if (!this.send) return this.report({ ok: false, status: "error", message: "This host does not take edits (read only).", label, at: Date.now() });
     if (this.replayState) return this.report({ ok: false, status: "error", message: "Replaying an earlier version: return to the live board to edit.", label, at: Date.now() });
     const batchId = newBatchId();
     this.draft = undefined;
-    const tx: PageTransaction = { batchId, label, ops, ...(options.changeSet ? { changeSet: options.changeSet } : {}), ...(options.dryRun ? { dryRun: true } : {}) };
+    this.recordDraft = undefined;
+    const tx: PageTransaction & { expectRegion?: ExpectRegion } = { batchId, label, ops, ...(options.changeSet ? { changeSet: options.changeSet } : {}), ...(options.dryRun ? { dryRun: true } : {}), ...(options.expectEpoch ? { expectEpoch: options.expectEpoch } : {}), ...(options.expectRegion ? { expectRegion: options.expectRegion } : {}) };
     if (options.expectFor?.length) {
       const exp: Record<string, number> = {};
       for (const id of options.expectFor) exp[id] = this.base.version(id) + this.pending.filter((p) => p.ids.includes(id)).length;
@@ -268,6 +289,7 @@ export class EditSession implements BoardSource {
     if (seq >= this.base.seq) return this.live();
     if (!this.send) return;
     this.draft = undefined;
+    this.recordDraft = undefined;
     this.replayState = { seq, loading: true };
     this.emitStatus();
     const r = await this.send({ method: "at", seq });
@@ -335,10 +357,18 @@ export class EditSession implements BoardSource {
     this.pending.forEach((p, i) => (p.ids = r.ids[i] ?? []));
     const ok = !(this.draft && r.failed.includes(txs.length - 1));
     const now = new Set(r.ids.flat());
+    let doc = r.doc;
+    if (this.recordDraft) {
+      const rd = this.recordDraft;
+      // a removed record that the board no longer has (a pending write took it) is not removed twice
+      doc = withChanges(doc, rd.puts, rd.removes.filter((id) => doc.records.has(id)));
+      for (const p of rd.puts) now.add(p.id);
+      for (const id of rd.removes) now.add(id);
+    }
     const touched = new Set<string>([...this.overlayIds, ...now, ...(extra ?? [])]);
     this.overlayIds = now;
     const base = this.base;
-    this.shown = txs.length ? makeSnapshot(base.epoch, base.seq, r.doc, (id) => base.version(id)) : base;
+    this.shown = txs.length || this.recordDraft ? makeSnapshot(base.epoch, base.seq, doc, (id) => base.version(id)) : base;
     if (extra === undefined) return ok;
     if (this.replayState) return ok;
     const ev: BoardEvent =

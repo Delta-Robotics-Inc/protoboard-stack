@@ -18,12 +18,64 @@ export const DEFAULT_FLOOR = { width: 127_000, clearance: 127_000, viaOuter: 450
 type Check = RuleRec["check"];
 
 const enabled = (r: RuleRec) => r.enabled !== false;
-/** Whether a rule is local (region, layers or object-kind pair): a router input cannot take it. */
-const isLocal = (r: RuleRec) => !!(r.applies.region || r.applies.layers?.length || r.applies.between);
+
+type Condition = NonNullable<RuleRec["applies"]["when"]>;
+/**
+ * A rule's `when` condition for a track of one net (side A, no second object): true or false when it depends only
+ * on the object's kind, net and class; undefined when it depends on anything else (a layer, an area, a pad, a
+ * footprint, a coordinate, the other object of a pair), which no router input can take.
+ */
+export function whenForNetTrack(c: Condition, net: string | undefined, cls: string | undefined): boolean | undefined {
+  if ("all" in c) {
+    let unknown = false;
+    for (const x of c.all) {
+      const v = whenForNetTrack(x, net, cls);
+      if (v === false) return false;
+      if (v === undefined) unknown = true;
+    }
+    return unknown ? undefined : true;
+  }
+  if ("any" in c) {
+    let unknown = false;
+    for (const x of c.any) {
+      const v = whenForNetTrack(x, net, cls);
+      if (v === true) return true;
+      if (v === undefined) unknown = true;
+    }
+    return unknown ? undefined : false;
+  }
+  if ("not" in c) {
+    const v = whenForNetTrack(c.not, net, cls);
+    return v === undefined ? undefined : !v;
+  }
+  if ("same_net" in c || c.side !== "A") return undefined;
+  if ("kind" in c) return c.kind.includes("track");
+  if ("net" in c) return net !== undefined && c.net.includes(net);
+  if ("class" in c) return c.class.includes(cls ?? "default");
+  return undefined;
+}
+
+/** Whether a `when` condition can be decided from a net and its class alone (no geometry, no second object). */
+function decidable(c: Condition): boolean {
+  if ("all" in c) return c.all.every(decidable);
+  if ("any" in c) return c.any.every(decidable);
+  if ("not" in c) return decidable(c.not);
+  if ("same_net" in c || c.side !== "A") return false;
+  return "kind" in c || "net" in c || "class" in c;
+}
+
+/**
+ * Whether a rule is local (region, layers, an object-kind pair, or a `when` condition that needs more than the net
+ * and its class): a router input cannot take it.
+ */
+const isLocal = (r: RuleRec) => !!(r.applies.region || r.applies.layers?.length || r.applies.between || (r.applies.when && !decidable(r.applies.when)));
 
 function matchesNet(r: RuleRec, net: string | undefined, cls: string | undefined): boolean {
   if (r.applies.nets && (!net || !r.applies.nets.includes(net))) return false;
   if (r.applies.classes && (!cls || !r.applies.classes.includes(cls))) return false;
+  // a condition on the net or its class (a KiCad custom rule such as "A.NetClass == 'Power'") holds for this net
+  // only; board-wide (no net) it holds for none
+  if (r.applies.when && (net === undefined || whenForNetTrack(r.applies.when, net, cls) !== true)) return false;
   return true;
 }
 

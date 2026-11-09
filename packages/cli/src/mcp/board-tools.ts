@@ -47,6 +47,76 @@ async function board(ctx: ToolContext, dir: string, sub: string, options: Record
   }
 }
 
+const STATUS = z.enum(["open", "stale", "accepted", "partial", "rejected"]);
+const OPS_ITEM = z.object({ op: z.string() }).passthrough();
+
+/**
+ * Proposals and the corridor (Phase 2 editing): an agent proposes and reads proposals; no tool accepts, rejects,
+ * pauses or resumes (a person's calls, made in the editor or with the CLI in a person's terminal).
+ */
+function editingTools(): ToolSpec[] {
+  return [
+    tool({
+      name: "board_propose",
+      title: "Propose a board change",
+      description:
+        "Store a change as a proposal for a person to review and accept, instead of applying it: a title (3 to 12 words) and items, each a short label and the operations it applies (as board_apply takes them; each item must apply on its own and all together). The reply is the stored proposal: id, items with their nets and change summary, counts before and after, the areas it touches. Changes nothing on the board (a person's accept applies it as their own transaction, keeping your provenance). Proposals are taken even while a person has paused agents. You act as agent:<your client name>.",
+      input: {
+        dir: DIR,
+        title: z.string().min(1).max(160).describe("3 to 12 words saying what the proposal does."),
+        items: z
+          .array(z.object({ key: z.string().optional().describe("Default i<n>; letters, digits, _ . -"), label: z.string().min(1).max(160).describe("What this item does."), ops: z.array(OPS_ITEM).min(1).max(200).describe("Operations, each { op, ...input }.") }).strict())
+          .min(1)
+          .max(200)
+          .describe("The items: a person may accept some and reject others."),
+        changeSet: z.object({ id: z.string(), title: z.string().optional() }).optional().describe("The change set the accepted items join."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        return board(ctx, dir, "propose", { as: boardActor(ctx).id }, [], { title: a.title, items: a.items, ...(a.changeSet ? { changeSet: a.changeSet } : {}) });
+      },
+    }),
+    tool({
+      name: "board_proposals",
+      title: "List board proposals",
+      description: "The proposals stored on a board, newest first: id, title, who proposed (agent, router, host), status (open, stale, accepted, partial, rejected), items with nets and change summaries, scores (a router's current and candidate), and why one is stale. Writes nothing.",
+      input: { dir: DIR, status: STATUS.optional().describe("Only proposals with this status.") },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async ({ dir, status }, ctx) => board(ctx, await ctx.dir(dir), "proposals", { status }, []),
+    }),
+    tool({
+      name: "board_proposal",
+      title: "Read one board proposal",
+      description: "One proposal: title, proposer, status, items (key, label, ops, status, nets, change summary), counts before and after, touched ids, scores, the stale reason or the rejection. `preview: true` adds the diff against the board as it is now (records added, removed and changed, and whether it still applies). Writes nothing.",
+      input: { dir: DIR, id: z.string().min(1).describe("The proposal id (p.<epoch>.<n>)."), preview: z.boolean().optional().describe("Add the diff against the current board.") },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async ({ dir, id, preview }, ctx) => board(ctx, await ctx.dir(dir), "proposal", { preview: preview ? "true" : undefined }, [id]),
+    }),
+    tool({
+      name: "board_corridor",
+      title: "Find a free corridor",
+      description:
+        "Ask whether a track can pass between two places on one copper layer: from and to are points in millimeters ([x, y], +Y up, origin at the board center) or object ids (a pad, via or footprint: its center); the net's own copper is not an obstacle (default: the net of a pad or via end). Returns found, the centerline path and its length (mm), the widest track that fits along it, or where it got stuck and the objects blocking it. A guide for planning a route, not a route: nothing is changed (commit one with board_apply and track.route). Writes nothing.",
+      input: {
+        dir: DIR,
+        from: z.union([z.array(z.number()).length(2), z.string()]).describe("[x, y] in millimeters, or a pad, via or footprint id."),
+        to: z.union([z.array(z.number()).length(2), z.string()]).describe("[x, y] in millimeters, or a pad, via or footprint id."),
+        layer: z.string().describe("A copper layer: top, bottom, inner1, ..."),
+        net: z.string().optional().describe("The net the track would carry."),
+        width: z.number().positive().optional().describe("Track width in millimeters (default: the board's target width)."),
+        clearance: z.number().nonnegative().optional().describe("Clearance in millimeters (default: the board's target clearance)."),
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        const end = (v: number[] | string) => (typeof v === "string" ? v : `[${v.map((x) => `${x}mm`).join(",")}]`);
+        return board(ctx, dir, "corridor", { from: end(a.from), to: end(a.to), layer: a.layer, net: a.net, width: a.width !== undefined ? `${a.width}mm` : undefined, clearance: a.clearance !== undefined ? `${a.clearance}mm` : undefined }, []);
+      },
+    }),
+  ];
+}
+
 /** A reply with the PNG it names attached (when the command wrote one). */
 function withPng(out: ToolOutcome, pick: (d: { file?: string; files?: { png?: string } }) => string | undefined): ToolOutcome {
   if (out.isError) return out;
@@ -76,7 +146,7 @@ export function boardTools(): ToolSpec[] {
       name: "board_apply",
       title: "Apply board operations",
       description:
-        `Apply one transaction to a board: up to 200 operations, all or none. Each op is { op, ...input } as board_operations describes (${names.length} operations: ${names.join(", ")}). New copper, zones and keep-outs take a \`handle\`; the reply maps handles to ids, and later ops may refer to "$<handle>". Pass expectSeq (the seq you read) or expectVersions so a change made since you looked refuses your write instead of overwriting it. The reply: applied (seq, changed, created, removed, versions), valid (dryRun), refused (reason: stale-seq, stale-versions, locked, leased, lease-revoked, needs-person, with what you missed), or invalid (error and the op index). Locked objects are refused for agents; changes to nets need a person. CHANGES THE BOARD (saved at once when no service is running; else on the service's save). You act as agent:<your client name>.`,
+        `Apply one transaction to a board: up to 200 operations, all or none. Each op is { op, ...input } as board_operations describes (${names.length} operations: ${names.join(", ")}). New copper, zones and keep-outs take a \`handle\`; the reply maps handles to ids, and later ops may refer to "$<handle>". Pass expectSeq (the seq you read) or expectVersions so a change made since you looked refuses your write instead of overwriting it. The reply: applied (seq, changed, created, removed, versions), valid (dryRun), refused (reason: stale-seq, stale-versions, locked, leased, lease-revoked, needs-person, held, paused, with what you missed), or invalid (error and the op index). Locked objects are refused for agents; changes to nets, unlocks and waivers need a person: such a transaction is refused needs-person and stored as a proposal (its id in the reply) for a person to accept. While a person has paused agents, writes are refused paused (waitSeconds waits it out). CHANGES THE BOARD (saved at once when no service is running; else on the service's save). You act as agent:<your client name>.`,
       input: {
         dir: DIR,
         ops: z.array(z.object({ op: z.enum(names) }).passthrough()).min(1).max(200).describe("The operations, each { op: <name>, ...its input }."),
@@ -89,6 +159,7 @@ export function boardTools(): ToolSpec[] {
         expectRegion: z.object({ box: BOX, layers: z.array(z.string()).optional(), seq: z.number().int() }).optional().describe("A region you read at a seq: refused if anything there changed since."),
         lease: LEASE,
         dryRun: z.boolean().optional().describe("Validate everything, commit nothing: status valid."),
+        waitSeconds: z.number().positive().max(3600).optional().describe("When a person has paused agents (refused: paused) or is dragging what you change (refused: held), wait up to this many seconds and send the same transaction again until it goes through."),
       },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
       handler: async (a, ctx) => {
@@ -105,7 +176,7 @@ export function boardTools(): ToolSpec[] {
           ...(a.lease !== undefined ? { leaseToken: a.lease } : {}),
           ...(a.dryRun ? { dryRun: true } : {}),
         };
-        return board(ctx, dir, "apply", { as: boardActor(ctx).id }, [], tx);
+        return board(ctx, dir, "apply", { as: boardActor(ctx).id, wait: a.waitSeconds }, [], tx);
       },
     }),
     tool({
@@ -300,6 +371,22 @@ export function boardTools(): ToolSpec[] {
       },
     }),
     tool({
+      name: "board_export_kicad",
+      title: "Export the board to KiCad",
+      description:
+        "Write a board as a KiCad board: the .kicad_pcb at `out`, with the .kicad_pro (board setup minimums, net classes and their nets) and .kicad_dru (custom rules) beside it. Footprints with their pads, tracks and arcs, vias, zones with their fill, keep-outs as rule areas, the outline and cutouts, graphics and texts; coordinates go through the board's import record offset when it has one, objects the source gave one KiCad UUID share one again (unless uniqueIds), and the export is noted in the import record, so board_check with `kicad` set to the export cross-checks it with KiCad's DRC as it would the source. Returns the files written, counts, and the report: what was approximated or dropped and why. CHANGES FILES: it writes the export only, and notes it in the import record (the board is not changed).",
+      input: {
+        dir: DIR,
+        out: z.string().describe("The .kicad_pcb file to write, absolute or relative to the folder the agent works in; the .kicad_pro and .kicad_dru go beside it (existing ones are overwritten)."),
+        uniqueIds: z.boolean().optional().describe("Give every object its own UUID, even objects the source gave one UUID (default false: they share one again, as in the source)."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        return board(ctx, dir, "export-kicad", { "unique-ids": a.uniqueIds ? "true" : undefined }, [await ctx.dir(a.out)]);
+      },
+    }),
+    tool({
       name: "board_route",
       title: "Autoroute the board",
       description:
@@ -310,23 +397,25 @@ export function boardTools(): ToolSpec[] {
         region: z.array(z.number()).length(4).optional().describe("Route the open connections in this box, millimeters: [x1, y1, x2, y2]."),
         budget: z.number().positive().max(3600).optional().describe("Seconds per router run (default 60)."),
         apply: z.boolean().optional().describe("Apply the proposal when its status is proposed (default false: report only)."),
+        propose: z.boolean().optional().describe("Store a proposed result as board proposals (one per router run, one item per net, the scores kept) for a person to accept; changes nothing."),
       },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
       handler: async (a, ctx) => {
         const dir = await ctx.dir(a.dir);
         if (a.nets?.length && a.region) return { data: { error: "give nets or region, not both (neither: every open net)" }, isError: true };
-        return board(ctx, dir, "route", { as: boardActor(ctx).id, nets: a.nets?.length ? a.nets.join(",") : undefined, region: a.region ? `[${a.region.map((v) => `${v}mm`).join(",")}]` : undefined, budget: a.budget, apply: a.apply ? "true" : undefined }, []);
+        if (a.apply && a.propose) return { data: { error: "give apply or propose, not both" }, isError: true };
+        return board(ctx, dir, "route", { as: boardActor(ctx).id, nets: a.nets?.length ? a.nets.join(",") : undefined, region: a.region ? `[${a.region.map((v) => `${v}mm`).join(",")}]` : undefined, budget: a.budget, apply: a.apply ? "true" : undefined, propose: a.propose ? "true" : undefined }, []);
       },
     }),
     tool({
       name: "board_diagnose",
       title: "Why a net does not route",
       description:
-        "Diagnose one net that does not route: the verdict (routes: it routes as is; rules: with only the fab floor and no-go areas it routes, so a rule above the floor blocks it; placement: even then it does not route, so the parts or a no-go area block it), a summary sentence, the router attempts, the probe run with the fab floor and no-go areas only, what blocks it (rules by tier), the rule areas by tier (outlines in nm), and relaxations (target rules for this net only) test-run on copies with their results. Each router run takes up to `budget` seconds (default 30). Writes nothing; a relaxation takes effect only if its rules (rule.set inputs) are then applied with board_apply, which is a design decision to confirm with the person first.",
+        "Diagnose one net that does not route: the verdict (routes: it routes as is; rules: with only the fab floor and no-go areas it routes, so a rule above the floor blocks it; placement: even then it does not route, so the parts or a no-go area block it; connected: nothing of it is open; unknown: the budget ran out before the probe), a summary sentence, the open links diagnosed (only the net's missing connections; a net with a zone is left to its pour, and only the links its fill does not make are routed: pour), the router attempts, the probe run with the fab floor and no-go areas only, what blocks it (rules by tier), the rule areas by tier (outlines in nm), and relaxations (target rules for this net only) test-run on copies with their results (skipped says why one was not test-run). One time budget of `budget` seconds (default 8) covers the whole diagnosis; stopped lists what it cut. Answers are cached by the board content, net and options (cached: true). Writes nothing but that cache under .protoboard/build; a relaxation takes effect only if its rules (rule.set inputs) are then applied with board_apply, which is a design decision to confirm with the person first.",
       input: {
         dir: DIR,
         net: z.string().min(1).describe("The net name."),
-        budget: z.number().positive().max(3600).optional().describe("Seconds per router run (default 30)."),
+        budget: z.number().positive().max(3600).optional().describe("Seconds for the whole diagnosis (default 8)."),
       },
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       handler: async (a, ctx) => {
@@ -334,6 +423,7 @@ export function boardTools(): ToolSpec[] {
         return board(ctx, dir, "diagnose", { budget: a.budget }, [a.net]);
       },
     }),
+    ...editingTools(),
   ];
   for (const s of specs) s.description = `${s.description} ${BOARD_NO_PROJECT_CODE}`;
   return specs;

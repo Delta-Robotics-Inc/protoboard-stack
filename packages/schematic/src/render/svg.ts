@@ -538,17 +538,85 @@ function cardMarkup(c: CardRecT, T: ThemeTokens): string {
   return parts.join("");
 }
 
-function symbolMarkup(doc: SchematicDocument, s: PlacedSymbol, T: ThemeTokens): string {
+/** A symbol's markup in its three layers: the drawn body, the text inside its frame (pin names and numbers), and its fields. */
+function symbolParts(s: PlacedSymbol, T: ThemeTokens): { transform: string; body: string; pinText: string; fields: string } {
   const variant = s.rec.variant ?? T.variants[s.part.class];
   const r = variant && variant !== s.resolved.variant ? resolveSymbol(s.part, { variant, ...(s.rec.symbol ? { symbol: s.rec.symbol } : {}) }) : s.resolved;
   const tr = symbolTransform([s.rec.x, s.rec.y], s.rec.rotation, !!s.rec.mirror);
   const ink = T.ink;
   const drawn = r.body.filter((e) => e.el !== "text").map((e) => elementMarkup(e, ink, T.symbolStroke, { pinName: T.pinName, pinNumber: T.pinNumber, ink }));
   const text = r.body.filter((e) => e.el === "text").map((e) => elementMarkup(e, ink, T.symbolStroke, { pinName: T.pinName, pinNumber: T.pinNumber, ink }));
-  const parts = [`<g transform="${tr}">${drawn.join("")}${text.join("")}</g>`];
-  parts.push(textMark(s.ref, T.ref, 0.13));
-  if (s.value) parts.push(textMark(s.value, T.value));
-  return parts.join("");
+  return { transform: tr, body: drawn.join(""), pinText: text.join(""), fields: textMark(s.ref, T.ref, 0.13) + (s.value ? textMark(s.value, T.value) : "") };
+}
+
+function symbolMarkup(doc: SchematicDocument, s: PlacedSymbol, T: ThemeTokens): string {
+  const p = symbolParts(s, T);
+  return `<g transform="${p.transform}">${p.body}${p.pinText}</g>${p.fields}`;
+}
+
+// ------------------------------------------------------------------ item by item (the editor screen)
+
+/** What `drawRecord` and `drawGhost` take: the theme and token overrides, as `renderSchematicSvg` does. */
+export interface DrawOptions {
+  theme?: "dark" | "paper";
+  tokens?: Partial<ThemeTokens>;
+}
+
+/** The tokens a theme and its overrides give. */
+export const themeTokens = (o: DrawOptions = {}): ThemeTokens => ({ ...THEMES[o.theme ?? "dark"], ...(o.tokens ?? {}) }) as ThemeTokens;
+
+/**
+ * One drawn record's markup in sheet coordinates (grid units), exactly as `renderSchematicSvg` draws it, so a screen
+ * that draws the sheet item by item and the exported image cannot drift. A symbol comes in layers (`svg` is the
+ * body, `pinText` its pin names and numbers in the symbol's own frame, `fields` its reference and value); `color`
+ * overrides a net item's class color (a highlighted net). Text notes, frames and proposals are not drawn (as the
+ * full render does not draw them); undefined for those and for records the document cannot place.
+ */
+export function drawRecord(doc: SchematicDocument, rec: SchematicRecord, o: DrawOptions & { color?: string } = {}): { svg: string; pinText?: string; transform?: string; fields?: string } | undefined {
+  const T = themeTokens(o);
+  const colorOf = (net: string) => o.color ?? T.wire[signalClassOf(doc, net)];
+  switch (rec.kind) {
+    case "card":
+      return { svg: cardMarkup(rec, T) };
+    case "symbol": {
+      const s = geometryOf(doc).symbols.get(rec.id);
+      if (!s) return undefined;
+      const p = symbolParts(s, T);
+      return { svg: `<g transform="${p.transform}">${p.body}</g>`, pinText: p.pinText, transform: p.transform, fields: p.fields };
+    }
+    case "wire":
+      return { svg: `<polyline points="${rec.points.map((p) => `${f(p[0])},${f(p[1])}`).join(" ")}" fill="none" stroke="${colorOf(rec.net)}" stroke-width="${T.wireWidth}" stroke-linecap="round" stroke-linejoin="round"/>` };
+    case "label":
+      return { svg: labelMarkup(doc, rec, T, colorOf(rec.net), false) };
+    case "power":
+      return { svg: powerMarkup(doc, rec, T, colorOf(rec.net), false, packSymbols()) };
+    case "noconnect": {
+      const p = geometryOf(doc).pins.get(rec.pin);
+      return p ? { svg: ncMark(p.at, T.nc) } : undefined;
+    }
+    default:
+      return undefined;
+  }
+}
+
+/** A ghost's group (`<g data-ghost>`) for a diff from `ghostDiff`, or between two documents, as `renderSchematicSvg`'s `ghost` draws it. */
+export function drawGhost(doc: SchematicDocument, diff: GhostDiff, o: DrawOptions & { label?: string } = {}): string {
+  return ghostMarkup(doc, diff, themeTokens(o), o.label ? { proposal: o.label } : { ops: [] }, () => true, packSymbols());
+}
+
+/** The drawn records two documents differ in (`after` is the second), in `ghostDiff`'s form: what a ghost of the change draws. */
+export function diffDrawn(before: SchematicDocument, after: SchematicDocument): GhostDiff {
+  const added: string[] = [];
+  const changed: string[] = [];
+  const removed: string[] = [];
+  for (const [id, r] of after.records) {
+    if (!GHOST_KINDS.has(r.kind)) continue;
+    const o = before.records.get(id);
+    if (!o) added.push(id);
+    else if (o !== r && looks(o) !== looks(r)) changed.push(id);
+  }
+  for (const [id, r] of before.records) if (GHOST_KINDS.has(r.kind) && !after.records.has(id)) removed.push(id);
+  return { after, added: added.sort(byCodeUnit), changed: changed.sort(byCodeUnit), removed: removed.sort(byCodeUnit) };
 }
 
 function powerMarkup(doc: SchematicDocument, p: PowerRecT, T: ThemeTokens, color: string, dim: boolean, pack: ReturnType<typeof packSymbols>): string {

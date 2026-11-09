@@ -136,11 +136,12 @@ export type RefusalReason =
   | "nothing-to-redo"
   | "held"
   | "stale-proposal"
-  | "not-a-person";
+  | "not-a-person"
+  | "paused";
 
 export type Reply =
   | { status: "applied" | "valid"; batchId: string; epoch: string; seq: number; changed: string[]; created: Record<string, string>; removed: string[]; versions: Record<string, number>; reports?: OpReport[]; netlist?: true; duplicate?: true }
-  | { status: "refused"; batchId: string; epoch: string; seq: number; reason: RefusalReason; message: string; missed?: MissedEntry[]; conflicts?: Conflict[]; lease?: Lease | EndedLease; ids?: string[]; hold?: Hold; retryAfterMs?: number; proposal?: string; duplicate?: true }
+  | { status: "refused"; batchId: string; epoch: string; seq: number; reason: RefusalReason; message: string; missed?: MissedEntry[]; conflicts?: Conflict[]; lease?: Lease | EndedLease; ids?: string[]; hold?: Hold; retryAfterMs?: number; proposal?: string; pause?: Pause; duplicate?: true }
   | { status: "invalid"; batchId: string; epoch: string; seq: number; error: string; index?: number; issues?: unknown; duplicate?: true };
 
 export interface Intent {
@@ -157,6 +158,16 @@ export interface Presence {
   intents: Intent[];
   /** A person's live drag holds. */
   holds: Hold[];
+  /** Agents and routers are paused by a person (absent: not paused). */
+  paused?: Pause;
+}
+
+/** A person's pause of agents and routers (Phase 2, P2-E): their transactions are refused `paused` until resumed or `until`. */
+export interface Pause {
+  by: Actor;
+  since: number;
+  reason?: string;
+  until?: number;
 }
 
 export interface ChangeSetInfo {
@@ -172,7 +183,11 @@ export interface CommitEvent {
   after: BoardDocument;
 }
 
-export type ClaimReply = { status: "granted"; lease: Lease } | { status: "refused"; reason: "leased"; lease: Lease; message: string } | { status: "invalid"; error: string };
+export type ClaimReply =
+  | { status: "granted"; lease: Lease }
+  | { status: "refused"; reason: "leased"; lease: Lease; message: string }
+  | { status: "refused"; reason: "paused"; pause: Pause; retryAfterMs?: number; message: string }
+  | { status: "invalid"; error: string };
 
 export interface EngineOptions {
   now?: () => number;
@@ -192,6 +207,12 @@ export interface Engine {
   hold(actor: Actor, claim: { ids: string[]; margin?: number; ttlMs?: number }): { status: "held"; hold: Hold } | { status: "invalid"; error: string };
   releaseHold(actor: Actor, id?: string): Hold[];
   holds(): Hold[];
+  /** A person pauses agents and routers: their transactions and claims are refused `paused` (proposals still go through the service). */
+  pause(actor: Actor, options?: { reason?: string; ttlMs?: number }): { status: "paused"; pause: Pause } | { status: "invalid"; error: string };
+  /** A person resumes agents and routers. */
+  resume(actor: Actor): { status: "resumed"; was?: Pause } | { status: "invalid"; error: string };
+  /** The live pause, if any. */
+  paused(): Pause | undefined;
   undo(actor: Actor, meta?: { batchId?: string; leaseToken?: number }): Reply;
   redo(actor: Actor, meta?: { batchId?: string; leaseToken?: number }): Reply;
   revertChangeSet(actor: Actor, id: string, meta?: { batchId?: string; leaseToken?: number }): Reply;
@@ -298,6 +319,9 @@ function recordProblem(doc: BoardDocument, rec: BoardRecord): { error: string; i
       if (other && other.id !== rec.id) return { error: `${rec.id}: reference ${rec.ref} is already used by ${other.id}` };
       break;
     }
+    case "waiver":
+      if (rec.finding === undefined && rec.rule === undefined) return { error: `${rec.id}: a waiver names a finding, a rule, or both` };
+      break;
     case "graphic":
     case "text":
       if ((stack as string[]).concat().includes(rec.layer) === false && /^(top|bottom|inner\d)$/.test(rec.layer)) return { error: `${rec.id}: layer ${rec.layer} is not in the stackup` };
@@ -385,6 +409,28 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
     proposal?: string;
   }
 
+  // ---- a person's pause of agents and routers
+  let pauseState: Pause | undefined;
+  /** The live pause; one past its `until` ends here (and says so to presence listeners). */
+  const livePause = (): Pause | undefined => {
+    if (pauseState?.until !== undefined && pauseState.until <= now()) {
+      pauseState = undefined;
+      emitLeases();
+    }
+    return pauseState;
+  };
+  const copyPause = (p: Pause): Pause => ({ ...p, by: { ...p.by } });
+  /** The refusal of an agent's or router's write while paused (never remembered: a resend after the pause applies). */
+  const pausedFor = (actor: Actor, batchId: string): Reply | undefined => {
+    if (actor.kind !== "agent" && actor.kind !== "router") return undefined;
+    const p = livePause();
+    if (!p) return undefined;
+    const retry = p.until !== undefined ? Math.max(0, p.until - now()) : undefined;
+    return refused(batchId, "paused", `a person paused agents and routers${p.reason ? ` (${p.reason})` : ""}${p.until !== undefined ? ` until ${new Date(p.until).toISOString()}` : " until they resume"}; proposals are still taken: retry later, or propose the change for a person`, { pause: copyPause(p), ...(retry !== undefined ? { retryAfterMs: retry } : {}) });
+  };
+  /** Refusals that clear on their own are not remembered by batch id, so the same batch may be sent again. */
+  const transient = (r: Reply) => r.status === "refused" && (r.reason === "held" || r.reason === "paused");
+
   const holdTable = new Map<string, Hold>();
   let holdSerial = 0;
   const liveHolds = (): Hold[] => {
@@ -416,6 +462,7 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       provenance: meta.provenance ?? provenanceFor(actor),
       edited: meta.edited ?? editedFor(actor),
       lockCopper: meta.lockCopper ?? actor.kind === "human",
+      now,
     };
     const handles: Record<string, string> = {};
     const inverse: OpCall[] = [];
@@ -497,6 +544,9 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       if (locked.length) return refused(id, "locked", `${locked.length} locked object${locked.length > 1 ? "s" : ""} would change (${locked.slice(0, 5).join(", ")}); agents and routers leave locked objects alone`, { ids: locked });
       if (unlocks.length) return refused(id, "needs-person", `unlocking ${unlocks.slice(0, 5).join(", ")} waits for a person`, { ids: unlocks });
       if (nets.length && actor.kind === "agent") return refused(id, "needs-person", `net changes from an agent wait for a person (${nets.slice(0, 5).join(", ")})`, { ids: nets });
+      // operations only a person makes (a waiver): an agent's call waits for one
+      const personOps = [...new Set(applied.filter((c) => getOperation(c.op)?.person).map((c) => c.op))];
+      if (personOps.length) return refused(id, "needs-person", `${personOps.join(" and ")} from ${actor.kind === "agent" ? "an agent" : "a router"} waits for a person`, { ids: changed.slice(0, 50) });
     }
     if (!meta.replay && (actor.kind === "agent" || actor.kind === "router" || actor.kind === "host")) {
       // the person's live drag wins: writes into what they hold, or its halo, wait
@@ -679,6 +729,26 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       return out;
     },
     holds: () => liveHolds().map((h) => ({ ...h, holder: { ...h.holder }, ids: [...h.ids], layers: [...h.layers] })),
+    pause(actor, options = {}) {
+      if (actor.kind !== "human") return { status: "invalid", error: "only a person pauses agents and routers" };
+      const reason = typeof options.reason === "string" ? options.reason.trim().slice(0, 200) : undefined;
+      if (options.ttlMs !== undefined && !(Number.isFinite(options.ttlMs) && options.ttlMs > 0 && options.ttlMs <= 86_400_000)) return { status: "invalid", error: "ttlMs is a positive number of milliseconds, at most a day" };
+      const t = now();
+      pauseState = { by: { ...actor }, since: livePause()?.since ?? t, ...(reason ? { reason } : {}), ...(options.ttlMs !== undefined ? { until: t + Math.round(options.ttlMs) } : {}) };
+      emitLeases();
+      return { status: "paused", pause: copyPause(pauseState) };
+    },
+    resume(actor) {
+      if (actor.kind !== "human") return { status: "invalid", error: "only a person resumes agents and routers" };
+      const was = livePause();
+      pauseState = undefined;
+      if (was) emitLeases();
+      return { status: "resumed", ...(was ? { was: copyPause(was) } : {}) };
+    },
+    paused: () => {
+      const p = livePause();
+      return p ? copyPause(p) : undefined;
+    },
     apply(tx, actor, options = {}) {
       const bid = typeof tx?.batchId === "string" ? tx.batchId : "";
       const hit = bid ? replies.get(bid) : undefined;
@@ -686,6 +756,9 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       const bad = checkEnvelope(tx);
       if (bad) return remember(bid, invalid(bid, bad));
       if (tx.provenance !== undefined && actor.kind !== "host" && actor.kind !== "router" && actor.kind !== "system") return remember(bid, invalid(bid, "only hosts, routers and the system give provenance"));
+      // a dry run changes nothing and goes through a pause, as a proposal does
+      const paused = tx.dryRun ? undefined : pausedFor(actor, bid);
+      if (paused) return paused;
       if (tx.expectEpoch !== undefined && tx.expectEpoch !== epoch) return remember(bid, refused(bid, "stale-epoch", `the board service restarted (epoch ${epoch}, you read ${tx.expectEpoch}): re-read the board`));
       if (tx.expectSeq !== undefined) {
         if (!Number.isInteger(tx.expectSeq) || tx.expectSeq < 0) return remember(bid, invalid(bid, "expectSeq must be a seq number"));
@@ -720,13 +793,15 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
         ...(options.proposal !== undefined ? { proposal: options.proposal } : {}),
         ...(tx.expectSeq !== undefined ? { baseSeq: tx.expectSeq } : {}),
       });
-      // a dry run is not remembered: the same id may be sent again for real
-      return tx.dryRun ? strip(r) : remember(bid, strip(r));
+      // a dry run is not remembered: the same id may be sent again for real (nor a refusal that clears on its own)
+      return tx.dryRun || transient(r) ? strip(r) : remember(bid, strip(r));
     },
     undo(actor, meta = {}) {
       const bid = meta.batchId ?? "";
       const hit = bid ? replies.get(bid) : undefined;
       if (hit) return { ...hit, duplicate: true };
+      const pu = pausedFor(actor, bid);
+      if (pu) return pu;
       const e = findUndoable(actor);
       if (!e) return remember(bid, refused(bid, "nothing-to-undo", `nothing of yours is left to undo (the log keeps the last ${LOG_CAP} entries)`));
       const conflicts = changedSince(e);
@@ -739,6 +814,8 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       const bid = meta.batchId ?? "";
       const hit = bid ? replies.get(bid) : undefined;
       if (hit) return { ...hit, duplicate: true };
+      const pr = pausedFor(actor, bid);
+      if (pr) return pr;
       const u = findRedoable(actor);
       if (!u) return remember(bid, refused(bid, "nothing-to-redo", "nothing of yours is left to redo (a new change of yours clears redo)"));
       const conflicts = changedSince(u);
@@ -752,6 +829,8 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       const bid = meta.batchId ?? "";
       const hit = bid ? replies.get(bid) : undefined;
       if (hit) return { ...hit, duplicate: true };
+      const pv = pausedFor(actor, bid);
+      if (pv) return pv;
       const list = entries.filter((e) => e.changeSet === csId && e.undoneBy === undefined && e.undoOf === undefined).reverse();
       if (!list.length) return remember(bid, refused(bid, "nothing-to-undo", `change set ${csId} has nothing left to revert in the log`));
       const mine = new Set(list.map((e) => e.seq));
@@ -775,6 +854,8 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       return strip(execute(SYSTEM, ops, { batchId: "", label, internal: true, replay: true }));
     },
     claim(actor, claim) {
+      const pc = pausedFor(actor, "");
+      if (pc && pc.status === "refused") return { status: "refused", reason: "paused", pause: pc.pause!, ...(pc.retryAfterMs !== undefined ? { retryAfterMs: pc.retryAfterMs } : {}), message: pc.message };
       const c = leases.claim(actor, claim);
       if ("error" in c) return { status: "invalid", error: c.error };
       if ("refused" in c) return { status: "refused", reason: "leased", lease: c.refused, message: `lease ${c.refused.id} of ${c.refused.holder.kind} ${c.refused.holder.id} overlaps (see lease)` };
@@ -796,7 +877,8 @@ export function createEngine(initial: BoardDocument, options: EngineOptions = {}
       const t = now();
       const intents: Intent[] = live.map((l) => ({ actor: { ...l.holder }, label: l.purpose, ids: [], at: l.grantedAt, from: "lease" as const }));
       for (const r of recent.values()) if (t - r.at <= INTENT_MS && !intents.some((i) => sameActor(i.actor, r.actor))) intents.push({ ...r, actor: { ...r.actor }, ids: [...r.ids] });
-      return { epoch, seq, leases: live, intents, holds: engine.holds() };
+      const p = livePause();
+      return { epoch, seq, leases: live, intents, holds: engine.holds(), ...(p ? { paused: copyPause(p) } : {}) };
     },
     log: (since) => (since === undefined ? [...entries] : entries.filter((e) => e.seq > since)),
     changeSets: () => [...changeSets.values()].map((c) => ({ ...c, actors: c.actors.map((a) => ({ ...a })), entries: [...c.entries] })),

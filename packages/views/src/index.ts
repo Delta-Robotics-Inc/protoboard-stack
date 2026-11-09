@@ -19,6 +19,8 @@ export { LayoutView } from "./pcb/LayoutView.js";
 export { setKnownBoards, knownBoards, onKnownBoards } from "./pcb/known-boards.js";
 export { RemoteBoardSource, createEventStreamBoardHost, openBoardSource, type BoardChannel, type BoardHost } from "./pcb/remote.js";
 export type { BoardDerived, BoardEntry, BoardFeedMessage } from "./pcb/types.js";
+export { SchematicEditorView, SchematicScreen, createEventStreamSchematicHost, openSchematicSource, setKnownSchematics, knownSchematics, onKnownSchematics, type SchematicHost, type SchematicChannel } from "./schematic/index.js";
+export type { SchematicEntry, SchematicFeedMessage, SchematicRequest, SchematicReply } from "./schematic/types.js";
 export { CUSTOM_ICONS, SCHEMATIC_ICON, ViewIcon, customIconSvg } from "./icons.js";
 export { pairsOf, findPair, censusOf, potentialsOf, type Pair, type PairLink, type PairSide, type CensusEntry } from "./pair/model.js";
 export {

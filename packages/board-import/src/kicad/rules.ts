@@ -77,7 +77,7 @@ export const KICAD_VIOLATION_TYPE: Partial<Record<RuleRec["check"], string>> = {
  * KiCad 10's default severity of a violation type when the project does not set one: observed with kicad-cli on
  * boards with no `rule_severities` (hole_to_hole a warning, the rest errors); diff pair and length assumed errors.
  */
-const KICAD_DEFAULT_SEVERITY: Record<string, "error" | "warning"> = {
+export const KICAD_DEFAULT_SEVERITY: Record<string, "error" | "warning"> = {
   clearance: "error",
   track_width: "error",
   via_diameter: "error",

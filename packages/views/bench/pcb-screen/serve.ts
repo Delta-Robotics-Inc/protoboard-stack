@@ -7,7 +7,9 @@
  *   commit) and served there as a live board service (`serveBoard`), so the page sees commits as they happen and
  *   writes through it as a person (`/__protoboard/board/request`); `/api/move` commits a footprint move on it as a
  *   person and `/api/agent` makes an agent claim a lease and commit (the screenshot script's way to make
- *   commits). The tracked fixture is never written.
+ *   commits); `/api/agent-write` is an agent's write with no lease (refused while paused) and `/api/propose` an
+ *   agent's proposal of track segments. The service has live checks and `board.diagnose` attached, as
+ *   `protoboard board serve` does. The tracked fixture is never written.
  * - `?fixture=files` opens a second copy with no service: the host opens it for writing on the page's first write.
  * - `?board=<folder>` (any folder holding board.jsonl) opens that board through its live service when one runs
  *   (`protoboard board serve`), else from its files.
@@ -27,7 +29,7 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { agentActor, HUMAN, openBoardService, serveBoard, type BoardServer, type BoardService } from "@protoboardai/board/node";
 import { bundleBrowser } from "../../src/pcb/headless/bundle.js";
-import { BOARD_ROUTE_PREFIX, createBoardRoutes, entryOf } from "../../src/pcb/host/index.js";
+import { BOARD_ROUTE_PREFIX, createBoardRoutes, entryOf, loadEditModule, watchRefusals } from "../../src/pcb/host/index.js";
 import type { BoardEntry } from "../../src/pcb/types.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -72,13 +74,19 @@ export async function startDevServer(port = 5470, options: { log?: (line: string
     options.log?.("git is not available: checkpoints will save but not commit");
   }
   const fixture: BoardService = openBoardService({ dir: fixtureDir });
-  const fixtureServer: BoardServer = await serveBoard(fixture);
+  // as `protoboard board serve` does: live checks (derived events to every client) and `board.diagnose`; agents'
+  // writes refused while paused or held go to the page's feed, as a host serving the board itself passes them on
+  const editing = (await loadEditModule())?.attachEditing(fixture);
+  let routesRef: ReturnType<typeof createBoardRoutes> | undefined;
+  const watched = watchRefusals(fixture, (r) => void routesRef?.feed("fixture").then((f) => f.reportRefusal(r)));
+  const fixtureServer: BoardServer = await serveBoard(watched, editing ? { methods: editing.methods } : {});
   const opened = new Map<string, { entry: BoardEntry; dir: string; service?: BoardService }>();
   const fixtureEntry = { ...entryOf(tmp, fixtureDir), key: "fixture" };
   opened.set("fixture", { entry: fixtureEntry, dir: fixtureDir, service: fixture });
   opened.set("fixture-files", { entry: { ...entryOf(tmp, filesDir), key: "fixture-files" }, dir: filesDir });
   const samePage = (req: { headers: { origin?: string } }) => !req.headers.origin || /^http:\/\/127\.0\.0\.1:\d+$/.test(String(req.headers.origin));
   const routes = createBoardRoutes({ root: tmp, extra: () => [...opened.values()], mayRecheck: samePage, mayWrite: samePage, ...(options.log ? { log: options.log } : {}) });
+  routesRef = routes;
 
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://127.0.0.1");
@@ -140,12 +148,31 @@ export async function startDevServer(port = 5470, options: { log?: (line: string
       if (url.pathname === "/api/agent" && req.method === "POST") {
         // an agent at work on the fixture: a lease on a subtree, then a move inside it (the agent bar's feed)
         const agent = agentActor(url.searchParams.get("name") ?? "placer");
-        const c = fixture.claim(agent, { roots: [url.searchParams.get("root") ?? "sensor"], purpose: url.searchParams.get("purpose") ?? "tidy the sensor section", ttlMs: 240_000 });
+        const c = watched.claim(agent, { roots: [url.searchParams.get("root") ?? "sensor"], purpose: url.searchParams.get("purpose") ?? "tidy the sensor section", ttlMs: 240_000 });
         let r: unknown = c;
         const move = url.searchParams.get("move");
-        if (c.status === "granted" && move) r = fixture.apply({ batchId: `agent-${Date.now()}`, label: "nudge the sensor pull-up", leaseToken: c.lease.token, ops: [{ op: "footprint.move", ids: [move], dx: 500_000, dy: 0, tracks: "stay" }] }, agent);
+        if (c.status === "granted" && move) r = watched.apply({ batchId: `agent-${Date.now()}`, label: "nudge the sensor pull-up", leaseToken: c.lease.token, ops: [{ op: "footprint.move", ids: [move], dx: 500_000, dy: 0, tracks: "stay" }] }, agent);
         res.writeHead(200, { "content-type": "application/json" });
         return res.end(JSON.stringify({ claim: c, reply: r }));
+      }
+      if (url.pathname === "/api/agent-write" && req.method === "POST") {
+        // an agent's write with no lease (refused while a person pauses agents: the agent bar shows it)
+        const agent = agentActor(url.searchParams.get("name") ?? "placer");
+        const r = watched.apply({ batchId: `agent-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, label: url.searchParams.get("label") ?? "nudge the sensor pull-up", ops: [{ op: "footprint.move", ids: [url.searchParams.get("id") ?? "fp:sensor/r_scl"], dx: Math.round(Number(url.searchParams.get("dx") ?? 0.5) * 1e6), dy: 0, tracks: "stay" }] }, agent);
+        res.writeHead(200, { "content-type": "application/json" });
+        return res.end(JSON.stringify(r));
+      }
+      if (url.pathname === "/api/propose" && req.method === "POST") {
+        // a proposal on the fixture as an agent sends one (`board propose`): items of track segments, millimeters in
+        // the body ({ title, name?, items: [{ label, net, layer?, width?, points: [[x, y], ...] }] })
+        const chunks: Buffer[] = [];
+        for await (const c of req) chunks.push(c as Buffer);
+        const body = JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}") as { title: string; name?: string; items: { label: string; net: string; layer?: string; width?: number; points: [number, number][] }[] };
+        const nm = (v: number) => Math.round(v * 1e6);
+        const items = body.items.map((it) => ({ label: it.label, ops: [{ op: "track.add", segments: it.points.slice(1).map((p, i) => ({ net: it.net, layer: it.layer ?? "top", width: nm(it.width ?? 0.25), start: { x: nm(it.points[i][0]), y: nm(it.points[i][1]) }, end: { x: nm(p[0]), y: nm(p[1]) } })) }] }));
+        const r = fixture.propose(agentActor(body.name ?? "router-helper"), { title: body.title, items });
+        res.writeHead(200, { "content-type": "application/json" });
+        return res.end(JSON.stringify(r));
       }
       res.writeHead(url.pathname === "/favicon.ico" ? 204 : 404);
       res.end();
@@ -171,6 +198,7 @@ export async function startDevServer(port = 5470, options: { log?: (line: string
         await new Promise<void>((ok) => server.close(() => ok()));
         await routes.close();
         await fixtureServer.close();
+        editing?.stop();
         fixture.close({ save: false });
         rmSync(tmp, { recursive: true, force: true });
       })()),

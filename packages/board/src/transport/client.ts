@@ -10,7 +10,7 @@ import type { Actor } from "../ops/registry.js";
 import { BoardLockedError } from "../journal.js";
 import type { Netlist } from "../schema.js";
 import { boardLocalDir, findProjectRoot, openBoardService, type BoardEvent, type BoardService, type BoardSnapshot, type CheckpointResult, type SaveResult } from "../service.js";
-import type { ChangeSetInfo, ClaimReply, Hold, LogEntry, Presence, Reply, Transaction } from "../transaction.js";
+import type { ChangeSetInfo, ClaimReply, Hold, LogEntry, Pause, Presence, Reply, Transaction } from "../transaction.js";
 import type { DerivedState, Proposal, ProposalPreview, ProposeInput, ProposeReply } from "../editing-types.js";
 import { BOARD_PROTOCOL, BoardRpcError, TOKEN_PROTOCOL_PREFIX, callService, describeOperations, METHOD_PARAMS, RPC_ERRORS, SERVICE_FILE, snapshotFromWire, type BoardMethod, type QueryParams, type QueryResult, type ServiceFile, type WireSnapshot } from "./protocol.js";
 
@@ -63,7 +63,10 @@ export interface BoardClient {
   hold(actor: Actor, claim: { ids: string[]; margin?: number; ttlMs?: number }): Promise<{ status: "held"; hold: Hold } | { status: "invalid"; error: string }>;
   releaseHold(actor: Actor, id?: string): Promise<Hold[]>;
   derived(): Promise<DerivedState | null>;
-  /** A host's extra method (oard.diagnose): service mode only; local mode refuses it. */
+  /** A person pauses agents and routers (their writes are refused `paused` until resume or the ttl). */
+  pause(actor: Actor, options?: { reason?: string; ttlMs?: number }): Promise<{ status: "paused"; pause: Pause } | { status: "invalid"; error: string }>;
+  resume(actor: Actor): Promise<{ status: "resumed"; was?: Pause } | { status: "invalid"; error: string }>;
+  /** A host's extra method (board.diagnose): service mode only; local mode refuses it. */
   callExtension(method: string, params?: unknown): Promise<unknown>;
   /** Service mode: `board.event` notifications; local mode: the service's own events. */
   subscribe(listener: (e: BoardEvent) => void): () => void;
@@ -144,6 +147,8 @@ function typed(dir: string, mode: "service" | "local", recoverable: number, call
     hold: (actor, claim) => call("board.hold", { actor, ...claim }) as Promise<{ status: "held"; hold: Hold } | { status: "invalid"; error: string }>,
     releaseHold: (actor, id) => call("board.releaseHold", { actor, ...(id ? { id } : {}) }) as Promise<Hold[]>,
     derived: () => call("board.derived", {}) as Promise<DerivedState | null>,
+    pause: (actor, o) => call("board.pause", { actor, ...(o?.reason !== undefined ? { reason: o.reason } : {}), ...(o?.ttlMs !== undefined ? { ttlMs: o.ttlMs } : {}) }) as Promise<{ status: "paused"; pause: Pause } | { status: "invalid"; error: string }>,
+    resume: (actor) => call("board.resume", { actor }) as Promise<{ status: "resumed"; was?: Pause } | { status: "invalid"; error: string }>,
     callExtension: rest.callExtension,
     subscribe: rest.subscribe,
     close: rest.close,

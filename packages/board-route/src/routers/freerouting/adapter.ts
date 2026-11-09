@@ -65,7 +65,8 @@ export function createFreeroutingRouter(options: FreeroutingOptions = {}): Route
       const d = detect();
       return d.ok ? { ok: true } : { ok: false, reason: `${d.reason}. ${d.howToInstall}` };
     },
-    capabilities: { layers: { min: 1, max: 10 }, region: false, netSubset: true, respectsLockedCopper: true, incremental: true, maxThreads: 16 },
+    // a JVM starts before it routes anything (seconds on a laptop): not worth starting with less time left than that
+    capabilities: { layers: { min: 1, max: 10 }, region: false, netSubset: true, respectsLockedCopper: true, incremental: true, maxThreads: 16, startupMs: 3000 },
     express(job) {
       const out = jobToDsn(job).unexpressed;
       out.push("seed: Freerouting takes no seed; one thread keeps runs repeatable");

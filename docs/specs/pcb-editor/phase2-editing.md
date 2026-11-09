@@ -13,7 +13,9 @@ integer nanometers and millidegrees, +Y up.
 |---|---|---|
 | Operation names, inputs and effects | 2 | **built and stable** (2026-11-09) |
 | Reply additions (`reports`, `proposal` on a refusal, `held`) | 3 | **built and stable** |
-| Bindings P2-D must add (CLI, MCP, wire) | 9 | **stable**; the wire methods are built in `@protoboardai/board` |
+| Bindings (CLI, MCP, wire) | 9 | **built and stable** (2026-11-09): wire methods, CLI commands, MCP tools, `board serve` with live checks |
+| Waivers (record, operations, checks, KiCad comparison) | 2.4, 6.2 | **built and stable** (P2-E) |
+| Pause of agents and routers | 3, 5.1 | **built and stable** (P2-E) |
 | Proposal mode | 4 | **built and stable**; the stored file may gain fields (additive only) |
 | Drag hold | 5 | **built and stable** |
 | Live checks and the derived-state event | 6 | **built and stable** event shape; timings reported, not promised |
@@ -107,6 +109,34 @@ removed: string[], missingFootprints: string[], unusedFootprints: string[] }` (f
 `footprint.add` and `footprint.remove`, never by this operation). The commit event carries `netlist: true`; a board
 whose folder has `netlist.jsonl` writes it on save.
 
+### 2.4 Waivers (a person only)
+
+A waiver is a person's "not a problem" on a finding, with a reason: a `waiver` record (`waiver:<key>`), stored in
+`rules.jsonl` with the rules.
+
+```ts
+interface WaiverRec {
+  kind: "waiver"; id: string;
+  finding?: string;          // a finding id ("f:<check>:<hash>")
+  rule?: string;             // a rule id ("rule:...") or a check name ("clearance", "dangling", ...)
+  objects: string[];         // 0 to 50 ids; with `rule`: that rule's findings on exactly these objects (any order)
+  reason: string;            // 1 to 500 characters
+  by: { kind: "human" | "agent" | "router" | "host" | "system"; id: string; name?: string };  // the actor that added it
+  at?: string;               // ISO time (the engine's clock)
+  provenance: Provenance;
+}                            // at least one of finding, rule
+```
+
+| Name | Input | Effect |
+|---|---|---|
+| `waiver.add` | `waiver: { finding?, rule?, objects?, reason }`, `handle?` | adds a waiver (`waiver:<epoch>.<n>`; the reply maps the handle); `rule` alone waives every finding of that rule or check |
+| `waiver.remove` | `ids?`, `findings?` (at least one) | removes waivers by id (each must exist) and every waiver naming one of `findings` (a finding with none is an error) |
+
+Both are marked `person: true` in the registry: an agent's or router's transaction holding one is refused
+`needs-person`, and the service stores an agent's as a proposal (section 4). A host acting for a person may waive.
+`waiver.remove`'s example needs a waiver on the sample board: the registry's `exampleBefore` holds the `waiver.add`
+that makes it apply (run first, in the same transaction or one before). The checks' side is in 6.2.
+
 `PLANNED_OPERATIONS` is empty once all of section 2 is registered; bindings list operations from the registry only.
 
 ## 3. Reply additions
@@ -118,11 +148,18 @@ reports?: { index: number; op: string; report: Record<string, unknown> }[];
 proposal?: string;                        // the proposal id
 // refused with reason held: the hold and when to retry
 hold?: Hold; retryAfterMs?: number;
+// refused with reason paused: the pause (and retryAfterMs when it has an end)
+pause?: Pause;
 // applied or valid: the transaction changed the netlist (netlist.sync)
 netlist?: true;
 // new refusal reasons
-type RefusalReason = ... | "held" | "stale-proposal" | "not-a-person";
+type RefusalReason = ... | "held" | "stale-proposal" | "not-a-person" | "paused";
 ```
+
+`needs-person` also refuses an agent's or router's waiver (section 2.4). A `held` or `paused` refusal is not
+remembered by batch id: the same batch sent again after the hold or pause ends applies (`board apply --wait`
+relies on it). A `claim` while paused is refused `{ status: "refused", reason: "paused", pause, retryAfterMs?,
+message }`.
 
 `acceptProposal` returns the reply plus `proposalState: Proposal` (the proposal after the accept). The log entry of an
 accept carries `proposal: <id>`; the commit event's `entry.proposal` names it too.
@@ -197,6 +234,21 @@ refused with reason `held`, the hold in `hold`, and `retryAfterMs`. Proposals th
 created and accepted (the accept is the person's). The person's own commit that touches the held ids releases the
 hold. `presence()` lists holds (`holds: Hold[]`) and a `presence` event fires on hold and release.
 
+### 5.1 Pause (P2-E)
+
+```ts
+interface Pause { by: Actor; since: number; reason?: string; until?: number }
+svc.pause(actor, { reason?: string; ttlMs?: number }): { status: "paused"; pause: Pause } | { status: "invalid"; error: string }  // a person only
+svc.resume(actor): { status: "resumed"; was?: Pause } | { status: "invalid"; error: string }  // a person only
+svc.paused(): Pause | undefined
+```
+
+While paused, every transaction of an `agent` or `router` actor (apply, undo, redo, revertChangeSet, claim) is
+refused `paused` with the pause and `retryAfterMs` when `until` is set; a dry run and a proposal go through (they
+change nothing), and person and host writes are unaffected. `ttlMs` (at most a day) ends the pause on its own.
+`presence()` carries `paused` while it lasts, and a `presence` event fires on pause, on resume and when a pause with
+an end runs out (the service sets a timer for it). Pausing again replaces the reason and end and keeps `since`.
+
 ## 6. Live checks and derived state
 
 ### 6.1 The derived-state event
@@ -207,7 +259,7 @@ publishes:
 
 ```ts
 { type: "derived"; epoch: string; seq: number;
-  summary: { line: string; unconnected: number; errors: number; warnings: number; infos: number; incomplete: boolean; caveats: string[] };
+  summary: { line: string; unconnected: number; errors: number; warnings: number; infos: number; waived?: number; incomplete: boolean; caveats: string[] };
   findings: { added: Finding[]; removed: string[]; total: number };   // finding ids are stable across runs
   fill: { refilled: string[]; stale: string[] };                      // zone ids
   stale: { checks: boolean; fill: string[] };                         // what is behind the document right now
@@ -245,6 +297,15 @@ When it stays open, `board-route`'s rules-or-placement rerun answers: `{ net, ro
 messages }` (`unknown` when the rerun did not report the net; the messages say why). Default routers are
 `board-route`'s defaults (tscircuit, then an installed Freerouting); tests pass the built-in router.
 The service attachment exposes it as `editing.diagnose(net)` and over the wire as `board.diagnose`.
+
+`budgetMs` (default 8 s) is one time budget for the whole diagnosis (the routers, the fallback and the rerun), given
+to `board-route` as a `deadline`. Only the net's open links are routed, as the board checks see them with the zone
+fill (`board-route`'s `islands` source), and candidates are scored by what changed (`createLocalScoring`). Every
+answer also carries `links`, `budgetMs`, `stopped?` (what the budget cut), `pour?` (a net with a zone is left to its
+pour; only the links its fill does not make are routed, and with none no router runs: `routable: true`, router
+`none`), `hash` and `cached` (in memory, and under the board's build folder `diagnosis/<hash>.json` when the service
+has a folder). The screen's fuller diagnosis (attempt, probe, relaxations) is `diagnoseNet` in
+`@protoboardai/views/pcb/host` (host/diagnose.ts) under the same bounds.
 
 ## 7. Interactive routing session (`@protoboardai/board-edit`)
 
@@ -350,24 +411,36 @@ will detach. A track or via drag searches toward the requested delta for the lar
 clearance violation against other nets) within the budget. The screen holds the dragged ids (section 5) for the
 length of the drag.
 
-## 9. Bindings the CLI and MCP must add (P2-D)
+## 9. Bindings (CLI, MCP, wire)
 
-**Operations**: `board apply` and the MCP `board_apply` tool take them from the registry already. The parity test
-needs these updates: the system list becomes `["netlist.sync", "record.put", "record.remove"]`; `footprint.move`
-without `tracks` now means `attached`; examples of the Phase 2 operations dry-run as a person and as an agent like
-the others. `outline.import_dxf` takes the file's text: the CLI command should read a path (`board import-dxf
+Built (2026-11-09); the command reference with example runs is [board-cli.md](board-cli.md).
+
+**Operations**: `board apply` and the MCP `board_apply` tool take them from the registry. The parity test
+(`packages/cli/test/board-parity.test.ts`) holds: the system list is `["netlist.sync", "record.put",
+"record.remove"]`; `footprint.move` without `tracks` means `attached`; every operation's example (with its
+`exampleBefore`, for `waiver.remove`) dry-runs as a person (valid) and as an agent (valid, or refused
+`needs-person` or `locked`). `outline.import_dxf` takes the file's text: the CLI command should read a path (`board import-dxf
 <dir> <file.dxf> [--units] [--layers] [--tolerance] [--json]`, which builds the op) and the MCP tool
 `board_import_dxf` with `{ dir, path, units?, layers?, tolerance? }`, both CHANGES FILES.
 
-**Wire methods** (core, in `METHOD_PARAMS`; built into the server, `callService`, and the client by `@protoboardai/board`; the client has typed methods of the same names): `board.propose` `{ actor, proposal }`, `board.proposals` `{ status? }`, `board.proposal` `{ id }`, `board.previewProposal` `{ id, items? }`, `board.acceptProposal` `{ actor, id, items?, allowStale?, batchId? }`, `board.rejectProposal` `{ actor, id, items?, reason? }`, `board.hold` `{ actor, ids, margin?, ttlMs? }`, `board.releaseHold` `{ actor, id? }`, `board.derived` `{}`. Extension method, registered by `attachEditing(svc).methods` and passed as `serveBoard(svc, { methods })` (the server now accepts `methods`, and a method may answer with a promise): `board.diagnose` `{ net }`; clients call it with `client.callExtension("board.diagnose", { net })` (service mode only). `board serve` should call `attachEditing(svc)` so live checks publish `derived` events and `board.diagnose` exists. A CLI command on a board with no running service calls `diagnoseNet(svc.snapshot(), net)` from `@protoboardai/board-edit/service` directly.
+**Wire methods** (core, in `METHOD_PARAMS`; built into the server, `callService`, and the client by `@protoboardai/board`; the client has typed methods of the same names): `board.propose` `{ actor, proposal }`, `board.proposals` `{ status? }`, `board.proposal` `{ id }`, `board.previewProposal` `{ id, items? }`, `board.acceptProposal` `{ actor, id, items?, allowStale?, batchId? }`, `board.rejectProposal` `{ actor, id, items?, reason? }`, `board.hold` `{ actor, ids, margin?, ttlMs? }`, `board.releaseHold` `{ actor, id? }`, `board.derived` `{}`, `board.pause` `{ actor, reason?, ttlMs? }`, `board.resume` `{ actor }`. Extension method, registered by `attachEditing(svc).methods` and passed as `serveBoard(svc, { methods })` (the server now accepts `methods`, and a method may answer with a promise): `board.diagnose` `{ net }`; clients call it with `client.callExtension("board.diagnose", { net })` (service mode only). `board serve` calls `attachEditing(svc)` (when `@protoboardai/board-edit` is installed) and passes its `methods`, so live checks publish `derived` events and `board.diagnose` exists. A CLI command on a board with no running service calls `diagnoseNet(svc.snapshot(), net)` from `@protoboardai/board-edit/service` directly.
 
 **CLI commands** (each with `--json`): `board proposals <dir> [--status]`, `board proposal <dir> <id> [--preview]`,
 `board accept <dir> <id> [--items a,b] [--allow-stale]` (a person only), `board reject <dir> <id> [--items]
-[--reason]`, `board propose <dir> <proposal.json>` (as the actor the CLI resolves), `board diagnose <dir> <net>`.
+[--reason]`, `board propose <dir> <proposal.json>` (as the actor the CLI resolves), `board diagnose <dir> <net>`;
+`board pause <dir> [--reason] [--ttl <seconds>]` and `board resume <dir>` (a person only, on a running service),
+`board apply --wait <seconds>` (sends the same batch again while it is refused `paused` or `held`), `board route
+--propose` (the route result stored as proposals through `proposeRouteResult`, the scores kept, one item per net; the
+proposal ids printed) and `board corridor <dir> --from <x,y | id> --to <x,y | id> --layer <layer> [--net] [--width]
+[--clearance]` (board-scene's `findCorridor`; millimeters out, changes nothing). `accept`, `pause` and `resume` under
+an agent are refused `not-a-person` (exit 3) without reaching the board. `board check` lists waived findings and
+the cross-check's waived items.
 
 **MCP tools**: `board_propose` `{ dir, title, items, changeSet? }` (the agent's batch as a proposal), `board_proposals`
 `{ dir, status? }` (read only), `board_proposal` `{ dir, id, preview? }` (read only), `board_diagnose` `{ dir, net }`
-(read only). No MCP tool accepts or rejects a proposal (a person's call), and none takes a hold.
+(read only), `board_corridor` `{ dir, from, to, layer, net?, width?, clearance? }` (read only; millimeters),
+`board_apply` gains `waitSeconds` and `board_route` `propose`. No MCP tool accepts or rejects a proposal, pauses or
+resumes (a person's calls), and none takes a hold.
 
 ## 10. Built versus specified
 
@@ -378,6 +451,16 @@ Built (2026-11-09), with tests:
   copper geometry and planners (`copper-geom.ts`, `edit-plan.ts`).
 - Reply additions (section 3), proposal mode with files, stale marking and agents' needs-person proposals (section
   4), the drag hold (section 5), the wire methods (section 9).
+- Waivers (P2-E): the record kind, `waiver.add` and `waiver.remove` (person only; cases in
+  `packages/board/test/op-cases-waiver.ts`); `runBoardChecks`, the contract `Check` objects and the incremental
+  checks leave waived findings out of `findings` and the counts and list them in `result.waived` (`summary.waived`,
+  the line ends in `N waived`; the summary's `unconnected` excludes waived unconnected items); a waiver change runs
+  the incremental checks in full, and the incremental-equals-full property test walks with waivers added and
+  removed; the KiCad comparison lists waived findings and their matched KiCad items apart (`waived`) and counts
+  neither.
+- Pause (P2-E): section 5.1, in the engine, the service, the wire and the CLI.
+- The CLI and MCP bindings of section 9 (`packages/cli/src/board-editing.ts`, `board.ts`, `mcp/board-tools.ts`),
+  with tests in `packages/cli/test/board-editing.test.ts` and the parity test.
 - `@protoboardai/board-edit`: the routing session (walk-around, highlight, snapping, vias, back, finish with a
   region precondition) and drag sessions; live checks, diagnosis and router proposals in `/service`.
 - `@protoboardai/board-checks`: `createIncrementalChecks`, equal to a full run on random edit sequences, with
@@ -395,3 +478,7 @@ Specified only, not built:
 - Live checks do not debounce; every commit is rechecked.
 - The head does not resolve rules with a `region` or `when` condition (7.1); the live checks report them.
 - Arc tracks: `track.drag` refuses to drag an arc segment itself (its vias and neighbors may move its ends).
+- With no running service, the CLI opens the board for one call, so proposals stored by an earlier call read as
+  stale (their seq belongs to another session); `accept --allow-stale` revalidates them.
+- The corridor query is a grid search of the agent scene (0.05 mm), a guide for planning, not the routing kernel's
+  walk-around.

@@ -10,6 +10,7 @@ import type { ResolvedView } from "@protoboardai/core";
 import { VIEW_FILES, isModelFile } from "@protoboardai/core/views";
 import { appliesFromDecl, hasArtifact, hasFile } from "./applies.js";
 import { layoutApplies } from "./pcb/known-boards.js";
+import { schematicEditorApplies } from "./schematic/known.js";
 
 /** A view's registration without its component (types.ts ViewDefinition, which adds it). */
 export interface TabRule {
@@ -53,9 +54,10 @@ export const BUILTIN_TABS: readonly TabRule[] = [
     icon: SCHEMATIC_ICON,
     order: 20,
     source: "builtin",
-    description: "The board's schematic, from its circuit tool's native drawing, in the host's theme.",
-    // scoped to the module being viewed (the 2026-10-05 review): the board that has the drawing, never a level above it
-    applies: (module, bundle) => hasFile(module, bundle, VIEW_FILES.schematic),
+    description: "The board's schematic: the editor on the project's UHD boards when the host serves them, else the circuit tool's native drawing, in the host's theme.",
+    // scoped to the module being viewed (the 2026-10-05 review): the board that has the drawing, never a level above it;
+    // the schematic editor (PCB editor Phase 3) also at the root of a project whose host knows a UHD board (schematic/known.ts)
+    applies: (module, bundle, at) => hasFile(module, bundle, VIEW_FILES.schematic) || schematicEditorApplies(module, bundle, at),
   },
   {
     id: "pcb",

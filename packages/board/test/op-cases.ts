@@ -6,6 +6,7 @@ import { expect } from "vitest";
 import type { BoardDocument, BoardRecord, FootprintRec, TrackRec, ViaRec, ZoneRec } from "../src/index.js";
 import { OP_CASES_EDIT } from "./op-cases-edit.js";
 import { OP_CASES_P2 } from "./op-cases-p2.js";
+import { OP_CASES_WAIVER } from "./op-cases-waiver.js";
 
 export interface OpCase {
   name: string;
@@ -15,6 +16,8 @@ export interface OpCase {
   check(before: BoardDocument, after: BoardDocument, created: Record<string, string>): void;
   /** The apply must fail with this text in its message. */
   fails?: string;
+  /** Calls applied (as the system) to the fixture first, so the case has what it needs (a waiver to remove). */
+  before?: (Record<string, unknown> & { op: string })[];
 }
 
 const rec = <T extends BoardRecord>(d: BoardDocument, id: string) => d.records.get(id) as T;
@@ -207,4 +210,4 @@ const OP_CASES_P1: Record<string, OpCase[]> = {
 
 /** Every case by operation: Phase 1, then the Phase 2 sets (a name in two sets gets both lists). */
 export const OP_CASES: Record<string, OpCase[]> = {};
-for (const set of [OP_CASES_P1, OP_CASES_P2, OP_CASES_EDIT]) for (const [name, cases] of Object.entries(set)) OP_CASES[name] = [...(OP_CASES[name] ?? []), ...cases];
+for (const set of [OP_CASES_P1, OP_CASES_P2, OP_CASES_EDIT, OP_CASES_WAIVER]) for (const [name, cases] of Object.entries(set)) OP_CASES[name] = [...(OP_CASES[name] ?? []), ...cases];

@@ -12,7 +12,8 @@ hand. The contract is `docs/specs/pcb-editor/phase2-editing.md` in the Protoboar
   operations use, so the preview is the commit; track and via drags stop at the last legal position.
 - `@protoboardai/board-edit/service` (Node): `attachLiveChecks(service)` rechecks and refills only what a commit
   touched and publishes the derived state; `diagnoseNet(snapshot, net)` asks `board-route` whether rules or placement
-  keep a net open; `proposeRouteResult(service, result)` stores router results as proposals; `attachEditing(service)`
+  keep a net open, within one time budget (default 8 s), routing only its open links (a net with a pour only where
+  the fill does not reach) and cached by input hash; `proposeRouteResult(service, result)` stores router results as proposals; `attachEditing(service)`
   bundles them with the `board.diagnose` wire method for `serveBoard(service, { methods })`.
 
 Nothing here writes a board. Sessions return operations; the board service applies them.

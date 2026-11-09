@@ -9,7 +9,10 @@
  * Sessions: move a part and undo it; rotate, flip, lock and an inspector edit; lock a track and confirm a router run
  * leaves it byte-identical, then accept the proposal; work a review item to done (a waiver with a reason); a routing
  * diagnosis; replay the timeline; an agent at work with a lease and Take over; a checkpoint committed to Git; a
- * first write on a board with no service (the host opens it). Exit 1 when a check fails.
+ * first write on a board with no service (the host opens it); the interactive tools (`tools`: a route drafted with
+ * its callout, halo and Drafting lane, then finished as one transaction; highlight collisions dropped with Esc; a
+ * footprint dragged with its attached tracks through the kernel; a DXF outline import and its report). Exit 1 when
+ * a check fails.
  */
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -17,6 +20,7 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { launchBrowser, type Browser } from "@protoboardai/core/cdp";
 import { canonicalRecord } from "@protoboardai/board/node";
+import { padsOf, type FootprintRec } from "@protoboardai/board";
 import { startDevServer } from "./serve.js";
 
 const { values } = parseArgs({ options: { out: { type: "string" }, backend: { type: "string" }, only: { type: "string" }, "no-route": { type: "boolean" } } });
@@ -244,8 +248,8 @@ try {
     await shot("p2-11-review-waiver-reason");
     await key("Enter", "Enter");
     await settle(s0 + 1);
-    const waiverRule = [...dev.fixture.snapshot().doc.records.values()].find((r) => r.kind === "rule" && r.id.startsWith("rule:waiver."));
-    check("the waiver is a rules entry on the service's board", !!waiverRule, waiverRule ? `${waiverRule.id}` : "none");
+    const waiverRec = [...dev.fixture.snapshot().doc.records.values()].find((r) => r.kind === "waiver");
+    check("the waiver is a waiver record on the service's board", !!waiverRec, waiverRec ? `${waiverRec.id}` : "none");
     const listed = await waitFor<boolean>("!!window.__dev.derived?.waived?.length", (x) => x, 15_000);
     check("the checks leave the waived finding out and list it", listed && item !== "", `item ${item}`);
     const n1 = await browser.evaluate<number>("Number(document.querySelector('.pcb-left b')?.textContent.match(/[0-9]+/)?.[0] ?? -1)");
@@ -351,6 +355,129 @@ try {
     await sleep(500);
     const seq = await browser.evaluate<number>("window.__dev.session.confirmed().seq");
     check("a read-only host takes no edits (a drag box-selects)", seq === svcSeq());
+  }
+
+  // ---------------------------------------------------------------- 11. the interactive tools (route, highlight, kernel drag, DXF)
+  if (run("tools")) {
+    const pad = (fp: string, k: string) => {
+      const p = padsOf(dev.fixture.snapshot().doc.records.get(fp) as FootprintRec).find((x) => x.key === k)!;
+      return { x: p.x / 1e6, y: p.y / 1e6, id: p.id };
+    };
+    // bring a board point to the middle of the canvas (a middle-button pan) and zoom in on it (the wheel)
+    const lookAt = async (xMm: number, yMm: number, steps = 3) => {
+      const p = await at(xMm, yMm);
+      const c = await browser.evaluate<{ x: number; y: number }>("(() => { const r = document.querySelector('.pcb-canvas').getBoundingClientRect(); return { x: r.left + (r.width - 320) / 2, y: r.top + r.height * 0.5 }; })()");
+      await browser.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: p.x, y: p.y, button: "none" });
+      await browser.send("Input.dispatchMouseEvent", { type: "mousePressed", x: p.x, y: p.y, button: "middle", buttons: 4, clickCount: 1 });
+      for (let i = 1; i <= 8; i++) await browser.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: p.x + ((c.x - p.x) * i) / 8, y: p.y + ((c.y - p.y) * i) / 8, button: "middle", buttons: 4 });
+      await browser.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: c.x, y: c.y, button: "middle", buttons: 0, clickCount: 1 });
+      for (let i = 0; i < steps; i++) {
+        await browser.send("Input.dispatchMouseEvent", { type: "mouseWheel", x: c.x, y: c.y, deltaX: 0, deltaY: -300 });
+        await sleep(60);
+      }
+      await sleep(200);
+    };
+    // a route drafted around the pads between R1 and D1: callout, halo and the Drafting lane, nothing written
+    await open();
+    check("the tools are on the layout screen", await browser.evaluate<boolean>("!!window.__pcbTools"));
+    const from = pad("fp:status/r1", "2");
+    const to = pad("fp:status/led1", "1");
+    const s0 = svcSeq();
+    await lookAt((from.x + to.x) / 2, (from.y + to.y) / 2 - 1, 3);
+    await key("x", "KeyX");
+    await sleep(100);
+    const a = await at(from.x, from.y);
+    await click(a.x, a.y);
+    await sleep(150);
+    for (let k = 0; k <= 12; k++) {
+      const t = k / 12;
+      const p = await at(from.x - 0.5 + (to.x - from.x) * 0.75 * t, from.y + 1.5 * (1 - t) + 0.4 * t);
+      await mouse("mouseMoved", p.x, p.y);
+      await sleep(30);
+    }
+    await sleep(300);
+    const mid = await browser.evaluate<{ card: string; lane: string; draft: number }>("({ card: document.querySelector('.pcb-routecard')?.textContent ?? '', lane: document.querySelector('.pcb-timeline')?.textContent ?? '', draft: document.querySelector('.pcb-draft')?.childElementCount ?? 0 })");
+    check("the route draft is drawn with one callout on the active segment", mid.draft > 3 && /active segment/i.test(mid.card) && /clearance/i.test(mid.card) && /width/i.test(mid.card), mid.card.slice(0, 160));
+    check("the callout names the rule's tier and live length", /design target|fab floor|net class|default/i.test(mid.card) && /mm, live/.test(mid.card));
+    check("the draft is a Drafting lane in the timeline", /drafting/i.test(mid.lane) && /uncommitted/i.test(mid.lane));
+    check("nothing is written while drafting", svcSeq() === s0, `seq ${svcSeq()}`);
+    await shot("p2e-tool-route-draft");
+    const b = await at(to.x + 0.12, to.y - 0.08);
+    await mouse("mouseMoved", b.x, b.y);
+    await sleep(200);
+    await key("f", "KeyF");
+    await settle(s0 + 1);
+    const entry = dev.fixture.log().at(-1)!;
+    check("F commits the route as one person's transaction", svcSeq() === s0 + 1 && entry.actor.kind === "human" && /route/.test(entry.label), `${entry.actor.kind}: ${entry.label} at seq ${svcSeq()}`);
+    const routed = [...dev.fixture.snapshot().doc.records.values()].filter((r) => r.kind === "track" && r.provenance?.by === "hand" && !r.id.startsWith("trk:f."));
+    check("the route is hand copper on the service's board", routed.length > 0, `${routed.length} new segments`);
+    await shot("p2e-tool-route-finished");
+    await key("z", "KeyZ", 2);
+    await settle(s0 + 2);
+    check("Ctrl+Z takes the whole route back", routed.every((r) => !dev.fixture.snapshot().doc.records.has(r.id)), `seq ${svcSeq()}`);
+
+    // highlight collisions: flagged, the first F only asks; Esc drops the draft
+    await open();
+    const s1 = svcSeq();
+    await lookAt((from.x + to.x) / 2, (from.y + to.y) / 2 - 1, 3);
+    await key("x", "KeyX");
+    const a2 = await at(from.x, from.y);
+    await click(a2.x, a2.y);
+    await sleep(100);
+    await key("m", "KeyM", 2);
+    const b2 = await at(to.x, to.y);
+    for (let k = 1; k <= 6; k++) {
+      await mouse("mouseMoved", a2.x + ((b2.x - a2.x) * k) / 6, a2.y + ((b2.y - a2.y) * k) / 6);
+      await sleep(30);
+    }
+    await sleep(250);
+    await key("f", "KeyF");
+    await sleep(250);
+    const hl = await browser.evaluate<string>("document.querySelector('.pcb-routecard')?.textContent ?? ''");
+    check("highlight mode flags its collisions and asks before committing", /collision/i.test(hl) && /F again commits/i.test(hl) && svcSeq() === s1, hl.slice(0, 160));
+    await shot("p2e-tool-highlight");
+    await key("Escape", "Escape");
+    await sleep(200);
+    check("Esc drops the draft: nothing written", svcSeq() === s1 && !(await browser.evaluate<boolean>("!!document.querySelector('.pcb-routecard')")));
+    await key("Escape", "Escape");
+
+    // a footprint dragged with its attached tracks through the kernel: preview, hold, commit
+    await open();
+    const ldo = dev.fixture.snapshot().doc.records.get("fp:power/ldo") as { x: number; y: number };
+    const near = [...dev.fixture.snapshot().doc.records.values()].filter((r) => r.kind === "track" && [r.start, r.end].some((e) => Math.hypot(e.x - ldo.x, e.y - ldo.y) < 4_000_000)).map((r) => r.id);
+    const before = Object.fromEntries(near.map((id) => [id, canonicalRecord(dev.fixture.snapshot().doc.records.get(id)!)]));
+    const s2 = svcSeq();
+    await lookAt(ldo.x / 1e6, ldo.y / 1e6, 2);
+    let mid2 = "";
+    await drag(await at(-10, -3), await at(-8, -2), 14, async () => {
+      await sleep(250);
+      mid2 = await browser.evaluate<string>("JSON.stringify({ kernel: !!window.__pcbTools?.controller.drag, cand: window.__pcbTools?.controller.drag?.candidate ? { dx: window.__pcbTools.controller.drag.candidate.dx, puts: window.__pcbTools.controller.drag.candidate.puts.length, detached: window.__pcbTools.controller.drag.candidate.detached.length } : null })");
+      await shot("p2e-tool-drag-attached");
+    });
+    check("the footprint drag runs through the kernel and previews its tracks", /"kernel":true/.test(mid2) && /"puts":([2-9]|\d\d)/.test(mid2), mid2);
+    await settle(s2 + 1);
+    const moved = dev.fixture.snapshot().doc.records.get("fp:power/ldo") as { x: number; y: number };
+    const followed = near.filter((id) => { const r = dev.fixture.snapshot().doc.records.get(id); return !r || canonicalRecord(r) !== before[id]; });
+    check("the commit moves the footprint and its attached tracks follow", moved.x !== ldo.x && followed.length > 0, `${followed.length} of ${near.length} nearby tracks changed; ${dev.fixture.log().at(-1)!.label}`);
+
+    // DXF: an outline with a cutout and an entity it skips, and the report
+    await open();
+    const lines = [
+      ["0", "SECTION", "2", "HEADER", "9", "$INSUNITS", "70", "4", "0", "ENDSEC"],
+      ["0", "SECTION", "2", "ENTITIES"],
+      ...[[-22, -16, 22, -16], [22, -16, 22, 16], [22, 16, -22, 16], [-22, 16, -22, -16]].map(([x1, y1, x2, y2]) => ["0", "LINE", "8", "EDGE", "10", String(x1), "20", String(y1), "11", String(x2), "21", String(y2)]),
+      ["0", "CIRCLE", "8", "EDGE", "10", "16", "20", "10", "40", "1.6"],
+      ["0", "TEXT", "8", "NOTES", "10", "0", "20", "0", "40", "2", "1", "rev A"],
+      ["0", "ENDSEC", "0", "E" + "OF"],
+    ];
+    const dxf = lines.flat().join("\n");
+    const s3 = svcSeq();
+    await browser.evaluate(`window.__pcbTools.applyDxf("panel-outline.dxf", ${JSON.stringify(dxf)})`);
+    const shown = await waitFor<boolean>("!!document.querySelector('.pcb-dxf')", (x) => x, 10_000);
+    const rep = await browser.evaluate<string>("document.querySelector('.pcb-dxf')?.textContent ?? ''");
+    check("the DXF import is one change and its report lists entities, loops and what was skipped", shown && svcSeq() === s3 + 1 && /loops/i.test(rep) && /skipped/i.test(rep), rep.slice(0, 200));
+    await settle(s3 + 1);
+    await shot("p2e-tool-dxf-report");
   }
 
   const errors = browser.takeErrors();

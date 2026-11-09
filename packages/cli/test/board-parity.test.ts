@@ -79,10 +79,17 @@ describe("every operation open to all actors is reachable through the CLI and MC
     expect(reply.reports?.find((r) => r.op === "footprint.move")?.report).toHaveProperty("followed");
   });
 
+  /** The example as a transaction's ops: what it needs on the sample board first (a waiver to remove), then itself. */
+  const exampleOps = (d: (typeof all)[number]) => [...(d.exampleBefore ?? []), { op: d.name, ...d.example }];
+
+  it("the waiver operations are open to all and a person's call (an agent's is refused needs-person)", () => {
+    for (const n of ["waiver.add", "waiver.remove"]) expect(all.find((d) => d.name === n)?.person, n).toBe(true);
+  });
+
   it.each(all.map((d) => [d.name, d] as const))("%s through `board apply` (a dry run, as a person)", async (_name, d) => {
     const { root, dir } = project();
     const file = join(root, "tx.json");
-    writeFileSync(file, JSON.stringify({ op: d.name, ...d.example }));
+    writeFileSync(file, JSON.stringify(exampleOps(d)));
     const r = await run(["apply", dir, file, "--dry-run", "--json"], root);
     const reply = JSON.parse(r.stdout) as Reply;
     expect(reply.status, r.stdout).toBe("valid");
@@ -92,7 +99,7 @@ describe("every operation open to all actors is reachable through the CLI and MC
   it.each(all.map((d) => [d.name, d] as const))("%s through the MCP board_apply tool (a dry run, as the agent)", async (_name, d) => {
     const { root, dir } = project();
     const t = tool("board_apply");
-    const args = { dir, ops: [{ op: d.name, ...d.example }], dryRun: true };
+    const args = { dir, ops: exampleOps(d), dryRun: true };
     expect(z.object(t.input).safeParse(args).success).toBe(true);
     const out = await t.handler(args as never, ctx(root));
     const reply = out.data as Reply;
@@ -190,7 +197,13 @@ describe("every board command has a --json mode", () => {
       route: ["--budget", "5"],
       diagnose: ["I2C_SCL", "--budget", "5"],
       "import-dxf": [join(root, "outline.dxf")],
+      proposal: ["p.none.1"],
+      propose: [join(root, "proposal.json")],
+      accept: ["p.none.1"],
+      reject: ["p.none.1"],
+      corridor: ["--from", "-16mm,10mm", "--to", "-13mm,7mm", "--layer", "top"],
     };
+    writeFileSync(join(root, "proposal.json"), JSON.stringify({ title: "nudge the regulator to the right", items: [{ label: "move the LDO", ops: [{ op: "footprint.move", ids: ["fp:power/ldo"], dx: 1000, dy: 0, tracks: "stay" }] }] }));
     writeFileSync(join(root, "outline.dxf"), DXF_RECT);
     writeFileSync(join(root, "tx.json"), JSON.stringify({ op: "footprint.move", ids: ["fp:power/ldo"], dx: 1000, dy: 0, tracks: "stay" }));
     const argv = name === "ops" ? ["ops", "--json"] : name === "import" ? ["import", join(dir, "board.jsonl"), join(root, "imported"), "--json"] : [name, dir, ...(extra[name] ?? []), "--json"];
@@ -204,6 +217,42 @@ describe("every board command has a --json mode", () => {
     else expect(() => JSON.parse(stdout), stdout).not.toThrow();
     expect(typeof code).toBe("number");
   }, 120_000);
+});
+
+describe("the editing commands an agent may run have MCP tools; a person's calls have none", () => {
+  const pairs = { propose: "board_propose", proposals: "board_proposals", proposal: "board_proposal", corridor: "board_corridor" } as const;
+
+  it.each(Object.entries(pairs))("board %s is the %s tool", (command, name) => {
+    expect(BOARD_COMMANDS.map((c) => c.name)).toContain(command);
+    const t = tool(name);
+    expect(t, name).toBeDefined();
+    expect(t.annotations.destructiveHint).toBe(false);
+    expect(t.annotations.readOnlyHint).toBe(command !== "propose");
+  });
+
+  it("accept, reject, pause and resume are CLI commands with no tool", () => {
+    for (const c of ["accept", "reject", "pause", "resume"]) expect(BOARD_COMMANDS.map((x) => x.name)).toContain(c);
+    for (const t of boardTools()) expect(t.name, t.name).not.toMatch(/accept|reject|pause|resume/);
+  });
+
+  it("each editing tool runs its command with the flags the command takes", async () => {
+    const { root, dir } = project();
+    const seen: string[][] = [];
+    const c = ctx(root);
+    const spy: ToolContext = { ...c, cli: (d, args) => (seen.push(args), c.cli(d, args)) };
+    await tool("board_propose").handler({ dir, title: "nudge the regulator to the right", items: [{ label: "move the LDO", ops: [{ op: "footprint.move", ids: ["fp:power/ldo"], dx: 1000, dy: 0, tracks: "stay" }] }] } as never, spy);
+    await tool("board_proposals").handler({ dir, status: "open" } as never, spy);
+    await tool("board_proposal").handler({ dir, id: "p.none.1", preview: true } as never, spy);
+    await tool("board_corridor").handler({ dir, from: [-16, 10], to: "fp:status/r2", layer: "top", width: 0.25 } as never, spy);
+    await tool("board_apply").handler({ dir, ops: [{ op: "footprint.move", ids: ["fp:power/ldo"], dx: 1000, dy: 0, tracks: "stay" }], waitSeconds: 1 } as never, spy);
+    for (const args of seen) {
+      const spec = BOARD_COMMANDS.find((x) => x.name === args[1])!;
+      for (const a of args.filter((x) => x.startsWith("--") && x !== "--")) {
+        const flag = a.slice(2).split("=")[0];
+        if (flag !== "format") expect(spec.flags, `${args[1]} --${flag}`).toContain(flag);
+      }
+    }
+  });
 });
 
 describe("the import, check, describe, render, route and diagnose commands have MCP tools", () => {

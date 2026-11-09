@@ -15,7 +15,7 @@ import { boardLocalDir, findProjectRoot } from "./paths.js";
 import { acquireOwnerLock, BoardJournal, pendingEntries, type JournalLine } from "./journal.js";
 import type { EndedLease, LeaseClaim } from "./leases.js";
 import type { Actor } from "./ops/registry.js";
-import { createEngine, HUMAN, type ChangeSetInfo, type ClaimReply, type Engine, type Hold, type LogEntry, type Presence, type Reply, type Transaction } from "./transaction.js";
+import { createEngine, HUMAN, type ChangeSetInfo, type ClaimReply, type Engine, type Hold, type LogEntry, type Pause, type Presence, type Reply, type Transaction } from "./transaction.js";
 import { BOARD_FILES, type BoardFile, type Netlist } from "./schema.js";
 
 export interface BoardSnapshot {
@@ -112,6 +112,14 @@ export interface BoardService {
   derived(): DerivedState | undefined;
   /** The folder proposals are stored in (absent for an in-memory board). */
   readonly proposalsDir: string | undefined;
+  /**
+   * A person pauses agents and routers: every transaction of theirs (apply, undo, redo, revert, claim) is refused
+   * `paused`, with the pause and `retryAfterMs` when it has an end. Proposals are still taken; person and host
+   * writes go on. A `presence` event fires on pause and on resume (and when a pause with `ttlMs` ends).
+   */
+  pause(actor: Actor, options?: { reason?: string; ttlMs?: number }): { status: "paused"; pause: Pause } | { status: "invalid"; error: string };
+  resume(actor: Actor): { status: "resumed"; was?: Pause } | { status: "invalid"; error: string };
+  paused(): Pause | undefined;
 }
 
 export { boardBuildDir, boardKey, boardLocalDir, findProjectRoot, STATE_DIR } from "./paths.js";
@@ -210,6 +218,7 @@ export function openBoardService(options: BoardServiceOptions): BoardService {
   /** Agents' needs-person refusals stored as proposals, by batch id (a resent batch gets the same proposal). */
   const proposedFor = new Map<string, string>();
   let lastDerived: DerivedState | undefined;
+  let pauseTimer: ReturnType<typeof setTimeout> | undefined;
 
   const live = () => {
     if (closed) throw new Error("this board service is closed");
@@ -350,6 +359,24 @@ export function openBoardService(options: BoardServiceOptions): BoardService {
       return proposals.accept(actor, id, o);
     },
     rejectProposal: (actor, id, o) => proposals.reject(actor, id, o),
+    pause(actor, o) {
+      live();
+      const r = engine.pause(actor, o);
+      clearTimeout(pauseTimer);
+      // a pause with an end says so when it ends, even with nobody writing (the engine notices it lazily)
+      if (r.status === "paused" && r.pause.until !== undefined) {
+        pauseTimer = setTimeout(() => void engine.paused(), Math.max(0, r.pause.until - (options.now ?? Date.now)()) + 5);
+        pauseTimer.unref?.();
+      }
+      return r;
+    },
+    resume(actor) {
+      live();
+      const r = engine.resume(actor);
+      if (r.status === "resumed") clearTimeout(pauseTimer);
+      return r;
+    },
+    paused: () => engine.paused(),
     hold: (actor, claim) => engine.hold(actor, claim),
     releaseHold: (actor, id) => engine.releaseHold(actor, id),
     publishDerived(state) {
@@ -363,6 +390,7 @@ export function openBoardService(options: BoardServiceOptions): BoardService {
         if (dir && (opts.save ?? true)) save();
       } finally {
         closed = true;
+        clearTimeout(pauseTimer);
         listeners.clear();
         lock?.release();
       }

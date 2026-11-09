@@ -72,6 +72,7 @@ import { MAX_VIEWER_STATE_BYTES, presentationToWrite, parsePresentation, wantsAn
 import { SNAPSHOTS_DIR, backendOf, checkSnapshotMeta, readSnapshot, snapshotKey, writeSnapshot } from "@protoboardai/core/render-service";
 import { Journal } from "./journal.js";
 import { BOARD_ROUTE_PREFIX, createBoardRoutes } from "@protoboardai/views/pcb/host";
+import { SCHEMATIC_ROUTE_PREFIX, createSchematicRoutes, type SchematicEntry, type SchematicSourceEntry } from "@protoboardai/views/schematic/host";
 // TODO(W1-B handoff): `@protoboardai/core/telemetry` once core/package.json exports it
 import { MAX_LINE_BYTES, appendTelemetry, enrichViewerRecord } from "@protoboardai/core/telemetry";
 
@@ -958,6 +959,23 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
   // client (or reads a board's files) and passes the feed to the page, read only; a new check run is the page's own
   // request (its token and origin), as a layout save is
   const boards = createBoardRoutes({ root, mayRecheck: (req) => req.headers[TOKEN_HEADER] === token && (!req.headers.origin || sameSite(req.headers.origin, req)), log: (message) => log({ level: "info", event: "board", message }) });
+  // the schematic tab's schematics (PCB editor Phase 3, @protoboardai/views/schematic/host): one per UHD board; this
+  // server is the schematic service's client and writes a page's edits as a person (the page's token and origin)
+  let schematicEntries: SchematicEntry[] = [];
+  const schematicList = async (): Promise<SchematicSourceEntry[]> => {
+    const { schematicTargets, schematicCircuitFor } = await import("../schematic.js");
+    const layouts = boards.list();
+    const out = (await schematicTargets(root)).map((t) => {
+      const rel = relative(root, t.dir).split(sep).join("/");
+      const layout = t.boardDir ? layouts.find((b) => resolve(root, b.dir) === resolve(t.boardDir!)) : undefined;
+      const entry: SchematicEntry = { key: t.key, dir: rel, name: t.name, board: t.board, ...(layout ? { layoutKey: layout.key } : {}), saved: existsSync(join(t.dir, "schematic.jsonl")) };
+      return { entry, dir: t.dir, projectRoot: root, circuit: async () => (await schematicCircuitFor(t.dir)).circuit };
+    });
+    schematicEntries = out.map((x) => x.entry);
+    return out;
+  };
+  const schematics = createSchematicRoutes({ list: schematicList, mayWrite: (req) => req.headers[TOKEN_HEADER] === token && (!req.headers.origin || sameSite(req.headers.origin, req)), log: (message) => log({ level: "info", event: "board", message: `schematic: ${message}` }) });
+  void schematics.list().catch(() => undefined);
   // the library and bom tabs' data (./parts.ts); a write needs the page's token and origin, as a layout does
   const parts = partsRoutes(root);
   const routes: Record<string, (res: ServerResponse) => void> = {
@@ -986,7 +1004,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       // the saved live view state (PB-1178) comes back to a page that opens; never in a capture's own session
       const viewState = personal ? readViewerState(root) : undefined;
       const hash = bundleHash();
-      res.end(JSON.stringify({ session, version, diagnostics: devDiagnostics, building, failed: lastBuild ? !lastBuild.ok : false, message, ...(unwatched ? { unwatched } : {}), views: lastViews, partStatus: lastPartStatus, display: displayRel().split(sep).join("/"), ...(viewState ? { viewState } : {}), ...(hash ? { bundleHash: hash } : {}), boards: boards.list() }));
+      res.end(JSON.stringify({ session, version, diagnostics: devDiagnostics, building, failed: lastBuild ? !lastBuild.ok : false, message, ...(unwatched ? { unwatched } : {}), views: lastViews, partStatus: lastPartStatus, display: displayRel().split(sep).join("/"), ...(viewState ? { viewState } : {}), ...(hash ? { bundleHash: hash } : {}), boards: boards.list(), schematics: schematicEntries }));
     },
     [DEV_ROUTES.events]: (res) => {
       res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-store", connection: "keep-alive" });
@@ -1039,6 +1057,13 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
         return res.end("the board routes are for this server's own page");
       }
       if (boards.handle(req, res, new URL(req.url ?? "/", "http://x"))) return;
+    }
+    if (path.startsWith(SCHEMATIC_ROUTE_PREFIX)) {
+      if (req.headers.origin && !sameSite(req.headers.origin, req)) {
+        res.writeHead(403, { "content-type": "text/plain; charset=utf-8" });
+        return res.end("the schematic routes are for this server's own page");
+      }
+      if (schematics.handle(req, res, new URL(req.url ?? "/", "http://x"))) return;
     }
     if (path.startsWith(PARTS_PREFIX)) {
       const origin = req.headers.origin;
@@ -1170,6 +1195,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       clearInterval(heartbeat);
       bridge.close();
       await boards.close();
+      await schematics.close();
       for (const w of watchers.values()) w.close();
       child?.kill();
       for (const res of clients) res.end();

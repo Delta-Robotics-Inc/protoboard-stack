@@ -7,6 +7,7 @@
 export {
   analyzeBoard,
   crossCheckSummary,
+  importRecordFor,
   importRecordPath,
   loadChecksModule,
   logTail,
@@ -22,11 +23,14 @@ export {
   type ImportRecord,
   type KicadReference,
 } from "./analysis.js";
-export { BoardFeed, docAtSeq, type BoardFeedOptions } from "./feed.js";
+export { BoardFeed, docAtSeq, watchRefusals, type BoardFeedOptions } from "./feed.js";
 export { BOARD_ROUTE_PREFIX, createBoardRoutes, entryOf, findBoards, PERSON, type BoardRoutes, type BoardRoutesOptions } from "./routes.js";
-export { diagnoseNet, ghostOf, lockedRecords, loadFillModule, loadRouteModule, productScorer, proposalView, routerInfo, routeScope, RouteRuns, defaultRouterList, type DiagnoseOptions, type RouteMessage, type RunOptions } from "./route.js";
+export { diagnoseNet, ghostOf, lockedRecords, lockFingerprint, loadFillModule, loadRouteModule, productScorer, proposalView, routerInfo, routeScope, RouteRuns, defaultRouterList, type DiagnoseOptions, type ProposeRun, type RouteMessage, type RunOptions } from "./route.js";
+export { HostChecks, rebase, type HostCheckRun } from "./live.js";
+export { copperOf, loadEditModule, pagePreview, pageProposal, routeProposalInputs } from "./proposals.js";
 export { commitBoardFolder, type CommitResult } from "./git.js";
 export { parseBoardRequest } from "../requests.js";
-export { applyWaivers, readWaivers, waiverRule, waiverRuleId, WAIVER_ID_PREFIX } from "../waivers.js";
+export { applyWaivers, boardWaivers, legacyWaiverMigration, legacyWaivers, readWaivers, unwaiveOps, waiverAddOp, waiverCovers, waiverFor, waiverRule, waiverRuleId, WAIVER_ID_PREFIX, type BoardWaiver } from "../waivers.js";
 export { zoneFillsFromEntries } from "../fills.js";
-export type { BoardDerived, BoardEntry, BoardFeedMessage, BoardReplyMessage, BoardRequest, CheckSummary, CrossCheckSummary, DiagnosisView, PcbFinding, ProposalView, RatsnestPair, RouterInfo } from "../types.js";
+export { describeFinding, describeOpenNet, type FindingText } from "../findings-text.js";
+export type { BoardDerived, BoardEntry, BoardFeedMessage, BoardReplyMessage, BoardRequest, CheckSummary, CrossCheckSummary, DiagnosisView, PageActor, PagePause, PageProposal, PageProposalPreview, PageRefusal, PcbFinding, ProposalView, RatsnestPair, RouterInfo } from "../types.js";

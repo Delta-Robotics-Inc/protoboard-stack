@@ -22,6 +22,7 @@ export { Reporter, type ImportSummary } from "./report.js";
 export { importKicadPcb, KICAD_IMPORTER_ID, type KicadImportOptions } from "./kicad/board.js";
 export { mapKicadRules, parseLength, CUSTOM_RULE_PRIORITY, KICAD_VIOLATION_TYPE } from "./kicad/rules.js";
 export { kicadCondition, UnsupportedCondition } from "./kicad/condition.js";
+export { exportKicadBoard, fracture, mmExact, KICAD_EXPORT_VERSION, KICAD_EXPORT_DEFAULT_CENTER, type KicadExport, type KicadExportOptions, type KicadExportReportItem } from "./kicad/export.js";
 export { importCircuitJson, CIRCUIT_JSON_IMPORTER_ID, type CircuitJsonImportOptions } from "./circuit-json/import.js";
 export { exportCircuitJson, type CircuitJsonExport } from "./circuit-json/export.js";
 export { READ_FIELDS, WRITE_FIELDS, ROUTE_POINT_FIELDS } from "./circuit-json/fields.js";

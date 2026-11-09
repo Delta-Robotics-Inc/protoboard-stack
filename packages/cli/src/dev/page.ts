@@ -142,7 +142,7 @@ export function devPage(config: { name: string; token: string; session: string; 
 /** The page's script: mounts the viewer and connects it to the dev server. */
 export const DEV_SCRIPT = `import * as viewerLib from "${fromScript(DEV_ROUTES.viewerJs)}";
 // the layout tab's board host came later than the viewer's first builds: a viewer without it has no layout tab
-const { createDevPartsData, mountWebViewer, createEventStreamBoardHost } = viewerLib;
+const { createDevPartsData, mountWebViewer, createEventStreamBoardHost, createEventStreamSchematicHost } = viewerLib;
 import { createRelay } from "${fromScript(DEV_ROUTES.relay)}";
 
 const config = JSON.parse(document.getElementById("protoboard-dev").textContent);
@@ -287,7 +287,9 @@ const viewer = mountWebViewer(document.getElementById("viewer"), {
   // the library and bom tabs ask the server (writes carry the session token)
   partsData: createDevPartsData({ base: here("${DEV_ROUTES.parts.slice(1)}"), token: config.token, tokenHeader: "${TOKEN_HEADER}" }),
   // the layout tab's boards (PCB editor Phase 1): the server is the board service's client and passes its feed on
-  ...(createEventStreamBoardHost ? { boards: createEventStreamBoardHost({ base: here(""), token: config.token, tokenHeader: "${TOKEN_HEADER}" }), knownBoards: state.boards ?? [] } : {}),
+  ...(createEventStreamBoardHost ? { boards: createEventStreamBoardHost({ base: here("./"), token: config.token, tokenHeader: "${TOKEN_HEADER}" }), knownBoards: state.boards ?? [] } : {}),
+  // the schematic tab's editor (PCB editor Phase 3): one schematic per UHD board, edited as a person through the server
+  ...(createEventStreamSchematicHost ? { schematics: createEventStreamSchematicHost({ base: here("./"), token: config.token, tokenHeader: "${TOKEN_HEADER}" }), knownSchematics: state.schematics ?? [] } : {}),
   diagnostics: state.diagnostics,
   layout: empty(),
   onLayoutChange: save,

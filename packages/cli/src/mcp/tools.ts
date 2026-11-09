@@ -23,6 +23,7 @@ import { geometryTools, viewTools } from "./view-tools.js";
 import { reportTools } from "./report-tools.js";
 import { settingsTools } from "./settings-tools.js";
 import { boardTools } from "./board-tools.js";
+import { schematicTools } from "./schematic-tools.js";
 
 /** What a tool hands back: data (sent as JSON text), images (base64, only when asked for) and whether it is a failure. */
 export interface ToolOutcome {
@@ -172,7 +173,7 @@ export function protoboardTools(templates: string[]): ToolSpec[] {
   // W4-D: the exact measurement tier (PB-1187) and issue and feature reports (PB-1197; a draft, shown, then sent only on confirm)
   // R2-E: the user's settings (settings_get, settings_set)
   // PCB editor Phase 1: the board tools, generated from the board operation registry (board-tools.ts)
-  const specs = [...cliTools(templates), ...viewTools(), ...geometryTools(), ...reportTools(), ...settingsTools(), ...boardTools()];
+  const specs = [...cliTools(templates), ...viewTools(), ...geometryTools(), ...reportTools(), ...settingsTools(), ...boardTools(), ...schematicTools()];
   for (const s of specs) if (s.description.length > DESCRIPTION_LIMIT) throw new Error(`the description of ${s.name} is ${s.description.length} characters; clients cut it at ${DESCRIPTION_LIMIT}`);
   return specs;
 }

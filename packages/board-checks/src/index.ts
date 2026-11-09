@@ -6,6 +6,7 @@
 export { runBoardChecks, createBoardChecks, analyzeBoard, type RunOptions, type BoardCheckResult } from "./run.js";
 export { createIncrementalChecks, type IncrementalChecks, type IncrementalUpdate } from "./incremental.js";
 export { summarize, type Summary, type Timing, type CheckCounts } from "./summary.js";
+export { applyWaivers, splitWaived, waiverFor, waiversOf, type WaivedFinding } from "./waivers.js";
 export { CHECKS, coverage, makeFinding, type Analysis } from "./checks.js";
 export * from "./connectivity.js";
 export { normalizeFills, type FillPolygon, type ZoneFill, type ZoneFillSet, type ZoneFillInput } from "./fills.js";

@@ -11,9 +11,10 @@
 import { DiagramCanvas, EmptyState, Scene3D } from "@deltarobotics/uhd-viewer/components";
 import { ViewIcon } from "./icons.js";
 import { BUILTIN_TABS } from "./tabs.js";
-import { PcbView, SchematicView } from "./drawing/BoardDrawingView.js";
+import { PcbView } from "./drawing/BoardDrawingView.js";
 import { PairView } from "./pair/PairView.js";
 import { LayoutView } from "./pcb/LayoutView.js";
+import { SchematicEditorView } from "./schematic/SchematicView.js";
 import { BomView, LibraryView } from "./parts/views.js";
 import { Button } from "./parts/ui.js";
 import { ViewRegistry } from "./registry.js";
@@ -73,7 +74,8 @@ export function PlannedView({ view, module }: ViewProps) {
 const COMPONENTS: Record<string, ViewDefinition["component"]> = {
   diagram: DiagramView,
   "3d": AssemblyView,
-  schematic: SchematicView,
+  // the schematic editor when the host serves the project's schematics, else the native drawing (SchematicView)
+  schematic: SchematicEditorView,
   pcb: PcbView,
   layout: LayoutView,
   bom: BomView,

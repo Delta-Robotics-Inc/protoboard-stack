@@ -38,7 +38,8 @@ describe("operation cases", () => {
   for (const [name, cases] of Object.entries(OP_CASES)) {
     for (const c of cases) {
       it(`${name}: ${c.name}`, () => {
-        const before = airnodeC3();
+        const fresh = () => (c.before ? applyAll(airnodeC3(), c.before) : airnodeC3());
+        const before = fresh();
         if (c.fails) {
           expect(() => applyCall(before, c.call, ctxFor(c.actor))).toThrow(OpError);
           expect(() => applyCall(before, c.call, ctxFor(c.actor))).toThrow(c.fails);
@@ -48,7 +49,7 @@ describe("operation cases", () => {
         expect(r.changed.length).toBeGreaterThan(0);
         c.check(before, r.doc, r.created ?? {});
         // pure: the input document is untouched
-        expect(documentsEqual(before, airnodeC3())).toBe(true);
+        expect(documentsEqual(before, fresh())).toBe(true);
         // exact inverse
         expect(documentsEqual(applyAll(r.doc, r.inverse), before)).toBe(true);
       });

@@ -13,7 +13,8 @@ import { dirname, join, resolve } from "node:path";
 import { boardBuildDir, findProjectRoot, loadZoneFill, parseZoneFill, type BoardSnapshot, type DerivedZoneFill } from "@protoboardai/board/node";
 import type * as ChecksModule from "@protoboardai/board-checks";
 import type { BoardDerived, CheckSummary, CrossCheckSummary, PcbFinding, RatsnestPair } from "../types.js";
-import { applyWaivers, readWaivers } from "../waivers.js";
+import type { WaivedFinding } from "../types.js";
+import { applyWaivers, boardWaivers } from "../waivers.js";
 
 export type BoardCheckResult = ChecksModule.BoardCheckResult;
 export type CrossCheckResult = ChecksModule.CrossCheckResult;
@@ -38,6 +39,27 @@ export interface ImportRecord {
   rulesNotEvaluated?: { name: string; reason: string }[];
   /** Groups of objects the source gives one identity (the import's `sharedSourceIds`): KiCad reports each group once. */
   sharedIds?: string[][];
+  /**
+   * KiCad files written from this board (`protoboard board export-kicad`), absolute: written in the source's frame (the
+   * offset above), and with `sharedIds` true keeping the groups above on one UUID each, so a cross-check against one
+   * reads it as it reads the source.
+   */
+  exports?: { path: string; at: string; sharedIds: boolean }[];
+}
+
+/** Whether two paths name one file (case-insensitively on Windows). */
+const samePath = (a: string, b: string): boolean => {
+  const x = resolve(a);
+  const y = resolve(b);
+  return process.platform === "win32" ? x.toLowerCase() === y.toLowerCase() : x === y;
+};
+
+/** How the import record bears on a KiCad file: its source, an export of the board (and whether it keeps the shared identities), or neither. */
+export function importRecordFor(record: ImportRecord | undefined, pcbPath: string): { source: boolean; exported: boolean; sharedIds: boolean } | undefined {
+  if (!record) return undefined;
+  if (samePath(record.source, pcbPath)) return { source: true, exported: false, sharedIds: true };
+  const e = record.exports?.find((x) => samePath(x.path, pcbPath));
+  return e ? { source: false, exported: true, sharedIds: e.sharedIds } : undefined;
 }
 
 export const importRecordPath = (boardDir: string, projectRoot?: string): string => {
@@ -100,6 +122,11 @@ export interface AnalyzeOptions {
   kicadRoot?: string;
   /** KiCad's run from an earlier analysis of the same source (hosts keep it). */
   kicad?: KicadReference;
+  /**
+   * The checks' result for this snapshot, already computed (a host's incremental checks or the service's live
+   * checks): used as it is instead of a new run; the cross-check still runs on it.
+   */
+  result?: BoardCheckResult;
 }
 
 export interface BoardAnalysis {
@@ -128,8 +155,8 @@ export async function analyzeBoard(snapshot: BoardSnapshot, dir: string | undefi
   const importRecord = dir ? readImportRecord(dir, root) : undefined;
   if (!mod) return { available: false, reason: "the board checks are not installed (package @protoboardai/board-checks)", ...(fill ? { fill } : {}), ...(importRecord ? { importRecord } : {}), ms: {} };
   const t0 = performance.now();
-  const result = mod.runBoardChecks(snapshot, fill ? { fills: fill.fill } : {});
-  const ms: BoardAnalysis["ms"] = { checks: Math.round(performance.now() - t0) };
+  const result = options.result ?? mod.runBoardChecks(snapshot, fill ? { fills: fill.fill } : {});
+  const ms: BoardAnalysis["ms"] = options.result ? {} : { checks: Math.round(performance.now() - t0) };
   const out: BoardAnalysis = { available: true, result, ...(fill ? { fill } : {}), ...(importRecord ? { importRecord } : {}), ms };
   if (options.crossCheck === false) return out;
   const pcbPath = options.kicadPcb ?? options.kicad?.pcbPath ?? (importRecord && /\.kicad_pcb$/i.test(importRecord.source) ? importRecord.source : undefined);
@@ -139,7 +166,8 @@ export async function analyzeBoard(snapshot: BoardSnapshot, dir: string | undefi
   }
   let kicad = options.kicad && options.kicad.pcbPath === pcbPath ? options.kicad : undefined;
   if (!kicad) {
-    kicad = { pcbPath, ...(importRecord?.offset && importRecord.source === pcbPath ? { transform: { tx: -importRecord.offset.x, ty: -importRecord.offset.y } } : {}) };
+    // the source and the board's own exports are in one frame: the import record's offset
+    kicad = { pcbPath, ...(importRecord?.offset && importRecordFor(importRecord, pcbPath) ? { transform: { tx: -importRecord.offset.x, ty: -importRecord.offset.y } } : {}) };
     if (!existsSync(pcbPath)) kicad.reason = `the KiCad board file is not there any more (${pcbPath})`;
     else {
       const cli = mod.findKicadCli();
@@ -163,8 +191,11 @@ export async function analyzeBoard(snapshot: BoardSnapshot, dir: string | undefi
   }
   const transform = kicad.transform ? { ...kicad.transform, source: "given" as const } : mod.estimateTransform(snapshot.doc, readFileSync(pcbPath, "utf8"));
   // like with like (board-checks README, "KiCad cross-check"): the rules the import could not express and the objects
-  // the source gives one identity come from the import record when the record is for this source file
-  const fromImport = importRecord && importRecord.source === pcbPath ? importRecord : undefined;
+  // the source gives one identity come from the import record when the record is for this source file, or for a file
+  // exported from the board (an export holds none of the rules the import could not express; it keeps the shared
+  // identities unless it was written with every object on its own UUID)
+  const bears = importRecordFor(importRecord, pcbPath);
+  const fromImport = bears ? { rulesNotEvaluated: importRecord!.rulesNotEvaluated, sharedIds: bears.sharedIds ? importRecord!.sharedIds : undefined } : undefined;
   out.crossCheck = mod.compareWithKicad(result, kicad.run.report, {
     ...(transform ? { transform } : {}),
     command: kicad.run.command,
@@ -225,11 +256,19 @@ export function toBoardDerived(snapshot: BoardSnapshot, a: BoardAnalysis, option
     return { epoch: snapshot.epoch, seq: snapshot.seq, checks: { ran: false, ...(a.reason ? { reason: a.reason } : {}) }, findings: [], ratsnest: [], fills, ...(a.fill ? { fill: { source: a.fill.fill.source, current: a.fill.current } } : {}), ...(notes.length ? { notes } : {}) };
   }
   const r = a.result;
-  // waivers (a person's "not a problem", ../waivers.ts): left out of the findings and the counts, listed apart
-  const { open, waived } = applyWaivers(r.findings as PcbFinding[], readWaivers(snapshot.doc));
-  const waivedUnconnected = waived.filter((w) => w.finding.check === "unconnected").length;
-  const waivedErrors = waived.filter((w) => w.finding.check !== "unconnected" && w.finding.severity === "error").length;
-  const waivedWarnings = waived.filter((w) => w.finding.check !== "unconnected" && w.finding.severity === "warning").length;
+  // waivers (a person's "not a problem", ../waivers.ts): left out of the findings and the counts, listed apart. The
+  // checks leave waiver records out themselves (`result.waived`, already out of the counts); what they did not (the
+  // older rules entries, or checks that predate waiver records) is left out here and out of the counts
+  const waivers = boardWaivers(snapshot.doc);
+  const byChecks: WaivedFinding[] = ((r as { waived?: { finding: unknown; waiver: string }[] }).waived ?? []).map((x) => {
+    const w = waivers.find((y) => y.id === x.waiver);
+    return { finding: x.finding as PcbFinding, rule: x.waiver, reason: w?.reason ?? "", ...(w?.by ? { by: w.by } : {}), ...(w?.at ? { at: w.at } : {}) };
+  });
+  const { open, waived: here } = applyWaivers(r.findings as PcbFinding[], waivers);
+  const waived = [...byChecks, ...here];
+  const waivedUnconnected = here.filter((w) => w.finding.check === "unconnected").length;
+  const waivedErrors = here.filter((w) => w.finding.check !== "unconnected" && w.finding.severity === "error").length;
+  const waivedWarnings = here.filter((w) => w.finding.check !== "unconnected" && w.finding.severity === "warning").length;
   const waivedLinks = new Set(waived.filter((w) => w.finding.check === "unconnected").map((w) => w.finding.objects.join("|")));
   const ratsnest: RatsnestPair[] = r.connectivity.links.map((l) => ({ net: l.net, a: { x: l.from.x, y: l.from.y }, b: { x: l.to.x, y: l.to.y }, from: l.from.object, to: l.to.object }));
   const checks: CheckSummary = {

@@ -149,6 +149,8 @@ export interface RouteProposal {
   unexpressed: string[];
   notes: string[];
   diagnostic?: DiagnosticReport;
+  /** What the deadline cut (a router skipped or stopped), when `deadline` was given and cut something. */
+  stopped?: string[];
 }
 
 export interface RouteRequest extends JobRequest {
@@ -160,7 +162,19 @@ export interface RouteRequest extends JobRequest {
   onEvent?: (e: RouteEvent) => void;
   /** Run the rules-or-placement diagnostic when nets stay open (default true). */
   diagnose?: boolean;
+  /**
+   * One deadline for the whole run (`Date.now()` milliseconds): each router gets at most the time left (and its
+   * `budget.timeMs`), is stopped at the deadline (its result is a timeout, not a cancellation), and a router that
+   * would start with less than a second (or its `startupMs`) left is skipped. The proposal's `stopped` says what the
+   * deadline cut.
+   */
+  deadline?: number;
 }
+
+/** The least time left for a router to start under a deadline (ms). */
+const MIN_STAGE_MS = 1000;
+/** How long after the deadline a router is stopped (it stops itself at its budget; this is the backstop). */
+const DEADLINE_GRACE_MS = 750;
 
 /** Six base-36 characters from a text (a deterministic epoch for the copy the routers' operations are applied to). */
 function epochFrom(text: string): string {
@@ -170,14 +184,14 @@ function epochFrom(text: string): string {
   return out;
 }
 
-/** A signal that aborts when the parent does or after `ms` (for a stuck router). */
+/** A signal that aborts when the parent does or after `ms` (for a stuck router, or at a run's deadline). */
 function stageSignal(parent: AbortSignal | undefined, ms: number): { signal: AbortSignal; done: () => void; timedOut: () => boolean } {
   const c = new AbortController();
   let timed = false;
   const t = setTimeout(() => {
     timed = true;
     c.abort(new Error("time budget exceeded"));
-  }, ms);
+  }, Math.max(0, ms));
   const onAbort = () => c.abort(parent?.reason);
   parent?.addEventListener("abort", onAbort, { once: true });
   if (parent?.aborted) c.abort(parent.reason);
@@ -247,6 +261,7 @@ export async function routeBoard(input: BoardSnapshot | BoardDocument, request: 
   let bestRejected: { score: BoardScore; steps: ProposalStep[]; added: { segments: number; vias: number; length: number } } | undefined;
   const fallbackReasons: string[] = [];
   const unexpressed = new Set<string>();
+  const stopped: string[] = [];
   let cancelled = false;
 
   for (let i = 0; i < request.routers.length && remaining.length; i++) {
@@ -280,11 +295,22 @@ export async function routeBoard(input: BoardSnapshot | BoardDocument, request: 
       nextReason(report.reason);
       continue;
     }
+    if (request.deadline !== undefined) {
+      const left = request.deadline - Date.now();
+      if (left < Math.max(MIN_STAGE_MS, router.capabilities.startupMs ?? 0)) {
+        report.reason = `the time budget ran out (${Math.max(0, Math.round(left))} ms left)`;
+        stopped.push(`${router.id}: not started, ${report.reason}`);
+        emit({ type: "stage-end", stage, router: router.id, status: "skipped", kept: false, reason: report.reason });
+        nextReason(report.reason);
+        continue;
+      }
+      job.budget = { ...job.budget, timeMs: Math.min(job.budget.timeMs, left) };
+    }
     job.unexpressed = [...new Set([...commonUnexpressed(job.constraints), ...router.express(job)])];
     if (job.region && !router.capabilities.region) job.unexpressed.push("region: this router cannot bound new copper to the region; copper outside it is checked after");
     report.nets = job.nets.map((n) => n.net);
     emit({ type: "stage-start", stage, router: router.id, nets: report.nets });
-    const s = stageSignal(request.signal, job.budget.timeMs + 30_000);
+    const s = stageSignal(request.signal, request.deadline !== undefined ? Math.min(job.budget.timeMs + 30_000, request.deadline - Date.now() + DEADLINE_GRACE_MS) : job.budget.timeMs + 30_000);
     let result: RouteResult;
     const t0 = Date.now();
     try {
@@ -294,6 +320,9 @@ export async function routeBoard(input: BoardSnapshot | BoardDocument, request: 
     } finally {
       s.done();
     }
+    // stopped at its time (the budget backstop or the deadline), not by the caller: a timeout, not a cancellation
+    if (result.status === "cancelled" && s.timedOut() && !request.signal?.aborted) result = { ...result, status: "timeout", messages: [...result.messages, "stopped at the time budget"] };
+    if (request.deadline !== undefined && result.status === "timeout") stopped.push(`${router.id}: stopped at the time budget after ${result.stats.durationMs} ms`);
     report.status = result.status;
     report.version = result.version;
     report.durationMs = result.stats.durationMs;
@@ -347,15 +376,16 @@ export async function routeBoard(input: BoardSnapshot | BoardDocument, request: 
     proposal.steps.push(step);
     base = applied.doc;
     baseScore = score;
-    remaining = netsInScope(base, { kind: "nets", nets: remaining }).nets.map((n) => n.net);
+    remaining = netsInScope(base, { kind: "nets", nets: remaining }, request.islands).nets.map((n) => n.net);
     // a region scope: only nets whose islands in the region are still apart
-    if (first.region) remaining = netsInScope(base, { kind: "region", region: first.region, includePourNets: true }).nets.map((n) => n.net).filter((n) => remaining.includes(n));
+    if (first.region) remaining = netsInScope(base, { kind: "region", region: first.region, includePourNets: true }, request.islands).nets.map((n) => n.net).filter((n) => remaining.includes(n));
     emit({ type: "stage-end", stage, router: router.id, status: result.status, kept: true });
     if (remaining.length) nextReason(result.status === "timeout" || result.status === "failed" ? `${result.status}, ${remaining.length} net(s) still open` : `${remaining.length} net(s) still open`);
   }
 
   proposal.unexpressed = [...unexpressed].sort(byCodeUnit);
   proposal.added = sumAdded(proposal.steps);
+  if (stopped.length) proposal.stopped = stopped;
   const fellBack = proposal.stages.length > 1;
   if (fellBack) proposal.fallback = { from: proposal.stages[0].router, to: proposal.stages.slice(1).map((s) => s.router), reasons: fallbackReasons };
 
@@ -391,9 +421,11 @@ export async function routeBoard(input: BoardSnapshot | BoardDocument, request: 
     const t = proposal.steps[0].transaction;
     proposal.steps[0] = { ...proposal.steps[0], transaction: { ...t, expectEpoch: snapshot.epoch, expectSeq: snapshot.seq } };
   }
-  proposal.openNets = proposal.status === "proposed" ? remaining : scopeNets.filter((n) => netsInScope(doc, { kind: "nets", nets: [n] }).nets.length > 0);
+  proposal.openNets = proposal.status === "proposed" ? remaining : scopeNets.filter((n) => netsInScope(doc, { kind: "nets", nets: [n] }, request.islands).nets.length > 0);
 
-  if (proposal.openNets.length && request.diagnose !== false && !request.signal?.aborted) {
+  const diagnoseLeft = request.deadline === undefined ? Infinity : request.deadline - Date.now();
+  if (proposal.openNets.length && request.diagnose !== false && !request.signal?.aborted && diagnoseLeft < MIN_STAGE_MS) (proposal.stopped ??= []).push("the rules-or-placement rerun: not started, the time budget ran out");
+  else if (proposal.openNets.length && request.diagnose !== false && !request.signal?.aborted) {
     // the router whose copper was kept last does the probe (it is the one that got furthest), else the first available
     const lastKept = [...proposal.stages].reverse().find((st) => st.kept)?.router;
     const diag = await diagnose(proposal.status === "proposed" ? base : doc, proposal.openNets, request, runId, lastKept);
@@ -434,9 +466,10 @@ async function diagnose(doc: BoardDocument, nets: string[], request: RouteReques
   const built = buildJob(doc, { ...request, scope, tiers: "floor-and-no-go" });
   const job: RouteJob = { ...built, runId: `${runId}-probe`, unexpressed: [] };
   delete (job as { notes?: string[] }).notes;
+  if (request.deadline !== undefined) job.budget = { ...job.budget, timeMs: Math.max(1, Math.min(job.budget.timeMs, request.deadline - Date.now())) };
   job.unexpressed = [...new Set([...commonUnexpressed(job.constraints), ...router.express(job)])];
   const normal = resolveConstraints(doc, nets, { ...(request.scope.layers ? { layers: request.scope.layers } : {}) });
-  const s = stageSignal(request.signal, job.budget.timeMs + 30_000);
+  const s = stageSignal(request.signal, request.deadline !== undefined ? Math.min(job.budget.timeMs + 30_000, request.deadline - Date.now() + DEADLINE_GRACE_MS) : job.budget.timeMs + 30_000);
   let result: RouteResult;
   try {
     result = await router.route(job, s.signal, () => {});
@@ -450,7 +483,7 @@ async function diagnose(doc: BoardDocument, nets: string[], request: RouteReques
     const applied = applyOnCopy(doc, result, router, job, 99);
     if (applied.doc && !applied.lockChanged.length) after = applied.doc;
   }
-  const stillOpen = new Set(netsInScope(after, { kind: "nets", nets }).nets.map((n) => n.net));
+  const stillOpen = new Set(netsInScope(after, { kind: "nets", nets }, request.islands).nets.map((n) => n.net));
   // copper the relaxed run added, by net, and its pairs closer than the floor clearance
   const newIds = new Map<string, string>();
   for (const r of after.records.values()) if (!doc.records.has(r.id) && (r.kind === "track" || r.kind === "via") && r.net) newIds.set(r.id, r.net);

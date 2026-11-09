@@ -1,17 +1,17 @@
 /**
  * Autorouting and routing diagnosis for a host (Node only), on `@protoboardai/board-route` (loaded when installed):
  * the default router order (tscircuit's autorouter first, Freerouting as the fallback), the scorer the product uses
- * (the board checks, with a computed zone fill when the board has zones), runs that can be cancelled, proposals held
- * by the host until a person accepts or rejects them, and the diagnosis of one open net (L4): the attempt, the probe
- * with only the fab floor and no-go areas, the rules that block it, and relaxations test-run on copies.
+ * (the board checks, with a computed zone fill when the board has zones), runs that can be cancelled, results handed
+ * to the board service as proposals; the diagnosis of one open net (L4) lives in ./diagnose.ts (re-exported here).
  *
- * Nothing here changes a board: accepting a proposal applies its transactions through the caller's `apply` (the
- * board service), each as its router, and checks afterwards that every locked record is byte-identical.
+ * Nothing here changes a board: a run's result becomes service proposals (the feed proposes it), a person accepts
+ * them through the service, and the feed checks afterwards that every locked record is byte-identical
+ * (`lockFingerprint`).
  */
-import { byCodeUnit, canonicalRecord, createEngine, recordsOfKind, sha1Hex, type Actor, type BoardDocument, type BoardSnapshot, type OpCall, type Reply, type RuleRec, type Transaction } from "@protoboardai/board";
+import { byCodeUnit, canonicalRecord, type BoardDocument, type BoardRecord, type BoardSnapshot, type OpCall } from "@protoboardai/board";
 import type * as RouteModule from "@protoboardai/board-route";
 import type * as FillModule from "@protoboardai/board-fill";
-import type { DiagnosisArea, DiagnosisView, GhostCopper, PageRouteScope, PageScore, ProposalView, RelaxOption, RouteProgressView, RouterInfo } from "../types.js";
+import type { GhostCopper, PageRouteScope, PageScore, ProposalView, RouteProgressView, RouterInfo } from "../types.js";
 import { loadChecksModule } from "./analysis.js";
 
 type RouteProposal = RouteModule.RouteProposal;
@@ -107,6 +107,27 @@ export function lockedRecords(doc: BoardDocument): string[] {
   return out.sort(byCodeUnit);
 }
 
+/** Whether a track is hand copper (drawn or last edited by a person). */
+const isHandTrack = (r: BoardRecord) => r.kind === "track" && (r.provenance.by === "hand" || r.provenance.edited === "hand");
+
+/**
+ * The fingerprint of every locked record before a change, and a check afterwards that each is byte-identical:
+ * how many were checked, which changed, and how many of them are hand tracks (the "N hand tracks verified
+ * unchanged" line after a router's proposal is accepted).
+ */
+export function lockFingerprint(before: BoardDocument): (after: BoardDocument) => { checked: number; changed: string[]; hand: number } {
+  const ids = lockedRecords(before);
+  const fp = new Map(ids.map((id) => [id, canonicalRecord(before.records.get(id)!)]));
+  const hand = ids.filter((id) => isHandTrack(before.records.get(id)!)).length;
+  return (after) => {
+    const changed = ids.filter((id) => {
+      const rec = after.records.get(id);
+      return !rec || canonicalRecord(rec) !== fp.get(id);
+    });
+    return { checked: ids.length, changed, hand: hand - changed.filter((id) => isHandTrack(before.records.get(id)!)).length };
+  };
+}
+
 /** A proposal in the page's form. */
 export function proposalView(run: string, p: RouteProposal, doc: BoardDocument, ms: number): ProposalView {
   return {
@@ -158,17 +179,43 @@ interface Run {
 export type RouteMessage = { run: string; progress?: RouteProgressView; proposal?: ProposalView; error?: string; ended?: "accepted" | "rejected" | "cancelled" };
 
 /**
- * The autoroute runs of one board: each runs on a snapshot, sends its progress and its proposal to `emit`, and is
- * held until it is accepted, rejected or cancelled. One run at a time per board (a new run cancels the old one).
+ * Turn a run's result into board service proposals (`proposeRouteResult`, contract section 4): the ids of the
+ * proposals made, or why none was.
+ */
+export type ProposeRun = (result: RouteProposal) => Promise<{ ids: string[]; error?: string }>;
+
+/**
+ * The autoroute runs of one board: each runs on a snapshot and sends its progress and its result to `emit`. A
+ * result better than the board becomes board service proposals through `propose` (one per router step, one item
+ * per net); the service holds them, and accepting or rejecting goes through it, never through the run. One run at a
+ * time per board (a new run cancels the old one).
  */
 export class RouteRuns {
   private readonly runs = new Map<string, Run>();
   private n = 0;
-  constructor(private readonly emit: (m: RouteMessage) => void) {}
+  constructor(
+    private readonly emit: (m: RouteMessage) => void,
+    private readonly propose?: ProposeRun,
+  ) {}
 
   get(run: string): { proposal?: ProposalView; ended?: string } | undefined {
     const r = this.runs.get(run);
     return r ? { ...(r.view ? { proposal: r.view } : {}), ...(r.ended ? { ended: r.ended } : {}) } : undefined;
+  }
+
+  /** The run that became a service proposal, by the proposal's id. */
+  runOf(proposal: string): string | undefined {
+    for (const r of this.runs.values()) if (r.view?.proposals?.includes(proposal)) return r.id;
+    return undefined;
+  }
+
+  /** Mark a run accepted or rejected (its proposals were, through the service). */
+  end(run: string, how: "accepted" | "rejected"): boolean {
+    const r = this.runs.get(run);
+    if (!r?.view || r.ended) return false;
+    r.ended = how;
+    this.emit({ run, ended: how });
+    return true;
   }
 
   /** Start a run; resolves with its id at once (the proposal comes through `emit`). */
@@ -203,10 +250,20 @@ export class RouteRuns {
         },
       })
       .then(
-        (p) => {
+        async (p) => {
           run.proposal = p;
-          run.view = proposalView(id, p, snapshot.doc, Date.now() - started);
+          const view = proposalView(id, p, snapshot.doc, Date.now() - started);
           if (p.status === "cancelled") run.ended = "cancelled";
+          if (p.status === "proposed" && !run.ended && this.propose) {
+            try {
+              const made = await this.propose(p);
+              view.proposals = made.ids;
+              if (made.error) view.proposalError = made.error;
+            } catch (e) {
+              view.proposalError = (e as Error).message;
+            }
+          }
+          run.view = view;
           this.emit({ run: id, proposal: run.view, ...(run.ended ? { ended: run.ended } : {}) });
         },
         (e: Error) => {
@@ -229,40 +286,7 @@ export class RouteRuns {
   }
 
   reject(run: string): boolean {
-    const r = this.runs.get(run);
-    if (!r?.view || r.ended) return false;
-    r.ended = "rejected";
-    this.emit({ run, ended: "rejected" });
-    return true;
-  }
-
-  /**
-   * Apply a held proposal step by step, each as its router (the person accepted it), and verify afterwards that
-   * every locked record is byte-identical. Stops at the first refusal (a board that moved on is refused stale).
-   */
-  async accept(run: string, apply: (tx: Transaction, actor: Actor) => Promise<Reply>, before: BoardDocument, after: () => Promise<BoardDocument>): Promise<{ replies: Reply[]; locked: { checked: number; changed: string[] } }> {
-    const r = this.runs.get(run);
-    if (!r?.proposal || r.ended) throw new Error(`no open proposal ${run}`);
-    if (r.proposal.status !== "proposed") throw new Error(`proposal ${run} is ${r.proposal.status}: a result worse than the board you have is never applied`);
-    const ids = lockedRecords(before);
-    const fp = new Map(ids.map((id) => [id, canonicalRecord(before.records.get(id)!)]));
-    const replies: Reply[] = [];
-    for (const s of r.proposal.steps) {
-      const tx: Transaction = { ...s.transaction, label: `${s.transaction.label} (accepted)`.slice(0, 160) };
-      const reply = await apply(tx, s.actor);
-      replies.push(reply);
-      if (reply.status !== "applied") break;
-    }
-    const doc = await after();
-    const changed = ids.filter((id) => {
-      const rec = doc.records.get(id);
-      return !rec || canonicalRecord(rec) !== fp.get(id);
-    });
-    if (replies.length && replies.every((x) => x.status === "applied")) {
-      r.ended = "accepted";
-      this.emit({ run, ended: "accepted" });
-    }
-    return { replies, locked: { checked: ids.length, changed } };
+    return this.end(run, "rejected");
   }
 
   /** Cancel everything (the board closes). */
@@ -272,138 +296,6 @@ export class RouteRuns {
   }
 }
 
-// ---------------------------------------------------------------- diagnosis (L4)
+// ---------------------------------------------------------------- diagnosis (L4): host/diagnose.ts
 
-const mmText = (nm: number) => `${(nm / 1e6).toFixed(3).replace(/\.?0+$/, "")} mm`;
-
-/** Apply a proposal's steps on a copy (each as its router); the copy after them, or undefined when one was refused. */
-function applyOnCopy(doc: BoardDocument, steps: readonly { actor: Actor; transaction: Transaction }[]): BoardDocument | undefined {
-  const engine = createEngine(doc, { epoch: "probe0", now: () => 0 });
-  for (const s of steps) {
-    const r = engine.apply({ ...s.transaction, expectEpoch: undefined, expectSeq: undefined } as Transaction, s.actor);
-    if (r.status !== "applied") return undefined;
-  }
-  return engine.doc;
-}
-
-/** Apply rule changes on a copy as a person would. */
-function withRules(doc: BoardDocument, rules: Record<string, unknown>[]): BoardDocument | undefined {
-  const engine = createEngine(doc, { epoch: "relax0", now: () => 0 });
-  const r = engine.apply({ batchId: "relax", label: "test-run a relaxation", ops: rules.map((rule) => ({ op: "rule.set", rule })) }, { kind: "human", id: "diagnosis" });
-  return r.status === "applied" ? engine.doc : undefined;
-}
-
-/** A rule id key from free text (net names may hold characters an id key cannot). */
-const ruleKey = (text: string) => `${text.replace(/[^A-Za-z0-9_.-]+/g, "_").slice(0, 40)}.${sha1Hex(text).slice(0, 6)}`;
-
-export interface DiagnoseOptions {
-  budgetMs?: number;
-  routers?: Router[];
-  scorer?: BoardScorer;
-  signal?: AbortSignal;
-}
-
-/**
- * Why one net does not route (L4): the attempt with every rule, the probe with the fab floor and no-go areas only,
- * the verdict (`rules` when the probe routes within the floor clearance, else `placement`), what blocks it, the rule
- * areas by tier, and relaxations test-run on copies of the board. Nothing is applied.
- */
-export async function diagnoseNet(snapshot: BoardSnapshot, net: string, options: DiagnoseOptions = {}): Promise<DiagnosisView> {
-  const t0 = Date.now();
-  const route = await loadRouteModule();
-  if (!route) throw new Error("the autorouter is not installed (package @protoboardai/board-route)");
-  const doc = snapshot.doc;
-  if (!doc.nets.has(net)) throw new Error(`net ${net} is not in this board's netlist`);
-  const scorer = options.scorer ?? (await productScorer())?.scorer;
-  if (!scorer) throw new Error("no scorer");
-  const routers = options.routers ?? route.defaultRouters();
-  const budget = { timeMs: options.budgetMs ?? 30_000 };
-  const scope = { kind: "nets" as const, nets: [net] };
-  const base = { routers, scorer, budget, diagnose: false, ...(options.signal ? { signal: options.signal } : {}) };
-
-  // 1. the attempt with every rule
-  const ta = Date.now();
-  const attempt = await route.routeBoard(doc, { ...base, scope });
-  const attemptMs = Date.now() - ta;
-  const routesAsIs = attempt.status === "proposed" && !attempt.openNets.includes(net);
-  const attempts: DiagnosisView["attempts"] = attempt.stages.map((s) => ({ router: s.router, status: s.status, ...(s.reason ? { reason: s.reason } : {}), ghost: s.kept ? ghostOf(attempt.steps.filter((st) => st.actor.id === `router:${s.router}`).map((st) => st.transaction)) : { segments: [], vias: [] }, ms: s.durationMs }));
-  if (!attempts.length) attempts.push({ router: "none", status: attempt.status, reason: attempt.reasons.join("; "), ghost: { segments: [], vias: [] }, ms: attemptMs });
-
-  const normal = route.resolveConstraints(doc, [net], {});
-  const relaxed = route.resolveConstraints(doc, [net], { tiers: "floor-and-no-go" });
-  const n = route.netConstraint(normal, net);
-  const f = route.netConstraint(relaxed, net);
-
-  // 2. the probe: the fab floor and no-go areas only
-  let probe: DiagnosisView["probe"];
-  if (!routesAsIs) {
-    const tp = Date.now();
-    const p = await route.routeBoard(doc, { ...base, scope, tiers: "floor-and-no-go" });
-    const after = p.steps.length ? applyOnCopy(doc, p.steps) : undefined;
-    let floorViolations = 0;
-    if (after) {
-      const added = new Set<string>();
-      for (const r of after.records.values()) if (!doc.records.has(r.id) && (r.kind === "track" || r.kind === "via")) added.add(r.id);
-      for (const pr of route.clearancePairs(route.copperModel(after), relaxed.defaults.clearance.floor)) if (added.has(pr.a) || added.has(pr.b)) floorViolations++;
-    }
-    const routed = !!after && !route.netsInScope(after, scope).nets.length;
-    const g = ghostOf(p.steps.map((s) => s.transaction));
-    probe = { router: p.stages.filter((s) => s.kept).at(-1)?.router ?? p.stages[0]?.router ?? "none", routed, ghost: g, length: p.added.length, vias: p.added.vias, floorViolations, ms: Date.now() - tp };
-  }
-  const verdict: DiagnosisView["verdict"] = routesAsIs ? "routes" : probe?.routed && probe.floorViolations === 0 ? "rules" : "placement";
-
-  // 3. what blocks it
-  const rules = recordsOfKind(doc, "rule");
-  const ruleName = (id: string | undefined) => (id ? (doc.records.get(id) as RuleRec | undefined)?.note ?? id : "built-in default");
-  const blockers: DiagnosisView["blockers"] = [];
-  if (n.clearance.plan > f.clearance.floor) blockers.push({ rule: n.sources.clearance ?? "default plan", tier: "target", what: `clearance plan ${mmText(n.clearance.plan)} (${ruleName(n.sources.clearance)})`, blocks: `above the floor ${mmText(f.clearance.floor)}` });
-  if (n.width.plan > f.width.floor) blockers.push({ rule: n.sources.width ?? "default plan", tier: "target", what: `track width plan ${mmText(n.width.plan)} (${ruleName(n.sources.width)})`, blocks: `above the floor ${mmText(f.width.floor)}` });
-  for (const k of recordsOfKind(doc, "keepout")) {
-    const what = Object.entries(k.blocks)
-      .filter(([, v]) => v)
-      .map(([b]) => b)
-      .join(", ");
-    blockers.push({ rule: k.id, tier: k.tier, what: k.name ?? k.description ?? k.id, blocks: k.tier === "no_go" ? `a wall for ${what || "nothing"} on ${k.layers.join(", ")}` : `a cost for ${what || "nothing"}` });
-  }
-  for (const r of rules.filter((x) => x.enabled !== false && x.tier === "policy" && x.applies.region)) blockers.push({ rule: r.id, tier: "policy", what: r.note ?? r.id, blocks: `a cost (${r.cost ?? 1}) in its region` });
-  blockers.push({ rule: "fab floor", tier: "floor", what: `clearance ${mmText(f.clearance.floor)}, width ${mmText(f.width.floor)}`, blocks: "never relaxed" });
-
-  // 4. rule areas by tier
-  const areas: DiagnosisArea[] = [];
-  for (const k of recordsOfKind(doc, "keepout")) areas.push({ id: k.id, name: k.name ?? k.id, tier: k.tier, outline: k.outline.map((v) => ({ x: v.x, y: v.y })), blocks: Object.entries(k.blocks).filter(([, v]) => v).map(([b]) => b).join(", ") });
-  for (const r of rules) if (r.enabled !== false && r.applies.region && r.severity !== "ignore") areas.push({ id: r.id, name: r.note ?? r.id, tier: r.tier, outline: r.applies.region.map((v) => ({ x: v.x, y: v.y })), blocks: r.check });
-
-  // 5. relaxations, test-run on copies (only the target tier: the floor is never relaxed)
-  const options_: RelaxOption[] = [];
-  if (!routesAsIs) {
-    const prio = Math.min(1_000_000, Math.max(0, ...rules.filter((r) => r.tier === "target").map((r) => r.priority ?? 0)) + 1);
-    const key = ruleKey(net);
-    const cands: { id: string; title: string; detail: string; rules: Record<string, unknown>[] }[] = [];
-    const clr = n.clearance.plan > f.clearance.floor ? { id: `rule:relax.${key}.clearance`, tier: "target", check: "clearance", priority: prio, applies: { nets: [net] }, min: f.clearance.floor, preferred: f.clearance.floor, note: `${net} may route at the floor clearance (routing diagnosis)`.slice(0, 500) } : undefined;
-    const wid = n.width.plan > f.width.floor ? { id: `rule:relax.${key}.width`, tier: "target", check: "track_width", priority: prio, applies: { nets: [net] }, min: f.width.floor, preferred: f.width.floor, note: `${net} may route at the floor width (routing diagnosis)`.slice(0, 500) } : undefined;
-    if (clr) cands.push({ id: "clearance", title: `Plan ${net} at the floor clearance`, detail: `a target rule for this net only: ${mmText(n.clearance.plan)} to ${mmText(f.clearance.floor)}`, rules: [clr] });
-    if (wid) cands.push({ id: "width", title: `Plan ${net} at the floor width`, detail: `a target rule for this net only: ${mmText(n.width.plan)} to ${mmText(f.width.floor)}`, rules: [wid] });
-    if (clr && wid) cands.push({ id: "both", title: `Plan ${net} at the floor clearance and width`, detail: "both target rules, this net only", rules: [clr, wid] });
-    for (const c of cands) {
-      const t = Date.now();
-      const copy = withRules(doc, c.rules);
-      if (!copy) {
-        options_.push({ ...c, result: { routed: false, open: 0, errors: 0, vias: 0, length: 0, newFindings: 0, ms: Date.now() - t, note: "the rule was refused on a copy" } });
-        continue;
-      }
-      const p = await route.routeBoard(copy, { ...base, scope });
-      const routed = p.status === "proposed" && !p.openNets.includes(net);
-      options_.push({ ...c, result: { routed, open: p.candidate.open, errors: p.candidate.errors, vias: p.added.vias, length: p.added.length, newFindings: Math.max(0, p.candidate.errors - p.current.errors), ms: Date.now() - t, ...(p.status !== "proposed" ? { note: p.reasons.join("; ").slice(0, 300) } : {}) } });
-    }
-  }
-
-  const summary =
-    verdict === "routes"
-      ? `${net} routes with every rule as it is: run the autorouter on it`
-      : verdict === "rules"
-        ? `Rules, not placement: with only the fab floor and no-go areas, ${net} routed (${mmText(probe!.length)}, ${probe!.vias} via${probe!.vias === 1 ? "" : "s"}); a rule above the floor blocks it`
-        : probe?.routed
-          ? `Placement: the probe routed ${net} only by breaking the floor clearance (${probe.floorViolations} pair${probe.floorViolations === 1 ? "" : "s"}); move parts or a no-go area`
-          : `Placement: even with only the fab floor and no-go areas, ${net} did not route; the parts or a no-go area block it`;
-  return { net, seq: snapshot.seq, verdict, summary, attempts, ...(probe ? { probe } : {}), blockers, areas, options: options_, ms: Date.now() - t0 };
-}
+export { diagnoseNet, diagnosisHash, diagnosisCacheDir, clearDiagnosisMemory, DEFAULT_DIAGNOSIS_BUDGET_MS, type DiagnoseOptions } from "./diagnose.js";

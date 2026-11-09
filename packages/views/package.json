@@ -28,6 +28,9 @@
     "./pcb/remote": "./src/pcb/remote.ts",
     "./pcb/requests": "./src/pcb/requests.ts",
     "./pcb/types": "./src/pcb/types.ts",
+    "./schematic": "./src/schematic/index.ts",
+    "./schematic/host": "./src/schematic/host/index.ts",
+    "./shell": "./src/shell/index.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -45,6 +48,8 @@
   "dependencies": {
     "@deltarobotics/uhd-viewer": "^0.2.1",
     "@protoboardai/board": "^0.2.2",
+    "@protoboardai/schematic": "^0.2.2",
+    "@protoboardai/board-edit": "^0.2.2",
     "@radix-ui/react-select": "^2.3.7"
   },
   "peerDependencies": {

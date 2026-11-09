@@ -23,12 +23,14 @@ import type * as ImportModule from "@protoboardai/board-import";
 import type * as RouteModule from "@protoboardai/board-route";
 import type * as SceneModule from "@protoboardai/board-scene";
 import type * as HostModule from "@protoboardai/views/pcb/host";
+import { boardExportKicad, exportKicadText } from "./board-export-kicad.js";
 import {
   agentActor,
   BoardLockedError,
   boardBuildDir,
   canonicalRecord,
   connectBoard,
+  createEngine,
   describeOperations,
   findProjectRoot,
   findService,
@@ -38,6 +40,7 @@ import {
   openBoardService,
   serveBoard,
   toMm,
+  withChanges,
   writeBoardDir,
   writeNetlist,
   writeZoneFill,
@@ -53,6 +56,7 @@ import {
   type Reply,
   type Transaction,
 } from "@protoboardai/board/node";
+import { applyWithWait, attachServeEditing, EDITING_BOOLEAN, EDITING_COMMANDS, editingCommands, proposeRoute, waitSeconds } from "./board-editing.js";
 
 export type Out = (data: unknown, text: () => string) => void;
 
@@ -98,7 +102,7 @@ export const BOARD_COMMANDS: readonly Spec[] = [
   { name: "inspect", args: "<dir>", summary: "Summary: board, layers, counts, nets, rules, locks, version, leases", flags: [] },
   { name: "query", args: "<dir> [<query.json>]", summary: "Objects by --id, --net, --region x1,y1,x2,y2 or --point x,y (nm, or with mm); JSON", flags: ["id", "net", "region", "point", "tolerance", "layers", "kinds", "records"] },
   { name: "ops", args: "", summary: "The operation registry: names, descriptions, examples and JSON schemas (--all adds system ones)", flags: ["all"] },
-  { name: "apply", args: "<dir> [<ops.json> | -]", summary: "Apply a transaction file (or ops, or one op; - or no file reads stdin); --dry-run validates only", flags: ["as", "dry-run", "label", "batch-id", "change-set", "expect-seq", "expect-epoch", "lease"] },
+  { name: "apply", args: "<dir> [<ops.json> | -]", summary: "Apply a transaction file (or ops, or one op; - or no file reads stdin); --dry-run validates only; --wait <s> retries while paused or held", flags: ["as", "dry-run", "label", "batch-id", "change-set", "expect-seq", "expect-epoch", "lease", "wait"] },
   { name: "undo", args: "<dir>", summary: "Undo the actor's own last transaction (needs a running service to have history)", flags: ["as", "lease"] },
   { name: "redo", args: "<dir>", summary: "Redo the actor's last undone transaction", flags: ["as", "lease"] },
   { name: "revert", args: "<dir> <change set id>", summary: "Undo a whole change set, all or nothing", flags: ["as", "lease"] },
@@ -108,12 +112,15 @@ export const BOARD_COMMANDS: readonly Spec[] = [
   { name: "save", args: "<dir>", summary: "Write the changed board files", flags: [] },
   { name: "checkpoint", args: "<dir> <label>", summary: "Save, then print the commit message for the caller to commit (never runs Git)", flags: [] },
   { name: "import", args: "<source> <dir>", summary: "Import a board (KiCad, Circuit JSON, EasyEDA Pro) into an empty folder, with its zone fill and import record; prints the import report", flags: ["kind", "as"] },
-  { name: "check", args: "<dir>", summary: "Connectivity and design rule checks with the board's zone fill, and KiCad's DRC beside them when the board came from KiCad; exit 1 on errors", flags: ["kicad", "kicad-root", "no-cross-check"] },
+  { name: "check", args: "<dir>", summary: "Connectivity and design rule checks with the board's zone fill, and KiCad's DRC beside them when the board came from KiCad; exit 1 on errors; --with <ops or proposal file> or --proposal <id> (--items) checks the board as it would be after that change, beside the board now; --refill fills the zones again first", flags: ["kicad", "kicad-root", "no-cross-check", "with", "proposal", "items", "as", "refill"] },
   { name: "render", args: "<dir>", summary: "A PNG of the board (headless Chrome) with its fill, ratsnest and findings; --out, --region, --layers, --flip, --net, --width, --height", flags: ["out", "region", "layers", "flip", "net", "width", "height"] },
   { name: "describe", args: "<dir>", summary: "The agent scene (JSON and PNG) of the whole board, or of one --region (mm), --net, --object or --finding, with the checks' connectivity", flags: ["region", "net", "object", "finding", "out", "image"] },
-  { name: "route", args: "<dir>", summary: "Autoroute (tscircuit first, Freerouting as the fallback) and print the scored proposal; --nets or --region, --budget <s>; changes nothing unless --apply", flags: ["nets", "region", "budget", "apply", "as"] },
+  { name: "route", args: "<dir>", summary: "Autoroute (tscircuit first, Freerouting as the fallback) and print the scored proposal; --nets or --region, --budget <s>; changes nothing unless --apply; --propose stores it as proposals", flags: ["nets", "region", "budget", "apply", "propose", "as"] },
   { name: "diagnose", args: "<dir> <net>", summary: "Why a net does not route: rules or placement, the attempts, the probe, what blocks it, and relaxations test-run on copies; changes nothing", flags: ["budget"] },
   { name: "import-dxf", args: "<dir> <file.dxf>", summary: "Set the board outline and cutouts from a DXF drawing (one outline.import_dxf op); prints what was read and skipped", flags: ["units", "layers", "tolerance", "as"] },
+  { name: "export-kicad", args: "<dir> <out.kicad_pcb>", summary: "Write the board as a KiCad board: the .kicad_pcb, .kicad_pro and .kicad_dru beside each other (through the import record's offset, with the zone fill; objects the source gave one UUID share one again unless --unique-ids); prints the export report", flags: ["unique-ids"] },
+  // proposals, pause and resume, the corridor query (board-editing.ts)
+  ...EDITING_COMMANDS.map((c) => ({ ...c, flags: [...c.flags] })),
 ];
 
 export const BOARD_USAGE = [
@@ -128,7 +135,7 @@ export const BOARD_USAGE = [
 
 class UsageError extends Error {}
 
-const BOOLEAN = new Set(["json", "dry-run", "all", "records", "recover", "autosave", "no-cross-check", "flip", "apply"]);
+const BOOLEAN = new Set(["json", "dry-run", "all", "records", "recover", "autosave", "no-cross-check", "refill", "flip", "apply", "unique-ids", ...EDITING_BOOLEAN]);
 const MULTI = new Set(["id", "origin"]);
 const GLOBAL = new Set(["json", "format", "cwd"]);
 
@@ -314,6 +321,7 @@ const COMMANDS = {
     if (live) throw new Error(`this board is already served by pid ${live.pid} on port ${live.port} (${live.file})`);
     const svc = openBoardService({ dir });
     let server: Awaited<ReturnType<typeof serveBoard>> | undefined;
+    let editing: Awaited<ReturnType<typeof attachServeEditing>>;
     try {
       let recovered: number | undefined;
       const pending = svc.recoverable();
@@ -322,7 +330,9 @@ const COMMANDS = {
       const stop = new AbortController();
       const origins = c.a.all("origin");
       const port = int(c.a.one("port"), "--port");
-      server = await serveBoard(svc, { ...(port !== undefined ? { port } : {}), ...(origins.length ? { origins } : {}), onShutdown: () => stop.abort() });
+      // live checks (a `derived` event after each commit) and board.diagnose, when the editing kernel is installed
+      editing = await attachServeEditing(svc, c.stderr);
+      server = await serveBoard(svc, { ...(port !== undefined ? { port } : {}), ...(origins.length ? { origins } : {}), ...(editing ? { methods: editing.methods } : {}), onShutdown: () => stop.abort() });
       let timer: ReturnType<typeof setTimeout> | undefined;
       const unsub = c.a.has("autosave")
         ? svc.subscribe((e) => {
@@ -350,6 +360,8 @@ const COMMANDS = {
       clearTimeout(timer);
       await server.close();
       server = undefined;
+      editing?.stop();
+      editing = undefined;
       const saved = svc.save();
       svc.close({ save: false });
       if (c.json) c.write(JSON.stringify({ status: "stopped", seq: saved.seq, written: saved.written, refused: saved.refused }) + "\n");
@@ -357,6 +369,7 @@ const COMMANDS = {
       return saved.refused.length ? BOARD_EXIT.refused : BOARD_EXIT.ok;
     } finally {
       await server?.close();
+      editing?.stop();
       svc.close({ save: false });
     }
   },
@@ -438,8 +451,11 @@ const COMMANDS = {
     const text = !file || file === "-" ? await (c.io.readStdin ?? readStdin)() : readFileSync(resolve(c.io.cwd, file), "utf8");
     const tx = transactionFrom(text, c.a);
     const actor = resolveActor(c.a.one("as"), c.env);
-    const { r, mode } = await withBoard(dir, async (b) => ({ r: await b.apply(tx, actor), mode: b.mode }));
-    c.out(r, () => replyText(r, mode));
+    // --wait: a `paused` or `held` refusal is sent again until it clears or the time runs out
+    const wait = waitSeconds(c.a.one("wait"), (m) => new UsageError(m));
+    if (wait !== undefined && tx.dryRun) throw new UsageError("--wait is for a write; a dry run is never paused or held");
+    const { r, mode, waited } = await withBoard(dir, async (b) => (wait !== undefined ? { ...(await applyWithWait(b, tx, actor, wait)), mode: b.mode } : { r: await b.apply(tx, actor), mode: b.mode, waited: undefined }));
+    c.out(waited ? { ...r, waited } : r, () => replyText(r, mode) + (waited && waited.tries > 1 ? `\n  waited ${(waited.ms / 1000).toFixed(1)} s, ${waited.tries} tries${r.status === "refused" && (r.reason === "paused" || r.reason === "held") ? " (still refused when --wait ran out)" : ""}` : ""));
     return exitOf(r);
   },
 
@@ -496,6 +512,7 @@ const COMMANDS = {
     c.out({ ...p, mode }, () =>
       [
         `seq ${p.seq}, epoch ${p.epoch}${mode === "local" ? " (no running service: no leases)" : ""}`,
+        ...(p.paused ? [`  PAUSED by ${p.paused.by.id}${p.paused.reason ? ` (${p.paused.reason})` : ""} since ${new Date(p.paused.since).toISOString()}${p.paused.until !== undefined ? ` until ${new Date(p.paused.until).toISOString()}` : " until resumed"}: agents and routers are refused`] : []),
         ...(p.leases.length ? p.leases.map((l) => `  lease ${l.id} by ${l.holder.id}: ${[...l.roots.map((r) => `root ${r || "(whole board)"}`), ...l.nets.map((n) => `net ${n}`), ...(l.region ? ["a region"] : [])].join(", ")} until ${new Date(l.expiresAt).toISOString()}`) : ["  no leases"]),
         ...p.intents.map((i) => `  intent of ${i.actor.id} (${i.from === "lease" ? "from its lease" : "recent edit"}): ${JSON.stringify(i.label)}${i.ids.length ? `, ${i.ids.length} object(s)` : ""}`),
       ].join("\n"),
@@ -607,16 +624,61 @@ const COMMANDS = {
     const noCross = c.a.has("no-cross-check");
     if (noCross && (kicad || kicadRoot)) throw new UsageError("--no-cross-check turns the KiCad cross-check off; drop it, or drop --kicad and --kicad-root");
     if (kicad && !existsSync(kicad)) throw new UsageError(`--kicad: no file ${kicad}`);
+    // --with <file> / --proposal <id>: the checks on the board as it would be after that change (nothing changes)
+    const withFile = c.a.one("with");
+    const proposalId = c.a.one("proposal");
+    if (withFile && proposalId) throw new UsageError("--with and --proposal exclude each other");
+    if ((withFile || proposalId) && (kicad || kicadRoot)) throw new UsageError("--with and --proposal check a board that is not on disk; KiCad cross-checks a file (drop --kicad and --kicad-root)");
+    if (c.a.one("items") && !withFile && !proposalId) throw new UsageError("--items narrows --with <proposal file> or --proposal <id>");
     const host = await loadHost();
     if (!host) return notAvailable(c, "check", "the board analysis is not installed (package views, pcb/host)");
     const t0 = performance.now();
-    const s = await withBoard(dir, (b) => b.snapshot(), "read");
-    const a = await host.analyzeBoard(s, dir, { crossCheck: noCross ? false : kicad ? true : "auto", ...(kicad ? { kicadPcb: kicad } : {}), ...(kicadRoot ? { kicadRoot } : {}) });
+    const loaded = await withBoard(dir, async (b) => {
+      const snap = await b.snapshot();
+      const preview = proposalId ? await b.previewProposal(proposalId, list(c.a.one("items")) ? { items: list(c.a.one("items"))! } : {}) : undefined;
+      return { snap, preview };
+    }, "read");
+    let s = loaded.snap;
+    let candidate: { kind: "with" | "proposal"; what: string; items?: string[]; now: BoardSnapshot } | undefined;
+    if (proposalId) {
+      const pv = loaded.preview;
+      if (!pv || !pv.valid) {
+        const error = pv ? (pv.error ?? "it does not apply") : `no proposal ${proposalId}`;
+        c.out({ status: "invalid", error }, () => `INVALID  --proposal ${proposalId}: ${error}`);
+        return BOARD_EXIT.invalid;
+      }
+      candidate = { kind: "proposal", what: proposalId, ...(list(c.a.one("items")) ? { items: list(c.a.one("items"))! } : {}), now: s };
+      s = { ...s, doc: withChanges(s.doc, [...pv.added, ...pv.changed.map((x) => x.after)], pv.removed.map((x) => x.id)) };
+    } else if (withFile) {
+      const file = resolve(c.io.cwd, withFile);
+      const tx = changeFrom(readFileSync(file, "utf8"), list(c.a.one("items")));
+      const actor = resolveActor(c.a.one("as"), c.env);
+      // an epoch of its own: ids it issues never collide with the board's (an engine counts ids per epoch from 1)
+      const engine = createEngine(s.doc, { epoch: "chkwth", now: () => 0 });
+      const r = engine.apply({ ...tx, dryRun: false, expectSeq: undefined, expectEpoch: undefined } as Transaction, actor);
+      if (r.status !== "applied") {
+        c.out(r, () => `--with ${withFile}: ${replyText(r, "local").replace(/^(\w+)/, "$1 (nothing checked)")}`);
+        return exitOf(r);
+      }
+      candidate = { kind: "with", what: withFile, ...(list(c.a.one("items")) ? { items: list(c.a.one("items"))! } : {}), now: s };
+      s = { ...s, doc: engine.doc };
+    }
+    // --refill: the zones filled again around the copper as it is now (the fill engine), as the board service's live
+    // checks and the layout screen do once the board is edited; without it, the cached fill (an imported board's is
+    // the source tool's last fill, current for its zones but not refilled around copper moved since)
+    const refill = c.a.has("refill");
+    const fillMod = refill ? await host.loadFillModule() : undefined;
+    if (refill && !fillMod) return notAvailable(c, "check --refill", "the zone fill engine is not installed (package board-fill)");
+    const fillOf = (snap: BoardSnapshot) => (fillMod ? { fill: fillMod.fillZones(snap).fill } : {});
+    const a = await host.analyzeBoard(s, dir, { crossCheck: candidate || noCross ? false : kicad ? true : "auto", ...(kicad ? { kicadPcb: kicad } : {}), ...(kicadRoot ? { kicadRoot } : {}), ...fillOf(s) });
+    const nowA = candidate ? await host.analyzeBoard(candidate.now, dir, { crossCheck: false, ...fillOf(candidate.now) }) : undefined;
     if (!a.available || !a.result) return notAvailable(c, "check", a.reason ?? "the board checks are not installed (package board-checks)");
     const r = a.result;
     const total = Math.round(performance.now() - t0);
     const errorFindings = r.findings.filter((f) => f.severity === "error").length;
-    const cross = a.crossCheck ?? { ran: false as const, reason: noCross ? "turned off (--no-cross-check)" : "the board was not imported from a KiCad file (--kicad <file> names one)", inputHash: r.inputHash };
+    const cross = a.crossCheck ?? { ran: false as const, reason: candidate ? `not run on a board that is not on disk (--${candidate.kind})` : noCross ? "turned off (--no-cross-check)" : "the board was not imported from a KiCad file (--kicad <file> names one)", inputHash: r.inputHash };
+    const nowSummary = nowA?.result?.summary;
+    const withData = candidate ? { kind: candidate.kind, [candidate.kind === "with" ? "file" : "id"]: candidate.what, ...(candidate.items ? { items: candidate.items } : {}), now: nowSummary ?? null } : undefined;
     const fill = fillState(a, r.connectivity);
     const data = {
       dir,
@@ -624,6 +686,8 @@ const COMMANDS = {
       seq: s.seq,
       summary: r.summary,
       findings: r.findings,
+      // findings a person waived (not in findings or the counts), each with its waiver
+      waived: r.waived ?? [],
       notRun: r.notRun,
       defaults: r.defaults,
       notes: r.notes,
@@ -632,17 +696,30 @@ const COMMANDS = {
       fill: fill.data,
       importRecord: a.importRecord ?? null,
       ms: { checks: a.ms.checks ?? null, kicad: a.ms.kicad ?? null, total },
+      ...(withData ? { with: withData } : {}),
     };
     const checks = await host.loadChecksModule();
     c.out(data, () =>
       [
-        ...r.findings.map((f) => `${f.severity.toUpperCase().padEnd(7)} ${f.check}  ${f.message}  [${f.objects.join(", ")}] at ${mmText(f.location.x)}, ${mmText(f.location.y)}${f.location.layer ? ` on ${f.location.layer}` : ""}  (${f.id})`),
+        // in plain language (the screen's words); the ids of findings, objects and rules are in --json
+        ...r.findings.map((f) => {
+          const d = host.describeFinding?.(f, s.doc);
+          return `${f.severity.toUpperCase().padEnd(7)} ${d ? `${d.check}: ${d.sentence}` : `${f.check}  ${f.message}`}  at (${+toMm(f.location.x).toFixed(3)}, ${+toMm(f.location.y).toFixed(3)}) mm`;
+        }),
+        ...(r.findings.length ? ["(finding, object and rule ids: --json)"] : []),
         ...r.notRun.map((n) => `NOT RUN ${n.check}: ${n.reason}`),
         ...r.defaults.map((n) => `DEFAULT ${n.check}: ${n.reason}`),
         ...r.summary.caveats.map((x) => `CAVEAT  ${x}`),
         ...r.notes.map((x) => `NOTE    ${x}`),
+        ...(r.waived ?? []).map((w) => `WAIVED  ${w.finding.check} (${w.finding.id}) by ${w.waiver}: out of the counts`),
         `zone fill: ${fill.text}`,
         `ours:  ${r.summary.line}  (seq ${s.seq}, checks ${a.ms.checks ?? "?"} ms)`,
+        ...(candidate
+          ? [
+              `  with ${candidate.kind === "with" ? `the change in ${candidate.what}` : `proposal ${candidate.what}`}${candidate.items ? ` (items ${candidate.items.join(", ")})` : ""} applied on a copy; nothing changed`,
+              `  the board now: ${nowSummary?.line ?? "not checked"}`,
+            ]
+          : []),
         ...crossCheckLines(cross, checks?.formatCrossCheck),
       ].join("\n"),
     );
@@ -797,6 +874,13 @@ const COMMANDS = {
     return exitOf(r);
   },
 
+  async "export-kicad"(c: Ctx): Promise<number> {
+    const r = await boardExportKicad(c.path(c.pos[0]), c.path(c.pos[1], "<out.kicad_pcb>"), await loadHost(), { uniqueIds: c.a.has("unique-ids") });
+    if (r.status === "not-available") return notAvailable(c, "export-kicad", r.reason);
+    c.out(r, () => exportKicadText(r));
+    return BOARD_EXIT.ok;
+  },
+
   async route(c: Ctx): Promise<number> {
     const dir = c.path(c.pos[0]);
     const nets = list(c.a.one("nets"));
@@ -807,7 +891,8 @@ const COMMANDS = {
     const region = box ? [{ x: box.minX, y: box.minY }, { x: box.maxX, y: box.minY }, { x: box.maxX, y: box.maxY }, { x: box.minX, y: box.maxY }] : undefined;
     const budgetMs = seconds(c.a.one("budget"), 60);
     const by = resolveActor(c.a.one("as"), c.env);
-    const r = await boardRoute(dir, { ...c.io.routing, ...(nets ? { nets } : {}), ...(region ? { region } : {}), budgetMs, apply: c.a.has("apply"), by });
+    if (c.a.has("apply") && c.a.has("propose")) throw new UsageError("board route takes --apply or --propose, not both");
+    const r = await boardRoute(dir, { ...c.io.routing, ...(nets ? { nets } : {}), ...(region ? { region } : {}), budgetMs, apply: c.a.has("apply"), propose: c.a.has("propose"), by });
     if (r.status === "not-available") return notAvailable(c, "route", r.message);
     c.out(r, () => routeText(r));
     return r.exit;
@@ -817,12 +902,25 @@ const COMMANDS = {
     const dir = c.path(c.pos[0]);
     const net = c.pos[1];
     if (!net) throw new UsageError("usage: protoboard board diagnose <dir> <net>  (missing <net>)");
-    const budgetMs = seconds(c.a.one("budget"), 30);
-    const r = await boardDiagnose(dir, net, { ...c.io.routing, budgetMs });
+    // one budget for the whole diagnosis (DEFAULT 8 s); progress on stderr for a person (not with --json)
+    const budgetMs = seconds(c.a.one("budget"), 8);
+    const r = await boardDiagnose(dir, net, { ...c.io.routing, budgetMs, ...(c.json ? {} : { onProgress: diagnoseProgress(c.stderr) }) });
     if (r.status === "not-available") return notAvailable(c, "diagnose", r.message);
     c.out(r, () => diagnoseText(r));
     return BOARD_EXIT.ok;
   },
+  // proposals (proposals, proposal, propose, accept, reject), pause, resume and corridor: board-editing.ts
+  ...editingCommands({
+    withBoard,
+    resolveActor,
+    parseLength,
+    replyText,
+    exitOf,
+    readJson,
+    usage: (m) => new UsageError(m),
+    loadScene: () => loadScene(),
+    notAvailable: (c, command, why) => notAvailable(c as Ctx, command, why),
+  }),
 } satisfies Record<string, (c: Ctx) => Promise<number>>;
 
 async function undoRedo(c: Ctx, which: "undo" | "redo"): Promise<number> {
@@ -853,6 +951,29 @@ async function readStdin(): Promise<string> {
   const chunks: Buffer[] = [];
   for await (const ch of process.stdin) chunks.push(ch as Buffer);
   return Buffer.concat(chunks).toString("utf8");
+}
+
+/**
+ * The change `board check --with` tries on a copy: a proposal file (`{ title, items: [{ key?, label, ops }] }`, the
+ * items named by key, `i<n>` when they have none, or all of them), or what `board apply` takes.
+ */
+export function changeFrom(text: string, items: string[] | undefined): Transaction {
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    throw new UsageError(`--with: the file is not JSON: ${(e as Error).message}`);
+  }
+  const its = data && typeof data === "object" && !Array.isArray(data) ? (data as { items?: unknown }).items : undefined;
+  if (Array.isArray(its)) {
+    const keyed = its.map((it, i) => ({ key: typeof it?.key === "string" ? it.key : `i${i}`, ops: Array.isArray(it?.ops) ? (it.ops as Transaction["ops"]) : [] }));
+    const unknown = (items ?? []).filter((k) => !keyed.some((x) => x.key === k));
+    if (unknown.length) throw new UsageError(`--items: the proposal file has no item ${unknown.join(", ")} (it has ${keyed.map((x) => x.key).join(", ")})`);
+    const chosen = items ? keyed.filter((x) => items.includes(x.key)) : keyed;
+    return { batchId: "check-with", label: "check a proposal file on a copy", ops: chosen.flatMap((x) => x.ops) };
+  }
+  if (items) throw new UsageError("--items narrows a proposal file ({ title, items }); this file holds a transaction or ops");
+  return transactionFrom(text, { one: () => undefined, has: () => false });
 }
 
 /** A transaction from a file's JSON: a whole transaction, a list of ops, or one op; flags fill or override the envelope. */
@@ -1028,6 +1149,7 @@ function compactCrossCheck(c: CrossCheckResult) {
     oursOnly: c.oursOnly.map((f) => f.id),
     borderline: c.borderline.map((f) => f.id),
     kicadOnly: c.kicadOnly,
+    waived: (c.waived ?? []).map((w) => ({ finding: w.finding.id, waiver: w.waiver, kicad: w.kicad ?? null })),
   };
 }
 
@@ -1039,7 +1161,7 @@ function crossCheckLines(c: CrossCheckResult, format: ((c: CrossCheckResult) => 
   const n = (x: { unconnected: number; errors: number; warnings: number }) => `${x.unconnected} unconnected, ${x.errors} error${x.errors === 1 ? "" : "s"}, ${x.warnings} warning${x.warnings === 1 ? "" : "s"}`;
   const lines = [
     `like with like: ours ${n(cmp.ours)}; KiCad ${n(cmp.kicad)}  (KiCad ${c.kicad.version ?? "version unknown"}${c.kicad.durationMs !== undefined ? `, ${Math.round(c.kicad.durationMs)} ms` : ""})`,
-    `apart: ours only ${c.oursOnlyCategories.count}, KiCad only ${c.kicadOnlyCategories.count}, not evaluated ${c.notEvaluated.rules.length} rule(s) with ${c.notEvaluated.kicadItems.length} KiCad item(s) under them, folded ${c.folded.length}`,
+    `apart: ours only ${c.oursOnlyCategories.count}, KiCad only ${c.kicadOnlyCategories.count}, not evaluated ${c.notEvaluated.rules.length} rule(s) with ${c.notEvaluated.kicadItems.length} KiCad item(s) under them, folded ${c.folded.length}, waived ${c.waived?.length ?? 0} (${c.waived?.filter((w) => w.kicad).length ?? 0} matched to a KiCad item)`,
     `KiCad raw: ${n(k)}${k.excluded ? `, ${k.excluded} excluded` : ""}`,
   ];
   if (format) lines.push(format(c));
@@ -1103,6 +1225,8 @@ export interface RouteOptions extends RoutingDeps {
   budgetMs?: number;
   /** Apply the proposal when its status is `proposed`, each step as its router. */
   apply?: boolean;
+  /** Store a `proposed` result as service proposals (one per router step, one item per net, the scores kept) for a person to accept. */
+  propose?: boolean;
   /** Who asked for the run (the steps are applied as their routers, never as this actor). */
   by?: Actor;
 }
@@ -1158,6 +1282,9 @@ async function runRoute(dir: string, o: RouteOptions, host: typeof HostModule, r
         const bad = replies.find((x) => x.reply.status !== "applied");
         exit = changed.length ? BOARD_EXIT.usage : bad ? exitOf(bad.reply) : BOARD_EXIT.ok;
       }
+      // --propose: the result as proposals a person accepts (only those that score better, say)
+      const proposals = o.propose && p.status === "proposed" ? await proposeRoute(b, p, s.epoch) : null;
+      if (proposals?.some((x) => "error" in x)) exit = BOARD_EXIT.invalid;
       return {
         status: p.status,
         runId: p.runId,
@@ -1195,6 +1322,8 @@ async function runRoute(dir: string, o: RouteOptions, host: typeof HostModule, r
         steps: p.steps.map((st) => ({ actor: st.actor.id, batchId: st.transaction.batchId, label: st.transaction.label, ops: st.transaction.ops.length })),
         applyRequested: !!o.apply,
         applied,
+        proposeRequested: !!o.propose,
+        proposals,
         ms: { route: routeMs },
         exit,
       };
@@ -1216,7 +1345,9 @@ function routeText(r: RouteReport): string {
         ? r.applied.complete
           ? "APPLIED"
           : "PROPOSED, APPLY STOPPED"
-        : "PROPOSED  (nothing changed; --apply applies it)"
+        : r.proposals
+          ? "PROPOSED  (nothing changed; stored for a person to accept)"
+          : "PROPOSED  (nothing changed; --apply applies it, --propose stores it for a person)"
       : `${r.status.toUpperCase()}  (nothing changed${r.applyRequested ? "; a result that is not proposed is never applied" : ""})`;
   const lines = [`${head}  ${r.runId}, seq ${r.seq}, epoch ${r.epoch}`];
   for (const x of r.reasons) lines.push(`  reason: ${x}`);
@@ -1231,6 +1362,10 @@ function routeText(r: RouteReport): string {
   if (r.openNets.length) lines.push(`  still open: ${r.openNets.join(", ")} (\`protoboard board diagnose <dir> <net>\` says why)`);
   if (r.unexpressed.length) lines.push("  unexpressed (checked after the run, not given to a router):", ...r.unexpressed.map((u) => `    - ${u}`));
   for (const n of r.notes) lines.push(`  note: ${n}`);
+  if (r.proposals) {
+    for (const x of r.proposals) lines.push("error" in x ? `  NOT PROPOSED: ${x.error}` : `  stored as proposal ${x.id}: ${JSON.stringify(x.title)}, ${x.items.length} item(s) (${x.items.map((i) => `${i.key} ${i.nets.join("+") || i.label}`).join(", ")})`);
+    if (r.proposals.some((x) => !("error" in x))) lines.push("  a person accepts what scores better: `protoboard board proposal <dir> <id> --preview`, then `board accept <dir> <id> [--items ...]`");
+  } else if (r.proposeRequested) lines.push("  nothing proposed: only a proposed result is stored as proposals");
   if (r.applied) {
     lines.push(`  applied as the routers (accepted by ${r.applied.by}${r.applied.mode === "local" ? "; no running service: opened here and saved" : ""}):`);
     for (const x of r.applied.replies) lines.push(`    ${x.actor}: ${replyText(x.reply, "service").split("\n")[0]}`);
@@ -1242,21 +1377,41 @@ function routeText(r: RouteReport): string {
 
 export type DiagnoseReport = Awaited<ReturnType<typeof runDiagnose>>;
 
-/** `board diagnose`: why one net does not route (the host's diagnosis). Changes nothing. Exported for tests (inject routers and a scorer). */
-export async function boardDiagnose(dir: string, net: string, o: RoutingDeps & { budgetMs?: number } = {}): Promise<NotAvailable | DiagnoseReport> {
+type DiagnosisProgress = Parameters<NonNullable<HostModule.DiagnoseOptions["onProgress"]>>[0];
+type DiagnoseOptions = RoutingDeps & { budgetMs?: number; onProgress?: (p: DiagnosisProgress) => void; cache?: boolean };
+
+/**
+ * `board diagnose`: why one net does not route (the host's diagnosis), within one time budget for the whole diagnosis
+ * (DEFAULT 8 s). Changes nothing on the board; the answer is cached under the board's build folder. Exported for tests
+ * (inject routers and a scorer).
+ */
+export async function boardDiagnose(dir: string, net: string, o: DiagnoseOptions = {}): Promise<NotAvailable | DiagnoseReport> {
   const r = await routing(o);
   if ("status" in r) return r;
   return runDiagnose(dir, net, o, r.host, r.routers, r.info);
 }
 
-const VERDICT = { routes: "routes as is", rules: "rules, not placement", placement: "placement" } as const;
+const VERDICT = { routes: "routes as is", rules: "rules, not placement", placement: "placement", connected: "connected", unknown: "not known (the budget ran out)" } as const;
+
+/** Progress lines for a person (stderr): one per stage, and at most one a second within a stage. */
+function diagnoseProgress(write: (s: string) => void): (p: DiagnosisProgress) => void {
+  let stage = "";
+  let at = 0;
+  return (p) => {
+    const now = Date.now();
+    if (p.stage === stage && now - at < 1000 && p.stage !== "done") return;
+    stage = p.stage;
+    at = now;
+    write(`  diagnose ${p.net}: ${p.stage} ${Math.round(p.fraction * 100)}%  ${(p.elapsedMs / 1000).toFixed(1)} of ${(p.budgetMs / 1000).toFixed(0)} s${p.router ? `  ${p.router}` : ""}${p.message ? `: ${p.message}` : ""}\n`);
+  };
+}
 const TIERS = ["floor", "no_go", "target", "policy"] as const;
 
-async function runDiagnose(dir: string, net: string, o: RoutingDeps & { budgetMs?: number }, host: typeof HostModule, routers: RouteModule.Router[], info: HostModule.RouterInfo[]) {
-  const budgetMs = o.budgetMs ?? 30_000;
+async function runDiagnose(dir: string, net: string, o: DiagnoseOptions, host: typeof HostModule, routers: RouteModule.Router[], info: HostModule.RouterInfo[]) {
+  const budgetMs = o.budgetMs ?? 8_000;
   const s = await withBoard(dir, (b) => b.snapshot(), "read");
   if (!s.doc.nets.has(net)) throw new UsageError(`the board has no net ${net} (\`protoboard board inspect\` lists them)`);
-  const v = await host.diagnoseNet(s, net, { budgetMs, routers, ...(o.scorer ? { scorer: o.scorer } : {}) });
+  const v = await host.diagnoseNet(s, net, { budgetMs, routers, dir, ...(o.scorer ? { scorer: o.scorer, scorerName: o.scorerName ?? "injected" } : {}), ...(o.onProgress ? { onProgress: o.onProgress } : {}), ...(o.cache === false ? { cache: false } : {}) });
   return {
     status: "diagnosed" as const,
     dir,
@@ -1273,15 +1428,25 @@ async function runDiagnose(dir: string, net: string, o: RoutingDeps & { budgetMs
     blockers: v.blockers,
     areas: TIERS.map((tier) => ({ tier, areas: v.areas.filter((a) => a.tier === tier) })),
     options: v.options,
+    links: v.links ?? null,
+    pour: v.pour ?? null,
+    stopped: v.stopped ?? [],
+    notes: v.notes ?? [],
+    cached: !!v.cached,
+    hash: v.hash ?? null,
     ms: v.ms,
   };
 }
 
 function diagnoseText(r: DiagnoseReport): string {
-  const lines = [`${r.net}: ${r.verdictText.toUpperCase()}  (seq ${r.seq}, epoch ${r.epoch}; nothing changed)`, `  ${r.summary}`, "  attempts (every rule as it is):"];
+  const lines = [`${r.net}: ${r.verdictText.toUpperCase()}  (seq ${r.seq}, epoch ${r.epoch}; nothing changed${r.cached ? "; from the cache" : ""})`];
+  if (r.pour) lines.push(`  ${r.pour.note}`);
+  lines.push(`  ${r.summary}`, `  budget ${r.budgetMs / 1000} s for the whole diagnosis; took ${(r.ms / 1000).toFixed(1)} s${r.links !== null ? `; ${r.links} open link(s) diagnosed` : ""}`);
+  for (const x of r.stopped) lines.push(`  STOPPED ${x}`);
+  lines.push(r.attempts.length ? "  attempts (every rule as it is):" : "  attempts: none (nothing to route)");
   for (const a of r.attempts) lines.push(`    ${a.router}  ${a.status}${a.reason ? ` (${a.reason})` : ""}  ${a.copper.segments} segment(s), ${a.copper.vias} via(s), ${a.ms} ms`);
   if (r.probe) lines.push(`  probe (the fab floor and no-go areas only): ${r.probe.router} ${r.probe.routed ? "routed" : "did not route"} the net, ${mmText(r.probe.length)}, ${r.probe.vias} via(s), ${r.probe.floorViolations} pair(s) under the floor clearance, ${r.probe.ms} ms`);
-  else lines.push("  probe: not run (the net routes as is)");
+  else lines.push(`  probe: not run (${r.verdict === "routes" ? "the net routes as is" : r.verdict === "connected" ? "nothing is open" : "the budget ran out"})`);
   lines.push("  what blocks it:", ...r.blockers.map((b) => `    ${b.tier.padEnd(7)} ${b.rule}: ${b.what !== b.rule ? `${b.what}; ` : ""}${b.blocks}`));
   lines.push("  rule areas by tier:");
   for (const t of r.areas) lines.push(`    ${t.tier}: ${t.areas.length ? t.areas.map((a) => `${a.id}${a.name !== a.id ? ` (${a.name})` : ""}${a.blocks ? ` blocks ${a.blocks}` : ""}`).join("; ") : "none"}`);
@@ -1289,9 +1454,10 @@ function diagnoseText(r: DiagnoseReport): string {
     lines.push("  relaxations (test-run on copies; none applied):");
     for (const x of r.options) {
       const res = x.result;
-      lines.push(`    ${x.title}: ${x.detail}`, `      -> ${res.routed ? "routed" : "did not route"}: ${res.open} open, ${res.errors} error(s), ${res.vias} via(s), ${mmText(res.length)}, ${res.newFindings} new finding(s), ${res.ms} ms${res.note ? ` (${res.note})` : ""}`);
+      lines.push(`    ${x.title}: ${x.detail}`, res.skipped ? `      -> not test-run: ${res.skipped}` : `      -> ${res.routed ? "routed" : "did not route"}: ${res.open} open, ${res.errors} error(s), ${res.vias} via(s), ${mmText(res.length)}, ${res.newFindings} new finding(s), ${res.ms} ms${res.note ? ` (${res.note})` : ""}`);
     }
-  } else lines.push(`  relaxations: ${r.verdict === "routes" ? "none needed" : "none to try (the plan is already at the floor; the floor is never relaxed)"}`);
+  } else lines.push(`  relaxations: ${r.verdict === "routes" || r.verdict === "connected" ? "none needed" : "none to try (the plan is already at the floor; the floor is never relaxed)"}`);
+  for (const x of r.notes) lines.push(`  note: ${x}`);
   return lines.join("\n");
 }
 

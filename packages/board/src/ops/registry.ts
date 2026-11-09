@@ -26,6 +26,8 @@ export interface ApplyContext {
   edited?: "hand" | "agent" | "routed";
   /** Whether copper this operation adds or moves is locked by default (a person's copper: contract section 6). */
   lockCopper: boolean;
+  /** The engine's clock (milliseconds), for times an operation records (a waiver's `at`). Absent outside an engine. */
+  now?: () => number;
 }
 
 export interface ApplyResult {
@@ -50,8 +52,15 @@ export interface OperationDef<S extends z.ZodTypeAny = z.ZodTypeAny> {
   /** `system`: hosts, undo and the engine only; never offered as a CLI or MCP tool. */
   audience: "all" | "system";
   phase: 1 | 2;
+  /**
+   * Only a person (or a host acting for one) makes this change: an agent's or router's call is refused
+   * `needs-person`, and the service stores an agent's as a proposal for a person to accept (a waiver).
+   */
+  person?: true;
   /** A valid call on the Airnode C3 fixture (without `op`). */
   example: Record<string, unknown>;
+  /** Calls that make `example` apply on the fixture when it needs something the fixture lacks: run them first (before it in the same transaction, or in one of their own). */
+  exampleBefore?: OpCall[];
   apply(doc: BoardDocument, input: z.infer<S>, ctx: ApplyContext): ApplyResult;
 }
 

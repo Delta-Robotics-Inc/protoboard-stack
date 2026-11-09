@@ -153,6 +153,26 @@ describe("board diagnose", () => {
     expect((await run(["diagnose", dir, "NOPE"], root, builtin())).code).toBe(2);
     expect((await run(["diagnose", dir], root, builtin())).code).toBe(2);
   });
+  it("keeps to one budget (8 s by default), prints progress on stderr for a person, and answers again from the cache", async () => {
+    const { root, dir } = project();
+    const before = files(dir);
+    const text = await run(["diagnose", dir, "LED1_A", "--budget", "7"], root, builtin());
+    expect(text.code, text.stdout + text.stderr).toBe(0);
+    expect(text.stderr).toMatch(/diagnose LED1_A: connectivity \d+%/);
+    expect(text.stderr).toMatch(/diagnose LED1_A: done 100%/);
+    expect(text.stdout).toMatch(/budget 7 s for the whole diagnosis/);
+    const json = await run(["diagnose", dir, "LED1_A", "--json"], root, builtin());
+    expect(json.stderr).toBe("");
+    const d = JSON.parse(json.stdout);
+    expect(d.budgetMs).toBe(8000);
+    expect(d.cached).toBe(false);
+    const again = JSON.parse((await run(["diagnose", dir, "LED1_A", "--json"], root, builtin())).stdout);
+    expect(again.cached).toBe(true);
+    expect(again.hash).toBe(d.hash);
+    // the board's files are untouched; the answer is cached under its build folder
+    expect(files(dir)).toEqual(before);
+    expect(readdirSync(join(root, ".protoboard", "build", "board", "board", "diagnosis"))).toContain(`${d.hash}.json`);
+  });
 });
 
 describe("the board_route and board_diagnose MCP tools", () => {

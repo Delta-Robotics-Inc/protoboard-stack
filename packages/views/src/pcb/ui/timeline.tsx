@@ -49,6 +49,17 @@ export interface TimelineProps {
 }
 
 const SPAN = 24;
+/** At most this many blocks in the mode's lane: each keeps room for its label; the rest are counted in one block. */
+const LANE_MAX = 8;
+
+/** The mode lane's blocks that fit: a window around the one in hand, and a count of the rest. */
+export function laneWindow(blocks: readonly LaneBlock[], max = LANE_MAX): { shown: LaneBlock[]; before: LaneBlock[]; after: LaneBlock[] } {
+  if (blocks.length <= max) return { shown: [...blocks], before: [], after: [] };
+  const on = Math.max(0, blocks.findIndex((b) => b.tone === "queue-on"));
+  const room = max - 1;
+  const start = Math.min(Math.max(0, on - 1), blocks.length - room);
+  return { shown: blocks.slice(start, start + room), before: blocks.slice(0, start), after: blocks.slice(start + room) };
+}
 
 export function Timeline(p: TimelineProps) {
   const lanesRef = useRef<HTMLDivElement>(null);
@@ -68,6 +79,7 @@ export function Timeline(p: TimelineProps) {
     const s = Math.round(scale.min + f * slots - 0.5);
     p.onScrub(s >= p.seq ? undefined : Math.max(scale.min, s));
   };
+  const win = laneWindow(p.lane?.blocks ?? []);
   const lane = (children: ReactNode, className = "") => <div className={`lane ${className}`}>{children}</div>;
   return (
     <div className={`pcb-float pcb-timeline${p.lane ? " four" : ""}${p.replay !== undefined ? " replaying" : ""}`} onPointerDown={(e) => e.stopPropagation()}>
@@ -117,7 +129,7 @@ export function Timeline(p: TimelineProps) {
                   className={`pcb-block ${b.kind}${b.undo ? " undo" : ""}${p.selected === b.key ? " on" : ""}`}
                   style={{ position: "absolute", left: left(from), width: width(b.to - from + 1) }}
                   onClick={() => p.onSelect(p.selected === b.key ? undefined : { from: b.from, to: b.to, ids: b.ids })}
-                  title={`seq ${b.from}${b.to !== b.from ? ` to ${b.to}` : ""} · ${b.actor.kind} ${b.actor.name ?? b.actor.id} · ${b.entries} transaction${b.entries === 1 ? "" : "s"}${b.changeSet ? ` · change set ${b.changeSet}` : ""}`}
+                  title={`${b.label}\nseq ${b.from}${b.to !== b.from ? ` to ${b.to}` : ""} · ${b.actor.kind} ${b.actor.name ?? b.actor.id} · ${b.entries} transaction${b.entries === 1 ? "" : "s"}${b.changeSet ? ` · change set ${b.changeSet}` : ""}`}
                 >
                   {b.to !== b.from ? `${b.from}-${b.to}` : b.from} {b.label}
                 </button>
@@ -164,11 +176,21 @@ export function Timeline(p: TimelineProps) {
             <>
               {!p.lane.blocks.length && <span className="mute mono empty">Nothing here yet.</span>}
               <div className="flow" style={{ justifyContent: p.lane.align === "end" ? "flex-end" : "flex-start" }}>
-                {p.lane.blocks.map((b) => (
-                  <button key={b.key} className={`pcb-block lane-${b.tone}`} onClick={b.onClick} title={b.title ?? b.label}>
+                {win.before.length > 0 && (
+                  <span className="pcb-block lane-more" title={win.before.map((b) => b.label).join("\n")}>
+                    {win.before.length} before
+                  </span>
+                )}
+                {win.shown.map((b) => (
+                  <button key={b.key} className={`pcb-block lane-${b.tone}`} onClick={b.onClick} title={b.title && b.title !== b.label ? `${b.label}\n${b.title}` : b.label}>
                     {b.label}
                   </button>
                 ))}
+                {win.after.length > 0 && (
+                  <span className="pcb-block lane-more" title={win.after.map((b) => b.label).join("\n")}>
+                    +{win.after.length} more
+                  </span>
+                )}
               </div>
             </>,
           )}

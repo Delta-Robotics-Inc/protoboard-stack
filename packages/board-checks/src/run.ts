@@ -1,7 +1,7 @@
 /**
  * Running the checks: analyze a board once (model, rules, one pair scan, connectivity), then each check turns the
  * analysis into findings. `runBoardChecks` returns findings, connectivity and the status-line summary, all keyed
- * by the input hash. `createBoardChecks` gives the same checks as contract `Check` objects for `runChecks`.
+ * by the input hash; a person's waivers take their findings out of the list and the counts (`waived` lists them). `createBoardChecks` gives the same checks as contract `Check` objects for `runChecks`.
  */
 import { boxesMeet, runChecks, type BoardDocument, type BoardSnapshot, type Box, type Check, type CheckContext, type Finding } from "@protoboardai/board";
 import { CHECKS, coverage, type Analysis } from "./checks.js";
@@ -11,6 +11,7 @@ import { inputHash } from "./hash.js";
 import { buildModel } from "./model.js";
 import { RuleBook } from "./rules.js";
 import { summarize, type Summary, type Timing } from "./summary.js";
+import { applyWaivers, waiverFor, waiversOf, type WaivedFinding } from "./waivers.js";
 
 export interface RunOptions {
   /** Derived zone fill (fills.ts). Without it, zones connect nothing and the result says so. */
@@ -27,7 +28,10 @@ export interface BoardCheckResult {
   /** The snapshot's epoch and seq when run on a snapshot. */
   epoch?: string;
   seq?: number;
+  /** The findings that count (waived ones are in `waived`). */
   findings: Finding[];
+  /** Findings a person waived, each with the waiver that covers it: out of `findings` and the summary's counts. */
+  waived: WaivedFinding[];
   connectivity: ConnectivityResult;
   summary: Summary;
   /** Checks that did not run and why; checks that ran on a built-in default. */
@@ -101,16 +105,21 @@ export function runBoardChecks(input: BoardSnapshot | BoardDocument, options: Ru
   const validated = validate(all);
   const timing: Timing = { totalMs: Math.round((now() - t0) * 100) / 100, stages };
   const cov = coverage(analysis);
-  return {
-    inputHash: analysis.inputHash,
-    ...(isSnapshot(input) ? { epoch: input.epoch, seq: input.seq } : {}),
-    findings: validated,
-    connectivity: analysis.connectivity,
-    summary: summarize(validated, analysis.connectivity, { timing, notRun: analysis.notRun }),
-    notRun: analysis.notRun,
-    defaults: cov.defaults,
-    notes: analysis.notes,
-  };
+  // a person's waivers: those findings leave the list and the counts and are listed apart
+  return applyWaivers(
+    {
+      inputHash: analysis.inputHash,
+      ...(isSnapshot(input) ? { epoch: input.epoch, seq: input.seq } : {}),
+      findings: validated,
+      waived: [],
+      connectivity: analysis.connectivity,
+      summary: summarize(validated, analysis.connectivity, { timing, notRun: analysis.notRun }),
+      notRun: analysis.notRun,
+      defaults: cov.defaults,
+      notes: analysis.notes,
+    },
+    doc,
+  );
 }
 
 /** Validate the findings' shape and sort them as `runChecks` does (severity, then id), dropping repeats by id. */
@@ -139,7 +148,8 @@ export function createBoardChecks(options: { fills?: ZoneFillInput; join?: JoinR
     title: c.title,
     run(snapshot: BoardSnapshot, ctx: CheckContext): Finding[] {
       const { analysis } = analyzeBoard(snapshot.doc, fills, options.join);
-      return c.run(analysis).filter((f) => inRegion(f, ctx.region));
+      const waivers = waiversOf(snapshot.doc);
+      return c.run(analysis).filter((f) => inRegion(f, ctx.region) && !(waivers.length && waiverFor(f, waivers)));
     },
   }));
 }

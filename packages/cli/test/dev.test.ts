@@ -294,6 +294,11 @@ describe("protoboard dev on a temporary project", () => {
     expect(script).toContain(`import { createDevPartsData, mountWebViewer } from "./viewer/web-viewer.js"`);
     // the library and bom tabs ask this server, relative to the page too
     expect(script).toContain(`createDevPartsData({ base: here("__protoboard/parts/")`);
+    // the board host hangs from the page's folder, never from its query string (a page opened as /?drill=)
+    if (script.includes("createEventStreamBoardHost({")) {
+      expect(script).toContain(`createEventStreamBoardHost({ base: here("./")`);
+      expect(script).not.toContain(`createEventStreamBoardHost({ base: here("")`);
+    }
     // the page names no brand colour: the badge takes the viewer's theme tokens
     expect(page).not.toMatch(/#f26b1d|#ff5c00|oklch\(0\.6837/i);
     expect(script).toContain(`from "./relay.js"`);

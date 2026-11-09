@@ -7,7 +7,12 @@
  */
 import type { BoardRequest, PageTransaction } from "./types.js";
 
-const METHODS = new Set(["apply", "undo", "redo", "revertChangeSet", "takeOver", "save", "checkpoint", "commit", "at", "routers", "route", "routeCancel", "routeAccept", "routeReject", "diagnose", "waive", "unwaive"]);
+const METHODS = new Set(["apply", "undo", "redo", "revertChangeSet", "takeOver", "save", "checkpoint", "commit", "at", "routers", "route", "routeCancel", "routeAccept", "routeReject", "diagnose", "waive", "unwaive", "proposals", "proposalPreview", "proposalAccept", "proposalReject", "hold", "releaseHold", "pause", "resume"]);
+const PROPOSAL_STATUS = ["open", "stale", "accepted", "partial", "rejected"];
+/** A proposal id (`p.<epoch>.<n>`) or an item key: what the service accepts. */
+const ID = /^[A-Za-z0-9_.:-]+$/;
+const items = (v: unknown): string | undefined => (v === undefined ? undefined : !Array.isArray(v) || !v.length || v.length > 200 || v.some((k) => !str(k, 40) || !ID.test(k)) ? "items: 1 to 200 item keys" : undefined);
+const ttl = (v: unknown, max: number): string | undefined => (v === undefined ? undefined : !int(v) || v < 1000 || v > max ? `ttlMs: 1 s to ${max / 1000} s` : undefined);
 /** Fields a page may never send at any level of the envelope: the host decides who acts and with what authority. */
 const FORBIDDEN = ["actor", "by", "provenance", "leaseToken"];
 
@@ -25,7 +30,7 @@ function only(o: Record<string, unknown>, allowed: string[], where: string): str
 
 function checkTx(tx: unknown): string | undefined {
   if (!isObj(tx)) return "tx: a transaction object";
-  const bad = only(tx, ["batchId", "label", "ops", "changeSet", "expectEpoch", "expectSeq", "expectVersions", "dryRun"], "tx");
+  const bad = only(tx, ["batchId", "label", "ops", "changeSet", "expectEpoch", "expectSeq", "expectVersions", "expectRegion", "dryRun"], "tx");
   if (bad) return bad;
   const t = tx as Partial<PageTransaction>;
   if (!str(t.batchId, 200) || !/^[A-Za-z0-9_.:-]+$/.test(t.batchId)) return "tx.batchId: 1 to 200 of A-Z a-z 0-9 _ . : -";
@@ -42,6 +47,15 @@ function checkTx(tx: unknown): string | undefined {
     if (!isObj(t.expectVersions)) return "tx.expectVersions: id to version";
     const e = Object.entries(t.expectVersions);
     if (e.length > 1000 || e.some(([k, v]) => !str(k, 300) || !int(v) || v < 0)) return "tx.expectVersions: id to version";
+  }
+  if (t.expectRegion !== undefined) {
+    const r = t.expectRegion as unknown;
+    const why = "tx.expectRegion: { box: { minX, minY, maxX, maxY } (whole nm), layers?: up to 64 layer names, seq: a whole number }";
+    if (!isObj(r) || !isObj(r.box) || !int(r.seq) || r.seq < 0) return why;
+    if (only(r, ["box", "layers", "seq"], "tx.expectRegion") || only(r.box, ["minX", "minY", "maxX", "maxY"], "tx.expectRegion.box")) return why;
+    const b = r.box;
+    if (![b.minX, b.minY, b.maxX, b.maxY].every(int) || (b.minX as number) > (b.maxX as number) || (b.minY as number) > (b.maxY as number)) return why;
+    if (r.layers !== undefined && (!Array.isArray(r.layers) || r.layers.length > 64 || r.layers.some((l) => !str(l, 40)))) return why;
   }
   if (t.dryRun !== undefined && typeof t.dryRun !== "boolean") return "tx.dryRun: true or false";
   return undefined;
@@ -100,10 +114,34 @@ export function parseBoardRequest(value: unknown): { ok: true; request: BoardReq
       bad = check(["net", "budgetMs"]) ?? (!str(v.net, 200) ? "net: a net name" : v.budgetMs !== undefined && (!int(v.budgetMs) || v.budgetMs < 1000 || v.budgetMs > 600_000) ? "budgetMs: 1 s to 10 min" : undefined);
       break;
     case "waive":
-      bad = check(["finding", "reason"]) ?? (!str(v.finding, 200) ? "finding: a finding id" : !str(v.reason, 400) || !String(v.reason).trim() ? "reason: why it is not a problem (1 to 400 characters)" : undefined);
+      bad = check(["finding", "reason"]) ?? (!str(v.finding, 200) ? "finding: a finding id" : !str(v.reason, 500) || !String(v.reason).trim() ? "reason: why it is not a problem (1 to 500 characters)" : undefined);
       break;
     case "unwaive":
       bad = check(["finding"]) ?? (!str(v.finding, 200) ? "finding: a finding id" : undefined);
+      break;
+    case "proposals":
+      bad = check(["status"]) ?? (v.status !== undefined && !PROPOSAL_STATUS.includes(String(v.status)) ? "status: open, stale, accepted, partial or rejected" : undefined);
+      break;
+    case "proposalPreview":
+      bad = check(["id", "items"]) ?? (!str(v.id, 200) || !ID.test(v.id) ? "id: a proposal id" : items(v.items));
+      break;
+    case "proposalAccept":
+      bad = check(["id", "items", "allowStale"]) ?? (!str(v.id, 200) || !ID.test(v.id) ? "id: a proposal id" : items(v.items) ?? (v.allowStale !== undefined && typeof v.allowStale !== "boolean" ? "allowStale: true or false" : undefined));
+      break;
+    case "proposalReject":
+      bad = check(["id", "items", "reason"]) ?? (!str(v.id, 200) || !ID.test(v.id) ? "id: a proposal id" : items(v.items) ?? (v.reason !== undefined && !str(v.reason, 500) ? "reason: up to 500 characters" : undefined));
+      break;
+    case "hold":
+      bad = check(["ids", "ttlMs"]) ?? (!Array.isArray(v.ids) || !v.ids.length || v.ids.length > 2000 || v.ids.some((id) => !str(id, 300)) ? "ids: 1 to 2000 object ids" : ttl(v.ttlMs, 60_000));
+      break;
+    case "releaseHold":
+      bad = check(["id"]) ?? (v.id !== undefined && !str(v.id, 200) ? "id: a hold id" : undefined);
+      break;
+    case "pause":
+      bad = check(["reason", "ttlMs"]) ?? (v.reason !== undefined && !str(v.reason, 500) ? "reason: up to 500 characters" : ttl(v.ttlMs, 24 * 3600_000));
+      break;
+    case "resume":
+      bad = check([]);
       break;
   }
   return bad ? fail(bad) : { ok: true, request: value as unknown as BoardRequest };

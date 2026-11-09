@@ -1,7 +1,7 @@
 /** The orchestrator with the built-in and fake routers: fallback, rejection, lock verification, cancel, determinism, diagnostic. */
 import { describe, expect, it } from "vitest";
 import { createDocument, mm, openBoardService, withChanges, type BoardRecord, type TrackRec } from "@protoboardai/board";
-import { applyProposal, basicScorer, createBuiltinRouter, lockedChanges, lockedFingerprint, resolveConstraints, routeBoard, type RouteEvent } from "../src/index.js";
+import { applyProposal, basicScorer, createBuiltinRouter, lockedChanges, lockedFingerprint, netsInScope, resolveConstraints, routeBoard, type IslandSource, type RouteEvent } from "../src/index.js";
 import { baseRecords, blockedTopBoard, chip, diagnosticBoard, easyBoard, fakeRouter, netlist, stripTimes, track } from "./helpers.js";
 
 const scorer = basicScorer(mm(0.127));
@@ -198,6 +198,39 @@ describe("cancel, determinism, progress", () => {
   });
 });
 
+describe("one deadline, and the caller's islands", () => {
+  it("stops at the deadline: a slow router ends as a timeout (not a cancellation), the next is not started, and the proposal says so", async () => {
+    const slow = createBuiltinRouter({ id: "slow", delayMs: 400 });
+    const t0 = Date.now();
+    const p = await routeBoard(easyBoard(), { scope: { kind: "open" }, routers: [slow, createBuiltinRouter({ id: "next" })], scorer, deadline: Date.now() + 1200 });
+    expect(Date.now() - t0).toBeLessThan(3000);
+    expect(p.status).not.toBe("cancelled");
+    expect(p.stages[0]).toMatchObject({ router: "slow", status: "timeout" });
+    expect(p.stages[1]).toMatchObject({ router: "next", status: "skipped" });
+    expect(p.stages[1].reason).toMatch(/time budget ran out/);
+    expect(p.stopped?.join("; ")).toMatch(/slow: stopped at the time budget/);
+    expect(p.stopped?.join("; ")).toMatch(/next: not started/);
+  });
+
+  it("does not start a router whose startup needs more time than is left", async () => {
+    const jvm = { ...createBuiltinRouter({ id: "jvm" }), capabilities: { ...createBuiltinRouter().capabilities, startupMs: 60_000 } };
+    const p = await routeBoard(easyBoard(), { scope: { kind: "open" }, routers: [jvm, createBuiltinRouter()], scorer, deadline: Date.now() + 5000 });
+    expect(p.stages[0]).toMatchObject({ router: "jvm", status: "skipped" });
+    expect(p.stages[1]).toMatchObject({ router: "builtin", kept: true });
+    expect(p.status).toBe("proposed");
+  });
+
+  it("routes only the islands the caller's connectivity gives (a pour joins the rest)", async () => {
+    // the caller's connectivity says net A is joined already (by a pour, say): only B is routed
+    const islands: IslandSource = (d, nets) => new Map(nets.filter((n) => n !== "A").map((n) => [n, netsInScope(d, { kind: "nets", nets: [n] }).nets[0]?.islands ?? []]));
+    const p = await routeBoard(easyBoard(), { scope: { kind: "nets", nets: ["A", "B"] }, routers: [createBuiltinRouter()], scorer, islands });
+    expect(p.nets).toEqual(["B"]);
+    expect(p.status).toBe("proposed");
+    expect(p.openNets).toEqual([]);
+    expect(netsInScope(easyBoard(), { kind: "nets", nets: ["A"] }, () => new Map()).nets).toEqual([]);
+  });
+});
+
 describe("rules or placement diagnostic", () => {
   it("names the target rules that block a net, and placement for a net walled off", async () => {
     const p = await routeBoard(diagnosticBoard(), { scope: { kind: "open" }, routers: [createBuiltinRouter()], scorer });
@@ -239,5 +272,19 @@ describe("constraints", () => {
     expect(c.policies).toEqual([{ id: "rule:policy.via", check: "via_under_footprint", cost: 5 }]);
     expect(c.localRules).toEqual(["rule:target.inner"]);
     expect(c.defaulted).toEqual(["edge clearance", "via diameter", "via hole"]);
+  });
+
+  it("applies a rule whose condition names a class only to that class's nets; a condition on geometry is local", () => {
+    // as a KiCad custom rule imports: (condition "A.Type == 'track' && A.NetClass == 'power'")
+    const extra: BoardRecord[] = [
+      { kind: "netclass", id: "class:power", name: "power", nets: ["A"] },
+      { kind: "rule", id: "rule:dru.power", tier: "floor", check: "track_width", applies: { when: { all: [{ kind: ["track"], side: "A" }, { any: [{ class: ["power"], side: "A" }] }] } }, min: mm(0.3) },
+      { kind: "rule", id: "rule:dru.area", tier: "floor", check: "track_width", applies: { when: { all: [{ class: ["power"], side: "A" }, { area: ["X"], side: "A" }] } }, min: mm(0.5) },
+    ];
+    const c = resolveConstraints(easyBoard(extra), ["A", "B"]);
+    expect(c.nets.A.width.floor).toBe(mm(0.3));
+    expect(c.nets.B.width).toEqual({ plan: mm(0.25), floor: mm(0.127) });
+    expect(c.defaults.width.floor).toBe(mm(0.127));
+    expect(c.localRules).toEqual(["rule:dru.area"]);
   });
 });

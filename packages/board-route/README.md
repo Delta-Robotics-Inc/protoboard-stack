@@ -14,6 +14,12 @@ into scored, verified proposals, and the router adapters.
   open, times out or fails, the next one routes what is still open, and the proposal says so.
   When nets stay open, the rules-or-placement diagnostic reruns them with the floor and no-go
   tiers only, on a copy, and reports which target rules, if relaxed, let each net route.
+- **One deadline, net-local scoring.** `deadline` bounds a whole run: each router gets the time
+  left, is stopped at the deadline (a timeout), and one that cannot start in time (Freerouting's
+  JVM start, `startupMs`) is skipped; `proposal.stopped` says what was cut. `islands` routes only
+  the islands the caller's connectivity leaves apart (zone fill included), and
+  `createLocalScoring` scores repeated candidates on one board by what changed (incremental checks
+  and refill passed in) instead of a full check run each; the routing diagnosis uses both.
 - **Policies are costs, not walls.** Policy rules and policy keep-outs never enter a router's
   input as obstacles; what a router cannot express is listed in the job and checked after.
 
