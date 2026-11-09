@@ -1,14 +1,17 @@
 /**
  * Net completion: which copper of each net touches which, how many links are missing, and the ratsnest lines that
- * would close them. The board checks package is the authority; pass its result as `ConnectivityInput`. Without one
- * the scene estimates connectivity from geometry (copper overlap on a shared layer) and says so: zone fill is not
- * computed, so an item of a zone's net inside the zone's outline on a zone layer counts as joined to the pour.
+ * would close them. The board checks package is the authority: pass its connectivity (`runBoardChecks(...)
+ * .connectivity`, the core's `BoardConnectivity` shape) as the input. Without one the scene estimates connectivity
+ * from geometry (copper overlap on a shared layer) and says so: zone fill is not computed, so an item of a zone's
+ * net inside the zone's outline on a zone layer counts as joined to the pour. The estimate is only a fallback,
+ * labeled as such wherever the scene reports completion.
  */
+import type { BoardConnectivity } from "@protoboardai/board";
 import type { BoardModel, MPad, MTrack, MVia, MArea } from "./model.js";
 import { padSdf } from "./model.js";
 import { byStr, dist, pointInPolygon, polyDist, polyPolyDist, type Pt } from "./util.js";
 
-/** One net's islands as the checks package reports them (object and pad ids). */
+/** One net's islands (object and pad ids), in the scene's earlier input shape. */
 export interface NetConnectivity {
   net: string;
   islands: string[][];
@@ -21,12 +24,17 @@ export interface RatsnestLink {
   from: { id: string; x: number; y: number; layer?: string };
   to: { id: string; x: number; y: number; layer?: string };
 }
-/** Connectivity from the checks package (the shape this package assumes; see the README). */
-export interface ConnectivityInput {
+/** The scene's earlier input shape: islands per net and ratsnest lines. Still accepted. */
+export interface LegacyConnectivityInput {
   source?: string;
   nets: NetConnectivity[];
   ratsnest: RatsnestLink[];
 }
+/**
+ * Connectivity handed in: the checks package's result (the core's `BoardConnectivity`, which
+ * `@protoboardai/board-checks`' `ConnectivityResult` satisfies as it is), or the earlier per-net island shape.
+ */
+export type ConnectivityInput = BoardConnectivity | LegacyConnectivityInput;
 
 export interface RatLink {
   /** A scene-only id: `rat:<net>:<n>`, n from 1 in the net's order. */
@@ -48,10 +56,15 @@ export interface NetState {
 }
 
 export interface ConnectivityResult {
-  /** `estimate` (from geometry in this package) or `checks:<source>`. */
+  /** `estimate` (from geometry in this package), `checks` (the checks package's result) or `checks:<source>`. */
   source: string;
   nets: Map<string, NetState>;
   rats: RatLink[];
+  /** Nets the input left out, estimated from geometry instead (labeled in the scene). */
+  estimated?: string[];
+  /** The input's zone fill state and the zones it had no fill for (checks input only). */
+  zoneFill?: BoardConnectivity["zoneFill"];
+  zonesWithoutFill?: string[];
 }
 
 const TOL = 0.001;
@@ -222,8 +235,75 @@ export function estimateConnectivity(model: BoardModel): ConnectivityResult {
   return { source: "estimate", nets, rats };
 }
 
-/** Use the checks package's connectivity (nanometers) as the scene's. Nets it leaves out are estimated. */
+const isLegacy = (c: ConnectivityInput): c is LegacyConnectivityInput => Array.isArray((c as LegacyConnectivityInput).ratsnest);
+
+/** Use the checks package's connectivity (nanometers) as the scene's. Nets it leaves out are estimated, and said so. */
 export function fromInput(model: BoardModel, input: ConnectivityInput): ConnectivityResult {
+  return isLegacy(input) ? fromLegacy(model, input) : fromChecks(model, input);
+}
+
+/**
+ * The checks package's result: per net its completion, the islands of nets with missing links, and the links.
+ * A complete net is one island of every pad and piece of copper the board gives it. An island without a pad is
+ * copper that touches no pad of its net (floating).
+ */
+function fromChecks(model: BoardModel, input: BoardConnectivity): ConnectivityResult {
+  const nets = new Map<string, NetState>();
+  const islandsOf = new Map<string, string[][]>();
+  for (const i of input.islands) {
+    const l = islandsOf.get(i.net) ?? [];
+    l.push([...i.objects].sort(byStr));
+    islandsOf.set(i.net, l);
+  }
+  const copperOf = (name: string): string[] => [...model.tracks.filter((t) => t.net === name).map((t) => t.id), ...model.vias.filter((v) => v.net === name).map((v) => v.id), ...model.zones.filter((z) => z.net === name).map((z) => z.id)];
+  const given = new Set<string>();
+  for (const n of input.nets) {
+    given.add(n.net);
+    const mnet = model.netByName.get(n.net);
+    const copper = copperOf(n.net);
+    const listed = islandsOf.get(n.net);
+    let islands: string[][];
+    let floating: string[][] = [];
+    if (listed?.length) {
+      const sorted = listed.sort((a, b) => byStr(a[0] ?? "", b[0] ?? ""));
+      islands = sorted.filter((g) => g.some((id) => id.startsWith("pad:")));
+      floating = sorted.filter((g) => !g.some((id) => id.startsWith("pad:")));
+    } else islands = n.pads > 0 ? [[...(mnet?.pads ?? []), ...copper].sort(byStr)] : [];
+    nets.set(n.net, { net: n.net, islands, floating, missing: n.missing, status: statusOf(mnet?.pads.length ?? n.pads, copper.length, n.missing) });
+  }
+  const counters = new Map<string, number>();
+  const rats: RatLink[] = [];
+  for (const r of [...input.links].sort((a, b) => byStr(a.net, b.net) || byStr(a.from.object, b.from.object) || byStr(a.to.object, b.to.object))) {
+    const k = (counters.get(r.net) ?? 0) + 1;
+    counters.set(r.net, k);
+    const from = { id: r.from.object, at: { x: r.from.x / 1e6, y: r.from.y / 1e6 } };
+    const to = { id: r.to.object, at: { x: r.to.x / 1e6, y: r.to.y / 1e6 } };
+    rats.push({ id: `rat:${r.net}:${k}`, net: r.net, from, to, len: dist(from.at, to.at) });
+  }
+  // nets of the board the result does not mention: estimated from geometry, and said so
+  const missingNets = model.nets.filter((n) => !given.has(n.name)).map((n) => n.name);
+  let estimated: string[] | undefined;
+  if (missingNets.length) {
+    const est = estimateConnectivity(model);
+    estimated = missingNets;
+    for (const name of missingNets) {
+      const st = est.nets.get(name);
+      if (st) nets.set(name, st);
+    }
+    for (const r of est.rats) if (missingNets.includes(r.net)) rats.push(r);
+  }
+  rats.sort((a, b) => byStr(a.net, b.net) || natIdx(a.id) - natIdx(b.id));
+  return {
+    source: "checks",
+    nets,
+    rats,
+    ...(estimated ? { estimated } : {}),
+    ...(input.zoneFill ? { zoneFill: input.zoneFill } : {}),
+    ...(input.zonesWithoutFill?.length ? { zonesWithoutFill: [...input.zonesWithoutFill].sort(byStr) } : {}),
+  };
+}
+
+function fromLegacy(model: BoardModel, input: LegacyConnectivityInput): ConnectivityResult {
   const est = estimateConnectivity(model);
   const nets = new Map(est.nets);
   for (const n of input.nets) {
@@ -243,9 +323,10 @@ export function fromInput(model: BoardModel, input: ConnectivityInput): Connecti
     const to = { id: r.to.id, at: { x: r.to.x / 1e6, y: r.to.y / 1e6 } };
     rats.push({ id: `rat:${r.net}:${k}`, net: r.net, from, to, len: dist(from.at, to.at) });
   }
+  const estimated = model.nets.map((n) => n.name).filter((n) => !given.has(n));
   for (const r of est.rats) if (!given.has(r.net)) rats.push(r);
   rats.sort((a, b) => byStr(a.net, b.net) || natIdx(a.id) - natIdx(b.id));
-  return { source: `checks${input.source ? `:${input.source}` : ""}`, nets, rats };
+  return { source: `checks${input.source ? `:${input.source}` : ""}`, nets, rats, ...(estimated.length ? { estimated } : {}) };
 }
 
 const natIdx = (id: string): number => Number(id.slice(id.lastIndexOf(":") + 1));

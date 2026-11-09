@@ -439,22 +439,30 @@ function buildRecord(scene: Scene, r: BoardRecord, changed: Set<string>): void {
     case "zone": {
       const net = netIdx(scene, r.net);
       const ring = contourPoints(r.outline, true);
+      // a zone with holes (a ring): its area is the outline less the holes, so the holes are drawn and not picked
+      const holes = (r.holes ?? []).map((h) => contourPoints(h, true));
       const items: SceneItem[] = [];
       const fills = scene.fills.get(r.id) ?? [];
       for (const l of r.layers) {
         for (const f of fills.filter((x) => x.layer === l))
           for (const poly of f.polygons) items.push({ layer: cu(l), parts: [{ k: "poly", rings: poly.map((ringNm) => ringNm.flatMap((p) => [p.x * NM, p.y * NM])) }], flags: FLAG.FILL, minScale: 0 });
-        items.push({ layer: cu(l), parts: [{ k: "path", pts: ring, w: 0, closed: true }], flags: FLAG.DASHED, minScale: 0 });
+        items.push({ layer: cu(l), parts: [ring, ...holes].map((pts) => ({ k: "path" as const, pts, w: 0, closed: true })), flags: FLAG.DASHED, minScale: 0 });
       }
-      put(scene, { id: r.id, kind: "zone", net, ...(r.net ? { netName: r.net } : {}), fp: -1, items, copper: [...r.layers], pick: [{ k: "poly", rings: [ring] }], ...(r.locked ? { locked: true } : {}) });
+      put(scene, { id: r.id, kind: "zone", net, ...(r.net ? { netName: r.net } : {}), fp: -1, items, copper: [...r.layers], pick: [{ k: "poly", rings: [ring, ...holes] }], ...(r.locked ? { locked: true } : {}) });
       return;
     }
     case "keepout": {
       const ring = contourPoints(r.outline, true);
-      const hatch = hatchLines([ring], KEEPOUT_HATCH);
-      const parts: Part[] = [{ k: "path", pts: ring, w: 0.08, closed: true }];
-      for (let i = 0; i + 3 < hatch.length; i += 4) parts.push({ k: "seg", x1: hatch[i], y1: hatch[i + 1], x2: hatch[i + 2], y2: hatch[i + 3], w: 0 });
-      put(scene, { id: r.id, kind: "keepout", net: 0, fp: -1, items: [{ layer: "keepout", parts, flags: 0, minScale: 0 }], copper: [...r.layers], pick: [{ k: "poly", rings: [ring] }], ...(r.footprint ? { footprint: r.footprint } : {}), ...(r.locked ? { locked: true } : {}) });
+      // a ring keep-out (holes) hatches only the ring: the hatch is even-odd over the outline and its holes
+      const holes = (r.holes ?? []).map((h) => contourPoints(h, true));
+      const parts: Part[] = [ring, ...holes].map((pts) => ({ k: "path" as const, pts, w: 0.08, closed: true }));
+      // an area that blocks nothing (a rule area that only scopes custom rules) is drawn as its outline: hatch says "blocked"
+      const blocks = Object.values(r.blocks ?? {}).some(Boolean);
+      if (blocks) {
+        const hatch = hatchLines([ring, ...holes], KEEPOUT_HATCH);
+        for (let i = 0; i + 3 < hatch.length; i += 4) parts.push({ k: "seg", x1: hatch[i], y1: hatch[i + 1], x2: hatch[i + 2], y2: hatch[i + 3], w: 0 });
+      }
+      put(scene, { id: r.id, kind: "keepout", net: 0, fp: -1, items: [{ layer: "keepout", parts, flags: blocks ? 0 : FLAG.DASHED, minScale: 0 }], copper: [...r.layers], pick: [{ k: "poly", rings: [ring, ...holes] }], ...(r.footprint ? { footprint: r.footprint } : {}), ...(r.locked ? { locked: true } : {}) });
       return;
     }
     case "outline":

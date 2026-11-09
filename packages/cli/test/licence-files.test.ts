@@ -48,7 +48,8 @@ describe("licence files of one package in a repository that is not open source a
 
   it("fails a client without NOTICE, not Apache-2.0, or not listing its licence files", () => {
     const dir = repo("bad", service, { name: "@protoboardai/cloud", license: "UNLICENSED", files: ["src/client.ts"] }, ["LICENSE"]);
-    expect(checkPackageLicences(dir, ["client"]).map((p) => `${p.path}: ${p.problem}`)).toEqual([
+    // the script joins paths with the platform's separator (client\NOTICE on Windows); compare them in one form
+    expect(checkPackageLicences(dir, ["client"]).map((p) => `${p.path.replaceAll("\\", "/")}: ${p.problem}`)).toEqual([
       'client/package.json: "license" is "UNLICENSED", not "Apache-2.0"',
       'client/package.json: "files" does not list LICENSE',
       "client/NOTICE: missing: @protoboardai/cloud must ship it",

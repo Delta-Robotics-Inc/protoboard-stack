@@ -1,6 +1,6 @@
 /** The layout screen's pure parts: the Inspect fields in millimeters, net class targets, the agent bar's words, layer presets and the theme. */
 import { describe, expect, it } from "vitest";
-import { airnodeC3 } from "../../../board/src/fixtures/airnode-c3.js";
+import { airnodeC3 } from "@protoboardai/board/fixtures/airnode-c3";
 import { BRAND_TOKENS } from "../../src/theme.js";
 import { classTargets, fmtMm, inspect } from "../../src/pcb/inspect.js";
 import { defaultGroups, drawLayers, layerGroups, presetGroups } from "../../src/pcb/layers.js";

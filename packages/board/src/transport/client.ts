@@ -11,7 +11,7 @@ import { BoardLockedError } from "../journal.js";
 import type { Netlist } from "../schema.js";
 import { boardLocalDir, findProjectRoot, openBoardService, type BoardEvent, type BoardService, type BoardSnapshot, type CheckpointResult, type SaveResult } from "../service.js";
 import type { ChangeSetInfo, ClaimReply, LogEntry, Presence, Reply, Transaction } from "../transaction.js";
-import { BOARD_PROTOCOL, BoardRpcError, callService, describeOperations, METHOD_PARAMS, RPC_ERRORS, SERVICE_FILE, snapshotFromWire, type BoardMethod, type QueryParams, type QueryResult, type ServiceFile, type WireSnapshot } from "./protocol.js";
+import { BOARD_PROTOCOL, BoardRpcError, TOKEN_PROTOCOL_PREFIX, callService, describeOperations, METHOD_PARAMS, RPC_ERRORS, SERVICE_FILE, snapshotFromWire, type BoardMethod, type QueryParams, type QueryResult, type ServiceFile, type WireSnapshot } from "./protocol.js";
 
 export interface ConnectOptions {
   /** DEFAULT: the nearest folder up from `dir` with protoboard.config.ts, else `dir` (as the service decides). */
@@ -149,9 +149,13 @@ export function localClient(svc: BoardService, options: { dir?: string; closeSer
   });
 }
 
-/** A client over the wire to a service at `url` with `token`. */
+/**
+ * A client over the wire to a service at `url` with `token`. The token goes as the second subprotocol
+ * (`protoboard.token.<token>`, which the server accepts beside `Authorization: Bearer`): the standard WebSocket
+ * constructor, so this module has the same types in Node and in a program that also has the DOM's.
+ */
 export async function wireClient(url: string, token: string, options: { timeoutMs?: number; dir?: string; serviceFile?: string; connectTimeoutMs?: number } = {}): Promise<BoardClient> {
-  const ws = new WebSocket(url, { protocols: [BOARD_PROTOCOL], headers: { authorization: `Bearer ${token}` } });
+  const ws = new WebSocket(url, [BOARD_PROTOCOL, `${TOKEN_PROTOCOL_PREFIX}${token}`]);
   await new Promise<void>((done, fail) => {
     const t = setTimeout(() => {
       fail(new Error(`no answer from the board service at ${url}`));
@@ -231,9 +235,13 @@ export async function wireClient(url: string, token: string, options: { timeoutM
     close: async () => {
       if (ws.readyState === WebSocket.CLOSED) return;
       await new Promise<void>((done) => {
-        ws.addEventListener("close", () => done());
+        // the close handshake, or a second at most: the timer is cleared when the close comes, so it never holds the process
+        const t = setTimeout(done, 1000);
+        ws.addEventListener("close", () => {
+          clearTimeout(t);
+          done();
+        });
         ws.close(1000);
-        setTimeout(done, 1000).unref?.();
       });
     },
   });

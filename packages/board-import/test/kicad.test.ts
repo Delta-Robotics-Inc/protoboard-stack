@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { arcCenter, footprintToWorld, netClassOf, normAngle, padsOf, recordsOfKind, type FootprintRec, type Pad } from "@protoboardai/board";
-import { derivedFillPath, fillIsCurrent, importBoard, importKicadPcb, kicadImporter, parseLength, readDerivedFill, unfracture, type BoardImportResult } from "../src/index.js";
+import { derivedFillPath, fillIsCurrent, importBoard, importKicadPcb, kicadCondition, kicadImporter, parseLength, readDerivedFill, unfracture, UnsupportedCondition, type BoardImportResult } from "../src/index.js";
 import { parseSexprAll } from "../src/sexpr.js";
 import { kicadWorldPads, padWorldError, saveAndReload } from "./helpers.js";
 
@@ -230,35 +230,98 @@ describe("KiCad board: net classes and rules", () => {
     expect(has(r, "dropped", "regular expression")).toBe(true);
   });
 
-  it("maps board constraints to floors, class values to targets, simple custom rules to both", async () => {
+  it("maps board setup and net class clearance to priority-0 floors, custom rules above them in file order", async () => {
     const r = await sample();
     const rules = new Map(recordsOfKind(r.document, "rule").map((x) => [x.id, x]));
-    expect(rules.get("rule:kicad.board.min_clearance")).toMatchObject({ tier: "floor", check: "clearance", applies: {}, min: 100_000 });
+    expect(rules.get("rule:kicad.board.min_clearance")).toMatchObject({ tier: "floor", check: "clearance", priority: 0, applies: {}, min: 100_000, provenance: { by: "imported", tool: "kicad", from: "board setup" } });
     expect(rules.get("rule:kicad.board.min_copper_edge_clearance")).toMatchObject({ tier: "floor", check: "edge_clearance", min: 300_000 });
-    expect(rules.get("rule:kicad.class.default.track_width")).toMatchObject({ tier: "target", applies: {}, min: 250_000 });
-    expect(rules.get("rule:kicad.class.Power_Rail.via_hole")).toMatchObject({ tier: "target", applies: { classes: ["Power_Rail"] }, min: 400_000 });
-    expect(rules.get("rule:kicad.dru.1.power_wide.track_width")).toMatchObject({ tier: "floor", min: 400_000, applies: { classes: ["Power_Rail"] } });
-    expect(rules.get("rule:kicad.dru.1.power_wide.track_width.opt")).toMatchObject({ tier: "target", min: 600_000 });
-    expect(rules.get("rule:kicad.dru.2.via_holes.via_hole")).toMatchObject({ tier: "floor", check: "via_hole", min: 250_000 });
-    expect(rules.get("rule:kicad.dru.4.outer_clearance.clearance")).toMatchObject({ applies: { layers: ["top", "bottom"] }, min: 152_400 });
-    expect(rules.get("rule:kicad.dru.7.edge.edge_clearance")).toMatchObject({ severity: "warning", min: 500_000 });
-    // every rule that could not be mapped is reported, by name
-    for (const s of ["min_silk_clearance", "max_error", "uvia_diameter", "diff_pair_width", "all holes", "courtyard area", "skew"]) expect(r.report.some((i) => i.level === "dropped" && (i.source ?? "").includes(s))).toBe(true);
+    // the minimum through hole applies to every hole, pads included, as KiCad applies it
+    expect(rules.get("rule:kicad.board.min_through_hole_diameter")).toMatchObject({ check: "hole_size", min: 200_000 });
+    // hole to hole is a warning by KiCad's default severity
+    expect(rules.get("rule:kicad.board.min_hole_to_hole")).toMatchObject({ severity: "warning", min: 250_000 });
+    // a net class clearance is checked (a floor); its track width and via sizes are routing values only
+    expect(rules.get("rule:kicad.class.default.clearance")).toMatchObject({ tier: "floor", priority: 0, applies: { classes: ["default"] }, min: 200_000, provenance: { from: "net class Default" } });
+    expect(rules.get("rule:kicad.class.default.track_width")).toMatchObject({ tier: "target", applies: { classes: ["default"] }, preferred: 250_000 });
+    expect(rules.get("rule:kicad.class.default.track_width")!.min).toBeUndefined();
+    expect(rules.get("rule:kicad.class.Power_Rail.via_hole")).toMatchObject({ tier: "target", applies: { classes: ["Power_Rail"] }, preferred: 400_000 });
+    // custom rules: priority 1000 plus their position, the condition kept as a rule condition
+    expect(rules.get("rule:kicad.dru.1.power_wide.track_width")).toMatchObject({ tier: "floor", priority: 1001, min: 400_000, applies: { when: { side: "A", class: ["Power_Rail"] } }, provenance: { from: "custom rule 'power wide'" } });
+    expect(rules.get("rule:kicad.dru.1.power_wide.track_width.opt")).toMatchObject({ tier: "target", priority: 1001, preferred: 600_000 });
+    expect(rules.get("rule:kicad.dru.2.via_holes.hole_size")).toMatchObject({ tier: "floor", check: "hole_size", priority: 1002, min: 250_000, applies: { when: { side: "A", kind: ["via"] } } });
+    expect(rules.get("rule:kicad.dru.3.all_holes.hole_size")).toMatchObject({ priority: 1003, min: 200_000, applies: {} });
+    expect(rules.get("rule:kicad.dru.4.outer_clearance.clearance")).toMatchObject({ applies: { layers: ["top", "bottom"] }, min: 152_400, priority: 1004 });
+    expect(rules.get("rule:kicad.dru.5.courtyard_area.clearance")).toMatchObject({ applies: { when: { side: "A", courtyard: ["U1"] } }, min: 1_000_000 });
+    expect(rules.get("rule:kicad.dru.7.edge.edge_clearance")).toMatchObject({ severity: "warning", min: 500_000, priority: 1007 });
+    // everything that could not be expressed is reported by name, and listed as not evaluated
+    for (const s of ["min_silk_clearance", "uvia_diameter", "diff_pair_width"]) expect(r.report.some((i) => i.level === "dropped" && (i.source ?? i.message).includes(s))).toBe(true);
+    expect(r.rulesNotEvaluated).toEqual(expect.arrayContaining([{ name: "custom rule 'skew'", reason: "constraint skew has no rule check" }, { name: "board setup min_silk_clearance", reason: "no rule check expresses it" }]));
   });
 
-  it("says plainly when several custom rules give one check a minimum (combined by the largest)", () => {
-    const dru = `(version 1)\n(rule "a" (layer outer) (constraint clearance (min 0.2mm)))\n(rule "b" (condition "A.NetName == 'GND'") (constraint clearance (min 0.3mm)))\n(rule "c" (constraint track_width (min 0.2mm)))\n`;
+  it("gives later custom rules higher priorities and reports a condition it cannot map by name", () => {
+    const dru = `(version 1)\n(rule "a" (layer outer) (constraint clearance (min 0.2mm)))\n(rule "b" (condition "A.NetName == 'GND'") (constraint clearance (min 0.3mm)))\n(rule "c" (condition "A.isPlated()") (constraint track_width (min 0.2mm)))\n(rule "d" (condition "A.Type == 'Via'") (constraint disallow via track text))\n`;
     const r = importKicadPcb(readFileSync(SAMPLE, "utf8"), { rules: dru });
-    const line = r.report.find((i) => i.level === "approximated" && i.message.includes("combined by the largest minimum"));
-    expect(line?.message).toContain("2 custom rules give clearance a minimum (a, b)");
-    expect(line?.message).toContain("KiCad would use the last matching rule");
-    expect(r.report.some((i) => i.message.includes("give track_width"))).toBe(false);
+    const rules = recordsOfKind(r.document, "rule").filter((x) => x.id.startsWith("rule:kicad.dru."));
+    expect(rules.map((x) => [x.id, x.priority])).toEqual([
+      ["rule:kicad.dru.1.a.clearance", 1001],
+      ["rule:kicad.dru.2.b.clearance", 1002],
+      ["rule:kicad.dru.4.d.disallow", 1004],
+    ]);
+    expect(rules[2]).toMatchObject({ tier: "no_go", check: "disallow", applies: { when: { all: [{ side: "A", kind: ["via", "track"] }, { side: "A", kind: ["via"] }] } } });
+    expect(r.rulesNotEvaluated!.map((n) => n.name)).toEqual(expect.arrayContaining(["custom rule 'c'", "custom rule 'd'"]));
+    expect(r.report.some((i) => i.level === "dropped" && i.message.includes("custom rule 'c': condition: A.isPlated() not mapped"))).toBe(true);
   });
 
-  it("reports when the project and rules files are absent", async () => {
+  it("without a project file, KiCad's default board setup applies, as in KiCad", async () => {
     const r = await importBoard({ text: readFileSync(SAMPLE, "utf8"), kind: "kicad_pcb" });
-    expect(recordsOfKind(r.document, "rule")).toHaveLength(0);
+    const rules = recordsOfKind(r.document, "rule");
+    expect(Object.fromEntries(rules.map((x) => [x.check, x.min]))).toEqual({ track_width: 200_000, via_diameter: 500_000, hole_size: 300_000, annular_ring: 100_000, hole_clearance: 250_000, hole_to_hole: 250_000, edge_clearance: 500_000 });
+    expect(rules.every((x) => x.provenance?.from === "board setup (KiCad default)" && x.priority === 0)).toBe(true);
     expect(has(r, "info", "project file")).toBe(true);
+  });
+
+  it("keeps a rule area's holes: the polygons after the first", () => {
+    const ring = (r: number, n = 16) => Array.from({ length: n }, (_, i) => `(xy ${(120 + r * Math.cos((2 * Math.PI * i) / n)).toFixed(4)} ${(110 + r * Math.sin((2 * Math.PI * i) / n)).toFixed(4)})`).join(" ");
+    const zone = `  (zone (net 0) (net_name "") (layer "B.Cu") (uuid "00000000-0000-0000-0000-0000000000aa") (name "ring") (hatch edge 0.5) (connect_pads (clearance 0)) (min_thickness 0.25)
+    (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour allowed) (footprints not_allowed))
+    (fill (thermal_gap 0.5) (thermal_bridge_width 0.5))
+    (polygon (pts ${ring(6)})) (polygon (pts ${ring(3)})))\n`;
+    const text = readFileSync(SAMPLE, "utf8").replace(/\)\s*$/, `${zone})`);
+    const r = importKicadPcb(text, { recenter: false });
+    const k = recordsOfKind(r.document, "keepout").find((x) => x.name === "ring")!;
+    expect(k.outline).toHaveLength(16);
+    expect(k.holes).toHaveLength(1);
+    expect(k.holes![0]).toHaveLength(16);
+    expect(has(r, "info", "zone or rule area with holes")).toBe(true);
+  });
+
+  it("lists pads that share one UUID (KiCad treats them as one item)", () => {
+    const pad = (layer: string) => `(pad "1" smd rect (at 0 0) (size 0.6 0.6) (layers "${layer}") (uuid "3d926f00-71fa-eae1-599c-993e25341d5d"))`;
+    const fpText = `  (footprint "T:E" (layer "F.Cu") (at 120 105 0) (property "Reference" "E1" (at 0 -2 0) (layer "F.Fab")) ${pad("F.Cu")} ${pad("B.Cu")})
+`;
+    const r = importKicadPcb(readFileSync(SAMPLE, "utf8").replace(/\)\s*$/, `${fpText})`), { recenter: false });
+    expect(r.sharedSourceIds).toEqual([["pad:E1:1", "pad:E1:1~2"]]);
+    expect(has(r, "info", "item sharing its UUID")).toBe(true);
+  });
+});
+
+describe("KiCad custom rule conditions", () => {
+  const ctx = { className: (c: string) => c.replace(/ /g, "_"), copperOf: (l: string) => (l === "F.Cu" ? ("top" as const) : l === "In1.Cu" ? ("inner1" as const) : undefined) };
+  it("maps types, classes, nets, layers and functions", () => {
+    expect(kicadCondition("A.Type == 'Via' && B.Type == 'Pad'", ctx)).toEqual({ all: [{ side: "A", kind: ["via"] }, { side: "B", kind: ["pad"] }] });
+    expect(kicadCondition("A.NetClass == 'Power Rail' || A.hasNetclass('GND')", ctx)).toEqual({ any: [{ side: "A", class: ["Power_Rail"] }, { side: "A", class: ["GND"] }] });
+    expect(kicadCondition("A.NetName != B.NetName && B.NetName != 'x'", ctx)).toEqual({ all: [{ not: { same_net: true } }, { not: { side: "B", net: ["x"] } }] });
+    expect(kicadCondition("A.Layer == 'In1.Cu'", ctx)).toEqual({ side: "A", layer: ["inner1"] });
+    expect(kicadCondition("!A.intersectsCourtyard('*') && A.enclosedByArea('Z') && B.intersectsArea('Y')", ctx)).toEqual({ all: [{ not: { side: "A", courtyard: ["*"] } }, { side: "A", area: ["Z"] }, { side: "B", area: ["Y"], touch: true }] });
+    expect(kicadCondition("A.memberOfFootprint('J2') && A.Pad_Number == '17' && A.Pad_Type == 'Through-hole'", ctx)).toEqual({ all: [{ side: "A", footprint: ["J2"] }, { side: "A", pad: ["17"] }, { side: "A", pad_type: ["th"] }] });
+  });
+  it("maps positions to the board frame (KiCad's Y runs down)", () => {
+    expect(kicadCondition("A.Position_X > 95.3mm && A.Position_Y < 104.4mm", ctx)).toEqual({ all: [{ side: "A", coord: "x", of: "at", gt: 95_300_000 }, { side: "A", coord: "y", of: "at", gt: -104_400_000 }] });
+    expect(kicadCondition("A.Start_X >= 1mm", ctx)).toEqual({ side: "A", coord: "x", of: "start", gt: 999_999 });
+  });
+  it("names what it cannot map", () => {
+    expect(() => kicadCondition("A.isPlated()", ctx)).toThrow(UnsupportedCondition);
+    expect(() => kicadCondition("A.Layer == 'F.SilkS'", ctx)).toThrow(/not a copper layer/);
+    expect(() => kicadCondition("A.Type == 'Text'", ctx)).toThrow(/object type Text/);
   });
 });
 

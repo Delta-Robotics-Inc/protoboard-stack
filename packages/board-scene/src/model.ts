@@ -137,6 +137,8 @@ export interface MArea {
   name?: string;
   layers: string[];
   outline: Pt[];
+  /** Holes in the outline (a ring-shaped area); `area` is the outline's less the holes'. */
+  holes: Pt[][];
   box: BoxMm;
   area: number;
   locked: boolean;
@@ -436,7 +438,9 @@ export function buildModel(input: BoardSnapshot | BoardDocument): BoardModel {
 
   const area = (rec: ZoneRec | KeepoutRec): MArea => {
     const pts = flatten(rec.outline);
-    const base = { id: rec.id, ...(rec.name ? { name: rec.name } : {}), layers: [...rec.layers] as string[], outline: pts, box: mmBox(boundsOf(rec)!), area: Math.abs(polygonArea(pts)), locked: rec.locked === true, prov: rec.provenance };
+    const holes = (rec.holes ?? []).map((h) => flatten(h));
+    const area = Math.abs(polygonArea(pts)) - holes.reduce((s, h) => s + Math.abs(polygonArea(h)), 0);
+    const base = { id: rec.id, ...(rec.name ? { name: rec.name } : {}), layers: [...rec.layers] as string[], outline: pts, holes, box: mmBox(boundsOf(rec)!), area, locked: rec.locked === true, prov: rec.provenance };
     if (rec.kind === "zone") return { ...base, kind: "zone", ...(rec.net ? { net: rec.net } : {}), priority: rec.priority, fill: rec.fill_mode, connect: rec.pad_connection };
     return { ...base, kind: "keepout", blocks: { ...rec.blocks }, tier: rec.tier, ...(rec.footprint ? { owner: rec.footprint } : {}), ...(rec.description ? { description: rec.description } : {}) };
   };

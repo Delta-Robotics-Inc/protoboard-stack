@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { findBrowser } from "@protoboardai/core/browser";
-import { airnodeC3 } from "../../../board/src/fixtures/airnode-c3.js";
+import { airnodeC3 } from "@protoboardai/board/fixtures/airnode-c3";
 import { createHeadlessRenderer, type HeadlessRenderer } from "../../src/pcb/headless/render.js";
 
 const GOLDEN = fileURLToPath(new URL("./airnode-c3.golden.png", import.meta.url));

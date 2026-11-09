@@ -46,7 +46,7 @@ describe.skipIf(!!skip)("real boards (local only)", () => {
         return;
       }
       const { importBoard } = (await import(pathToFileURL(IMPORTER).href)) as {
-        importBoard: (s: { path: string }) => Promise<{ document: BoardDocument; fill: { fills: unknown[] }; offset: { x: number; y: number }; ms: number }>;
+        importBoard: (s: { path: string }) => Promise<{ document: BoardDocument; fill: { fills: unknown[] }; offset: { x: number; y: number }; ms: number; rulesNotEvaluated?: { name: string; reason: string }[]; sharedSourceIds?: string[][] }>;
       };
       const imp = await importBoard({ path: b.pcb });
       const t0 = performance.now();
@@ -62,7 +62,7 @@ describe.skipIf(!!skip)("real boards (local only)", () => {
       ];
       let cross: CrossCheckResult | undefined;
       if (findKicadCli()) {
-        cross = crossCheckWithKicad(res, { pcbPath: b.pcb, root: b.root, doc: imp.document, transform: { tx: -imp.offset.x, ty: -imp.offset.y } });
+        cross = crossCheckWithKicad(res, { pcbPath: b.pcb, root: b.root, doc: imp.document, transform: { tx: -imp.offset.x, ty: -imp.offset.y }, notEvaluated: imp.rulesNotEvaluated ?? [], sharedIds: imp.sharedSourceIds ?? [] });
         if (cross.ran) {
           lines.push(`  KiCad DRC ${cross.kicad.durationMs} ms`);
           lines.push(...formatCrossCheck(cross).split("\n").slice(1).map((l) => `  ${l}`));
@@ -70,7 +70,11 @@ describe.skipIf(!!skip)("real boards (local only)", () => {
           if (ties) lines.push(`  unconnected matched as equal-length alternatives: ${ties}`);
           const byNet = cross.unconnectedByNet;
           if (byNet.length) lines.push(`  nets whose unconnected counts differ: ${byNet.length} (ours ${byNet.reduce((s, n) => s + n.ours, 0)}, KiCad ${byNet.reduce((s, n) => s + n.kicad, 0)} on those nets)`);
-          for (const d of cross.differences.filter((d) => !d.startsWith("net "))) lines.push(`  difference: ${d}`);
+          for (const d of cross.differences.filter((d) => !d.startsWith("net ") && !d.includes("Protoboard does not check this"))) lines.push(`  difference: ${d}`);
+          // every remaining comparable difference by location (KiCad's frame, mm), without net names
+          const k = (x: number, y: number) => `(${((x + imp.offset.x) / 1e6).toFixed(3)}, ${(-(y + imp.offset.y) / 1e6).toFixed(3)}) mm`;
+          for (const f of cross.oursOnly) lines.push(`  ours only: ${f.severity} ${f.check} at ${k(f.location.x, f.location.y)}${f.location.layer ? ` on ${f.location.layer}` : ""}, ${f.objects.length} object(s), measured ${f.measured ?? "-"} nm, limit ${f.required ?? "-"} nm`);
+          for (const e of cross.kicadOnly) lines.push(`  KiCad only: ${e.severity} ${e.type} at ${(e.kicadPoints ?? []).map((p) => `(${p.x}, ${p.y})`).join(" ")} mm${e.reports > 1 ? `, ${e.reports} reports` : ""}`);
         } else lines.push(`  KiCad cross-check not run: ${cross.reason}`);
       } else lines.push("  KiCad cross-check not run: kicad-cli is not installed");
       console.log(lines.join("\n"));

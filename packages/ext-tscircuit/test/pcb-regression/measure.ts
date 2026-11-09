@@ -6,8 +6,10 @@
  *   KiCad needed): copper layers, footprints, tracks, vias, zones, nets and
  *   the Edge.Cuts outline's size;
  * - kicad-cli, when KiCad is installed: DRC (the stack's one DRC command,
- *   lib/kicad/drc.ts), `pcb export stats`, a top-side render and one SVG per
- *   layer as golden images.
+ *   lib/kicad/drc.ts, plus `--all-track-errors` so every error of a track is
+ *   counted, not only its first: complete and stable counts, as the board
+ *   checks' KiCad cross-check runs it), `pcb export stats`, a top-side render
+ *   and one SVG per layer as golden images.
  *
  * Every kicad-cli call runs on a copy of the board's folder in the system's
  * temporary folder (kicad-cli writes settings beside a project), never on the
@@ -20,6 +22,9 @@ import { tmpdir } from "node:os";
 import { basename, dirname, join, relative } from "node:path";
 import { kicadCliInfo, kicadCliMissing } from "../../lib/kicad/cli.ts";
 import { DRC_ARGS, type DrcReport } from "../../lib/kicad/drc.ts";
+
+/** The regression set's DRC: the stack's one DRC command with every error of each track. */
+export const REGRESSION_DRC_ARGS = [...DRC_ARGS, "--all-track-errors"] as const;
 import { child, children, head, isList, isStr, parse, text, valueOf, type List, type Node } from "../../lib/kicad/sexpr.ts";
 
 /** What the board file says, without KiCad. */
@@ -297,7 +302,7 @@ export async function measureBoard(board: string, root: string, pcb: string, opt
     const out = join(work, "out");
     mkdirSync(join(out, "layers"), { recursive: true });
 
-    const drc = await kicad(cli, [...DRC_ARGS, "--output", join(out, "drc.json"), pcbPath], cwd);
+    const drc = await kicad(cli, [...REGRESSION_DRC_ARGS, "--output", join(out, "drc.json"), pcbPath], cwd);
     if (!existsSync(join(out, "drc.json"))) throw new Error(`${board}: kicad-cli pcb drc wrote no report (exit ${drc.status}): ${lastLines(drc.out)}`);
     const stats = await kicad(cli, [...STATS_ARGS, "--output", join(out, "stats.json"), pcbPath], cwd);
     if (!existsSync(join(out, "stats.json"))) throw new Error(`${board}: kicad-cli pcb export stats failed (exit ${stats.status}): ${lastLines(stats.out)}`);

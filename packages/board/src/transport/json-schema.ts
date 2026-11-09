@@ -15,6 +15,8 @@ interface Def {
 }
 
 const defOf = (s: z.ZodTypeAny): Def => (s as unknown as { _def: Def })._def;
+/** Lazy schemas being converted (a recursive one stops at its second use). */
+const lazyActive = new Set<z.ZodTypeAny>();
 
 function withDescription(out: JsonSchema, def: Def): JsonSchema {
   return def.description ? { ...out, description: def.description } : out;
@@ -101,8 +103,16 @@ function convert(schema: z.ZodTypeAny, def: Def): JsonSchema {
       return { ...toJsonSchema(def.innerType as z.ZodTypeAny), default: (def.defaultValue as () => unknown)() };
     case "ZodEffects":
       return toJsonSchema(def.schema as z.ZodTypeAny);
-    case "ZodLazy":
-      return toJsonSchema((def.getter as () => z.ZodTypeAny)());
+    case "ZodLazy": {
+      // a recursive schema (a rule condition) is written out once; its inner use is left open
+      if (lazyActive.has(schema)) return { description: "recursive: the same schema as its enclosing one" };
+      lazyActive.add(schema);
+      try {
+        return toJsonSchema((def.getter as () => z.ZodTypeAny)());
+      } finally {
+        lazyActive.delete(schema);
+      }
+    }
     case "ZodBranded":
       return toJsonSchema(def.type as z.ZodTypeAny);
     case "ZodReadonly":

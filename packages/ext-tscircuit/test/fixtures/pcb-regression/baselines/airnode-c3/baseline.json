@@ -1,5 +1,5 @@
 {
-  "schema": "pb-pcb-regression-baseline/1",
+  "schema": "pb-pcb-regression-baseline/2",
   "board": "airnode-c3",
   "name": "Airnode C3 (sample: ESP32-C3-MINI-1, USB-C, AP2112K-3.3, SHT40, 2 LEDs, BOOT; 40 x 30 mm, 2 layers; placed, not routed; not for fab)",
   "pcb": "airnode-c3.kicad_pcb",

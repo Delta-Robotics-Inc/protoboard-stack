@@ -36,6 +36,17 @@ export interface BoardImportResult extends ImportResult {
   offset: { x: number; y: number };
   stats: ImportStats;
   summary: ImportSummary;
+  /**
+   * Rules and settings of the source that the board's rules cannot express (a KiCad custom rule with a condition
+   * the rule model has no term for, a constraint type no check measures), by name. Also in `report`. They are not
+   * evaluated, so a cross-check lists them as such and counts nothing from them.
+   */
+  rulesNotEvaluated?: { name: string; reason: string }[];
+  /**
+   * Groups of objects the source gives one identity (KiCad pads sharing one UUID, as some exporters write them).
+   * KiCad's DRC reports each group as one item; a cross-check folds our findings on such a group into one.
+   */
+  sharedSourceIds?: string[][];
   /** The importer that ran. */
   importer: string;
   /** Wall time of the import, milliseconds. */

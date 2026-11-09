@@ -55,8 +55,11 @@ describe("comparison", () => {
     const row = (cat: string) => c.categories.find((r) => r.category === cat)!;
     expect(row("short")).toMatchObject({ ours: { errors: 1, warnings: 0 }, kicad: { errors: 1, warnings: 0 }, matched: 1, oursOnly: 0, kicadOnly: 0 });
     expect(row("kicad:text_height")).toMatchObject({ ours: null, kicadOnly: 1, note: "not checked by Protoboard" });
-    expect(c.differences).toContain("kicad:text_height: KiCad reports 0 error(s) and 1 warning(s); Protoboard does not check this");
-    expect(c.differences).toContain("warnings: ours 0, KiCad 1");
+    expect(c.differences).toContain("kicad:text_height: KiCad only, 0 error(s) and 1 warning(s); Protoboard does not check this");
+    // like with like: KiCad's text height warning is KiCad only, so the comparable counts agree
+    expect(c.comparable).toEqual({ ours: { unconnected: 1, errors: 1, warnings: 0 }, kicad: { unconnected: 1, errors: 1, warnings: 0 } });
+    expect(c.kicadOnlyCategories).toEqual({ count: 1, reports: 1, byType: { text_height: 1 } });
+    expect(c.differences.some((d) => /^(errors|warnings):/.test(d))).toBe(false);
     expect(c.unconnectedByNet).toEqual([]);
     expect(formatCrossCheck(c)).toMatch(/short\s+ours 1E 0W\s+KiCad 1E 0W/);
   });
@@ -99,5 +102,44 @@ describe.skipIf(!live)("cross-check against KiCad on the tracked sample board", 
     console.log(formatCrossCheck(c));
     expect(c.totals.ours.unconnected).toBe(c.totals.kicad.unconnected);
     expect(c.categories.find((r) => r.category === "unconnected")!.kicadOnly).toBe(0);
+    // the comparable errors and warnings agree (KiCad's text and library warnings are KiCad only)
+    expect(c.comparable.ours).toEqual(c.comparable.kicad);
+    expect(c.oursOnly).toEqual([]);
+    expect(c.kicadOnly).toEqual([]);
+  });
+});
+
+describe("KiCad reports counted once per item set", () => {
+  const doc = makeDoc([...boardRecords(), fp("A", 0, 0, [smd("1", 0, 9.8, 0.8, 0.8)]), rule("e", "floor", "edge_clearance", 0.5)], { N1: ["A.1"] });
+  const ours = runBoardChecks(doc);
+  const k = (x: number, y: number) => ({ x: x + 100, y: -y + 100 });
+  const edge = (desc: string, at: { x: number; y: number }) => ({ type: "copper_edge_clearance", severity: "error", description: desc, items: [{ description: "Segment on Edge.Cuts", pos: k(-10, 10) }, { description: "Pad 1 [N1] of A on F.Cu", pos: at }] });
+  it("folds repeats of one item set, matches an edge item by its copper item, and leaves out rules not evaluated", () => {
+    const report: KicadDrcReport = {
+      coordinate_units: "mm",
+      violations: [
+        edge("Board edge clearance violation (rule 'e' clearance 0.5000 mm; actual 0.0000 mm)", k(0, 9.8)),
+        edge("Board edge clearance violation (rule 'e' clearance 0.5000 mm; actual 0.0100 mm)", k(0, 9.8)),
+        { type: "items_not_allowed", severity: "warning", description: "Items not allowed (rule 'odd')", items: [{ description: "Via", pos: k(1, 1) }] },
+      ],
+      unconnected_items: [],
+    };
+    const c = compareWithKicad(ours, report, { transform: { tx: -mm(100), ty: mm(100), source: "given" }, notEvaluated: [{ name: "custom rule 'odd'", reason: "condition not mapped" }] });
+    const row = c.categories.find((r) => r.category === "edge_clearance")!;
+    expect(row).toMatchObject({ ours: { errors: 1, warnings: 0 }, kicad: { errors: 1, warnings: 0 }, kicadReports: 2, matched: 1 });
+    expect(c.notEvaluated.kicadItems.map((e) => e.type)).toEqual(["items_not_allowed"]);
+    expect(c.comparable.kicad).toEqual({ unconnected: 0, errors: 1, warnings: 0 });
+  });
+
+  it("folds findings on objects the source gives one identity (pads sharing a UUID) into one", () => {
+    const twins = makeDoc([...boardRecords(), fp("A", 0, 0, [smd("1", 0, 9.8, 0.8, 0.8), smd("1", 0, 9.8, 0.8, 0.8, { layer: "bottom" })]), rule("e", "floor", "edge_clearance", 0.5)], { N1: ["A.1"] });
+    const r = runBoardChecks(twins);
+    expect(r.findings.filter((f) => f.check === "edge_clearance")).toHaveLength(2);
+    const report: KicadDrcReport = { coordinate_units: "mm", violations: [edge("Board edge clearance violation (rule 'e' clearance 0.5000 mm; actual 0.0000 mm)", k(0, 9.8))], unconnected_items: [] };
+    const c = compareWithKicad(r, report, { transform: { tx: -mm(100), ty: mm(100), source: "given" }, sharedIds: [["pad:A:1", "pad:A:1~2"]] });
+    expect(c.folded).toHaveLength(1);
+    expect(c.comparable.ours.errors).toBe(1);
+    // the two pads of one net are also one unconnected link apart; KiCad reports that too, not given here
+    expect(c.categories.find((x) => x.category === "edge_clearance")).toMatchObject({ ours: { errors: 1 }, kicad: { errors: 1 }, matched: 1, oursOnly: 0, kicadOnly: 0 });
   });
 });

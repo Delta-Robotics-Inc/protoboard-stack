@@ -108,6 +108,57 @@ export function runChecks(snapshot: BoardSnapshot, checks: readonly Check[], ctx
   return [...out.values()].sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity] || byCodeUnit(a.id, b.id));
 }
 
+// ---------------------------------------------------------------- connectivity
+
+/**
+ * Copper connectivity as the checks compute it and as scenes and renderers read it (the ratsnest, net completion).
+ * A structural subset of `@protoboardai/board-checks`' `ConnectivityResult`, so that result is accepted as it is;
+ * consumers that only draw or describe a board depend on this shape, not on the checks package. Lengths and
+ * coordinates are integer nanometers in board coordinates.
+ */
+export interface ConnectivityAnchor {
+  /** The object the anchor is on: a pad id, track id or via id. */
+  object: string;
+  x: number;
+  y: number;
+  layer?: string;
+}
+/** One missing link (a ratsnest line): the shortest join between two islands of a net. */
+export interface ConnectivityLink {
+  net: string;
+  from: ConnectivityAnchor;
+  to: ConnectivityAnchor;
+  length?: number;
+}
+/** One island of a net that has missing links: its objects (sorted ids) and how many of them are pads. */
+export interface ConnectivityIsland {
+  net: string;
+  objects: readonly string[];
+  pads?: number;
+}
+/** A net's completion: its pads, its islands (holding a pad, a track or a via) and the links it misses. */
+export interface ConnectivityNet {
+  net: string;
+  pads: number;
+  islands: number;
+  missing: number;
+}
+export interface BoardConnectivity {
+  /** The input the result was computed from (records, netlist, fill), when the producer says. */
+  inputHash?: string;
+  /** Missing links over all nets: the status line's "unconnected". */
+  unconnected: number;
+  links: readonly ConnectivityLink[];
+  /** Islands of every net that has missing links (complete nets are one island and are not listed). */
+  islands: readonly ConnectivityIsland[];
+  nets: readonly ConnectivityNet[];
+  /** Whether zone fill was given: `provided`, `partial`, `absent`, or `no-zones`. */
+  zoneFill?: "provided" | "partial" | "absent" | "no-zones";
+  zonesWithoutFill?: readonly string[];
+  /** Whether a netlist gave the pads their nets. */
+  netlist?: boolean;
+}
+
 // ---------------------------------------------------------------- renderers
 
 /** A renderer or scene exporter: reads snapshots and events, never writes. */

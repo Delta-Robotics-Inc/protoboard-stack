@@ -73,7 +73,7 @@
    "zone:f.gnd_bottom"
   ]
  ],
- "connectivity": "estimated from geometry by the scene (copper overlap on a shared layer; zone fill not computed: an item inside a zone of its net on a zone layer counts as joined)",
+ "connectivity": "estimated from geometry by the scene (copper overlap on a shared layer; zone fill not computed: an item inside a zone of its net on a zone layer counts as joined); no checks result was given",
  "footprints": [
   {
    "id": "fp:power/c_in",

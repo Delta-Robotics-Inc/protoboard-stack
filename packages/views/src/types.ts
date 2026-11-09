@@ -6,6 +6,7 @@
 import type { ComponentType } from "react";
 import type { ModuleDef, UhdBundle } from "@deltarobotics/uhd";
 import type { Theme, ThemeAdapter, ViewerSelection } from "@deltarobotics/uhd-viewer/components";
+import type { BoardHost } from "./pcb/remote.js";
 
 export type { Theme, ThemeAdapter };
 
@@ -87,6 +88,8 @@ export interface HostAdapter {
   notify?(message: string, severity?: "info" | "warning" | "error"): void;
   /** Add the library parts the project names and does not hold (VS Code: Fetch Parts, B6). */
   fetchParts?(): void;
+  /** The project's board folders and a read-only feed of each, for the layout view (pcb/remote.ts). */
+  boards?: BoardHost;
 }
 
 /** A host that offers nothing (tests, static pages). */

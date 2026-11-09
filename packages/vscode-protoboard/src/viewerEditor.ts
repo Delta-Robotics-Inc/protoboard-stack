@@ -31,8 +31,9 @@ import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type PartsOp, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection, type ViewerSettings } from "../../web-viewer/src/vscode/protocol.js";
+import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type PartsOp, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection, type ViewerSettings, type BoardFeedMessage } from "../../web-viewer/src/vscode/protocol.js";
 import { nonce } from "./html.js";
+import { BoardFeed, findBoards } from "../../views/src/pcb/host/index.js";
 import { writeViewerTelemetry } from "./telemetry.js";
 import { ProjectRelay, presenceChip, readViewerState, saveTabViewState, savePresentation, saveViewerSnapshot, takeOverRequest } from "./viewerBridge.js";
 import { devOrigins, distinctTitles, originCovered, parseBackup, parseViewerUri, viewerPageHtml, viewerTitle, viewerUri, SOURCE_COMMANDS, VIEWER_SCHEME, VIEWER_TYPE, type ViewerBackup, type ViewerTarget } from "./viewerPage.js";
@@ -151,6 +152,8 @@ export class ViewerEditor {
   lastSavePoint: { png: string; meta: Record<string, unknown>; at: number } | undefined;
   /** R2-E (F1): in-place moves the extension made (tests). */
   readonly moves: { path: string; view: string }[] = [];
+  /** The layout tab's open board feeds (PCB editor Phase 1), by board key: this host is the board service's client. */
+  readonly boardFeeds = new Map<string, { feed: Promise<BoardFeed>; unsubscribe?: () => void }>();
   private themeWaiters: ((r: Extract<FromWebview, { type: "theme" }>) => void)[] = [];
   private hierarchyWaiters: ((r: Extract<FromWebview, { type: "hierarchy" }>) => void)[] = [];
 
@@ -409,6 +412,7 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
     // the Inspector follows the viewer tab that has focus, and stays on it while another editor has focus
     panel.onDidChangeViewState((e) => e.webviewPanel.active && this.setActive(editor));
     panel.onDidDispose(() => {
+      for (const key of [...editor.boardFeeds.keys()]) this.closeBoard(editor, key);
       this.relays.get(root)?.remove(editor.bridgeId);
       document.editors.delete(editor);
       this.editors.delete(editor);
@@ -646,7 +650,54 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
       case "hierarchy":
         editor.hierarchyReported(m);
         return;
+      case "boards":
+        // straight to the page (not through post, which keeps only the last message of a kind while it loads)
+        void editor.panel.webview.postMessage({ type: "boards", boards: findBoards(editor.root) } satisfies ToWebview);
+        return;
+      case "boardOpen":
+        this.openBoard(editor, m.board);
+        return;
+      case "boardClose":
+        this.closeBoard(editor, m.board);
+        return;
+      case "boardCheck":
+        void editor.boardFeeds.get(m.board)?.feed.then((f) => f.recheck());
+        return;
     }
+  }
+
+  /**
+   * A board's feed for a tab's layout view: the live board service when one runs (connectBoard), else the board's
+   * files; snapshots, commits and the checks' derived data go to the page by postMessage, read only.
+   */
+  private openBoard(editor: ViewerEditor, key: string) {
+    this.closeBoard(editor, key);
+    const entry = findBoards(editor.root).find((b) => b.key === key);
+    const send = (message: BoardFeedMessage) => void editor.panel.webview.postMessage({ type: "boardFeed", message } satisfies ToWebview);
+    if (!entry) {
+      send({ type: "error", board: key, message: `no board folder with key ${key} in this project` });
+      return;
+    }
+    const slot: { feed: Promise<BoardFeed>; unsubscribe?: () => void } = { feed: BoardFeed.open({ dir: join(editor.root, entry.dir), key, projectRoot: editor.root, log: (l) => this.host.log.info(l) }) };
+    editor.boardFeeds.set(key, slot);
+    slot.feed.then(
+      (f) => {
+        if (editor.boardFeeds.get(key) !== slot) return void f.close();
+        slot.unsubscribe = f.subscribe(send);
+      },
+      (e: Error) => {
+        editor.boardFeeds.delete(key);
+        send({ type: "error", board: key, message: e.message });
+      },
+    );
+  }
+
+  private closeBoard(editor: ViewerEditor, key: string) {
+    const slot = editor.boardFeeds.get(key);
+    if (!slot) return;
+    editor.boardFeeds.delete(key);
+    slot.unsubscribe?.();
+    void slot.feed.then((f) => f.close(), () => {});
   }
 
   private setLayout(doc: ViewerDocument, layout: ViewerLayout) {

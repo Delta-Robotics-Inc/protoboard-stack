@@ -22,6 +22,11 @@
     "./part-status": "./src/parts/part-status.ts",
     "./inspector": "./src/inspector/index.ts",
     "./inspector-model": "./src/inspector/model.ts",
+    "./pcb": "./src/pcb/index.ts",
+    "./pcb/headless": "./src/pcb/headless/render.ts",
+    "./pcb/host": "./src/pcb/host/index.ts",
+    "./pcb/remote": "./src/pcb/remote.ts",
+    "./pcb/types": "./src/pcb/types.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -38,6 +43,7 @@
   },
   "dependencies": {
     "@deltarobotics/uhd-viewer": "^0.2.1",
+    "@protoboardai/board": "^0.2.2",
     "@radix-ui/react-select": "^2.3.7"
   },
   "peerDependencies": {

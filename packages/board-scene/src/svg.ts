@@ -163,6 +163,9 @@ function niceStep(span: number, target: number): number {
 }
 
 /** Draw the model. */
+/** An area's outline with its holes, as one path (drawn even-odd: a ring keep-out hatches only the ring). */
+const areaPath = (fr: Parameters<typeof pathOf>[0], a: { outline: Pt[]; holes?: Pt[][] }): string => pathOf(fr, a.outline, true) + (a.holes ?? []).map((h) => pathOf(fr, h, true)).join("");
+
 export function renderSvg(model: BoardModel, o: SvgOptions = {}): string {
   const fr = frame(model, o);
   const layers = (o.layers ?? model.copper).filter((l) => model.copper.includes(l));
@@ -192,7 +195,7 @@ export function renderSvg(model: BoardModel, o: SvgOptions = {}): string {
   // zones (outline and a light fill), bottom layer first
   for (const l of order)
     for (const z of model.zones)
-      if (z.layers.includes(l) && overlaps(z.box, view)) out.push(`<path d="${pathOf(fr, z.outline, true)}" fill="${layerColor(model, l)}" fill-opacity="0.14" stroke="${layerColor(model, l)}" stroke-width="1" stroke-dasharray="5 3" data-id="${esc(z.id)}" data-layer="${l}"/>`);
+      if (z.layers.includes(l) && overlaps(z.box, view)) out.push(`<path d="${areaPath(fr, z)}" fill="${layerColor(model, l)}" fill-opacity="0.14" fill-rule="evenodd" stroke="${layerColor(model, l)}" stroke-width="1" stroke-dasharray="5 3" data-id="${esc(z.id)}" data-layer="${l}"/>`);
   // copper, bottom to top: tracks, then pads
   for (const l of order) {
     const c = layerColor(model, l);
@@ -211,7 +214,7 @@ export function renderSvg(model: BoardModel, o: SvgOptions = {}): string {
   for (const v of model.vias) if (v.layers.some((l) => layers.includes(l)) && overlaps(v.box, view)) out.push(viaSvg(fr, v, PALETTE.via, ` data-id="${esc(v.id)}"`));
   // keep-outs
   for (const k of model.keepouts)
-    if (k.layers.some((l) => layers.includes(l)) && overlaps(k.box, view)) out.push(`<path d="${pathOf(fr, k.outline, true)}" fill="url(#hatch)" stroke="${PALETTE.keepout}" stroke-width="1.2" stroke-dasharray="6 3" data-id="${esc(k.id)}"/>`);
+    if (k.layers.some((l) => layers.includes(l)) && overlaps(k.box, view)) out.push(`<path d="${areaPath(fr, k)}" fill="${Object.values(k.blocks ?? {}).some(Boolean) ? "url(#hatch)" : "none"}" fill-rule="evenodd" stroke="${PALETTE.keepout}" stroke-width="1.2" stroke-dasharray="6 3" data-id="${esc(k.id)}"/>`);
   // courtyards and silkscreen
   for (const fp of model.footprints) {
     if (!overlaps(fp.box, view) || !sideShown(fp.side)) continue;

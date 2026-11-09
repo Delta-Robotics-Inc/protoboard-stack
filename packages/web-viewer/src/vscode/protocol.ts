@@ -164,6 +164,10 @@ export interface DevEndpoint {
 }
 
 /** Extension → webview. */
+/** The layout tab's boards (PCB editor Phase 1): the extension host is the board service's client and relays its feed. */
+export type { BoardEntry, BoardFeedMessage } from "@protoboardai/views/pcb/types";
+import type { BoardEntry, BoardFeedMessage } from "@protoboardai/views/pcb/types";
+
 export type ToWebview =
   /** The dev server to load from (`null`: there is none; `message` says why). */
   | { type: "dev"; dev: DevEndpoint | null; message?: string; busy?: boolean }
@@ -202,7 +206,11 @@ export type ToWebview =
   /** R2-E (J1): the user's viewer settings changed. */
   | { type: "settings"; settings: ViewerSettings }
   /** R2-E: the answer to a `parts` request of the in-place BOM (by its `ask`). */
-  | { type: "partsAnswer"; ask: number; ok: boolean; value?: unknown; error?: string };
+  | { type: "partsAnswer"; ask: number; ok: boolean; value?: unknown; error?: string }
+  /** The project's board folders (an answer to `boards`, and again when they change). */
+  | { type: "boards"; boards: BoardEntry[] }
+  /** One message of an open board's feed (`boardOpen`). */
+  | { type: "boardFeed"; message: BoardFeedMessage };
 
 export type HierarchyAction = "reveal" | "filter" | "open" | "close" | "toggle";
 
@@ -308,7 +316,11 @@ export type FromWebview =
    */
   | { type: "download"; name: string; data: string }
   /** R2-E (F1): whether the header's back and forward have somewhere to go (the extension's Go Back keys follow). */
-  | { type: "historyState"; back: boolean; forward: boolean };
+  | { type: "historyState"; back: boolean; forward: boolean }
+  /** The layout tab asks for the project's board folders. */
+  | { type: "boards" }
+  /** The layout tab opens a board's feed (by key), closes it, or asks for a new check run. */
+  | { type: "boardOpen" | "boardClose" | "boardCheck"; board: string };
 
 /** What the in-place BOM asks the extension (R2-E). */
 export type PartsOp = "bom" | "saveBom" | "refreshOffers" | "openSource" | "openLink";
@@ -497,6 +509,13 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
   switch (data.type) {
     case "ready":
       return { type: "ready" };
+    case "boards":
+      return { type: "boards" };
+    case "boardOpen":
+    case "boardClose":
+    case "boardCheck":
+      // a board key (contract section 7: the folder relative to the project, `/` as `__`), never a path
+      return str(data.board) && /^[A-Za-z0-9_.-]{1,300}$/.test(data.board) ? { type: data.type, board: data.board } : undefined;
     case "log": {
       if (!str(data.message)) return undefined;
       const level = data.level === "warn" || data.level === "error" ? data.level : "info";

@@ -11,9 +11,12 @@
 import polygonClipping, { type Polygon as ClipPolygon } from "polygon-clipping";
 import {
   deg,
+  footprintKey,
   footprintToWorld,
   mm,
   normAngle,
+  padId,
+  padKeys,
   sideLayer,
   type AnyLayer,
   type BoardRec,
@@ -34,7 +37,7 @@ import {
 } from "@protoboardai/board";
 import { assemble, emptyDraft, type Draft } from "../assemble.js";
 import { unfracture, type FillEntry } from "../fill.js";
-import { arcSweep, ccwContour, circleContour, dedupeContour, joinEdges, pointInPolygon, polygonArea, tessellate, validContour, type Edge } from "../geom.js";
+import { arcSweep, ccwContour, circleContour, dedupeContour, joinEdges, pointInPolygon, polygonArea, reverseContour, tessellate, validContour, type Edge } from "../geom.js";
 import { Reporter } from "../report.js";
 import { atomsOf, flag, head, isList, kid, kids, num, numOf, parseSexpr, str, val, xyOf, type SList } from "../sexpr.js";
 import type { BoardImportResult } from "../types.js";
@@ -215,6 +218,16 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
   rep.info("KiCad board file", `format ${version || "unknown"}${version && Number(version) < 20221018 ? " (older than KiCad 7: read as best effort)" : ""}`);
   const layers = new KicadLayers(root);
   const copper = layers.copper;
+  {
+    // KiCad identifies items by UUID: two items with one UUID are reported by its DRC as one item
+    const seen = new Set<string>();
+    let dup = 0;
+    for (const m of text.matchAll(/\(uuid\s+"?([0-9A-Fa-f-]{8,})"?\s*\)/g)) {
+      if (seen.has(m[1])) dup++;
+      else seen.add(m[1]);
+    }
+    if (dup) rep.info("item sharing its UUID with another", "both are imported; KiCad identifies items by UUID and its DRC reports such a pair as one item, so a KiCad cross-check can show the other as ours only", { count: dup });
+  }
   const at = (l: SList | undefined) => `line ${l?.line ?? "?"}`;
 
   // ---- nets: KiCad 9 and earlier number them in a header table; KiCad 10 writes names
@@ -252,6 +265,8 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
   const closedLoops: { contour: Vertex[]; source: string }[] = [];
 
   const fpRefs = new Set<string>();
+  /** Pad ids by the pad's KiCad UUID: KiCad treats pads sharing one as one item. */
+  const padsByUuid = new Map<string, string[]>();
   const pins = new Map<string, Set<string>>();
   const addPin = (net: string, pin: string) => {
     const s = pins.get(net) ?? new Set<string>();
@@ -328,7 +343,7 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
   readOutline();
 
   // ---- netlist
-  const mapped = mapKicadRules({ project: options.project, dru: options.rules, nets: [...usedNets].sort(), copper }, rep);
+  const mapped = mapKicadRules({ project: options.project, dru: options.rules, nets: [...usedNets].sort(), copper, copperOf: (n) => layers.copperOf(n) }, rep);
   draft.netclasses = mapped.netclasses;
   draft.rules = mapped.rules;
   const netlist: Netlist = {
@@ -340,7 +355,7 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
   const signed = (v: number) => (v < 0 ? `- ${-v}` : `+ ${v}`);
   rep.info("board offset", `the board was centered on its outline (offset ${done.offset.x}, ${done.offset.y} nm); KiCad's coordinates are x_mm = (x ${signed(done.offset.x)}) / 1e6, y_mm = -(y ${signed(done.offset.y)}) / 1e6`);
   if (done.stats.arcs) rep.info("track arc", "stored as exact end points and a sweep rounded to 0.001 degree (the center is derived)", { count: done.stats.arcs });
-  return { ...done, document: done.document, netlist, report: rep.items(), summary: rep.summary(), importer: KICAD_IMPORTER_ID, ms: performance.now() - t0 };
+  return { ...done, document: done.document, netlist, report: rep.items(), summary: rep.summary(), rulesNotEvaluated: mapped.notEvaluated, sharedSourceIds: [...padsByUuid.values()].filter((l) => l.length > 1), importer: KICAD_IMPORTER_ID, ms: performance.now() - t0 };
 
   // ================================================================= readers
 
@@ -401,12 +416,31 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
       rep.dropped("zone", "no outline polygon", { source: src });
       return;
     }
-    if (polys.length > 1) rep.approximated("zone with several outlines", "only the first outline is kept (one outline per zone)", { source: src });
     const outline = validContour(ccwContour(ringToVertices(ptsRing(kid(polys[0], "pts")), WORLD)));
     if (!outline) {
       rep.dropped("zone", "its outline has fewer than three points", { source: src });
       return;
     }
+    // KiCad writes a zone's holes (a ring-shaped area) as the polygons after the first: each is a hole in it
+    const holes: Vertex[][] = [];
+    if (polys.length > 1) {
+      const outerPts = tessellate(outline);
+      for (const p of polys.slice(1)) {
+        const h = validContour(ringToVertices(ptsRing(kid(p, "pts")), WORLD));
+        if (!h) {
+          rep.dropped("zone hole", "fewer than three points", { source: src });
+          continue;
+        }
+        if (!tessellate(h).every((q) => pointInPolygon(q, outerPts))) {
+          rep.dropped("zone hole", "not inside the zone's outline; KiCad reads the polygons after the first as holes, so it removes nothing there", { source: src });
+          continue;
+        }
+        // a hole runs clockwise
+        holes.push(reverseContour(ccwContour(h)));
+      }
+      if (holes.length) rep.info("zone or rule area with holes", "imported with its holes", { count: 1 });
+    }
+    const holed = holes.length ? { holes } : {};
     const keep = kid(e, "keepout");
     const placement = kid(e, "placement");
     const locked = flag(e, "locked") ? { locked: true as const } : {};
@@ -425,7 +459,7 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
       if (placement && val(placement, "enabled") === "yes") rep.dropped("placement rule area setting", "placement rule areas (sheet or class placement) are not modeled", { source: src });
       const any = blocks.tracks || blocks.vias || blocks.pours || blocks.footprints;
       if (!any) rep.info("rule area that blocks nothing", "kept as a policy keep-out (KiCad uses such areas in custom rules)", { source: src });
-      const k: Omit<KeepoutRec, "id"> = { kind: "keepout", outline, layers: zl, blocks, tier: any ? "no_go" : "policy", ...(footprintId ? { footprint: footprintId } : {}), ...named, ...locked, provenance: PROV };
+      const k: Omit<KeepoutRec, "id"> = { kind: "keepout", outline, ...holed, layers: zl, blocks, tier: any ? "no_go" : "policy", ...(footprintId ? { footprint: footprintId } : {}), ...named, ...locked, provenance: PROV };
       draft.keepouts.push(k);
       return;
     }
@@ -457,6 +491,7 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
       ...(net ? { net } : {}),
       layers: zl,
       outline,
+      ...holed,
       priority: Math.min(1000, Math.max(0, Math.round(priority))),
       ...(clearance !== undefined ? { clearance: mm(clearance) } : {}),
       ...(minW! > 0 ? { min_width: mm(minW!) } : {}),
@@ -699,6 +734,7 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
       if (/lcsc|jlc|supplier/i.test(n) && /^C\d+$/.test(v)) supplier = v;
     }
     const pads: Pad[] = [];
+    const padUuids: (string | undefined)[] = [];
     const graphics: FootprintGraphic[] = [];
     const texts: FootprintText[] = [];
     const courtyardEdges: Edge[] = [];
@@ -777,6 +813,7 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
         const r = readPad(c, ctx);
         if (r) {
           pads.push(r.pad);
+          padUuids.push(val(c, "uuid") ?? val(c, "tstamp"));
           if (r.net) addPin(r.net, `${ref}.${r.pad.number}`);
         }
       } else if (h === "zone") zones.push(c);
@@ -823,6 +860,13 @@ export function importKicadPcb(text: string, options: KicadImportOptions = {}): 
     if (graphics.length > 5000) rep.dropped("footprint graphic", "more than 5000 in one footprint", { count: graphics.length - 5000, source: src });
     if (texts.length > 100) rep.dropped("footprint text", "more than 100 in one footprint", { count: texts.length - 100, source: src });
     draft.footprints.push(fp);
+    const keys = padKeys(fp);
+    padUuids.forEach((u, i) => {
+      if (!u) return;
+      const l = padsByUuid.get(u) ?? [];
+      l.push(padId(footprintKey(fp), keys[i]));
+      padsByUuid.set(u, l);
+    });
     // footprint Edge.Cuts items join the board outline, in world coordinates
     const toWorld = (p: Point) => {
       const w = footprintToWorld(fp, p);

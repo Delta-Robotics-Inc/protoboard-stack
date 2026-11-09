@@ -71,6 +71,7 @@ import { BRIDGE_KEY_HEADER, BRIDGE_ROUTES, BRIDGE_SESSION_HEADER, LiveBridge, MA
 import { MAX_VIEWER_STATE_BYTES, presentationToWrite, parsePresentation, wantsAnnotations, parseViewerStateFile, readViewerState, saveViewerState, withPresentation } from "./viewState.js";
 import { SNAPSHOTS_DIR, backendOf, checkSnapshotMeta, readSnapshot, snapshotKey, writeSnapshot } from "@protoboardai/core/render-service";
 import { Journal } from "./journal.js";
+import { BOARD_ROUTE_PREFIX, createBoardRoutes } from "@protoboardai/views/pcb/host";
 // TODO(W1-B handoff): `@protoboardai/core/telemetry` once core/package.json exports it
 import { MAX_LINE_BYTES, appendTelemetry, enrichViewerRecord } from "@protoboardai/core/telemetry";
 
@@ -135,7 +136,7 @@ export interface DevDiagnostic {
 /** One structured log line. */
 export interface DevLogEvent {
   level: "info" | "warn" | "error";
-  event: "listening" | "build" | "build-failed" | "display" | "layout" | "layout-refused" | "watch" | "error" | "stopped" | "bridge" | "view-state";
+  event: "listening" | "build" | "build-failed" | "display" | "layout" | "layout-refused" | "watch" | "error" | "stopped" | "bridge" | "view-state" | "board";
   message: string;
   [key: string]: unknown;
 }
@@ -953,6 +954,10 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     return found ? json(res, 200, found) : json(res, 404, { error: `no source known for ${defId ?? instancePath}` });
   };
   const relayFile = fileURLToPath(new URL("./relay.js", import.meta.url));
+  // the layout tab's boards (PCB editor Phase 1, @protoboardai/views/pcb/host): this server is the board service's
+  // client (or reads a board's files) and passes the feed to the page, read only; a new check run is the page's own
+  // request (its token and origin), as a layout save is
+  const boards = createBoardRoutes({ root, mayRecheck: (req) => req.headers[TOKEN_HEADER] === token && (!req.headers.origin || sameSite(req.headers.origin, req)), log: (message) => log({ level: "info", event: "board", message }) });
   // the library and bom tabs' data (./parts.ts); a write needs the page's token and origin, as a layout does
   const parts = partsRoutes(root);
   const routes: Record<string, (res: ServerResponse) => void> = {
@@ -981,7 +986,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       // the saved live view state (PB-1178) comes back to a page that opens; never in a capture's own session
       const viewState = personal ? readViewerState(root) : undefined;
       const hash = bundleHash();
-      res.end(JSON.stringify({ session, version, diagnostics: devDiagnostics, building, failed: lastBuild ? !lastBuild.ok : false, message, ...(unwatched ? { unwatched } : {}), views: lastViews, partStatus: lastPartStatus, display: displayRel().split(sep).join("/"), ...(viewState ? { viewState } : {}), ...(hash ? { bundleHash: hash } : {}) }));
+      res.end(JSON.stringify({ session, version, diagnostics: devDiagnostics, building, failed: lastBuild ? !lastBuild.ok : false, message, ...(unwatched ? { unwatched } : {}), views: lastViews, partStatus: lastPartStatus, display: displayRel().split(sep).join("/"), ...(viewState ? { viewState } : {}), ...(hash ? { bundleHash: hash } : {}), boards: boards.list() }));
     },
     [DEV_ROUTES.events]: (res) => {
       res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-store", connection: "keep-alive" });
@@ -1026,6 +1031,14 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     } catch {
       res.writeHead(400);
       return res.end("bad request");
+    }
+    if (path.startsWith(BOARD_ROUTE_PREFIX)) {
+      // read only, from this server's own page (same site) or a page with no Origin; a check run needs the token
+      if (req.headers.origin && !sameSite(req.headers.origin, req)) {
+        res.writeHead(403, { "content-type": "text/plain; charset=utf-8" });
+        return res.end("the board routes are for this server's own page");
+      }
+      if (boards.handle(req, res, new URL(req.url ?? "/", "http://x"))) return;
     }
     if (path.startsWith(PARTS_PREFIX)) {
       const origin = req.headers.origin;
@@ -1156,6 +1169,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       clearTimeout(timer);
       clearInterval(heartbeat);
       bridge.close();
+      await boards.close();
       for (const w of watchers.values()) w.close();
       child?.kill();
       for (const res of clients) res.end();

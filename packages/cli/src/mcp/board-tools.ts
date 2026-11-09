@@ -7,7 +7,7 @@
  * The CLI uses the board's running service when there is one (`protoboard board serve`), else it opens the board
  * for the one call and saves what it changed. Undo history, leases and presence live in a running service.
  */
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { z } from "zod";
@@ -45,6 +45,14 @@ async function board(ctx: ToolContext, dir: string, sub: string, options: Record
   } finally {
     if (scratch) rmSync(scratch, { recursive: true, force: true });
   }
+}
+
+/** A reply with the PNG it names attached (when the command wrote one). */
+function withPng(out: ToolOutcome, pick: (d: { file?: string; files?: { png?: string } }) => string | undefined): ToolOutcome {
+  if (out.isError) return out;
+  const file = pick((out.data ?? {}) as { file?: string; files?: { png?: string } });
+  if (!file || !file.toLowerCase().endsWith(".png") || !existsSync(file)) return out;
+  return { ...out, images: [{ data: readFileSync(file).toString("base64"), mimeType: "image/png" }] };
 }
 
 export function boardTools(): ToolSpec[] {
@@ -179,6 +187,98 @@ export function boardTools(): ToolSpec[] {
       input: { dir: DIR },
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       handler: async ({ dir }, ctx) => board(ctx, await ctx.dir(dir), "presence", {}, []),
+    }),
+    tool({
+      name: "board_check",
+      title: "Check the board",
+      description:
+        "Run the board's connectivity and design rule checks on its zone fill: every finding (id, check, severity, message, objects, location in nm), the checks not run and why, caveats, connectivity counts, and summary.line (N unconnected, M errors, K warnings; `incomplete` when something is left out). When the board was imported from a KiCad file (or `kicad` names one) and kicad-cli is installed, KiCad's DRC runs on that file and crossCheck gives KiCad's counts beside ours with every difference named; otherwise crossCheck says why it did not run. Finding ids work in board_describe's `finding`. Writes nothing.",
+      input: {
+        dir: DIR,
+        kicad: z.string().optional().describe("A KiCad board file (.kicad_pcb) of the same board to cross-check against (default: the file the board was imported from)."),
+        kicadRoot: z.string().optional().describe("The folder kicad-cli's run copies (default: the KiCad file's folder; it must hold the project and rule files)."),
+        crossCheck: z.boolean().optional().describe("false: skip KiCad's DRC (it takes seconds)."),
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        return board(ctx, dir, "check", { kicad: a.kicad ? await ctx.dir(a.kicad) : undefined, "kicad-root": a.kicadRoot ? await ctx.dir(a.kicadRoot) : undefined, "no-cross-check": a.crossCheck === false ? "true" : undefined }, []);
+      },
+    }),
+    tool({
+      name: "board_describe",
+      title: "Describe the board for an agent",
+      description:
+        "The board scene: compact JSON made for an agent (board, view, counts, footprints with neighbors, nets with completion, ratsnest links, copper, vias, zones, keep-outs, locks, congestion; millimeters, +Y up, origin at the board center) and a matching PNG whose marker numbers match the JSON's. Connectivity and finding markers come from the board checks. Give at most one focus: region (mm box), net, object (an id), or finding (an id from board_check); none describes the whole board. Returns the scene and the paths of the files it wrote under .protoboard/build; `image: true` also returns the PNG. Writes only those derived files.",
+      input: {
+        dir: DIR,
+        region: z.array(z.number()).length(4).optional().describe("A box in millimeters: [x1, y1, x2, y2]."),
+        net: z.string().optional().describe("A net name: its pads, copper and missing links."),
+        object: z.string().optional().describe("An object id (fp:…, pad:…, trk:…, via:…, zone:…)."),
+        finding: z.string().optional().describe("A finding id from board_check (f:<check>:<hash>)."),
+        image: z.boolean().optional().describe("Also return the PNG in the reply."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        const given = [a.region ? 1 : 0, a.net ? 1 : 0, a.object ? 1 : 0, a.finding ? 1 : 0].reduce((x, y) => x + y, 0);
+        if (given > 1) return { data: { error: "give at most one of region, net, object, finding" }, isError: true };
+        const out = await board(ctx, dir, "describe", { region: a.region ? `[${a.region.join(",")}]` : undefined, net: a.net, object: a.object, finding: a.finding }, []);
+        return a.image ? withPng(out, (d) => d.files?.png) : out;
+      },
+    }),
+    tool({
+      name: "board_render",
+      title: "Render the board to a PNG",
+      description:
+        "A PNG of the board as the layout screen draws it (headless Chrome; several seconds), with its zone fill, ratsnest and the checks' finding markers: the whole board or a region (nm box), chosen layers, flipped to the bottom, nets highlighted. Returns the file it wrote under .protoboard/build and what it drew; `image: true` also returns the PNG. For a description an agent reads, prefer board_describe. Writes only that derived file.",
+      input: {
+        dir: DIR,
+        region: BOX.optional().describe("The area to draw, nanometers (default: the whole board)."),
+        layers: z.union([z.enum(["all", "routing", "top", "fab"]), z.array(z.string())]).optional().describe("A preset (all, routing, top, fab) or layer panel rows such as cu:top, silk:top, pads."),
+        flip: z.boolean().optional().describe("View from the bottom."),
+        nets: z.array(z.string()).optional().describe("Nets to highlight."),
+        width: z.number().int().min(16).max(8192).optional().describe("Pixels (default 1200)."),
+        height: z.number().int().min(16).max(8192).optional().describe("Pixels (default 900)."),
+        image: z.boolean().optional().describe("Also return the PNG in the reply."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        const out = await board(
+          ctx,
+          dir,
+          "render",
+          {
+            region: a.region ? `[${[a.region.minX, a.region.minY, a.region.maxX, a.region.maxY].join(",")}]` : undefined,
+            layers: a.layers === undefined ? undefined : typeof a.layers === "string" ? a.layers : a.layers.join(","),
+            flip: a.flip ? "true" : undefined,
+            net: a.nets?.length ? a.nets.join(",") : undefined,
+            width: a.width,
+            height: a.height,
+          },
+          [],
+        );
+        return a.image ? withPng(out, (d) => d.file) : out;
+      },
+    }),
+    tool({
+      name: "board_import",
+      title: "Import a board",
+      description:
+        "Import a board file into a board folder: a KiCad board (.kicad_pcb, with the .kicad_pro and .kicad_dru beside it), Circuit JSON, or EasyEDA Pro when its importer is installed. A whole board needs an empty or new folder; it writes the board files, the netlist, the source's zone fill and an import record (so board_check can cross-check against the source with KiCad). Returns the import report: what was dropped or approximated and why, counts, and the coordinate offset. An importer that gives operations instead applies them to the board there as host import:<importer>. CHANGES FILES.",
+      input: {
+        source: z.string().describe("The file to import, absolute or relative to the folder the agent works in."),
+        dir: DIR,
+        format: z.string().optional().describe("The source format when its name does not say: kicad_pcb, circuit-json, epro2."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+      handler: async (a, ctx) => {
+        const dir = await ctx.dir(a.dir);
+        const source = await ctx.dir(a.source);
+        const r = readCliJson(await ctx.cli(dir, cliArgs(["board", "import"], { kind: a.format }, [source, dir])));
+        return r.ok ? { data: r.data } : failure(r.message, dir, r.code);
+      },
     }),
   ];
   for (const s of specs) s.description = `${s.description} ${BOARD_NO_PROJECT_CODE}`;

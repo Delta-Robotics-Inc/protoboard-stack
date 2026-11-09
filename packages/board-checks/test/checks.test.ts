@@ -204,11 +204,13 @@ describe("findings", () => {
 });
 
 describe("measurement details", () => {
-  it("compares at whole nanometers", () => {
-    const book = new RuleBook(makeDoc([...boardRecords(), rule("f", "floor", "clearance", 0.1)]));
+  it("passes a distance up to 500 nm short of its minimum, and compares a size exactly", () => {
+    const book = new RuleBook(makeDoc([...boardRecords(), rule("f", "floor", "clearance", 0.1), rule("w", "floor", "track_width", 0.1)]));
     const s = { nets: ["N1", "N2"], kinds: ["track", "track"] as ["track", "track"], at: { x: 0, y: 0 } };
-    expect(book.evaluate("clearance", 99_999.6, s)).toEqual([]);
-    expect(book.evaluate("clearance", 99_999.4, s).map((v) => v.rule)).toEqual(["rule:f"]);
+    expect(book.evaluate("clearance", 99_500, s)).toEqual([]);
+    expect(book.evaluate("clearance", 99_499, s).map((v) => v.rule)).toEqual(["rule:f"]);
+    expect(book.evaluate("track_width", 99_999.6, s)).toEqual([]);
+    expect(book.evaluate("track_width", 99_999, s).map((v) => v.rule)).toEqual(["rule:w"]);
   });
 
   it("clearance between copper carrying the same net by contact is not checked", () => {
@@ -216,11 +218,16 @@ describe("measurement details", () => {
     expect(of(run(recs, { N1: ["A.1"] }), "clearance")).toEqual([]);
   });
 
-  it("a zone's own clearance warns when its fill is nearer than it asks and no rule reports the pair", () => {
+  it("a zone's own clearance is an error floor at priority 0, overridden by a higher-priority rule", () => {
     const z: BoardRecord = { kind: "zone", id: "zone:g", net: "GND", layers: ["top"], outline: rectV(10, 10), priority: 0, clearance: mm(0.3), pad_connection: "solid", fill_mode: "solid", remove_islands: "never", provenance: { by: "hand" } };
+    const fills = [{ zone: "zone:g", layer: "top" as const, polygons: [{ outline: rectV(8, 4, 0, 0) }] }];
     const doc = makeDoc([...boardRecords(), z, trk("t", "N1", "top", 0.2, [-3, 2.25], [3, 2.25]), rule("f", "floor", "clearance", 0.1)]);
-    const f = runBoardChecks(doc, { fills: [{ zone: "zone:g", layer: "top", polygons: [{ outline: rectV(8, 4, 0, 0) }] }] }).findings.filter((x) => x.check === "clearance");
-    expect(f.map((x) => [x.severity, x.measured, x.required])).toEqual([["warning", mm(0.15), mm(0.3)]]);
+    const f = runBoardChecks(doc, { fills }).findings.filter((x) => x.check === "clearance");
+    expect(f.map((x) => [x.severity, x.measured, x.required])).toEqual([["error", mm(0.15), mm(0.3)]]);
+    expect(f[0].message).toContain("zone zone:g clearance, floor");
+    // a custom rule (a higher priority) that allows 0.1 mm replaces the zone's clearance, as in KiCad
+    const over = makeDoc([...boardRecords(), z, trk("t", "N1", "top", 0.2, [-3, 2.25], [3, 2.25]), rule("f", "floor", "clearance", 0.1, {}, { priority: 1001 })]);
+    expect(runBoardChecks(over, { fills }).findings.filter((x) => x.check === "clearance")).toEqual([]);
   });
 
   it("fill clipped at a keep-out's edge is not inside it", () => {
@@ -231,5 +238,81 @@ describe("measurement details", () => {
     expect(touching.findings.filter((x) => x.check === "keepout")).toEqual([]);
     const inside = runBoardChecks(doc, { fills: [{ zone: "zone:g", layer: "top", polygons: [{ outline: rectV(4.5, 4, 0, 0) }] }] });
     expect(inside.findings.filter((x) => x.check === "keepout")).toHaveLength(1);
+  });
+});
+
+describe("precedence and conditions", () => {
+  it("the highest-priority matching rule of a tier overrides lower ones", () => {
+    // a later (higher-priority) rule with a smaller minimum relaxes an earlier, larger one
+    expect(of(run([...pair(0.15), rule("early", "floor", "clearance", 0.3, {}, { priority: 1001 }), rule("late", "floor", "clearance", 0.1, {}, { priority: 1002 })]), "clearance")).toEqual([]);
+    const f = of(run([...pair(0.15), rule("early", "floor", "clearance", 0.1, {}, { priority: 1001 }), rule("late", "floor", "clearance", 0.3, {}, { priority: 1002 })]), "clearance");
+    expect(f.map((x) => [x.rule, x.required])).toEqual([["rule:late", mm(0.3)]]);
+    // board setup and net class floors (priority 0) give way to a matching custom rule
+    expect(of(run([...pair(0.15), rule("setup", "floor", "clearance", 0.2, {}, { priority: 0 }), rule("custom", "floor", "clearance", 0.1, {}, { priority: 1001 })]), "clearance")).toEqual([]);
+    // precedence is per tier: a policy rule is not silenced by a floor of a higher priority
+    const p = of(run([...pair(0.15), rule("custom", "floor", "clearance", 0.1, {}, { priority: 1001 }), rule("pref", "policy", "clearance", 0.2, {}, { cost: 3 })]), "clearance");
+    expect(p.map((x) => [x.rule, x.severity])).toEqual([["rule:pref", "warning"]]);
+  });
+
+  it("a winning rule set to ignore silences what it overrides", () => {
+    expect(of(run([...pair(0.05), rule("setup", "floor", "clearance", 0.1), rule("off", "floor", "clearance", 0.3, {}, { priority: 1001, severity: "ignore" })]), "clearance")).toEqual([]);
+  });
+
+  it("a condition on object kinds matches the pair in either order", () => {
+    const when = { all: [{ side: "A" as const, kind: ["via" as const] }, { side: "B" as const, kind: ["pad" as const] }] };
+    const recs = [fp("U", 0, 0, [smd("1", 0, 0, 1, 1)]), via("v", "N2", 1.0, 0, 0.6, 0.3), trk("t", "N3", "top", 0.2, [-3, 0.9], [-1, 0.9]), rule("vp", "floor", "clearance", 0.5, { when }, { priority: 1001 })];
+    const f = of(run(recs, { N1: ["U.1"] }), "clearance");
+    // the via's copper is 0.2 mm from the pad; the track 0.3 mm from it is not a via
+    expect(f.map((x) => x.objects)).toEqual([["pad:U:1", "via:v"]]);
+  });
+
+  it("conditions on net class, net name, same net and coordinates", () => {
+    const book = new RuleBook(makeDoc([...boardRecords(), { kind: "netclass", id: "class:pwr", name: "pwr", nets: ["VCC"] } as BoardRecord]));
+    const A = { id: "via:a", kind: "via" as const, net: "VCC", at: { x: mm(1), y: mm(-2) } };
+    const B = { id: "pad:b", kind: "pad" as const, net: "VCC" };
+    expect(book.test({ side: "A", class: ["pwr"] }, A, B)).toBe(true);
+    expect(book.test({ side: "B", net: ["GND"] }, A, B)).toBe(false);
+    expect(book.test({ same_net: true }, A, B)).toBe(true);
+    expect(book.test({ not: { same_net: true } }, A, { ...B, net: "GND" })).toBe(true);
+    expect(book.test({ side: "A", coord: "y", of: "at", lt: mm(-1) }, A, B)).toBe(true);
+    expect(book.test({ any: [{ side: "B", kind: ["track"] }, { side: "A", coord: "x", of: "at", gt: mm(2) }] }, A, B)).toBe(false);
+    // a term about B on a single object is false
+    expect(book.test({ side: "B", kind: ["pad"] }, A, undefined)).toBe(false);
+  });
+
+  it("a keep-out with a hole: inside the hole is allowed, inside the ring is not", () => {
+    const ring: BoardRecord = { kind: "keepout", id: "kpo:r", outline: rectV(8, 8), holes: [rectV(4, 4).reverse()], layers: ["top", "bottom"], blocks: { tracks: true, vias: true, pours: true, footprints: false }, tier: "no_go", provenance: { by: "hand" } };
+    const f = of(run([ring, via("in_hole", "N1", 0, 0), via("in_ring", "N1", 3, 0)]), "keepout");
+    expect(f.map((x) => x.objects)).toEqual([["kpo:r", "via:in_ring"]]);
+  });
+
+  it("a higher-priority disallow rule replaces a keep-out's finding with its own severity", () => {
+    const kpo: BoardRecord = { kind: "keepout", id: "kpo:k", outline: rectV(4, 4), layers: ["top", "bottom"], blocks: { tracks: true, vias: true, pours: true, footprints: false }, tier: "no_go", provenance: { by: "hand" } };
+    const vias = { when: { side: "A" as const, kind: ["via" as const] } };
+    const r = run([kpo, via("v", "N1", 0, 0), rule("d", "no_go", "disallow", undefined, vias, { priority: 1001, severity: "warning" })]);
+    expect(of(r, "keepout")).toEqual([]);
+    expect(of(r, "disallow").map((x) => [x.objects, x.severity])).toEqual([[["via:v"], "warning"]]);
+    // a disallow rule for tracks does not touch the via: the keep-out's error stays
+    const tracks = { when: { side: "A" as const, kind: ["track" as const] } };
+    expect(of(run([kpo, via("v", "N1", 0, 0), rule("d", "no_go", "disallow", undefined, tracks, { priority: 1001, severity: "warning" })]), "keepout").map((x) => x.severity)).toEqual(["error"]);
+  });
+
+  it("hole size covers pad holes; a condition picks a footprint's pad by number", () => {
+    const when = { all: [{ side: "A" as const, footprint: ["J2"] }, { side: "A" as const, pad: ["17"] }] };
+    const recs = [fp("J2", 0, 0, [th("17", 0, 0, 1.2, 0.6), th("1", 3, 0, 1.2, 0.6)]), rule("s", "floor", "hole_size", undefined, { when }, { max: mm(0.1), severity: "warning", priority: 1001 })];
+    expect(of(run(recs), "hole_size").map((x) => [x.objects, x.severity, x.measured, x.required])).toEqual([[["pad:J2:17"], "warning", mm(0.6), mm(0.1)]]);
+  });
+
+  it("physical clearance measures copper of the same net", () => {
+    const when = { all: [{ side: "A" as const, kind: ["via" as const] }, { side: "B" as const, kind: ["pad" as const] }, { same_net: true as const }] };
+    const recs = [fp("U", 0, 0, [smd("1", 0, 0, 1, 1)]), via("v", "N1", 0.85, 0, 0.6, 0.3), rule("pc", "floor", "physical_clearance", 0.2, { when }, { priority: 1001, severity: "warning" })];
+    const f = of(run(recs, { N1: ["U.1"] }), "physical_clearance");
+    expect(f.map((x) => [x.objects, x.severity, x.measured])).toEqual([[["pad:U:1", "via:v"], "warning", mm(0.05)]]);
+  });
+
+  it("silkscreen over pads: one finding per silkscreen element, naming every pad it reaches", () => {
+    const text: BoardRecord = { kind: "text", id: "txt:t", layer: "top_silkscreen", text: "ABCDEFGH", x: 0, y: 0, height: mm(1), provenance: { by: "hand" } };
+    const f = of(run([fp("U", 0, 0, [smd("1", -1, 0, 0.5, 0.5), smd("2", 1, 0, 0.5, 0.5)]), text]), "silk_to_pad");
+    expect(f.map((x) => x.objects)).toEqual([["pad:U:1", "pad:U:2", "txt:t"]]);
   });
 });

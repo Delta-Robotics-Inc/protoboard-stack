@@ -9,6 +9,7 @@ import type { ModuleDef, UhdBundle } from "@deltarobotics/uhd";
 import type { ResolvedView } from "@protoboardai/core";
 import { VIEW_FILES, isModelFile } from "@protoboardai/core/views";
 import { appliesFromDecl, hasArtifact, hasFile } from "./applies.js";
+import { layoutApplies } from "./pcb/known-boards.js";
 
 /** A view's registration without its component (types.ts ViewDefinition, which adds it). */
 export interface TabRule {
@@ -64,6 +65,16 @@ export const BUILTIN_TABS: readonly TabRule[] = [
     source: "builtin",
     description: "The board's layout, top and bottom, in the host's theme; a pad lights its net.",
     applies: (module, bundle) => hasFile(module, bundle, VIEW_FILES.pcb),
+  },
+  {
+    id: "layout",
+    title: "Layout",
+    icon: "circuit-board",
+    order: 35,
+    source: "builtin",
+    description: "The board layout editor's screen on a board folder of the project: layers, nets, the checks and KiCad's beside them.",
+    // a board folder is not in the bundle: the shell's host says which there are (pcb/known-boards.ts)
+    applies: (module, bundle, at) => layoutApplies(module, bundle, at),
   },
   {
     id: "bom",

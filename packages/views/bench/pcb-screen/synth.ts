@@ -3,9 +3,9 @@
  * segments, 230 vias, a few hundred pads in QFN-like and chip footprints, inner-layer zones and silkscreen.
  * Deterministic (a seeded generator), so runs compare. Not a real design: shapes and nets are arbitrary.
  */
-import { createDocument, type BoardDocument } from "../../../board/src/document.js";
-import type { BoardRecord, CopperLayer, FootprintRec, Netlist, Pad } from "../../../board/src/schema.js";
-import { mm } from "../../../board/src/units.js";
+import { createDocument, type BoardDocument } from "@protoboardai/board";
+import type { BoardRecord, CopperLayer, FootprintRec, Netlist, Pad } from "@protoboardai/board";
+import { mm } from "@protoboardai/board";
 
 export interface SynthOptions {
   tracks?: number;

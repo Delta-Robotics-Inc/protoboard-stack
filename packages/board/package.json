@@ -12,6 +12,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./browser": "./src/browser.ts",
+    "./node": "./src/node.ts",
     "./fixtures/airnode-c3": "./src/fixtures/airnode-c3.ts",
     "./package.json": "./package.json"
   },

@@ -9,8 +9,8 @@
  */
 import { writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { loadBoardDir } from "../../../board/src/format.js";
-import { airnodeC3 } from "../../../board/src/fixtures/airnode-c3.js";
+import { loadBoardDir } from "@protoboardai/board";
+import { airnodeC3 } from "@protoboardai/board/fixtures/airnode-c3";
 import { createHeadlessRenderer } from "../../src/pcb/headless/render.js";
 import { synthBoard } from "./synth.js";
 

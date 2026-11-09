@@ -34,6 +34,7 @@ import {
   type ZoneRec,
 } from "@protoboardai/board";
 import { shiftFill, type DerivedFill, type FillEntry } from "./fill.js";
+import { shiftCondition } from "./kicad/condition.js";
 import type { Reporter } from "./report.js";
 import type { ImportStats } from "./types.js";
 
@@ -71,8 +72,8 @@ function shiftDraft(d: Draft, dx: number, dy: number): void {
   d.footprints = d.footprints.map((f) => ({ ...f, x: f.x - dx, y: f.y - dy }));
   d.tracks = d.tracks.map((t) => ({ ...t, start: shiftPt(t.start, dx, dy), end: shiftPt(t.end, dx, dy) }));
   d.vias = d.vias.map((v) => ({ ...v, x: v.x - dx, y: v.y - dy }));
-  d.zones = d.zones.map((z) => ({ ...z, rec: { ...z.rec, outline: shiftContour(z.rec.outline, dx, dy) } }));
-  d.keepouts = d.keepouts.map((k) => ({ ...k, outline: shiftContour(k.outline, dx, dy) }));
+  d.zones = d.zones.map((z) => ({ ...z, rec: { ...z.rec, outline: shiftContour(z.rec.outline, dx, dy), ...(z.rec.holes ? { holes: z.rec.holes.map((h) => shiftContour(h, dx, dy)) } : {}) } }));
+  d.keepouts = d.keepouts.map((k) => ({ ...k, outline: shiftContour(k.outline, dx, dy), ...(k.holes ? { holes: k.holes.map((h) => shiftContour(h, dx, dy)) } : {}) }));
   d.graphics = d.graphics.map((g) => ({
     ...g,
     ...(g.start ? { start: shiftPt(g.start, dx, dy) } : {}),
@@ -81,7 +82,11 @@ function shiftDraft(d: Draft, dx: number, dy: number): void {
     ...(g.points ? { points: shiftContour(g.points, dx, dy) } : {}),
   }));
   d.texts = d.texts.map((t) => ({ ...t, x: t.x - dx, y: t.y - dy }));
-  d.rules = d.rules.map((r) => (r.applies.region ? { ...r, applies: { ...r.applies, region: shiftContour(r.applies.region, dx, dy) } } : r));
+  d.rules = d.rules.map((r) =>
+    r.applies.region || r.applies.when
+      ? { ...r, applies: { ...r.applies, ...(r.applies.region ? { region: shiftContour(r.applies.region, dx, dy) } : {}), ...(r.applies.when ? { when: shiftCondition(r.applies.when, dx, dy) } : {}) } }
+      : r,
+  );
   for (const z of d.zones) shiftFill(z.fills as FillEntry[], dx, dy);
   shiftFill(d.looseFills, dx, dy);
 }

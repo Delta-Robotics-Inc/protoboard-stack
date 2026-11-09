@@ -40,10 +40,12 @@ const TOOLS = [
   "settings_get", "settings_set",
   // PCB editor Phase 1 (deliberate change): the board tools, generated from the board operation registry
   "board_operations", "board_apply", "board_inspect", "board_query", "board_undo", "board_redo", "board_claim", "board_release", "board_presence",
+  // PCB editor Phase 1 (deliberate change): the board's checks, agent scene, image and import
+  "board_check", "board_describe", "board_render", "board_import",
 ];
 const WRITES = ["project_init", "project_build", "project_layout", "parts_add"];
 /** Tools that run no project code (W4-D): the exact tier and the issue reports. */
-const NO_PROJECT_CODE = ["geometry_measure", "report_issue", "request_feature", "report_send", "report_list", "settings_get", "settings_set", "board_operations", "board_apply", "board_inspect", "board_query", "board_undo", "board_redo", "board_claim", "board_release", "board_presence"];
+const NO_PROJECT_CODE = ["geometry_measure", "report_issue", "request_feature", "report_send", "report_list", "settings_get", "settings_set", "board_operations", "board_apply", "board_inspect", "board_query", "board_undo", "board_redo", "board_claim", "board_release", "board_presence", "board_check", "board_describe", "board_render", "board_import"];
 
 const PART: UhdModuleDef = {
   id: "test-mcp-regulator",

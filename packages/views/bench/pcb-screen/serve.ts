@@ -1,24 +1,34 @@
 /**
- * The layout screen's dev server: bundles page.tsx (the screen, the renderer and the board core with browser
- * shims) and serves it on 127.0.0.1 with the viewer's Kode Mono faces. It also reads board folders for the page
- * (`/api/board?path=<folder>`): any folder holding board.jsonl, in the core's on-disk format.
+ * The layout screen's dev server: bundles page.tsx (the screen, the renderer and the board core's browser-safe
+ * parts) and serves it on 127.0.0.1 with the viewer's Kode Mono faces, and is the board service's client for the
+ * page through the same routes `protoboard dev` mounts (@protoboardai/views/pcb/host: `/__protoboard/board/...`).
+ *
+ * - The default board is the Airnode C3 fixture, copied to a temporary folder and served there as a live board
+ *   service (`serveBoard`), so the page sees commits as they happen; `/api/move` commits a footprint move on it as
+ *   a person (the screenshot script's way to make commits). The tracked fixture is never written.
+ * - `?board=<folder>` (any folder holding board.jsonl) opens that board through its live service when one runs
+ *   (`protoboard board serve`), else from its files.
  *
  *   npx tsx packages/views/bench/pcb-screen/serve.ts [--port 5470]
  *   then open http://127.0.0.1:5470/ (the fixture) or /?board=<board folder>
  *
  * The bundle is rebuilt on every page load, so an edit shows on reload.
  */
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
 import { createServer, type Server } from "node:http";
 import { createRequire } from "node:module";
+import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { loadBoardDir } from "../../../board/src/format.js";
+import { HUMAN, openBoardService, serveBoard, type BoardServer, type BoardService } from "@protoboardai/board/node";
 import { bundleBrowser } from "../../src/pcb/headless/bundle.js";
+import { BOARD_ROUTE_PREFIX, createBoardRoutes, entryOf } from "../../src/pcb/host/index.js";
+import type { BoardEntry } from "../../src/pcb/types.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO = resolve(HERE, "..", "..", "..", "..");
+const FIXTURE = join(REPO, "packages", "board", "test", "fixtures", "airnode-c3");
 
 function fontsDir(): string | undefined {
   try {
@@ -37,11 +47,26 @@ const HTML = `<!doctype html><html><head><meta charset="utf-8"><title>layout</ti
 html, body, #root { margin: 0; height: 100%; background: #0b0b0b; }
 </style></head><body><div id="root"></div><script src="/app.js"></script></body></html>`;
 
-export async function startDevServer(port = 5470): Promise<{ url: string; server: Server }> {
+export async function startDevServer(port = 5470, options: { log?: (line: string) => void } = {}): Promise<{ url: string; server: Server; close(): Promise<void> }> {
   const fonts = fontsDir();
+  // the fixture as a live board service, on a copy
+  const tmp = mkdtempSync(join(tmpdir(), "pcb-screen-"));
+  const fixtureDir = join(tmp, "airnode-c3");
+  cpSync(FIXTURE, fixtureDir, { recursive: true });
+  const fixture: BoardService = openBoardService({ dir: fixtureDir });
+  const fixtureServer: BoardServer = await serveBoard(fixture);
+  const opened = new Map<string, { entry: BoardEntry; dir: string; service?: BoardService }>();
+  const fixtureEntry = { ...entryOf(tmp, fixtureDir), key: "fixture" };
+  opened.set("fixture", { entry: fixtureEntry, dir: fixtureDir, service: fixture });
+  const routes = createBoardRoutes({ root: tmp, extra: () => [...opened.values()], mayRecheck: (req) => !req.headers.origin || /^http:\/\/127\.0\.0\.1:\d+$/.test(String(req.headers.origin)), ...(options.log ? { log: options.log } : {}) });
+
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://127.0.0.1");
     try {
+      if (url.pathname.startsWith(BOARD_ROUTE_PREFIX)) {
+        routes.handle(req, res, url);
+        return;
+      }
       if (url.pathname === "/") {
         res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
         return res.end(HTML);
@@ -58,16 +83,35 @@ export async function startDevServer(port = 5470): Promise<{ url: string; server
           return res.end(readFileSync(file));
         }
       }
-      if (url.pathname === "/api/board") {
-        const dir = resolve(url.searchParams.get("path") ?? "");
+      if (url.pathname === "/api/open") {
+        const path = url.searchParams.get("path");
+        if (!path) {
+          res.writeHead(200, { "content-type": "application/json" });
+          return res.end(JSON.stringify({ key: "fixture", name: fixtureEntry.name }));
+        }
+        const dir = resolve(path);
         if (!existsSync(join(dir, "board.jsonl")) || !statSync(dir).isDirectory()) {
           res.writeHead(404, { "content-type": "text/plain" });
           return res.end(`not a board folder (no board.jsonl): ${dir}`);
         }
-        const { doc } = loadBoardDir(dir);
-        const board = doc.records.get("board");
-        res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store" });
-        return res.end(JSON.stringify({ records: [...doc.records.values()], ...(doc.netlist ? { netlist: doc.netlist } : {}), name: board?.kind === "board" ? board.name : basename(dir) }));
+        const entry = { ...entryOf(dirname(dir), dir), key: `dir-${opened.size}` };
+        const had = [...opened.values()].find((o) => o.dir === dir);
+        const use = had?.entry ?? entry;
+        if (!had) opened.set(entry.key, { entry, dir });
+        res.writeHead(200, { "content-type": "application/json" });
+        return res.end(JSON.stringify({ key: use.key, name: use.name }));
+      }
+      if (url.pathname === "/api/move" && req.method === "POST") {
+        const o = opened.get(url.searchParams.get("board") ?? "");
+        if (!o?.service) {
+          res.writeHead(409, { "content-type": "text/plain" });
+          return res.end("only the fixture's own service takes moves here");
+        }
+        const dx = Math.round(Number(url.searchParams.get("dx")) * 1e6);
+        const dy = Math.round(Number(url.searchParams.get("dy")) * 1e6);
+        const r = o.service.apply({ batchId: `dev-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, label: `move ${url.searchParams.get("id")} by hand`, ops: [{ op: "footprint.move", ids: [url.searchParams.get("id") ?? ""], dx, dy, tracks: "stay" }] }, HUMAN);
+        res.writeHead(200, { "content-type": "application/json" });
+        return res.end(JSON.stringify(r));
       }
       res.writeHead(url.pathname === "/favicon.ico" ? 204 : 404);
       res.end();
@@ -79,11 +123,25 @@ export async function startDevServer(port = 5470): Promise<{ url: string; server
   await new Promise<void>((ok) => server.listen(port, "127.0.0.1", ok));
   const addr = server.address();
   const p = typeof addr === "object" && addr ? addr.port : port;
-  return { url: `http://127.0.0.1:${p}/`, server };
+  let closing: Promise<void> | undefined;
+  return {
+    url: `http://127.0.0.1:${p}/`,
+    server,
+    close: () =>
+      (closing ??= (async () => {
+        server.closeAllConnections();
+        await new Promise<void>((ok) => server.close(() => ok()));
+        await routes.close();
+        await fixtureServer.close();
+        fixture.close({ save: false });
+        rmSync(tmp, { recursive: true, force: true });
+      })()),
+  };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const { values } = parseArgs({ options: { port: { type: "string" } } });
-  const { url } = await startDevServer(Number(values.port ?? 5470));
-  console.log(`layout screen dev page: ${url}  (a board folder: ${url}?board=<folder>)`);
+  const s = await startDevServer(Number(values.port ?? 5470), { log: (l) => console.log(l) });
+  console.log(`layout screen dev page: ${s.url}  (a board folder: ${s.url}?board=<folder>)`);
+  for (const sig of ["SIGINT", "SIGTERM"] as const) process.once(sig, () => void s.close().then(() => process.exit(0)));
 }

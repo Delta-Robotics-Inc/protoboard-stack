@@ -23,6 +23,16 @@ export const SERVICE_FILE = "service.json";
 export const MAX_MESSAGE_BYTES = 4 * 1024 * 1024;
 /** DEFAULT: connections a server holds at once. */
 export const MAX_CONNECTIONS = 32;
+/** Requests one JSON-RPC batch may hold. */
+export const MAX_BATCH = 64;
+/** Sockets a server accepts beyond `maxConnections`, for handshakes in progress and refusals being answered. */
+export const HANDSHAKE_SLACK = 8;
+/** How long a socket may take to send its upgrade request (headers and all) before it is dropped. */
+export const HANDSHAKE_TIMEOUT_MS = 10_000;
+/** DEFAULT: a keepalive ping this often; a client that sent nothing since the last one is dropped (0 turns it off). */
+export const KEEPALIVE_MS = 30_000;
+/** DEFAULT: bytes a connection may hold unsent (a client that does not read) before it is dropped. */
+export const MAX_SEND_BUFFER_BYTES = 32 * 1024 * 1024;
 
 /** What `service.json` holds (contract section 7: pid, port, token, epoch; the rest is informative). */
 export interface ServiceFile {

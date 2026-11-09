@@ -18,10 +18,14 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import type * as ChecksModule from "@protoboardai/board-checks";
+import type * as ImportModule from "@protoboardai/board-import";
+import type * as SceneModule from "@protoboardai/board-scene";
+import type * as HostModule from "@protoboardai/views/pcb/host";
 import {
   agentActor,
   BoardLockedError,
-  boardKey,
+  boardBuildDir,
   connectBoard,
   describeOperations,
   findProjectRoot,
@@ -30,24 +34,23 @@ import {
   importResultToTransaction,
   netClassOf,
   openBoardService,
-  runChecks,
   serveBoard,
   toMm,
   writeBoardDir,
   writeNetlist,
+  writeZoneFill,
   type Actor,
   type BoardClient,
   type BoardRecord,
   type BoardSnapshot,
-  type Check,
-  type Finding,
   type Importer,
+  type ImportResult,
   type ImportSource,
   type LeaseClaim,
   type QueryParams,
   type Reply,
   type Transaction,
-} from "@protoboardai/board";
+} from "@protoboardai/board/node";
 
 export type Out = (data: unknown, text: () => string) => void;
 
@@ -92,9 +95,10 @@ export const BOARD_COMMANDS: readonly Spec[] = [
   { name: "presence", args: "<dir>", summary: "Live leases and recent agent intents", flags: [] },
   { name: "save", args: "<dir>", summary: "Write the changed board files", flags: [] },
   { name: "checkpoint", args: "<dir> <label>", summary: "Save, then print the commit message for the caller to commit (never runs Git)", flags: [] },
-  { name: "import", args: "<source> <dir>", summary: "Import a board through an installed importer (board-import packages)", flags: ["kind", "as"] },
-  { name: "check", args: "<dir>", summary: "Run the installed board checks (board-checks package); exit 1 on errors", flags: [] },
-  { name: "render", args: "<dir>", summary: "Render the board with the installed renderer (views pcb); --out <file>", flags: ["out"] },
+  { name: "import", args: "<source> <dir>", summary: "Import a board (KiCad, Circuit JSON, EasyEDA Pro) into an empty folder, with its zone fill and import record; prints the import report", flags: ["kind", "as"] },
+  { name: "check", args: "<dir>", summary: "Connectivity and design rule checks with the board's zone fill, and KiCad's DRC beside them when the board came from KiCad; exit 1 on errors", flags: ["kicad", "kicad-root", "no-cross-check"] },
+  { name: "render", args: "<dir>", summary: "A PNG of the board (headless Chrome) with its fill, ratsnest and findings; --out, --region, --layers, --flip, --net, --width, --height", flags: ["out", "region", "layers", "flip", "net", "width", "height"] },
+  { name: "describe", args: "<dir>", summary: "The agent scene (JSON and PNG) of the whole board, or of one --region (mm), --net, --object or --finding, with the checks' connectivity", flags: ["region", "net", "object", "finding", "out", "image"] },
 ];
 
 export const BOARD_USAGE = [
@@ -109,7 +113,7 @@ export const BOARD_USAGE = [
 
 class UsageError extends Error {}
 
-const BOOLEAN = new Set(["json", "dry-run", "all", "records", "recover", "autosave"]);
+const BOOLEAN = new Set(["json", "dry-run", "all", "records", "recover", "autosave", "no-cross-check", "flip"]);
 const MULTI = new Set(["id", "origin"]);
 const GLOBAL = new Set(["json", "format", "cwd"]);
 
@@ -191,8 +195,10 @@ export function parseLength(s: string, what: string): number {
   if (!Number.isInteger(v)) throw new UsageError(`${what}: ${s} is not a whole number of nanometers (add mm for millimeters)`);
   return v;
 }
+/** A list value, optionally in brackets (`[-1,2,3,4]`: a value that cannot start with a dash, as the MCP tools pass it). */
+const unwrap = (s: string) => s.trim().replace(/^\[(.*)\]$/, "$1");
 const lengths = (s: string, n: number, what: string) => {
-  const parts = s.split(",");
+  const parts = unwrap(s).split(",");
   if (parts.length !== n) throw new UsageError(`${what} takes ${n} comma-separated lengths`);
   return parts.map((p) => parseLength(p, what));
 };
@@ -501,6 +507,7 @@ const COMMANDS = {
   async import(c: Ctx): Promise<number> {
     const source = c.path(c.pos[0], "<source>");
     const dir = c.path(c.pos[1]);
+    const t0 = performance.now();
     const importers = await loadImporters();
     if (!importers) return notAvailable(c, "import", "no board importer is installed (packages board-import and board-import-easyeda)");
     if (!existsSync(source)) throw new Error(`no file ${source}`);
@@ -513,16 +520,28 @@ const COMMANDS = {
     const imp = importers.find((i) => i.accepts(src));
     if (!imp) throw new Error(`no installed importer accepts ${source} (installed: ${importers.map((i) => i.id).join(", ")}; --kind names the format)`);
     const exists = existsSync(join(dir, "board.jsonl"));
-    const result = await imp.import(src, exists ? { current: (await withBoard(dir, (b) => b.snapshot(), "read")).doc } : {});
+    // a whole-board importer (board-import's) returns more than the contract's ImportResult: stats, offset, fill, timing
+    const result = (await imp.import(src, exists ? { current: (await withBoard(dir, (b) => b.snapshot(), "read")).doc } : {})) as ImportResult & Partial<Omit<ImportModule.BoardImportResult, "report">>;
+    const importMs = result.ms !== undefined ? Math.round(result.ms) : Math.round(performance.now() - t0);
     const report = result.report;
+    const levels = { dropped: 0, approximated: 0, info: 0 };
+    for (const x of report) levels[x.level]++;
+    // objects per level (a line such as "40 hidden footprint text" counts 40), when the importer summarizes them
+    const objects = result.summary ? Object.fromEntries((["dropped", "approximated", "info"] as const).map((l) => [l, Object.values(result.summary![l] ?? {}).reduce((n, v) => n + v, 0)])) : undefined;
     let outcome: Record<string, unknown>;
     let code: number = BOARD_EXIT.ok;
     if (result.document) {
       if (exists) throw new Error(`${dir} already holds a board; importing a whole board needs an empty folder`);
       mkdirSync(dir, { recursive: true });
+      const root = findProjectRoot(dir);
       const w = writeBoardDir(dir, result.document);
       if (result.netlist && result.netlist.source !== "uhd") writeNetlist(dir, result.netlist);
-      outcome = { status: "written", files: w.written, records: result.document.records.size };
+      // the source's own zone fill (derived data: the build folder, never the board files)
+      const fill = result.fill ? { path: writeZoneFill(dir, result.fill, root), source: result.fill.source, entries: result.fill.fills.length, polygons: result.fill.fills.reduce((n, f) => n + f.polygons.length, 0) } : undefined;
+      // where the board came from, for `board check`'s KiCad cross-check
+      const host = await loadHost();
+      const importRecord = host ? host.writeImportRecord(dir, { importer: imp.id, source, ...(result.offset ? { offset: result.offset } : {}), at: new Date().toISOString(), report: levels, ...(result.rulesNotEvaluated?.length ? { rulesNotEvaluated: result.rulesNotEvaluated } : {}), ...(result.sharedSourceIds?.length ? { sharedIds: result.sharedSourceIds } : {}) }, root) : undefined;
+      outcome = { status: "written", files: w.written, records: result.document.records.size, fill: fill ?? null, importRecord: importRecord ?? null, ...(host ? {} : { importRecordNote: "not written: the board analysis (views pcb/host) is not installed, so `board check` cannot find the source for a cross-check" }) };
     } else if (result.ops?.length) {
       if (!exists) throw new Error(`${dir} has no board to import into, and ${imp.id} gave operations, not a board`);
       const tx = importResultToTransaction(imp.id, result);
@@ -531,44 +550,217 @@ const COMMANDS = {
       outcome = { status: r.status, reply: r };
       code = exitOf(r);
     } else outcome = { status: "nothing", message: `${imp.id} gave neither a board nor operations` };
-    const data = { importer: imp.id, source, dir, ...outcome, report };
-    const count = (l: string) => report.filter((x) => x.level === l).length;
-    c.out(data, () => [`${String(outcome.status).toUpperCase()}  ${imp.id}: ${source} -> ${dir}`, `  report: ${count("dropped")} dropped, ${count("approximated")} approximated, ${count("info")} info`, ...report.filter((x) => x.level !== "info").map((x) => `  ${x.level.toUpperCase()} ${x.message}${x.source ? ` (${x.source})` : ""}`)].join("\n"));
+    const ms = { import: importMs, total: Math.round(performance.now() - t0) };
+    const data = {
+      importer: imp.id,
+      source,
+      dir,
+      ...outcome,
+      ...(result.stats ? { stats: result.stats } : {}),
+      ...(result.offset ? { offset: result.offset } : {}),
+      levels,
+      ...(objects ? { objects } : {}),
+      ...(result.summary ? { summary: result.summary } : {}),
+      report,
+      ...(result.rulesNotEvaluated ? { rulesNotEvaluated: result.rulesNotEvaluated } : {}),
+      ms,
+    };
+    c.out(data, () => {
+      const st = result.stats;
+      const fill = outcome.fill as { path: string; source: string; entries: number; polygons: number } | null | undefined;
+      const per = (l: "dropped" | "approximated" | "info") => `${levels[l]} ${l}${objects && objects[l] !== levels[l] ? ` (${objects[l]} object${objects[l] === 1 ? "" : "s"})` : ""}`;
+      return [
+        `${String(outcome.status).toUpperCase()}  ${imp.id}: ${source} -> ${dir}`,
+        ...(st ? [`  board: ${st.footprints} footprints, ${st.pads} pads, ${st.tracks} tracks (${st.arcs} arcs), ${st.vias} vias, ${st.zones} zones, ${st.keepouts} keep-outs, ${st.nets} nets, ${st.netclasses} net classes, ${st.rules} rules`] : []),
+        ...(outcome.files ? [`  files: ${(outcome.files as string[]).join(", ") || "none"}`] : []),
+        ...(fill ? [`  zone fill: ${fill.entries ? `${fill.entries} entries, ${fill.polygons} polygons` : "none in the source"} (${fill.source}) -> ${fill.path}`] : outcome.status === "written" ? ["  zone fill: the importer gave none"] : []),
+        ...(result.offset ? [`  offset: a board point plus (${mmText(result.offset.x)}, ${mmText(result.offset.y)}) is the source point (+Y up)`] : []),
+        ...(outcome.importRecord ? [`  import record: ${outcome.importRecord as string}`] : outcome.importRecordNote ? [`  import record: ${outcome.importRecordNote as string}`] : []),
+        `  report: ${per("dropped")}, ${per("approximated")}, ${per("info")} line(s); --json lists every line`,
+        ...report.filter((x) => x.level !== "info").map((x) => `  ${x.level.toUpperCase()} ${x.message}${x.source ? ` (${x.source})` : ""}`),
+        ...(result.rulesNotEvaluated ?? []).map((r) => `  NOT EVALUATED rule ${r.name}: ${r.reason}`),
+        `  took ${ms.import} ms to import, ${ms.total} ms in all`,
+      ].join("\n");
+    });
     return code;
   },
 
   async check(c: Ctx): Promise<number> {
     const dir = c.path(c.pos[0]);
-    const checks = await loadChecks();
-    if (!checks) return notAvailable(c, "check", "no board checks are installed (package board-checks)");
+    const kicad = c.a.one("kicad") ? resolve(c.io.cwd, c.a.one("kicad")!) : undefined;
+    const kicadRoot = c.a.one("kicad-root") ? resolve(c.io.cwd, c.a.one("kicad-root")!) : undefined;
+    const noCross = c.a.has("no-cross-check");
+    if (noCross && (kicad || kicadRoot)) throw new UsageError("--no-cross-check turns the KiCad cross-check off; drop it, or drop --kicad and --kicad-root");
+    if (kicad && !existsSync(kicad)) throw new UsageError(`--kicad: no file ${kicad}`);
+    const host = await loadHost();
+    if (!host) return notAvailable(c, "check", "the board analysis is not installed (package views, pcb/host)");
+    const t0 = performance.now();
     const s = await withBoard(dir, (b) => b.snapshot(), "read");
-    const r = checks.run(s);
-    const findings = r.findings;
-    const count = (sev: string) => findings.filter((f) => f.severity === sev).length;
-    c.out({ seq: s.seq, epoch: s.epoch, checks: checks.ids, findings, errors: count("error"), warnings: count("warning"), ...(r.notRun ? { notRun: r.notRun } : {}), ...(r.notes ? { notes: r.notes } : {}) }, () =>
+    const a = await host.analyzeBoard(s, dir, { crossCheck: noCross ? false : kicad ? true : "auto", ...(kicad ? { kicadPcb: kicad } : {}), ...(kicadRoot ? { kicadRoot } : {}) });
+    if (!a.available || !a.result) return notAvailable(c, "check", a.reason ?? "the board checks are not installed (package board-checks)");
+    const r = a.result;
+    const total = Math.round(performance.now() - t0);
+    const errorFindings = r.findings.filter((f) => f.severity === "error").length;
+    const cross = a.crossCheck ?? { ran: false as const, reason: noCross ? "turned off (--no-cross-check)" : "the board was not imported from a KiCad file (--kicad <file> names one)", inputHash: r.inputHash };
+    const fill = fillState(a, r.connectivity);
+    const data = {
+      dir,
+      epoch: s.epoch,
+      seq: s.seq,
+      summary: r.summary,
+      findings: r.findings,
+      notRun: r.notRun,
+      defaults: r.defaults,
+      notes: r.notes,
+      connectivity: connectivityCounts(r.connectivity),
+      crossCheck: compactCrossCheck(cross),
+      fill: fill.data,
+      importRecord: a.importRecord ?? null,
+      ms: { checks: a.ms.checks ?? null, kicad: a.ms.kicad ?? null, total },
+    };
+    const checks = await host.loadChecksModule();
+    c.out(data, () =>
       [
-        ...findings.map((f) => `${f.severity.toUpperCase().padEnd(7)} ${f.check}  ${f.message}  [${f.objects.join(", ")}] at ${mmText(f.location.x)}, ${mmText(f.location.y)}${f.location.layer ? ` on ${f.location.layer}` : ""}`),
-        ...(r.notRun ?? []).map((n) => `NOT RUN ${n.check}: ${n.reason}`),
-        `${count("error")} error(s), ${count("warning")} warning(s), ${count("info")} info; ${checks.ids.length} check(s) at seq ${s.seq}`,
+        ...r.findings.map((f) => `${f.severity.toUpperCase().padEnd(7)} ${f.check}  ${f.message}  [${f.objects.join(", ")}] at ${mmText(f.location.x)}, ${mmText(f.location.y)}${f.location.layer ? ` on ${f.location.layer}` : ""}  (${f.id})`),
+        ...r.notRun.map((n) => `NOT RUN ${n.check}: ${n.reason}`),
+        ...r.defaults.map((n) => `DEFAULT ${n.check}: ${n.reason}`),
+        ...r.summary.caveats.map((x) => `CAVEAT  ${x}`),
+        ...r.notes.map((x) => `NOTE    ${x}`),
+        `zone fill: ${fill.text}`,
+        `ours:  ${r.summary.line}  (seq ${s.seq}, checks ${a.ms.checks ?? "?"} ms)`,
+        ...crossCheckLines(cross, checks?.formatCrossCheck),
       ].join("\n"),
     );
-    return count("error") ? BOARD_EXIT.invalid : BOARD_EXIT.ok;
+    return errorFindings ? BOARD_EXIT.invalid : BOARD_EXIT.ok;
   },
 
   async render(c: Ctx): Promise<number> {
     const dir = c.path(c.pos[0]);
-    const renderer = await loadRenderer();
-    if (!renderer) return notAvailable(c, "render", "no board renderer that draws to a file is installed (views pcb)");
+    const region = c.a.one("region") ? boxOf(lengths(c.a.one("region")!, 4, "--region")) : undefined;
+    const layersFlag = c.a.one("layers");
+    const layers = layersFlag === undefined ? undefined : (PRESET_IDS as readonly string[]).includes(layersFlag) ? layersFlag : list(layersFlag);
+    const width = size(c.a.one("width"), "--width") ?? 1200;
+    const height = size(c.a.one("height"), "--height") ?? 900;
+    const nets = c.a.all("net").flatMap((v) => v.split(",")).map((x) => x.trim()).filter(Boolean);
+    const headless = await loadHeadless();
+    if (!headless) return notAvailable(c, "render", "the headless board renderer is not installed (package views, pcb/headless)");
+    const t0 = performance.now();
     const s = await withBoard(dir, (b) => b.snapshot(), "read");
-    const result = await renderer.fn(s, {});
-    const isSvg = typeof result === "string" && /<svg[\s>]/.test(result);
-    const isBytes = result instanceof Uint8Array;
-    if (!isSvg && !isBytes) return notAvailable(c, "render", `the installed renderer's ${renderer.name} did not return an SVG text or image bytes`);
+    for (const n of nets) if (!s.doc.nets.has(n)) throw new UsageError(`--net: the board has no net ${n}`);
+    // the board's fill, ratsnest and findings, from the same analysis `board check` runs (no KiCad: a picture needs none)
+    const host = await loadHost();
+    const a = host ? await host.analyzeBoard(s, dir, { crossCheck: false }) : undefined;
+    const derived = host && a ? host.toBoardDerived(s, a) : undefined;
+    const fills = host && derived ? host.zoneFillsFromEntries(derived.fills) : { fills: [], unplaced: 0 };
+    const notes = [...(derived?.notes ?? []), ...(host ? [] : ["the board analysis (views pcb/host) is not installed: no fill, ratsnest or findings drawn"]), ...(fills.unplaced ? [`${fills.unplaced} fill entr${fills.unplaced === 1 ? "y has" : "ies have"} no zone record to draw under and ${fills.unplaced === 1 ? "is" : "are"} left out`] : [])];
+    const options: HeadlessOptions = { width, height, ...(region ? { region } : {}), ...(layers ? { layers } : {}), ...(c.a.has("flip") ? { flip: true } : {}), ...(nets.length ? { highlightNets: nets } : {}), findings: derived?.findings ?? [], ratsnest: derived?.ratsnest ?? [], fills: fills.fills, origin: true };
+    let png: Uint8Array;
+    try {
+      png = await headless.renderBoardPng(s, options);
+    } catch (e) {
+      return notAvailable(c, "render", `the headless renderer could not draw (it needs a Chrome-family browser): ${(e as Error).message.split("\n")[0]}`);
+    }
     const root = findProjectRoot(dir);
-    const outFile = c.a.one("out") ? resolve(c.io.cwd, c.a.one("out")!) : join(root, ".protoboard", "build", "board", boardKey(root, dir), isSvg ? "render.svg" : "render.png");
+    const outFile = c.a.one("out") ? resolve(c.io.cwd, c.a.one("out")!) : join(boardBuildDir(root, dir), "render.png");
     mkdirSync(dirname(outFile), { recursive: true });
-    writeFileSync(outFile, isSvg ? (result as string) : (result as Uint8Array));
-    c.out({ status: "written", file: outFile, renderer: renderer.name, seq: s.seq }, () => `wrote ${outFile} (${renderer.name}, seq ${s.seq})`);
+    writeFileSync(outFile, png);
+    const checks = derived?.checks.ran ? a?.result?.summary.line : undefined;
+    const data = {
+      status: "written",
+      file: outFile,
+      seq: s.seq,
+      epoch: s.epoch,
+      width,
+      height,
+      region: region ?? null,
+      layers: layers ?? "default",
+      flip: c.a.has("flip"),
+      highlightNets: nets,
+      findings: derived?.findings.length ?? 0,
+      ratsnest: derived?.ratsnest.length ?? 0,
+      fill: derived?.fill ? { ...derived.fill, drawn: fills.fills.length } : null,
+      checks: checks ?? null,
+      ...(notes.length ? { notes } : {}),
+      ms: Math.round(performance.now() - t0),
+    };
+    c.out(data, () =>
+      [
+        `wrote ${outFile} (${width} x ${height} px, seq ${s.seq})`,
+        `  drawn: ${data.findings} finding marker(s), ${data.ratsnest} ratsnest line(s), ${fills.fills.length} fill entr${fills.fills.length === 1 ? "y" : "ies"}${derived?.fill ? ` (${derived.fill.source}${derived.fill.current ? "" : ", out of date"})` : ""}`,
+        ...(checks ? [`  checks: ${checks}`] : []),
+        ...notes.map((n) => `  note: ${n}`),
+      ].join("\n"),
+    );
+    return BOARD_EXIT.ok;
+  },
+
+  async describe(c: Ctx): Promise<number> {
+    const dir = c.path(c.pos[0]);
+    const given = (["region", "net", "object", "finding"] as const).filter((k) => c.a.one(k) !== undefined);
+    if (given.length > 1) throw new UsageError("board describe takes at most one of --region, --net, --object, --finding (none: the whole board)");
+    const focus = given[0];
+    const value = focus ? c.a.one(focus)! : undefined;
+    const image = c.a.one("image") ?? "png";
+    if (!["png", "svg", "both", "none"].includes(image)) throw new UsageError("--image takes png (the default), svg, both or none");
+    const region = focus === "region" ? millimeters(value!, 4, "--region") : undefined;
+    const scene = await loadScene();
+    if (!scene) return notAvailable(c, "describe", "the board scene is not installed (package board-scene)");
+    const t0 = performance.now();
+    const s = await withBoard(dir, (b) => b.snapshot(), "read");
+    const host = await loadHost();
+    const a = host ? await host.analyzeBoard(s, dir, { crossCheck: false }) : undefined;
+    const r = a?.result;
+    const notes: string[] = [];
+    if (!r) notes.push(`no checks ran (${a?.reason ?? "the board analysis, views pcb/host, is not installed"}): connectivity is the scene's own estimate and no findings are marked`);
+    let img = image as "png" | "svg" | "both" | "none";
+    if ((img === "png" || img === "both") && !scene.pngAvailable()) {
+      img = "svg";
+      notes.push("PNG output is not available here (@resvg/resvg-js did not load): wrote the SVG instead");
+    }
+    if (focus === "finding" && r && !r.findings.some((f) => f.id === value)) throw new UsageError(`--finding: no finding ${value} on the board now (\`protoboard board check\` lists them with their ids)`);
+    if (focus === "finding" && !r) throw new UsageError("--finding needs the board checks (package board-checks), which are not installed");
+    const d = scene.describeBoard(s, {
+      ...(region ? { region: region as [number, number, number, number] } : {}),
+      ...(focus === "net" ? { net: value } : {}),
+      ...(focus === "object" ? { object: value } : {}),
+      ...(focus === "finding" ? { finding: value } : {}),
+      findings: r?.findings ?? [],
+      ...(r ? { connectivity: r.connectivity } : {}),
+      image: img,
+    });
+    const root = findProjectRoot(dir);
+    const slug = focus ? `${focus}-${(focus === "region" ? region!.join("_") : value!).replace(/[^A-Za-z0-9_.-]+/g, "_").slice(0, 80)}` : "overview";
+    const base = c.a.one("out") ? resolve(c.io.cwd, c.a.one("out")!).replace(/\.(json|png|svg)$/i, "") : join(boardBuildDir(root, dir), `describe-${slug}`);
+    mkdirSync(dirname(base), { recursive: true });
+    const files: { json: string; png?: string; svg?: string } = { json: `${base}.json` };
+    writeFileSync(files.json, d.json + "\n");
+    if (d.png) writeFileSync((files.png = `${base}.png`), d.png);
+    if (d.svg) writeFileSync((files.svg = `${base}.svg`), d.svg);
+    const data = {
+      status: "written",
+      dir,
+      epoch: s.epoch,
+      seq: s.seq,
+      focus: focus ? { [focus]: focus === "region" ? region : value } : "overview",
+      files,
+      stats: d.stats,
+      checks: r ? { line: r.summary.line, unconnected: r.summary.unconnected, errors: r.summary.errors, warnings: r.summary.warnings, incomplete: r.summary.incomplete } : null,
+      fill: a?.fill ? { source: a.fill.fill.source, current: a.fill.current } : null,
+      ...(notes.length ? { notes } : {}),
+      ms: Math.round(performance.now() - t0),
+      scene: d.scene,
+    };
+    c.out(data, () =>
+      [
+        `wrote ${files.json} (${d.stats.jsonChars} characters, about ${d.stats.estTokens} tokens)`,
+        ...(files.png ? [`wrote ${files.png} (${d.stats.imageWidth} x ${d.stats.imageHeight} px, about ${d.stats.estImageTokens} image tokens)`] : []),
+        ...(files.svg ? [`wrote ${files.svg}`] : []),
+        `  scene: ${String(d.scene.detail)} detail, ${focus ? `focus ${focus} ${focus === "region" ? `${region!.join(", ")} mm` : value}` : "the whole board"}${typeof d.scene.connectivity === "string" ? `; connectivity ${d.scene.connectivity}` : ""}`,
+        ...(r ? [`  checks: ${r.summary.line}`] : []),
+        ...notes.map((n) => `  note: ${n}`),
+        "  the scene itself: add --json (it prints the scene with these paths)",
+      ].join("\n"),
+    );
     return BOARD_EXIT.ok;
   },
 } satisfies Record<string, (c: Ctx) => Promise<number>>;
@@ -698,6 +890,104 @@ function wrap(text: string, width: number, indent: string): string {
   return out.join("\n");
 }
 
+// ---------------------------------------------------------------- check, render and describe helpers
+
+type CheckResult = ChecksModule.BoardCheckResult;
+type CrossCheckResult = ChecksModule.CrossCheckResult;
+
+const boxOf = ([x1, y1, x2, y2]: number[]) => ({ minX: Math.min(x1, x2), minY: Math.min(y1, y2), maxX: Math.max(x1, x2), maxY: Math.max(y1, y2) });
+
+/** A positive pixel size up to 8192. */
+function size(s: string | undefined, what: string): number | undefined {
+  const v = int(s, what);
+  if (v !== undefined && (v < 16 || v > 8192)) throw new UsageError(`${what} must be 16 to 8192 pixels`);
+  return v;
+}
+
+/** `n` comma-separated millimeter values (a plain number is millimeters; `mm` and `nm` suffixes are read). */
+function millimeters(s: string, n: number, what: string): number[] {
+  const parts = unwrap(s).split(",");
+  if (parts.length !== n) throw new UsageError(`${what} takes ${n} comma-separated millimeter values (x1,y1,x2,y2)`);
+  return parts.map((p) => {
+    const m = /^\s*(-?\d+(?:\.\d+)?)\s*(mm|nm)?\s*$/i.exec(p);
+    if (!m) throw new UsageError(`${what}: ${p} is not a length in millimeters`);
+    return m[2]?.toLowerCase() === "nm" ? Number(m[1]) / 1_000_000 : Number(m[1]);
+  });
+}
+
+/** The layout screen's layer presets, which `render --layers` takes by name. */
+const PRESET_IDS = ["all", "routing", "top", "fab"] as const;
+
+/** The zone fill the checks used, for people and for JSON. */
+function fillState(a: HostModule.BoardAnalysis, conn: CheckResult["connectivity"]): { text: string; data: unknown } {
+  if (a.fill) {
+    const f = a.fill.fill;
+    const polygons = f.fills.reduce((n, e) => n + e.polygons.length, 0);
+    return {
+      text: `${f.source}, ${f.fills.length} entries, ${polygons} polygons, ${a.fill.current ? "current" : "OUT OF DATE (made for other zones than the board has now; checked as it is)"}${a.fill.path ? ` (${a.fill.path})` : ""}`,
+      data: { source: f.source, current: a.fill.current, entries: f.fills.length, polygons, path: a.fill.path ?? null, zoneFill: conn.zoneFill, zonesWithoutFill: conn.zonesWithoutFill },
+    };
+  }
+  const text = conn.zoneFill === "no-zones" ? "none needed (the board has no zones)" : `none known: ${conn.zonesWithoutFill.length} zone(s) connect nothing in these checks`;
+  return { text, data: { source: null, zoneFill: conn.zoneFill, zonesWithoutFill: conn.zonesWithoutFill } };
+}
+
+function connectivityCounts(c: CheckResult["connectivity"]) {
+  return {
+    unconnected: c.unconnected,
+    links: c.links.length,
+    nets: c.nets.length,
+    islands: c.islands.length,
+    shorts: c.shorts.length,
+    dangling: c.dangling.length,
+    isolated: c.isolated.length,
+    unassigned: c.unassigned.length,
+    missingPins: c.missingPins,
+    netlist: c.netlist,
+    zoneFill: c.zoneFill,
+    zonesWithoutFill: c.zonesWithoutFill,
+    undecided: c.undecided,
+    touchingNotJoined: c.touchingNotJoined,
+    join: c.join,
+  };
+}
+
+/** The cross-check for JSON: our findings by id (they are listed in full beside it), KiCad's entries in full. */
+function compactCrossCheck(c: CrossCheckResult) {
+  if (!c.ran) return { ran: false, reason: c.reason };
+  return {
+    ran: true,
+    kicad: c.kicad,
+    ...(c.transform ? { transform: c.transform } : {}),
+    totals: c.totals,
+    differences: c.differences,
+    categories: c.categories,
+    unconnectedByNet: c.unconnectedByNet,
+    matched: c.matched.length,
+    ties: c.matched.filter((m) => m.tie).length,
+    oursOnly: c.oursOnly.map((f) => f.id),
+    borderline: c.borderline.map((f) => f.id),
+    kicadOnly: c.kicadOnly,
+  };
+}
+
+/** KiCad's counts beside ours with every difference named, or why no cross-check ran. */
+function crossCheckLines(c: CrossCheckResult, format: ((c: CrossCheckResult) => string) | undefined): string[] {
+  if (!c.ran) return [`KiCad cross-check not run: ${c.reason}`];
+  const k = c.totals.kicad;
+  const cmp = c.comparable;
+  const n = (x: { unconnected: number; errors: number; warnings: number }) => `${x.unconnected} unconnected, ${x.errors} error${x.errors === 1 ? "" : "s"}, ${x.warnings} warning${x.warnings === 1 ? "" : "s"}`;
+  const lines = [
+    `like with like: ours ${n(cmp.ours)}; KiCad ${n(cmp.kicad)}  (KiCad ${c.kicad.version ?? "version unknown"}${c.kicad.durationMs !== undefined ? `, ${Math.round(c.kicad.durationMs)} ms` : ""})`,
+    `apart: ours only ${c.oursOnlyCategories.count}, KiCad only ${c.kicadOnlyCategories.count}, not evaluated ${c.notEvaluated.rules.length} rule(s) with ${c.notEvaluated.kicadItems.length} KiCad item(s) under them, folded ${c.folded.length}`,
+    `KiCad raw: ${n(k)}${k.excluded ? `, ${k.excluded} excluded` : ""}`,
+  ];
+  if (format) lines.push(format(c));
+  if (c.differences.length) lines.push(`differences (${c.differences.length}):`, ...c.differences.map((d) => `  - ${d}`));
+  else lines.push("differences: none (every count and item matched)");
+  return lines;
+}
+
 // ---------------------------------------------------------------- optional packages, loaded when present
 
 /** A package by name (once linked as a workspace), else from this repository's source tree; undefined when neither is there. */
@@ -717,7 +1007,6 @@ async function loadOptional(name: string, repoPath: string): Promise<Record<stri
 }
 
 const isImporter = (v: unknown): v is Importer => !!v && typeof v === "object" && typeof (v as Importer).id === "string" && typeof (v as Importer).accepts === "function" && typeof (v as Importer).import === "function";
-const isCheck = (v: unknown): v is Check => !!v && typeof v === "object" && typeof (v as Check).id === "string" && typeof (v as Check).run === "function";
 
 /** What a module exports that passes `is`: the values themselves, arrays of them, and lists from zero-argument functions named like `listImporters`. */
 function collect<T>(mod: Record<string, unknown>, is: (v: unknown) => v is T, lister: RegExp): T[] {
@@ -738,39 +1027,57 @@ function collect<T>(mod: Record<string, unknown>, is: (v: unknown) => v is T, li
   return [...new Map(found.map((x) => [(x as { id: string }).id, x])).values()];
 }
 
+/**
+ * The installed importers: board-import's `availableImporters()` (KiCad, Circuit JSON, and the optional importer
+ * packages it finds, such as EasyEDA Pro), else whatever importer objects the packages export.
+ */
 export async function loadImporters(): Promise<Importer[] | undefined> {
-  const mods = [await loadOptional("@protoboardai/board-import", "../../board-import/src/index.ts"), await loadOptional("@protoboardai/board-import-easyeda", "../../board-import-easyeda/src/index.ts")].filter((m): m is Record<string, unknown> => !!m);
+  const main = await loadOptional("@protoboardai/board-import", "../../board-import/src/index.ts");
+  if (main && typeof main.availableImporters === "function") {
+    const listed = await (main as unknown as typeof ImportModule).availableImporters();
+    if (listed.length) return listed;
+  }
+  const mods = [main, await loadOptional("@protoboardai/board-import-easyeda", "../../board-import-easyeda/src/index.ts")].filter((m): m is Record<string, unknown> => !!m);
   const all = mods.flatMap((m) => collect(m, isImporter, /^(list|all|default)?[Ii]mporters$/));
   return all.length ? all : undefined;
 }
 
-export interface ChecksRun {
-  ids: string[];
-  run(s: BoardSnapshot): { findings: Finding[]; notRun?: { check: string; reason: string }[]; notes?: string[] };
+/** The layout screen's Node side: the analysis `board check` shares with the dev servers and the editor, import records, fill conversion. */
+export async function loadHost(): Promise<typeof HostModule | undefined> {
+  const mod = await loadOptional("@protoboardai/views/pcb/host", "../../views/src/pcb/host/index.ts");
+  return mod && typeof mod.analyzeBoard === "function" ? (mod as unknown as typeof HostModule) : undefined;
+}
+
+/** The agent scene (board-scene). */
+export async function loadScene(): Promise<typeof SceneModule | undefined> {
+  const mod = await loadOptional("@protoboardai/board-scene", "../../board-scene/src/index.ts");
+  return mod && typeof mod.describeBoard === "function" ? (mod as unknown as typeof SceneModule) : undefined;
 }
 
 /**
- * The installed board checks: the package's own runner (`runBoardChecks`, which also says what did not run), else
- * contract `Check` objects (`createBoardChecks()`, or exported checks) through `runChecks`.
+ * What `render` hands the headless renderer (views pcb/headless, `HeadlessRenderOptions`). Typed here: the
+ * renderer's page module is browser code (DOM types) that this package's type check does not load.
  */
-export async function loadChecks(): Promise<ChecksRun | undefined> {
-  const mod = await loadOptional("@protoboardai/board-checks", "../../board-checks/src/index.ts");
-  if (!mod) return undefined;
-  const make = typeof mod.createBoardChecks === "function" ? (mod.createBoardChecks as () => unknown)() : undefined;
-  const checks = Array.isArray(make) ? make.filter(isCheck) : collect(mod, isCheck, /^(list|all|default)?[Cc]hecks$/);
-  if (typeof mod.runBoardChecks === "function") {
-    const runner = mod.runBoardChecks as (s: BoardSnapshot) => { findings: Finding[]; notRun?: { check: string; reason: string }[]; notes?: string[] };
-    return { ids: checks.map((k) => k.id), run: (s) => runner(s) };
-  }
-  return checks.length ? { ids: checks.map((k) => k.id), run: (s) => ({ findings: runChecks(s, checks) }) } : undefined;
+export interface HeadlessOptions {
+  width: number;
+  height: number;
+  /** Nanometers. */
+  region?: { minX: number; minY: number; maxX: number; maxY: number };
+  /** Layer panel rows, or a preset name (all, routing, top, fab). */
+  layers?: string[] | string;
+  flip?: boolean;
+  highlightNets?: string[];
+  findings?: unknown[];
+  ratsnest?: unknown[];
+  fills?: unknown[];
+  origin?: boolean;
+}
+interface HeadlessModule {
+  renderBoardPng(board: BoardSnapshot, options: HeadlessOptions): Promise<Uint8Array>;
 }
 
-const RENDER_NAMES = ["renderBoardSvg", "renderPcbSvg", "boardToSvg", "renderSvg", "renderBoardPng", "renderPcbPng", "renderBoard"];
-export async function loadRenderer(): Promise<{ name: string; fn: (s: BoardSnapshot, o: object) => unknown } | undefined> {
-  const mod =
-    (await loadOptional("@protoboardai/views/pcb", "../../views/src/pcb/index.ts")) ??
-    (await loadOptional("@protoboardai/views/pcb-headless", "../../views/src/pcb/headless/render.ts"));
-  if (!mod) return undefined;
-  const name = RENDER_NAMES.find((n) => typeof mod[n] === "function");
-  return name ? { name, fn: mod[name] as (s: BoardSnapshot, o: object) => unknown } : undefined;
+/** The headless renderer (views pcb/headless), loaded only when a render is asked for. */
+export async function loadHeadless(): Promise<HeadlessModule | undefined> {
+  const mod = await loadOptional("@protoboardai/views/pcb/headless", "../../views/src/pcb/headless/render.ts");
+  return mod && typeof mod.renderBoardPng === "function" ? (mod as unknown as HeadlessModule) : undefined;
 }

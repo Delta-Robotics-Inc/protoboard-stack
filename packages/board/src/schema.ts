@@ -82,6 +82,8 @@ export const Provenance = z
     actor: z.string().min(1).max(120).optional(),
     run: z.string().min(1).max(120).optional(),
     edited: z.enum(["hand", "agent", "routed", "system"]).optional(),
+    /** Where in the source the object came from, in the importer's words (`board setup`, `net class GND`, `custom rule 'Width GND'`). */
+    from: z.string().min(1).max(200).optional(),
   })
   .strict();
 export type Provenance = z.infer<typeof Provenance>;
@@ -284,6 +286,8 @@ export const ZoneFields = z
     net: NetName.optional(),
     layers: z.array(CopperLayer).min(1).max(10),
     outline: Contour,
+    /** Holes in the outline: each lies inside it; the zone's area is the outline less its holes. */
+    holes: z.array(Contour).max(1000).optional(),
     priority: z.number().int().min(0).max(1000),
     clearance: NonNegativeNm.optional(),
     min_width: PositiveNm.optional(),
@@ -306,6 +310,8 @@ export const KeepoutBlocks = z.object({ tracks: z.boolean(), vias: z.boolean(), 
 export const KeepoutFields = z
   .object({
     outline: Contour,
+    /** Holes in the outline (a ring-shaped area): each lies inside it; the area is the outline less its holes. */
+    holes: z.array(Contour).max(1000).optional(),
     layers: z.array(CopperLayer).min(1).max(10),
     blocks: KeepoutBlocks,
     tier: z.enum(["no_go", "policy"]),
@@ -367,9 +373,61 @@ export const RULE_CHECKS = [
   "via_under_footprint",
   "length",
   "diff_pair_gap",
+  // added with rule precedence (contract section 5)
+  "hole_size",
+  "physical_clearance",
+  "disallow",
 ] as const;
 export const RuleCheck = z.enum(RULE_CHECKS);
 export const ObjectKindName = z.enum(["pad", "track", "via", "zone", "keepout", "footprint", "outline", "cutout", "graphic", "text", "hole"]);
+export type ObjectKindName = z.infer<typeof ObjectKindName>;
+
+/**
+ * A rule condition (contract section 5): a small expression over the measured objects, A and B. It is tested with
+ * the objects in both orders and matches when either order is true; a check of one object has only A, and a term
+ * about B is then false.
+ */
+export type RuleCondition =
+  | { all: RuleCondition[] }
+  | { any: RuleCondition[] }
+  | { not: RuleCondition }
+  /** A and B are on the same net (both have one). */
+  | { same_net: true }
+  | { side: "A" | "B"; kind: ObjectKindName[] }
+  | { side: "A" | "B"; pad_type: ("smd" | "th" | "np")[] }
+  | { side: "A" | "B"; net: string[] }
+  | { side: "A" | "B"; class: string[] }
+  | { side: "A" | "B"; layer: AnyLayer[] }
+  /** Inside a keep-out (rule area) of one of these names; `touch`: overlapping it rather than wholly inside. */
+  | { side: "A" | "B"; area: string[]; touch?: true }
+  /** Overlapping the courtyard of a footprint with one of these references (`*` any footprint). */
+  | { side: "A" | "B"; courtyard: string[] }
+  /** Belonging to a footprint of one of these references or library names. */
+  | { side: "A" | "B"; footprint: string[] }
+  | { side: "A" | "B"; pad: string[] }
+  /** A coordinate of the object (`at`: a via's, pad's or footprint's position; `start`, `end`: a track's) above `gt` and below `lt`, board frame. */
+  | { side: "A" | "B"; coord: "x" | "y"; of: "at" | "start" | "end"; gt?: number; lt?: number };
+const SideName = z.enum(["A", "B"]);
+const Names = z.array(z.string().min(1).max(200)).min(1).max(1000);
+export const RuleCondition: z.ZodType<RuleCondition> = z.lazy(() =>
+  z.union([
+    z.object({ all: z.array(RuleCondition).min(1).max(1000) }).strict(),
+    z.object({ any: z.array(RuleCondition).min(1).max(1000) }).strict(),
+    z.object({ not: RuleCondition }).strict(),
+    z.object({ same_net: z.literal(true) }).strict(),
+    z.object({ side: SideName, kind: z.array(ObjectKindName).min(1).max(11) }).strict(),
+    z.object({ side: SideName, pad_type: z.array(z.enum(["smd", "th", "np"])).min(1).max(3) }).strict(),
+    z.object({ side: SideName, net: z.array(NetName).min(1).max(10_000) }).strict(),
+    z.object({ side: SideName, class: Names }).strict(),
+    z.object({ side: SideName, layer: z.array(AnyLayer).min(1).max(30) }).strict(),
+    z.object({ side: SideName, area: Names, touch: z.literal(true).optional() }).strict(),
+    z.object({ side: SideName, courtyard: Names }).strict(),
+    z.object({ side: SideName, footprint: Names }).strict(),
+    z.object({ side: SideName, pad: Names }).strict(),
+    z.object({ side: SideName, coord: z.enum(["x", "y"]), of: z.enum(["at", "start", "end"]), gt: Nm.optional(), lt: Nm.optional() }).strict(),
+  ]),
+) as z.ZodType<RuleCondition>;
+
 export const RuleApplies = z
   .object({
     nets: z.array(NetName).max(10_000).optional(),
@@ -377,6 +435,8 @@ export const RuleApplies = z
     layers: z.array(AnyLayer).max(30).optional(),
     between: z.tuple([ObjectKindName, ObjectKindName]).optional(),
     region: Contour.optional(),
+    /** A condition over the measured objects; every other field of `applies` must match too. */
+    when: RuleCondition.optional(),
   })
   .strict();
 export const Severity = z.enum(["error", "warning", "info", "ignore"]);
@@ -386,6 +446,11 @@ export const RuleRec = z
     id: ObjectId,
     tier: RuleTier,
     check: RuleCheck,
+    /**
+     * Precedence within the rule's tier (absent: 0). Of the matching rules of one check and tier, only those with the
+     * highest priority apply: a higher-priority rule overrides lower ones rather than combining with them.
+     */
+    priority: z.number().int().min(0).max(1_000_000).optional(),
     applies: RuleApplies,
     min: NonNegativeNm.optional(),
     max: NonNegativeNm.optional(),

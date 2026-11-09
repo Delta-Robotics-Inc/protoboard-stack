@@ -52,6 +52,7 @@ import {
 } from "@deltarobotics/uhd-viewer/components";
 import type { ResolvedView } from "@protoboardai/core";
 import { MissingPartsHint, PartStatusStyles, PartsDataProvider, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, type HostAdapter, type PartTrust, type PartsData, type ViewDefinition } from "@protoboardai/views";
+import { knownBoards, onKnownBoards, type BoardHost } from "@protoboardai/views";
 import { isProtoboardColourTheme, vscodeViewThemeAdapter } from "@protoboardai/views/theme";
 import { Logo } from "../Logo.js";
 import { LoadingScreen } from "./Loading.js";
@@ -118,6 +119,8 @@ export interface VsCodeViewerOptions extends UhdViewerOptions {
    * `modelInfo` and `hoverLongDelayMs` from here; `zoomToCursor` is applied through the view hub's controls.
    */
   settings?: ViewerSettings;
+  /** The layout tab's boards, through the extension host (index.ts). */
+  boards?: BoardHost;
 }
 
 /** The colour theme VS Code applies is a Protoboard one (the extension's Protoboard Dark or Light). */
@@ -142,7 +145,7 @@ export function VsCodeShell(props: VsCodeViewerOptions) {
       {props.bundle || props.bundleUrl ? (
         <PartsDataProvider data={props.partsData ?? null}>
           <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
-            <Shell bridge={props.bridge} views={props.views} registry={props.registry} />
+            <Shell bridge={props.bridge} views={props.views} registry={props.registry} {...(props.boards ? { boards: props.boards } : {})} />
             {status && <StatusCard status={status} bridge={props.bridge} over />}
           </UhdViewer>
         </PartsDataProvider>
@@ -291,9 +294,11 @@ function NavButtons({ back, forward, backTitle, forwardTitle, onBack, onForward 
   );
 }
 
-function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?: ResolvedView[]; registry?: ViewRegistry }) {
+function Shell({ bridge, views, registry: given, boards }: { bridge: ShellBridge; views?: ResolvedView[]; registry?: ViewRegistry; boards?: BoardHost }) {
   const c = useViewer();
   const registry = useRegistry(views, given);
+  // the tabs again when the extension's board folders arrive (the layout tab comes with them)
+  useSyncExternalStore(onKnownBoards, () => knownBoards().length);
   const path = c.drill.join("/");
   const tabs = registry.forModule(c.levelDef, c.source.bundle, path).filter((t) => !NOT_IN_VSCODE.has(t.id));
   // a domain tab (schematic, BOM, …) when one is shown; the viewer's own view (diagram, 3D) otherwise
@@ -343,8 +348,9 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
       // a component picked in a domain view (the PCB, the schematic): the extension's Inspector follows it, as it
       // follows the diagram's selection
       selectionChanged: (selection) => bridge.post({ type: "event", event: { type: "uhd-viewer:selectionChanged", selection } }),
+      ...(boards ? { boards } : {}),
     }),
-    [c.hostActions, bridge, c.source],
+    [c.hostActions, bridge, c.source, boards],
   );
 
   // the extension titles the tab and follows the level (the Inspector, a new tab's module)

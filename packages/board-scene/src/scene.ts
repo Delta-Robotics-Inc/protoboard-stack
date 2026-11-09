@@ -386,6 +386,22 @@ function legendFor(detail: Detail): Record<string, string> {
   return l;
 }
 
+/** Where the scene's completion numbers come from, in one line: the checks' result, or the scene's own estimate. */
+export function connectivityNote(conn: ConnectivityResult): string {
+  const ESTIMATE = "estimated from geometry by the scene (copper overlap on a shared layer; zone fill not computed: an item inside a zone of its net on a zone layer counts as joined)";
+  if (conn.source === "estimate") return `${ESTIMATE}; no checks result was given`;
+  const fill =
+    conn.zoneFill === "provided"
+      ? "; zone fill given to the checks"
+      : conn.zoneFill === "partial"
+        ? `; zone fill given for some zones (none for ${conn.zonesWithoutFill?.join(", ") ?? "some"})`
+        : conn.zoneFill === "absent"
+          ? "; no zone fill was given: zones connect nothing in these numbers"
+          : "";
+  const rest = conn.estimated?.length ? `; nets the checks did not report (${conn.estimated.slice(0, 8).join(", ")}${conn.estimated.length > 8 ? ", ..." : ""}) are ${ESTIMATE}` : "";
+  return `from the board checks${conn.source === "checks" ? "" : ` (${conn.source})`}${fill}${rest}`;
+}
+
 export function buildScene(model: BoardModel, options: SceneOptions): SceneBuild {
   const o = options;
   const detail = o.detail;
@@ -453,7 +469,7 @@ export function buildScene(model: BoardModel, options: SceneOptions): SceneBuild
     inView: { footprints: fps.length, tracks: tracks.length, vias: vias.length, rats: rats.length },
   };
   scene.markers = [];
-  scene.connectivity = conn.source === "estimate" ? "estimated from geometry by the scene (copper overlap on a shared layer; zone fill not computed: an item inside a zone of its net on a zone layer counts as joined)" : `from ${conn.source}`;
+  scene.connectivity = connectivityNote(conn);
 
   // the focus object
   if (detail === "object") scene.focus = focusEntry(model, o.focus!, focusFinding, conn, crossings, findings);
@@ -726,7 +742,8 @@ function focusEntry(model: BoardModel, id: string, finding: Finding | undefined,
     const n: Record<string, unknown> = {};
     for (const d of DIRECTIONS) if (near[d]) n[d] = { id: near[d]!.id, ref: near[d]!.ref, gap: r3(near[d]!.gap), dx: r3(near[d]!.dx), dy: r3(near[d]!.dy), ...(near[d]!.side !== f.side ? { side: near[d]!.side } : {}) };
     e.near = n;
-    e.nearest = neighborsOf(model, f).slice(0, 6).map((x) => [x.ref, x.dir, r3(x.gap)]);
+    // a part on the other side overlaps in plan view without touching: its side says so
+    e.nearest = neighborsOf(model, f).slice(0, 6).map((x) => [x.ref, x.dir, r3(x.gap), ...(x.side !== f.side ? [x.side] : [])]);
     e.pads = f.pads.map((p) => padDetail(model, p));
     e.nets = f.nets.map((name) => ({ name, status: conn.nets.get(name)?.status ?? "empty", ...(conn.nets.get(name)?.missing ? { missing: conn.nets.get(name)!.missing } : {}) }));
     const padIds = new Set(f.pads.map((p) => p.id));

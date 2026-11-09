@@ -253,10 +253,12 @@ export interface StatusProps {
 
 export function StatusLine(p: StatusProps) {
   const c = p.checks;
+  const x = c.ran ? c.crossCheck : undefined;
   return (
     <footer className="pcb-status">
       {c.ran ? (
         <>
+          <span className="item">ours</span>
           <span className="item" style={{ color: "var(--pcb-warn)" }}>
             ▲ <b>{c.unconnected}</b> <span className="mute">unconnected</span>
           </span>
@@ -266,19 +268,46 @@ export function StatusLine(p: StatusProps) {
           <span className="item" style={{ color: "var(--pcb-body)" }}>
             ◌ <b>{c.warnings}</b> <span className="mute">warnings</span>
           </span>
-          <span className="item">
-            ours{c.at ? ` · ${c.at}` : ""}
+          <span className="item mute">
+            {c.seq !== undefined ? `seq ${c.seq}` : ""}
             {c.ms !== undefined ? ` · ${Math.round(c.ms)} ms` : ""}
           </span>
-          {c.crossCheck && (
-            <span className="item">
-              {c.crossCheck.tool} <b>{c.crossCheck.unconnected}</b> · <b>{c.crossCheck.errors}</b> · <b>{c.crossCheck.warnings}</b>
-              {c.crossCheck.difference && <span className="pcb-chip warn">{c.crossCheck.difference}</span>}
+          {c.incomplete && (
+            <span className="pcb-chip warn" title={(c.caveats ?? []).join("\n")}>
+              incomplete{c.caveats?.length ? ` · ${c.caveats.length} caveat${c.caveats.length === 1 ? "" : "s"} (Checks tab)` : ""}
+            </span>
+          )}
+          {x?.ran ? (
+            <span className="item" data-cross-check="ran" title={[`${x.tool}, like with like (the categories both check)`, ...(x.differences ?? []), ...(x.raw ? [`raw totals: ours ${x.raw.ours.unconnected} / ${x.raw.ours.errors} / ${x.raw.ours.warnings}, KiCad ${x.raw.kicad.unconnected} / ${x.raw.kicad.errors} / ${x.raw.kicad.warnings}`] : [])].join("\n")}>
+              {x.tool}
+              {x.seq !== undefined && c.seq !== undefined && x.seq !== c.seq ? <span className="mute"> (source file, at seq {x.seq})</span> : null}
+              <span className="mute"> like with like:</span>
+              {x.ours ? (
+                <>
+                  {" "}ours ▲ <b>{x.ours.unconnected}</b> ✖ <b>{x.ours.errors}</b> ◌ <b>{x.ours.warnings}</b> ·
+                </>
+              ) : null}{" "}
+              KiCad ▲ <b>{x.unconnected}</b> ✖ <b>{x.errors}</b> ◌ <b>{x.warnings}</b>
+              {x.difference ? <span className="pcb-chip warn">{x.difference}</span> : <span className="pcb-chip">same</span>}
+              <span className="mute">
+                {" "}
+                · ours only {x.oursOnly?.count ?? "?"} · KiCad only {x.kicadOnly?.count ?? "?"} · not evaluated {x.notEvaluated ? `${x.notEvaluated.rules} rule${x.notEvaluated.rules === 1 ? "" : "s"}` : "?"}
+              </span>
+            </span>
+          ) : x ? (
+            <span className="item mute" data-cross-check="not-run" title={x.reason}>
+              no {x.tool} cross-check: {x.reason}
+            </span>
+          ) : (
+            <span className="item mute" data-cross-check="none">
+              no cross-check has run
             </span>
           )}
         </>
       ) : (
-        <span className="item">No check has run on this board yet: there are no counts to show.</span>
+        <span className="item" data-checks="none">
+          No check has run on this board yet: there are no counts to show{c.reason ? ` (${c.reason})` : ""}.
+        </span>
       )}
       <span className="right">
         <span>

@@ -32,24 +32,64 @@ console.log(formatCrossCheck(cross)); // or "KiCad cross-check not run: <reason>
 | `unassigned_copper` | copper without a net touching a net | warning |
 | `dangling` | a track end touching nothing; a via meeting copper on fewer than two layers | warning |
 | `isolated_copper` | a zone fill island touching no pad, track or via of its net | warning |
-| `clearance` | copper of different nets on one layer (pads, tracks, arcs, vias, zone fill) | by rule tier |
+| `clearance` | copper of different nets on one layer (pads, tracks, arcs, vias, zone fill), one finding per pair | by rule tier; a zone's own clearance is an error by default |
+| `physical_clearance` | any two copper objects, same net included, only with a rule | by rule tier |
 | `track_width`, `via_diameter`, `via_hole`, `annular_ring` | sizes (annular ring: vias and plated pads) | by rule tier |
+| `hole_size` | every drilled hole, vias and pads (a slot by its narrow side for a minimum, wide side for a maximum) | by rule tier |
 | `hole_to_hole`, `hole_clearance` | drill edge to drill edge; drill to copper of another net | by rule tier |
 | `edge_clearance` | copper to the outline and cutouts | by rule tier; copper across or outside the edge is an error by default |
 | `courtyard_overlap` | positive-area overlap of courtyards on one side | error by default |
-| `silk_to_pad` | silkscreen to pads on its side | warning for overlap by default |
+| `silk_to_pad` | silkscreen to pads on its side, one finding per silkscreen element | warning for overlap by default |
 | `via_in_pad`, `via_under_footprint` | policy checks, only with a rule | by rule tier |
-| `keepout` | tracks, vias, fill or footprints inside a keep-out that blocks them | `no_go` error, `policy` warning |
+| `keepout` | tracks, vias, fill or footprints inside a keep-out (holes respected) that blocks them | `no_go` error, `policy` warning |
+| `disallow` | an object a `disallow` rule matches (KiCad's `disallow` constraint) | by rule tier |
 
-Rules resolve in the four tiers of the contract (`src/rules.ts`): the floor is the largest
-matching `min`, the target the most specific matching rule, every policy and no-go rule applies
-on its own, `severity` overrides and `ignore` drops. A region rule applies when the measurement
-point or a measured object reaches into the region. Measurements compare at whole nanometers.
-A check whose rule is missing does not run and the result says so (`notRun`, and the summary's
-`caveats`); a check that runs on a built-in default says that too (`defaults`).
+Rules resolve in the four tiers of the contract (`src/rules.ts`), with explicit precedence:
+within each tier only the matching rules of the highest `priority` take part, so a later, more
+specific rule overrides rather than combines. Then the floor is the largest `min` left, the
+target the most specific rule left, every policy and no-go rule left applies on its own,
+`severity` overrides and `ignore` drops. `applies.when` conditions (object kind pairs, net,
+class, layer, pad type and number, footprint, courtyard, named rule area, position) are tested
+with the objects in both orders. A region rule applies when the measurement point or a measured
+object reaches into the region. A check whose rule is missing does not run and the result says
+so (`notRun`, and the summary's `caveats`); a check that runs on a built-in default says that
+too (`defaults`).
 
-A filled zone's own `clearance` is checked for its fill against other nets: a warning when the
-fill is nearer than the zone asks and no clearance rule already reports the pair.
+A filled zone's own `clearance` is a floor at priority 0 for its fill against other nets: it
+joins priority-0 floors (net classes, board setup) by the largest minimum and gives way to a
+matching floor of a higher priority (a KiCad custom rule), at the error severity unless the
+priority-0 floor it joins says otherwise. A keep-out is a disallow at priority 0: an object a
+higher-priority `disallow` rule matches is reported by that rule (with its severity) instead.
+
+**Tolerance.** A distance (clearance, physical clearance, hole clearance, hole to hole, copper
+to edge, silkscreen to pad, diff pair gap) passes when it is short of its minimum by at most
+500 nm (`DISTANCE_TOLERANCE_NM`); a size (track width, via diameter, hole size, annular ring)
+compares exactly at whole nanometers. This is what KiCad 10 does, measured with `kicad-cli` on
+test boards: a clearance 0.5 um short passes and 0.501 um short fails; a width 1 nm short fails.
+
+### KiCad's precedence, as confirmed
+
+Measured with `kicad-cli pcb drc` (KiCad 10.0.5) on small hand-written boards, read with KiCad's
+public custom-rules and board-setup documentation; no KiCad source was read:
+
+- For one constraint type on one object or pair, the last matching custom rule in the `.kicad_dru`
+  wins: over earlier custom rules (a later, smaller minimum relaxes an earlier, larger one), over
+  net class values and over board setup minimums (a custom clearance of 0.1 mm passes a gap a
+  board minimum of 0.18 mm would fail). A rule's `(layer ...)` and `(condition ...)` decide whether
+  it matches; its `(severity ...)` sets the severity, `ignore` silences.
+- With no matching custom rule, clearance is the largest of the board setup minimum, the net class
+  clearance of either object and a zone's own clearance ("zone clearance", an error).
+- Net class track widths and via sizes are not checked by DRC; a custom rule's `opt` is not either.
+- Board setup values absent from the project take KiCad's defaults: copper to edge 0.5 mm, track
+  width 0.2, via diameter 0.5, hole 0.3, annular ring 0.1, hole clearance 0.25, hole to hole 0.25
+  (clearance 0). The minimum hole and annular ring apply to plated pads too.
+- Default severities: hole to hole is a warning; clearance, track width, via diameter, hole size,
+  annular ring, hole clearance, copper to edge and items not allowed are errors.
+- Keep-out rule areas act as disallow rules below every custom rule: a custom `disallow via` rule
+  matching a via in a keep-out replaces the area's error with its own severity; a custom rule
+  that disallows only tracks does not affect a via there.
+- A zone's or rule area's polygons after the first are holes in it.
+- KiCad identifies items by UUID: two pads sharing one are reported as one item.
 
 ## Connectivity semantics
 
@@ -115,11 +155,21 @@ carry the snapshot's `epoch` and `seq`.
 
     kicad-cli pcb drc --format json --severity-all --all-track-errors --units mm
 
-(no schematic parity). `compareWithKicad` lines up our counts beside KiCad's per category, matches
-items by location (KiCad's item positions against our finding's box, 0.1 mm tolerance), and lists
-every unmatched item on both sides, every KiCad category we do not check, per-net unconnected
-differences, and our findings within 1 micrometer of their limit (`borderline`). The transform
-from KiCad millimeters (+Y down) to board nanometers is the importer's offset
+(no schematic parity). `compareWithKicad` compares like with like. `CATEGORY_ROWS` maps each of
+our checks to the KiCad violation types that measure the same thing (`clearance` and
+`physical_clearance` to `clearance`, `hole_size` and `via_hole` to `drill_out_of_range`,
+`keepout` and `disallow` to `items_not_allowed`, and so on); the comparable errors and warnings
+are the sums over those rows. Checks KiCad has no counterpart for (`unassigned_copper`, the
+policy checks) are counted apart as ours only; KiCad types we do not check (text height,
+footprint library mismatch, silkscreen overlap, copper slivers, ...) as KiCad only. KiCad's
+reports are counted once per distinct item set: with `--all-track-errors` KiCad reports a track
+once per place along it against the edge and a hole clearance once per copper layer, where we
+report one finding per object pair (an edge item is matched by its copper item). KiCad items
+under a rule the importer could not express (`notEvaluated`, from the import's
+`rulesNotEvaluated`) are listed apart and counted nowhere. Items match by location (a KiCad item
+position against our finding's box, 0.1 mm tolerance, an error only with an error), preferring
+the finding whose object KiCad places there; every unmatched item on both sides is listed. The
+transform from KiCad millimeters (+Y down) to board nanometers is the importer's offset
 (`tx = -offset.x, ty = -offset.y`) or, without it, estimated from footprint positions by
 reference. Without KiCad or a board file, the result is `{ ran: false, reason }`.
 

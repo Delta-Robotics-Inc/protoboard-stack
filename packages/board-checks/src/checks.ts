@@ -6,8 +6,8 @@
 import { byCodeUnit, findingId, toMm, type Box, type CopperLayer, type Finding, type RuleTier, type Vertex } from "@protoboardai/board";
 import { CONTACT_EPS, type ConnectivityResult, type PairScan } from "./connectivity.js";
 import { flattenContour, pointInPoly, polyCore, polygonsOverlap, shape, shapeGap, type Gap, type PolyCore, type Shape } from "./geom/shape.js";
-import type { CheckModel, CopperItem } from "./model.js";
-import type { RuleBook, RuleCheckName, Violation } from "./rules.js";
+import type { CheckModel, CopperItem, HoleItem } from "./model.js";
+import type { ImplicitFloor, RuleBook, RuleCheckName, SubjectObject, Violation } from "./rules.js";
 
 export interface Analysis {
   model: CheckModel;
@@ -27,7 +27,38 @@ const netOf = (n: string | undefined) => (n === undefined ? "no net" : `net ${n}
 const netIs = (a: Analysis, id: string, net: string | undefined): string | undefined => net ?? a.connectivity.carried[id];
 /** A net for messages: says when it is carried by contact rather than the object's own. */
 const netSay = (a: Analysis, id: string, net: string | undefined): string => (net === undefined && a.connectivity.carried[id] !== undefined ? `no net; carries ${a.connectivity.carried[id]} by contact` : netOf(net));
-const ruleText = (v: Violation) => (v.rule ? `${v.rule}, ${v.tier}` : "built-in default");
+const ruleText = (v: Violation) => (v.rule ? `${v.rule}, ${v.tier}` : v.implicit ? `${v.implicit}, ${v.tier}` : "built-in default");
+
+/** A pad as a rule condition sees it: its footprint, number, type and position. */
+function padInfo(a: Analysis, id: string): Partial<SubjectObject> {
+  const wp = a.model.pads.get(id);
+  if (!wp) return {};
+  return { footprint: wp.footprint, pad: wp.pad.number, padType: wp.pad.type, at: { x: wp.x, y: wp.y } };
+}
+
+/** A copper item as a rule condition sees it. */
+export function copperObj(a: Analysis, it: CopperItem): SubjectObject {
+  const net = netIs(a, it.id, it.net);
+  const o: SubjectObject = { id: it.id, kind: it.kind, layer: it.layer, shape: it.shape, ...(net !== undefined ? { net } : {}) };
+  if (it.kind === "pad") return { ...o, ...padInfo(a, it.id) };
+  const c = it.shape.core;
+  if (it.kind === "via" && c.t === "pt") o.at = { x: c.x, y: c.y };
+  if (it.kind === "track" && it.ends) {
+    o.start = { x: it.ends[0], y: it.ends[1] };
+    o.end = { x: it.ends[2], y: it.ends[3] };
+  }
+  return o;
+}
+
+/** A drilled hole as a rule condition sees it: its owner (the via or pad), with the hole's shape. */
+function holeObj(a: Analysis, h: HoleItem): SubjectObject {
+  const net = netIs(a, h.id, h.net);
+  const o: SubjectObject = { id: h.id, kind: h.kind, shape: h.shape, ...(net !== undefined ? { net } : {}) };
+  if (h.kind === "pad") return { ...o, ...padInfo(a, h.id) };
+  const c = h.shape.core;
+  if (c.t === "pt") o.at = { x: c.x, y: c.y };
+  return o;
+}
 const costText = (v: Violation) => (v.cost !== undefined ? `, cost ${v.cost}` : "");
 
 function listIds(ids: readonly string[], max = 5): string {
@@ -132,9 +163,15 @@ function zoneClearance(a: Analysis, it: CopperItem): number | undefined {
   return z?.kind === "zone" ? z.clearance : undefined;
 }
 
+/**
+ * Copper clearance between objects of different nets. A filled zone's own clearance is a floor at priority 0 for
+ * the gap between its fill and other copper: it combines with priority-0 floors (net classes, board setup) by the
+ * largest minimum and gives way to any matching floor of a higher priority (a KiCad custom rule), as in KiCad.
+ * One finding per object pair (the closest approach over their layers and fill parts).
+ */
 export function clearanceFindings(a: Analysis): Finding[] {
   const hasRules = a.rules.has("clearance");
-  const out: Finding[] = [];
+  const best = new Map<string, { p: (typeof a.scan.near)[number]; vs: Violation[] }>();
   for (const p of a.scan.near) {
     const A = a.model.copper[p.a];
     const B = a.model.copper[p.b];
@@ -142,20 +179,73 @@ export function clearanceFindings(a: Analysis): Finding[] {
     const nb = netIs(a, B.id, B.net);
     // copper carrying the same net by contact is one net, as for copper that names it
     if (na !== undefined && na === nb) continue;
-    const vs = hasRules ? a.rules.evaluate("clearance", p.gap, { nets: [na, nb], kinds: [A.kind, B.kind], layers: [A.layer], at: { x: p.x, y: p.y }, shapes: [A.shape, B.shape] }) : [];
-    // a zone's own clearance is a minimum for its fill, as an error, when no rule already reports this pair (a
-    // board whose rules allow less, as a fab override does, reports the rule's finding instead)
-    const zc = Math.max(zoneClearance(a, A) ?? 0, zoneClearance(a, B) ?? 0);
-    if (zc > 0 && Math.round(p.gap) < zc && !vs.length) {
-      const z = zoneClearance(a, A) === zc ? A : B;
-      out.push(makeFinding("clearance", "warning", [A.id, B.id], { x: p.x, y: p.y, layer: A.layer }, `Clearance ${fmt(p.gap)} between ${A.id} (${netSay(a, A.id, A.net)}) and ${B.id} (${netSay(a, B.id, B.net)}) on ${A.layer} is below ${fmt(zc)}, the clearance of zone ${z.id} (its fill is nearer than the zone asks).`, { box: unionBox(A.shape.box, B.shape.box), measured: p.gap, required: zc }));
+    const implicit: ImplicitFloor[] = [];
+    for (const it of [A, B]) {
+      const zc = zoneClearance(a, it);
+      if (zc !== undefined && zc > 0) implicit.push({ min: zc, label: `zone ${it.id} clearance` });
     }
+    if (!hasRules && !implicit.length) continue;
+    const vs = a.rules.evaluate("clearance", p.gap, { nets: [na, nb], kinds: [A.kind, B.kind], layers: [A.layer], at: { x: p.x, y: p.y }, shapes: [A.shape, B.shape], objects: [copperObj(a, A), copperObj(a, B)] }, implicit);
+    if (!vs.length) continue;
+    // KiCad names a zone once per layer and other objects once: a pair with a zone is one pair per layer
+    const key = [A.id, B.id].sort(byCodeUnit).join("\u0000") + (A.kind === "zone" || B.kind === "zone" ? `\u0000${A.layer}` : "");
+    const prev = best.get(key);
+    if (!prev || p.gap < prev.p.gap) best.set(key, { p, vs });
+  }
+  const out: Finding[] = [];
+  for (const { p, vs } of best.values()) {
+    const A = a.model.copper[p.a];
+    const B = a.model.copper[p.b];
     out.push(
       ...violationFindings("clearance", vs, [A.id, B.id], { x: p.x, y: p.y, layer: A.layer }, p.gap, unionBox(A.shape.box, B.shape.box), (v) =>
         `Clearance ${fmt(p.gap)} between ${A.id} (${netSay(a, A.id, A.net)}) and ${B.id} (${netSay(a, B.id, B.net)}) on ${A.layer} is ${bound(v)} ${fmt(v.required!)} (${ruleText(v)}${costText(v)}).`,
       ),
     );
   }
+  return out;
+}
+
+/**
+ * Physical clearance: the gap between any two copper objects, of the same net or not (KiCad's physical_clearance),
+ * where a rule asks for one. Only pairs some rule matches are measured. One finding per object pair.
+ */
+export function physicalClearanceFindings(a: Analysis): Finding[] {
+  if (!a.rules.has("physical_clearance")) return [];
+  const m = a.model;
+  const radius = a.rules.maxMin("physical_clearance");
+  if (radius <= 0) return [];
+  const best = new Map<string, { A: CopperItem; B: CopperItem; gap: number; x: number; y: number; vs: Violation[] }>();
+  const g: Gap = { gap: 0, x: 0, y: 0 };
+  for (const layer of m.layers) {
+    const grid = m.grids.get(layer)!;
+    for (const A of m.copper) {
+      if (A.layer !== layer) continue;
+      const cand = grid.search({ minX: A.shape.box.minX - radius, minY: A.shape.box.minY - radius, maxX: A.shape.box.maxX + radius, maxY: A.shape.box.maxY + radius });
+      for (const j of cand) {
+        if (j <= A.i) continue;
+        const B = m.copper[j];
+        if (B.id === A.id) continue;
+        const s = { nets: [netIs(a, A.id, A.net), netIs(a, B.id, B.net)], kinds: [A.kind, B.kind], layers: [layer], at: { x: 0, y: 0 }, shapes: [A.shape, B.shape], objects: [copperObj(a, A), copperObj(a, B)] };
+        const r = a.rules.resolve("physical_clearance", s);
+        if (!r.floor.length && !r.target.length && !r.policy.length && !r.no_go.length) continue;
+        const d = shapeGap(A.shape, B.shape, radius, g);
+        if (!(d < radius)) continue;
+        s.at = { x: g.x, y: g.y };
+        const vs = a.rules.evaluate("physical_clearance", d, s);
+        if (!vs.length) continue;
+        const key = [A.id, B.id].sort(byCodeUnit).join("\u0000");
+        const prev = best.get(key);
+        if (!prev || d < prev.gap) best.set(key, { A, B, gap: d, x: g.x, y: g.y, vs });
+      }
+    }
+  }
+  const out: Finding[] = [];
+  for (const { A, B, gap, x, y, vs } of best.values())
+    out.push(
+      ...violationFindings("physical_clearance", vs, [A.id, B.id], { x, y, layer: A.layer }, gap, unionBox(A.shape.box, B.shape.box), (v) =>
+        `Physical clearance ${fmt(gap)} between ${A.id} (${netSay(a, A.id, A.net)}) and ${B.id} (${netSay(a, B.id, B.net)}) on ${A.layer} is ${bound(v)} ${fmt(v.required!)} (${ruleText(v)}${costText(v)}).`,
+      ),
+    );
   return out;
 }
 
@@ -169,7 +259,7 @@ export function trackWidthFindings(a: Analysis): Finding[] {
     const w = t.shape.r * 2;
     const e = t.ends!;
     const loc = { x: (e[0] + e[2]) / 2, y: (e[1] + e[3]) / 2, layer: t.layer };
-    const vs = a.rules.evaluate("track_width", w, { nets: [netIs(a, t.id, t.net)], kinds: ["track"], layers: [t.layer], at: loc, shapes: [t.shape] });
+    const vs = a.rules.evaluate("track_width", w, { nets: [netIs(a, t.id, t.net)], kinds: ["track"], layers: [t.layer], at: loc, shapes: [t.shape], objects: [copperObj(a, t)] });
     out.push(...violationFindings("track_width", vs, [t.id], loc, w, t.shape.box, (v) => `Track ${t.id} (${netSay(a, t.id, t.net)}) on ${t.layer} is ${fmt(w)} wide, ${bound(v)} ${fmt(v.required!)} (${ruleText(v)}${costText(v)}).`));
   }
   return out;
@@ -184,9 +274,49 @@ export function viaSizeFindings(a: Analysis, check: "via_diameter" | "via_hole")
     const hole = a.model.holes.find((h) => h.id === v.id);
     const layers = hole?.layers ?? [v.from_layer, v.to_layer];
     const loc = { x: v.x, y: v.y, layer: v.from_layer };
-    const vs = a.rules.evaluate(check, size, { nets: [netIs(a, v.id, v.net)], kinds: [check === "via_hole" ? "hole" : "via"], layers, at: loc });
+    const net = netIs(a, v.id, v.net);
+    const obj: SubjectObject = { id: v.id, kind: "via", at: { x: v.x, y: v.y }, shape: hole?.shape ?? { core: { t: "pt", x: v.x, y: v.y }, r: v.outer_diameter / 2, box: { minX: v.x - v.outer_diameter / 2, minY: v.y - v.outer_diameter / 2, maxX: v.x + v.outer_diameter / 2, maxY: v.y + v.outer_diameter / 2 } } as Shape, ...(net !== undefined ? { net } : {}) };
+    const vs = a.rules.evaluate(check, size, { nets: [net], kinds: [check === "via_hole" ? "hole" : "via"], layers, at: loc, objects: [obj] });
     const word = check === "via_diameter" ? "diameter" : "hole";
     out.push(...violationFindings(check, vs, [v.id], loc, size, { minX: v.x - v.outer_diameter / 2, minY: v.y - v.outer_diameter / 2, maxX: v.x + v.outer_diameter / 2, maxY: v.y + v.outer_diameter / 2 }, (x) => `Via ${v.id} (${netOf(v.net)}) ${word} ${fmt(size)} is ${bound(x)} ${fmt(x.required!)} (${ruleText(x)}${costText(x)}).`));
+  }
+  return out;
+}
+
+/**
+ * Hole size of every drilled hole, vias and pads (KiCad's hole_size and minimum through hole). A slot is measured
+ * by its narrower side against a minimum and its wider side against a maximum.
+ */
+export function holeSizeFindings(a: Analysis): Finding[] {
+  if (!a.rules.has("hole_size")) return [];
+  const out: Finding[] = [];
+  for (const h of a.model.holes) {
+    const b = h.shape.box;
+    const w = b.maxX - b.minX;
+    const ht = b.maxY - b.minY;
+    let narrow: number;
+    let wide: number;
+    if (h.kind === "via") {
+      const v = a.model.doc.records.get(h.id);
+      narrow = wide = v?.kind === "via" ? v.hole_diameter : Math.min(w, ht);
+    } else {
+      const p = a.model.pads.get(h.id)?.pad;
+      const hw = p?.hole_width ?? p?.hole_diameter ?? Math.min(w, ht);
+      const hh = p?.hole_height ?? p?.hole_diameter ?? Math.min(w, ht);
+      narrow = Math.min(hw, hh);
+      wide = Math.max(hw, hh);
+    }
+    const c = h.shape.core;
+    const loc = c.t === "pt" ? { x: c.x, y: c.y } : { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 };
+    const s = { nets: [netIs(a, h.id, h.net)], kinds: ["hole" as const], layers: h.layers, at: loc, shapes: [h.shape], objects: [holeObj(a, h)] };
+    const what = h.kind === "via" ? "Via" : "Pad";
+    for (const [size, side] of [
+      [narrow, "min"],
+      [wide, "max"],
+    ] as const) {
+      const vs = a.rules.evaluate("hole_size", size, s).filter((v) => v.bound === side);
+      out.push(...violationFindings("hole_size", vs, [h.id], loc, size, h.shape.box, (x) => `${what} ${h.id} (${netOf(h.net)}) hole ${fmt(size)} is ${bound(x)} ${fmt(x.required!)} (${ruleText(x)}${costText(x)}).`));
+    }
   }
   return out;
 }
@@ -198,7 +328,8 @@ export function annularRingFindings(a: Analysis): Finding[] {
     if (v.kind !== "via") continue;
     const ring = (v.outer_diameter - v.hole_diameter) / 2;
     const loc = { x: v.x, y: v.y, layer: v.from_layer };
-    const vs = a.rules.evaluate("annular_ring", ring, { nets: [netIs(a, v.id, v.net)], kinds: ["via"], layers: [v.from_layer, v.to_layer], at: loc });
+    const vnet = netIs(a, v.id, v.net);
+    const vs = a.rules.evaluate("annular_ring", ring, { nets: [vnet], kinds: ["via"], layers: [v.from_layer, v.to_layer], at: loc, objects: [{ id: v.id, kind: "via", at: { x: v.x, y: v.y }, shape: { core: { t: "pt", x: v.x, y: v.y }, r: v.outer_diameter / 2, box: { minX: v.x - v.outer_diameter / 2, minY: v.y - v.outer_diameter / 2, maxX: v.x + v.outer_diameter / 2, maxY: v.y + v.outer_diameter / 2 } } as Shape, ...(vnet !== undefined ? { net: vnet } : {}) }] });
     out.push(...violationFindings("annular_ring", vs, [v.id], loc, ring, undefined, (x) => `Via ${v.id} (${netOf(v.net)}) annular ring ${fmt(ring)} is ${bound(x)} ${fmt(x.required!)} (${ruleText(x)}${costText(x)}).`));
   }
   for (const [id, wp] of a.model.pads) {
@@ -215,7 +346,7 @@ export function annularRingFindings(a: Analysis): Finding[] {
     }
     const net = a.model.doc.padNets.get(id);
     const loc = { x: wp.x, y: wp.y };
-    const vs = a.rules.evaluate("annular_ring", ring, { nets: [net], kinds: ["pad"], layers: wp.layers, at: loc });
+    const vs = a.rules.evaluate("annular_ring", ring, { nets: [net], kinds: ["pad"], layers: wp.layers, at: loc, objects: [{ id, kind: "pad", shape: wp.shape, ...(net !== undefined ? { net } : {}), ...padInfo(a, id) }] });
     out.push(...violationFindings("annular_ring", vs, [id], loc, ring, wp.box, (x) => `Pad ${id} (${netOf(net)}) annular ring ${fmt(ring)} is ${bound(x)} ${fmt(x.required!)} (${ruleText(x)}${costText(x)}).`));
   }
   return out;
@@ -236,7 +367,7 @@ export function holeToHoleFindings(a: Analysis): Finding[] {
       if (o.id === h.id) continue;
       const d = shapeGap(h.shape, o.shape, radius, g);
       if (!(d < radius)) continue;
-      const vs = a.rules.evaluate("hole_to_hole", d, { nets: [netIs(a, h.id, h.net), netIs(a, o.id, o.net)], kinds: ["hole", "hole"], at: { x: g.x, y: g.y }, shapes: [h.shape, o.shape] });
+      const vs = a.rules.evaluate("hole_to_hole", d, { nets: [netIs(a, h.id, h.net), netIs(a, o.id, o.net)], kinds: ["hole", "hole"], at: { x: g.x, y: g.y }, shapes: [h.shape, o.shape], objects: [holeObj(a, h), holeObj(a, o)] });
       out.push(...violationFindings("hole_to_hole", vs, [h.id, o.id], { x: g.x, y: g.y }, d, unionBox(h.shape.box, o.shape.box), (v) => `Holes of ${h.id} and ${o.id} are ${fmt(d)} apart, ${bound(v)} ${fmt(v.required!)} (${ruleText(v)}${costText(v)}).`));
     }
   }
@@ -248,6 +379,8 @@ export function holeClearanceFindings(a: Analysis): Finding[] {
   if (!a.rules.has("hole_clearance") || radius <= 0) return [];
   const out: Finding[] = [];
   const g: Gap = { gap: 0, x: 0, y: 0 };
+  // one finding per pair of objects (the hole of A near B and the hole of B near A are one pair, as KiCad reports it)
+  const pairs = new Map<string, { h: HoleItem; item: CopperItem; gap: number; x: number; y: number; vs: Violation[] }>();
   for (const h of a.model.holes) {
     // the closest approach per object over the layers the drill passes
     const best = new Map<string, { item: CopperItem; gap: number; x: number; y: number }>();
@@ -268,10 +401,15 @@ export function holeClearanceFindings(a: Analysis): Finding[] {
       }
     }
     for (const { item, gap, x, y } of [...best.values()].sort((p, q) => byCodeUnit(p.item.id, q.item.id))) {
-      const vs = a.rules.evaluate("hole_clearance", gap, { nets: [netIs(a, h.id, h.net), netIs(a, item.id, item.net)], kinds: ["hole", item.kind], layers: [item.layer], at: { x, y }, shapes: [h.shape, item.shape] });
-      out.push(...violationFindings("hole_clearance", vs, [h.id, item.id], { x, y, layer: item.layer }, gap, unionBox(h.shape.box, item.shape.box), (v) => `Hole of ${h.id} is ${fmt(gap)} from ${item.id} (${netSay(a, item.id, item.net)}) on ${item.layer}, ${bound(v)} ${fmt(v.required!)} (${ruleText(v)}${costText(v)}).`));
+      const vs = a.rules.evaluate("hole_clearance", gap, { nets: [netIs(a, h.id, h.net), netIs(a, item.id, item.net)], kinds: ["hole", item.kind], layers: [item.layer], at: { x, y }, shapes: [h.shape, item.shape], objects: [holeObj(a, h), copperObj(a, item)] });
+      if (!vs.length) continue;
+      const key = [h.id, item.id].sort(byCodeUnit).join("\u0000") + (item.kind === "zone" ? `\u0000${item.layer}` : "");
+      const prev = pairs.get(key);
+      if (!prev || gap < prev.gap) pairs.set(key, { h, item, gap, x, y, vs });
     }
   }
+  for (const { h, item, gap, x, y, vs } of pairs.values())
+    out.push(...violationFindings("hole_clearance", vs, [h.id, item.id], { x, y, layer: item.layer }, gap, unionBox(h.shape.box, item.shape.box), (v) => `Hole of ${h.id} is ${fmt(gap)} from ${item.id} (${netSay(a, item.id, item.net)}) on ${item.layer}, ${bound(v)} ${fmt(v.required!)} (${ruleText(v)}${costText(v)}).`));
   return out;
 }
 
@@ -320,7 +458,8 @@ export function edgeClearanceFindings(a: Analysis): Finding[] {
   for (const { item, gap, x, y, outside, edge } of perObject.values()) {
     const what = outside ? `lies outside the board outline` : gap === 0 ? `crosses the board edge (${edge})` : `is ${fmt(gap)} from the board edge (${edge})`;
     const loc = { x, y, layer: item.layer };
-    const s = { nets: [netIs(a, item.id, item.net)], kinds: [item.kind, edge === "outline" ? "outline" : "cutout"] as ["pad", "outline"], layers: [item.layer], at: { x, y }, shapes: [item.shape] };
+    const edgeKind = edge === "outline" ? ("outline" as const) : ("cutout" as const);
+    const s = { nets: [netIs(a, item.id, item.net)], kinds: [item.kind, edgeKind] as ["pad", "outline"], layers: [item.layer], at: { x, y }, shapes: [item.shape], objects: [copperObj(a, item), { id: edge, kind: edgeKind }] };
     const vs = hasRules ? a.rules.evaluate("edge_clearance", gap, s) : [];
     if (vs.length) out.push(...violationFindings("edge_clearance", vs, [item.id, edge], loc, gap, item.shape.box, (v) => `${item.id} (${netOf(item.net)}) on ${item.layer} ${what}; the limit is ${fmt(v.required!)} (${ruleText(v)}${costText(v)}).`));
     else if (gap === 0 && (!hasRules || a.rules.resolve("edge_clearance", s).floor.every((r) => r.severity !== "ignore")))
@@ -342,26 +481,36 @@ export function courtyardFindings(a: Analysis): Finding[] {
       const hit = polygonsOverlap(A.poly, B.poly);
       if (!hit) continue;
       const layer = `${A.side}_courtyard`;
-      const vs = a.rules.flag("courtyard_overlap", { nets: [], kinds: ["footprint", "footprint"], layers: [layer], at: hit, shapes: [shape(A.poly), shape(B.poly)] }, "error");
+      const vs = a.rules.flag("courtyard_overlap", { nets: [], kinds: ["footprint", "footprint"], layers: [layer], at: hit, shapes: [shape(A.poly), shape(B.poly)], objects: [{ id: A.footprint, kind: "footprint", footprint: A.footprint, shape: shape(A.poly) }, { id: B.footprint, kind: "footprint", footprint: B.footprint, shape: shape(B.poly) }] }, "error");
       out.push(...violationFindings("courtyard_overlap", vs, [A.footprint, B.footprint], { ...hit, layer }, undefined, unionBox(A.poly.box, B.poly.box), (v) => `Courtyards of ${A.ref} (${A.footprint}) and ${B.ref} (${B.footprint}) overlap on the ${A.side} near ${at(hit.x, hit.y)} (${ruleText(v)}${costText(v)}).`));
     }
   return out;
 }
 
+/**
+ * Silkscreen over pads: one finding per silkscreen element (a line, shape or text) that comes too near or over
+ * pads, naming every pad it reaches, as KiCad reports one item per silkscreen element. The finding takes the most
+ * severe violation among those pads and the smallest gap.
+ */
 export function silkToPadFindings(a: Analysis): Finding[] {
   const m = a.model;
   const hasRules = a.rules.has("silk_to_pad");
   const radius = Math.max(CONTACT_EPS, a.rules.maxMin("silk_to_pad"));
   const out: Finding[] = [];
   const g: Gap = { gap: 0, x: 0, y: 0 };
+  const rank = (v: Violation) => (v.severity === "error" ? 0 : v.severity === "warning" ? 1 : 2);
   m.silk.forEach((s) => {
     const layer: CopperLayer = s.layer === "top_silkscreen" ? "top" : "bottom";
     const grid = m.grids.get(layer);
     if (!grid) return;
     const cand = grid.search({ minX: s.box.minX - radius, minY: s.box.minY - radius, maxX: s.box.maxX + radius, maxY: s.box.maxY + radius });
+    const pads: string[] = [];
+    let worst: { v?: Violation; gap: number; x: number; y: number; box: Box } | undefined;
+    const seen = new Set<string>();
     for (const j of cand) {
       const pad = m.copper[j];
-      if (pad.kind !== "pad") continue;
+      if (pad.kind !== "pad" || seen.has(pad.id)) continue;
+      seen.add(pad.id);
       let best = Infinity,
         bx = 0,
         by = 0;
@@ -374,16 +523,24 @@ export function silkToPadFindings(a: Analysis): Finding[] {
         }
       }
       if (!(best < radius)) continue;
-      const subject = { nets: [pad.net], kinds: [s.textBox ? "text" : "graphic", "pad"] as ["text", "pad"], layers: [s.layer], at: { x: bx, y: by }, shapes: [pad.shape, ...s.shapes] };
-      const approx = s.textBox ? " (text checked as its box)" : "";
-      const objects = [s.id, pad.id];
-      const loc = { x: bx, y: by, layer: s.layer };
-      const box = unionBox(s.box, pad.shape.box);
+      const subject = { nets: [pad.net], kinds: [s.textBox ? "text" : "graphic", "pad"] as ["text", "pad"], layers: [s.layer], at: { x: bx, y: by }, shapes: [pad.shape, ...s.shapes], objects: [{ id: s.id, kind: s.textBox ? ("text" as const) : ("graphic" as const), layer: s.layer, ...(s.footprint ? { footprint: s.footprint } : {}) }, copperObj(a, pad)] };
+      let v: Violation | undefined;
       if (hasRules) {
-        const vs = a.rules.evaluate("silk_to_pad", best, subject);
-        out.push(...violationFindings("silk_to_pad", vs, objects, loc, best, box, (v) => `Silkscreen of ${s.id} is ${fmt(best)} from pad ${pad.id} on ${s.layer}, ${bound(v)} ${fmt(v.required!)}${approx} (${ruleText(v)}${costText(v)}).`));
-      } else if (best === 0) out.push(makeFinding("silk_to_pad", "warning", objects, loc, `Silkscreen of ${s.id} overlaps pad ${pad.id} on ${s.layer}${approx} (built-in default).`, { box, measured: 0, required: 0 }));
+        const vs = a.rules.evaluate("silk_to_pad", best, subject).sort((p, q) => rank(p) - rank(q));
+        if (!vs.length) continue;
+        v = vs[0];
+      } else if (best !== 0) continue;
+      pads.push(pad.id);
+      const box = unionBox(s.box, pad.shape.box);
+      if (!worst || (v && worst.v && rank(v) < rank(worst.v)) || ((!v || !worst.v || rank(v) === rank(worst.v)) && best < worst.gap)) worst = { ...(v ? { v } : {}), gap: best, x: bx, y: by, box: worst ? unionBox(worst.box, box) : box };
+      else worst.box = unionBox(worst.box, box);
     }
+    if (!worst) return;
+    const approx = s.textBox ? " (text checked as its box)" : "";
+    const what = pads.length === 1 ? `pad ${pads[0]}` : `${pads.length} pads (${listIds(pads.sort(byCodeUnit))})`;
+    const loc = { x: worst.x, y: worst.y, layer: s.layer };
+    if (worst.v) out.push(...violationFindings("silk_to_pad", [worst.v], [s.id, ...pads], loc, worst.gap, worst.box, (v) => `Silkscreen of ${s.id} on ${s.layer} is ${fmt(worst!.gap)} from ${what}, ${bound(v)} ${fmt(v.required!)}${approx} (${ruleText(v)}${costText(v)}).`));
+    else out.push(makeFinding("silk_to_pad", "warning", [s.id, ...pads], loc, `Silkscreen of ${s.id} overlaps ${what} on ${s.layer}${approx} (built-in default).`, { box: worst.box, measured: 0, required: 0 }));
   });
   return out;
 }
@@ -405,7 +562,7 @@ export function viaInPadFindings(a: Analysis): Finding[] {
       if (shapeGap(v.shape, p.shape, CONTACT_EPS, g) > CONTACT_EPS) continue;
       seen.add(key);
       const c = v.shape.core as { x: number; y: number };
-      const vs = a.rules.flag("via_in_pad", { nets: [v.net, p.net], kinds: ["via", "pad"], layers: [v.layer], at: c, shapes: [v.shape] });
+      const vs = a.rules.flag("via_in_pad", { nets: [v.net, p.net], kinds: ["via", "pad"], layers: [v.layer], at: c, shapes: [v.shape], objects: [copperObj(a, v), copperObj(a, p)] });
       out.push(...violationFindings("via_in_pad", vs, [v.id, p.id], { x: c.x, y: c.y, layer: v.layer }, undefined, unionBox(v.shape.box, p.shape.box), (x) => `Via ${v.id} (${netOf(v.net)}) is in pad ${p.id} (${netOf(p.net)}) on ${v.layer} (${ruleText(x)}${costText(x)}).`));
     }
   }
@@ -423,7 +580,7 @@ export function viaUnderFootprintFindings(a: Analysis): Finding[] {
       const outer = cy.side === "top" ? m.layers[0] : m.layers[m.layers.length - 1];
       if (!h.layers.includes(outer)) continue;
       if (!pointInPoly(cy.poly, c.x, c.y)) continue;
-      const vs = a.rules.flag("via_under_footprint", { nets: [h.net], kinds: ["via", "footprint"], layers: [outer], at: c, shapes: [h.shape] });
+      const vs = a.rules.flag("via_under_footprint", { nets: [h.net], kinds: ["via", "footprint"], layers: [outer], at: c, shapes: [h.shape], objects: [holeObj(a, h), { id: cy.footprint, kind: "footprint", footprint: cy.footprint, shape: shape(cy.poly) }] });
       out.push(...violationFindings("via_under_footprint", vs, [h.id, cy.footprint], { x: c.x, y: c.y, layer: outer }, undefined, h.shape.box, (x) => `Via ${h.id} (${netOf(h.net)}) is under ${cy.ref} (${cy.footprint}) on the ${cy.side} (${ruleText(x)}${costText(x)}).`));
     }
   }
@@ -432,12 +589,18 @@ export function viaUnderFootprintFindings(a: Analysis): Finding[] {
 
 // ---------------------------------------------------------------- keep-outs
 
+/**
+ * Keep-outs: copper and footprints inside a keep-out that blocks them. A keep-out is a disallow at priority 0: an
+ * object a `disallow` rule of a higher priority matches is reported by that rule instead (`disallowFindings`), as
+ * KiCad's custom rules take precedence over its rule areas.
+ */
 export function keepoutFindings(a: Analysis): Finding[] {
   const m = a.model;
   const out: Finding[] = [];
+  const overridden = (o: SubjectObject, layers: string[]) => a.rules.has("disallow") && a.rules.disallowPriority({ nets: [o.net], kinds: [o.kind], layers, at: o.at ?? { x: 0, y: 0 }, ...(o.shape ? { shapes: [o.shape] } : {}), objects: [o] }) > 0;
   for (const k of m.doc.records.values()) {
     if (k.kind !== "keepout") continue;
-    const region = m.zoneOutlines.get(k.id)?.poly ?? keepoutPoly(k.outline);
+    const region = keepoutPoly(k.outline, k.holes);
     const regionShape: Shape = shape(region, 0);
     const severity = k.tier === "no_go" ? "error" : "warning";
     const kinds = new Set<string>();
@@ -464,6 +627,7 @@ export function keepoutFindings(a: Analysis): Finding[] {
         g.x = hit.x;
         g.y = hit.y;
         seen.add(key);
+        if (overridden(copperObj(a, it), [layer])) continue;
         out.push(makeFinding("keepout", severity, [k.id, it.id], { x: g.x, y: g.y, layer }, `${it.kind === "zone" ? "Zone fill" : it.kind === "via" ? "Via" : "Track"} ${it.id} (${netOf(it.net)}) on ${layer} is inside keep-out ${k.id}, which blocks ${it.kind === "zone" ? "pours" : `${it.kind}s`} (${k.tier}).`, { tier: k.tier, box: it.shape.box }));
       }
     }
@@ -474,6 +638,7 @@ export function keepoutFindings(a: Analysis): Finding[] {
         if (!k.layers.includes(side)) continue;
         const hit = polygonsOverlap(cy.poly, region);
         if (!hit) continue;
+        if (overridden({ id: cy.footprint, kind: "footprint", footprint: cy.footprint, shape: shape(cy.poly) }, [side])) continue;
         out.push(makeFinding("keepout", severity, [k.id, cy.footprint], { ...hit, layer: side }, `Footprint ${cy.ref} (${cy.footprint}) overlaps keep-out ${k.id}, which blocks footprints (${k.tier}).`, { tier: k.tier, box: cy.poly.box }));
       }
     }
@@ -481,7 +646,52 @@ export function keepoutFindings(a: Analysis): Finding[] {
   return out;
 }
 
-const keepoutPoly = (outline: readonly Vertex[]): PolyCore => polyCore([flattenContour(outline)]);
+const keepoutPoly = (outline: readonly Vertex[], holes?: readonly (readonly Vertex[])[]): PolyCore => polyCore([flattenContour(outline), ...(holes ?? []).map((h) => flattenContour(h))]);
+
+/**
+ * Disallow rules: an object a `disallow` rule matches is not allowed (KiCad's `disallow` constraint). Objects are
+ * tracks, vias, pads, zones (one per zone and layer) and footprints; the rule's `applies` says which. Precedence and
+ * severity as for every rule; a rule set to `ignore` allows the object, keep-outs included.
+ */
+export function disallowFindings(a: Analysis): Finding[] {
+  if (!a.rules.has("disallow")) return [];
+  const m = a.model;
+  const out: Finding[] = [];
+  const seen = new Set<string>();
+  const report = (o: SubjectObject, layers: string[], loc: { x: number; y: number; layer?: string }, box: Box | undefined, what: string) => {
+    const vs = a.rules.flag("disallow", { nets: [o.net], kinds: [o.kind], layers, at: loc, ...(o.shape ? { shapes: [o.shape] } : {}), objects: [o] });
+    out.push(...violationFindings("disallow", vs, [o.id], loc, undefined, box, (v) => `${what} is not allowed (${ruleText(v)}${costText(v)}).`));
+  };
+  for (const it of m.copper) {
+    if (it.kind === "pad" || it.kind === "via") {
+      if (seen.has(it.id)) continue;
+      seen.add(it.id);
+      const layers: string[] = it.kind === "via" ? viaLayersOf(m, it.id) : (m.pads.get(it.id)?.layers ?? [it.layer]);
+      const o = copperObj(a, it);
+      const c = it.shape.core;
+      const loc = c.t === "pt" ? { x: c.x, y: c.y, layer: it.layer } : { x: (it.shape.box.minX + it.shape.box.maxX) / 2, y: (it.shape.box.minY + it.shape.box.maxY) / 2, layer: it.layer };
+      report({ ...o, layer: it.kind === "pad" ? it.layer : undefined } as SubjectObject, layers, loc, it.shape.box, `${it.kind === "via" ? "Via" : "Pad"} ${it.id} (${netOf(o.net)})`);
+    } else if (it.kind === "track") {
+      const o = copperObj(a, it);
+      const e = it.ends!;
+      report(o, [it.layer], { x: (e[0] + e[2]) / 2, y: (e[1] + e[3]) / 2, layer: it.layer }, it.shape.box, `Track ${it.id} (${netOf(o.net)}) on ${it.layer}`);
+    } else if (it.kind === "zone") {
+      const key = `${it.id}\u0000${it.layer}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const o = copperObj(a, it);
+      report(o, [it.layer], { x: (it.shape.box.minX + it.shape.box.maxX) / 2, y: (it.shape.box.minY + it.shape.box.maxY) / 2, layer: it.layer }, it.shape.box, `Zone ${it.id} (${netOf(o.net)}) on ${it.layer}`);
+    }
+  }
+  for (const cy of m.courtyards) {
+    const side = cy.side === "top" ? m.layers[0] : m.layers[m.layers.length - 1];
+    const sh = shape(cy.poly);
+    report({ id: cy.footprint, kind: "footprint", footprint: cy.footprint, shape: sh }, [side], { x: (cy.poly.box.minX + cy.poly.box.maxX) / 2, y: (cy.poly.box.minY + cy.poly.box.maxY) / 2, layer: side }, cy.poly.box, `Footprint ${cy.ref} (${cy.footprint})`);
+  }
+  return out;
+}
+
+const viaLayersOf = (m: CheckModel, id: string): string[] => m.holes.find((h) => h.id === id)?.layers ?? [];
 
 /** Every check of this package, by finding `check` id, in report order. */
 export const CHECKS: { id: string; title: string; rule?: RuleCheckName; run: (a: Analysis) => Finding[] }[] = [
@@ -491,9 +701,11 @@ export const CHECKS: { id: string; title: string; rule?: RuleCheckName; run: (a:
   { id: "dangling", title: "Dangling track ends and vias", run: danglingFindings },
   { id: "isolated_copper", title: "Isolated zone fill islands", run: isolatedFindings },
   { id: "clearance", title: "Copper clearance", rule: "clearance", run: clearanceFindings },
+  { id: "physical_clearance", title: "Physical clearance (any nets)", rule: "physical_clearance", run: physicalClearanceFindings },
   { id: "track_width", title: "Track width", rule: "track_width", run: trackWidthFindings },
   { id: "via_diameter", title: "Via diameter", rule: "via_diameter", run: (a) => viaSizeFindings(a, "via_diameter") },
   { id: "via_hole", title: "Via hole", rule: "via_hole", run: (a) => viaSizeFindings(a, "via_hole") },
+  { id: "hole_size", title: "Hole size (vias and pads)", rule: "hole_size", run: holeSizeFindings },
   { id: "annular_ring", title: "Annular ring", rule: "annular_ring", run: annularRingFindings },
   { id: "hole_to_hole", title: "Hole to hole", rule: "hole_to_hole", run: holeToHoleFindings },
   { id: "hole_clearance", title: "Hole clearance", rule: "hole_clearance", run: holeClearanceFindings },
@@ -503,6 +715,7 @@ export const CHECKS: { id: string; title: string; rule?: RuleCheckName; run: (a:
   { id: "via_in_pad", title: "Via in pad (policy)", rule: "via_in_pad", run: viaInPadFindings },
   { id: "via_under_footprint", title: "Via under footprint (policy)", rule: "via_under_footprint", run: viaUnderFootprintFindings },
   { id: "keepout", title: "Keep-out areas", run: keepoutFindings },
+  { id: "disallow", title: "Disallowed objects (disallow rules)", rule: "disallow", run: disallowFindings },
 ];
 
 /** Checks that did not run, and checks that ran on a built-in default because no rule was given. */
@@ -510,7 +723,11 @@ export function coverage(a: Pick<Analysis, "rules" | "model">): { notRun: { chec
   const notRun: { check: string; reason: string }[] = [];
   const defaults: { check: string; reason: string }[] = [];
   const needRule: RuleCheckName[] = ["clearance", "track_width", "via_diameter", "via_hole", "annular_ring", "hole_to_hole", "hole_clearance", "via_in_pad", "via_under_footprint"];
-  for (const c of needRule) if (!a.rules.has(c)) notRun.push({ check: c, reason: `no enabled ${c} rule on the board` });
+  for (const c of needRule) {
+    // a hole_size rule covers via holes too
+    if (c === "via_hole" && a.rules.has("hole_size")) continue;
+    if (!a.rules.has(c)) notRun.push({ check: c, reason: `no enabled ${c} rule on the board` });
+  }
   if (!a.model.region) notRun.push({ check: "edge_clearance", reason: "the board has no outline" });
   else if (!a.rules.has("edge_clearance")) defaults.push({ check: "edge_clearance", reason: "no enabled edge_clearance rule: only copper crossing or outside the edge is reported, as an error" });
   if (!a.rules.has("silk_to_pad")) defaults.push({ check: "silk_to_pad", reason: "no enabled silk_to_pad rule: only silkscreen overlapping a pad is reported, as a warning" });

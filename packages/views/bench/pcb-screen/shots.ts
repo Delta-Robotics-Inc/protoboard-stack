@@ -4,7 +4,8 @@
  *
  *   npx tsx packages/views/bench/pcb-screen/shots.ts --out <folder> [--backend auto|gpu|swiftshader] [--board <folder>]
  *
- * Sample findings and the naive ratsnest are the dev page's stand-ins (see page.tsx); the file names say so.
+ * The page reads the board through the dev server's board feed (serve.ts): the checks, the ratsnest and the zone
+ * fill are the real ones (@protoboardai/board-checks), and each shot waits until they arrived.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -19,7 +20,8 @@ mkdirSync(OUT, { recursive: true });
 const W = 1440;
 const H = 900;
 
-const { url, server } = await startDevServer(Number(values.port ?? 0));
+const dev = await startDevServer(Number(values.port ?? 0));
+const { url } = dev;
 const browser: Browser = await launchBrowser({ backend: (values.backend as "auto") ?? "auto", purpose: "Screenshots of the layout screen", echoErrors: true });
 console.log(`browser: ${browser.backend.kind}${browser.backend.gl ? ` (${browser.backend.gl.renderer})` : ""}`);
 await browser.setViewport(W, H, 1);
@@ -31,6 +33,11 @@ async function open(query: string) {
     const s = await browser.evaluate<{ ready: boolean; error?: string }>("({ ready: !!window.__dev?.ready, error: window.__dev?.error })");
     if (s.error) throw new Error(s.error);
     if (s.ready) break;
+    await sleep(100);
+  }
+  // the derived data (checks, ratsnest) follows the snapshot
+  for (let i = 0; i < 300; i++) {
+    if (await browser.evaluate<boolean>("!!window.__dev?.derived")) break;
     await sleep(100);
   }
   await browser.evaluate("document.fonts.ready.then(() => true)");
@@ -71,18 +78,18 @@ try {
   await open("");
   await shot("01-layout-default-no-check");
 
-  await open("sample=findings&ratsnest=naive");
+  await open("");
   let p = await at(-10, -3);
   await click(p.x, p.y);
-  await shot("02-selected-u2-callout-sample-findings-naive-ratsnest");
+  await shot("02-selected-u2-callout-findings-ratsnest");
 
   await clickSel(".pcb-tabs button", "nets");
   await clickSel(".pcb-panel .pcb-row", "VBUS");
   await shot("03-nets-vbus-lit-dim-others");
 
-  await open("sample=findings&ratsnest=naive");
+  await open("");
   await clickSel(".pcb-btn.main");
-  await shot("04-review-first-sample-finding");
+  await shot("04-review-first-finding");
 
   await open("");
   p = await at(0, 0);
@@ -113,10 +120,10 @@ try {
   await key("4", "Digit4", 1);
   await shot("08-fab-check-preset");
 
-  await open("ratsnest=naive");
+  await open("");
   await browser.evaluate(`window.__dev.move("fp:power/ldo", 2, 0)`);
   await browser.evaluate(`window.__dev.move("fp:sensor/ic", 0, -1.5)`);
-  await sleep(200);
+  await sleep(1200);
   await clickSel(".pcb-block");
   await clickSel(".pcb-tabs button", "inspect");
   await shot("09-after-two-commits-timeline-block-selected");
@@ -125,5 +132,5 @@ try {
   if (errors.length) console.log(`page errors:\n${errors.join("\n")}`);
 } finally {
   await browser.close();
-  server.close();
+  await dev.close();
 }

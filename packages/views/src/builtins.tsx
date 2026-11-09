@@ -13,6 +13,7 @@ import { ViewIcon } from "./icons.js";
 import { BUILTIN_TABS } from "./tabs.js";
 import { PcbView, SchematicView } from "./drawing/BoardDrawingView.js";
 import { PairView } from "./pair/PairView.js";
+import { LayoutView } from "./pcb/LayoutView.js";
 import { BomView, LibraryView } from "./parts/views.js";
 import { Button } from "./parts/ui.js";
 import { ViewRegistry } from "./registry.js";
@@ -74,6 +75,7 @@ const COMPONENTS: Record<string, ViewDefinition["component"]> = {
   "3d": AssemblyView,
   schematic: SchematicView,
   pcb: PcbView,
+  layout: LayoutView,
   bom: BomView,
   pair: PairView,
   library: LibraryView,

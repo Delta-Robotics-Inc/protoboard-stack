@@ -297,7 +297,7 @@ export function buildModel(doc: BoardDocument, fills?: ZoneFillSet): CheckModel 
   const zones = recordsOfKind(doc, "zone");
   const zoneById = new Map(zones.map((z) => [z.id, z]));
   const zoneOutlines = new Map<string, { net?: string; layers: CopperLayer[]; poly: PolyCore }>();
-  for (const z of zones) zoneOutlines.set(z.id, { ...(z.net ? { net: z.net } : {}), layers: [...z.layers], poly: polyCore([flattenContour(z.outline)]) });
+  for (const z of zones) zoneOutlines.set(z.id, { ...(z.net ? { net: z.net } : {}), layers: [...z.layers], poly: polyCore([flattenContour(z.outline), ...(z.holes ?? []).map((h) => flattenContour(h))]) });
   const filled = new Set<string>();
   const orphanFills = new Set<string>();
   for (const f of fills ?? []) {

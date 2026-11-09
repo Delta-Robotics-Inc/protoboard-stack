@@ -12,7 +12,8 @@ import { Resvg } from "@resvg/resvg-js";
 import looksSame from "@tscircuit/image-utils/looks-same";
 import type { FileMetrics, ImageRecord, KicadMetrics, Measurement } from "./measure.ts";
 
-export const BASELINE_SCHEMA = "pb-pcb-regression-baseline/1";
+/** /2: DRC counts with --all-track-errors (every error of each track). */
+export const BASELINE_SCHEMA = "pb-pcb-regression-baseline/2";
 
 export interface Baseline {
   schema: typeof BASELINE_SCHEMA;

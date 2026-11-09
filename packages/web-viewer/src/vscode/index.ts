@@ -34,6 +34,7 @@ import { emptyLayout, hasEdits, parseViewerSettings, parseViewerStateFile, type 
 import { parseTabHistory, type TabHistory, type ViewerHistoryFlags } from "./tab-history.js";
 import { applyHubSettings, extensionPartsData, interceptDownloads } from "./host-io.js";
 import type { PartsData } from "@protoboardai/views";
+import { setKnownBoards, type BoardEntry, type BoardFeedMessage, type BoardHost } from "@protoboardai/views";
 
 export { VsCodeShell, vscodeShellThemeAdapter, isProtoboardTheme } from "./Shell.js";
 export * from "./tab-history.js";
@@ -171,6 +172,28 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   let savedPending = false;
   const waiting: ToWebview[] = [];
   let views: ResolvedView[] = [];
+  // the layout tab's boards: the extension host is the board service's client and relays its feed (PCB editor Phase 1)
+  const boardListeners = new Set<(m: BoardFeedMessage) => void>();
+  const boardWaiters: ((b: BoardEntry[]) => void)[] = [];
+  const boards: BoardHost = {
+    list: () =>
+      new Promise<BoardEntry[]>((resolve) => {
+        boardWaiters.push(resolve);
+        post({ type: "boards" });
+      }),
+    open: (key) => ({
+      subscribe(onMessage) {
+        const l = (m: BoardFeedMessage) => m.board === key && onMessage(m);
+        boardListeners.add(l);
+        post({ type: "boardOpen", board: key });
+        return () => {
+          boardListeners.delete(l);
+          post({ type: "boardClose", board: key });
+        };
+      },
+      recheck: () => post({ type: "boardCheck", board: key }),
+    }),
+  };
   let partStatus: VsCodeViewerOptions["partStatus"];
 
   const navOptions: Record<string, unknown> = {
@@ -192,6 +215,7 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     views,
     settings,
     partsData: parts.data as unknown as PartsData,
+    boards,
     // R2-A's navigation options (typed loosely: a viewer build from before R2-A has neither and ignores them)
     ...navOptions,
     ...(partStatus ? { partStatus } : {}),
@@ -353,6 +377,13 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       case "partsAnswer":
         parts.answer(m);
         return;
+      case "boards":
+        setKnownBoards(m.boards);
+        for (const w of boardWaiters.splice(0)) w(m.boards);
+        return;
+      case "boardFeed":
+        for (const l of [...boardListeners]) l(m.message);
+        return;
       case "bridge": {
         // an agent's batch, relayed by the extension from the dev server (PB-1178): the viewer's store answers it
         const out = viewer?.bridge(m.request as unknown as Parameters<ViewerHandle["bridge"]>[0]);
@@ -390,6 +421,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   window.addEventListener("offline", () => log("warn", "the browser reports the network is gone (loopback connections are closed with it)"));
   if (config.dev) link.set(config.dev);
   post({ type: "ready" });
+  // the layout tab is offered when the project has a board folder: ask which there are
+  post({ type: "boards" });
   ask(0);
   return { get viewer() { return viewer; }, receive, link };
 }

@@ -1,13 +1,13 @@
 /**
- * The board core's browser-safe parts, in one place. The renderer and the layout screen run in a browser, so they
- * import the board package's pure modules (document, geometry, units, schema) and never its index, which pulls in
- * the file format, the journal and the service (Node's fs and path). When @protoboardai/board exports these
- * modules as subpaths, only this file changes.
+ * The board core's browser-safe parts, in one place: `@protoboardai/board/browser`. The renderer and the layout
+ * screen run in a browser, so they never import the package's index (the file format, the journal, the service and
+ * the Node WebSocket client).
  */
-export { copperLayers, netClassOf, parsePadId, padKeys, padId, footprintKey, recordsOfKind, type BoardDocument, type NetInfo } from "../../../board/src/document.js";
-export { arcCenter, boundsOf, footprintToWorld, layersOf, padsOf, rotatePoint, sideLayer, viaLayers, type Box, type WorldPad } from "../../../board/src/geometry.js";
-export { mm, toMm, toDeg, deg, normAngle } from "../../../board/src/units.js";
-export { COPPER_LAYERS, DRAWING_LAYERS } from "../../../board/src/schema.js";
+export { copperLayers, netClassOf, parsePadId, padKeys, padId, footprintKey, recordsOfKind, createDocument, withChanges, type BoardDocument, type NetInfo } from "@protoboardai/board/browser";
+export { arcCenter, boundsOf, footprintToWorld, layersOf, padsOf, rotatePoint, sideLayer, viaLayers, type Box, type WorldPad } from "@protoboardai/board/browser";
+export { mm, toMm, toDeg, deg, normAngle } from "@protoboardai/board/browser";
+export { COPPER_LAYERS, DRAWING_LAYERS } from "@protoboardai/board/browser";
+export { BoardIndex, snapshotFromWire } from "@protoboardai/board/browser";
 export type {
   AnyLayer,
   BoardRecord,
@@ -17,6 +17,7 @@ export type {
   FootprintText,
   GraphicRec,
   KeepoutRec,
+  Netlist,
   OutlineRec,
   CutoutRec,
   Pad,
@@ -29,9 +30,11 @@ export type {
   Vertex,
   ViaRec,
   ZoneRec,
-} from "../../../board/src/schema.js";
-export type { BoardQuery, IndexItem } from "../../../board/src/index-spatial.js";
-export type { BoardEvent, BoardSnapshot } from "../../../board/src/service.js";
-export type { LogEntry, Presence } from "../../../board/src/transaction.js";
-export type { Actor } from "../../../board/src/ops/registry.js";
-export type { Finding } from "../../../board/src/extensions.js";
+} from "@protoboardai/board/browser";
+export type { BoardQuery, IndexItem } from "@protoboardai/board/browser";
+export type { BoardEvent, BoardSnapshot } from "@protoboardai/board/browser";
+export type { LogEntry, Presence } from "@protoboardai/board/browser";
+export type { Actor } from "@protoboardai/board/browser";
+export type { Finding, BoardConnectivity } from "@protoboardai/board/browser";
+export type { WireSnapshot } from "@protoboardai/board/browser";
+export type { DerivedZoneFill, ZoneFillEntry, ZoneFillPolygon } from "@protoboardai/board/browser";

@@ -20,7 +20,8 @@ export * from "./types.js";
 export * from "./fill.js";
 export { Reporter, type ImportSummary } from "./report.js";
 export { importKicadPcb, KICAD_IMPORTER_ID, type KicadImportOptions } from "./kicad/board.js";
-export { mapKicadRules, parseLength } from "./kicad/rules.js";
+export { mapKicadRules, parseLength, CUSTOM_RULE_PRIORITY, KICAD_VIOLATION_TYPE } from "./kicad/rules.js";
+export { kicadCondition, UnsupportedCondition } from "./kicad/condition.js";
 export { importCircuitJson, CIRCUIT_JSON_IMPORTER_ID, type CircuitJsonImportOptions } from "./circuit-json/import.js";
 export { exportCircuitJson, type CircuitJsonExport } from "./circuit-json/export.js";
 export { READ_FIELDS, WRITE_FIELDS, ROUTE_POINT_FIELDS } from "./circuit-json/fields.js";
@@ -86,7 +87,7 @@ export async function importBoard(source: BoardSource, options: ImportBoardOptio
       rules: source.rules ?? (source.path ? beside(source.path, ".kicad_dru") : undefined),
     };
     result = importKicadPcb(text, opts);
-    if (opts.project === undefined) result.report.push({ level: "info", message: "1 project file: none beside the board; no net classes or board constraints mapped" });
+    if (opts.project === undefined) result.report.push({ level: "info", message: "1 project file: none beside the board; no net classes mapped, and KiCad's default board constraints used (as KiCad does)" });
     if (opts.rules === undefined) result.report.push({ level: "info", message: "1 custom rules file: none beside the board" });
   } else if (kind === "circuit-json") {
     const parsed = JSON.parse(text) as unknown;

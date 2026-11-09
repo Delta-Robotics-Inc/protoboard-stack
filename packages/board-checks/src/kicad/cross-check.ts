@@ -22,6 +22,10 @@ export interface CrossCheckOptions {
   cli?: KicadCli;
   refillZones?: boolean;
   tolerance?: number;
+  /** The source's rules the importer could not express (`rulesNotEvaluated` of a KiCad import). */
+  notEvaluated?: { name: string; reason: string }[];
+  /** Groups of objects the source gives one identity (`sharedSourceIds` of a KiCad import). */
+  sharedIds?: string[][];
 }
 
 export function crossCheckWithKicad(result: BoardCheckResult, options: CrossCheckOptions): CrossCheckResult {
@@ -32,5 +36,5 @@ export function crossCheckWithKicad(result: BoardCheckResult, options: CrossChec
   const run = runKicadDrc(options.pcbPath, { cli, ...(options.root ? { root: options.root } : {}), ...(options.refillZones ? { refillZones: true } : {}) });
   let transform: KicadTransform | undefined = options.transform ? { ...options.transform, source: "given" } : undefined;
   if (!transform && options.doc) transform = estimateTransform(options.doc, readFileSync(options.pcbPath, "utf8"));
-  return compareWithKicad(result, run.report, { ...(transform ? { transform } : {}), ...(options.tolerance ? { tolerance: options.tolerance } : {}), command: run.command, durationMs: run.durationMs });
+  return compareWithKicad(result, run.report, { ...(transform ? { transform } : {}), ...(options.tolerance ? { tolerance: options.tolerance } : {}), ...(options.notEvaluated ? { notEvaluated: options.notEvaluated } : {}), ...(options.doc ? { doc: options.doc } : {}), ...(options.sharedIds ? { sharedIds: options.sharedIds } : {}), command: run.command, durationMs: run.durationMs });
 }

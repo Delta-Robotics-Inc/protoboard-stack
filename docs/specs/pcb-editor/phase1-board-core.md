@@ -205,7 +205,10 @@ higher fills first), `clearance?`, `min_width?`, `pad_connection: "thermal" | "s
 `island_min_area?` (integer square nanometers; 1 mm squared is 1e12), `name?`, `locked?`,
 `provenance`. The fill is derived (section 4.3).
 
-**keepout**: `outline: Vertex[]`, `layers` (copper layer names; at least one), `blocks: {
+A zone's and a keep-out's optional `holes: Vertex[][]` are contours inside the outline (clockwise); the area is
+the outline less its holes (a ring-shaped area is an outline with one hole).
+
+**keepout**: `outline: Vertex[]`, `holes?`, `layers` (copper layer names; at least one), `blocks: {
 tracks, vias, pours, footprints }` (all four booleans required, so every keep-out states what
 it blocks), `tier: "no_go" | "policy"`, `footprint?` (an `fp:` id it belongs to), `name?`,
 `description?`, `locked?`, `provenance`.
@@ -222,8 +225,10 @@ width, height, rotation?` (rect), `points: Vertex[]` (polygon closed, path open)
 `description?`. A net's class: an explicit `nets` entry, else the first class (by id) whose
 pattern matches, else the netlist's `class`, else `default` (`netClassOf(doc, net)`).
 
-**rule**: `tier`, `check`, `applies`, `min?`, `max?`, `preferred?`, `cost?`, `severity?`,
-`enabled?: false` (absent means enabled), `note?`, `provenance`. See section 5.
+**rule**: `tier`, `check`, `priority?` (integer 0 to 1,000,000; absent is 0), `applies`, `min?`, `max?`,
+`preferred?`, `cost?`, `severity?`, `enabled?: false` (absent means enabled), `note?`, `provenance`. See section 5.
+`provenance.from?` says where in the source an imported object came from, in the importer's words (`board
+setup`, `board setup (KiCad default)`, `net class GND`, `custom rule 'Width GND'`).
 
 ### 4.2 Nets come from a netlist input
 
@@ -287,15 +292,44 @@ source, fills)` (stamps the hash, drops rings under three points), `parseZoneFil
 
 `check` names what is measured: `clearance`, `track_width`, `via_diameter`, `via_hole`,
 `annular_ring`, `hole_clearance`, `hole_to_hole`, `edge_clearance`, `silk_to_pad`,
-`courtyard_overlap`, `via_in_pad`, `via_under_footprint`, `length`, `diff_pair_gap`. Values
+`courtyard_overlap`, `via_in_pad`, `via_under_footprint`, `length`, `diff_pair_gap`, and (added with
+precedence) `hole_size` (every drilled hole, vias and pads), `physical_clearance` (any two copper objects,
+same net included) and `disallow` (the matching object is not allowed; `min` and `max` unused). Values
 `min`, `max`, `preferred` are nm (`length` too). `applies = { nets?, classes?, layers?, between?:
-[ObjectKind, ObjectKind], region?: Vertex[] }`; absent fields match everything.
+[ObjectKind, ObjectKind], region?: Vertex[], when?: RuleCondition }`; absent fields match everything.
 
-Resolution for one check on one object (or pair): collect enabled rules whose `applies` match.
-Floor gives the hard minimum (the largest matching `min`); target gives the plan value from
-the most specific matching rule (region, then nets, then classes, then layers, then global;
-ties take the larger `min`); policy adds every matching `cost`; a matching `no_go` refuses.
-`severity` overrides the tier's default (`error`, `warning`, `info`, `ignore`).
+**Conditions.** `when` is an expression over the measured objects A and B: `{ all: [...] }`, `{ any: [...] }`,
+`{ not: c }`, `{ same_net: true }`, and terms `{ side: "A" | "B", ... }` with one of `kind` (object kinds),
+`pad_type` (`smd`, `th`, `np`), `net`, `class`, `layer`, `area` (inside a keep-out or rule area of that `name`;
+`touch: true` for overlapping it), `courtyard` (overlapping the courtyard of a footprint with that reference; `*`
+any), `footprint` (belonging to a footprint of that reference or library name; `*` and `?` wildcards), `pad`
+(pad number), or `coord: "x" | "y", of: "at" | "start" | "end", gt?, lt?` (a position, board frame, nm). It is
+tested with the objects as (A, B) and as (B, A) and matches when either holds; a check of one object has only
+A, and a term about B is false. These are the terms KiCad custom rules use on real boards; an importer reports
+any other term by name as not evaluated and drops nothing silently.
+
+**Precedence.** Resolution for one check on one object (or pair): collect enabled rules whose `applies` match.
+Within each tier, only the matching rules with the highest `priority` take part: a higher-priority rule
+overrides lower ones (a smaller minimum relaxes a larger one), it does not combine with them. Then floor gives
+the hard minimum (the largest `min` left); target gives the plan value from the most specific rule left
+(region, then nets, then classes, then layers, then global; ties take the larger `min`); policy adds every
+`cost` left; a `no_go` left refuses. `severity` overrides the tier's default (`error`, `warning`, `info`,
+`ignore`); a winning rule set to `ignore` silences the rules it overrides. A zone's own `clearance` is a floor
+at priority 0 for the gap between its fill and copper of other nets: it combines with priority-0 floors by the
+largest minimum and gives way to a matching floor of a higher priority. A keep-out is a `disallow` at priority
+0 for what it blocks: a matching `disallow` rule of a higher priority replaces it.
+
+Importers state precedence with `priority`. KiCad (confirmed with `kicad-cli pcb drc` on test boards): the last
+matching custom rule in the file wins over earlier ones and over net class and board setup values, and absent
+one the largest of board setup minimum, net class clearance and zone clearance applies; the importer gives
+board setup and net class floors priority 0 and custom rules 1000 plus their position in the file. Net class
+track widths and via sizes, and a custom rule's `opt`, are routing values KiCad's DRC does not check: they are
+`target` rules with only `preferred`.
+
+**Comparison tolerance.** A distance (`clearance`, `physical_clearance`, `hole_clearance`, `hole_to_hole`,
+`edge_clearance`, `silk_to_pad`, `diff_pair_gap`) passes when it is short of its minimum by at most 500 nm, as
+KiCad 10 passes it (0.5 um short passes, 0.501 um fails); a size (`track_width`, `via_diameter`, `via_hole`,
+`hole_size`, `annular_ring`, `length`) is compared exactly at whole nanometers, as KiCad compares sizes.
 
 Geometric no-go areas are `keepout` records with `tier: "no_go"`; geometric preferences are
 keep-outs with `tier: "policy"`. Every keep-out names its layers and what it blocks; an
@@ -561,6 +595,10 @@ with JSON schemas). Server notifications: `board.event` with the event above. Th
 connects through the dev server's proxy; CLI commands (`protoboard board apply <ops.json>`,
 `board query`, `board inspect`) use a running service if `service.json` names a live one, else
 open the board themselves for the one call. MCP tools run the CLI as today.
+
+**Entry points.** The package index is safe to load anywhere. The transport lives in a
+Node-only entry: `serveBoard` and `connectBoard` come from `@protoboardai/board/node`.
+Browser code imports types and pure helpers from `@protoboardai/board/browser`.
 
 **Saving.** Never automatic per transaction. The service saves on `save()`, on
 `checkpoint()`, on close, and (host's choice) on idle 2 s after the last transaction. Each file

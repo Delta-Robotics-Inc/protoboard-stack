@@ -33,7 +33,7 @@ import {
   type BoardService,
   type FootprintRec,
   type Reply,
-} from "../src/index.js";
+} from "../src/node.js";
 
 const FIXTURE = fileURLToPath(new URL("./fixtures/airnode-c3/", import.meta.url));
 const AGENT = agentActor("placer");

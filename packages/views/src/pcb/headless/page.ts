@@ -3,9 +3,8 @@
  * The page keeps its scene between calls, so a run of crops is a view change each, not a reload (the Phase 0
  * benchmark's advice). It also compares two PNGs pixel by pixel for the visual tests.
  */
-import { createDocument } from "../../../../board/src/document.js";
-import { BoardIndex } from "../../../../board/src/index-spatial.js";
-import type { BoardRecord, Netlist } from "../../../../board/src/schema.js";
+import { BoardIndex, createDocument } from "../board.js";
+import type { BoardRecord, Netlist } from "../board.js";
 import type { BoardSnapshot, CopperLayer } from "../board.js";
 import { BoardView } from "../boardview.js";
 import { NM, type Rect } from "../geom.js";
@@ -132,13 +131,16 @@ window.__pcb = {
    * Performance: first paint (document, scene, buffers, upload and the first frame finished on the GPU) and the
    * GPU-synced cost of pan frames (each frame ends in a one-pixel readback, so the GPU's work counts).
    */
-  perf(payload: PagePayload, o: { width: number; height: number; frames?: number }) {
+  perf(payload: PagePayload, o: { width: number; height: number; frames?: number; fills?: ZoneFill[]; ratsnest?: RatsnestPair[] }) {
     host.style.width = `${o.width}px`;
     host.style.height = `${o.height}px`;
     const t0 = performance.now();
     view ??= new BoardView(canvas, { preserveDrawingBuffer: true });
     view.resize(o.width, o.height, window.devicePixelRatio || 1);
     const snap = snapshotOf(payload);
+    // the derived data a host hands in with the board (zone fill, ratsnest) is part of what a first paint draws
+    view.setFills(o.fills ?? []);
+    view.setRatsnest(o.ratsnest ?? []);
     view.setSnapshot(snap);
     view.setView(fitRect(view.scene!.rect, o.width, o.height, NO_INSETS, false, 0.94));
     view.renderNow();

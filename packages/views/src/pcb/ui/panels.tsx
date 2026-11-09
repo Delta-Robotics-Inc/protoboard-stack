@@ -190,18 +190,36 @@ export function NetsPanel({ nets, lit, dim, onLight, onDim }: { nets: NetRow[]; 
   );
 }
 
-export function ChecksPanel({ findings, checks, active, onLocate }: { findings: readonly PcbFinding[] | undefined; checks: CheckSummary; active?: string; onLocate: (f: PcbFinding) => void }) {
+/** Where a rule came from in the source (board setup, a net class, a custom rule), when the board records it. */
+export type RuleFrom = (ruleId: string) => string | undefined;
+
+export function ChecksPanel({ findings, checks, notes, active, onLocate, ruleFrom }: { findings: readonly PcbFinding[] | undefined; checks: CheckSummary; notes?: readonly string[]; active?: string; onLocate: (f: PcbFinding) => void; ruleFrom?: RuleFrom }) {
+  const said = [...(notes ?? []), ...(checks.ran ? (checks.caveats ?? []) : [])];
+  const noteList = said.length ? (
+    <div className="mute" style={{ fontSize: 11.5, margin: "0 0 8px" }}>
+      {said.map((n) => (
+        <div key={n}>{n}</div>
+      ))}
+    </div>
+  ) : null;
   if (!checks.ran && !findings?.length)
     return (
       <div className="pcb-empty">
-        No check has run on this board yet, so there are no findings to show.
+        No check has run on this board yet, so there are no findings to show.{checks.reason ? ` ${checks.reason}.` : ""}
+        {noteList}
         <div className="mute" style={{ marginTop: 8, fontSize: 11.5 }}>
           Findings appear here when the host hands in a check run: each one is a marker on the board, and clicking it here frames it.
         </div>
       </div>
     );
   const list = findings ?? [];
-  if (!list.length) return <div className="pcb-empty">The last check found nothing on this board.</div>;
+  if (!list.length)
+    return (
+      <div className="pcb-empty">
+        The last check found nothing on this board.
+        {noteList}
+      </div>
+    );
   const order = { error: 0, warning: 1, info: 2 } as const;
   const sorted = [...list].sort((a, b) => order[a.severity] - order[b.severity] || (a.id < b.id ? -1 : 1));
   return (
@@ -212,6 +230,7 @@ export function ChecksPanel({ findings, checks, active, onLocate }: { findings: 
         </span>
         <i>click to frame it</i>
       </h4>
+      {noteList}
       {sorted.map((f) => (
         <div key={f.id} className={`pcb-finding${f.id === active ? " on" : ""}`} onClick={() => onLocate(f)}>
           <svg width="18" height="18" viewBox="-9 -9 18 18" style={{ flex: "none", marginTop: 1 }} dangerouslySetInnerHTML={{ __html: markerSvg(markerKind(f), 7) }} />
@@ -220,6 +239,7 @@ export function ChecksPanel({ findings, checks, active, onLocate }: { findings: 
             <div className="meta">
               {f.check}
               {f.rule ? ` · ${f.rule}` : ""}
+              {f.rule && ruleFrom?.(f.rule) ? ` (from ${ruleFrom(f.rule)})` : ""}
               {f.measured !== undefined ? ` · measured ${fmtMm(f.measured)} mm` : ""}
               {f.required !== undefined ? ` · required ${fmtMm(f.required)} mm` : ""}
               {f.location.layer ? ` · ${f.location.layer}` : ""}
@@ -231,7 +251,33 @@ export function ChecksPanel({ findings, checks, active, onLocate }: { findings: 
   );
 }
 
-export function InspectPanel({ items, total, onLook }: { items: Inspection[]; total: number; onLook: () => void }) {
+export function InspectPanel({ items, total, onLook, finding, ruleFrom }: { items: Inspection[]; total: number; onLook: () => void; finding?: PcbFinding; ruleFrom?: RuleFrom }): ReactNode {
+  // the finding these objects were selected for, with the rule it names and where that rule came from
+  const about = finding ? (
+    <div className="pcb-sec" data-finding={finding.id}>
+      <h4>
+        <span>finding</span>
+        <i>{finding.check}</i>
+      </h4>
+      <div className="msg" style={{ marginBottom: 6 }}>{finding.message}</div>
+      <dl className="pcb-kv">
+        {finding.rule && <Kv label="Rule" value={finding.rule} />}
+        {finding.rule && ruleFrom?.(finding.rule) && <Kv label="From" value={ruleFrom(finding.rule)!} />}
+        {finding.tier && <Kv label="Tier" value={finding.tier} />}
+        {finding.measured !== undefined && <Kv label="Measured" value={fmtMm(finding.measured)} unit="mm" />}
+        {finding.required !== undefined && <Kv label="Required" value={fmtMm(finding.required)} unit="mm" />}
+      </dl>
+    </div>
+  ) : null;
+  if (about) {
+    const rest: ReactNode = InspectPanel({ items, total, onLook });
+    return (
+      <>
+        {about}
+        {items.length ? rest : null}
+      </>
+    );
+  }
   if (!items.length) return <div className="pcb-empty">Nothing selected. Click a pad, a via, a track or a footprint on the board; click again at the same spot to reach what lies under it.</div>;
   if (items.length > 1) {
     const kinds = new Map<string, number>();

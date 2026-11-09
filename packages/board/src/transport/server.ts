@@ -8,16 +8,38 @@
  * origin is allowed by name, and through a Host header naming the loopback address (no DNS rebinding). The token
  * proves local file access, nothing more: which actor kinds a connection may name is the `actors` policy, and the
  * agent entry points (MCP tools, the CLI under an agent) only ever name agents.
+ *
+ * Resource limits: `maxConnections` open connections, plus `HANDSHAKE_SLACK` sockets in the handshake or being
+ * refused (the listener drops anything beyond); an upgrade request must arrive within `handshakeTimeoutMs`; each
+ * connection's message size, fragments, pings and unsent bytes are bounded in `ws.ts`; a keepalive ping frees the
+ * slot of a client that stopped answering.
  */
-import { randomBytes, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type Server } from "node:http";
-import type { AddressInfo } from "node:net";
+import type { AddressInfo, Socket } from "node:net";
 import { dirname, join } from "node:path";
 import type { Duplex } from "node:stream";
 import type { Actor } from "../ops/registry.js";
 import type { BoardEvent, BoardService } from "../service.js";
-import { BOARD_PROTOCOL, callService, MAX_CONNECTIONS, MAX_MESSAGE_BYTES, METHOD_PARAMS, RPC_ERRORS, SERVICE_FILE, TOKEN_PROTOCOL_PREFIX, type BoardMethod, type RpcError, type ServiceFile } from "./protocol.js";
+import {
+  BOARD_PROTOCOL,
+  callService,
+  HANDSHAKE_SLACK,
+  HANDSHAKE_TIMEOUT_MS,
+  KEEPALIVE_MS,
+  MAX_BATCH,
+  MAX_CONNECTIONS,
+  MAX_MESSAGE_BYTES,
+  MAX_SEND_BUFFER_BYTES,
+  METHOD_PARAMS,
+  RPC_ERRORS,
+  SERVICE_FILE,
+  TOKEN_PROTOCOL_PREFIX,
+  type BoardMethod,
+  type RpcError,
+  type ServiceFile,
+} from "./protocol.js";
 import { CLOSE, refuseUpgrade, upgradeProblem, WsConnection } from "./ws.js";
 
 export interface ServeOptions {
@@ -25,12 +47,24 @@ export interface ServeOptions {
   port?: number;
   /** DEFAULT: 32 random bytes, hex. */
   token?: string;
-  /** Browser origins allowed to connect (exact match, such as the dev server's `http://127.0.0.1:5180`). A request without an Origin header (not a browser) is always allowed. */
+  /**
+   * Browser origins allowed to connect (exact match, such as the dev server's `http://127.0.0.1:5180`; given here
+   * in any case and with or without a trailing slash, matched against the browser's lowercase serialization).
+   * `null` (an opaque origin) is never allowed. A request without an Origin header (not a browser) is allowed.
+   */
   origins?: string[];
   /** DEFAULT 4 MiB: larger messages close the connection (1009). */
   maxMessageBytes?: number;
   /** DEFAULT 32. */
   maxConnections?: number;
+  /** DEFAULT 30 s (`KEEPALIVE_MS`): ping each client this often and drop one that sent nothing since the last ping. 0 turns it off. */
+  keepaliveMs?: number;
+  /** DEFAULT 32 MiB: a client whose unsent replies and events pass this is dropped. */
+  maxSendBufferBytes?: number;
+  /** DEFAULT 10 s: time a socket has to send its upgrade request. */
+  handshakeTimeoutMs?: number;
+  /** DEFAULT 1 s: time a client has to answer a close frame before its socket is destroyed. */
+  closeTimeoutMs?: number;
   /** DEFAULT true: write `<local folder>/service.json` while serving (needs a board folder). A string writes it there instead. */
   serviceFile?: boolean | string;
   /** Which actors a connection may name: a reason to refuse, or undefined to allow. DEFAULT: every wire actor (human, agent, router, host). */
@@ -56,10 +90,20 @@ const LOOPBACK = /^(127\.\d{1,3}\.\d{1,3}\.\d{1,3}|::1|::ffff:127\.\d{1,3}\.\d{1
 /** Whether a peer address is this machine's loopback. */
 export const isLoopback = (address: string | undefined): boolean => !!address && LOOPBACK.test(address);
 
+/** Constant-time comparison: both sides are hashed first, so neither the content nor the length leaks through timing. */
 function sameSecret(a: string, b: string): boolean {
-  const x = Buffer.from(a);
-  const y = Buffer.from(b);
-  return x.length === y.length && timingSafeEqual(x, y);
+  const x = createHash("sha256").update(a, "utf8").digest();
+  const y = createHash("sha256").update(b, "utf8").digest();
+  return timingSafeEqual(x, y);
+}
+
+/** A configured origin in the form a browser sends it: lowercase, no trailing slash. */
+const normalOrigin = (o: string): string => o.trim().toLowerCase().replace(/\/+$/, "");
+
+/** The Host header values that name this server: the loopback address with its port (bare on port 80). */
+function hostsFor(port: number): Set<string> {
+  const names = ["127.0.0.1", "localhost", "[::1]"];
+  return new Set([...names.map((n) => `${n}:${port}`), ...(port === 80 ? names : [])]);
 }
 
 /** The token a request carries: `Authorization: Bearer <token>`, or a `protoboard.token.<token>` subprotocol. */
@@ -79,17 +123,36 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
   if (!/^[A-Za-z0-9_-]{16,256}$/.test(token)) throw new Error("the token must be 16 to 256 letters, digits, _ or -");
   const maxBytes = options.maxMessageBytes ?? MAX_MESSAGE_BYTES;
   const maxConns = options.maxConnections ?? MAX_CONNECTIONS;
-  const origins = new Set((options.origins ?? []).map((o) => o.replace(/\/+$/, "")));
+  const origins = new Set((options.origins ?? []).map(normalOrigin).filter((o) => o && o !== "null"));
   const policy = options.actors ?? (() => undefined);
   const log = options.log ?? (() => {});
+  const handshakeMs = options.handshakeTimeoutMs ?? HANDSHAKE_TIMEOUT_MS;
   const conns = new Set<WsConnection>();
   const sockets = new Set<Duplex>();
   let port = 0;
+  let hosts = hostsFor(0);
 
-  const server: Server = createServer((_req, res) => {
-    // plain HTTP gets nothing but the hint that this is a WebSocket endpoint
-    res.writeHead(426, { "content-type": "text/plain; charset=utf-8", connection: "close", upgrade: "websocket" });
-    res.end("Upgrade Required: the board service speaks JSON-RPC over WebSocket\n");
+  const server: Server = createServer(
+    // a socket must deliver its whole upgrade request in time; idle or slow ones are dropped
+    { headersTimeout: handshakeMs, requestTimeout: handshakeMs, connectionsCheckingInterval: Math.max(50, Math.min(1000, Math.floor(handshakeMs / 4))) },
+    (_req, res) => {
+      // plain HTTP gets nothing but the hint that this is a WebSocket endpoint
+      res.writeHead(426, { "content-type": "text/plain; charset=utf-8", connection: "close", upgrade: "websocket" });
+      res.end("Upgrade Required: the board service speaks JSON-RPC over WebSocket\n");
+    },
+  );
+  // every socket counts, open connections and handshakes alike; the listener drops what is beyond
+  server.maxConnections = maxConns + HANDSHAKE_SLACK;
+  // the listener is bound to 127.0.0.1; a peer that is not loopback is dropped before it says anything
+  // and one that has not completed its upgrade in time is dropped too (the HTTP server's own timeouts only start
+  // once a request has begun, so a socket that never says anything would otherwise hold its slot forever)
+  const handshakeTimers = new WeakMap<Duplex, ReturnType<typeof setTimeout>>();
+  server.on("connection", (s: Socket) => {
+    if (!isLoopback(s.remoteAddress)) return void s.destroy();
+    const t = setTimeout(() => s.destroy(), handshakeMs);
+    t.unref?.();
+    handshakeTimers.set(s, t);
+    s.once("close", () => clearTimeout(t));
   });
 
   server.on("upgrade", (req: IncomingMessage, socket: Duplex, head: Buffer) => {
@@ -98,34 +161,57 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
       log(`board server: refused a connection (${reason})`);
       refuseUpgrade(socket, status, reason);
     };
-    if (!isLoopback(req.socket.remoteAddress)) return refuse(403, "Forbidden");
-    const host = String(req.headers.host ?? "").toLowerCase();
-    if (![`127.0.0.1:${port}`, `localhost:${port}`, `[::1]:${port}`].includes(host)) return refuse(403, "Forbidden");
-    const origin = req.headers.origin;
-    if (origin !== undefined && !origins.has(String(origin).replace(/\/+$/, ""))) return refuse(403, "Forbidden");
-    const problem = upgradeProblem(req);
-    if (problem) return refuse(400, "Bad Request");
-    const protocols = String(req.headers["sec-websocket-protocol"] ?? "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    if (protocols.length && !protocols.includes(BOARD_PROTOCOL)) return refuse(400, "Bad Request");
-    const given = tokenOf(req, protocols);
-    if (!given || !sameSecret(given, token)) return refuse(401, "Unauthorized");
-    if (conns.size >= maxConns) return refuse(503, "Service Unavailable");
-    sockets.add(socket);
-    socket.on("close", () => sockets.delete(socket));
-    const conn: WsConnection = WsConnection.accept(req, socket, head, {
-      maxMessageBytes: maxBytes,
-      ...(protocols.length ? { protocol: BOARD_PROTOCOL } : {}),
-      onMessage: (text) => onMessage(conn, text),
-      onClose: () => conns.delete(conn),
-    });
-    conns.add(conn);
-    log(`board server: a client connected (${conns.size} connected)`);
+    try {
+      if (!isLoopback(req.socket.remoteAddress)) return refuse(403, "Forbidden");
+      // DNS rebinding: a page on another name that resolves to 127.0.0.1 still sends its own name as Host
+      const host = req.headers.host;
+      if (typeof host !== "string" || !hosts.has(host.toLowerCase())) return refuse(403, "Forbidden");
+      // a browser always sends Origin; it must be one of ours exactly (an opaque `null` never is)
+      const origin = req.headers.origin;
+      if (origin !== undefined && !origins.has(origin)) return refuse(403, "Forbidden");
+      const problem = upgradeProblem(req);
+      if (problem) return refuse(400, "Bad Request");
+      const protocols = String(req.headers["sec-websocket-protocol"] ?? "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      if (protocols.length && !protocols.includes(BOARD_PROTOCOL)) return refuse(400, "Bad Request");
+      const given = tokenOf(req, protocols);
+      if (!given || !sameSecret(given, token)) return refuse(401, "Unauthorized");
+      if (conns.size >= maxConns) return refuse(503, "Service Unavailable");
+      clearTimeout(handshakeTimers.get(socket));
+      sockets.add(socket);
+      socket.on("close", () => sockets.delete(socket));
+      const conn: WsConnection = WsConnection.accept(req, socket, head, {
+        maxMessageBytes: maxBytes,
+        maxSendBufferBytes: options.maxSendBufferBytes ?? MAX_SEND_BUFFER_BYTES,
+        keepaliveMs: options.keepaliveMs ?? KEEPALIVE_MS,
+        ...(options.closeTimeoutMs !== undefined ? { closeTimeoutMs: options.closeTimeoutMs } : {}),
+        ...(protocols.length ? { protocol: BOARD_PROTOCOL } : {}),
+        onMessage: (text) => onMessage(conn, text),
+        onClose: () => conns.delete(conn),
+      });
+      conns.add(conn);
+      log(`board server: a client connected (${conns.size} connected)`);
+    } catch (e) {
+      // nothing a client sends may take the process down
+      log(`board server: dropped a connection (${(e as Error)?.message ?? String(e)})`);
+      socket.destroy();
+    }
   });
 
   const handle = (msg: unknown): object | undefined => {
+    try {
+      return handleOne(msg);
+    } catch (e) {
+      // a request that throws outside the service call (a schema too deep to check, a policy that throws)
+      const id = msg && typeof msg === "object" && !Array.isArray(msg) ? (msg as { id?: unknown }).id : null;
+      const replyId = typeof id === "string" || typeof id === "number" ? id : null;
+      return rpcError(replyId, { code: RPC_ERRORS.internal, message: `internal error: ${(e as Error)?.message ?? String(e)}`.slice(0, 500) });
+    }
+  };
+
+  const handleOne = (msg: unknown): object | undefined => {
     if (!msg || typeof msg !== "object" || Array.isArray(msg)) return rpcError(null, { code: RPC_ERRORS.invalidRequest, message: "a request is a JSON object" });
     const m = msg as { jsonrpc?: unknown; id?: unknown; method?: unknown; params?: unknown };
     const hasId = "id" in m;
@@ -143,7 +229,13 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
     }
     if (method === "board.shutdown") {
       if (!options.onShutdown) return reply({ error: { code: RPC_ERRORS.methodNotFound, message: "this server cannot be stopped by a client" } });
-      setImmediate(() => options.onShutdown!());
+      setImmediate(() => {
+        try {
+          options.onShutdown!();
+        } catch (e) {
+          log(`board server: shutdown failed (${(e as Error)?.message ?? String(e)})`);
+        }
+      });
       return reply({ result: { stopping: true } });
     }
     try {
@@ -153,22 +245,33 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
     }
   };
 
+  /** Send a reply; one that cannot be serialized becomes an internal error. */
+  const sendJson = (conn: WsConnection, body: unknown) => {
+    let text: string;
+    try {
+      text = JSON.stringify(body);
+    } catch (e) {
+      text = JSON.stringify(rpcError(null, { code: RPC_ERRORS.internal, message: `internal error: ${(e as Error)?.message ?? String(e)}`.slice(0, 500) }));
+    }
+    conn.send(text);
+  };
+
   const onMessage = (conn: WsConnection, text: string) => {
     let msg: unknown;
     try {
       msg = JSON.parse(text);
     } catch {
-      conn.send(JSON.stringify(rpcError(null, { code: RPC_ERRORS.parse, message: "not JSON" })));
+      sendJson(conn, rpcError(null, { code: RPC_ERRORS.parse, message: "not JSON" }));
       return;
     }
     if (Array.isArray(msg)) {
-      if (!msg.length || msg.length > 64) return conn.send(JSON.stringify(rpcError(null, { code: RPC_ERRORS.invalidRequest, message: "a batch holds 1 to 64 requests" })));
-      const replies = msg.map(handle).filter((r): r is object => r !== undefined);
-      if (replies.length) conn.send(JSON.stringify(replies));
+      if (!msg.length || msg.length > MAX_BATCH) return sendJson(conn, rpcError(null, { code: RPC_ERRORS.invalidRequest, message: `a batch holds 1 to ${MAX_BATCH} requests` }));
+      const replies = msg.map((m) => handle(m)).filter((r): r is object => r !== undefined);
+      if (replies.length) sendJson(conn, replies);
       return;
     }
     const r = handle(msg);
-    if (r) conn.send(JSON.stringify(r));
+    if (r) sendJson(conn, r);
   };
 
   const unsubscribe = service.subscribe((event: BoardEvent) => {
@@ -189,6 +292,7 @@ export async function serveBoard(service: BoardService, options: ServeOptions = 
     throw e;
   }
   port = (server.address() as AddressInfo).port;
+  hosts = hostsFor(port);
 
   // service.json: written whole (temp file and rename), readable by this user only
   let serviceFile: string | undefined;

@@ -1,10 +1,10 @@
 /** Picking (src/pcb/pick.ts): the board core's query index plus exact shape tests, by priority, honoring visible and active layers. */
 import { describe, expect, it } from "vitest";
-import { createDocument } from "../../../board/src/document.js";
-import type { BoardRecord } from "../../../board/src/schema.js";
-import { openBoardService } from "../../../board/src/service.js";
-import { mm } from "../../../board/src/units.js";
-import { airnodeC3, airnodeC3Records, AIRNODE_C3_NETLIST } from "../../../board/src/fixtures/airnode-c3.js";
+import { createDocument } from "@protoboardai/board";
+import type { BoardRecord } from "@protoboardai/board";
+import { openBoardService } from "@protoboardai/board";
+import { mm } from "@protoboardai/board";
+import { airnodeC3, airnodeC3Records, AIRNODE_C3_NETLIST } from "@protoboardai/board/fixtures/airnode-c3";
 import { defaultGroups, drawLayers } from "../../src/pcb/layers.js";
 import { pickAt, pickBox, type PickContext } from "../../src/pcb/pick.js";
 import { buildScene } from "../../src/pcb/scene.js";

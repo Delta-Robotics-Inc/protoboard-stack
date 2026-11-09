@@ -491,7 +491,7 @@ export function polygonsOverlap(a: PolyCore, b: PolyCore, eps = 1): { x: number;
 
 /** A polygon's boundary as a "polygon" with no interior: the same edges, used to measure distance to the boundary. */
 const boundaryCache = new WeakMap<PolyCore, PolyCore>();
-function edgesOnly(p: PolyCore): PolyCore {
+export function edgesOnly(p: PolyCore): PolyCore {
   let b = boundaryCache.get(p);
   if (!b) {
     // a ring pair with opposite winding cancels the interior under even-odd: the containment test never fires

@@ -17,4 +17,6 @@ export * from "./service.js";
 export * from "./derived.js";
 export * from "./extensions.js";
 export { deterministicKey } from "./keys.js";
-export * from "./transport/index.js";
+// the wire protocol's shapes are browser-safe; the WebSocket server and client are Node only: `@protoboardai/board/node`
+export * from "./transport/protocol.js";
+export { toJsonSchema, type JsonSchema } from "./transport/json-schema.js";

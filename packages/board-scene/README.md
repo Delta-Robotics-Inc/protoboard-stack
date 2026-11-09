@@ -94,7 +94,7 @@ then `focus` (object views), `findings`, `footprints`, `nets`, `rats`, `copper` 
 
 The object view's `focus` holds the full record of one thing: for a footprint every pad
 (shape, size, layers, drill, the copper touching it), the nearest part in each direction with
-center offsets, the six nearest parts, its nets' status, ratsnest lines at its pads, keep-outs
+center offsets, the six nearest parts (`[ref, direction, gap, side]`, the side only when it is the other one), its nets' status, ratsnest lines at its pads, keep-outs
 over it and findings naming it; for a track its chain, the pads it touches and the nearest
 copper of other nets with gaps; for a net every pad, segment, via, island and ratsnest line.
 
@@ -123,15 +123,20 @@ copper of other nets with gaps; for a net every pad, segment, via, island and ra
 
 ### Connectivity
 
-The board checks package is the authority on completion. Pass its result as `connectivity`:
+The board checks package is the authority on completion. Pass its connectivity as `connectivity`
+(and its findings as `findings`):
 
 ```ts
-interface ConnectivityInput {
-  source?: string;
-  nets: { net: string; islands: string[][]; missing: number }[];  // pad and object ids
-  ratsnest: { net: string; from: { id: string; x: number; y: number; layer?: string }; to: { ... } }[];  // nanometers
-}
+const checks = runBoardChecks(snapshot, { fills });           // @protoboardai/board-checks
+describeBoard(snapshot, { connectivity: checks.connectivity, findings: checks.findings });
 ```
+
+The input's shape is the core's `BoardConnectivity` (`@protoboardai/board`, extensions.ts):
+`unconnected`, `nets` (`{ net, pads, islands, missing }`), `islands` of the nets with missing
+links (`{ net, objects }`), `links` (`{ net, from: { object, x, y, layer }, to }`, nanometers),
+and `zoneFill`. The checks' `ConnectivityResult` satisfies it as it is. The scene's earlier
+shape (`{ nets: { net, islands, missing }[], ratsnest }`) is still accepted. Nets the input does
+not mention are estimated and named in `connectivity`.
 
 Without it the scene estimates completion from geometry and says so in `connectivity`: copper
 of one net joins when it overlaps on a shared layer (pads by their shapes, tracks by width,

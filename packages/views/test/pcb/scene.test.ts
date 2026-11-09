@@ -1,12 +1,12 @@
 /** The renderer's scene (src/pcb/scene.ts) and its GPU buffers (buffers.ts): built from a board snapshot, kept up to date by commits. */
 import { describe, expect, it } from "vitest";
-import { createDocument } from "../../../board/src/document.js";
-import type { BoardRecord, FootprintRec } from "../../../board/src/schema.js";
-import { openBoardService } from "../../../board/src/service.js";
-import { HUMAN } from "../../../board/src/transaction.js";
-import { mm } from "../../../board/src/units.js";
-import "../../../board/src/ops/index.js";
-import { airnodeC3, airnodeC3Records, AIRNODE_C3_NETLIST } from "../../../board/src/fixtures/airnode-c3.js";
+import { createDocument } from "@protoboardai/board";
+import type { BoardRecord, FootprintRec } from "@protoboardai/board";
+import { openBoardService } from "@protoboardai/board";
+import { HUMAN } from "@protoboardai/board";
+import { mm } from "@protoboardai/board";
+import "@protoboardai/board";
+import { airnodeC3, airnodeC3Records, AIRNODE_C3_NETLIST } from "@protoboardai/board/fixtures/airnode-c3";
 import { SceneBuffers } from "../../src/pcb/buffers.js";
 import { FLAG, INSTANCE_FLOATS, partHit, type Part } from "../../src/pcb/geom.js";
 import { drawOrder } from "../../src/pcb/layers.js";

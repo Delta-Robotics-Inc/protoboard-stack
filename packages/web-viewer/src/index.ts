@@ -14,6 +14,8 @@ import { WebShell, type WebViewerOptions } from "./Shell.js";
 
 export { WebShell, type WebViewerOptions };
 export { createDevPartsData, type DevPartsOptions } from "./partsData.js";
+// the layout tab's board feed for `protoboard dev` (the page's script builds it; views pcb/remote.ts)
+export { createEventStreamBoardHost, setKnownBoards } from "@protoboardai/views";
 export type { ViewerHandle };
 
 export function mountWebViewer(element: HTMLElement, options: WebViewerOptions): ViewerHandle {

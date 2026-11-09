@@ -15,6 +15,10 @@ export { themeSvg, canonicalColour, type Palette, type ThemedSvg } from "./drawi
 export { PCB_PALETTE, SCHEMATIC_PALETTE, DRAWING_CSS } from "./drawing/palettes.js";
 export { boardsWith, type BoardAt } from "./drawing/boards.js";
 export { PairView } from "./pair/PairView.js";
+export { LayoutView } from "./pcb/LayoutView.js";
+export { setKnownBoards, knownBoards, onKnownBoards } from "./pcb/known-boards.js";
+export { RemoteBoardSource, createEventStreamBoardHost, openBoardSource, type BoardChannel, type BoardHost } from "./pcb/remote.js";
+export type { BoardDerived, BoardEntry, BoardFeedMessage } from "./pcb/types.js";
 export { CUSTOM_ICONS, SCHEMATIC_ICON, ViewIcon, customIconSvg } from "./icons.js";
 export { pairsOf, findPair, censusOf, potentialsOf, type Pair, type PairLink, type PairSide, type CensusEntry } from "./pair/model.js";
 export {

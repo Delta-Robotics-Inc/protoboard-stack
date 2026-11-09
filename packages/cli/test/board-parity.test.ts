@@ -165,6 +165,9 @@ describe("every board command has a --json mode", () => {
       checkpoint: ["parity checkpoint"],
       claim: ["--purpose", "parity check"],
       import: [],
+      check: ["--no-cross-check"],
+      describe: ["--image", "none"],
+      render: ["--width", "200", "--height", "150"],
     };
     writeFileSync(join(root, "tx.json"), JSON.stringify({ op: "footprint.move", ids: ["fp:power/ldo"], dx: 1000, dy: 0, tracks: "stay" }));
     const argv = name === "ops" ? ["ops", "--json"] : name === "import" ? ["import", join(dir, "board.jsonl"), join(root, "imported"), "--json"] : [name, dir, ...(extra[name] ?? []), "--json"];
@@ -176,5 +179,41 @@ describe("every board command has a --json mode", () => {
     if (name === "serve") for (const l of lines) expect(() => JSON.parse(l), l).not.toThrow();
     else expect(() => JSON.parse(stdout), stdout).not.toThrow();
     expect(typeof code).toBe("number");
+  }, 120_000);
+});
+
+describe("the import, check, describe and render commands have MCP tools", () => {
+  const pairs = { import: "board_import", check: "board_check", describe: "board_describe", render: "board_render" } as const;
+
+  it.each(Object.entries(pairs))("board %s is the %s tool", (command, name) => {
+    expect(BOARD_COMMANDS.map((c) => c.name)).toContain(command);
+    const t = tool(name);
+    expect(t, name).toBeDefined();
+    expect(t.annotations.destructiveHint).toBe(false);
+    // check writes nothing; describe and render write derived files only; import changes files
+    expect(t.annotations.readOnlyHint).toBe(command === "check");
+    if (command === "import") expect(t.description).toMatch(/CHANGES FILES/);
+  });
+
+  it("each tool runs its command with the flags the command takes", async () => {
+    const { root, dir } = project();
+    const seen: string[][] = [];
+    const c = ctx(root);
+    const spy: ToolContext = { ...c, cli: (d, args) => (seen.push(args), c.cli(d, args)) };
+    await tool("board_check").handler({ dir, crossCheck: false } as never, spy);
+    await tool("board_describe").handler({ dir, net: "GND" } as never, spy);
+    await tool("board_describe").handler({ dir, region: [-10, -5, 10, 5] } as never, spy);
+    await tool("board_import").handler({ source: join(dir, "board.jsonl"), dir: join(root, "imported"), format: "kicad_pcb" } as never, spy);
+    expect(seen[0].slice(0, 3)).toEqual(["board", "check", "--no-cross-check=true"]);
+    expect(seen[1]).toContain("--net=GND");
+    expect(seen[2]).toContain("--region=[-10,-5,10,5]");
+    expect(seen[3]).toContain("--kind=kicad_pcb");
+    for (const args of seen) {
+      const spec = BOARD_COMMANDS.find((x) => x.name === args[1])!;
+      for (const a of args.filter((x) => x.startsWith("--") && x !== "--")) {
+        const flag = a.slice(2).split("=")[0];
+        if (flag !== "format") expect(spec.flags, `${args[1]} --${flag}`).toContain(flag);
+      }
+    }
   });
 });

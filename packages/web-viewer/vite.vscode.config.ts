@@ -1,5 +1,10 @@
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath } from "node:url";
+
+// the board core runs in the layout tab: its ids and input hashes use node:crypto's createHash, which this bundle
+// takes from the views package's small SHA implementation (the board core's browser entry touches no other built-in)
+const nodeShims = [{ find: /^(node:)?crypto$/, replacement: fileURLToPath(new URL("../views/src/pcb/shims/node-crypto.ts", import.meta.url)) }];
 
 // The VS Code shell (src/vscode): one ES module and one stylesheet the
 // extension ships and loads into each viewer tab's webview
@@ -9,7 +14,7 @@ export default defineConfig({
   plugins: [tailwindcss()],
   oxc: { jsx: { runtime: "automatic" } },
   define: { "process.env.NODE_ENV": JSON.stringify("production") },
-  resolve: { dedupe: ["react", "react-dom", "three", "@xyflow/react", "@radix-ui/react-scroll-area", "lucide-react"] },
+  resolve: { dedupe: ["react", "react-dom", "three", "@xyflow/react", "@radix-ui/react-scroll-area", "lucide-react"], alias: nodeShims },
   build: {
     outDir: "dist/vscode",
     emptyOutDir: true,

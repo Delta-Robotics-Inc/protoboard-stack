@@ -3,7 +3,7 @@
  * Schematic / Layout / 3D switcher, a floating tool rail, the agent bar, a right panel with Layers, Nets, Checks
  * and Inspect, the timeline and the status line). A read-only client of the board service: it reads snapshots
  * and commit events from `source` and never writes. Derived data (ratsnest, zone fills, findings, check counts)
- * is handed in.
+ * is handed in: as `derived` (what a host's board feed sends, ./host), or field by field.
  *
  * Keys: 1 to 4 the depths (when the host navigates), V select, M measure, F fit, B view from the bottom,
  * PageUp / PageDown top or bottom copper active, + and - the next or previous copper layer, G inactive copper gray,
@@ -11,14 +11,15 @@
  * Esc clears the measure, the lit nets and the selection, in that order.
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import type { BoardEvent, CopperLayer, LogEntry, Presence } from "./board.js";
+import type { BoardEvent, CopperLayer, LogEntry, Presence, ZoneFillEntry } from "./board.js";
 import { recordsOfKind, netClassOf } from "./board.js";
 import { BoardCanvas, type Tool } from "./BoardCanvas.js";
 import type { BoardView } from "./boardview.js";
 import { classTargets, inspect, type Inspection } from "./inspect.js";
 import { cu, defaultGroups, presetGroups, PRESETS, type PresetId } from "./layers.js";
 import type { Hit } from "./pick.js";
-import type { BoardSource, CheckSummary, DepthView, PcbFinding, RatsnestPair, ZoneFill } from "./types.js";
+import { zoneFillsFromEntries } from "./fills.js";
+import type { BoardDerived, BoardSource, CheckSummary, DepthView, PcbFinding, RatsnestPair, ZoneFill } from "./types.js";
 import { ChecksPanel, InspectPanel, Kv, LayersPanel, NetsPanel, type NetRow } from "./ui/panels.js";
 import { AgentBar, agentState, Gutter, Rail, StatusLine, Timeline, TopBar } from "./ui/shell.js";
 import { SCREEN_CSS } from "./ui/styles.js";
@@ -28,8 +29,15 @@ export interface LayoutScreenProps {
   source: BoardSource;
   /** Breadcrumbs before "Layout" (project, board, branch). */
   crumbs?: string[];
+  /**
+   * Everything derived at once, as a host's board feed sends it (checks, findings, ratsnest, the zone fill in the
+   * core's shared form). The fields below override its parts.
+   */
+  derived?: BoardDerived;
   ratsnest?: readonly RatsnestPair[];
+  /** Zone fill in the renderer's form; `zoneFill` takes the core's shared form (`protoboard.zone-fill/v1` entries). */
   fills?: readonly ZoneFill[];
+  zoneFill?: readonly ZoneFillEntry[];
   findings?: readonly PcbFinding[];
   /** What the status line says about checks; absent means no check has run. */
   checks?: CheckSummary;
@@ -71,9 +79,13 @@ function useBus<T>() {
 
 export function LayoutScreen(props: LayoutScreenProps) {
   installCss();
-  const { source } = props;
-  const findings = props.findings ?? EMPTY;
-  const checks = props.checks ?? NO_CHECK;
+  const { source, derived } = props;
+  const findings = props.findings ?? derived?.findings ?? EMPTY;
+  const checks = props.checks ?? derived?.checks ?? NO_CHECK;
+  const ratsnest = props.ratsnest ?? derived?.ratsnest ?? EMPTY;
+  const zoneEntries = props.zoneFill ?? derived?.fills;
+  const fills = useMemo(() => props.fills ?? zoneFillsFromEntries(zoneEntries).fills, [props.fills, zoneEntries]);
+  const notes = derived?.notes;
   const viewRef = useRef<BoardView | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   // the screen takes the keyboard when it opens (its shortcuts); a click on the board takes it back later
@@ -113,6 +125,13 @@ export function LayoutScreen(props: LayoutScreenProps) {
         viewRef.current?.applyCommit(e, s);
         setSnap(s);
         setLog(source.log?.());
+      } else if (e.type === "external-change") {
+        // the host reloaded the whole board (changed on disk, or a service started or stopped)
+        const s = source.snapshot();
+        viewRef.current?.setSnapshot(s);
+        setSnap(s);
+        setLog(source.log?.());
+        setPresence(source.presence?.());
       } else if (e.type === "presence") setPresence(e.presence);
       else if (e.type === "saved") setSaves((x) => [...x, e.seq]);
     });
@@ -128,8 +147,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
     (v: BoardView) => {
       viewRef.current = v;
       v.setSnapshot(source.snapshot());
-      v.setRatsnest(props.ratsnest ?? []);
-      v.setFills(props.fills ?? []);
+      v.setRatsnest(ratsnest);
+      v.setFills(fills);
       v.setGrid(grid);
       v.fit(FIT_INSETS);
       v.onChange(() => scaleBus.emit(v.view.s));
@@ -146,8 +165,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
     props.onSelectionChange?.(selection);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selection]);
-  useEffect(() => viewRef.current?.setRatsnest(props.ratsnest ?? []), [props.ratsnest]);
-  useEffect(() => viewRef.current?.setFills(props.fills ?? []), [props.fills]);
+  useEffect(() => viewRef.current?.setRatsnest(ratsnest), [ratsnest]);
+  useEffect(() => viewRef.current?.setFills(fills), [fills]);
   useEffect(() => viewRef.current?.setGrid(grid), [grid]);
   // a selection that left the board leaves the selection
   useEffect(() => setSelection((s) => s.filter((id) => id.startsWith("pad:") ? true : snap.doc.records.has(id))), [snap]);
@@ -181,6 +200,14 @@ export function LayoutScreen(props: LayoutScreenProps) {
   }, [snap]);
   const inspections = useMemo(() => selection.map((id) => inspect(snap.doc, id)).filter((x): x is Inspection => !!x), [selection, snap]);
   const errors = findings.filter((f) => f.severity === "error").length;
+  // where a finding's rule came from in the source (the importer's `provenance.from`)
+  const ruleFrom = useCallback(
+    (id: string) => {
+      const r = snap.doc.records.get(id);
+      return r?.kind === "rule" ? r.provenance?.from : undefined;
+    },
+    [snap],
+  );
   const board = snap.doc.records.get("board");
   const boardName = board?.kind === "board" ? board.name : "board";
 
@@ -506,8 +533,8 @@ export function LayoutScreen(props: LayoutScreenProps) {
               />
             )}
             {tab === "nets" && <NetsPanel nets={nets} lit={lit} dim={dim} onDim={setDim} onLight={(n, add) => setLit((l) => (!n ? [] : add ? (l.includes(n) ? l.filter((x) => x !== n) : [...l, n]) : l.length === 1 && l[0] === n ? [] : [n]))} />}
-            {tab === "checks" && <ChecksPanel findings={props.findings} checks={checks} {...(activeFinding ? { active: activeFinding } : {})} onLocate={locate} />}
-            {tab === "inspect" && <InspectPanel items={inspections} total={selection.length} onLook={() => fitSelection(selection)} />}
+            {tab === "checks" && <ChecksPanel findings={props.findings ?? derived?.findings} checks={checks} {...(notes?.length ? { notes } : {})} {...(activeFinding ? { active: activeFinding } : {})} onLocate={locate} ruleFrom={ruleFrom} />}
+            {tab === "inspect" && <InspectPanel items={inspections} total={selection.length} onLook={() => fitSelection(selection)} ruleFrom={ruleFrom} {...(activeFinding && findings.find((f) => f.id === activeFinding) ? { finding: findings.find((f) => f.id === activeFinding)! } : {})} />}
           </div>
         </aside>
       </main>

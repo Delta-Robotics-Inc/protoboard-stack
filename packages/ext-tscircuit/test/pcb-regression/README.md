@@ -8,7 +8,8 @@ board the runner records, and later compares:
   needed): copper layers, footprints, tracks (segments and arcs), vias, zones,
   nets and the Edge.Cuts outline's size;
 - from `kicad-cli` (KiCad 10), when installed: DRC with the stack's one DRC
-  command (`pcb drc --format json --severity-all --schematic-parity`), counted
+  command with every error of each track (`pcb drc --format json --severity-all
+  --schematic-parity --all-track-errors`), counted
   as errors, warnings, unconnected, schematic parity and each severity and
   type; `pcb export stats` (size, components, vias, pads); a top-side render
   (`render-top.png`) and one SVG per copper, silkscreen, mask and outline layer
