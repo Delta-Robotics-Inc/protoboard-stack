@@ -1,0 +1,32 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "buzzer",
+  "name": "Buzzer (piezo or magnetic)",
+  "category": "transducer",
+  "refdes": "BZ",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "1", "name": "+", "number": "1", "at": [1, 4], "dir": "down", "type": "passive" },
+    { "id": "2", "name": "-", "number": "2", "at": [3, 4], "dir": "down", "type": "passive" }
+  ],
+  "body": [
+    { "el": "path", "d": "M7 14a5 5 0 0 1 10 0", "role": "body" },
+    { "el": "rect", "x": 5, "y": 14, "width": 14, "height": 4, "rx": 1, "role": "body" },
+    { "el": "path", "d": "M7 22v-4", "role": "lead", "pin": "1" },
+    { "el": "path", "d": "M17 22v-4", "role": "lead", "pin": "2" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [4.3, 1.6], "anchor": "start" }, "value": { "at": [4.3, 2.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["buzzer", "piezo", "beeper", "audio"],
+  "match": { "keywords": ["buzzer", "piezo", "beeper"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  }
+}

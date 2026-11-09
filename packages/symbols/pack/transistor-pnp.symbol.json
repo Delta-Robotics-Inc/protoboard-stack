@@ -1,0 +1,36 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "transistor-pnp",
+  "name": "PNP transistor",
+  "category": "transistor",
+  "refdes": "Q",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "B", "name": "B", "at": [0, 2], "dir": "left", "type": "input", "names": ["base", "b"] },
+    { "id": "C", "name": "C", "at": [3, 0], "dir": "up", "type": "passive", "names": ["collector", "c"] },
+    { "id": "E", "name": "E", "at": [3, 4], "dir": "down", "type": "passive", "names": ["emitter", "e"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 12h9", "role": "lead", "pin": "B" },
+    { "el": "path", "d": "M11 7v10", "role": "body" },
+    { "el": "path", "d": "M11 10l6-6", "role": "body" },
+    { "el": "path", "d": "M17 2v2", "role": "lead", "pin": "C" },
+    { "el": "path", "d": "M11 14l6 6", "role": "body" },
+    { "el": "path", "d": "M17 22v-2", "role": "lead", "pin": "E" },
+    { "el": "path", "d": "M15 15.5h-2.5V18", "role": "arrow" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [4.3, 1.6], "anchor": "start" }, "value": { "at": [4.3, 2.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["transistor", "bjt", "pnp"],
+  "match": { "keywords": ["pnp", "bjt", "2n3906"], "pinNames": [["base", "collector", "emitter"]] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "redrawn to STYLE.md from the 2026-09-30 protocol icon of the same part",
+    "review": "draft"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "transistor-darlington",
+  "name": "Darlington transistor (NPN)",
+  "category": "transistor",
+  "refdes": "Q",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 34, "h": 34 },
+  "pins": [
+    { "id": "B", "name": "B", "at": [0, 2], "dir": "left", "type": "input", "names": ["base", "b"] },
+    { "id": "C", "name": "C", "at": [5, 0], "dir": "up", "type": "passive", "names": ["collector", "c"] },
+    { "id": "E", "name": "E", "at": [5, 6], "dir": "down", "type": "passive", "names": ["emitter", "e"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 12h7", "role": "lead", "pin": "B" },
+    { "el": "path", "d": "M9 7v10", "role": "body" },
+    { "el": "path", "d": "M9 10l5-5h13", "role": "body" },
+    { "el": "path", "d": "M9 14l5 5h5", "role": "body" },
+    { "el": "path", "d": "M10.5 18H13v-2.5", "role": "arrow" },
+    { "el": "path", "d": "M19 17v10", "role": "body" },
+    { "el": "path", "d": "M19 20l8-8", "role": "body" },
+    { "el": "path", "d": "M19 24l6 6", "role": "body" },
+    { "el": "path", "d": "M21.5 29H24v-2.5", "role": "arrow" },
+    { "el": "path", "d": "M27 2v10", "role": "lead", "pin": "C" },
+    { "el": "path", "d": "M27 32v-2h-2", "role": "lead", "pin": "E" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [6.3, 2.6], "anchor": "start" }, "value": { "at": [6.3, 3.4], "anchor": "start" } },
+  "icon": { "from": "pack:transistor-npn", "omitRoles": [] },
+  "tags": ["transistor", "darlington", "bjt"],
+  "match": { "keywords": ["darlington", "tip120", "uln2003"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  }
+}

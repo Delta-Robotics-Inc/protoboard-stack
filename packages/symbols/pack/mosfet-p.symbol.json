@@ -1,0 +1,67 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "mosfet-p",
+  "name": "P-channel MOSFET (enhancement)",
+  "category": "transistor",
+  "refdes": "Q",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "G", "name": "G", "at": [0, 2], "dir": "left", "type": "input", "names": ["gate", "g"] },
+    { "id": "D", "name": "D", "at": [3, 0], "dir": "up", "type": "passive", "names": ["drain", "d"] },
+    { "id": "S", "name": "S", "at": [3, 4], "dir": "down", "type": "passive", "names": ["source", "s"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 12h3", "role": "lead", "pin": "G" },
+    { "el": "path", "d": "M5 6v12", "role": "body" },
+    { "el": "path", "d": "M9 3v4", "role": "body" },
+    { "el": "path", "d": "M9 11v2", "role": "body" },
+    { "el": "path", "d": "M9 17v4", "role": "body" },
+    { "el": "path", "d": "M17 2v3h-8", "role": "lead", "pin": "D" },
+    { "el": "path", "d": "M17 22v-3h-8", "role": "lead", "pin": "S" },
+    { "el": "path", "d": "M9 12h8v7", "role": "body" },
+    { "el": "path", "d": "M13 9.5l2.5 2.5-2.5 2.5", "role": "arrow" }
+  ],
+  "variants": {
+    "body-diode": {
+      "name": "With body diode",
+      "body": [
+        { "el": "path", "d": "M2 12h3", "role": "lead", "pin": "G" },
+        { "el": "path", "d": "M5 6v12", "role": "body" },
+        { "el": "path", "d": "M9 3v4", "role": "body" },
+        { "el": "path", "d": "M9 11v2", "role": "body" },
+        { "el": "path", "d": "M9 17v4", "role": "body" },
+        { "el": "path", "d": "M17 2v3h-8", "role": "lead", "pin": "D" },
+        { "el": "path", "d": "M17 22v-3h-8", "role": "lead", "pin": "S" },
+        { "el": "path", "d": "M9 12h4v7", "role": "body" },
+        { "el": "path", "d": "M10.5 10.5 12 12l-1.5 1.5", "role": "arrow" },
+        { "el": "path", "d": "M17 5v6M15 11h4l-2 4zM15 15h4M17 15v4", "role": "body" }
+      ]
+    },
+    "depletion": {
+      "name": "Depletion mode",
+      "body": [
+        { "el": "path", "d": "M2 12h3", "role": "lead", "pin": "G" },
+        { "el": "path", "d": "M5 6v12", "role": "body" },
+        { "el": "path", "d": "M9 3v18", "role": "body" },
+        { "el": "path", "d": "M17 2v3h-8", "role": "lead", "pin": "D" },
+        { "el": "path", "d": "M17 22v-3h-8", "role": "lead", "pin": "S" },
+        { "el": "path", "d": "M9 12h8v7", "role": "body" },
+        { "el": "path", "d": "M13 9.5l2.5 2.5-2.5 2.5", "role": "arrow" }
+      ]
+    }
+  },
+  "fields": { "refdes": { "at": [4.3, 1.6], "anchor": "start" }, "value": { "at": [4.3, 2.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["transistor", "mosfet", "pmos", "p-channel"],
+  "match": { "keywords": ["p-channel", "pmos", "mosfet", "ao3401"], "pinNames": [["gate", "drain", "source"]] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "Arrow out of the channel. Mirror it vertically for the usual high-side drawing (source up)."
+}

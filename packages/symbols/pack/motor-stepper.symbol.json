@@ -1,0 +1,38 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "motor-stepper",
+  "name": "Stepper motor (bipolar)",
+  "category": "electromechanical",
+  "refdes": "M",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 34, "h": 34 },
+  "pins": [
+    { "id": "A+", "name": "A+", "at": [0, 2], "dir": "left", "type": "passive", "names": ["a1", "a+", "1a"] },
+    { "id": "A-", "name": "A-", "at": [0, 4], "dir": "left", "type": "passive", "names": ["a2", "a-", "1b"] },
+    { "id": "B+", "name": "B+", "at": [6, 2], "dir": "right", "type": "passive", "names": ["b1", "b+", "2a"] },
+    { "id": "B-", "name": "B-", "at": [6, 4], "dir": "right", "type": "passive", "names": ["b2", "b-", "2b"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 12h4", "role": "lead", "pin": "A+" },
+    { "el": "path", "d": "M6 12a4 2.5 0 0 1 0 5a4 2.5 0 0 1 0 5", "role": "body" },
+    { "el": "path", "d": "M2 22h4", "role": "lead", "pin": "A-" },
+    { "el": "circle", "cx": 17, "cy": 17, "r": 5, "role": "body" },
+    { "el": "path", "d": "M15 19v-4l2 2.5 2-2.5v4", "role": "body" },
+    { "el": "path", "d": "M32 12h-4", "role": "lead", "pin": "B+" },
+    { "el": "path", "d": "M28 12a4 2.5 0 0 0 0 5a4 2.5 0 0 0 0 5", "role": "body" },
+    { "el": "path", "d": "M32 22h-4", "role": "lead", "pin": "B-" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [6.3, 2.6], "anchor": "start" }, "value": { "at": [6.3, 3.4], "anchor": "start" } },
+  "icon": { "from": "pack:motor-dc", "omitRoles": [] },
+  "tags": ["motor", "stepper", "actuator"],
+  "match": { "keywords": ["stepper", "nema17", "bipolar stepper"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  }
+}

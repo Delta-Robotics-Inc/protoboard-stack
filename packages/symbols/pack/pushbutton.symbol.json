@@ -1,0 +1,34 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "pushbutton",
+  "name": "Pushbutton (normally open)",
+  "category": "switch",
+  "refdes": "SW",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "1", "name": "1", "number": "1", "at": [0, 2], "dir": "left", "type": "passive" },
+    { "id": "2", "name": "2", "number": "2", "at": [4, 2], "dir": "right", "type": "passive" }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 12h3", "role": "lead", "pin": "1" },
+    { "el": "circle", "cx": 7, "cy": 12, "r": 2, "role": "body" },
+    { "el": "circle", "cx": 17, "cy": 12, "r": 2, "role": "body" },
+    { "el": "path", "d": "M5 6h14M12 6V3M10 3h4", "role": "body" },
+    { "el": "path", "d": "M22 12h-3", "role": "lead", "pin": "2" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [2, 0.3], "anchor": "middle" }, "value": { "at": [2, 4.2], "anchor": "middle" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["pushbutton", "tactile", "button", "momentary", "switch"],
+  "match": { "keywords": ["pushbutton", "tactile switch", "button", "tact"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "A 4-pin tactile switch uses this symbol: each symbol pin binds two pads (1 and 2, 3 and 4)."
+}

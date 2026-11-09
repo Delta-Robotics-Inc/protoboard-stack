@@ -1,0 +1,32 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "coax",
+  "name": "Coaxial connector (SMA, U.FL)",
+  "category": "board",
+  "refdes": "J",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "1", "name": "IN", "number": "1", "at": [0, 2], "dir": "left", "type": "passive", "names": ["signal", "rf", "in"] },
+    { "id": "2", "name": "EXT", "number": "2", "at": [2, 4], "dir": "down", "type": "passive", "names": ["shield", "gnd", "ext"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 12h8", "role": "lead", "pin": "1" },
+    { "el": "circle", "cx": 12, "cy": 12, "r": 2, "role": "body" },
+    { "el": "path", "d": "M9.5 6a6.5 6.5 0 1 1 0 12", "role": "body" },
+    { "el": "path", "d": "M12 22v-3.5", "role": "lead", "pin": "2" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [4.3, 1.6], "anchor": "start" }, "value": { "at": [4.3, 2.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["coax", "sma", "u.fl", "rf", "connector"],
+  "match": { "keywords": ["sma", "u.fl", "ipex", "coax"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  }
+}

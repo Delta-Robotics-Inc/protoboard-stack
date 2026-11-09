@@ -1,0 +1,48 @@
+{
+  "name": "@protoboardai/symbols",
+  "version": "0.1.0",
+  "description": "Protoboard schematic symbols and component icons: one style, one file per symbol, a checker and a generator for code-built symbols.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/symbols"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./pack": "./src/pack.ts",
+    "./pack/*": "./pack/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "pack",
+    "scripts",
+    "STYLE.md",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "licenses"
+  ],
+  "scripts": {
+    "check": "node scripts/check.ts",
+    "format": "node scripts/format.ts",
+    "sheet": "node scripts/sheet.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "protoboard",
+    "schematic",
+    "symbols",
+    "icons",
+    "electronics"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "sheet-port",
+  "name": "Sheet port (hierarchical label)",
+  "category": "net",
+  "refdes": "#PORT",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "1", "name": "PORT", "at": [0, 2], "dir": "left", "type": "input" }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 12h3", "role": "lead", "pin": "1" },
+    { "el": "path", "d": "M5 12l4-4h10v8H9z", "role": "body" }
+  ],
+  "variants": {
+    "bidirectional": {
+      "name": "Bidirectional",
+      "pins": [
+        { "id": "1", "name": "PORT", "at": [0, 2], "dir": "left", "type": "bidirectional" }
+      ],
+      "body": [
+        { "el": "path", "d": "M2 12h3", "role": "lead", "pin": "1" },
+        { "el": "path", "d": "M5 12l4-4h6l4 4-4 4H9z", "role": "body" }
+      ]
+    },
+    "output": {
+      "name": "Output",
+      "pins": [
+        { "id": "1", "name": "PORT", "at": [0, 2], "dir": "left", "type": "output" }
+      ],
+      "body": [
+        { "el": "path", "d": "M2 12h3", "role": "lead", "pin": "1" },
+        { "el": "path", "d": "M5 8h10l4 4-4 4H5z", "role": "body" }
+      ]
+    }
+  },
+  "fields": { "refdes": { "at": [2.2, 2.25], "anchor": "middle" }, "value": { "at": [2.2, 2.25], "anchor": "middle" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["port", "hierarchical", "sheet"],
+  "match": { "keywords": ["hierarchical label", "sheet port"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "Input points at its wire; output points away; bidirectional points both ways."
+}

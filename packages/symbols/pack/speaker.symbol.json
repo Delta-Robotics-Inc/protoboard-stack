@@ -1,0 +1,32 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "speaker",
+  "name": "Speaker",
+  "category": "transducer",
+  "refdes": "LS",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "1", "name": "1", "number": "1", "at": [0, 1], "dir": "left", "type": "passive" },
+    { "id": "2", "name": "2", "number": "2", "at": [0, 3], "dir": "left", "type": "passive" }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 7h3", "role": "lead", "pin": "1" },
+    { "el": "path", "d": "M2 17h3", "role": "lead", "pin": "2" },
+    { "el": "rect", "x": 5, "y": 5, "width": 5, "height": 14, "rx": 1, "role": "body" },
+    { "el": "path", "d": "M10 9l6-5v16l-6-5", "role": "body" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [4.3, 1.6], "anchor": "start" }, "value": { "at": [4.3, 2.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["speaker", "loudspeaker", "audio"],
+  "match": { "keywords": ["speaker", "loudspeaker"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "led",
+  "name": "LED",
+  "category": "diode",
+  "refdes": "D",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "A", "name": "A", "number": "2", "at": [0, 3], "dir": "left", "type": "passive", "names": ["anode", "a"] },
+    { "id": "K", "name": "K", "number": "1", "at": [4, 3], "dir": "right", "type": "passive", "names": ["cathode", "k"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 17h6.5", "role": "lead", "pin": "A" },
+    { "el": "path", "d": "M8.5 13v8l7-4z", "role": "body" },
+    { "el": "path", "d": "M15.5 13v8", "role": "body" },
+    { "el": "path", "d": "M22 17h-6.5", "role": "lead", "pin": "K" },
+    { "el": "path", "d": "M9 9l3.5-3.5M10 5.5h2.5V8", "role": "arrow" },
+    { "el": "path", "d": "M17 9l3.5-3.5M18 5.5h2.5V8", "role": "arrow" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [2, 1.6], "anchor": "middle" }, "value": { "at": [2, 4.2], "anchor": "middle" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["led", "light", "diode", "indicator"],
+  "match": { "keywords": ["led", "light emitting"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "redrawn to STYLE.md from the 2026-09-30 protocol icon of the same part",
+    "review": "draft"
+  },
+  "notes": "Optical parts sit on row 17 at the compact size so the light arrows keep 2 px clear above them."
+}

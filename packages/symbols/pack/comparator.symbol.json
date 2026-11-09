@@ -1,0 +1,59 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "comparator",
+  "name": "Comparator",
+  "category": "amplifier",
+  "refdes": "U",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "+", "name": "+", "at": [0, 1], "dir": "left", "type": "input", "names": ["in+", "non-inverting", "inp"] },
+    { "id": "-", "name": "-", "at": [0, 3], "dir": "left", "type": "input", "names": ["in-", "inverting", "inn"] },
+    { "id": "OUT", "name": "OUT", "at": [4, 2], "dir": "right", "type": "output", "names": ["out", "output"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 7h3", "role": "lead", "pin": "+" },
+    { "el": "path", "d": "M2 17h3", "role": "lead", "pin": "-" },
+    { "el": "path", "d": "M5 3v18l14-9z", "role": "body" },
+    { "el": "path", "d": "M22 12h-3", "role": "lead", "pin": "OUT" },
+    { "el": "path", "d": "M7 9h3M8.5 7.5v3", "role": "mark" },
+    { "el": "path", "d": "M7 15h3", "role": "mark" },
+    { "el": "path", "d": "M11.5 14h1.5v-3h1.5", "role": "mark" }
+  ],
+  "variants": {
+    "power-pins": {
+      "name": "With power pins",
+      "pins": [
+        { "id": "+", "name": "+", "at": [0, 1], "dir": "left", "type": "input", "names": ["in+", "non-inverting", "inp"] },
+        { "id": "-", "name": "-", "at": [0, 3], "dir": "left", "type": "input", "names": ["in-", "inverting", "inn"] },
+        { "id": "OUT", "name": "OUT", "at": [4, 2], "dir": "right", "type": "output", "names": ["out", "output"] },
+        { "id": "V+", "name": "V+", "at": [2, 0], "dir": "up", "type": "power_in", "names": ["vcc", "vdd", "v+"] },
+        { "id": "V-", "name": "V-", "at": [2, 4], "dir": "down", "type": "power_in", "names": ["vee", "vss", "gnd", "v-"] }
+      ],
+      "body": [
+        { "el": "path", "d": "M2 7h3", "role": "lead", "pin": "+" },
+        { "el": "path", "d": "M2 17h3", "role": "lead", "pin": "-" },
+        { "el": "path", "d": "M5 3v18l14-9z", "role": "body" },
+        { "el": "path", "d": "M22 12h-3", "role": "lead", "pin": "OUT" },
+        { "el": "path", "d": "M7 9h3M8.5 7.5v3", "role": "mark" },
+        { "el": "path", "d": "M7 15h3", "role": "mark" },
+        { "el": "path", "d": "M11.5 14h1.5v-3h1.5", "role": "mark" },
+        { "el": "path", "d": "M12 2v5.5", "role": "lead", "pin": "V+" },
+        { "el": "path", "d": "M12 22v-5.5", "role": "lead", "pin": "V-" }
+      ]
+    }
+  },
+  "fields": { "refdes": { "at": [4.3, 1.6], "anchor": "start" }, "value": { "at": [4.3, 2.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": ["mark"] },
+  "tags": ["comparator", "analog"],
+  "match": { "keywords": ["comparator", "lm393", "tlv3201"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "The small step inside is this pack's mark for a comparator (standards draw it like an op amp); the icon is the op amp's."
+}

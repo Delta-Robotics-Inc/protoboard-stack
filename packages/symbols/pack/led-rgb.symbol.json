@@ -1,0 +1,83 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "led-rgb",
+  "name": "RGB LED, common anode",
+  "category": "diode",
+  "refdes": "D",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 34, "h": 34 },
+  "pins": [
+    { "id": "A", "name": "A", "at": [0, 3], "dir": "left", "type": "passive", "names": ["anode", "common", "com"] },
+    { "id": "R", "name": "R", "at": [6, 1], "dir": "right", "type": "passive", "names": ["red"] },
+    { "id": "G", "name": "G", "at": [6, 3], "dir": "right", "type": "passive", "names": ["green"] },
+    { "id": "B", "name": "B", "at": [6, 5], "dir": "right", "type": "passive", "names": ["blue"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 17h4", "role": "lead", "pin": "A" },
+    { "el": "path", "d": "M6 7v20", "role": "body" },
+    { "el": "path", "d": "M6 7h3", "role": "body" },
+    { "el": "path", "d": "M9 4v6l5-3z", "role": "body" },
+    { "el": "path", "d": "M14 4v6", "role": "body" },
+    { "el": "path", "d": "M32 7h-18", "role": "lead", "pin": "R" },
+    { "el": "path", "d": "M16.5 5l2-2M17 3h1.5v1.5", "role": "arrow" },
+    { "el": "path", "d": "M20.5 5l2-2M21 3h1.5v1.5", "role": "arrow" },
+    { "el": "path", "d": "M6 17h3", "role": "body" },
+    { "el": "path", "d": "M9 14v6l5-3z", "role": "body" },
+    { "el": "path", "d": "M14 14v6", "role": "body" },
+    { "el": "path", "d": "M32 17h-18", "role": "lead", "pin": "G" },
+    { "el": "path", "d": "M16.5 15l2-2M17 13h1.5v1.5", "role": "arrow" },
+    { "el": "path", "d": "M20.5 15l2-2M21 13h1.5v1.5", "role": "arrow" },
+    { "el": "path", "d": "M6 27h3", "role": "body" },
+    { "el": "path", "d": "M9 24v6l5-3z", "role": "body" },
+    { "el": "path", "d": "M14 24v6", "role": "body" },
+    { "el": "path", "d": "M32 27h-18", "role": "lead", "pin": "B" },
+    { "el": "path", "d": "M16.5 25l2-2M17 23h1.5v1.5", "role": "arrow" },
+    { "el": "path", "d": "M20.5 25l2-2M21 23h1.5v1.5", "role": "arrow" }
+  ],
+  "variants": {
+    "common-cathode": {
+      "name": "Common cathode",
+      "pins": [
+        { "id": "K", "name": "K", "at": [0, 3], "dir": "left", "type": "passive", "names": ["cathode", "common", "com"] },
+        { "id": "R", "name": "R", "at": [6, 1], "dir": "right", "type": "passive", "names": ["red"] },
+        { "id": "G", "name": "G", "at": [6, 3], "dir": "right", "type": "passive", "names": ["green"] },
+        { "id": "B", "name": "B", "at": [6, 5], "dir": "right", "type": "passive", "names": ["blue"] }
+      ],
+      "body": [
+        { "el": "path", "d": "M2 17h4", "role": "lead", "pin": "K" },
+        { "el": "path", "d": "M6 7v20", "role": "body" },
+        { "el": "path", "d": "M6 7h3", "role": "body" },
+        { "el": "path", "d": "M14 4v6l-5-3z", "role": "body" },
+        { "el": "path", "d": "M9 4v6", "role": "body" },
+        { "el": "path", "d": "M32 7h-18", "role": "lead", "pin": "R" },
+        { "el": "path", "d": "M16.5 5l2-2M17 3h1.5v1.5", "role": "arrow" },
+        { "el": "path", "d": "M20.5 5l2-2M21 3h1.5v1.5", "role": "arrow" },
+        { "el": "path", "d": "M6 17h3", "role": "body" },
+        { "el": "path", "d": "M14 14v6l-5-3z", "role": "body" },
+        { "el": "path", "d": "M9 14v6", "role": "body" },
+        { "el": "path", "d": "M32 17h-18", "role": "lead", "pin": "G" },
+        { "el": "path", "d": "M16.5 15l2-2M17 13h1.5v1.5", "role": "arrow" },
+        { "el": "path", "d": "M20.5 15l2-2M21 13h1.5v1.5", "role": "arrow" },
+        { "el": "path", "d": "M6 27h3", "role": "body" },
+        { "el": "path", "d": "M14 24v6l-5-3z", "role": "body" },
+        { "el": "path", "d": "M9 24v6", "role": "body" },
+        { "el": "path", "d": "M32 27h-18", "role": "lead", "pin": "B" },
+        { "el": "path", "d": "M16.5 25l2-2M17 23h1.5v1.5", "role": "arrow" },
+        { "el": "path", "d": "M20.5 25l2-2M21 23h1.5v1.5", "role": "arrow" }
+      ]
+    }
+  },
+  "fields": { "refdes": { "at": [6.3, 2.6], "anchor": "start" }, "value": { "at": [6.3, 3.4], "anchor": "start" } },
+  "icon": { "from": "pack:led", "omitRoles": [] },
+  "tags": ["led", "rgb", "light", "diode"],
+  "match": { "keywords": ["rgb led", "ws2812", "common anode", "common cathode"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "Three compact LEDs on one common pin. Its icon is the LED's: three LEDs cannot keep 2 px clear at 24 px."
+}

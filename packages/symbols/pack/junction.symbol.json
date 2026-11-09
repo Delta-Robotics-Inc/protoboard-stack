@@ -1,0 +1,29 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "junction",
+  "name": "Junction",
+  "category": "net",
+  "refdes": "#J",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "J", "name": "J", "at": [2, 2], "dir": "none", "type": "passive" }
+  ],
+  "body": [
+    { "el": "circle", "cx": 12, "cy": 12, "r": 1, "role": "dot" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [4.3, 1.6], "anchor": "start" }, "value": { "at": [4.3, 2.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["junction", "dot", "wire"],
+  "match": { "keywords": ["junction"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "A dot only where three or more wires meet."
+}

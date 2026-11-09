@@ -1,0 +1,34 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "photodiode",
+  "name": "Photodiode",
+  "category": "diode",
+  "refdes": "D",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "A", "name": "A", "number": "2", "at": [0, 3], "dir": "left", "type": "passive", "names": ["anode", "a"] },
+    { "id": "K", "name": "K", "number": "1", "at": [4, 3], "dir": "right", "type": "passive", "names": ["cathode", "k"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 17h6.5", "role": "lead", "pin": "A" },
+    { "el": "path", "d": "M8.5 13v8l7-4z", "role": "body" },
+    { "el": "path", "d": "M15.5 13v8", "role": "body" },
+    { "el": "path", "d": "M22 17h-6.5", "role": "lead", "pin": "K" },
+    { "el": "path", "d": "M12.5 5.5 9 9M11.5 9H9V6.5", "role": "arrow" },
+    { "el": "path", "d": "M20.5 5.5 17 9M19.5 9H17V6.5", "role": "arrow" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [2, 1.6], "anchor": "middle" }, "value": { "at": [2, 4.2], "anchor": "middle" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["photodiode", "light", "sensor", "diode"],
+  "match": { "keywords": ["photodiode", "pin diode", "light sensor"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "relay-spdt",
+  "name": "Relay (SPDT)",
+  "category": "switch",
+  "refdes": "K",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 34, "h": 34 },
+  "pins": [
+    { "id": "1", "name": "A1", "at": [1, 0], "dir": "up", "type": "passive", "names": ["coil", "coil+"] },
+    { "id": "2", "name": "A2", "at": [1, 6], "dir": "down", "type": "passive", "names": ["coil", "coil-"] },
+    { "id": "NC", "name": "NC", "at": [3, 0], "dir": "up", "type": "passive", "names": ["nc"] },
+    { "id": "NO", "name": "NO", "at": [5, 0], "dir": "up", "type": "passive", "names": ["no"] },
+    { "id": "COM", "name": "COM", "at": [4, 6], "dir": "down", "type": "passive", "names": ["com", "common"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M7 2v10", "role": "lead", "pin": "1" },
+    { "el": "rect", "x": 4.5, "y": 12, "width": 5, "height": 10, "rx": 1, "role": "body" },
+    { "el": "path", "d": "M7 32v-10", "role": "lead", "pin": "2" },
+    { "el": "path", "d": "M17 2v6", "role": "lead", "pin": "NC" },
+    { "el": "circle", "cx": 17, "cy": 10, "r": 2, "role": "body" },
+    { "el": "path", "d": "M27 2v6", "role": "lead", "pin": "NO" },
+    { "el": "circle", "cx": 27, "cy": 10, "r": 2, "role": "body" },
+    { "el": "path", "d": "M22 32v-6", "role": "lead", "pin": "COM" },
+    { "el": "circle", "cx": 22, "cy": 24, "r": 2, "role": "body" },
+    { "el": "path", "d": "M21.5 22l-4-10", "role": "body" },
+    { "el": "path", "d": "M11.5 17h1.5M15 17h1.5M18 17h1.5", "role": "link" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [6.3, 2.6], "anchor": "start" }, "value": { "at": [6.3, 3.4], "anchor": "start" } },
+  "icon": { "from": "body", "omitRoles": ["link"] },
+  "tags": ["relay", "spdt", "coil"],
+  "match": { "keywords": ["relay", "srd-05vdc"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "Shown de-energized: the common rests on NC. The dashes are the mechanical link from coil to contact."
+}

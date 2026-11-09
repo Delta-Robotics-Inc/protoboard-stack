@@ -1,0 +1,32 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "ground-earth",
+  "name": "Protective earth",
+  "category": "power",
+  "refdes": "#PWR",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 24, "h": 24 },
+  "pins": [
+    { "id": "1", "name": "PE", "number": "1", "at": [2, 0], "dir": "up", "type": "power_in" }
+  ],
+  "body": [
+    { "el": "path", "d": "M12 2v6", "role": "lead", "pin": "1" },
+    { "el": "circle", "cx": 12, "cy": 12, "r": 9, "role": "body" },
+    { "el": "path", "d": "M7 8h10", "role": "body" },
+    { "el": "path", "d": "M9 12h6", "role": "body" },
+    { "el": "path", "d": "M11 16h2", "role": "body" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [2, 4.2], "anchor": "middle" }, "value": { "at": [2, 4.2], "anchor": "middle" } },
+  "icon": { "from": "body", "omitRoles": [] },
+  "tags": ["earth", "protective earth", "pe", "power"],
+  "match": { "keywords": ["earth", "protective earth", "pe"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  }
+}

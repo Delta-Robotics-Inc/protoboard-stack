@@ -1,0 +1,43 @@
+{
+  "schema": "protoboard.symbol/v0",
+  "id": "optocoupler",
+  "name": "Optocoupler (phototransistor)",
+  "category": "transistor",
+  "refdes": "U",
+  "convention": "common",
+  "origin": "drawn",
+  "frame": { "w": 34, "h": 34 },
+  "pins": [
+    { "id": "A", "name": "A", "at": [0, 1], "dir": "left", "type": "passive", "names": ["anode"] },
+    { "id": "K", "name": "K", "at": [0, 5], "dir": "left", "type": "passive", "names": ["cathode"] },
+    { "id": "C", "name": "C", "at": [6, 1], "dir": "right", "type": "passive", "names": ["collector"] },
+    { "id": "E", "name": "E", "at": [6, 5], "dir": "right", "type": "passive", "names": ["emitter"] }
+  ],
+  "body": [
+    { "el": "path", "d": "M2 7h6v6", "role": "lead", "pin": "A" },
+    { "el": "path", "d": "M5 13h6l-3 6z", "role": "body" },
+    { "el": "path", "d": "M5 19h6", "role": "body" },
+    { "el": "path", "d": "M2 27h6v-8", "role": "lead", "pin": "K" },
+    { "el": "path", "d": "M14.5 13h4.5M16.5 10.5 19 13l-2.5 2.5", "role": "arrow" },
+    { "el": "path", "d": "M14.5 21h4.5M16.5 18.5 19 21l-2.5 2.5", "role": "arrow" },
+    { "el": "path", "d": "M23 11v12", "role": "body" },
+    { "el": "path", "d": "M23 14l7-7", "role": "body" },
+    { "el": "path", "d": "M32 7h-2", "role": "lead", "pin": "C" },
+    { "el": "path", "d": "M23 20l7 7", "role": "body" },
+    { "el": "path", "d": "M32 27h-2", "role": "lead", "pin": "E" },
+    { "el": "path", "d": "M26.5 26H29v-2.5", "role": "arrow" }
+  ],
+  "variants": {},
+  "fields": { "refdes": { "at": [6.3, 2.6], "anchor": "start" }, "value": { "at": [6.3, 3.4], "anchor": "start" } },
+  "icon": { "from": "pack:phototransistor", "omitRoles": [] },
+  "tags": ["optocoupler", "isolator", "opto"],
+  "match": { "keywords": ["optocoupler", "pc817", "opto isolator"] },
+  "license": "Apache-2.0",
+  "provenance": {
+    "author": "Protoboard symbol pack",
+    "date": "2026-11-09",
+    "basis": "drawn from scratch to STYLE.md",
+    "review": "draft"
+  },
+  "notes": "Its icon is the phototransistor's: the whole coupler cannot keep 2 px clear at 24 px."
+}
