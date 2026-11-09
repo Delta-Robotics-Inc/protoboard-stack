@@ -90,6 +90,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `agents config` | The command, JSON and steps for any other MCP client. Prints only |
 | `agents refresh` | Write or update Protoboard's launcher (in its own folder; no agent's file), for a client set up by hand from agents config |
 | `mcp` | The Protoboard MCP server on stdio: what an agent starts (it takes no arguments) |
+| `board <command> <dir>` | The PCB board without a window: serve, stop, inspect, query, ops, apply, undo, redo, revert, claim, release, presence, save, checkpoint, import, check, render (`protoboard board help`; docs/specs/pcb-editor/board-cli.md) |
 | `telemetry [status\|show\|export\|clear\|on\|off]` | Local crash and performance records of the viewer (.protoboard/local/telemetry/, never sent): status, show (--days), export prints the redacted bundle and writes it (--out <file>); --send records your consent and, in this release, sends nothing (a stub); clear; on\|off is the CLI's own switch (PROTOBOARD_TELEMETRY=off overrides) |
 
 ## Options
@@ -432,6 +433,9 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     agents refresh          Write or update Protoboard's launcher (in its own folder; no agent's file), for a
                             client set up by hand from agents config
     mcp                     The Protoboard MCP server on stdio: what an agent starts (it takes no arguments)
+    board <command> <dir>   The PCB board without a window: serve, stop, inspect, query, ops, apply, undo, redo,
+                            revert, claim, release, presence, save, checkpoint, import, check, render
+                            (`protoboard board help`; docs/specs/pcb-editor/board-cli.md)
     telemetry [status|show|export|clear|on|off]
                             Local crash and performance records of the viewer (.protoboard/local/telemetry/, never
                             sent): status, show (--days), export prints the redacted bundle and writes it (--out

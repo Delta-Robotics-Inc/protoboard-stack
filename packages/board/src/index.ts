@@ -16,3 +16,4 @@ export * from "./index-spatial.js";
 export * from "./service.js";
 export * from "./extensions.js";
 export { deterministicKey } from "./keys.js";
+export * from "./transport/index.js";

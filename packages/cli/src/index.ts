@@ -414,6 +414,9 @@ const cli = meow(
     agents refresh          Write or update Protoboard's launcher (in its own folder; no agent's file), for a
                             client set up by hand from agents config
     mcp                     The Protoboard MCP server on stdio: what an agent starts (it takes no arguments)
+    board <command> <dir>   The PCB board without a window: serve, stop, inspect, query, ops, apply, undo, redo,
+                            revert, claim, release, presence, save, checkpoint, import, check, render
+                            (\`protoboard board help\`; docs/specs/pcb-editor/board-cli.md)
     telemetry [status|show|export|clear|on|off]
                             Local crash and performance records of the viewer (.protoboard/local/telemetry/, never
                             sent): status, show (--days), export prints the redacted bundle and writes it (--out
@@ -1585,6 +1588,11 @@ async function main() {
         },
       );
       process.exitCode = process.exitCode || setupExitCode(r);
+      return;
+    }
+    case "board": {
+      // PCB editor Phase 1: the board service's CLI (board.ts); its flags are read from the raw argv there
+      process.exitCode = await (await import("./board.js")).boardCommand(process.argv.slice(process.argv.indexOf("board") + 1), { cwd });
       return;
     }
     case "settings": {

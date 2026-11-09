@@ -38,10 +38,12 @@ const TOOLS = [
   // wave R3 gate (deliberate change): view_dimension and view_angle sit after view_arrow above
   // R2-E (deliberate change): the user's settings
   "settings_get", "settings_set",
+  // PCB editor Phase 1 (deliberate change): the board tools, generated from the board operation registry
+  "board_operations", "board_apply", "board_inspect", "board_query", "board_undo", "board_redo", "board_claim", "board_release", "board_presence",
 ];
 const WRITES = ["project_init", "project_build", "project_layout", "parts_add"];
 /** Tools that run no project code (W4-D): the exact tier and the issue reports. */
-const NO_PROJECT_CODE = ["geometry_measure", "report_issue", "request_feature", "report_send", "report_list", "settings_get", "settings_set"];
+const NO_PROJECT_CODE = ["geometry_measure", "report_issue", "request_feature", "report_send", "report_list", "settings_get", "settings_set", "board_operations", "board_apply", "board_inspect", "board_query", "board_undo", "board_redo", "board_claim", "board_release", "board_presence"];
 
 const PART: UhdModuleDef = {
   id: "test-mcp-regulator",
@@ -200,8 +202,8 @@ describe("the server's surface", () => {
 
   it("has no tool that publishes, orders, uploads, signs in or shows prices by source", async () => {
     const { tools } = await client.listTools();
-    // (view_release ends a lease on the view, not a project release)
-    expect(tools.map((t) => t.name).filter((n) => n !== "view_release" && /publish|order|upload|login|logout|price|offer|usage|token|credential|run|release$/.test(n))).toEqual([]);
+    // (view_release and board_release end a lease, not a project release)
+    expect(tools.map((t) => t.name).filter((n) => n !== "view_release" && n !== "board_release" && /publish|order|upload|login|logout|price|offer|usage|token|credential|run|release$/.test(n))).toEqual([]);
     // and none takes a token, a key or a service address
     for (const t of tools) expect(Object.keys(t.inputSchema.properties ?? {}).filter((k) => /token|key|secret|password|url/i.test(k)), t.name).toEqual([]);
   });
