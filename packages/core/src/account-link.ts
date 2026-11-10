@@ -78,12 +78,14 @@ async function post(doFetch: typeof fetch, url: string, body: unknown): Promise<
 }
 
 /** Trade a code and the verifier for the session, and keep it. */
-async function exchange(service: string, info: AccountInfo & { apiKey: string }, requestId: string, verifier: string, code: string, options: { store?: CredentialStore; fetch?: typeof fetch }): Promise<CodeResult> {
+async function exchange(service: string, info: AccountInfo & { apiKey: string }, requestId: string, verifier: string, code: string, options: { store?: CredentialStore; fetch?: typeof fetch; active?: () => boolean }): Promise<CodeResult> {
   const doFetch = options.fetch ?? fetch;
   // whatever was pasted is a wrong code at worst: the service takes 40 characters
   const r = await post(doFetch, `${serviceKey(service)}/v1/auth/signin/${encodeURIComponent(requestId)}/token`, { verifier, code: code.trim().slice(0, 40) });
   if (r.ok && typeof r.body.customToken === "string") {
     const t = await signInWithCustomToken(info, r.body.customToken, options.fetch);
+    // cancelled or timed out while this was on its way: the person was told nothing completed, so nothing is kept
+    if (options.active && !options.active()) return { status: "expired" };
     const session = sessionFrom(service, info, t, "link");
     const store = options.store ?? new CredentialStore();
     store.put(session);
@@ -156,7 +158,7 @@ export async function startLinkLogin(service: string, options: LinkLoginOptions 
   let requestId = "";
   const submit = async (code: string): Promise<CodeResult> => {
     if (over) return { status: "expired" };
-    const r = await exchange(service, info, requestId, verifier, code, options);
+    const r = await exchange(service, info, requestId, verifier, code, { ...options, active: () => !over });
     if (r.status === "signed-in") end(() => finish(r.session));
     else if (r.status === "expired") end(() => fail(new AccountError("SIGN_IN_EXPIRED", "the sign-in expired or was used; start again")));
     return r;
