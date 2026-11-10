@@ -293,7 +293,7 @@ export class StartController implements vscode.Disposable {
     }
     if (!existsSync(parent)) throw new Error(`${parent} does not exist: choose a folder the example can be copied into`);
     const target = exampleTarget(parent);
-    const copied = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Protoboard: copying the ${EXAMPLE.title} example to ${target}` }, async () => copyExample(source, target));
+    const copied = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Protoboard: copying the ${EXAMPLE.title} example to ${target}` }, () => copyExample(source, target));
     this.host.log.info(`the example: ${copied.files} files (${(copied.bytes / 1e6).toFixed(1)} MB) copied to ${copied.dir}`);
     await this.context.globalState.update(EXAMPLE_OPENED_KEY, true);
     await this.context.globalState.update(EXAMPLE_COPIES_KEY, [...(this.context.globalState.get<string[]>(EXAMPLE_COPIES_KEY) ?? []), copied.dir].slice(-20));

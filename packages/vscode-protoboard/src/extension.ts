@@ -11,7 +11,7 @@ import { homedir, release as osRelease } from "node:os";
 import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { basename, delimiter, dirname, extname, isAbsolute, join, relative, sep } from "node:path";
 import * as vscode from "vscode";
-import { helpCommands, helpMarkdown, registerHelp } from "./help.js";
+import { START_COMMAND, helpCommands, helpMarkdown, registerHelp } from "./help.js";
 import { buildArtifacts, describeArtifact, describeInstances, openMode, partChoices, sortArtifacts, type ArtifactEntry, type PartChoice } from "./artifacts.js";
 import { openOutside } from "./openOutside.js";
 import { countDiagnostics, mapDiagnostics, parseCheck, skippedChecks, statusLabel, statusText, type Counts, type MappedDiagnostic } from "./check.js";
@@ -1895,7 +1895,7 @@ class ProtoboardExtension {
     const tilde = (p: string) => (p.startsWith(homedir()) ? `~${p.slice(homedir().length)}` : p);
     const manifest = this.carried;
     return [
-      { id: "start", label: "First steps", note: "New project, viewer, sign-in, terminal", icon: "map", action: "Open", opens: "view", command: "workbench.action.openWalkthrough", args: [`${this.context.extension.id}#protoboard.start`, false] },
+      { id: "start", label: "First steps", note: "Sign-in, agents, the drone example, themes", icon: "map", action: "Open", opens: "view", command: START_COMMAND, args: [] },
       ...(this.current && this.needsSetup(this.current) ? [{ id: "setupProject", label: `Set up ${basename(this.current)}`, note: "Not set up on this machine yet", icon: "rocket", action: "Initialize", command: "protoboard.setupProject" }] : []),
       ...(this.current && !this.needsSetup(this.current) ? [{ id: "runtimes", label: "Tool runtimes", note: `${basename(this.current)}: CAD and circuit runtimes`, icon: "wrench", action: "Install…", command: "protoboard.tools.install" }] : []),
       ...(this.current ? [{ id: "bom", label: "Bill of materials", note: `${basename(this.current)}: parts and chosen offers, in USD`, icon: "table", action: "Open", opens: "view" as const, command: "protoboard.openBom" }] : []),

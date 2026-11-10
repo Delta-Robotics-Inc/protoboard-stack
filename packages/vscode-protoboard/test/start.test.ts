@@ -211,20 +211,20 @@ describe("the example the extension carries", () => {
     expect(src(".vscodeignore")).toContain("!dist/examples/**");
   });
 
-  it("goes into a new folder of its name, or the next free one, never into an existing folder", () => {
+  it("goes into a new folder of its name, or the next free one, never into an existing folder", async () => {
     const taken = new Set([join("/w", "quadcopter-5in"), join("/w", "quadcopter-5in-2")]);
     expect(exampleTarget("/w", () => false)).toBe(join("/w", "quadcopter-5in"));
     expect(exampleTarget("/w", (p) => taken.has(p))).toBe(join("/w", "quadcopter-5in-3"));
     const there = join(TMP, "there");
     mkdirSync(there);
-    expect(() => copyExample(QUAD, there)).toThrow(/exists already/);
-    expect(() => copyExample(TMP, join(TMP, "nothing"))).toThrow(/does not carry one/);
+    await expect(copyExample(QUAD, there)).rejects.toThrow(/exists already/);
+    await expect(copyExample(TMP, join(TMP, "nothing"))).rejects.toThrow(/does not carry one/);
   });
 
-  it("is copied whole: every committed file of the example, and nothing a tool left there", () => {
+  it("is copied whole: every committed file of the example, and nothing a tool left there", async () => {
     const target = join(TMP, "copy", "quadcopter-5in");
     mkdirSync(join(TMP, "copy"));
-    const r = copyExample(QUAD, target);
+    const r = await copyExample(QUAD, target);
     expect(r.dir).toBe(target);
     for (const f of ["protoboard.config.ts", "package.json", ".gitignore", "src/quadcopter.uhd.ts", "parts/origins.json"]) expect(existsSync(join(target, f)), f).toBe(true);
     for (const f of ["node_modules", ".protoboard/build", ".protoboard/local", "release"]) expect(existsSync(join(target, f)), f).toBe(false);
@@ -243,7 +243,7 @@ describe("the example the extension carries", () => {
     expect(r.bytes).toBeGreaterThan(1_000_000);
   });
 
-  it("a copy with a tool's leftovers beside it copies none of them", () => {
+  it("a copy with a tool's leftovers beside it copies none of them", async () => {
     const from = join(TMP, "dirty");
     mkdirSync(join(from, "node_modules", "x"), { recursive: true });
     mkdirSync(join(from, ".protoboard", "build"), { recursive: true });
@@ -251,23 +251,23 @@ describe("the example the extension carries", () => {
     writeFileSync(join(from, "node_modules", "x", "index.js"), "");
     writeFileSync(join(from, ".protoboard", "build", "bundle.json"), "{}");
     writeFileSync(join(from, ".protoboard", "display.json"), "{}");
-    const r = copyExample(from, join(TMP, "clean"));
+    const r = await copyExample(from, join(TMP, "clean"));
     expect(r.files).toBe(2);
     expect(existsSync(join(TMP, "clean", "node_modules"))).toBe(false);
     expect(existsSync(join(TMP, "clean", ".protoboard", "display.json"))).toBe(true);
   });
 
-  it.skipIf(process.platform === "win32" || process.getuid?.() === 0)("a copy that fails leaves no folder behind, so the next one takes the same name", () => {
+  it.skipIf(process.platform === "win32" || process.getuid?.() === 0)("a copy that fails leaves no folder behind, so the next one takes the same name", async () => {
     const from = join(TMP, "unreadable");
     mkdirSync(join(from, "src"), { recursive: true });
     writeFileSync(join(from, "protoboard.config.ts"), "export default {};\n");
     writeFileSync(join(from, "src", "locked.ts"), "x");
     chmodSync(join(from, "src", "locked.ts"), 0o000);
     const to = join(TMP, "half");
-    expect(() => copyExample(from, to)).toThrow();
+    await expect(copyExample(from, to)).rejects.toThrow();
     expect(existsSync(to)).toBe(false);
     chmodSync(join(from, "src", "locked.ts"), 0o644);
-    expect(copyExample(from, to).files).toBe(2);
+    expect((await copyExample(from, to)).files).toBe(2);
   });
 
   it("opens with no account and no npm: trusted because the user asked for it, linked to the installed stack, then opened", () => {
@@ -281,6 +281,14 @@ describe("the example the extension carries", () => {
     expect(adopt.indexOf("} catch (e) {")).toBeLessThan(adopt.indexOf("await this.offerToOpen(dir, true);"));
     expect(adopt.indexOf("await this.prepareStack();")).toBeLessThan(adopt.indexOf("} catch (e) {"));
     expect(pkg.contributes.commands.find((c: { command: string }) => c.command === "protoboard.openExample")).toMatchObject({ title: "Open the Quadcopter Example…", category: "Protoboard" });
+  });
+});
+
+describe("Settings' First steps row", () => {
+  it("opens this page, not the walkthrough it replaced", () => {
+    const ext = src("src/extension.ts");
+    expect(ext).toMatch(/id: "start", label: "First steps",[^}]*command: START_COMMAND, args: \[\] \}/);
+    expect(ext).not.toContain("workbench.action.openWalkthrough");
   });
 });
 

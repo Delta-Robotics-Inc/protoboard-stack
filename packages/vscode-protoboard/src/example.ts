@@ -7,7 +7,8 @@
  *
  * No VS Code API here (start.ts asks where it goes and opens it).
  */
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { cp, mkdir, rm, stat } from "node:fs/promises";
 import { basename, join, relative, sep } from "node:path";
 
 export const EXAMPLE = {
@@ -59,23 +60,27 @@ export interface CopyResult {
   bytes: number;
 }
 
-/** Copy a project folder (the carried example) to a folder that does not exist yet. */
-export function copyExample(source: string, target: string): CopyResult {
+/**
+ * Copy a project folder (the carried example) to a folder that does not exist
+ * yet. Not the synchronous copy: it is hundreds of files, and the extension
+ * host has other things to answer meanwhile.
+ */
+export async function copyExample(source: string, target: string): Promise<CopyResult> {
   if (!existsSync(join(source, "protoboard.config.ts"))) throw new Error(`there is no example project at ${source}: this build of the extension does not carry one`);
   if (existsSync(target)) throw new Error(`${target} exists already: the example is copied into a new folder`);
-  mkdirSync(target, { recursive: true });
+  await mkdir(target, { recursive: true });
   let files = 0;
   let bytes = 0;
   try {
-    cpSync(source, target, {
+    await cp(source, target, {
       recursive: true,
       // links are not followed out of the example
       dereference: false,
-      filter: (from) => {
+      filter: async (from) => {
         const rel = relative(source, from);
         if (!rel) return true;
         if (exampleSkips(rel)) return false;
-        const st = statSync(from);
+        const st = await stat(from);
         if (st.isFile()) {
           files++;
           bytes += st.size;
@@ -85,7 +90,7 @@ export function copyExample(source: string, target: string): CopyResult {
     });
   } catch (e) {
     // half a copy is not left behind: the folder is this call's own (it did not exist before), and the next try takes its name
-    rmSync(target, { recursive: true, force: true });
+    await rm(target, { recursive: true, force: true });
     throw e;
   }
   return { dir: target, files, bytes };
