@@ -2018,10 +2018,22 @@ class ProtoboardExtension {
     // before there is a project, the sign-in is for the hosted Protoboard library (what a new project uses). The
     // sign-in is the user's, not a project's: a project whose packages are not installed yet signs in
     // through whatever CLI this window can run
-    const root = this.current ?? (await this.roots())[0];
     if (this.signInTerminal) return this.signInTerminal.show();
-    // a second Sign In while one waits brings its prompt (and its link) back
+    // a second Sign In while one waits brings its prompt (and its link) back. Taken before anything is
+    // awaited: two Sign Ins in a row must not both get past this line
     if (this.signingIn) return void this.signInShown?.();
+    this.signingIn = true;
+    try {
+      await this.signInOnce();
+    } finally {
+      this.signingIn = false;
+      this.signInShown = undefined;
+    }
+  }
+
+  /** The sign-in itself; `signIn` lets one run at a time. */
+  private async signInOnce() {
+    const root = this.current ?? (await this.roots())[0];
     const found = root && !this.waiting.has(root) && this.cliReady(root) ? this.cli(root) : this.cliOutside();
     // a service that does not answer cannot sign anyone in: one line now, rather than a prompt that ends with an error
     if (canRun(found) && signInUnavailable(await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: "Protoboard: signing in" }, () => this.refreshAccount(true)))) {
@@ -2042,37 +2054,31 @@ class ProtoboardExtension {
     }
     const cli = found;
     await cli.prepare?.();
-    this.signingIn = true;
     const args = ["login", "--wait", "--no-browser", "--format", "json"];
     this.log.info(`sign-in: running ${terminalCommand(cli, args)} behind the sign-in prompt`);
-    try {
-      const result = await runSignInPrompt({
-        box: () => {
-          const box = signInBox();
-          this.signInShown = () => box.show();
-          return box;
-        },
-        start: () => loginProcess(cli, args, cwd, { ...(this.library.cliEnv() as NodeJS.ProcessEnv), PROTOBOARD_LOGIN_CLIENT: "vscode" }),
-        // the person's own browser: in a remote window VS Code opens it on their machine, not the far one
-        open: async (url) => vscode.env.openExternal(vscode.Uri.parse(url, true)),
-        copy: async (text) => {
-          await vscode.env.clipboard.writeText(text);
-          vscode.window.setStatusBarMessage("$(copy) Sign-in link copied", 3000);
-        },
-        log: (line) => this.log.info(`sign-in: ${line}`),
-      });
-      if (result.signedIn) {
-        await this.refreshAccount(true);
-        vscode.window.setStatusBarMessage(this.lock.locked ? "$(account) Signed in; this account is not invited to the Protoboard library yet" : `$(account) Signed in to Protoboard${result.email ? ` as ${result.email}` : ""}`, 5000);
-      } else if (result.reason === "failed") {
-        this.log.warn(`sign-in: ${result.message}`);
-        const state = await this.refreshAccount(true);
-        void vscode.window.showWarningMessage(signInUnavailable(state) ? signInUnavailableMessage(state) : `Protoboard: ${result.message}`);
-      } else this.log.info("sign-in: cancelled");
-    } finally {
-      this.signingIn = false;
-      this.signInShown = undefined;
-    }
+    const result = await runSignInPrompt({
+      box: () => {
+        const box = signInBox();
+        this.signInShown = () => box.show();
+        return box;
+      },
+      start: () => loginProcess(cli, args, cwd, { ...(this.library.cliEnv() as NodeJS.ProcessEnv), PROTOBOARD_LOGIN_CLIENT: "vscode" }),
+      // the person's own browser: in a remote window VS Code opens it on their machine, not the far one
+      open: async (url) => vscode.env.openExternal(vscode.Uri.parse(url, true)),
+      copy: async (text) => {
+        await vscode.env.clipboard.writeText(text);
+        vscode.window.setStatusBarMessage("$(copy) Sign-in link copied", 3000);
+      },
+      log: (line) => this.log.info(`sign-in: ${line}`),
+    });
+    if (result.signedIn) {
+      await this.refreshAccount(true);
+      vscode.window.setStatusBarMessage(this.lock.locked ? "$(account) Signed in; this account is not invited to the Protoboard library yet" : `$(account) Signed in to Protoboard${result.email ? ` as ${result.email}` : ""}`, 5000);
+    } else if (result.reason === "failed") {
+      this.log.warn(`sign-in: ${result.message}`);
+      const state = await this.refreshAccount(true);
+      void vscode.window.showWarningMessage(signInUnavailable(state) ? signInUnavailableMessage(state) : `Protoboard: ${result.message}`);
+    } else this.log.info("sign-in: cancelled");
   }
 
   /** Notice the sign-in as soon as it is saved, while its terminal is there. */
