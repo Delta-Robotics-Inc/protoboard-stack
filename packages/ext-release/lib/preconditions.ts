@@ -6,7 +6,8 @@
  *   - providers' checks: any finding whose code ends in `_STALE` (warning or
  *     error), and a provider check that was skipped (its result is unknown);
  *   - every bound module has been exported, and its out/ is exactly what the
- *     latest export record lists (same files, same digests), made from the
+ *     latest export record lists (same files, same digests; the build's view
+ *     sidecars beside a body GLB are not export outputs), made from the
  *     current config and, when the record has it, the current module;
  *   - every file an operation record wrote is still the bytes it wrote
  *     (latest record per file; files since deleted are not checked here;
@@ -17,7 +18,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
-import { listOperationRecords, moduleDigest, type CapabilityBinding, type OperationRecord, type Project } from "@protoboardai/core";
+import { isViewSidecarFile, listOperationRecords, moduleDigest, type CapabilityBinding, type OperationRecord, type Project } from "@protoboardai/core";
 import { posix, sha256 } from "./util.ts";
 import type { SectionDiagnostic } from "./types.ts";
 
@@ -29,8 +30,12 @@ export interface Freshness {
   diagnostics: SectionDiagnostic[];
 }
 
+// The view sidecars the build writes beside a body GLB (X.view.glb, X.view.coarse.glb, X.view.json) are derived,
+// not committed, and no export writes them: they are not export outputs (core outputs.ts leaves them out the same way).
 const listFiles = (abs: string, base = abs): string[] =>
-  !existsSync(abs) ? [] : readdirSync(abs).flatMap((f) => (statSync(join(abs, f)).isDirectory() ? listFiles(join(abs, f), base) : [posix(relative(base, join(abs, f)))]));
+  !existsSync(abs)
+    ? []
+    : readdirSync(abs).flatMap((f) => (statSync(join(abs, f)).isDirectory() ? listFiles(join(abs, f), base) : isViewSidecarFile(f) ? [] : [posix(relative(base, join(abs, f)))]));
 
 /** Records, newest last, with the outputs each one wrote. */
 export function freshness(p: Project): Freshness {

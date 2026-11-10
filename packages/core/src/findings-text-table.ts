@@ -120,6 +120,7 @@ export const PLAIN_TABLE: Record<string, PlainEntry> = {
   "PB_EXTENSION_MANIFEST_INVALID": { title: "Add-on description is broken", summary: "{subject} has a broken add-on description, such as a missing field or a duplicate ID; fix it or report it to the add-on's author." },
   "PB_EXTENSION_NOT_INSTALLED": { title: "Add-on listed but not installed", summary: "The project settings file lists {subject}, an add-on that is not installed; check the name before installing anything." },
   "PB_EXTENSION_NO_MANIFEST": { title: "Package is not a Protoboard add-on", summary: "{subject} has no Protoboard add-on description, so it is not a Protoboard add-on; remove it from the project's add-on list." },
+  "PB_EXTENSION_SKILL_DUPLICATE": { title: "Two add-ons add the same agent skill", summary: "Two add-ons add an agent skill with the same name, so the agent cannot read or use either one; remove one of the add-ons." },
   "PB_EXTENSION_VIEW_DUPLICATE": { title: "Two add-ons add the same viewer tab", summary: "Two add-ons add a viewer tab with the same name, so the second one is ignored; rename one tab or drop one of the add-ons." },
   "PB_EXTRACT_INVALID": { title: "Facts read back from the design do not fit", summary: "Facts the design tool read back from {subject} do not fit the module; read them back again after generating." },
   "PB_FX_RATES_INVALID": { title: "Currency rate table unreadable", summary: "The project's own currency rate table cannot be read; fix it, or delete it so the bill of materials uses the built-in dated rates." },

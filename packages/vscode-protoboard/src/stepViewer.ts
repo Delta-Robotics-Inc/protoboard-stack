@@ -23,7 +23,9 @@
 import { spawn } from "node:child_process";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { resolve as resolvePath } from "node:path";
-import { join } from "node:path";
+// the Windows install folders are Windows paths whatever the host (the platform is an option, so tests on Linux and
+// macOS walk the Windows branch too): node:path's own join would write them with "/" there
+import { win32 } from "node:path";
 import * as vscode from "vscode";
 import { STEP_VIEWERS, isAgentActor, lastChange, type SettingsPlace } from "@protoboardai/core/settings";
 
@@ -92,9 +94,9 @@ export function stepLaunch(choice: string, file: string, o: FindOptions = {}): S
     case "fusion360": {
       if (platform === "darwin") return macOpen("Autodesk Fusion");
       if (platform === "win32" && env.LOCALAPPDATA) {
-        const base = join(env.LOCALAPPDATA, "Autodesk", "webdeploy", "production");
+        const base = win32.join(env.LOCALAPPDATA, "Autodesk", "webdeploy", "production");
         const builds = list(base)
-          .map((d) => join(base, d, "FusionLauncher.exe"))
+          .map((d) => win32.join(base, d, "FusionLauncher.exe"))
           .filter((p) => exists(p))
           .sort((a, b) => mtime(b) - mtime(a));
         if (builds[0]) return { kind: "exec", command: builds[0], args: [file], app: label };
@@ -104,9 +106,9 @@ export function stepLaunch(choice: string, file: string, o: FindOptions = {}): S
     case "kicad": {
       if (platform === "darwin") return macOpen("KiCad");
       if (platform === "win32") {
-        const base = join(env.ProgramFiles ?? "C:\\Program Files", "KiCad");
+        const base = win32.join(env.ProgramFiles ?? "C:\\Program Files", "KiCad");
         for (const v of newestVersion(list(base))) {
-          const exe = join(base, v, "bin", "kicad.exe");
+          const exe = win32.join(base, v, "bin", "kicad.exe");
           if (exists(exe)) return { kind: "exec", command: exe, args: [file], app: label };
         }
         return { kind: "missing", app: label, message: "KiCad was not found where it installs" };
@@ -118,7 +120,7 @@ export function stepLaunch(choice: string, file: string, o: FindOptions = {}): S
       if (platform === "win32") {
         const base = env.ProgramFiles ?? "C:\\Program Files";
         for (const d of newestVersion(list(base).filter((n) => /^FreeCAD/i.test(n)))) {
-          const exe = join(base, d, "bin", "FreeCAD.exe");
+          const exe = win32.join(base, d, "bin", "FreeCAD.exe");
           if (exists(exe)) return { kind: "exec", command: exe, args: [file], app: label };
         }
         return { kind: "missing", app: label, message: "FreeCAD was not found where it installs" };

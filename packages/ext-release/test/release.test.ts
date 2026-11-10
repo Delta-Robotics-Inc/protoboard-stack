@@ -22,6 +22,7 @@ import { bomLines } from "@protoboardai/core/bom";
 import { projectBom } from "../../cli/src/bom.ts";
 import { orderingCsv, orderingList, orderTotals, unitBom, type OrderLine } from "../lib/bom.ts";
 import { cutList } from "../lib/cutlist.ts";
+import { collectUnitFiles } from "../lib/collect.ts";
 import { readOffersFile, sourcingFor } from "../lib/offers.ts";
 import { blocksHtml } from "../lib/html.ts";
 import { freshness, preconditions } from "../lib/preconditions.ts";
@@ -533,6 +534,17 @@ describe("preconditions", () => {
     expect(msgs.some((m) => /body\.stl was changed after cad:export wrote it/.test(m))).toBe(true);
     expect(msgs.some((m) => /extra\.dxf is not from the last export of watch-case/.test(m))).toBe(true);
     expect(msgs.some((m) => /pnp\.csv from the last export of watch-mainboard is missing/.test(m))).toBe(true);
+  });
+
+  it("does not count the build's view sidecars beside a body GLB as export outputs, nor package them", async () => {
+    const dir = await watch();
+    for (const out of ["src/enclosures/case/out", "src/boards/mainboard/out"])
+      for (const f of ["body.view.glb", "body.view.coarse.glb", "body.view.json", "board.view.glb"]) write(dir, `${out}/${f}`, `sidecar ${f}`);
+    expect(codes(await refusals(dir))).toEqual([]);
+    const p = await loadProject(dir);
+    const files = resolveUnits(p).units.flatMap((u) => collectUnitFiles(p, u));
+    expect(files.length).toBeGreaterThan(0);
+    expect(files.filter((f) => /\.view(\.coarse)?\.(glb|json)$/.test(f.path) || /\.view(\.coarse)?\.(glb|json)$/.test(f.from ?? ""))).toEqual([]);
   });
 
   it("refuses outputs exported from another config or an earlier module", async () => {
