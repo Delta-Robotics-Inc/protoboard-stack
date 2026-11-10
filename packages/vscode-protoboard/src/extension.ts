@@ -2542,8 +2542,8 @@ class ProtoboardExtension {
    */
   /**
    * The Open Viewer command and a viewer tab's request for a view as its own
-   * tab: the library and the BOM have editors of their own in VS Code
-   * (PB-912), so those open there; every other view is a viewer tab.
+   * tab: the library has an editor of its own in VS Code (PB-912), so it
+   * opens there; every other view, the BOM included (R2-E F1), is a viewer tab.
    */
   async openViewOf(arg?: OpenViewerArg): Promise<ViewerEditor | undefined> {
     const view = typeof arg === "object" ? arg.view : undefined;

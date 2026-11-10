@@ -314,7 +314,11 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   };
   useEffect(() => bridge.onShowView(show));
   // R2-E (F1): the module the tab is on, which an in-place navigation moves (it starts where the tab was opened)
-  const [target, setTarget] = useState<{ path: string; view: string; seq: number }>(() => ({ path: bridge.startPath ?? "", view: bridge.startView, seq: 0 }));
+  // (`level`: the tab followed the viewer to a level it moved to, so the path is that level, never a part below it)
+  const [target, setTarget] = useState<{ path: string; view: string; seq: number; level?: boolean }>(() => ({ path: bridge.startPath ?? "", view: bridge.startView, seq: 0 }));
+  // where the tab is for its name and its 3D scope: a level it followed is the level shown (a module the viewer drilled
+  // into, then left again, is not a part of the level above: the tab's title went with it, CI on 2026-11-10)
+  const tabPath = target.level ? path : target.path;
   const goSeq = useRef(0);
   const goTo = useCallback(
     (to: TabLocation) => {
@@ -350,7 +354,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   // the extension titles the tab and follows the level (the Inspector, a new tab's module)
   // (a part's name as its level declares it: the diagram's own labels are capitals)
   const parts = ((c.levelDef.children ?? []) as { id: string; name?: string; moduleDefId?: string }[]).map((ch) => ({ id: ch.id, label: ch.name ?? c.defFor(ch.moduleDefId)?.name ?? ch.id }));
-  const on = tabModule(c.drill, target.path, c.vm.path[c.vm.path.length - 1]?.label ?? c.source.name, parts);
+  const on = tabModule(c.drill, tabPath, c.vm.path[c.vm.path.length - 1]?.label ?? c.source.name, parts);
   const label = on.label;
   const viewId = active?.id ?? "diagram";
   const nodes = c.drawn.nodes.length;
@@ -371,7 +375,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   // once there, a level the person moves to (a breadcrumb, a diagram drill, the 3D view's own Back) is where the tab is
   useEffect(() => {
     if (!settled) return;
-    if (path !== startPath && path !== startLevel) setTarget((t) => (t.path === path ? t : { ...t, path }));
+    if (path !== startPath && path !== startLevel) setTarget((t) => (t.path === path && t.level ? t : { ...t, path, level: true }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settled, path]);
   const loaded = !!c.source.bundle;
@@ -466,7 +470,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   };
 
   // 3D shows the module the tab is on (PB-897): the level, or the part the tab was opened on when it has no level of its own
-  const startAt = target.path ? target.path.split("/") : [];
+  const startAt = tabPath ? tabPath.split("/") : [];
   const scope = startAt.length > c.drill.length && c.drill.every((d, i) => startAt[i] === d) ? startAt : c.drill;
   // a board's 3D model is an output of its circuit tool: say how it is made where there is none (PB-946)
   // (a board: a module with nets, whether or not its drawings exist yet; and the tab is on the board itself, not on one of its parts)

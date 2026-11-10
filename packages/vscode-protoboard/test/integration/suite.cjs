@@ -159,13 +159,17 @@ exports.run = async function run() {
   await vscode.window.tabGroups.close(viewerTabs().filter((t) => t.input.uri.query.includes("view=pair")));
   await until(() => api.viewers().length === 2, 10000);
 
-  // the BOM and the full library are VS Code editors of their own: a viewer's BOM tab opens the BOM editor (PB-912)
+  // the BOM is a view of a viewer tab, under its tab bar and breadcrumbs (R2-E F1, walkthrough 3060-1; it was the BOM
+  // editor's, PB-912): a viewer's BOM tab is a viewer tab on the BOM, never the BOM editor. The BOM editor still opens
+  // from the Cloud panel and for a release's ordering list (libraryAndCloud)
   const bomTabs = () => vscode.window.tabGroups.all.flatMap((g) => g.tabs).filter((t) => t.input instanceof vscode.TabInputWebview && t.input.viewType.endsWith("protoboard.bomProject"));
   await vscode.commands.executeCommand("protoboard.openViewer", { root, path: "", view: "bom" });
-  await until(() => bomTabs().length === 1, 30000);
-  assert.equal(api.viewers().length, 2, "a viewer tab opened for the BOM");
-  step("the viewer's BOM tab opens the BOM editor");
-  await vscode.window.tabGroups.close(bomTabs());
+  const bomTab = await until(() => api.viewers().find((v) => v.target.view === "bom" && v.state && v.state.view === "bom"), 60000);
+  assert.equal(api.viewers().length, 3, "no viewer tab of its own for the BOM");
+  assert.equal(bomTabs().length, 0, "the viewer's BOM opened the BOM editor");
+  step(`the viewer's BOM is a viewer tab: "${bomTab.title}"`);
+  await vscode.window.tabGroups.close(viewerTabs().filter((t) => t.input.uri.query.includes("view=bom")));
+  await until(() => api.viewers().length === 2, 10000);
 
   // the colour themes: the token sets VS Code gives a webview, for the visual captures; the Protoboard ones carry the orange
   // settings ids, and the names the webview's body carries (data-vscode-theme-id)
