@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The Protoboard framework: loads projects, resolves parts, runs checks and builds.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

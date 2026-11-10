@@ -9,6 +9,13 @@
  * (an empty state, or a blank view). `--out` keeps a PNG of every tab, so an
  * agent can look at the board without the editor (F13).
  *
+ * The Library tab shows the account's libraries, not the model: when no
+ * library can be used from this machine (signed out, a sign-in the service
+ * no longer accepts, the service out of reach: any reason `checkAccess`
+ * refuses), the tab is still opened, but it is skipped with that reason
+ * instead of judged, so the account's state never fails a project's views.
+ * A tab that throws or logs an error still fails.
+ *
  * The levels are the root and every module with modules inside it (the
  * levels a person drills into: a board, an enclosure, an assembly);
  * `--module` picks one (an instance path, or a module id: its first
@@ -24,17 +31,19 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { ModuleDef } from "@deltarobotics/uhd";
-import { findProjectRoot, loadProject, resolveViews, uhdBundle } from "@protoboardai/core";
+import { DEFAULT_LIBRARY_ID, accessMessage, checkAccess, cloudTokenAllowed, configuredLibraries, findProjectRoot, isAuthEnvName, loadProject, tokenTransportProblem, resolveViews, uhdBundle, type Access, type ProtoboardConfig } from "@protoboardai/core";
 import { tabsFor } from "@protoboardai/views/tabs";
 
-export type TabStatus = "ok" | "empty" | "error" | "not-rendered";
+export type TabStatus = "ok" | "empty" | "error" | "skipped" | "not-rendered";
 
 export interface TabResult {
   id: string;
   title: string;
   status: TabStatus;
-  /** Why it failed, or what was seen. */
+  /** Why it failed or was skipped, or what was seen. */
   detail?: string;
+  /** Why it was skipped: the account's or the connection's state (`checkAccess`'s reason: signed-out, sign-in-invalid, unreachable…). */
+  reason?: string;
   /** Share of the view's pixels that differ from its background (0–1). */
   ink?: number;
   /** The PNG written for it (`--out`). */
@@ -68,6 +77,8 @@ export interface ViewsCheckReport {
   service?: boolean;
   /** Milliseconds for the whole check (browser start and page host included when not warm). */
   ms?: number;
+  /** Tabs opened but not judged (the Library tab while no library can be used). */
+  skipped: number;
 }
 
 /** A browser and viewer page someone else keeps warm (the render service). */
@@ -75,6 +86,12 @@ export interface ViewsCheckSession {
   browser: import("@protoboardai/core/cdp").Browser;
   /** The page host's URL (`protoboard dev`'s server). */
   url: string;
+}
+
+/** Why the Library tab cannot show the libraries from this machine: a reason and one line for a person. */
+export interface LibraryAccessProblem {
+  reason: string;
+  message: string;
 }
 
 export interface ViewsCheckOptions {
@@ -88,6 +105,52 @@ export interface ViewsCheckOptions {
   log?: (line: string) => void;
   /** Draw with this browser and page host instead of starting (and closing) new ones. */
   session?: ViewsCheckSession;
+  /** Whether the project's libraries can be used from here (default: `checkAccess` for each library's service); tests replace it. */
+  libraryAccess?: (config: ProtoboardConfig) => Promise<LibraryAccessProblem | undefined>;
+}
+
+/**
+ * The Library tab's problem, from the answers of the project's library
+ * services: none while one of them can be used now. A refusal (whatever its
+ * reason) is reported with its own line; a service accepted only from the
+ * last good answer because it cannot be reached (an account's or an open
+ * service's) reads as unreachable.
+ */
+export function libraryAccessProblem(answers: readonly Access[]): LibraryAccessProblem | undefined {
+  // an answer kept from before because the service cannot be reached now (`offlineUntil`: an account's, or an open
+  // service's) is no library to show
+  if (!answers.length || answers.some((a) => a.allowed && a.via !== "offline" && !a.offlineUntil)) return undefined;
+  const refused = answers.find((a) => !a.allowed);
+  if (refused) return { reason: refused.reason ?? "refused", message: (refused.message ?? accessMessage(refused)).split("\n")[0]! };
+  return { reason: "unreachable", message: accessMessage({ reason: "unreachable", service: answers[0]!.service }) };
+}
+
+/** Whether the project's libraries can be used from here: each library's service asked once, as a cloud command asks it. */
+async function projectLibraryAccess(config: ProtoboardConfig): Promise<LibraryAccessProblem | undefined> {
+  let libs: ReturnType<typeof configuredLibraries>;
+  try {
+    libs = configuredLibraries(config);
+  } catch {
+    // a libraries list that cannot be read is `protoboard check`'s finding, not the account's
+    return undefined;
+  }
+  // a library the client sends a token from the environment to stands for an account: the tab is judged
+  if (libs.some((l) => environmentTokenSent(l))) return undefined;
+  // PROTOBOARD_CLOUD_TOKEN reaches none of these libraries (see above): what counts is the account's sign-in
+  const { PROTOBOARD_CLOUD_TOKEN: _unsent, ...env } = process.env;
+  return libraryAccessProblem(await Promise.all([...new Set(libs.map((l) => l.url))].map((u) => checkAccess(u, { env }))));
+}
+
+/**
+ * Whether the library client (`connectLibrary`) sends this library a token
+ * from the environment, by its rules: its `authEnv` token, or the service
+ * token (PROTOBOARD_CLOUD_TOKEN) to the Protoboard library at an origin
+ * allowed to receive it; never over plain http to another machine.
+ */
+export function environmentTokenSent(l: { id: string; url: string; authEnv?: string }, env: NodeJS.ProcessEnv = process.env): boolean {
+  if (tokenTransportProblem(l.url)) return false;
+  if (isAuthEnvName(l.authEnv) && env[l.authEnv]) return true;
+  return l.id === DEFAULT_LIBRARY_ID && !!env.PROTOBOARD_CLOUD_TOKEN && cloudTokenAllowed(l.url, env);
 }
 
 /** DEFAULT (PB-1030): the CSS size each tab is opened at (a laptop's viewer). */
@@ -106,6 +169,8 @@ const MIN_INK = 0.002;
 /** DEFAULT (PB-1030): seconds a tab may take to draw (a board's GLB in a software renderer takes a while). */
 const DEFAULT_TIMEOUT_S = 45;
 
+/** The page's errors that are the view's: not a missing favicon, an aborted load or the reload channel. */
+const pageErrors = (errors: string[]) => errors.filter((e) => !/favicon|ERR_ABORTED|EventSource/i.test(e));
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const slug = (s: string) => s.replace(/[^A-Za-z0-9_.-]+/g, "_") || "root";
 
@@ -192,7 +257,7 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
     name: def.name ?? def.id,
     tabs: tabsFor(bundle.definitions.find((d) => d.id === def.id) ?? def, bundle, path, views).map((v) => ({ id: v.id, title: v.title, status: "not-rendered" as TabStatus })),
   }));
-  const report: ViewsCheckReport = { root, levels: result, rendered: false, failed: 0 };
+  const report: ViewsCheckReport = { root, levels: result, rendered: false, failed: 0, skipped: 0 };
   if (options.render === false) return { ...report, reason: "not rendered (--no-render)" };
 
   const { launchBrowser } = await import("@protoboardai/core/cdp");
@@ -211,6 +276,9 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
   const out = options.out ? resolve(options.cwd, options.out) : undefined;
   if (out) mkdirSync(out, { recursive: true });
   const timeout = (options.timeout ?? DEFAULT_TIMEOUT_S) * 1000;
+  // asked once, when a Library tab comes up
+  let libraryAccess: Promise<LibraryAccessProblem | undefined> | undefined;
+  const libraryProblem = () => (libraryAccess ??= (options.libraryAccess ?? projectLibraryAccess)(p.config).catch(() => undefined));
   try {
     await browser.setViewport(W, H);
     for (const level of result) {
@@ -267,7 +335,7 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
           } else if (waited > 4000 || (still >= 4 && waited > 2000)) break;
         }
         await sleep(600);
-        const errors = browser.takeErrors().filter((e) => !/favicon|ERR_ABORTED|EventSource/i.test(e));
+        const errors = pageErrors(browser.takeErrors());
         tab.ink = Math.round(ink * 10000) / 10000;
         if (errors.length) {
           tab.status = "error";
@@ -285,6 +353,19 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
           tab.status = "ok";
           tab.detail = `no drawing or table; shows "${(panel.text ?? "").split("\n")[0]}"`;
         } else tab.status = "ok";
+        // the Library tab without a usable library: what it shows is the account's state, not the project's
+        const asked = tab.id === "library" && !errors.length;
+        const access = asked ? await libraryProblem() : undefined;
+        // asking the service can take its timeout: what the page threw meanwhile still fails the tab, usable library or not
+        const late = asked ? pageErrors(browser.takeErrors()) : [];
+        if (late.length) {
+          tab.status = "error";
+          tab.detail = late[0]!.split("\n")[0]!.slice(0, 300);
+        } else if (access) {
+          tab.status = "skipped";
+          tab.reason = access.reason;
+          tab.detail = access.message;
+        }
         if (out) {
           const file = join(out, `${slug(level.path)}__${tab.id}.png`);
           writeFileSync(file, await browser.screenshot());
@@ -301,20 +382,24 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
     }
   }
   const failed = result.reduce((n, l) => n + l.tabs.filter((t) => t.status === "empty" || t.status === "error").length, 0);
-  return { ...report, rendered: true, failed, ms: Date.now() - started };
+  const skipped = result.reduce((n, l) => n + l.tabs.filter((t) => t.status === "skipped").length, 0);
+  return { ...report, rendered: true, failed, skipped, ms: Date.now() - started };
 }
+
+const MARK: Record<TabStatus, string> = { ok: "✓", "not-rendered": "·", skipped: "–", empty: "✗", error: "✗" };
 
 /** The report for people. */
 export function formatViewsCheck(r: ViewsCheckReport): string {
   const lines: string[] = [];
   for (const l of r.levels) {
     lines.push(`${l.path || "(root)"}  ${l.module}`);
-    for (const t of l.tabs) lines.push(`  ${t.status === "ok" ? "✓" : t.status === "not-rendered" ? "·" : "✗"} ${t.title.padEnd(10)} ${t.status === "ok" || t.status === "not-rendered" ? "" : t.status}${t.detail ? `${t.status === "ok" ? "" : ": "}${t.detail}` : ""}${t.ms !== undefined ? `  ${(t.ms / 1000).toFixed(1)} s` : ""}${t.shot ? `  ${t.shot}` : ""}`.trimEnd());
+    for (const t of l.tabs) lines.push(`  ${MARK[t.status]} ${t.title.padEnd(10)} ${t.status === "ok" || t.status === "not-rendered" ? "" : t.status === "skipped" && t.reason ? `skipped (${t.reason})` : t.status}${t.detail ? `${t.status === "ok" ? "" : ": "}${t.detail}` : ""}${t.ms !== undefined ? `  ${(t.ms / 1000).toFixed(1)} s` : ""}${t.shot ? `  ${t.shot}` : ""}`.trimEnd());
     if (l.mismatch) lines.push(`  ! the viewer's tabs differ from the rules: ${l.mismatch}`);
   }
   const tabs = r.levels.reduce((n, l) => n + l.tabs.length, 0);
   lines.push("");
-  lines.push(r.rendered ? `${tabs} tab(s) on ${r.levels.length} level(s): ${r.failed ? `${r.failed} failed` : "every one draws"}` : `${tabs} tab(s) on ${r.levels.length} level(s), not rendered: ${r.reason}`);
+  const skipped = r.skipped ? `, ${r.skipped} skipped` : "";
+  lines.push(r.rendered ? `${tabs} tab(s) on ${r.levels.length} level(s): ${r.failed ? `${r.failed} failed` : r.skipped ? "every other one draws" : "every one draws"}${skipped}` : `${tabs} tab(s) on ${r.levels.length} level(s), not rendered: ${r.reason}`);
   if (r.rendered && r.backend) lines.push(`Drawn on ${r.backend.kind === "gpu" ? "the GPU" : "SwiftShader (CPU)"}${r.backend.renderer ? ` (${r.backend.renderer})` : ""}${r.service ? ", in the warm render service" : ""}${r.ms !== undefined ? `, ${(r.ms / 1000).toFixed(1)} s` : ""}${r.backend.fallback ? `; GPU not used: ${r.backend.fallback}` : ""}`);
   return lines.join("\n");
 }

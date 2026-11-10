@@ -27,6 +27,11 @@
  *       development build. The npm packages
  *       carry it, and so does the extension's stack (build-stack.ts takes
  *       it in place of its own stamp, scripts/build-version.mjs).
+ *   node .github/scripts/release.mjs vsce
+ *       The version of @vscode/vsce in the extension's own lockfile
+ *       (packages/vscode-protoboard/package-lock.json): the one
+ *       scripts/package.mjs packages with, and the one the workflow
+ *       publishes with. Fails when the lockfile does not pin it.
  *
  * The published packages are the root package.json's workspaces under
  * packages/ whose name starts with @protoboardai/. The VS Code extension
@@ -154,6 +159,18 @@ function stamp() {
   return `packages/cli/build-info.json: ${v} from ${commit ?? "an unknown commit"}, ${release ? "a release" : "a development build (not a release tag)"}`;
 }
 
+/** The @vscode/vsce the extension's lockfile installs (`npm ci` in packages/vscode-protoboard). */
+function vsce() {
+  const lock = `${EXTENSION}/package-lock.json`;
+  if (!existsSync(join(ROOT, lock))) fail(`${lock} is missing: the extension has its own lockfile`);
+  const { packages = {} } = readJson(lock);
+  const wanted = packages[""]?.devDependencies?.["@vscode/vsce"];
+  const v = packages["node_modules/@vscode/vsce"]?.version;
+  if (!wanted) fail(`${EXTENSION}/package.json does not list @vscode/vsce in its devDependencies (as ${lock} records them)`);
+  if (!v) fail(`${lock} does not pin @vscode/vsce: run npm install in ${EXTENSION} and commit the lockfile`);
+  return v;
+}
+
 const [cmd, value] = process.argv.slice(2);
 switch (cmd) {
   case "version":
@@ -172,6 +189,9 @@ switch (cmd) {
   case "stamp":
     console.log(stamp());
     break;
+  case "vsce":
+    console.log(vsce());
+    break;
   default:
-    fail("usage: release.mjs version [--tag v<version>] | packages [--repository <owner/name>] | notes <version> | dist-tag <version> | stamp");
+    fail("usage: release.mjs version [--tag v<version>] | packages [--repository <owner/name>] | notes <version> | dist-tag <version> | stamp | vsce");
 }

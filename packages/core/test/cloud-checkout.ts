@@ -19,6 +19,7 @@ export function cloudCheckout(env: NodeJS.ProcessEnv = process.env): string | un
 /** The test files that start the parts service from that checkout. */
 export const SERVICE_TESTS = [
   "packages/cli/test/mcp.test.ts",
+  "packages/cli/test/sign-in-emulator.test.ts",
   "packages/core/test/libraries.test.ts",
   "packages/core/test/library-sort.test.ts",
   "packages/core/test/parts.test.ts",

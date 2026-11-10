@@ -49,7 +49,14 @@ const npm = (args, cwd) => {
 /** A package's command-line program, as the JavaScript file its bin names (run with this Node: no .cmd shim). */
 const binOf = (from, name, bin = name.split("/").pop()) => {
   const req = createRequire(join(from, "package.json"));
-  const manifest = req.resolve(`${name}/package.json`);
+  let manifest;
+  try {
+    manifest = req.resolve(`${name}/package.json`);
+  } catch {
+    // the extension is not in the root workspace: its devDependencies (vsce among them) come from its own lockfile
+    const where = from === here ? "packages/vscode-protoboard (it has its own package-lock.json, apart from the root's)" : "the repository root";
+    throw new Error(`${name} is not installed: run npm ci in ${where}`);
+  }
   const b = JSON.parse(readFileSync(manifest, "utf8")).bin;
   return join(dirname(manifest), typeof b === "string" ? b : b[bin]);
 };

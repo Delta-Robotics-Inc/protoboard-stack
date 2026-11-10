@@ -33,6 +33,8 @@ export interface WhoAmI {
   access?: WhoAmIAccess;
   /** With --check: the service did not answer at all (the request and what failed). */
   unreachable?: string;
+  /** With --check: the service answered, but could not check the sign-in right now. */
+  checkUnavailable?: boolean;
 }
 
 /** `Access` in @protoboardai/core (access.ts), as the CLI prints it. */
@@ -41,7 +43,7 @@ export interface WhoAmIAccess {
   required?: boolean;
   allowed: boolean;
   via?: string;
-  reason?: "signed-out" | "sign-in-invalid" | "not-invited" | "email-unverified" | "unreachable";
+  reason?: "signed-out" | "sign-in-invalid" | "not-invited" | "email-unverified" | "unreachable" | "check-unavailable";
   message?: string;
   email?: string;
   offlineUntil?: string;
@@ -68,7 +70,7 @@ export type AccountState = (
 export interface Lock {
   locked: boolean;
   /** `checking`: not asked yet. `unknown`: the CLI could not say. The rest are the CLI's reasons. */
-  reason: "ok" | "checking" | "unknown" | "signed-out" | "sign-in-invalid" | "not-invited" | "email-unverified" | "unreachable";
+  reason: "ok" | "checking" | "unknown" | "signed-out" | "sign-in-invalid" | "not-invited" | "email-unverified" | "unreachable" | "check-unavailable";
   /** One sentence for the Library's sign-in card and a cloud command's prompt. */
   message: string;
 }
@@ -156,6 +158,7 @@ const LOCK_MESSAGES: Record<Exclude<Lock["reason"], "ok" | "checking" | "unknown
   "not-invited": (a) => `${emailOf(a) ?? "This account"} is not invited to the Protoboard library yet. Ask for an invitation or use another account.`,
   "email-unverified": (a) => `Verify ${emailOf(a) ?? "this account's e-mail address"} to use the Protoboard library: the sign-in page sends the e-mail.`,
   unreachable: () => "The Protoboard library could not be reached. Projects work offline.",
+  "check-unavailable": () => "The Protoboard service can't check sign-ins right now. Try again later.",
 };
 
 /**
@@ -186,7 +189,9 @@ export function accountFromWhoAmI(r: CliResult): AccountState {
   // before 0.2.0 that gated everything and refused this machine is still read as signed out.)
   if (!w.signedIn && w.unreachable && !(w.access?.required === true && !w.access.allowed)) return { state: "unreachable", service: w.service, problem: w.unreachable, ...access };
   if (!w.signedIn) return { state: "signed-out", service: w.service, ...access };
-  if (w.valid === false) return { state: "expired", service: w.service, ...(w.email ? { email: w.email } : {}), problem: w.problem ?? "the service does not accept the sign-in", ...access };
+  // the service could not check the sign-in (its problem): still signed in here, and nobody is told to sign in again
+  const unchecked = w.access?.reason === "check-unavailable" || w.checkUnavailable === true;
+  if (w.valid === false && !unchecked) return { state: "expired", service: w.service, ...(w.email ? { email: w.email } : {}), problem: w.problem ?? "the service does not accept the sign-in", ...access };
   return { state: "signed-in", service: w.service, ...(w.email ? { email: w.email } : {}), ...(w.uid ? { uid: w.uid } : {}), ...(w.publisher !== undefined ? { publisher: w.publisher } : {}), ...(w.store ? { store: w.store } : {}), ...access };
 }
 

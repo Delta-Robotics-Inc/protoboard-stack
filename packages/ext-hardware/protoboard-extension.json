@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-hardware",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "General hardware engineering: system composition and review, harnesses and fastener stack-ups, test and measurement, BOM export, evidence coverage. Releases are @protoboardai/ext-release.",
   "compatibility": {
     "protoboard": "^0.2.0",

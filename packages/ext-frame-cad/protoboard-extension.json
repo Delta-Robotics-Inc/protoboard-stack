@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-frame-cad",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Custom structure and hardware CAD: plates generated from a module's UHD bolt patterns and frames, and nominal fastener bodies from their sizes, both as a provider of the cad capability (build123d), with STEP/GLB/DXF exports, feature manifests, frame and staleness checks and explicit re-binding.",
   "compatibility": {
     "protoboard": "^0.2.0",

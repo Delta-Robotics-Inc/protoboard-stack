@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-frame-cad",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Protoboard extension: frames and mounting plates generated from your design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

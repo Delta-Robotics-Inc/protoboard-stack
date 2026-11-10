@@ -250,6 +250,19 @@ describe("signed in", () => {
     rmSync(join(PROJECT, ".protoboard"), { recursive: true, force: true });
   });
 
+  it("a service that cannot check sign-ins says try again later, never sign in again, and keeps the sign-in", async () => {
+    const m = machine("check-unavailable");
+    m.signIn();
+    state.me = { signedIn: false, auth: "firebase", reason: "check-unavailable" };
+    const r = await pb(["parts", "search", "esp32"], m.env);
+    const who = await pb(["whoami", "--check", "--format", "json"], m.env);
+    state.me = { signedIn: true, allowed: true };
+    expect(r.code).toBe(4);
+    expect(r.stderr).toBe("protoboard: The Protoboard service can't check sign-ins right now. Try again later.\n");
+    expect(JSON.parse(who.stdout)).toMatchObject({ signedIn: true, checkUnavailable: true, access: { allowed: false, reason: "check-unavailable" } });
+    expect(existsSync(join(m.config, "credentials.json"))).toBe(true);
+  });
+
   it("a service that cannot be reached is not a refusal: the command says what it could not reach", async () => {
     const m = machine("offline");
     const r = await pb(["parts", "add", "acme-widget", "--url", "http://127.0.0.1:9"], m.env);

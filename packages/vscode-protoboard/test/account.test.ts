@@ -75,6 +75,13 @@ describe("the cloud's lock (PB-928): when the library needs a sign-in", () => {
     for (const via of ["offline", "recent", "open-service", "service-token"]) expect(lockOf(whoami({ signedIn: via !== "open-service", access: { allowed: true, via } })).locked).toBe(false);
   });
 
+  it("a service that cannot check sign-ins: try again later, still signed in here, never sign in again", () => {
+    const a = whoami({ signedIn: true, email: "ada@example.com", valid: false, checkUnavailable: true, problem: "x", access: { allowed: false, reason: "check-unavailable", email: "ada@example.com" } }, 1);
+    expect(a.state).toBe("signed-in");
+    expect(accountItem(a).text).not.toMatch(/sign in/i);
+    expect(lockOf(a)).toEqual({ locked: true, reason: "check-unavailable", message: "The Protoboard service can't check sign-ins right now. Try again later." });
+  });
+
   it("no message of the lock says Protoboard itself needs an account", () => {
     for (const reason of ["signed-out", "sign-in-invalid", "not-invited", "email-unverified", "unreachable"]) {
       const m = lockOf(whoami({ signedIn: reason !== "signed-out", email: "ada@example.com", access: { allowed: false, reason } }, 1)).message;

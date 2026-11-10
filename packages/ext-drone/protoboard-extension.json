@@ -1,7 +1,7 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-drone",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Multirotor domain pack: flight-controller configuration (Betaflight) generated from the UHD model.",
   "compatibility": {
     "protoboard": "^0.2.0",

@@ -286,7 +286,7 @@ export class PartsClient {
   }
 
   /**
-   * Parts whose recommended revision matches; every word of `q` must match;
+   * Parts whose recommended revision matches; any word of `q` matches, parts matching more words first;
    * `taxonomy` (or `category`) takes the subtree. Pass the result's
    * `nextCursor` as `cursor` for the next page; `facets` adds counts over
    * every match. `sort` orders the results on a library that declares the

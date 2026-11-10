@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/web-viewer",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The Protoboard viewer, for the browser and VS Code.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

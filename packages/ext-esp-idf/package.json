@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-esp-idf",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Protoboard extension: ESP-IDF firmware configuration for ESP32-C3 boards.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

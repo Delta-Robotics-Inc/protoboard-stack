@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-parts",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Protoboard extension: research, author and verify the parts in your project.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

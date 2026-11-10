@@ -132,7 +132,18 @@ describe("local work is never covered, disabled or held back", () => {
     const signIn = Object.values(pkg.contributes.menus)
       .flat()
       .filter((m) => m.command === "protoboard.signIn" && m.group?.startsWith("navigation"));
-    expect(signIn.map((m) => m.when)).toEqual(["view == protoboard.library && protoboard.cloudLocked && protoboard.access != 'checking'"]);
+    // not while the card answers with Check Again (the sign-in is kept): a check that cannot run, an unreachable service
+    expect(signIn.map((m) => m.when)).toEqual([
+      "view == protoboard.library && protoboard.cloudLocked && protoboard.access != 'checking' && protoboard.access != 'check-unavailable' && protoboard.access != 'unreachable' && protoboard.access != 'unknown'",
+    ]);
+  });
+
+  it("Sign In with a Code is in the palette only while signed out, like Sign In", () => {
+    const palette = pkg.contributes.menus.commandPalette.filter((m) => m.command === "protoboard.signIn" || m.command === "protoboard.signInDevice");
+    expect(palette.map((m) => [m.command, m.when])).toEqual([
+      ["protoboard.signIn", "!protoboard.signedIn"],
+      ["protoboard.signInDevice", "!protoboard.signedIn"],
+    ]);
   });
 
   it("Project Parts lists the project's own parts with no word about a sign-in", () => {

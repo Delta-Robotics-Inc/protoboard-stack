@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-sourcing",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Protoboard extension: find parts, extract datasheet facts and compare suppliers.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",

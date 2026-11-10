@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-release",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Protoboard extension: the manufacturing package, from BOM and ordering list to assembly guide and test plan.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
