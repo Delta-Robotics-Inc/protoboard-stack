@@ -708,19 +708,20 @@ class ProtoboardExtension {
    */
   private async adoptExample(dir: string, open: boolean) {
     this.trust.set(dir, true);
-    if (this.carried) await this.prepareStack();
-    const cli = this.cliAt(dir) ?? this.cliOutside();
-    if (canRun(cli)) {
-      try {
+    // setting it up is best effort: a stack that cannot be prepared, or a link that fails, still leaves a copy to open
+    try {
+      if (this.carried) await this.prepareStack();
+      const cli = this.cliAt(dir) ?? this.cliOutside();
+      if (canRun(cli)) {
         const r = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Protoboard: setting up ${basename(dir)}` }, () =>
           runCli(cli, ["stack", "link", "--format", "json"], { cwd: dir, onStderr: (l) => this.log.info(`[setup ${basename(dir)}] ${l}`) }),
         );
         const out = parseJsonOutput<{ linked: string[]; version: string; stack: string }>(r, "protoboard stack link");
         this.log.info(`${basename(dir)}: set up. ${out.linked.length} package(s) link to the Protoboard stack ${out.version} at ${out.stack}`);
-      } catch (e) {
-        // the window it opens in offers Initialize, which says what is missing
-        this.log.warn(`${basename(dir)} was copied but not set up: ${(e as Error).message}`);
       }
+    } catch (e) {
+      // the window it opens in offers Initialize, which says what is missing
+      this.log.warn(`${basename(dir)} was copied but not set up: ${(e as Error).message}`);
     }
     if (!open) return;
     if (folderHolding(dir, (vscode.workspace.workspaceFolders ?? []).filter((f) => f.uri.scheme === "file").map((f) => f.uri.fsPath))) return void this.refreshRoots();

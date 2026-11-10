@@ -259,10 +259,14 @@ describe("the example the extension carries", () => {
 
   it("opens with no account and no npm: trusted because the user asked for it, linked to the installed stack, then opened", () => {
     const ext = src("src/extension.ts");
-    const adopt = ext.slice(ext.indexOf("private async adoptExample("), ext.indexOf("private async adoptExample(") + 1600);
+    const adopt = ext.slice(ext.indexOf("private async adoptExample("), ext.indexOf("private async adoptExample(") + 2000);
     expect(adopt).toContain("this.trust.set(dir, true);");
     expect(adopt).toContain('["stack", "link", "--format", "json"]');
     expect(adopt).not.toMatch(/npm|signedInForParts|parts", "add/);
+    // a stack that cannot be prepared does not strand the copy: the set-up is inside the try, the opening after it
+    expect(adopt.indexOf("try {")).toBeLessThan(adopt.indexOf("await this.prepareStack();"));
+    expect(adopt.indexOf("} catch (e) {")).toBeLessThan(adopt.indexOf("await this.offerToOpen(dir, true);"));
+    expect(adopt.indexOf("await this.prepareStack();")).toBeLessThan(adopt.indexOf("} catch (e) {"));
     expect(pkg.contributes.commands.find((c: { command: string }) => c.command === "protoboard.openExample")).toMatchObject({ title: "Open the Quadcopter Example…", category: "Protoboard" });
   });
 });
