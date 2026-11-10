@@ -65,7 +65,7 @@ vi.mock("vscode", () => {
 });
 const commands: Record<string, () => void> = {};
 
-const { TRUST_ACTION, TRUST_COMMAND, activateRestricted, contributedCommands } = await import("../src/restricted.js");
+const { TRUST_ACTION, TRUST_COMMAND, UNLISTED_COMMANDS, activateRestricted, contributedCommands } = await import("../src/restricted.js");
 const src = (f: string) => readFileSync(fileURLToPath(new URL(`../${f}`, import.meta.url)), "utf8");
 const pkg = JSON.parse(src("package.json"));
 const context = () => ({ extension: { packageJSON: pkg }, subscriptions: [] as { dispose(): void }[] });
@@ -109,7 +109,10 @@ describe("in a folder that is not trusted", () => {
     const all = contributedCommands(pkg);
     expect(all.length).toBeGreaterThan(40);
     const handle = activateRestricted(context() as never, VIEWS, () => undefined);
-    expect([...registered].sort()).toEqual([...all].sort());
+    // and the id an earlier version's keybindings still call, which the manifest no longer lists
+    expect(UNLISTED_COMMANDS).toEqual(["protoboard.init"]);
+    expect(src("src/extension.ts")).toContain('cmd("protoboard.init", ');
+    expect([...registered].sort()).toEqual([...all, ...UNLISTED_COMMANDS].sort());
     expect([...trees].sort()).toEqual([...VIEWS].sort());
     commands["protoboard.check"]!();
     commands["protoboard.newProject"]!();

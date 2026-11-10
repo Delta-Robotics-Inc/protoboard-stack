@@ -668,7 +668,6 @@ class ProtoboardExtension {
     this.terminalCommand();
     // agents (PB-930): an updated extension is recorded for the launcher, in a window with a project or without
     void this.settings.refreshLauncher();
-    void this.start();
     // the carried stack is unpacked at the first start, with its progress shown, so the terminal's command is there
     // (and the launcher an agent starts is recorded again once it is: an update moved the CLI, PB-930)
     if (this.carried)
@@ -676,9 +675,15 @@ class ProtoboardExtension {
         .then(() => this.settings.refreshLauncher())
         .catch((e: Error) => this.stackFailed(e));
     // the first start after an install opens Get Started, once: that is this window's one unasked notice
-    void this.getStarted.auto().then((r) => {
-      if (r === "opened") this.noticed = true;
-    });
+    // It is settled before the window's projects are looked for: what that finds gives its own notices (New Project,
+    // the themes), and they must find the page already counted
+    void this.getStarted
+      .auto()
+      .then((r) => {
+        if (r === "opened") this.noticed = true;
+      })
+      .catch((e: Error) => this.log.warn(`Get Started: ${e.message}`))
+      .then(() => this.start());
   }
 
   /**

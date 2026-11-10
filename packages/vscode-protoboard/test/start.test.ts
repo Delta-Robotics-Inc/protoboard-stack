@@ -86,7 +86,7 @@ describe("opening by itself", () => {
   });
   it("is wired to the first activation, replaces the install notice, and stands in for the theme and agent offers", () => {
     const ext = src("src/extension.ts");
-    expect(ext).toMatch(/void this\.getStarted\.auto\(\)\.then\(\(r\) => \{\s*if \(r === "opened"\) this\.noticed = true;/);
+    expect(ext).toMatch(/void this\.getStarted\s*\.auto\(\)\s*\.then\(\(r\) => \{\s*if \(r === "opened"\) this\.noticed = true;/);
     // the notice of a first unpack is not also shown when the page is
     expect(ext).toMatch(/if \(this\.getStarted\.shown\) return;\s*const path = "Add to PATH";/);
     const start = src("src/start.ts");
@@ -291,6 +291,13 @@ describe("two copies to the same folder at once", () => {
     expect(done.map((d) => d.status).sort()).toEqual(["fulfilled", "rejected"]);
     expect(String((done.find((d) => d.status === "rejected") as PromiseRejectedResult).reason)).toMatch(/exists already/);
     expect(existsSync(join(to, "protoboard.config.ts"))).toBe(true);
+  });
+});
+
+describe("the first start's one notice", () => {
+  it("is settled before the window's projects are looked for, whose notices would otherwise race it", () => {
+    expect(src("src/extension.ts")).toMatch(/void this\.getStarted\s*\.auto\(\)\s*\.then\(\(r\) => \{\s*if \(r === "opened"\) this\.noticed = true;\s*\}\)\s*\.catch\([^\n]*\)\s*\.then\(\(\) => this\.start\(\)\);/);
+    expect(src("src/extension.ts").match(/this\.start\(\)/g)).toHaveLength(1);
   });
 });
 

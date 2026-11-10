@@ -22,6 +22,9 @@ import { RESTRICTED_LINE } from "./startPage.js";
 export const TRUST_COMMAND = "workbench.trust.manage";
 export const TRUST_ACTION = "Trust This Folder";
 
+/** Commands the extension registers that the manifest does not list: ids kept for keybindings and callers of an earlier version. */
+export const UNLISTED_COMMANDS = ["protoboard.init"] as const;
+
 /** The ids of the commands the manifest contributes. */
 export function contributedCommands(manifest: { contributes?: { commands?: { command: string }[] } }): string[] {
   return (manifest.contributes?.commands ?? []).map((c) => c.command);
@@ -43,7 +46,7 @@ export function activateRestricted(context: vscode.ExtensionContext, views: read
   const subs: vscode.Disposable[] = [
     // what runs no code and reads nothing of the folder stays as it is (`safe`: the links to the documentation)
     ...safe.register(),
-    ...contributedCommands(context.extension.packageJSON as { contributes?: { commands?: { command: string }[] } })
+    ...[...contributedCommands(context.extension.packageJSON as { contributes?: { commands?: { command: string }[] } }), ...UNLISTED_COMMANDS]
       .filter((id) => !safe.commands.includes(id))
       .map((id) => vscode.commands.registerCommand(id, say)),
     ...views.map((id) => vscode.window.registerTreeDataProvider(id, { getChildren: () => [], getTreeItem: (x: vscode.TreeItem) => x })),
