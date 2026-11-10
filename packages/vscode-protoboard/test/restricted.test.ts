@@ -91,8 +91,11 @@ describe("in a folder that is not trusted", () => {
 
   it("nothing of Protoboard is started: the extension itself is made only in a trusted window, or when trust is given", () => {
     const ext = src("src/extension.ts");
-    expect(ext).toMatch(/if \(vscode\.workspace\.isTrusted\) instance = new ProtoboardExtension\(context\);\s*else activateRestricted\(context, START_VIEWS, \(\) => \(instance = new ProtoboardExtension\(context\)\)/);
-    expect(ext.match(/new ProtoboardExtension\(/g)).toHaveLength(2);
+    expect(ext).toMatch(/if \(vscode\.workspace\.isTrusted\) begin\(\);\s*else activateRestricted\(context, START_VIEWS, begin, /);
+    // the extension and the CAD viewer (it draws a file of the folder in a page with scripts) are made in one place only
+    expect(ext.match(/new ProtoboardExtension\(/g)).toHaveLength(1);
+    expect(ext.match(/CadEditorProvider\.register\(/g)).toHaveLength(1);
+    expect(ext).toMatch(/const begin = \(\) => \{[^}]*cad = CadEditorProvider\.register\(context\);\s*instance = new ProtoboardExtension\(context\);\s*\};/);
     // what stands in for it can reach no CLI, dev server or project file: it imports none of that
     const imports = [...src("src/restricted.ts").matchAll(/^import .* from "([^"]+)";$/gm)].map((m) => m[1]);
     expect(imports.sort()).toEqual(["./startPage.js", "node:fs", "node:path", "vscode"]);

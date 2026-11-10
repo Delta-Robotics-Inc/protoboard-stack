@@ -833,7 +833,7 @@ folder that holds a `protoboard.config.ts` is told once, unasked. Nothing
 else starts: no CLI, no dev server, no check, no stack unpacked, no account
 asked; the links to the documentation are the one thing left as they are.
 When the folder is trusted the extension starts as in any trusted window,
-with no reload, and VS Code's trust page, which stays open over the window,
+with no reload (the CAD viewer of STEP and GLB files with it), and VS Code's trust page, which stays open over the window,
 is closed.
 
 ## Protoboard settings and agents

@@ -40,7 +40,8 @@ export interface StartHost {
   agents(): AgentState[];
   /** The `protoboard` command is on the user's PATH already. */
   onPath(): boolean;
-  hasProject(): boolean;
+  /** The folders of the projects found in this window. */
+  projects(): string[];
   /** A project copied from the carried example: it is the user's, so it is trusted, set up (no npm) and opened. */
   adopt(dir: string, open: boolean): Promise<void>;
 }
@@ -109,10 +110,10 @@ export class StartController implements vscode.Disposable {
     return { carried: hasExample(this.context.extensionPath), title: EXAMPLE.title, text: EXAMPLE.text };
   }
 
-  /** This window is on a copy of the example. */
-  private inExample(): boolean {
+  /** The projects of this window that are not copies of the example: a copy is not a project of the person's own. */
+  private ownProjects(): string[] {
     const copies = this.context.globalState.get<string[]>(EXAMPLE_COPIES_KEY) ?? [];
-    return (vscode.workspace.workspaceFolders ?? []).some((f) => copies.includes(f.uri.fsPath));
+    return this.host.projects().filter((root) => !copies.includes(root));
   }
 
   model(): StartModel {
@@ -127,7 +128,7 @@ export class StartController implements vscode.Disposable {
       },
       example: this.exampleModel(),
       theme: { choices: this.themeChoices(), current: this.currentTheme(), ...(this.context.globalState.get<string>(THEME_BEFORE_KEY) ? { previous: this.context.globalState.get<string>(THEME_BEFORE_KEY)! } : {}) },
-      hasProject: this.host.hasProject() && !this.inExample(),
+      hasProject: this.ownProjects().length > 0,
     };
     return { ...base, steps: startSteps({ ...base, exampleOpened: !!this.context.globalState.get(EXAMPLE_OPENED_KEY) }) };
   }

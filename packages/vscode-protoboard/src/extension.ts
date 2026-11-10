@@ -141,14 +141,18 @@ export function activate(context: vscode.ExtensionContext) {
   try {
     tightenUserFolders();
   } catch {}
-  // the CAD viewer first: a STEP or GLB opened before any project is found still has its editor
-  cad = CadEditorProvider.register(context);
   // the extension runs in every window (`onStartupFinished`), so that a project made in it later is noticed
   // (PB-931); what a project needs (its views gathered, the Inspector in front) starts when there is one
   // Restricted Mode (restricted.ts): nothing of Protoboard runs in a folder VS Code does not trust; its views say so,
   // and it starts here, with no reload, when the folder is trusted
-  if (vscode.workspace.isTrusted) instance = new ProtoboardExtension(context);
-  else activateRestricted(context, START_VIEWS, () => (instance = new ProtoboardExtension(context)), { commands: helpCommands(), register: registerHelp });
+  const begin = () => {
+    // the CAD viewer first: a STEP or GLB opened before any project is found still has its editor. It reads a file of
+    // the folder into a page with scripts, so it too waits for a trusted folder
+    cad = CadEditorProvider.register(context);
+    instance = new ProtoboardExtension(context);
+  };
+  if (vscode.workspace.isTrusted) begin();
+  else activateRestricted(context, START_VIEWS, begin, { commands: helpCommands(), register: registerHelp });
   // what the integration test reads; nothing else uses it
   return {
     projects: () => instance!.roots(),
@@ -513,7 +517,7 @@ class ProtoboardExtension {
       account: () => ({ signedIn: this.accountState.state === "signed-in", ...(this.accountState.state === "signed-in" && this.accountState.email ? { email: this.accountState.email } : {}) }),
       agents: () => this.settings.look(),
       onPath: () => pathPlan(join(this.home, "bin")).kind === "already",
-      hasProject: () => this.rootList.length > 0,
+      projects: () => [...this.rootList],
       adopt: (dir, open) => this.adoptExample(dir, open),
     });
     context.subscriptions.push(

@@ -66,7 +66,10 @@ describe("the steps of Get Started", () => {
 describe("the example and a project of one's own", () => {
   it("are told apart: a window on a copy of the example has not started a project", () => {
     const start = src("src/start.ts");
-    expect(start).toContain("hasProject: this.host.hasProject() && !this.inExample()");
+    expect(start).toContain("hasProject: this.ownProjects().length > 0");
+    // by the projects found, not by the window's folders: a copy made inside an open folder is still the example
+    expect(start).toContain("return this.host.projects().filter((root) => !copies.includes(root));");
+    expect(src("src/extension.ts")).toContain("projects: () => [...this.rootList],");
     expect(start).toMatch(/update\(EXAMPLE_COPIES_KEY, \[\.\.\.\(this\.context\.globalState\.get<string\[\]>\(EXAMPLE_COPIES_KEY\) \?\? \[\]\), copied\.dir\]/);
   });
 });
