@@ -284,6 +284,16 @@ describe("the example the extension carries", () => {
   });
 });
 
+describe("two copies to the same folder at once", () => {
+  it("one has it, the other is told it exists, and the folder of the first is not touched", async () => {
+    const to = join(TMP, "raced");
+    const done = await Promise.allSettled([copyExample(QUAD, to), copyExample(QUAD, to)]);
+    expect(done.map((d) => d.status).sort()).toEqual(["fulfilled", "rejected"]);
+    expect(String((done.find((d) => d.status === "rejected") as PromiseRejectedResult).reason)).toMatch(/exists already/);
+    expect(existsSync(join(to, "protoboard.config.ts"))).toBe(true);
+  });
+});
+
 describe("Settings' First steps row", () => {
   it("opens this page, not the walkthrough it replaced", () => {
     const ext = src("src/extension.ts");

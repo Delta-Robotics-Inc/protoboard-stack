@@ -67,8 +67,14 @@ export interface CopyResult {
  */
 export async function copyExample(source: string, target: string): Promise<CopyResult> {
   if (!existsSync(join(source, "protoboard.config.ts"))) throw new Error(`there is no example project at ${source}: this build of the extension does not carry one`);
-  if (existsSync(target)) throw new Error(`${target} exists already: the example is copied into a new folder`);
-  await mkdir(target, { recursive: true });
+  // the folder is claimed by making it, not by looking first: two copies at once, or another program, cannot share it,
+  // and what is removed when a copy fails is then this call's own
+  try {
+    await mkdir(target);
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code === "EEXIST") throw new Error(`${target} exists already: the example is copied into a new folder`);
+    throw e;
+  }
   let files = 0;
   let bytes = 0;
   try {
