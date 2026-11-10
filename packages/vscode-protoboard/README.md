@@ -34,12 +34,14 @@ and a 3D assembly.
 ## Get started
 
 1. Install the extension. It brings the whole Protoboard toolchain with
-   it, so there is nothing else to set up.
-2. Run **Protoboard: New Project…** from the Command Palette and pick a
-   starting point: a drone flight stack, a wearable, an IoT board, or an
-   empty project.
-3. Run **Protoboard: Connect Agents (MCP)**, then ask your agent what to
-   build.
+   it, so there is nothing else to set up. **Get Started with Protoboard**
+   opens the first time (later: **Protoboard: Get Started**, or Help in the
+   Protoboard Cloud side bar).
+2. Open the drone example from that page: a complete 5-inch quadcopter,
+   copied to a folder you choose, with its diagram, 3D assembly and checks.
+   It needs no account. Trust the folder when VS Code asks.
+3. Connect your agent from the same page, then ask it what to change, or
+   start a project of your own with **Protoboard: New Project…**.
 
 Already have a project? Open its folder, and Protoboard offers to set it up.
 

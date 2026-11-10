@@ -25,8 +25,13 @@
   "main": "./dist/extension.cjs",
   "capabilities": {
     "untrustedWorkspaces": {
-      "supported": false,
-      "description": "Protoboard checks, builds and serves a project by running its code (protoboard.config.ts, its model files, and the project's own CLI when it has one), so it does not run in Restricted Mode. In a trusted window it still asks once per project before it runs that project's code."
+      "supported": "limited",
+      "description": "Protoboard checks, builds and serves a project by running its code (protoboard.config.ts, its model files, and the project's own CLI when it has one), so in Restricted Mode it runs nothing: its views say that it is off and how to trust the folder. In a trusted window it still asks once per project before it runs that project's code.",
+      "restrictedConfigurations": [
+        "protoboard.cliPath",
+        "protoboard.nodePath",
+        "protoboard.libraries"
+      ]
     }
   },
   "activationEvents": [
@@ -351,6 +356,18 @@
         "icon": "$(add)"
       },
       {
+        "command": "protoboard.openExample",
+        "title": "Open the Quadcopter Example…",
+        "category": "Protoboard",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "protoboard.start",
+        "title": "Get Started",
+        "category": "Protoboard",
+        "icon": "$(star-empty)"
+      },
+      {
         "command": "protoboard.signInDevice",
         "title": "Sign In with a Code (Remote or Headless)",
         "category": "Protoboard",
@@ -569,7 +586,7 @@
         {
           "id": "protoboard.start.inspector",
           "name": "Protoboard Inspector",
-          "when": "protoboard.noProject || protoboard.needsSetup",
+          "when": "protoboard.noProject || protoboard.needsSetup || !isWorkspaceTrusted",
           "icon": "media/protoboard.svg",
           "contextualTitle": "Protoboard"
         },
@@ -595,9 +612,17 @@
       ],
       "protoboard-library": [
         {
+          "type": "webview",
+          "id": "protoboard.start.home",
+          "name": "Start",
+          "when": "protoboard.noProject",
+          "icon": "media/library.svg",
+          "contextualTitle": "Protoboard"
+        },
+        {
           "id": "protoboard.start.library",
           "name": "Protoboard Library",
-          "when": "protoboard.noProject || protoboard.needsSetup",
+          "when": "protoboard.needsSetup || !isWorkspaceTrusted",
           "icon": "media/library.svg",
           "contextualTitle": "Protoboard"
         },
@@ -614,7 +639,7 @@
         {
           "id": "protoboard.start.parts",
           "name": "Protoboard Project Parts",
-          "when": "protoboard.noProject || protoboard.needsSetup",
+          "when": "protoboard.noProject || protoboard.needsSetup || !isWorkspaceTrusted",
           "icon": "media/parts.svg",
           "contextualTitle": "Protoboard"
         },
@@ -631,7 +656,7 @@
         {
           "id": "protoboard.start.cloud",
           "name": "Protoboard Cloud",
-          "when": "protoboard.noProject || protoboard.needsSetup",
+          "when": "protoboard.noProject || protoboard.needsSetup || !isWorkspaceTrusted",
           "icon": "media/cloud.svg",
           "contextualTitle": "Protoboard"
         },
@@ -675,16 +700,6 @@
         "when": "protoboard.needsSetup"
       },
       {
-        "view": "protoboard.start.library",
-        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template. No account needed; template parts need a [sign-in](command:protoboard.signIn).",
-        "when": "protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn"
-      },
-      {
-        "view": "protoboard.start.library",
-        "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template.",
-        "when": "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"
-      },
-      {
         "view": "protoboard.start.parts",
         "contents": "This project is not set up on this machine yet.\n[$(rocket) Initialize](command:protoboard.setupProject)",
         "when": "protoboard.needsSetup"
@@ -713,6 +728,26 @@
         "view": "protoboard.start.cloud",
         "contents": "No Protoboard project in this window.\n[$(add) New Project](command:protoboard.newProject)\nStart blank or from a template.",
         "when": "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"
+      },
+      {
+        "view": "protoboard.start.inspector",
+        "contents": "Protoboard is off until you trust this folder.\n[Trust This Folder](command:workbench.trust.manage)",
+        "when": "!isWorkspaceTrusted"
+      },
+      {
+        "view": "protoboard.start.library",
+        "contents": "Protoboard is off until you trust this folder.\n[Trust This Folder](command:workbench.trust.manage)",
+        "when": "!isWorkspaceTrusted"
+      },
+      {
+        "view": "protoboard.start.parts",
+        "contents": "Protoboard is off until you trust this folder.\n[Trust This Folder](command:workbench.trust.manage)",
+        "when": "!isWorkspaceTrusted"
+      },
+      {
+        "view": "protoboard.start.cloud",
+        "contents": "Protoboard is off until you trust this folder.\n[Trust This Folder](command:workbench.trust.manage)",
+        "when": "!isWorkspaceTrusted"
       }
     ],
     "keybindings": [
@@ -1153,59 +1188,6 @@
         "id": "Protoboard Light",
         "uiTheme": "vs",
         "path": "./themes/protoboard-light-color-theme.json"
-      }
-    ],
-    "walkthroughs": [
-      {
-        "id": "protoboard.start",
-        "title": "Get Started with Protoboard",
-        "description": "Make a project and see it. No account needed.",
-        "steps": [
-          {
-            "id": "newProject",
-            "title": "Create a project",
-            "description": "Start blank or from a template: a drone, a wearable or an IoT board.\n[New Project](command:protoboard.newProject)",
-            "media": {
-              "markdown": "media/walkthrough/new-project.md"
-            },
-            "completionEvents": [
-              "onContext:protoboard.hasProject"
-            ]
-          },
-          {
-            "id": "viewer",
-            "title": "See it",
-            "description": "The system as a diagram and in 3D, in an editor tab.\n[Open Viewer](command:protoboard.openViewer)",
-            "media": {
-              "markdown": "media/walkthrough/viewer.md"
-            },
-            "completionEvents": [
-              "onCommand:protoboard.openViewer"
-            ]
-          },
-          {
-            "id": "signIn",
-            "title": "Use the Protoboard library (optional)",
-            "description": "Library parts, their files and prices need an account.\n[Sign In](command:protoboard.signIn)\nRemote or headless window: [Sign In with a Code](command:protoboard.signInDevice)",
-            "media": {
-              "markdown": "media/walkthrough/sign-in.md"
-            },
-            "completionEvents": [
-              "onContext:protoboard.signedIn"
-            ]
-          },
-          {
-            "id": "terminal",
-            "title": "Use it from the terminal, and with your agent",
-            "description": "This window's terminals have the ``protoboard`` command; so does your agent.\n[Open a Terminal](command:workbench.action.terminal.new)\nOther terminals: [Add the Command to PATH](command:protoboard.path.add). Agents: [Connect Agents](command:protoboard.agents.connect)",
-            "media": {
-              "markdown": "media/walkthrough/terminal.md"
-            },
-            "completionEvents": [
-              "onCommand:workbench.action.terminal.new"
-            ]
-          }
-        ]
       }
     ]
   },

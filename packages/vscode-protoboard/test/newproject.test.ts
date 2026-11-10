@@ -34,10 +34,15 @@ describe("the manifest: a window with no project (PB-931)", () => {
 
   it("gives every side bar container a start view, shown without a project or for one that is not set up, with a welcome that offers New Project or Initialize", () => {
     const starts = ["protoboard-library", "protoboard-parts", "protoboard-cloud", "protoboard-inspector"];
-    const START = "protoboard.noProject || protoboard.needsSetup";
+    // also in Restricted Mode, where the view says that Protoboard is off (restricted.test.ts)
+    const START = "protoboard.noProject || protoboard.needsSetup || !isWorkspaceTrusted";
+    // the Library's container: with no project its Start page (a webview: the example's card and what the Library looks
+    // like, start.test.ts); its start view is for a project that is not set up
+    const LIBRARY = "protoboard.needsSetup || !isWorkspaceTrusted";
     for (const id of starts) {
       const views = c.views[id] as { id: string; when?: string; type?: string; name: string }[];
-      const start = views.filter((v) => v.when === START);
+      const library = id === "protoboard-library";
+      const start = views.filter((v) => v.when === (library ? LIBRARY : START));
       expect(start, id).toHaveLength(1);
       // a tree view: VS Code draws its welcome natively (a webview view has none)
       expect(start[0].type, id).toBeUndefined();
@@ -46,12 +51,14 @@ describe("the manifest: a window with no project (PB-931)", () => {
       // no project: New Project, the one command (first builds review, item 21)
       // one wording signed out (it offers the sign-in), one signed in (it does not ask for what is already done)
       const none = welcomes.filter((w) => w.when?.startsWith("protoboard.noProject && !protoboard.needsSetup"));
-      expect(none.map((w) => w.when), id).toEqual(["protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn", "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"]);
+      expect(none.map((w) => w.when), id).toEqual(library ? [] : ["protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn", "protoboard.noProject && !protoboard.needsSetup && protoboard.signedIn"]);
       for (const w of none) {
         expect(w.contents).toContain("(command:protoboard.newProject)");
         expect(w.contents).toMatch(/blank or from a template/i);
       }
-      expect(none[1].contents).not.toMatch(/sign in/i);
+      if (!library) expect(none[1].contents).not.toMatch(/sign in/i);
+      // an untrusted folder: one line, and VS Code's own page where a folder is trusted
+      expect(welcomes.filter((w) => w.when === "!isWorkspaceTrusted").map((w) => w.contents), id).toEqual(["Protoboard is off until you trust this folder.\n[Trust This Folder](command:workbench.trust.manage)"]);
       // a project that is not set up: Initialize, with no npm and no registry (D2)
       const setup = welcomes.filter((w) => w.when === "protoboard.needsSetup");
       expect(setup, id).toHaveLength(1);
@@ -65,10 +72,10 @@ describe("the manifest: a window with no project (PB-931)", () => {
         expect(w.contents, w.when).not.toMatch(/npm install|\brun protoboard\b/i);
       }
       // every other view of the container needs a project that is set up, except Help (PB-1070: always there)
-      for (const v of views.filter((x) => x !== start[0] && x.id !== "protoboard.help")) expect(v.when, v.id).toBe("protoboard.hasProject && !protoboard.needsSetup");
+      for (const v of views.filter((x) => x !== start[0] && x.id !== "protoboard.help" && x.id !== "protoboard.start.home")) expect(v.when, v.id).toBe("protoboard.hasProject && !protoboard.needsSetup");
     }
     // the start views are the ones the extension registers
-    const ids = starts.map((id) => (c.views[id] as { id: string; when?: string }[]).find((v) => v.when === START)!.id).sort();
+    const ids = starts.map((id) => (c.views[id] as { id: string; when?: string }[]).find((v) => v.when === (id === "protoboard-library" ? LIBRARY : START))!.id).sort();
     expect([...src.matchAll(/"(protoboard\.start\.[a-z]+)"/g)].map((m) => m[1]).filter((v, i, a) => a.indexOf(v) === i).sort()).toEqual(ids);
     // neither context is set before the extension has looked: a project's window never flashes the start views
     expect(src).toContain('executeCommand("setContext", "protoboard.noProject", roots.length === 0)');
@@ -495,8 +502,8 @@ describe("buttons, not commands (first builds review, item 28)", () => {
       });
     }
     expect(told).toEqual([]);
-    // nor the walkthrough's pages
-    for (const page of ["new-project.md", "terminal.md", "sign-in.md", "viewer.md"]) expect(readFileSync(fileURLToPath(new URL(`../media/walkthrough/${page}`, import.meta.url)), "utf8"), page).not.toMatch(/\b[Rr]un `npm install`|after `npm install`/);
+    // nor Get Started's page
+    expect(readFileSync(fileURLToPath(new URL("../src/startPage.ts", import.meta.url)), "utf8")).not.toMatch(/\b[Rr]un `npm install`|after `npm install`/);
     // the CAD runtime and the agents are buttons: a command with progress, offered where a failure names it
     expect(src).toContain('executeCommand("protoboard.tools.install", runtime)');
     expect(src).toContain('["tools", "install", id, "--format", "json"]');

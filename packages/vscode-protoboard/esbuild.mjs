@@ -3,8 +3,8 @@
 // model preview) are built by Vite below. The viewer tabs' shell (@protoboardai/web-viewer's VS Code shell, built by Vite)
 // is copied into dist/webview: every webview loads only files the extension ships, never a CDN.
 import { context, build } from "esbuild";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -89,6 +89,31 @@ copyWebviewAssets();
 // the STEP reader beside the CAD viewer's bundle
 mkdirSync(join(here, "dist"), { recursive: true });
 for (const f of ["occt-import-js.js", "occt-import-js.wasm", "license.occt-import-js.txt", "license.occt.txt"]) copyFileSync(join(occt, "dist", f), join(here, "dist", f));
+
+// The example the extension carries (src/example.ts): the quadcopter as it is committed, without what a build, an
+// install or a tool wrote into the folder. Open the Quadcopter Example copies it from here. `--no-example` leaves it out.
+function copyExample() {
+  const from = join(here, "..", "..", "examples", "quadcopter-5in");
+  const to = join(here, "dist", "examples", "quadcopter-5in");
+  rmSync(join(here, "dist", "examples"), { force: true, recursive: true });
+  if (process.argv.includes("--no-example")) return;
+  const skips = (rel) => {
+    const parts = rel.split(/[\\/]/);
+    const name = parts.at(-1);
+    return (
+      parts.includes("node_modules") ||
+      parts.includes("__pycache__") ||
+      name.endsWith(".log") ||
+      parts[0] === "build" ||
+      parts[0] === "release" ||
+      (parts[0] === ".protoboard" && ["build", "cache", "local", "tools", "evals"].includes(parts[1] ?? "")) ||
+      (parts[0] === ".claude" && parts[1] === "skills") ||
+      (parts[0] === "parts" && parts[1] === "evidence" && parts[3] === ".research")
+    );
+  };
+  cpSync(from, to, { recursive: true, filter: (src) => !skips(relative(from, src)) });
+}
+copyExample();
 
 if (process.argv.includes("--watch")) for (const t of targets) await (await context(t)).watch();
 else {

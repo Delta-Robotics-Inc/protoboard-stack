@@ -618,13 +618,60 @@ folders): the viewer opens on the top-level system, the Inspector is in the
 secondary side bar (View → Appearance → Secondary Side Bar, Ctrl+Alt+B, if
 it is closed), the DRC in the panel.
 
+## Getting started
+
+**Get Started with Protoboard** (`src/startPage.ts`, `src/start.ts`) is an
+editor tab of the extension's own that looks like VS Code's walkthroughs. It
+opens by itself once, at the first start after an install, in place of the
+"is installed" notice, the theme offer and the agents offer (a profile that
+had the extension before the page existed is not shown it unasked; neither is
+a test run). **Protoboard: Get Started** and the first row of Help open it
+again. Its steps, each with its own content, are marked done by what is so on
+the machine, not by a click:
+
+1. **Sign in**: the extension's own sign-in command.
+2. **Connect your agent**: the agents found here and **Connect Agents**, and
+   **Add to PATH** while the `protoboard` command is not on the user's PATH.
+3. **Open the drone example**: a card with the quadcopter and **Open**
+   (below).
+4. **Choose a theme**: Protoboard Dark and Protoboard Light as tiles. A tile
+   applies its theme and remembers the one in use before; the applied tile,
+   clicked again, puts that theme back, and the note names it. The step
+   stays open once a theme is applied (the other steps hand over to the next
+   one when they are done).
+5. **Start your own project**: New Project. A window on a copy of the
+   example does not count as a project of one's own.
+
+The page and the Start view take every colour from the editor's theme, load
+only what the extension ships (scripts and styles by nonce, one picture) and
+hold no project logic.
+
+**The example.** The build copies `examples/quadcopter-5in` as committed
+into `dist/examples` (`esbuild.mjs`; about 57 MB on disk, 20 MB in the
+`.vsix`; `--no-example` leaves it out). **Protoboard: Open the Quadcopter
+Example…** copies it into a new folder inside one the user chooses
+(`quadcopter-5in`, or the next free `quadcopter-5in-2`), links its packages
+to the Protoboard installed for the user (`protoboard stack link`: no npm, no
+account, the example holds its own parts), records it as a project whose code
+may run (the user asked for it, and it came from the extension) and opens it:
+in this window when it holds no folder, else in a new one. VS Code opens a
+folder it has not seen in Restricted Mode; the views then say that
+Protoboard is off and offer to trust the folder (below), and the window that
+opens on the example shows Get Started again behind the viewer.
+
 ## A window with no project
 
 The extension runs in every window, so that it notices a project made after
 the window opened.
 
-- **No project yet.** The Protoboard Library, Project Parts and Cloud icons
-  and the Protoboard Inspector are there, each with **New Project**: the one
+- **No project yet.** The Protoboard Library side bar shows **Start**: the
+  example's card with **Open**, **New Project**, and what the Library looks
+  like (a search field, filters and the example's own parts as rows), dimmed
+  and out of reach, under one line: **Sign in to use the library**, with
+  **Sign In**. Signed in, the line says to open a project; the Library itself
+  is a project's. Nothing of the hosted library is carried for this. Project
+  Parts, Cloud and the Protoboard Inspector are there too, each with **New
+  Project**: the one
   command that makes a project (it was two, Create Project… and New
   Project…). It asks what to start from (a blank project is the default, or
   a template: drone, IoT, wearable) and where (the open folder when it is
@@ -772,10 +819,22 @@ that runs for a project folder the first time, Protoboard asks whether to run
 that project's code, and remembers the answer for the folder (in
 `trusted-projects.json` in your Protoboard config folder, readable by you
 only). A project made with **Protoboard: New Project** is trusted, because you
-made it. **Protoboard: Trust This Project's Code…** asks again. Protoboard does
-not run in Restricted Mode, and `protoboard.cliPath` and `protoboard.nodePath`
+made it. **Protoboard: Trust This Project's Code…** asks again. Protoboard runs
+nothing in Restricted Mode, and `protoboard.cliPath` and `protoboard.nodePath`
 are taken from your user or machine settings only, never from a workspace's
 `.vscode/settings.json`.
+
+**Restricted Mode** (`src/restricted.ts`). In a folder VS Code does not trust
+the extension stays on only to say that it is off
+(`untrustedWorkspaces.supported: "limited"`): its views carry "Protoboard is
+off until you trust this folder." with **Trust This Folder** (VS Code's own
+Workspace Trust page), every Protoboard command answers the same, and a
+folder that holds a `protoboard.config.ts` is told once, unasked. Nothing
+else starts: no CLI, no dev server, no check, no stack unpacked, no account
+asked; the links to the documentation are the one thing left as they are.
+When the folder is trusted the extension starts as in any trusted window,
+with no reload, and VS Code's trust page, which stays open over the window,
+is closed.
 
 ## Protoboard settings and agents
 
