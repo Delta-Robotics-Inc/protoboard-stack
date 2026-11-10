@@ -4,7 +4,7 @@
  * carries (startPage.ts, example.ts; start.ts is their VS Code side).
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -255,6 +255,19 @@ describe("the example the extension carries", () => {
     expect(r.files).toBe(2);
     expect(existsSync(join(TMP, "clean", "node_modules"))).toBe(false);
     expect(existsSync(join(TMP, "clean", ".protoboard", "display.json"))).toBe(true);
+  });
+
+  it.skipIf(process.platform === "win32" || process.getuid?.() === 0)("a copy that fails leaves no folder behind, so the next one takes the same name", () => {
+    const from = join(TMP, "unreadable");
+    mkdirSync(join(from, "src"), { recursive: true });
+    writeFileSync(join(from, "protoboard.config.ts"), "export default {};\n");
+    writeFileSync(join(from, "src", "locked.ts"), "x");
+    chmodSync(join(from, "src", "locked.ts"), 0o000);
+    const to = join(TMP, "half");
+    expect(() => copyExample(from, to)).toThrow();
+    expect(existsSync(to)).toBe(false);
+    chmodSync(join(from, "src", "locked.ts"), 0o644);
+    expect(copyExample(from, to).files).toBe(2);
   });
 
   it("opens with no account and no npm: trusted because the user asked for it, linked to the installed stack, then opened", () => {

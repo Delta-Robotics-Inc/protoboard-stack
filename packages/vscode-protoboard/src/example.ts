@@ -7,7 +7,7 @@
  *
  * No VS Code API here (start.ts asks where it goes and opens it).
  */
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from "node:fs";
 import { basename, join, relative, sep } from "node:path";
 
 export const EXAMPLE = {
@@ -66,22 +66,28 @@ export function copyExample(source: string, target: string): CopyResult {
   mkdirSync(target, { recursive: true });
   let files = 0;
   let bytes = 0;
-  cpSync(source, target, {
-    recursive: true,
-    // links are not followed out of the example
-    dereference: false,
-    filter: (from) => {
-      const rel = relative(source, from);
-      if (!rel) return true;
-      if (exampleSkips(rel)) return false;
-      const st = statSync(from);
-      if (st.isFile()) {
-        files++;
-        bytes += st.size;
-      }
-      return true;
-    },
-  });
+  try {
+    cpSync(source, target, {
+      recursive: true,
+      // links are not followed out of the example
+      dereference: false,
+      filter: (from) => {
+        const rel = relative(source, from);
+        if (!rel) return true;
+        if (exampleSkips(rel)) return false;
+        const st = statSync(from);
+        if (st.isFile()) {
+          files++;
+          bytes += st.size;
+        }
+        return true;
+      },
+    });
+  } catch (e) {
+    // half a copy is not left behind: the folder is this call's own (it did not exist before), and the next try takes its name
+    rmSync(target, { recursive: true, force: true });
+    throw e;
+  }
   return { dir: target, files, bytes };
 }
 
