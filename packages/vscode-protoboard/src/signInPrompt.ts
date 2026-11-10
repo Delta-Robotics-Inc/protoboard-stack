@@ -91,8 +91,11 @@ export function runSignInPrompt(host: PromptHost): Promise<PromptResult> {
       const p = host.start();
       proc = p;
       let signedIn: { email?: string } | undefined;
+      // every line, for a result that spans several (below)
+      const said: string[] = [];
       p.onLine((line) => {
         if (over || p !== proc) return;
+        said.push(line);
         let e: Record<string, unknown>;
         try {
           e = JSON.parse(line) as Record<string, unknown>;
@@ -128,8 +131,17 @@ export function runSignInPrompt(host: PromptHost): Promise<PromptResult> {
         if (over || p !== proc) return;
         if (signedIn) return end({ signedIn: true, ...signedIn });
         // a CLI from before sign-in by link prints its result as indented JSON, which no line of it parses:
-        // its exit says the sign-in was saved
-        if (code === 0) return end({ signedIn: true });
+        // the whole of what it said, from the last line that opens an object, is that result
+        if (code === 0) {
+          let result: { signedIn?: unknown; email?: unknown; message?: unknown } = {};
+          try {
+            result = JSON.parse(said.slice(said.lastIndexOf("{")).join("\n")) as typeof result;
+          } catch {
+            // not JSON: its exit says the sign-in was saved
+          }
+          if (result.signedIn === false) return end({ signedIn: false, reason: "failed", message: typeof result.message === "string" ? result.message : "the sign-in did not complete" });
+          return end({ signedIn: true, ...(typeof result.email === "string" ? { email: result.email } : {}) });
+        }
         // an expired link ends the command: the box stays, and Enter starts another
         if (expired) return;
         end({ signedIn: false, reason: "failed", message: lastError || `the sign-in ended with exit code ${code}` });

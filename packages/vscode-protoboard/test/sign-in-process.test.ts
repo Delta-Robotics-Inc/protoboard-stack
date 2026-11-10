@@ -101,9 +101,17 @@ describe("the sign-in process, with no Node.js on the machine", () => {
     const b = box();
     const opened: string[] = [];
     const done = runSignInPrompt({ box: () => b, start: () => loginProcess({ command: process.execPath, args: [older], from: "project" }, [], dir, {}), open: (url) => (opened.push(url), true), copy: () => {}, log: () => {} });
-    expect(await done).toEqual({ signedIn: true });
+    expect(await done).toEqual({ signedIn: true, email: "grace@example.com" });
     expect(opened).toEqual(["https://account.example/device"]);
     expect(b.prompt).toBe("Approve this code on the page that opened: BDFG-HJKL");
+  });
+
+  it("an older CLI's indented refusal is a refusal, though it exits 0", async () => {
+    const refuses = join(dir, "refuses.mjs");
+    writeFileSync(refuses, `process.stdout.write(JSON.stringify({ service: "https://parts.example", signedIn: false, message: "this service signs no one in" }, null, 2) + "\\n");\n`);
+    const b = box();
+    const done = runSignInPrompt({ box: () => b, start: () => loginProcess({ command: process.execPath, args: [refuses], from: "project" }, [], dir, {}), open: () => true, copy: () => {}, log: () => {} });
+    expect(await done).toEqual({ signedIn: false, reason: "failed", message: "this service signs no one in" });
   });
 
   it("a command that cannot start ends the prompt with what went wrong, not a dead surface", async () => {
