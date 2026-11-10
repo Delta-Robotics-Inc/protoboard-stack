@@ -518,6 +518,7 @@ export const VALUE_OPTIONS: readonly string[] = [
   "--allow-host",
   "--auth-env",
   "--case",
+  "--code",
   "--cursor",
   "--cwd",
   "--days",
