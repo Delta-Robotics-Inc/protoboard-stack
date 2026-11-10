@@ -79,7 +79,7 @@ export interface Session {
   idTokenExpiresAt?: number;
   signedInAt: string;
   /** How it was signed in. */
-  via: "browser" | "device";
+  via: "browser" | "device" | "link";
 }
 
 export type CredentialBackend = "keychain" | "dpapi" | "file";
@@ -379,7 +379,7 @@ function authEndpoints(info: { apiKey: string; emulator?: string }) {
 /** A sign-in error that says what to do. */
 export class AccountError extends Error {
   constructor(
-    readonly code: "NOT_SIGNED_IN" | "SESSION_EXPIRED" | "NO_SIGN_IN" | "SIGN_IN_FAILED" | "UNREACHABLE",
+    readonly code: "NOT_SIGNED_IN" | "SESSION_EXPIRED" | "NO_SIGN_IN" | "SIGN_IN_FAILED" | "UNREACHABLE" | "LINK_UNSUPPORTED" | "SIGN_IN_EXPIRED" | "NOT_STARTED",
     message: string,
   ) {
     super(message);

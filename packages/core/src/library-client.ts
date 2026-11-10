@@ -271,7 +271,7 @@ export function explainCloudError(e: unknown, lib: string | { id?: string; url: 
             : signsIn(e)
               ? l.signedIn
                 ? `You are signed in, but the service did not accept the sign-in: run \`protoboard login${isDefault(l) ? "" : ` --url ${url}`}\` again.`
-                : `Sign in first: \`protoboard login${isDefault(l) ? "" : ` --url ${url}`}\` (or \`protoboard login --device\` from an agent or a machine without a browser). Everything in the Protoboard library, searching included, needs an account.`
+                : `Sign in first: \`protoboard login${isDefault(l) ? "" : ` --url ${url}`}\` (from an agent: \`protoboard login --start\`, then \`protoboard login --code <code>\`). Everything in the Protoboard library, searching included, needs an account.`
               : `Name the environment variable that holds its token in its authEnv (\`protoboard libraries add ${l.id} ${url} --auth-env <NAME>\`); the token itself is never written to the project.`
         }`,
       );

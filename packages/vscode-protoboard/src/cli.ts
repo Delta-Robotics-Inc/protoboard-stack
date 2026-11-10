@@ -6,6 +6,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { existsSync, lstatSync, readdirSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
 import { delimiter, dirname, isAbsolute, join, resolve } from "node:path";
+import type { LoginProcess } from "./signInPrompt.js";
 import { projectStackRange, satisfies, stackCli, type Stack } from "@protoboardai/core/stack";
 
 /**
@@ -426,4 +427,35 @@ export function parseJsonOutput<T>(r: CliResult, what: string): T {
     throw new Error(`${what}: ${(data as { error: string }).error}`);
   }
   return data as T;
+}
+
+/**
+ * `protoboard login --wait --format json`, as the sign-in prompt drives it:
+ * its lines out, codes in. Pipes, never a terminal: VS Code's own runtime
+ * (the CLI's when the machine has no Node.js 22) prints nothing into a
+ * pseudo-terminal on Windows, and answers through pipes like any Node.
+ */
+export function loginProcess(cli: CliCommand, args: string[], cwd: string, env: NodeJS.ProcessEnv): LoginProcess {
+  // a .cmd or .bat (protoboard.cliPath) needs a shell on Windows
+  const proc = spawn(cli.command, [...cli.args, ...args], { cwd, env: { ...process.env, ...env, ...(cli.env ?? {}) }, stdio: ["pipe", "pipe", "pipe"], windowsHide: true, shell: /\.(cmd|bat)$/i.test(cli.command) });
+  let lastError = "";
+  const lines = (stream: NodeJS.ReadableStream, each: (line: string) => void) => {
+    let pending = "";
+    stream.on("data", (d) => {
+      const parts = (pending + String(d)).split(/\r?\n/);
+      pending = parts.pop() ?? "";
+      for (const l of parts) if (l.trim()) each(l);
+    });
+    stream.on("end", () => pending.trim() && each(pending));
+  };
+  lines(proc.stderr, (l) => (lastError = l.replace(/^protoboard:\s*/, "")));
+  return {
+    onLine: (run) => lines(proc.stdout, run),
+    onExit: (run) => {
+      proc.on("error", (e) => run(null, e.message));
+      proc.on("close", (code) => run(code, lastError));
+    },
+    write: (line) => void proc.stdin.write(`${line}\n`),
+    kill: () => void proc.kill(),
+  };
 }
