@@ -2010,7 +2010,8 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
       if (cli.flags.start || (!atTerminal && !cli.flags.wait)) {
         // nobody to type a code here (an agent, a script): the link now, the code in a second command
         const begun = await beginLinkLogin(service);
-        const next = "protoboard login --code <code>";
+        // the second command names the same service as this one
+        const next = `protoboard login${cli.flags.url ? ` --url ${cli.flags.url}` : ""} --code <code>`;
         out({ service, signedIn: false, url: begun.url, expiresIn: begun.expiresIn, next }, () => [begun.url, `Sign in there, then run: ${next}`].join("\n"));
         return;
       }

@@ -95,6 +95,17 @@ describe("the sign-in process, with no Node.js on the machine", () => {
     expect(b.shown).toBe(false);
   });
 
+  it("an older CLI's indented result still counts: its exit code 0 is a sign-in", async () => {
+    const older = join(dir, "older.mjs");
+    writeFileSync(older, `process.stdout.write(JSON.stringify({ prompt: "approve this code", userCode: "BDFG-HJKL", verificationUri: "https://account.example/device", expiresIn: 600 }) + "\\n");\nsetTimeout(() => { process.stdout.write(JSON.stringify({ service: "https://parts.example", signedIn: true, email: "grace@example.com" }, null, 2) + "\\n"); }, 50);\n`);
+    const b = box();
+    const opened: string[] = [];
+    const done = runSignInPrompt({ box: () => b, start: () => loginProcess({ command: process.execPath, args: [older], from: "project" }, [], dir, {}), open: (url) => (opened.push(url), true), copy: () => {}, log: () => {} });
+    expect(await done).toEqual({ signedIn: true });
+    expect(opened).toEqual(["https://account.example/device"]);
+    expect(b.prompt).toBe("Approve this code on the page that opened: BDFG-HJKL");
+  });
+
   it("a command that cannot start ends the prompt with what went wrong, not a dead surface", async () => {
     const b = box();
     const done = runSignInPrompt({ box: () => b, start: () => loginProcess({ command: join(dir, "no-such-runtime"), args: [], from: "carried" }, [], dir, {}), open: () => true, copy: () => {}, log: () => {} });

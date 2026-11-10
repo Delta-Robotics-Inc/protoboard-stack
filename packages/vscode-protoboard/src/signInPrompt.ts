@@ -127,6 +127,9 @@ export function runSignInPrompt(host: PromptHost): Promise<PromptResult> {
       p.onExit((code, lastError) => {
         if (over || p !== proc) return;
         if (signedIn) return end({ signedIn: true, ...signedIn });
+        // a CLI from before sign-in by link prints its result as indented JSON, which no line of it parses:
+        // its exit says the sign-in was saved
+        if (code === 0) return end({ signedIn: true });
         // an expired link ends the command: the box stays, and Enter starts another
         if (expired) return;
         end({ signedIn: false, reason: "failed", message: lastError || `the sign-in ended with exit code ${code}` });
