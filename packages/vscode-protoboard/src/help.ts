@@ -26,8 +26,19 @@ export const HELP_VIEW = "protoboard.help";
 
 export const helpCommand = (l: HelpLink) => `protoboard.help.${l.id}`;
 
-/** The Help view's rows: one per link, a click opens it. */
+/** Get Started (start.ts): the page of a first install, kept within reach. */
+export const START_COMMAND = "protoboard.start";
+
+/** The Help view's rows: Get Started, then one per link; a click opens it. */
 export function helpItems(): vscode.TreeItem[] {
+  const start = new vscode.TreeItem("Get Started");
+  start.id = "start";
+  start.iconPath = new vscode.ThemeIcon("star-empty");
+  start.command = { command: START_COMMAND, title: "Get Started" };
+  return [start, ...linkItems()];
+}
+
+function linkItems(): vscode.TreeItem[] {
   return HELP_LINKS.map((l) => {
     const item = new vscode.TreeItem(l.label);
     item.id = l.id;

@@ -11,7 +11,7 @@ import { homedir, release as osRelease } from "node:os";
 import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { basename, delimiter, dirname, extname, isAbsolute, join, relative, sep } from "node:path";
 import * as vscode from "vscode";
-import { helpCommands, helpMarkdown, registerHelp } from "./help.js";
+import { START_COMMAND, helpCommands, helpMarkdown, registerHelp } from "./help.js";
 import { buildArtifacts, describeArtifact, describeInstances, openMode, partChoices, sortArtifacts, type ArtifactEntry, type PartChoice } from "./artifacts.js";
 import { openOutside } from "./openOutside.js";
 import { countDiagnostics, mapDiagnostics, parseCheck, skippedChecks, statusLabel, statusText, type Counts, type MappedDiagnostic } from "./check.js";
@@ -59,6 +59,8 @@ import { registerPartsViews, type PartsViews } from "./partsViews.js";
 import { canInitIn, partsFailure, folderFromName, folderHolding, folderNameProblem, folderNotice, initArgs, npxCommand, partsAddArgs, partsNotFetchedMessage, registryRefusal, templateChoices, toolsInstallHint, vscodeBefore, withoutRunHint } from "./newProject.js";
 import { lensTitle, moduleAtLine, modulesInFile, type SourceModule } from "./sourceModules.js";
 import { SettingsController, type SettingsLink } from "./settingsPage.js";
+import { StartController } from "./start.js";
+import { activateRestricted } from "./restricted.js";
 
 let instance: ProtoboardExtension | undefined;
 
@@ -136,15 +138,23 @@ interface NewProjectArgs {
 
 
 export function activate(context: vscode.ExtensionContext) {
-  // the user's Protoboard folders (sign-ins, the stack) are readable by the user only, also when an earlier version made them (PB-1048)
-  try {
-    tightenUserFolders();
-  } catch {}
-  // the CAD viewer first: a STEP or GLB opened before any project is found still has its editor
-  cad = CadEditorProvider.register(context);
   // the extension runs in every window (`onStartupFinished`), so that a project made in it later is noticed
   // (PB-931); what a project needs (its views gathered, the Inspector in front) starts when there is one
-  instance = new ProtoboardExtension(context);
+  // Restricted Mode (restricted.ts): nothing of Protoboard runs in a folder VS Code does not trust; its views say so,
+  // and it starts here, with no reload, when the folder is trusted
+  const begin = () => {
+    // the user's Protoboard folders (sign-ins, the stack) are readable by the user only, also when an earlier version
+    // made them (PB-1048). Only in a trusted window: in Restricted Mode Protoboard changes nothing on the machine
+    try {
+      tightenUserFolders();
+    } catch {}
+    // the CAD viewer first: a STEP or GLB opened before any project is found still has its editor. It reads a file of
+    // the folder into a page with scripts, so it too waits for a trusted folder
+    cad = CadEditorProvider.register(context);
+    instance = new ProtoboardExtension(context);
+  };
+  if (vscode.workspace.isTrusted) begin();
+  else activateRestricted(context, START_VIEWS, begin, { commands: helpCommands(), register: registerHelp });
   // what the integration test reads; nothing else uses it
   return {
     projects: () => instance!.roots(),
@@ -186,6 +196,15 @@ export function activate(context: vscode.ExtensionContext) {
     // first): there only when VS Code runs the extension's tests, never in an installed extension
     ...(context.extensionMode === vscode.ExtensionMode.Test ? { useCliForTest: (file: string | undefined) => instance!.useCliForTest(file) } : {}),
     stack: () => instance!.stackInfo(),
+    start: {
+      model: () => instance!.getStarted.model(),
+      viewModel: () => instance!.getStarted.viewModel(),
+      shown: () => instance!.getStarted.shown,
+      open: () => instance!.getStarted.open(),
+      auto: () => instance!.getStarted.auto(),
+      chooseTheme: (theme: string) => instance!.getStarted.chooseTheme(theme),
+      openExample: (args?: { folder?: string; open?: boolean }) => instance!.getStarted.openExample(args),
+    },
     settings: {
       model: () => instance!.settings.model(),
       drawn: () => instance!.settings.drawn,
@@ -329,6 +348,8 @@ class ProtoboardExtension {
   readonly partsViews: PartsViews;
   /** The settings page and the agents' MCP configuration (PB-930; settingsPage.ts). */
   readonly settings: SettingsController;
+  /** Getting started (start.ts): the page of a first install, the Start view, the example. */
+  readonly getStarted: StartController;
   /** `protoboard release` runs, by project: the Cloud view shows the state of the current one. */
   private readonly releasing = new Map<string, ReleaseState>();
   private readonly packagePanels = new Map<string, vscode.WebviewPanel>();
@@ -492,7 +513,17 @@ class ProtoboardExtension {
       openLibraries: () => this.library.setManage(true),
       guard: (fn) => this.guard(fn),
     });
+    this.getStarted = new StartController(context, {
+      log: this.log,
+      guard: (fn) => this.guard(fn),
+      account: () => ({ signedIn: this.accountState.state === "signed-in", ...(this.accountState.state === "signed-in" && this.accountState.email ? { email: this.accountState.email } : {}) }),
+      agents: () => this.settings.look(),
+      onPath: () => this.pathAdded || pathPlan(join(this.home, "bin")).kind === "already",
+      projects: () => [...this.rootList],
+      adopt: (dir, open) => this.adoptExample(dir, open),
+    });
     context.subscriptions.push(
+      this.getStarted,
       this.settings,
       this.log,
       this.diagnostics,
@@ -638,13 +669,69 @@ class ProtoboardExtension {
     this.terminalCommand();
     // agents (PB-930): an updated extension is recorded for the launcher, in a window with a project or without
     void this.settings.refreshLauncher();
-    void this.start();
     // the carried stack is unpacked at the first start, with its progress shown, so the terminal's command is there
     // (and the launcher an agent starts is recorded again once it is: an update moved the CLI, PB-930)
     if (this.carried)
       void this.prepareStack()
         .then(() => this.settings.refreshLauncher())
-        .catch((e: Error) => this.log.error(`the carried stack: ${e.message}`));
+        .catch((e: Error) => this.stackFailed(e));
+    // the first start after an install opens Get Started, once: that is this window's one unasked notice
+    // It is settled before the window's projects are looked for: what that finds gives its own notices (New Project,
+    // the themes), and they must find the page already counted
+    void this.getStarted
+      .auto()
+      .then((r) => {
+        if (r === "opened") this.noticed = true;
+      })
+      .catch((e: Error) => this.log.warn(`Get Started: ${e.message}`))
+      .then(() => this.start());
+  }
+
+  /**
+   * The carried stack could not be unpacked at the first start. Without it
+   * there is no CLI to check, build or serve with, so it is said where it is
+   * seen, with the way to try again, and not only written to the log.
+   */
+  private stackFailed(e: Error) {
+    this.log.error(`the carried stack: ${e.message}`);
+    const again = "Try Again";
+    const log = "Show Log";
+    void vscode.window.showErrorMessage(`Protoboard could not set up its stack in ${join(this.home, "stack")}: ${e.message.split("\n")[0]}`, again, log).then((a) => {
+      if (a === log) return this.log.show();
+      if (a === again)
+        return this.prepareStack()
+          .then(() => this.settings.refreshLauncher())
+          .catch((err: Error) => this.stackFailed(err));
+    });
+  }
+
+  /**
+   * A copy of the carried example (start.ts) in a folder the user chose. It
+   * came from the extension and the user asked for it, so its code runs
+   * without the question a cloned folder gets; its packages are linked to the
+   * Protoboard installed for the user (no npm, no account), and it is opened:
+   * here when the window holds no folder, else in a new window.
+   */
+  private async adoptExample(dir: string, open: boolean) {
+    this.trust.set(dir, true);
+    // setting it up is best effort: a stack that cannot be prepared, or a link that fails, still leaves a copy to open
+    try {
+      if (this.carried) await this.prepareStack();
+      const cli = this.cliAt(dir) ?? this.cliOutside();
+      if (canRun(cli)) {
+        const r = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Protoboard: setting up ${basename(dir)}` }, () =>
+          runCli(cli, ["stack", "link", "--format", "json"], { cwd: dir, onStderr: (l) => this.log.info(`[setup ${basename(dir)}] ${l}`) }),
+        );
+        const out = parseJsonOutput<{ linked: string[]; version: string; stack: string }>(r, "protoboard stack link");
+        this.log.info(`${basename(dir)}: set up. ${out.linked.length} package(s) link to the Protoboard stack ${out.version} at ${out.stack}`);
+      }
+    } catch (e) {
+      // the window it opens in offers Initialize, which says what is missing
+      this.log.warn(`${basename(dir)} was copied but not set up: ${(e as Error).message}`);
+    }
+    if (!open) return;
+    if (folderHolding(dir, (vscode.workspace.workspaceFolders ?? []).filter((f) => f.uri.scheme === "file").map((f) => f.uri.fsPath))) return void this.refreshRoots();
+    await this.offerToOpen(dir, true);
   }
 
   // ---- the stack this extension carries (PB-929; stackStore.ts, docs/specs/distribution.md)
@@ -692,6 +779,8 @@ class ProtoboardExtension {
       if (unpacked) {
         // said once per version, and it counts as this window's one notice (an empty folder is not also asked about)
         this.noticed = true;
+        // a first install has Get Started open, which offers the same (Add to PATH is in its agent step): one notice, not two
+        if (this.getStarted.shown) return;
         const path = "Add to PATH";
         const plan = pathPlan(home.bin);
         void vscode.window
@@ -748,9 +837,15 @@ class ProtoboardExtension {
     const a = await vscode.window.showInformationMessage("Add the protoboard command to your PATH?", { modal: true, detail: describePathPlan(plan) }, yes);
     if (a !== yes) return;
     const done = applyPathPlan(plan);
+    this.pathAdded = true;
     this.log.info(`PATH: ${done.message}`);
     void vscode.window.showInformationMessage(`Protoboard: ${done.message}`);
   }
+  /**
+   * Add to PATH was done from this window. On Windows the change is in the user's stored Path, which this
+   * window's own environment does not get, so `pathPlan` alone would go on offering it until VS Code restarts.
+   */
+  private pathAdded = false;
   /** This window has shown its one unasked notice (set-up finished, an empty folder, a project to initialize). */
   private noticed = false;
 
@@ -1077,8 +1172,9 @@ class ProtoboardExtension {
   /**
    * A project made outside this window's folders (first builds review, item
    * 35): open it, in a new window first, and say what VS Code asks then.
-   * `now`: the caller asked for it to be opened (this window when it holds no
-   * folder, else a new one).
+   * Asked in a dialog, which stays until it is answered (a notification
+   * leaves the screen after some seconds). `now`: the caller asked for it to
+   * be opened (this window when it holds no folder, else a new one).
    */
   private async offerToOpen(dir: string, now = false) {
     const uri = vscode.Uri.file(dir);
@@ -1090,7 +1186,7 @@ class ProtoboardExtension {
       ? none
         ? here
         : fresh
-      : await vscode.window.showInformationMessage(`Protoboard: created ${basename(dir)} in ${dirname(dir)}. Trust the folder when VS Code asks.`, fresh, here, ...(none ? [] : [add]));
+      : await vscode.window.showInformationMessage(`Open ${basename(dir)}?`, { modal: true, detail: `Created in ${dirname(dir)}. Trust the folder when VS Code asks.` }, fresh, here, ...(none ? [] : [add]));
     if (a === add) vscode.workspace.updateWorkspaceFolders(vscode.workspace.workspaceFolders?.length ?? 0, 0, { uri });
     else if (a) await vscode.commands.executeCommand("vscode.openFolder", uri, { forceNewWindow: a === fresh });
   }
@@ -1213,6 +1309,7 @@ class ProtoboardExtension {
   /** What the manifest's `when` clauses read: a project is open, or none is (the start views), and whether the current one still has to be set up. Neither before the first look. */
   private async setProjectContext(roots: string[]) {
     this.rootList = roots;
+    this.getStarted?.refresh();
     await Promise.all([
       vscode.commands.executeCommand("setContext", "protoboard.hasProject", roots.length > 0),
       vscode.commands.executeCommand("setContext", "protoboard.noProject", roots.length === 0),
@@ -1810,7 +1907,7 @@ class ProtoboardExtension {
     const tilde = (p: string) => (p.startsWith(homedir()) ? `~${p.slice(homedir().length)}` : p);
     const manifest = this.carried;
     return [
-      { id: "start", label: "First steps", note: "New project, viewer, sign-in, terminal", icon: "map", action: "Open", opens: "view", command: "workbench.action.openWalkthrough", args: [`${this.context.extension.id}#protoboard.start`, false] },
+      { id: "start", label: "First steps", note: "Themes, sign-in, agents, the drone example", icon: "map", action: "Open", opens: "view", command: START_COMMAND, args: [] },
       ...(this.current && this.needsSetup(this.current) ? [{ id: "setupProject", label: `Set up ${basename(this.current)}`, note: "Not set up on this machine yet", icon: "rocket", action: "Initialize", command: "protoboard.setupProject" }] : []),
       ...(this.current && !this.needsSetup(this.current) ? [{ id: "runtimes", label: "Tool runtimes", note: `${basename(this.current)}: CAD and circuit runtimes`, icon: "wrench", action: "Install…", command: "protoboard.tools.install" }] : []),
       ...(this.current ? [{ id: "bom", label: "Bill of materials", note: `${basename(this.current)}: parts and chosen offers, in USD`, icon: "table", action: "Open", opens: "view" as const, command: "protoboard.openBom" }] : []),
@@ -1911,6 +2008,8 @@ class ProtoboardExtension {
     this.account.tooltip = item.tooltip;
     this.account.accessibilityInformation = { label: item.tooltip };
     void vscode.commands.executeCommand("setContext", "protoboard.signedIn", this.accountState.state === "signed-in");
+    // (the account is shown once before the constructor has made Get Started)
+    this.getStarted?.refresh();
   }
 
   /**

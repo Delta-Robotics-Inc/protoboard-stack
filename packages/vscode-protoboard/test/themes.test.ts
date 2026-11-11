@@ -157,7 +157,10 @@ describe("the extension's manifest", () => {
           expect(v.when, v.id).toBeUndefined();
           continue;
         }
-        expect(v.when, v.id).toBe(v.id.startsWith("protoboard.start.") ? "protoboard.noProject || protoboard.needsSetup" : "protoboard.hasProject && !protoboard.needsSetup");
+        // a start view is there with no project, for one not set up, and in Restricted Mode (where it says Protoboard is off);
+        // the Library's container shows the Start page with no project (start.test.ts) and its start view otherwise
+        const START: Record<string, string> = { "protoboard.start.home": "protoboard.noProject", "protoboard.start.library": "protoboard.needsSetup || !isWorkspaceTrusted" };
+        expect(v.when, v.id).toBe(v.id.startsWith("protoboard.start.") ? (START[v.id] ?? "protoboard.noProject || protoboard.needsSetup || !isWorkspaceTrusted") : "protoboard.hasProject && !protoboard.needsSetup");
         expect(v.when, v.id).not.toMatch(/locked|signedIn/);
       }
     }
@@ -167,10 +170,9 @@ describe("the extension's manifest", () => {
     for (const id of ["protoboard.signIn", "protoboard.signOut", "protoboard.account.check", "protoboard.newProject", "protoboard.stack.show", "protoboard.stack.update", "protoboard.stack.install"]) expect(commands.has(id), id).toBe(true);
   });
 
-  it("offers a walkthrough for a first start: a project, the viewer, the library's sign-in (optional), the terminal (PB-929, PB-928)", () => {
-    const [w] = pkg.contributes.walkthroughs;
-    expect(w.steps.map((s: { id: string }) => s.id)).toEqual(["newProject", "viewer", "signIn", "terminal"]);
-    for (const s of w.steps as { media: { markdown: string } }[]) expect(existsSync(new URL(`../${s.media.markdown}`, import.meta.url)), s.media.markdown).toBe(true);
+  it("has Get Started as a command for a first start (start.test.ts), and the terminal's command on by default", () => {
+    expect(pkg.contributes.walkthroughs).toBeUndefined();
+    expect(pkg.contributes.commands.find((c: { command: string }) => c.command === "protoboard.start")).toMatchObject({ title: "Get Started", category: "Protoboard" });
     expect(pkg.contributes.configuration.properties["protoboard.terminal.addCommand"].default).toBe(true);
     // the settings say the order the CLI is found in
     expect(pkg.contributes.configuration.properties["protoboard.cliPath"].markdownDescription).toMatch(/the project's own installed .* this setting, a stack copy .* the stack carried by this extension/);
@@ -189,7 +191,7 @@ describe("the extension's manifest", () => {
     const rowMenu = (pkg.contributes.menus["webview/context"] as { command: string; when: string }[]).filter((m) => m.when.includes("webviewSection == 'hierarchy'"));
     expect(rowMenu.map((m) => m.command)).toEqual(expect.arrayContaining(["protoboard.openModule", "protoboard.explorer.focus", "protoboard.explorer.openSource", "protoboard.explorer.openArtifact", "protoboard.explorer.runOperation"]));
     for (const m of rowMenu) expect(m.when).toContain("webviewId == 'protoboard.viewer'");
-    expect(inspector.filter((v) => v.when !== "protoboard.hasProject && !protoboard.needsSetup").map((v) => [v.id, v.when])).toEqual([["protoboard.start.inspector", "protoboard.noProject || protoboard.needsSetup"]]);
+    expect(inspector.filter((v) => v.when !== "protoboard.hasProject && !protoboard.needsSetup").map((v) => [v.id, v.when])).toEqual([["protoboard.start.inspector", "protoboard.noProject || protoboard.needsSetup || !isWorkspaceTrusted"]]);
     expect(pkg.contributes.customEditors[0]).toMatchObject({ viewType: "protoboard.viewer", priority: "option" });
   });
 });

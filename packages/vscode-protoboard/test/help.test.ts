@@ -62,6 +62,8 @@ describe("documentation, feedback and Discord (PB-1070)", () => {
   it("each row opens its link through its command", () => {
     const items = helpItems() as unknown as { label: string; command: { command: string } }[];
     expect(items.map((i) => [i.label, i.command.command])).toEqual([
+      // the page of a first install, kept within reach
+      ["Get Started", "protoboard.start"],
       ["Documentation", "protoboard.help.docs"],
       ["Feedback and Issues", "protoboard.help.feedback"],
       ["Discord", "protoboard.help.discord"],

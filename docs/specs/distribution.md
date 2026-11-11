@@ -497,8 +497,10 @@ test checks each against the CLI's.
   screens show the sign-in card in place of the library (no parts
   listed signed out); the cloud's commands ask to sign in; Project Parts
   asks the libraries for updates only when the cloud can be used. The status
-  bar shows **Sign in**, with a tooltip that says what it is for. The
-  walkthrough's sign-in step is optional, after the project and the viewer.
+  bar shows **Sign in**, with a tooltip that says what it is for. Get
+  Started has signing in as a step; nothing else on the page waits for it,
+  and a window with no project shows what the Library looks like, dimmed,
+  under one line that offers the sign-in.
   New Project signed out makes the project and leaves a template's library
   parts for later.
 - **The MCP server.** `project_status` mentions the sign-in once, at the end

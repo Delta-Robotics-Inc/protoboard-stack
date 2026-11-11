@@ -3,8 +3,9 @@
 // model preview) are built by Vite below. The viewer tabs' shell (@protoboardai/web-viewer's VS Code shell, built by Vite)
 // is copied into dist/webview: every webview loads only files the extension ships, never a CDN.
 import { context, build } from "esbuild";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { spawnSync } from "node:child_process";
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, sep } from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -89,6 +90,40 @@ copyWebviewAssets();
 // the STEP reader beside the CAD viewer's bundle
 mkdirSync(join(here, "dist"), { recursive: true });
 for (const f of ["occt-import-js.js", "occt-import-js.wasm", "license.occt-import-js.txt", "license.occt.txt"]) copyFileSync(join(occt, "dist", f), join(here, "dist", f));
+
+// The example the extension carries (src/example.ts): the quadcopter as it is committed, without what a build, an
+// install or a tool wrote into the folder. Open the Quadcopter Example copies it from here. `--no-example` leaves it out.
+function copyExample() {
+  const from = join(here, "..", "..", "examples", "quadcopter-5in");
+  const to = join(here, "dist", "examples", "quadcopter-5in");
+  rmSync(join(here, "dist", "examples"), { force: true, recursive: true });
+  if (process.argv.includes("--no-example")) return;
+  const skips = (rel) => {
+    const parts = rel.split(/[\\/]/);
+    const name = parts.at(-1);
+    return (
+      parts.includes("node_modules") ||
+      parts.includes("__pycache__") ||
+      name.endsWith(".log") ||
+      parts[0] === "build" ||
+      parts[0] === "release" ||
+      (parts[0] === ".protoboard" && ["build", "cache", "local", "tools", "evals"].includes(parts[1] ?? "")) ||
+      (parts[0] === ".claude" && parts[1] === "skills") ||
+      (parts[0] === "parts" && parts[1] === "evidence" && parts[3] === ".research")
+    );
+  };
+  // in a checkout, only what Git tracks is carried: a file left beside the example (an export, a note, a
+  // .env) never reaches the extension. Outside one (a source archive) the folder is what there is
+  const listed = spawnSync("git", ["ls-files", "-z", "--", "."], { cwd: from, encoding: "utf8" });
+  const tracked = listed.status === 0 && listed.stdout ? new Set(listed.stdout.split("\0").filter(Boolean).map((f) => f.split("/").join(sep))) : undefined;
+  const carried = (src) => {
+    const rel = relative(from, src);
+    if (rel === "" || skips(rel)) return rel === "";
+    return !tracked || statSync(src).isDirectory() || tracked.has(rel);
+  };
+  cpSync(from, to, { recursive: true, filter: carried });
+}
+copyExample();
 
 if (process.argv.includes("--watch")) for (const t of targets) await (await context(t)).watch();
 else {

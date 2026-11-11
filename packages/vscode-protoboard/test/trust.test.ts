@@ -121,9 +121,11 @@ describe("project trust", () => {
 
 describe("the manifest", () => {
   const pkg = JSON.parse(readFileSync(fileURLToPath(new URL("../package.json", import.meta.url)), "utf8"));
-  it("does not run in Restricted Mode", () => {
-    expect(pkg.capabilities.untrustedWorkspaces.supported).toBe(false);
-    expect(pkg.capabilities.untrustedWorkspaces.description).toMatch(/Restricted Mode/);
+  it("runs nothing in Restricted Mode: it is there only to say so (restricted.test.ts)", () => {
+    expect(pkg.capabilities.untrustedWorkspaces.supported).toBe("limited");
+    expect(pkg.capabilities.untrustedWorkspaces.description).toMatch(/Restricted Mode it runs nothing/);
+    // the settings that name a program to run, and the personal libraries, are never a workspace's
+    expect(pkg.capabilities.untrustedWorkspaces.restrictedConfigurations).toEqual(["protoboard.cliPath", "protoboard.nodePath", "protoboard.libraries"]);
   });
   it("takes the CLI and Node.js paths from the user's or the machine's settings only, never a workspace's", () => {
     const props = pkg.contributes.configuration.properties;

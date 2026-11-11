@@ -23,5 +23,6 @@
 !media/fonts/OFL.txt
 !themes/*.json
 !dist/stack/**
-!media/walkthrough/*.md
+!media/start/*.png
+!dist/examples/**
 !THIRD_PARTY_LICENSES.md
