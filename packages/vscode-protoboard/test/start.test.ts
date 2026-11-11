@@ -72,6 +72,13 @@ describe("the example and a project of one's own", () => {
     expect(src("src/extension.ts")).toContain("projects: () => [...this.rootList],");
     expect(start).toMatch(/update\(EXAMPLE_COPIES_KEY, \[\.\.\.\(this\.context\.globalState\.get<string\[\]>\(EXAMPLE_COPIES_KEY\) \?\? \[\]\), copied\.dir\]/);
   });
+
+  it("Add to PATH done in this window counts at once: on Windows the window's own PATH does not change", () => {
+    const ext = src("src/extension.ts");
+    expect(ext).toContain('onPath: () => this.pathAdded || pathPlan(join(this.home, "bin")).kind === "already",');
+    // set only after the plan was applied (applyPathPlan throws when the user's Path could not be written)
+    expect(ext).toMatch(/const done = applyPathPlan\(plan\);\n\s+this\.pathAdded = true;/);
+  });
 });
 
 describe("opening by itself", () => {

@@ -517,7 +517,7 @@ class ProtoboardExtension {
       guard: (fn) => this.guard(fn),
       account: () => ({ signedIn: this.accountState.state === "signed-in", ...(this.accountState.state === "signed-in" && this.accountState.email ? { email: this.accountState.email } : {}) }),
       agents: () => this.settings.look(),
-      onPath: () => pathPlan(join(this.home, "bin")).kind === "already",
+      onPath: () => this.pathAdded || pathPlan(join(this.home, "bin")).kind === "already",
       projects: () => [...this.rootList],
       adopt: (dir, open) => this.adoptExample(dir, open),
     });
@@ -836,9 +836,15 @@ class ProtoboardExtension {
     const a = await vscode.window.showInformationMessage("Add the protoboard command to your PATH?", { modal: true, detail: describePathPlan(plan) }, yes);
     if (a !== yes) return;
     const done = applyPathPlan(plan);
+    this.pathAdded = true;
     this.log.info(`PATH: ${done.message}`);
     void vscode.window.showInformationMessage(`Protoboard: ${done.message}`);
   }
+  /**
+   * Add to PATH was done from this window. On Windows the change is in the user's stored Path, which this
+   * window's own environment does not get, so `pathPlan` alone would go on offering it until VS Code restarts.
+   */
+  private pathAdded = false;
   /** This window has shown its one unasked notice (set-up finished, an empty folder, a project to initialize). */
   private noticed = false;
 
