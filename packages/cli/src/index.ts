@@ -2019,7 +2019,11 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
         // a URL with a character a shell reads (& ? ; and the like) is quoted, so the line runs as shown;
         // `nextArgs` is the same command as arguments, for a caller that starts it without a shell
         const url = cli.flags.url ? String(cli.flags.url) : undefined;
-        const shown = url === undefined ? "" : ` --url ${/^[A-Za-z0-9_\-.:\/@%+=,~]+$/.test(url) ? url : `"${url.replace(/(["\\$`])/g, "\\$1")}"`}`;
+        // quoted for the shells of this platform: single quotes where they are literal (sh and its kin); on
+        // Windows double quotes, which cmd and PowerShell both take (PowerShell still reads a `$` inside them:
+        // `nextArgs` is the exact command)
+        const quoted = (v: string) => (process.platform === "win32" ? `"${v}"` : `'${v.replace(/'/g, `'\\''`)}'`);
+        const shown = url === undefined ? "" : ` --url ${/^[A-Za-z0-9_\-.:\/@%+=,~]+$/.test(url) ? url : quoted(url)}`;
         const next = `protoboard login${shown} --code <code>`;
         const nextArgs = ["login", ...(url === undefined ? [] : ["--url", url]), "--code", "<code>"];
         out({ service, signedIn: false, url: begun.url, expiresIn: begun.expiresIn, next, nextArgs }, () => [begun.url, `Sign in there, then run: ${next}`].join("\n"));
