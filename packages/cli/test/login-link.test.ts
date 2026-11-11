@@ -158,6 +158,24 @@ describe("protoboard login at a terminal", () => {
     expect((await run).uid).toBe("u9");
   });
 
+  it("a sign-in that could not be saved ends the command with the reason, and never says signed in (PB-1226)", async () => {
+    const s = standIn();
+    const start = (async (...args: unknown[]) => {
+      const login = (await (s.start as (...a: unknown[]) => Promise<LinkLogin>)(...args)) as LinkLogin;
+      return { ...login, submitCode: async () => Promise.reject(new AccountError("NOT_SAVED", "the sign-in could not be saved, so you are not signed in: could not encrypt the sign-in with Windows' DPAPI")) };
+    }) as never;
+    const t = terminal();
+    const run = runLinkLogin(SERVICE, t.io, { json: false, start });
+    run.catch(() => undefined);
+    await t.tick();
+    await t.press("BDFG-HJKL\r");
+    await expect(run).rejects.toMatchObject({ code: "NOT_SAVED", message: expect.stringContaining("could not be saved, so you are not signed in") });
+    expect(t.text()).not.toMatch(/signed in as|✓/i);
+    // nothing is left waiting, and the terminal is given back
+    expect(s.logins[0]!.cancelled).toBe(true);
+    expect(t.raw).toEqual([true, false]);
+  });
+
   it("Ctrl+C cancels the sign-in and gives the terminal back", async () => {
     const s = standIn();
     const t = terminal();

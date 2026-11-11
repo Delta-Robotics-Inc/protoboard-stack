@@ -307,6 +307,42 @@ describe("the command scripts", () => {
     expect(cmd).toContain("\r\n");
   });
 
+  it("the Windows command ends with the CLI itself, so the CLI's exit code is the command's (PB-1226)", () => {
+    for (const kind of ["home", "project"] as const) {
+      const lines = windowsCommand({ kind, cli: "C:\\s\\cli.mjs", home: "C:\\h" }).split("\r\n");
+      // the last command of the file: nothing runs after the CLI, in its line or after it
+      expect(lines.slice(-3), kind).toEqual([":go", '"%PROG%" "%CLI%" %*', ""]);
+      expect(lines.filter((l) => l.includes('"%CLI%" %*')), kind).toHaveLength(1);
+      // Node.js from PATH when it is new enough, else the editor's runtime as Node; both go to that one line
+      expect(lines.some((l) => l.endsWith('&& set "PROG=node"')), kind).toBe(true);
+      expect(lines).toContain("if defined PROG goto go");
+      expect(lines).toContain('if defined RT if exist "%RT%" ( set "PROG=%RT%" & set "ELECTRON_RUN_AS_NODE=1" & goto go )');
+      // with neither, the line that says what to install, and 127
+      expect(lines.indexOf("exit /b 127")).toBeLessThan(lines.indexOf(":go"));
+    }
+  });
+
+  it.runIf(process.platform === "win32")("on Windows itself: a failed command's exit code comes back through the command file, to cmd and to PowerShell (PB-1226)", () => {
+    const home = join(TMP, "home-exit");
+    mkdirSync(join(home, "bin"), { recursive: true });
+    const cli = join(home, "cli.mjs");
+    writeFileSync(cli, 'console.log("ran " + process.argv.slice(2).join(","));\nprocess.exitCode = Number(process.argv[2] ?? 0);\n');
+    const file = writeCommands(join(home, "bin"), { kind: "home", cli, home }).find((f) => f.endsWith("protoboard.cmd"))!;
+    const root = process.env.SystemRoot ?? "C:\\Windows";
+    for (const code of [0, 1, 2, 7]) {
+      const viaCmd = spawnSync(`"${file}" ${code} "b c"`, { shell: true, encoding: "utf8", cwd: home });
+      expect(viaCmd.stdout.trim(), `cmd ${code}`).toBe(`ran ${code},b c`);
+      expect(viaCmd.status, `cmd ${code}`).toBe(code);
+      const viaPowerShell = spawnSync(join(root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe"), ["-NoProfile", "-NonInteractive", "-Command", `& '${file}' ${code}; exit $LASTEXITCODE`], { encoding: "utf8", cwd: home });
+      expect(viaPowerShell.status, `powershell ${code}`).toBe(code);
+    }
+    // what this replaced, for the record of the run: the CLI and `exit /b` in one line
+    const old = join(home, "bin", "old-form.cmd");
+    writeFileSync(old, `@echo off\r\nsetlocal\r\nwhere node >nul 2>nul && ( node "${cli}" %* & exit /b )\r\nexit /b 127\r\n`);
+    const before = spawnSync(join(root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe"), ["-NoProfile", "-NonInteractive", "-Command", `& '${old}' 7; exit $LASTEXITCODE`], { encoding: "utf8", cwd: home });
+    console.log(`the earlier form (CLI & exit /b in one line), asked for exit code 7, gave PowerShell ${before.status}`);
+  });
+
   it.skipIf(process.platform === "win32")("with no Node on PATH, run the CLI with the fallback runtime as Node", () => {
     const home = join(TMP, "home-rt");
     mkdirSync(join(home, "bin"), { recursive: true });

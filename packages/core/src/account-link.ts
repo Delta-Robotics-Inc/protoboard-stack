@@ -110,9 +110,16 @@ async function exchange(service: string, info: AccountInfo & { apiKey: string },
     // cancelled or timed out while this was on its way: the person was told nothing completed, so nothing is kept
     if (options.active && !options.active()) return { status: "expired" };
     const session = sessionFrom(service, info, t, "link");
-    const store = options.store ?? new CredentialStore();
-    store.put(session);
-    store.changed();
+    // a session that cannot be kept is not a sign-in: the next command would find nobody signed in. It is said as
+    // that, with the store's own reason. (The service gives this code a token again for a minute, so the same
+    // code can be given once more when the reason is put right; nothing here tries a failing store again.)
+    try {
+      const store = options.store ?? new CredentialStore();
+      store.put(session);
+      store.changed();
+    } catch (e) {
+      throw new AccountError("NOT_SAVED", `the sign-in could not be saved, so you are not signed in: ${(e as Error).message}`);
+    }
     return { status: "signed-in", session };
   }
   switch (r.body.error?.code) {
@@ -181,7 +188,12 @@ export async function startLinkLogin(service: string, options: LinkLoginOptions 
   let requestId = "";
   const submit = async (code: string): Promise<CodeResult> => {
     if (over) return { status: "expired" };
-    const r = await exchange(service, info, requestId, verifier, code, { ...options, active: () => !over });
+    const r = await exchange(service, info, requestId, verifier, code, { ...options, active: () => !over }).catch((e: unknown) => {
+      // the code was right and the session could not be kept: whoever waits on `done` (the page handed the code
+      // over; nobody typed it) is told now, not when the link runs out
+      if (e instanceof AccountError && e.code === "NOT_SAVED") end(() => fail(e));
+      throw e;
+    });
     if (r.status === "signed-in") end(() => finish(r.session));
     else if (r.status === "expired") end(() => fail(new AccountError("SIGN_IN_EXPIRED", "the sign-in expired or was used; start again")));
     return r;
@@ -262,7 +274,34 @@ interface Pending {
   expiresAt: number;
 }
 
-/** Where a started sign-in waits for its code: beside the credentials, readable by this user only. */
+/** The started sign-ins, by service: one waits per service, so a sign-in started for another service does not replace it. */
+type PendingFile = Record<string, Pending>;
+
+function readPending(file: string): PendingFile {
+  let v: unknown;
+  try {
+    v = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : undefined;
+  } catch {
+    v = undefined;
+  }
+  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
+  const all: PendingFile = {};
+  for (const [service, p] of Object.entries(v as Record<string, Partial<Pending> | undefined>)) {
+    if (p && typeof p === "object" && p.service === service && typeof p.requestId === "string" && typeof p.verifier === "string" && typeof p.expiresAt === "number") all[service] = p as Pending;
+  }
+  return all;
+}
+
+/** Keep the started sign-ins that still have time; with none left the file goes. */
+function writePending(file: string, all: PendingFile, platform: NodeJS.Platform, now = Date.now()): void {
+  const live = Object.fromEntries(Object.entries(all).filter(([, p]) => p.expiresAt > now));
+  if (!Object.keys(live).length) return rmSync(file, { force: true });
+  mkdirSync(join(file, ".."), { recursive: true, mode: 0o700 });
+  writeFileSync(file, JSON.stringify(live), { mode: 0o600 });
+  if (platform !== "win32") chmodSync(file, 0o600);
+}
+
+/** Where started sign-ins wait for their codes: beside the credentials, readable by this user only. */
 export const pendingSignInFile = (env: NodeJS.ProcessEnv = process.env, platform: NodeJS.Platform = process.platform) => join(configDir(env, platform), "sign-in-pending.json");
 
 /**
@@ -275,29 +314,33 @@ export async function beginLinkLogin(service: string, options: LinkLoginOptions 
   const verifier = randomBytes(32).toString("base64url");
   const asked = await request(service, info, verifier, undefined, options);
   const file = pendingSignInFile(options.env, options.platform);
-  mkdirSync(join(file, ".."), { recursive: true, mode: 0o700 });
   const pending: Pending = { service: serviceKey(service), requestId: asked.requestId, verifier, url: asked.url, expiresAt: Date.now() + asked.expiresIn * 1000 };
-  writeFileSync(file, JSON.stringify(pending), { mode: 0o600 });
-  if ((options.platform ?? process.platform) !== "win32") chmodSync(file, 0o600);
+  // one per service: a second --start for the same service replaces its link (the newest is the one to use), and
+  // leaves the sign-ins started for other services waiting
+  writePending(file, { ...readPending(file), [pending.service]: pending }, options.platform ?? process.platform);
   return { url: asked.url, expiresIn: asked.expiresIn };
 }
 
 /** The second step: the code the page showed. Throws NOT_STARTED when no sign-in was begun for this service. */
 export async function finishLinkLogin(service: string, code: string, options: { store?: CredentialStore; fetch?: typeof fetch; env?: NodeJS.ProcessEnv; platform?: NodeJS.Platform } = {}): Promise<CodeResult> {
   const file = pendingSignInFile(options.env, options.platform);
-  let pending: Pending | undefined;
-  try {
-    pending = existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as Pending) : undefined;
-  } catch {
-    pending = undefined;
-  }
-  if (!pending || pending.service !== serviceKey(service)) throw new AccountError("NOT_STARTED", "no sign-in is waiting for a code here; start one with `protoboard login --start`");
+  const platform = options.platform ?? process.platform;
+  const key = serviceKey(service);
+  const pending = readPending(file)[key];
+  if (!pending) throw new AccountError("NOT_STARTED", "no sign-in is waiting for a code here; start one with `protoboard login --start`");
+  /** This service's started sign-in is over; the others (read again: another command may have started one meanwhile) stay. */
+  const forget = () => {
+    const all = readPending(file);
+    if (all[key]?.requestId === pending.requestId) delete all[key];
+    writePending(file, all, platform);
+  };
   if (pending.expiresAt <= Date.now()) {
-    rmSync(file, { force: true });
+    forget();
     return { status: "expired" };
   }
   const info = await serviceAccount(service, options);
+  // a session that could not be saved (NOT_SAVED) leaves the started sign-in waiting: the same code is good again
   const r = await exchange(service, info, pending.requestId, pending.verifier, code, options);
-  if (r.status === "signed-in" || r.status === "expired") rmSync(file, { force: true });
+  if (r.status === "signed-in" || r.status === "expired") forget();
   return r;
 }

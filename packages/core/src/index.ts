@@ -347,6 +347,7 @@ export {
   SIGN_IN_CHECK_UNAVAILABLE,
   signInStamp,
   signInWithCustomToken,
+  windowsPowerShellEnv,
   type AccountInfo,
   type AccountStatus,
   type CredentialBackend,

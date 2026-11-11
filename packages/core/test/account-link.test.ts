@@ -5,7 +5,7 @@
  * form an agent uses, and a service from before this sign-in.
  */
 import { createHash } from "node:crypto";
-import { existsSync, mkdtempSync, readFileSync, statSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, statSync , writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -232,7 +232,7 @@ describe("sign-in in two steps (an agent, a script)", () => {
     expect(statSync(file).mode & 0o777).toBe(0o600);
     // no listener: an agent's machine is not where the browser is
     expect((s.calls.find((c) => c.url === `${SERVICE}/v1/auth/signin`)!.body as Record<string, unknown>).port).toBeUndefined();
-    const id = (JSON.parse(readFileSync(file, "utf8")) as { requestId: string }).requestId;
+    const id = (JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string }>)[SERVICE]!.requestId;
     expect(await finishLinkLogin(SERVICE, "BDFG-HJKL", { store, fetch: s.fetch, env })).toEqual({ status: "pending" });
     s.approve(id, "BDFG-HJKL");
     expect((await finishLinkLogin(SERVICE, "ZZZZ-ZZZZ", { store, fetch: s.fetch, env })).status).toBe("mismatch");
@@ -250,5 +250,92 @@ describe("sign-in in two steps (an agent, a script)", () => {
     await expect(finishLinkLogin(SERVICE, "BDFG-HJKL", { fetch: s.fetch, env })).rejects.toBeInstanceOf(AccountError);
     await beginLinkLogin(SERVICE, { fetch: s.fetch, env });
     await expect(finishLinkLogin("https://other.example", "BDFG-HJKL", { fetch: s.fetch, env })).rejects.toMatchObject({ code: "NOT_STARTED" });
+  });
+
+  it("a sign-in started for another service does not replace this one's; a second start for the same service does", async () => {
+    const OTHER = "https://other.example";
+    const s = standIn();
+    // the same stand-in answers for both services
+    const both: typeof fetch = ((url: string | URL | Request, init?: RequestInit) => s.fetch(String(url).replace(OTHER, SERVICE), init)) as typeof fetch;
+    const dir = mkdtempSync(join(tmpdir(), "pb-link-"));
+    const env = { PROTOBOARD_CONFIG_DIR: dir, PROTOBOARD_CREDENTIAL_STORE: "file" };
+    const store = fileStore(dir);
+    const file = pendingSignInFile(env);
+    const pending = () => JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string; service: string }>;
+    await beginLinkLogin(SERVICE, { fetch: s.fetch, env });
+    const first = pending()[SERVICE]!.requestId;
+    await beginLinkLogin(`${OTHER}/v1/`, { fetch: both, env });
+    expect(Object.keys(pending()).sort()).toEqual([OTHER, SERVICE].sort());
+    expect(pending()[SERVICE]!.requestId).toBe(first);
+    expect(statSync(file).mode & 0o777).toBe(0o600);
+    // the first command's follow-up still works, and leaves the other service's waiting
+    s.approve(first, "BDFG-HJKL");
+    expect((await finishLinkLogin(SERVICE, "BDFG-HJKL", { store, fetch: s.fetch, env })).status).toBe("signed-in");
+    expect(Object.keys(pending())).toEqual([OTHER]);
+    // the same service started twice: the newest link is the one that waits
+    await beginLinkLogin(OTHER, { fetch: both, env });
+    const second = pending()[OTHER]!.requestId;
+    await beginLinkLogin(OTHER, { fetch: both, env });
+    expect(pending()[OTHER]!.requestId).not.toBe(second);
+    s.approve(pending()[OTHER]!.requestId, "BDFG-HJKL");
+    expect((await finishLinkLogin(OTHER, "BDFG-HJKL", { store, fetch: both, env })).status).toBe("signed-in");
+    expect(existsSync(file)).toBe(false);
+  });
+
+  it("a file that is not what --start writes is nothing started", async () => {
+    const s = standIn();
+    const dir = mkdtempSync(join(tmpdir(), "pb-link-"));
+    const env = { PROTOBOARD_CONFIG_DIR: dir, PROTOBOARD_CREDENTIAL_STORE: "file" };
+    for (const text of ["not json", "[]", JSON.stringify({ [SERVICE]: { service: "https://elsewhere.example", requestId: "r", verifier: "v", expiresAt: Date.now() + 60_000 } }), JSON.stringify({ [SERVICE]: null })]) {
+      writeFileSync(pendingSignInFile(env), text);
+      await expect(finishLinkLogin(SERVICE, "BDFG-HJKL", { fetch: s.fetch, env }), text).rejects.toMatchObject({ code: "NOT_STARTED" });
+    }
+  });
+});
+
+describe("a sign-in that cannot be saved (PB-1226)", () => {
+  /** A store whose save fails, as Windows' did when its helper could not load a module. */
+  const failing = (dir = mkdtempSync(join(tmpdir(), "pb-link-"))) => {
+    const store = fileStore(dir);
+    store.put = () => {
+      throw new Error("could not encrypt the sign-in with Windows' DPAPI (PowerShell): the module could not be loaded");
+    };
+    return store;
+  };
+
+  it("--code fails with the reason, never as signed in, and the started sign-in still waits", async () => {
+    const s = standIn();
+    const dir = mkdtempSync(join(tmpdir(), "pb-link-"));
+    const env = { PROTOBOARD_CONFIG_DIR: dir, PROTOBOARD_CREDENTIAL_STORE: "file" };
+    await beginLinkLogin(SERVICE, { fetch: s.fetch, env });
+    const file = pendingSignInFile(env);
+    const id = (JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string }>)[SERVICE]!.requestId;
+    s.approve(id, "BDFG-HJKL");
+    const failed = await finishLinkLogin(SERVICE, "BDFG-HJKL", { store: failing(dir), fetch: s.fetch, env }).then(
+      (r) => r,
+      (e: unknown) => e,
+    );
+    expect(failed).toBeInstanceOf(AccountError);
+    expect(failed).toMatchObject({ code: "NOT_SAVED", message: "the sign-in could not be saved, so you are not signed in: could not encrypt the sign-in with Windows' DPAPI (PowerShell): the module could not be loaded" });
+    expect(fileStore(dir).get(SERVICE)).toBeUndefined();
+    // the token was asked for once: a failing store is not tried again
+    expect(s.calls.filter((c) => c.url.endsWith("/token"))).toHaveLength(1);
+    // what --code needs is still there, for the same code once the reason is put right
+    expect((JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string }>)[SERVICE]!.requestId).toBe(id);
+  });
+
+  it("a waiting sign-in ends with the reason, for a typed code and for the page's hand-off", async () => {
+    const s = standIn();
+    const typed = await startLinkLogin(SERVICE, { store: failing(), fetch: s.fetch });
+    s.approve(typed.requestId, "BDFG-HJKL");
+    await expect(typed.submitCode("BDFG-HJKL")).rejects.toMatchObject({ code: "NOT_SAVED" });
+    await expect(typed.done).rejects.toMatchObject({ code: "NOT_SAVED" });
+    // the page hands the code over: nobody is at submitCode, and whoever waits on `done` is told at once
+    const handed = await startLinkLogin(SERVICE, { store: failing(), fetch: s.fetch });
+    const { code, port } = s.approve(handed.requestId, "BDFG-HJKL");
+    const answer = await handOff(port!, { request: handed.requestId, code });
+    expect(answer.status).toBe(500);
+    expect(await answer.json()).toEqual({ ok: false });
+    await expect(handed.done).rejects.toMatchObject({ code: "NOT_SAVED", message: expect.stringContaining("could not be saved") });
   });
 });

@@ -85,10 +85,10 @@ export interface Session {
 export type CredentialBackend = "keychain" | "dpapi" | "file";
 
 /** Runs a command; stubbed in tests. */
-export type Runner = (command: string, args: string[], input?: string) => { status: number | null; stdout: string; stderr?: string; error?: Error };
+export type Runner = (command: string, args: string[], input?: string, options?: { env?: NodeJS.ProcessEnv }) => { status: number | null; stdout: string; stderr?: string; error?: Error };
 
-const run: Runner = (command, args, input) => {
-  const r = spawnSync(command, args, { input, encoding: "utf8", timeout: 15_000, windowsHide: true });
+const run: Runner = (command, args, input, options) => {
+  const r = spawnSync(command, args, { input, encoding: "utf8", timeout: 15_000, windowsHide: true, ...(options?.env ? { env: options.env } : {}) });
   return { status: r.status, stdout: r.stdout ?? "", stderr: r.stderr ?? "", ...(r.error ? { error: r.error } : {}) };
 };
 
@@ -122,6 +122,18 @@ export function dpapiFile(env: NodeJS.ProcessEnv = process.env, platform: NodeJS
   return join(local ? join(local, "protoboard") : configDir(env, platform), "credentials.dpapi.json");
 }
 
+/**
+ * The environment Windows PowerShell (`powershell.exe`) is started with:
+ * this process's, without `PSModulePath`. A terminal running PowerShell 7
+ * hands its own module folders down in that variable, and Windows PowerShell
+ * then finds PowerShell 7's `Microsoft.PowerShell.Security` first and cannot
+ * load it, so `ConvertTo-SecureString` fails. Without the variable it uses
+ * its own folders, whatever started this process.
+ */
+export function windowsPowerShellEnv(env: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
+  return Object.fromEntries(Object.entries(env).filter(([name]) => name.toLowerCase() !== "psmodulepath"));
+}
+
 /** PowerShell, run with the secret on stdin and never in its arguments. */
 const POWERSHELL = ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command"];
 /** stdin (base64 text) → a DPAPI blob for the current user, as hex. */
@@ -142,9 +154,11 @@ export class CredentialStore {
   readonly dpapiFile: string;
   private readonly runner: Runner;
   private readonly platform: NodeJS.Platform;
+  private readonly env: NodeJS.ProcessEnv;
 
   constructor(options: CredentialStoreOptions = {}) {
     const env = options.env ?? process.env;
+    this.env = env;
     this.platform = options.platform ?? process.platform;
     this.runner = options.runner ?? run;
     this.file = join(configDir(env, this.platform), "credentials.json");
@@ -301,7 +315,8 @@ export class CredentialStore {
   // ---- DPAPI (Windows)
 
   private powershell(script: string, input: string, what: string): string {
-    const r = this.runner("powershell.exe", [...POWERSHELL, script], input);
+    // this process's environment with the store's own over it, and never an inherited PSModulePath
+    const r = this.runner("powershell.exe", [...POWERSHELL, script], input, { env: windowsPowerShellEnv({ ...process.env, ...this.env }) });
     if (r.error || r.status !== 0 || !r.stdout.trim()) throw new Error(`could not ${what} the sign-in with Windows' DPAPI (PowerShell): ${(r.stderr || r.error?.message || `exit ${r.status}`).trim()}. PROTOBOARD_CREDENTIAL_STORE=file keeps it in ${this.file} instead`);
     return r.stdout.trim();
   }
@@ -379,7 +394,7 @@ function authEndpoints(info: { apiKey: string; emulator?: string }) {
 /** A sign-in error that says what to do. */
 export class AccountError extends Error {
   constructor(
-    readonly code: "NOT_SIGNED_IN" | "SESSION_EXPIRED" | "NO_SIGN_IN" | "SIGN_IN_FAILED" | "UNREACHABLE" | "LINK_UNSUPPORTED" | "SIGN_IN_EXPIRED" | "NOT_STARTED",
+    readonly code: "NOT_SIGNED_IN" | "SESSION_EXPIRED" | "NO_SIGN_IN" | "SIGN_IN_FAILED" | "UNREACHABLE" | "LINK_UNSUPPORTED" | "SIGN_IN_EXPIRED" | "NOT_STARTED" | "NOT_SAVED",
     message: string,
   ) {
     super(message);
