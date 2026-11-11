@@ -48,8 +48,8 @@ protoboard release --check                    # what stands between the design a
 ```
 
 Then open the folder in VS Code, or ask your agent to start from the
-**build-a-project** skill. A project made with Protoboard 0.1 is moved to
-0.2 with `protoboard upgrade` ([release notes](docs/releases/stack-v0.2.md)).
+**build-a-project** skill. A project made with Protoboard 0.1 or 0.2 is moved
+to 0.3 with `protoboard upgrade` ([release notes](docs/releases/stack-v0.3.md)).
 
 ## Documentation
 
@@ -67,7 +67,7 @@ Then open the folder in VS Code, or ask your agent to start from the
   [UHD boundary](docs/specs/uhd-boundary.md),
   [tool integrations](docs/specs/tool-integrations.md),
   [distribution](docs/specs/distribution.md) and the rest of [docs/specs](docs/specs/).
-- [Release notes](docs/releases/stack-v0.2.md).
+- [Release notes](docs/releases/stack-v0.3.md).
 
 ## Repository layout
 

@@ -63,9 +63,9 @@ Start with **build-a-project**: it takes an agent from a brief to a release and 
 
 ### @protoboardai/ext-docs
 
-Technical documents (datasheet, assembly guide) for a project's system: every value a query into the UHD model, figures rendered from the CAD artifacts, stand-in test data watermarked until measured data replaces it, and a verifier. Version 0.2.3; source [packages/ext-docs](../../packages/ext-docs).
+Technical documents (datasheet, assembly guide) for a project's system: every value a query into the UHD model, figures rendered from the CAD artifacts, stand-in test data watermarked until measured data replaces it, and a verifier. Version 0.3.0; source [packages/ext-docs](../../packages/ext-docs).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 | Operation | Effect | Needs | Summary |
 | --- | --- | --- | --- |
@@ -85,9 +85,9 @@ Eval cases: `build-datasheet` (Build and verify the quadcopter's datasheet).
 
 ### @protoboardai/ext-drone
 
-Multirotor domain pack: flight-controller configuration (Betaflight) generated from the UHD model. Version 0.2.3; source [packages/ext-drone](../../packages/ext-drone).
+Multirotor domain pack: flight-controller configuration (Betaflight) generated from the UHD model. Version 0.3.0; source [packages/ext-drone](../../packages/ext-drone).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 | Operation | Effect | Needs | Summary |
 | --- | --- | --- | --- |
@@ -101,9 +101,9 @@ Eval cases: `gps-moved-to-uart3` (Update the flight-controller configuration aft
 
 ### @protoboardai/ext-enclosure-cad
 
-Enclosure CAD: a printed or machined case generated with build123d from the UHD features it must provide (openings, plungers, windows, light pipes, insert bosses, O-ring glands, threads, strap lugs, the lid joint) and the bodies the assembly places inside it; fit, wall, seal and alignment checks. Version 0.2.3; source [packages/ext-enclosure-cad](../../packages/ext-enclosure-cad).
+Enclosure CAD: a printed or machined case generated with build123d from the UHD features it must provide (openings, plungers, windows, light pipes, insert bosses, O-ring glands, threads, strap lugs, the lid joint) and the bodies the assembly places inside it; fit, wall, seal and alignment checks. Version 0.3.0; source [packages/ext-enclosure-cad](../../packages/ext-enclosure-cad).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 **Capability `cad`**: Enclosures (cases, caps, back covers) with build123d: generated from the features they provide and what goes inside them. Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`. Constraints: `wall_mm` (required), `floor_mm`, `lid_mm`, `clearance_mm`, `clearance_top_mm`, `min_wall_mm`, `material`, `shape`, `cavity_mm`, `split_z_mm`, `joint`, `fasteners`, `exclude`, `resolution_mm`.
 
@@ -120,9 +120,9 @@ Skills: `enclosure-cad`.
 
 ### @protoboardai/ext-esp-idf
 
-firmware provider: ESP-IDF pin and peripheral header and sdkconfig.defaults for ESP32-C3 modules, every setting citing the UHD facts it comes from. Version 0.2.3; source [packages/ext-esp-idf](../../packages/ext-esp-idf).
+firmware provider: ESP-IDF pin and peripheral header and sdkconfig.defaults for ESP32-C3 modules, every setting citing the UHD facts it comes from. Version 0.3.0; source [packages/ext-esp-idf](../../packages/ext-esp-idf).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 **Capability `firmware`**: ESP-IDF 5.3 board_pins.h (buses, addresses, buttons, controls, wake mask) and sdkconfig.defaults (target, flash, console, RTC clock) for an ESP32-C3 board. Operations `firmware:generate`, `firmware:export`, `firmware:extract`, `firmware:check`. Constraints: `controller`, `console`, `i2c_frequency_hz`, `uart_baud`, `wake`.
 
@@ -132,9 +132,9 @@ Eval cases: `wake-on-fuel-gauge` (Configure ESP-IDF for the bottle cap after a w
 
 ### @protoboardai/ext-frame-cad
 
-Custom structure and hardware CAD: plates generated from a module's UHD bolt patterns and frames, and nominal fastener bodies from their sizes, both as a provider of the cad capability (build123d), with STEP/GLB/DXF exports, feature manifests, frame and staleness checks and explicit re-binding. Version 0.2.3; source [packages/ext-frame-cad](../../packages/ext-frame-cad).
+Custom structure and hardware CAD: plates generated from a module's UHD bolt patterns and frames, and nominal fastener bodies from their sizes, both as a provider of the cad capability (build123d), with STEP/GLB/DXF exports, feature manifests, frame and staleness checks and explicit re-binding. Version 0.3.0; source [packages/ext-frame-cad](../../packages/ext-frame-cad).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 **Capability `cad`**: Plates (frames, top plates, brackets) from a module's UHD bolt patterns and frames, and nominal mounting-hardware bodies (screws, nuts, standoffs, spacers) from their sizes, with build123d; DXF cutting profiles for plates. Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`. Constraints: `margin_mm`, `corner_radius_mm`, `arm_width_mm`, `arm_slot_width_mm`, `hub_extra_mm`, `pad_margin_mm`, `pad_height_mm`, `pad_center_relief_mm`, `hole_clearance_mm`, `clamp_wall_mm`, `clamp_margin_mm`, `clamp_height_mm`, `pads`, `outline_mm`, `slots_mm`.
 
@@ -161,9 +161,9 @@ Eval cases: `regenerate-after-vtx-move` (Regenerate the frame's CAD after the tr
 
 ### @protoboardai/ext-hardware
 
-General hardware engineering: system composition and review, harnesses and fastener stack-ups, test and measurement, BOM export, evidence coverage. Releases are @protoboardai/ext-release. Version 0.2.3; source [packages/ext-hardware](../../packages/ext-hardware).
+General hardware engineering: system composition and review, harnesses and fastener stack-ups, test and measurement, BOM export, evidence coverage. Releases are @protoboardai/ext-release. Version 0.3.0; source [packages/ext-hardware](../../packages/ext-hardware).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 | Operation | Effect | Needs | Summary |
 | --- | --- | --- | --- |
@@ -179,9 +179,9 @@ Eval cases: `compose-probe-cable` (Compose the temperature probe's connection th
 
 ### @protoboardai/ext-harness-cad
 
-Routed wire-harness CAD (a provider of the cad capability): each cable's 3D geometry (conductors swept along an obstacle-free route, twisted where the cable is, connector housings and solder joints) generated from the assembled UHD model and bound to the frames its ends land on. Version 0.2.3; source [packages/ext-harness-cad](../../packages/ext-harness-cad).
+Routed wire-harness CAD (a provider of the cad capability): each cable's 3D geometry (conductors swept along an obstacle-free route, twisted where the cable is, connector housings and solder joints) generated from the assembled UHD model and bound to the frames its ends land on. Version 0.3.0; source [packages/ext-harness-cad](../../packages/ext-harness-cad).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 **Capability `cad`**: Routed wire harnesses: an obstacle-free route through the assembled model, swept conductors, plug housings and solder joints (build123d). Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`.
 
@@ -205,9 +205,9 @@ Eval cases: `reroute-after-vtx-move` (Re-route the cable whose part moved: the D
 
 ### @protoboardai/ext-parts
 
-Purchased parts as datasheet-honest UHD definitions: research and cite the sources, author the ModuleDef, verify it automatically and by an independent audit, record the verification. Works on a project's parts (parts/local, parts/evidence) and on the cloud part library (library/parts). Version 0.2.3; source [packages/ext-parts](../../packages/ext-parts).
+Purchased parts as datasheet-honest UHD definitions: research and cite the sources, author the ModuleDef, verify it automatically and by an independent audit, record the verification. Works on a project's parts (parts/local, parts/evidence) and on the cloud part library (library/parts). Version 0.3.0; source [packages/ext-parts](../../packages/ext-parts).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 **Capability `cad`**: A project-researched part's body drawn by its own build123d script (parts/local/<id>/part-cad/<script>.py): run, recorded and exported as STEP, GLB and a feature manifest. Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`. Constraints: `generator`.
 
@@ -226,9 +226,9 @@ Eval cases: `author-ldo-regulator` (Author a small purchased part (an LDO regula
 
 ### @protoboardai/ext-release
 
-Releases: `protoboard release` refuses a project with check errors, stale outputs or uncommitted changes, then writes the Manufacturing Package (overview, per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan, manufacturing files, index.html) and a reproducible release manifest. Version 0.2.3; source [packages/ext-release](../../packages/ext-release).
+Releases: `protoboard release` refuses a project with check errors, stale outputs or uncommitted changes, then writes the Manufacturing Package (overview, per-unit spec sheet, BOM and ordering list, work order, assembly guide and test plan, manufacturing files, index.html) and a reproducible release manifest. Version 0.3.0; source [packages/ext-release](../../packages/ext-release).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 | Operation | Effect | Needs | Summary |
 | --- | --- | --- | --- |
@@ -249,9 +249,9 @@ Eval cases: `release-after-hand-edit` (Cut a release of the smart bottle after a
 
 ### @protoboardai/ext-sourcing
 
-Part sourcing: external discovery, datasheet facts with checked quotes, supplier and lifecycle observations as dated evidence (never orders), alternates, and handoff into locally authored UHD parts. Version 0.2.3; source [packages/ext-sourcing](../../packages/ext-sourcing).
+Part sourcing: external discovery, datasheet facts with checked quotes, supplier and lifecycle observations as dated evidence (never orders), alternates, and handoff into locally authored UHD parts. Version 0.3.0; source [packages/ext-sourcing](../../packages/ext-sourcing).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 | Check | Summary |
 | --- | --- |
@@ -267,9 +267,9 @@ Eval cases: `record-ldo-offers` (Record a regulator's supplier offers and lifecy
 
 ### @protoboardai/ext-tscircuit
 
-circuit provider: PCBs from UHD board modules with tscircuit, run in-process under Node and offline (generate, export, extract, check). Version 0.2.3; source [packages/ext-tscircuit](../../packages/ext-tscircuit).
+circuit provider: PCBs from UHD board modules with tscircuit, run in-process under Node and offline (generate, export, extract, check). Version 0.3.0; source [packages/ext-tscircuit](../../packages/ext-tscircuit).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 **Capability `circuit`**: PCBs from UHD boards with tscircuit: generated source, local autorouting, Gerber/BOM/PnP/GLB/STEP/manifest/netlist and SVG renders, DRC and netlist drift. Operations `circuit:generate`, `circuit:export`, `circuit:extract`, `circuit:check`, `circuit:kicad`, `circuit:lock`, `circuit:unlock`. Constraints: `layers`, `thickness_mm`, `outline`, `mounting_holes`, `placements`, `keepouts`, `pours`, `rules`, `autorouter`, `copper_oz`, `finish`, `solder_mask`, `silkscreen`, `assembly`, `fab_notes`, `via_in_pad`, `via_touching_pad`, `via_under_body`, `routing`, `trace_widths`.
 
@@ -286,9 +286,9 @@ Skills: `circuit-board`, `kicad-layout-review`, `kicad-cli`.
 
 ### @protoboardai/ext-zephyr
 
-firmware provider: Zephyr board definitions for nRF52840 modules (devicetree with pinctrl, buses, devices, buttons, display; Kconfig), every setting citing the UHD facts it comes from. Version 0.2.3; source [packages/ext-zephyr](../../packages/ext-zephyr).
+firmware provider: Zephyr board definitions for nRF52840 modules (devicetree with pinctrl, buses, devices, buttons, display; Kconfig), every setting citing the UHD facts it comes from. Version 0.3.0; source [packages/ext-zephyr](../../packages/ext-zephyr).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 **Capability `firmware`**: Zephyr 4.2 board definition (board.yml, Kconfig, defconfig, devicetree, pinctrl) and a Kconfig fragment for an nRF52840 board. Operations `firmware:generate`, `firmware:export`, `firmware:extract`, `firmware:check`. Constraints: `controller`, `board_name`, `vendor`, `console`, `i2c_frequency_hz`, `uart_baud`, `wake`, `properties`.
 

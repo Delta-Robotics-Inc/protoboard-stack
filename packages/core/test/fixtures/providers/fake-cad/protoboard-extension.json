@@ -3,7 +3,7 @@
   "id": "@fixtures/fake-cad",
   "version": "0.1.0",
   "description": "TEST FIXTURE: fake cad provider. Designs a box with one opening per interface; exports STEP, GLB, STL and a manifest. Not a real CAD tool.",
-  "compatibility": { "protoboard": "^0.2.0" },
+  "compatibility": { "protoboard": "^0.3.0" },
   "capabilities": [
     {
       "id": "cad",

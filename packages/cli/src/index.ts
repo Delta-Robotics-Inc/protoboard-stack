@@ -181,7 +181,7 @@ const cli = meow(
                             between its markers) to this version's and keep the project's own sections, write a
                             CLAUDE.md that imports AGENTS.md when there is none, and export the skills list;
                             lines elsewhere that contradict the guidance are reported, not rewritten
-    upgrade [dir]           Move a project made by an earlier Protoboard (0.1.x) to this version: package.json's
+    upgrade [dir]           Move a project made by an earlier Protoboard (0.1.x, 0.2.x) to this version: package.json's
                             @protoboardai/* ranges become ${stackRangeFor(FRAMEWORK_VERSION)} and its UHD and TypeScript pins this
                             stack's, its packages are linked again to a stack copy that fits, AGENTS.md and
                             CLAUDE.md get this version's guidance (init --refresh-guidance) and vendored parts

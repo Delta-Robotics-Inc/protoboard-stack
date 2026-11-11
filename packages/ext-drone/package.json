@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-drone",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Protoboard extension: flight-controller configuration for multirotor drones.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -26,9 +26,9 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/core": "^0.3.0",
     "@deltarobotics/uhd": ">=0.3.0",
-    "@protoboardai/ext-release": "^0.2.0"
+    "@protoboardai/ext-release": "^0.3.0"
   },
   "peerDependenciesMeta": {
     "@protoboardai/ext-release": {

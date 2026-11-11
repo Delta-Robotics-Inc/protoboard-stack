@@ -1,5 +1,5 @@
 /**
- * `protoboard upgrade`: move a project made by an earlier stack line (0.1.x)
+ * `protoboard upgrade`: move a project made by an earlier stack line (0.1.x, 0.2.x)
  * to this one. This file is the package.json part: every `@protoboardai/*`
  * range becomes `^<this stack's version>`, and the toolchain the stack pins
  * exactly (`@deltarobotics/uhd`, `typescript`, `TOOLCHAIN`) follows, as

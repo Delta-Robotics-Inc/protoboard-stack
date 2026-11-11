@@ -5,7 +5,7 @@ The stack's packages are published to npmjs by the release workflow
 them, before a release**: publish the workspace to a **local Verdaccio
 registry** on `127.0.0.1:4873`, then install projects from it outside the
 repository. Projects and the reference projects depend on **versions**
-(`"@protoboardai/core": "^0.2.0"`), never on `file:../` paths; inside the
+(`"@protoboardai/core": "^0.3.0"`), never on `file:../` paths; inside the
 repository npm links the packages instead (dev-link mode, below).
 
 ## The packages
@@ -172,7 +172,7 @@ project's `.npmrc` for the two scopes.
 ```sh
 mkdir ~/projects && cd ~/projects
 printf 'registry=http://127.0.0.1:4873/\n' > .npmrc     # or the scope lines in ~/.npmrc
-npm exec --package=@protoboardai/cli@0.2.0 -- protoboard init my-drone --template drone
+npm exec --package=@protoboardai/cli@0.3.0 -- protoboard init my-drone --template drone
 cd my-drone && npm install
 npx protoboard check && npx protoboard build
 ls .claude/skills              # exported by npm install (its postinstall), and listed at the end of AGENTS.md

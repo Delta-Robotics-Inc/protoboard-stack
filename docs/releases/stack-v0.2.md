@@ -3,7 +3,8 @@
 0.2.0 is the first public release of Protoboard Stack. The stack, the VS Code
 extension, the cloud client and the viewer are open source under Apache-2.0,
 and local work needs no account. The [0.1 release notes](stack-v0.1.md)
-describe the line before it.
+describe the line before it, and the [0.3 release notes](stack-v0.3.md) the
+one after.
 
 ## 0.2.3
 
