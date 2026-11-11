@@ -156,6 +156,17 @@ describe("the sign-in prompt", () => {
     expect(f.box.shown).toBe(false);
   });
 
+  it("a command that fails says why as a JSON line: the box closes with that reason, not with the exit code", async () => {
+    const f = fakes();
+    const run = runSignInPrompt(f.host);
+    f.procs[0]!.line(LINK);
+    // what `login --wait --format json` prints when the sign-in could not be saved; stderr stays empty
+    f.procs[0]!.line({ error: "the sign-in could not be saved, so you are not signed in: no credential store" });
+    f.procs[0]!.exit(2);
+    expect(await run).toEqual({ signedIn: false, reason: "failed", message: "the sign-in could not be saved, so you are not signed in: no credential store" });
+    expect(f.box.shown).toBe(false);
+  });
+
   it("a service from before sign-in by link: its code is shown, to approve on its own page", async () => {
     const f = fakes();
     const run = runSignInPrompt(f.host);

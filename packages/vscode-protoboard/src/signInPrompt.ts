@@ -125,6 +125,10 @@ export function runSignInPrompt(host: PromptHost): Promise<PromptResult> {
           signedIn = { ...(typeof e.email === "string" ? { email: e.email } : {}) };
         } else if (e.signedIn === false && typeof e.message === "string" && !expired) {
           end({ signedIn: false, reason: "failed", message: e.message });
+        } else if (typeof e.error === "string" && !expired) {
+          // the CLI's last line when the command itself fails (the sign-in could not be saved, the service is out
+          // of reach): with --format json it is on stdout, and nothing is on stderr
+          end({ signedIn: false, reason: "failed", message: e.error });
         }
       });
       p.onExit((code, lastError) => {
