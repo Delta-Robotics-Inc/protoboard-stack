@@ -11,7 +11,8 @@
 #            with spaces, an example, and the extension's integration test in
 #            a real VS Code
 #   windows  the same for Windows (the sign-in link's opener, the PATH entry, re-linking
-#            a project through junctions),
+#            a project through junctions, an example checked without the privilege to
+#            make symbolic links, as a standard user's process),
 #            from Git Bash and from PowerShell; the whole suite reports there
 #            without failing the run until it passes once (docs/ci.md)
 #
@@ -238,6 +239,16 @@ jobs:
         working-directory: protoboard-stack
         run: |
           node scripts/windows/template-project.mjs drone
+          exit $LASTEXITCODE
+
+      # The runner is elevated and has Developer Mode on; most people's machines are neither. The example's parts
+      # carry their own source, which `check` evaluates in a confined child process: with UHD 0.3.0 that needed a
+      # symbolic link, and failed for a standard user while it passed here (docs/ci.md, "Windows").
+      - name: check (the quadcopter example) as a process that cannot make symbolic links
+        shell: pwsh
+        working-directory: protoboard-stack/examples/quadcopter-5in
+        run: |
+          ../../scripts/windows/as-standard-user.ps1 -DeveloperModeOff node ../../packages/cli/bin/protoboard.mjs check
           exit $LASTEXITCODE
 
       - name: check and build (the quadcopter example)
