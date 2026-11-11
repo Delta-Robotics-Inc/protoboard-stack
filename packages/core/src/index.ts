@@ -374,7 +374,7 @@ export {
   type AccessRefusal,
   type AccessVia,
 } from "./access.js";
-export { PATH_MARK, TERMINAL_PATH_ENV, applyPathPlan, describePathPlan, lastingPath, onPathValue, pathPlan, type PathApplied, type PathLook, type PathPlan } from "./path-setup.js";
+export { PATH_MARK, TERMINAL_PATH_ENV, addToPathValue, applyPathPlan, describePathPlan, lastingPath, onPathValue, pathPlan, removeFromPathValue, removeFromUserPath, type PathApplied, type PathLook, type PathPlan } from "./path-setup.js";
 // Stack copies outside a project, and a project's links to one (PB-929)
 export {
   LINK_RECORD,

@@ -4,7 +4,7 @@
  * Every system is tested here by giving the platform and the environment.
  */
 import { describe, expect, it } from "vitest";
-import { PATH_MARK, TERMINAL_PATH_ENV, applyPathPlan, describePathPlan, lastingPath, onPathValue, pathPlan } from "../src/path-setup.js";
+import { PATH_MARK, TERMINAL_PATH_ENV, addToPathValue, applyPathPlan, describePathPlan, lastingPath, onPathValue, parseUserPath, pathPlan, powerShellEnv, readUserPathScript, removeFromPathValue, removeFromUserPath, writeUserPathScript } from "../src/path-setup.js";
 
 const HOME = "/home/ada";
 const BIN = `${HOME}/.protoboard/bin`;
@@ -39,22 +39,91 @@ describe("pathPlan", () => {
     expect(describePathPlan(plan)).toContain("terminals opened from now on have it");
   });
 
-  it("Windows: the user's own Path through PowerShell, the folder quoted, appended only when it is not there", () => {
+  it("Windows: the plan reads the user's own Path as the registry stores it, through Windows PowerShell", () => {
     const dir = "C:\\Users\\O'Brien\\.protoboard\\bin";
     const plan = pathPlan(dir, { platform: "win32", home: "C:\\Users\\O'Brien", env: { Path: "C:\\Windows", SystemRoot: "C:\\Windows" } });
     expect(plan.kind).toBe("windows");
     if (plan.kind !== "windows") return;
     expect(plan.command).toBe("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe");
-    expect(plan.args.slice(0, 3)).toEqual(["-NoProfile", "-NonInteractive", "-Command"]);
-    const script = plan.args[3]!;
-    expect(script).toContain("$d='C:\\Users\\O''Brien\\.protoboard\\bin'");
-    expect(script).toContain("[Environment]::GetEnvironmentVariable('Path','User')");
-    expect(script).toContain("-notcontains");
-    expect(script).toContain("[Environment]::SetEnvironmentVariable('Path'");
-    expect(script).toContain("'User')");
-    // never the machine's Path, and never setx (which cuts a long Path)
-    expect(script).not.toMatch(/'Machine'|setx/i);
+    expect(plan.args).toEqual(["-NoProfile", "-NonInteractive", "-Command", readUserPathScript()]);
     expect(describePathPlan(plan)).toContain("no administrator rights");
+  });
+});
+
+const DIR = "C:\\Users\\Ada\\.protoboard\\bin";
+const ADA = { USERPROFILE: "C:\\Users\\Ada", LocalAppData: "C:\\Users\\Ada\\AppData\\Local" };
+
+describe("the stored Windows Path (PB-1225)", () => {
+  it("appends the folder and keeps every other entry as written, variables included", () => {
+    const stored = "%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\bin;C:\\Tools";
+    expect(addToPathValue(stored, DIR, ADA)).toEqual({ value: `${stored};${DIR}`, changed: true });
+  });
+
+  it("a trailing semicolon, an empty value and no value", () => {
+    expect(addToPathValue("%USERPROFILE%\\bin;", DIR, ADA)).toEqual({ value: `%USERPROFILE%\\bin;${DIR}`, changed: true });
+    expect(addToPathValue("", DIR, ADA)).toEqual({ value: DIR, changed: true });
+    expect(addToPathValue("  ", DIR, ADA)).toEqual({ value: DIR, changed: true });
+    expect(addToPathValue(undefined, DIR, ADA)).toEqual({ value: DIR, changed: true });
+    // empty entries in the middle are the user's own: kept
+    expect(addToPathValue("C:\\a;;C:\\b", DIR, ADA).value).toBe(`C:\\a;;C:\\b;${DIR}`);
+  });
+
+  it("is unchanged when the folder is there: other case, a trailing separator, quotes, or through a variable", () => {
+    for (const stored of [`C:\\Tools;${DIR}`, `C:\\Tools;c:\\users\\ADA\\.Protoboard\\BIN\;C:\\x`, `"${DIR}"`, "C:\\Tools;%USERPROFILE%\\.protoboard\\bin", "%userprofile%\\.protoboard\\bin\;"]) {
+      expect(addToPathValue(stored, DIR, ADA)).toEqual({ value: stored, changed: false });
+    }
+    // a folder that only starts the same is another folder, and an unknown variable is not expanded
+    expect(addToPathValue(`${DIR}-old;%NOPE%\\.protoboard\\bin`, DIR, ADA).changed).toBe(true);
+  });
+
+  it("removal takes out only that folder", () => {
+    const stored = `%USERPROFILE%\\go\\bin;${DIR};C:\\Tools;`;
+    expect(removeFromPathValue(stored, DIR, ADA)).toEqual({ value: "%USERPROFILE%\\go\\bin;C:\\Tools;", changed: true });
+    expect(removeFromPathValue(`%USERPROFILE%\\go\\bin;${DIR}`, DIR, ADA).value).toBe("%USERPROFILE%\\go\\bin");
+    expect(removeFromPathValue("C:\\a;%USERPROFILE%\\.PROTOBOARD\\bin\;C:\\b", DIR, ADA).value).toBe("C:\\a;C:\\b");
+    expect(removeFromPathValue(DIR, DIR, ADA)).toEqual({ value: "", changed: true });
+    expect(removeFromPathValue("C:\\a;;C:\\b;", DIR, ADA)).toEqual({ value: "C:\\a;;C:\\b;", changed: false });
+    expect(removeFromPathValue(undefined, DIR, ADA)).toEqual({ value: "", changed: false });
+    // adding and removing gives back what was there
+    const before = "%USERPROFILE%\\go\\bin;C:\\Tools";
+    expect(removeFromPathValue(addToPathValue(before, DIR, ADA).value, DIR, ADA).value).toBe(before);
+  });
+
+  it("the read command asks the registry for the value unexpanded and for its type", () => {
+    const script = readUserPathScript();
+    expect(script).toContain("[Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment')");
+    expect(script).toContain("GetValue('Path',$null,[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)");
+    expect(script).toContain("GetValueKind('Path')");
+    // never the expanded value, the machine's Path, or setx (which cuts a long Path)
+    expect(script).not.toMatch(/GetEnvironmentVariable|LocalMachine|'Machine'|setx/i);
+  });
+
+  it("what the read command prints is read back: type and text, an empty value, a missing one", () => {
+    const b64 = (t: string) => Buffer.from(t, "utf8").toString("base64");
+    expect(parseUserPath(`ExpandString ${b64("%USERPROFILE%\\bin;C:\\Users\\Zoë\\x")}\r\n`)).toEqual({ kind: "ExpandString", value: "%USERPROFILE%\\bin;C:\\Users\\Zoë\\x" });
+    expect(parseUserPath("String\r\n")).toEqual({ kind: "String", value: "" });
+    expect(parseUserPath("missing\r\n")).toEqual({ kind: "missing" });
+    expect(parseUserPath("")).toBeUndefined();
+    expect(parseUserPath("Get-Item : Access denied")).toBeUndefined();
+  });
+
+  it("the write command carries the value whole, writes it with the type given, and announces the change", () => {
+    const value = "%USERPROFILE%\\it's;C:\\Users\\Zoë\\bin";
+    const script = writeUserPathScript(value, "ExpandString");
+    const carried = /FromBase64String\('([A-Za-z0-9+/=]+)'\)/.exec(script)?.[1];
+    expect(Buffer.from(carried!, "base64").toString("utf8")).toBe(value);
+    // the value itself is never part of the command's text: nothing in it can be read as PowerShell
+    expect(script).not.toContain("it's");
+    expect(script).toContain("$k.SetValue('Path',$v,[Microsoft.Win32.RegistryValueKind]::ExpandString)");
+    expect(writeUserPathScript(value, "String")).toContain("[Microsoft.Win32.RegistryValueKind]::String)");
+    // the broadcast: a variable that does not exist is deleted, which changes nothing and tells running programs
+    expect(script).toContain("[Environment]::SetEnvironmentVariable('PROTOBOARD_PATH_CHANGED',$null,'User')");
+    expect(script.indexOf("SetValue('Path'")).toBeLessThan(script.indexOf("SetEnvironmentVariable"));
+    expect(script).not.toMatch(/SetEnvironmentVariable\('Path'|LocalMachine|'Machine'|setx/i);
+  });
+
+  it("Windows PowerShell is started without PowerShell 7's module path", () => {
+    expect(powerShellEnv({ Path: "C:\\Windows", PSModulePath: "C:\\Program Files\\PowerShell\\7\\Modules", psmodulepath: "x", USERPROFILE: "C:\\Users\\Ada" })).toEqual({ Path: "C:\\Windows", USERPROFILE: "C:\\Users\\Ada" });
   });
 });
 
@@ -87,13 +156,63 @@ describe("applyPathPlan", () => {
     expect(r).toMatchObject({ changed: true, message: expect.stringContaining("Open a new terminal") });
   });
 
-  it("Windows: runs the command, and says what to do by hand when it fails", () => {
-    const plan = pathPlan("C:\\pb\\bin", { platform: "win32", env: { Path: "C:\\Windows" } });
-    const ran: string[][] = [];
-    expect(applyPathPlan(plan, { run: (c, a) => (ran.push([c, ...a]), { status: 0, stdout: "added\r\n", stderr: "" }) })).toMatchObject({ changed: true });
-    expect(ran).toHaveLength(1);
-    expect(applyPathPlan(plan, { run: () => ({ status: 0, stdout: "already\r\n", stderr: "" }) })).toMatchObject({ changed: false });
-    expect(() => applyPathPlan(plan, { run: () => ({ status: 1, stdout: "", stderr: "Access denied" }) })).toThrow(/Access denied.*Environment Variables/);
+  /** A user Path in a fake registry: answers the read command, and takes what the write command carries. */
+  const registry = (kind: string, value: string | undefined) => {
+    const reg = { kind, value, writes: 0, ran: [] as string[][] };
+    const run = (command: string, args: string[]) => {
+      reg.ran.push([command, ...args]);
+      const script = args.at(-1)!;
+      if (script === readUserPathScript()) return { status: 0, stdout: reg.value === undefined ? "missing\r\n" : `${reg.kind} ${Buffer.from(reg.value, "utf8").toString("base64")}\r\n`, stderr: "" };
+      const m = /FromBase64String\('([A-Za-z0-9+/=]*)'\).*RegistryValueKind\]::(\w+)\)/.exec(script);
+      if (!m) throw new Error(`unexpected command: ${script}`);
+      reg.value = Buffer.from(m[1]!, "base64").toString("utf8");
+      reg.kind = m[2]!;
+      reg.writes++;
+      return { status: 0, stdout: "written\r\n", stderr: "" };
+    };
+    return { reg, run };
+  };
+  const winPlan = () => pathPlan(DIR, { platform: "win32", env: { Path: "C:\\Windows", SystemRoot: "C:\\Windows" } });
+
+  it("Windows: an expandable Path stays expandable and differs only by the added folder (PB-1225)", () => {
+    const stored = "%USERPROFILE%\\AppData\\Local\\Microsoft\\WindowsApps;%USERPROFILE%\\go\\bin;";
+    const { reg, run } = registry("ExpandString", stored);
+    expect(applyPathPlan(winPlan(), { run, env: ADA })).toMatchObject({ changed: true, message: expect.stringContaining("Open a new terminal") });
+    expect(reg).toMatchObject({ kind: "ExpandString", value: `${stored}${DIR}`, writes: 1 });
+    expect(reg.ran.every((r) => r[0] === "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" && r.slice(1, 4).join(" ") === "-NoProfile -NonInteractive -Command")).toBe(true);
+    // a second time there is nothing to write
+    expect(applyPathPlan(winPlan(), { run, env: ADA })).toMatchObject({ changed: false, message: expect.stringContaining("already") });
+    expect(reg.writes).toBe(1);
+    // and taking it out again leaves the other entries as they were, type included (the folder goes with the separator before it)
+    expect(removeFromUserPath(DIR, { env: { ...ADA, SystemRoot: "C:\\Windows" } }, { run })).toMatchObject({ changed: true });
+    expect(reg).toMatchObject({ kind: "ExpandString", value: stored.slice(0, -1), writes: 2 });
+    expect(removeFromUserPath(DIR, { env: ADA }, { run })).toMatchObject({ changed: false });
+    expect(reg.writes).toBe(2);
+  });
+
+  it("Windows: a plain Path stays plain, a missing one is created expandable, one entered through a variable is left alone", () => {
+    const plain = registry("String", "C:\\Tools");
+    applyPathPlan(winPlan(), { run: plain.run, env: ADA });
+    expect(plain.reg).toMatchObject({ kind: "String", value: `C:\\Tools;${DIR}` });
+    const none = registry("", undefined);
+    applyPathPlan(winPlan(), { run: none.run, env: ADA });
+    expect(none.reg).toMatchObject({ kind: "ExpandString", value: DIR });
+    const through = registry("ExpandString", "%USERPROFILE%\\.protoboard\\bin");
+    expect(applyPathPlan(winPlan(), { run: through.run, env: ADA }).changed).toBe(false);
+    expect(through.reg.writes).toBe(0);
+  });
+
+  it("Windows: says what to do by hand when it cannot read or write, and never writes a Path it could not read", () => {
+    expect(() => applyPathPlan(winPlan(), { run: () => ({ status: 1, stdout: "", stderr: "Access denied" }) })).toThrow(/Access denied.*Environment Variables/);
+    const unread: string[] = [];
+    expect(() => applyPathPlan(winPlan(), { run: (_c, a) => (unread.push(a.at(-1)!), { status: 0, stdout: "WARNING: not what was asked.\r\n", stderr: "" }) })).toThrow(/could not be read.*Environment Variables/);
+    expect(unread).toEqual([readUserPathScript()]);
+    const odd = registry("MultiString", "C:\\Tools");
+    expect(() => applyPathPlan(winPlan(), { run: odd.run, env: ADA })).toThrow(/stored as MultiString/);
+    expect(odd.reg.writes).toBe(0);
+    const { reg, run } = registry("ExpandString", "C:\\Tools");
+    expect(() => applyPathPlan(winPlan(), { run: (c, a) => (a.at(-1) === readUserPathScript() ? run(c, a) : { status: 1, stdout: "", stderr: "Requested registry access is not allowed." }), env: ADA })).toThrow(/registry access is not allowed/);
+    expect(reg.value).toBe("C:\\Tools");
   });
 
   it("changes nothing when there is nothing to do", () => {

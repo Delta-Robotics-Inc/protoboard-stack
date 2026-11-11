@@ -13,6 +13,8 @@
   trust the folder.
 - A stack that cannot be set up at the first start is reported, with Try
   Again.
+- Windows: **Add to PATH** appends its folder to your user `Path` and
+  leaves the rest as it was, `%USERPROFILE%` entries included.
 
 ## 0.2.3
 
