@@ -68,30 +68,41 @@ export function activateRestricted(context: vscode.ExtensionContext, views: read
       .map((id) => vscode.commands.registerCommand(id, say)),
     ...views.map((id) => vscode.window.registerTreeDataProvider(id, { getChildren: () => [], getTreeItem: (x: vscode.TreeItem) => x })),
   ];
-  // a Protoboard project in the folder (the example just opened, a clone): said unasked, with the way out, in a tab
-  // that stays until the folder is trusted or the tab is closed (a notification is gone in ten seconds). Only a
-  // file's name is looked at; nothing of the project is read or run.
-  const project = (vscode.workspace.workspaceFolders ?? []).some((f) => f.uri.scheme === "file" && existsSync(join(f.uri.fsPath, "protoboard.config.ts")));
-  if (project) {
+  // a Protoboard project in the folder (the example just opened, a clone), or in a folder inside it (a repository
+  // with its projects below the root, found as a trusted window finds them): said unasked, with the way out, in a
+  // tab that stays until the folder is trusted or the tab is closed (a notification is gone in ten seconds). Only
+  // files' names are looked at; nothing of a project is read or run.
+  let done = false;
+  let over = false;
+  let page: vscode.Disposable | undefined;
+  const show = () => {
+    if (over || page) return;
     try {
-      subs.push(openRestrictedPage(context));
+      page = openRestrictedPage(context);
     } catch {
       // a window that cannot show the tab is still told
       say();
     }
-  }
-  let done = false;
+  };
+  const folders = (vscode.workspace.workspaceFolders ?? []).filter((f) => f.uri.scheme === "file");
+  if (folders.some((f) => existsSync(join(f.uri.fsPath, "protoboard.config.ts")))) show();
+  else if (folders.length) void Promise.resolve(vscode.workspace.findFiles("**/protoboard.config.ts", "**/{node_modules,.git,.protoboard}/**", 1)).then((found) => found.length && show(), () => undefined);
   const all = vscode.Disposable.from(...subs);
+  const end = () => {
+    over = true;
+    all.dispose();
+    page?.dispose();
+  };
   const granted = vscode.workspace.onDidGrantWorkspaceTrust(() => {
     if (done) return;
     done = true;
-    all.dispose();
+    end();
     granted.dispose();
     closeTrustPage();
     start();
   });
   const handle = new vscode.Disposable(() => {
-    if (!done) all.dispose();
+    if (!done) end();
     granted.dispose();
   });
   context.subscriptions.push(handle);

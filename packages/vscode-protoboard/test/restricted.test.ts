@@ -16,6 +16,8 @@ let tabs: { label: string; input: unknown }[] = [];
 const closed: unknown[] = [];
 const panels: { type: string; title: string; show: { preserveFocus?: boolean }; options: { enableScripts?: boolean; enableCommandUris?: readonly string[]; localResourceRoots?: unknown[] }; webview: { html: string }; iconPath?: unknown; open: boolean; dispose(): void }[] = [];
 let failPanel = false;
+const searches: { include: string; exclude: string; max: number }[] = [];
+let nested: unknown[] = [];
 let trustedFolders: { uri: { scheme: string; fsPath: string } }[] = [];
 
 vi.mock("vscode", () => {
@@ -65,6 +67,10 @@ vi.mock("vscode", () => {
     workspace: {
       get workspaceFolders() {
         return trustedFolders;
+      },
+      findFiles: (include: string, exclude: string, max: number) => {
+        searches.push({ include, exclude, max });
+        return Promise.resolve(nested);
       },
       onDidGrantWorkspaceTrust: (fn: () => void) => {
         grant = fn;
@@ -168,6 +174,38 @@ describe("in a folder that is not trusted", () => {
     activateRestricted(context() as never, VIEWS, () => undefined).dispose();
     expect(panels).toEqual([]);
     expect(said).toEqual([]);
+  });
+
+  it("a project in a folder below the one opened gets the tab too, found by name as a trusted window finds it", async () => {
+    panels.length = 0;
+    searches.length = 0;
+    said.length = 0;
+    // the folder itself holds no protoboard.config.ts
+    trustedFolders = [{ uri: { scheme: "file", fsPath: fileURLToPath(new URL("../src", import.meta.url)) } }];
+    nested = [{ fsPath: "below/protoboard.config.ts" }];
+    const handle = activateRestricted(context() as never, VIEWS, () => undefined);
+    expect(panels).toEqual([]);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(searches).toEqual([{ include: "**/protoboard.config.ts", exclude: "**/{node_modules,.git,.protoboard}/**", max: 1 }]);
+    expect(panels).toHaveLength(1);
+    expect(panels[0]).toMatchObject({ type: RESTRICTED_PANEL, open: true });
+    handle.dispose();
+    expect(panels[0]!.open).toBe(false);
+    // none below either: no tab, and nothing said
+    panels.length = 0;
+    nested = [];
+    activateRestricted(context() as never, VIEWS, () => undefined);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(panels).toEqual([]);
+    // an answer that comes after the folder was trusted opens nothing
+    nested = [{ fsPath: "below/protoboard.config.ts" }];
+    activateRestricted(context() as never, VIEWS, () => undefined);
+    grant!();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(panels).toEqual([]);
+    expect(said).toEqual([]);
+    nested = [];
+    trustedFolders = [];
   });
 
   it("the tab closes when the folder is trusted, before Protoboard starts", () => {
