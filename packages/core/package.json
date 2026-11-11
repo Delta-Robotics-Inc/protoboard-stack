@@ -45,7 +45,7 @@
   },
   "protoboard": {
     "toolchain": {
-      "uhd": "0.3.0",
+      "uhd": "0.3.1",
       "typescript": "7.0.2"
     }
   },
@@ -53,7 +53,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@deltarobotics/uhd": "^0.3.0",
+    "@deltarobotics/uhd": "^0.3.1",
     "@protoboardai/cloud": "^0.2.0",
     "jsonc-parser": "^3.3.1",
     "smol-toml": "^1.9.0",

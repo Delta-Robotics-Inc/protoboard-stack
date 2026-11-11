@@ -16,7 +16,7 @@ description: UHD and the UHD viewer beside this repository at pinned tags, built
 inputs:
   uhd-ref:
     description: The Delta-Robotics-Inc/uhd tag (or commit) to build against
-    default: v0.3.0
+    default: v0.3.1
   uhd-viewer-ref:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
     # the 0.2.1 release: the floating hierarchy, Harnesses & links, the legend at the bottom right
