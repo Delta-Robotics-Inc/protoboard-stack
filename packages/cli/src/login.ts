@@ -157,7 +157,11 @@ export async function runLinkLogin(service: string, io: LoginIo, run: LinkLoginR
             }
             // signed in, or expired: `done` settles and ends the wait
           })
-          .catch(reject)
+          .catch((e) => {
+            // the run ends here: the listener is closed with it, or the process would stay until the link expires
+            login.cancel();
+            reject(e);
+          })
           .finally(() => (busy = false));
       });
     }).finally(() => stop());

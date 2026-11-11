@@ -74,7 +74,13 @@ async function post(doFetch: typeof fetch, url: string, body: unknown): Promise<
   } catch (e) {
     throw new AccountError("UNREACHABLE", `POST ${url}: ${fetchProblem(e)}`);
   }
-  return { ok: res.ok, status: res.status, body: (await res.json().catch(() => ({}))) as ApiAnswer["body"] };
+  // an answer whose body did not arrive whole (the connection dropped while it was read) is an answer that did
+  // not get through: a refusal with no readable body is still a refusal
+  const answer = (await res.json().catch((e) => {
+    if (res.ok) throw new AccountError("UNREACHABLE", `POST ${url}: the answer was cut short (${fetchProblem(e)})`);
+    return {};
+  })) as ApiAnswer["body"];
+  return { ok: res.ok, status: res.status, body: answer ?? {} };
 }
 
 /** The waits before the token is asked for again after a request that did not get through (ms). */

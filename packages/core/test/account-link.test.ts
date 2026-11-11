@@ -150,6 +150,23 @@ describe("sign-in by link", () => {
     expect((await login.submitCode("BDFG-HJKL")).status).toBe("signed-in");
     expect(store.get(SERVICE)?.via).toBe("link");
 
+    // the answer began and was cut short while it was read: asked again, as one that never arrived
+    let cut = 1;
+    const short: typeof fetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const res = await s.fetch(url, init);
+      if (/\/token$/.test(String(url)) && res.ok && cut > 0) {
+        cut--;
+        s.requests.set(String(url).split("/").at(-2)!, kept!);
+        return new Response('{"customToken":"cus', { status: 200, headers: { "content-type": "application/json" } });
+      }
+      return res;
+    }) as typeof fetch;
+    const half = await startLinkLogin(SERVICE, { store: fileStore(), fetch: short });
+    s.approve(half.requestId, "BDFG-HJKL");
+    const kept = { ...s.requests.get(half.requestId)! };
+    expect((await half.submitCode("BDFG-HJKL")).status).toBe("signed-in");
+    expect(cut).toBe(0);
+
     drop = 99;
     const lost = await startLinkLogin(SERVICE, { store: fileStore(), fetch: flaky });
     s.approve(lost.requestId, "BDFG-HJKL");
