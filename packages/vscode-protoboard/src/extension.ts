@@ -1900,7 +1900,7 @@ class ProtoboardExtension {
     const tilde = (p: string) => (p.startsWith(homedir()) ? `~${p.slice(homedir().length)}` : p);
     const manifest = this.carried;
     return [
-      { id: "start", label: "First steps", note: "Sign-in, agents, the drone example, themes", icon: "map", action: "Open", opens: "view", command: START_COMMAND, args: [] },
+      { id: "start", label: "First steps", note: "Themes, sign-in, agents, the drone example", icon: "map", action: "Open", opens: "view", command: START_COMMAND, args: [] },
       ...(this.current && this.needsSetup(this.current) ? [{ id: "setupProject", label: `Set up ${basename(this.current)}`, note: "Not set up on this machine yet", icon: "rocket", action: "Initialize", command: "protoboard.setupProject" }] : []),
       ...(this.current && !this.needsSetup(this.current) ? [{ id: "runtimes", label: "Tool runtimes", note: `${basename(this.current)}: CAD and circuit runtimes`, icon: "wrench", action: "Install…", command: "protoboard.tools.install" }] : []),
       ...(this.current ? [{ id: "bom", label: "Bill of materials", note: `${basename(this.current)}: parts and chosen offers, in USD`, icon: "table", action: "Open", opens: "view" as const, command: "protoboard.openBom" }] : []),

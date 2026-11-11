@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- **Get Started with Protoboard** opens after a first install: sign in,
-  connect your agent, open the drone example, choose a theme, start a
+- **Get Started with Protoboard** opens after a first install: choose a
+  theme, sign in, connect your agent, open the drone example, start a
   project. Each step shows whether it is done.
 - **The drone example** is carried by the extension and opens in a folder
   you choose, with no account and no npm.

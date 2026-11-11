@@ -629,16 +629,16 @@ a test run). **Protoboard: Get Started** and the first row of Help open it
 again. Its steps, each with its own content, are marked done by what is so on
 the machine, not by a click:
 
-1. **Sign in**: the extension's own sign-in command.
-2. **Connect your agent**: the agents found here and **Connect Agents**, and
-   **Add to PATH** while the `protoboard` command is not on the user's PATH.
-3. **Open the drone example**: a card with the quadcopter and **Open**
-   (below).
-4. **Choose a theme**: Protoboard Dark and Protoboard Light as tiles. A tile
+1. **Choose a theme**: Protoboard Dark and Protoboard Light as tiles. A tile
    applies its theme and remembers the one in use before; the applied tile,
    clicked again, puts that theme back, and the note names it. The step
    stays open once a theme is applied (the other steps hand over to the next
    one when they are done).
+2. **Sign in**: the extension's own sign-in command.
+3. **Connect your agent**: the agents found here and **Connect Agents**, and
+   **Add to PATH** while the `protoboard` command is not on the user's PATH.
+4. **Open the drone example**: a card with the quadcopter and **Open**
+   (below).
 5. **Start your own project**: New Project. A window on a copy of the
    example does not count as a project of one's own.
 

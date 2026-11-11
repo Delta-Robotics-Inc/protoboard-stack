@@ -38,12 +38,12 @@ function model(over: Partial<Omit<StartModel, "steps">> & { exampleOpened?: bool
 const ENV = { cspSource: "vscode-webview://x", nonce: "N0nce", picture: "vscode-webview://x/media/start/quadcopter.png" };
 
 describe("the steps of Get Started", () => {
-  it("are five, in this order: sign in, connect your agent, the drone example, a theme, your own project", () => {
+  it("are five, in this order: a theme, sign in, connect your agent, the drone example, your own project", () => {
     expect(model().steps.map((s) => [s.id, s.title])).toEqual([
+      ["theme", "Choose a theme"],
       ["signIn", "Sign in"],
       ["agents", "Connect your agent"],
       ["example", "Open the drone example"],
-      ["theme", "Choose a theme"],
       ["project", "Start your own project"],
     ]);
   });
@@ -59,7 +59,7 @@ describe("the steps of Get Started", () => {
     });
     expect(all.steps.map((s) => s.done)).toEqual([true, true, true, true, true]);
     // an agent found but not connected is not a connected agent
-    expect(model({ agents: { waiting: ["Codex"], connected: [], onPath: true } }).steps[1]!.done).toBe(false);
+    expect(model({ agents: { waiting: ["Codex"], connected: [], onPath: true } }).steps[2]!.done).toBe(false);
   });
 });
 

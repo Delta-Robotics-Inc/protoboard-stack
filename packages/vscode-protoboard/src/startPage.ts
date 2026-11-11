@@ -61,10 +61,10 @@ export interface StartModel {
 /** The five steps, in their order, with what is done. */
 export function startSteps(m: Omit<StartModel, "steps"> & { exampleOpened: boolean }): StartStep[] {
   return [
+    { id: "theme", title: "Choose a theme", done: isProtoboardTheme(m.theme.current, m.theme.choices) },
     { id: "signIn", title: "Sign in", done: m.account.signedIn },
     { id: "agents", title: "Connect your agent", done: m.agents.connected.length > 0 },
     { id: "example", title: "Open the drone example", done: m.exampleOpened },
-    { id: "theme", title: "Choose a theme", done: isProtoboardTheme(m.theme.current, m.theme.choices) },
     { id: "project", title: "Start your own project", done: m.hasProject },
   ];
 }
