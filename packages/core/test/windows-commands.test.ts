@@ -34,11 +34,11 @@ describe("on Windows itself", () => {
       const viaPowerShell = spawnSync(join(root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe"), ["-NoProfile", "-NonInteractive", "-Command", `& '${file}' ${code}; exit $LASTEXITCODE`], { encoding: "utf8", cwd: home });
       expect(viaPowerShell.status, `powershell ${code}`).toBe(code);
     }
-    // what this replaced, for the record of the run: the CLI and `exit /b` in one line
+    // what this replaced: the CLI and `exit /b` in one line. PowerShell is given 0 for it, whatever the CLI's code
     const old = join(home, "bin", "old-form.cmd");
     writeFileSync(old, `@echo off\r\nsetlocal\r\nwhere node >nul 2>nul && ( node "${cli}" %* & exit /b )\r\nexit /b 127\r\n`);
     const before = spawnSync(join(root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe"), ["-NoProfile", "-NonInteractive", "-Command", `& '${old}' 7; exit $LASTEXITCODE`], { encoding: "utf8", cwd: home });
-    console.log(`the earlier form (CLI & exit /b in one line), asked for exit code 7, gave PowerShell ${before.status}`);
+    expect(before.status).toBe(0);
   });
 
   it.runIf(process.platform === "win32")("a sign-in is saved and read back with PowerShell 7's module folders in PSModulePath (PB-1226)", () => {

@@ -274,35 +274,25 @@ interface Pending {
   expiresAt: number;
 }
 
-/** The started sign-ins, by service: one waits per service, so a sign-in started for another service does not replace it. */
-type PendingFile = Record<string, Pending>;
+/**
+ * Where a sign-in started for a service waits for its code: a file of its
+ * own per service, beside the credentials and readable by this user only.
+ * One for another service is another file, so neither replaces the other,
+ * also when two are started at the same moment.
+ */
+export const pendingSignInFile = (service: string, env: NodeJS.ProcessEnv = process.env, platform: NodeJS.Platform = process.platform) =>
+  join(configDir(env, platform), `sign-in-pending-${createHash("sha256").update(serviceKey(service)).digest("hex").slice(0, 16)}.json`);
 
-function readPending(file: string): PendingFile {
-  let v: unknown;
+/** The sign-in started for this service, when its file holds one. */
+function readPending(file: string, service: string): Pending | undefined {
+  let p: Partial<Pending> | undefined;
   try {
-    v = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : undefined;
+    p = existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as Partial<Pending>) : undefined;
   } catch {
-    v = undefined;
+    p = undefined;
   }
-  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
-  const all: PendingFile = {};
-  for (const [service, p] of Object.entries(v as Record<string, Partial<Pending> | undefined>)) {
-    if (p && typeof p === "object" && p.service === service && typeof p.requestId === "string" && typeof p.verifier === "string" && typeof p.expiresAt === "number") all[service] = p as Pending;
-  }
-  return all;
+  return p && typeof p === "object" && p.service === serviceKey(service) && typeof p.requestId === "string" && typeof p.verifier === "string" && typeof p.expiresAt === "number" ? (p as Pending) : undefined;
 }
-
-/** Keep the started sign-ins that still have time; with none left the file goes. */
-function writePending(file: string, all: PendingFile, platform: NodeJS.Platform, now = Date.now()): void {
-  const live = Object.fromEntries(Object.entries(all).filter(([, p]) => p.expiresAt > now));
-  if (!Object.keys(live).length) return rmSync(file, { force: true });
-  mkdirSync(join(file, ".."), { recursive: true, mode: 0o700 });
-  writeFileSync(file, JSON.stringify(live), { mode: 0o600 });
-  if (platform !== "win32") chmodSync(file, 0o600);
-}
-
-/** Where started sign-ins wait for their codes: beside the credentials, readable by this user only. */
-export const pendingSignInFile = (env: NodeJS.ProcessEnv = process.env, platform: NodeJS.Platform = process.platform) => join(configDir(env, platform), "sign-in-pending.json");
 
 /**
  * The first of two steps: ask for a link and keep what the second step
@@ -313,26 +303,23 @@ export async function beginLinkLogin(service: string, options: LinkLoginOptions 
   const info = await serviceAccount(service, options);
   const verifier = randomBytes(32).toString("base64url");
   const asked = await request(service, info, verifier, undefined, options);
-  const file = pendingSignInFile(options.env, options.platform);
+  const file = pendingSignInFile(service, options.env, options.platform);
+  mkdirSync(join(file, ".."), { recursive: true, mode: 0o700 });
   const pending: Pending = { service: serviceKey(service), requestId: asked.requestId, verifier, url: asked.url, expiresAt: Date.now() + asked.expiresIn * 1000 };
-  // one per service: a second --start for the same service replaces its link (the newest is the one to use), and
-  // leaves the sign-ins started for other services waiting
-  writePending(file, { ...readPending(file), [pending.service]: pending }, options.platform ?? process.platform);
+  // a second --start for the same service replaces its link: the newest is the one to use
+  writeFileSync(file, JSON.stringify(pending), { mode: 0o600 });
+  if ((options.platform ?? process.platform) !== "win32") chmodSync(file, 0o600);
   return { url: asked.url, expiresIn: asked.expiresIn };
 }
 
 /** The second step: the code the page showed. Throws NOT_STARTED when no sign-in was begun for this service. */
 export async function finishLinkLogin(service: string, code: string, options: { store?: CredentialStore; fetch?: typeof fetch; env?: NodeJS.ProcessEnv; platform?: NodeJS.Platform } = {}): Promise<CodeResult> {
-  const file = pendingSignInFile(options.env, options.platform);
-  const platform = options.platform ?? process.platform;
-  const key = serviceKey(service);
-  const pending = readPending(file)[key];
+  const file = pendingSignInFile(service, options.env, options.platform);
+  const pending = readPending(file, service);
   if (!pending) throw new AccountError("NOT_STARTED", "no sign-in is waiting for a code here; start one with `protoboard login --start`");
-  /** This service's started sign-in is over; the others (read again: another command may have started one meanwhile) stay. */
+  /** This started sign-in is over; one started for the service meanwhile (another command) stays. */
   const forget = () => {
-    const all = readPending(file);
-    if (all[key]?.requestId === pending.requestId) delete all[key];
-    writePending(file, all, platform);
+    if (readPending(file, service)?.requestId === pending.requestId) rmSync(file, { force: true });
   };
   if (pending.expiresAt <= Date.now()) {
     forget();

@@ -228,11 +228,11 @@ describe("sign-in in two steps (an agent, a script)", () => {
     const store = fileStore(dir);
     const begun = await beginLinkLogin(SERVICE, { fetch: s.fetch, env });
     expect(begun.url).toMatch(/^https:\/\/account\.example\/login\?r=request\d+$/);
-    const file = pendingSignInFile(env);
+    const file = pendingSignInFile(SERVICE, env);
     expect(statSync(file).mode & 0o777).toBe(0o600);
     // no listener: an agent's machine is not where the browser is
     expect((s.calls.find((c) => c.url === `${SERVICE}/v1/auth/signin`)!.body as Record<string, unknown>).port).toBeUndefined();
-    const id = (JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string }>)[SERVICE]!.requestId;
+    const id = (JSON.parse(readFileSync(file, "utf8")) as { requestId: string }).requestId;
     expect(await finishLinkLogin(SERVICE, "BDFG-HJKL", { store, fetch: s.fetch, env })).toEqual({ status: "pending" });
     s.approve(id, "BDFG-HJKL");
     expect((await finishLinkLogin(SERVICE, "ZZZZ-ZZZZ", { store, fetch: s.fetch, env })).status).toBe("mismatch");
@@ -260,34 +260,36 @@ describe("sign-in in two steps (an agent, a script)", () => {
     const dir = mkdtempSync(join(tmpdir(), "pb-link-"));
     const env = { PROTOBOARD_CONFIG_DIR: dir, PROTOBOARD_CREDENTIAL_STORE: "file" };
     const store = fileStore(dir);
-    const file = pendingSignInFile(env);
-    const pending = () => JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string; service: string }>;
-    await beginLinkLogin(SERVICE, { fetch: s.fetch, env });
-    const first = pending()[SERVICE]!.requestId;
-    await beginLinkLogin(`${OTHER}/v1/`, { fetch: both, env });
-    expect(Object.keys(pending()).sort()).toEqual([OTHER, SERVICE].sort());
-    expect(pending()[SERVICE]!.requestId).toBe(first);
-    expect(statSync(file).mode & 0o777).toBe(0o600);
-    // the first command's follow-up still works, and leaves the other service's waiting
+    const requestIn = (file: string) => (JSON.parse(readFileSync(file, "utf8")) as { requestId: string }).requestId;
+    // each service has a file of its own, the same for every way of writing its URL
+    expect(pendingSignInFile(SERVICE, env)).not.toBe(pendingSignInFile(OTHER, env));
+    expect(pendingSignInFile(`${OTHER}/v1/`, env)).toBe(pendingSignInFile(OTHER, env));
+    // started at the same moment: neither write can take the other's away
+    await Promise.all([beginLinkLogin(SERVICE, { fetch: s.fetch, env }), beginLinkLogin(`${OTHER}/v1/`, { fetch: both, env })]);
+    const first = requestIn(pendingSignInFile(SERVICE, env));
+    expect(requestIn(pendingSignInFile(OTHER, env))).not.toBe(first);
+    expect(statSync(pendingSignInFile(OTHER, env)).mode & 0o777).toBe(0o600);
+    // the first command's follow-up works, and leaves the other service's waiting
     s.approve(first, "BDFG-HJKL");
     expect((await finishLinkLogin(SERVICE, "BDFG-HJKL", { store, fetch: s.fetch, env })).status).toBe("signed-in");
-    expect(Object.keys(pending())).toEqual([OTHER]);
+    expect(existsSync(pendingSignInFile(SERVICE, env))).toBe(false);
+    expect(existsSync(pendingSignInFile(OTHER, env))).toBe(true);
     // the same service started twice: the newest link is the one that waits
+    const second = requestIn(pendingSignInFile(OTHER, env));
     await beginLinkLogin(OTHER, { fetch: both, env });
-    const second = pending()[OTHER]!.requestId;
-    await beginLinkLogin(OTHER, { fetch: both, env });
-    expect(pending()[OTHER]!.requestId).not.toBe(second);
-    s.approve(pending()[OTHER]!.requestId, "BDFG-HJKL");
+    const newest = requestIn(pendingSignInFile(OTHER, env));
+    expect(newest).not.toBe(second);
+    s.approve(newest, "BDFG-HJKL");
     expect((await finishLinkLogin(OTHER, "BDFG-HJKL", { store, fetch: both, env })).status).toBe("signed-in");
-    expect(existsSync(file)).toBe(false);
+    expect(existsSync(pendingSignInFile(OTHER, env))).toBe(false);
   });
 
   it("a file that is not what --start writes is nothing started", async () => {
     const s = standIn();
     const dir = mkdtempSync(join(tmpdir(), "pb-link-"));
     const env = { PROTOBOARD_CONFIG_DIR: dir, PROTOBOARD_CREDENTIAL_STORE: "file" };
-    for (const text of ["not json", "[]", JSON.stringify({ [SERVICE]: { service: "https://elsewhere.example", requestId: "r", verifier: "v", expiresAt: Date.now() + 60_000 } }), JSON.stringify({ [SERVICE]: null })]) {
-      writeFileSync(pendingSignInFile(env), text);
+    for (const text of ["not json", "[]", "null", JSON.stringify({ service: "https://elsewhere.example", requestId: "r", verifier: "v", expiresAt: Date.now() + 60_000 }), JSON.stringify({ service: SERVICE, requestId: "r" })]) {
+      writeFileSync(pendingSignInFile(SERVICE, env), text);
       await expect(finishLinkLogin(SERVICE, "BDFG-HJKL", { fetch: s.fetch, env }), text).rejects.toMatchObject({ code: "NOT_STARTED" });
     }
   });
@@ -308,8 +310,8 @@ describe("a sign-in that cannot be saved (PB-1226)", () => {
     const dir = mkdtempSync(join(tmpdir(), "pb-link-"));
     const env = { PROTOBOARD_CONFIG_DIR: dir, PROTOBOARD_CREDENTIAL_STORE: "file" };
     await beginLinkLogin(SERVICE, { fetch: s.fetch, env });
-    const file = pendingSignInFile(env);
-    const id = (JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string }>)[SERVICE]!.requestId;
+    const file = pendingSignInFile(SERVICE, env);
+    const id = (JSON.parse(readFileSync(file, "utf8")) as { requestId: string }).requestId;
     s.approve(id, "BDFG-HJKL");
     const failed = await finishLinkLogin(SERVICE, "BDFG-HJKL", { store: failing(dir), fetch: s.fetch, env }).then(
       (r) => r,
@@ -321,7 +323,7 @@ describe("a sign-in that cannot be saved (PB-1226)", () => {
     // the token was asked for once: a failing store is not tried again
     expect(s.calls.filter((c) => c.url.endsWith("/token"))).toHaveLength(1);
     // what --code needs is still there, for the same code once the reason is put right
-    expect((JSON.parse(readFileSync(file, "utf8")) as Record<string, { requestId: string }>)[SERVICE]!.requestId).toBe(id);
+    expect((JSON.parse(readFileSync(file, "utf8")) as { requestId: string }).requestId).toBe(id);
   });
 
   it("a waiting sign-in ends with the reason, for a typed code and for the page's hand-off", async () => {
