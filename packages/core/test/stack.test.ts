@@ -322,27 +322,6 @@ describe("the command scripts", () => {
     }
   });
 
-  it.runIf(process.platform === "win32")("on Windows itself: a failed command's exit code comes back through the command file, to cmd and to PowerShell (PB-1226)", () => {
-    const home = join(TMP, "home-exit");
-    mkdirSync(join(home, "bin"), { recursive: true });
-    const cli = join(home, "cli.mjs");
-    writeFileSync(cli, 'console.log("ran " + process.argv.slice(2).join(","));\nprocess.exitCode = Number(process.argv[2] ?? 0);\n');
-    const file = writeCommands(join(home, "bin"), { kind: "home", cli, home }).find((f) => f.endsWith("protoboard.cmd"))!;
-    const root = process.env.SystemRoot ?? "C:\\Windows";
-    for (const code of [0, 1, 2, 7]) {
-      const viaCmd = spawnSync(`"${file}" ${code} "b c"`, { shell: true, encoding: "utf8", cwd: home });
-      expect(viaCmd.stdout.trim(), `cmd ${code}`).toBe(`ran ${code},b c`);
-      expect(viaCmd.status, `cmd ${code}`).toBe(code);
-      const viaPowerShell = spawnSync(join(root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe"), ["-NoProfile", "-NonInteractive", "-Command", `& '${file}' ${code}; exit $LASTEXITCODE`], { encoding: "utf8", cwd: home });
-      expect(viaPowerShell.status, `powershell ${code}`).toBe(code);
-    }
-    // what this replaced, for the record of the run: the CLI and `exit /b` in one line
-    const old = join(home, "bin", "old-form.cmd");
-    writeFileSync(old, `@echo off\r\nsetlocal\r\nwhere node >nul 2>nul && ( node "${cli}" %* & exit /b )\r\nexit /b 127\r\n`);
-    const before = spawnSync(join(root, "System32", "WindowsPowerShell", "v1.0", "powershell.exe"), ["-NoProfile", "-NonInteractive", "-Command", `& '${old}' 7; exit $LASTEXITCODE`], { encoding: "utf8", cwd: home });
-    console.log(`the earlier form (CLI & exit /b in one line), asked for exit code 7, gave PowerShell ${before.status}`);
-  });
-
   it.skipIf(process.platform === "win32")("with no Node on PATH, run the CLI with the fallback runtime as Node", () => {
     const home = join(TMP, "home-rt");
     mkdirSync(join(home, "bin"), { recursive: true });

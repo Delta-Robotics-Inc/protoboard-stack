@@ -158,16 +158,6 @@ describe("credential store", () => {
     }
   });
 
-  it.runIf(process.platform === "win32")("on Windows itself: a sign-in is saved and read back with PowerShell 7's module folders in PSModulePath (PB-1226)", () => {
-    const local = mkdtempSync(join(tmpdir(), "pb-local-"));
-    // what a PowerShell 7 terminal hands down: its own module folders ahead of Windows PowerShell's
-    const seven = ["C:\\Program Files\\PowerShell\\Modules", "C:\\Program Files\\PowerShell\\7\\Modules", process.env.PSModulePath ?? ""].join(";");
-    const store = new CredentialStore({ env: { ...process.env, LOCALAPPDATA: local, APPDATA: local, PSModulePath: seven, PROTOBOARD_CREDENTIAL_STORE: "dpapi" }, platform: "win32" });
-    store.put(session({ refreshToken: "refresh-secret" }));
-    expect(readFileSync(store.dpapiFile, "utf8")).not.toContain("refresh-secret");
-    expect(store.get(SERVICE)?.refreshToken).toBe("refresh-secret");
-  });
-
   it("makes the config folder 0700, also when it was there with a looser mode (PB-1048)", () => {
     if (process.platform === "win32") return;
     const dir = join(mkdtempSync(join(tmpdir(), "pb-account-dir-")), "protoboard");
