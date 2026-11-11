@@ -26,7 +26,7 @@ simplified version of `@protoboardai/ext-tscircuit`'s manifest
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-tscircuit",
   "version": "0.1.0",
-  "compatibility": { "protoboard": "^0.2.0" },
+  "compatibility": { "protoboard": "^0.3.0" },
   "tools": [{ "id": "tscircuit-node", "purpose": "tscircuit libraries, pinned, on Node 22+", "probe": ["node", "-e", "require(require.resolve('@protoboardai/ext-tscircuit/lib/probe.cjs', { paths: [process.cwd()] }))"] }],
   "capabilities": [
     {

@@ -106,7 +106,7 @@ function write(dir: string, rel: string, content: string | Buffer) {
 
 const codes = (p: Project, validator?: string) => p.diagnostics.filter((d) => !validator || d.validator === validator).map((d) => d.code);
 const OUT = "src/boards/mainboard/out";
-const manifest = (id: string, capabilities: unknown, extra: object = {}) => ({ schema: "protoboard.extension/v0", id, version: "0.1.0", compatibility: { protoboard: "^0.2.0" }, capabilities, ...extra });
+const manifest = (id: string, capabilities: unknown, extra: object = {}) => ({ schema: "protoboard.extension/v0", id, version: "0.1.0", compatibility: { protoboard: "^0.3.0" }, capabilities, ...extra });
 const ops = { generate: "./x.ts#g", export: "./x.ts#e", extract: "./x.ts#x", check: "./x.ts#c" };
 
 function pb(dir: string, args: string[]) {
@@ -119,7 +119,7 @@ describe("capability manifests", () => {
     const dir = watch(
       {},
       {
-        "ext-plain": { manifest: { schema: "protoboard.extension/v0", id: "ext-plain", version: "0.1.0", compatibility: { protoboard: "^0.2.0" } } },
+        "ext-plain": { manifest: { schema: "protoboard.extension/v0", id: "ext-plain", version: "0.1.0", compatibility: { protoboard: "^0.3.0" } } },
         "ext-partial": { manifest: manifest("ext-partial", [{ id: "circuit", operations: { generate: "./x.ts#g", export: "./x.ts#e" } }]) },
         "ext-unknown": { manifest: manifest("ext-unknown", [{ id: "fabrication", operations: ops }]) },
         "ext-tool": { manifest: manifest("ext-tool", [{ id: "cad", operations: { ...ops, generate: { entry: "./x.ts#g", requires: ["kernel"] } } }]) },

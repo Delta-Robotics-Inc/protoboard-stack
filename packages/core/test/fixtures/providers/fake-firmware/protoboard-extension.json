@@ -3,7 +3,7 @@
   "id": "@fixtures/fake-firmware",
   "version": "0.1.0",
   "description": "TEST FIXTURE: fake firmware provider. Writes one config file whose lines cite the board's links, and a firmware manifest. Not a real firmware framework.",
-  "compatibility": { "protoboard": "^0.2.0" },
+  "compatibility": { "protoboard": "^0.3.0" },
   "capabilities": [
     {
       "id": "firmware",

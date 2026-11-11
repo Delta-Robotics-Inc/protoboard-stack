@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/core",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "The Protoboard framework: loads projects, resolves parts, runs checks and builds.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -72,7 +72,7 @@
     "@gltf-transform/core": "4.5.1",
     "@gltf-transform/extensions": "4.5.1",
     "@gltf-transform/functions": "4.5.1",
-    "@protoboardai/cloud": "^0.2.0",
+    "@protoboardai/cloud": "^0.3.0",
     "jsonc-parser": "^3.3.1",
     "meshoptimizer": "1.3.0",
     "smol-toml": "^1.9.0",

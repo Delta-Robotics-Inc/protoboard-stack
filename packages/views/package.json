@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/views",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Protoboard design views (diagram, 3D, schematic, PCB, BOM) as components.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -42,7 +42,7 @@
   },
   "peerDependencies": {
     "@deltarobotics/uhd": ">=0.3.0",
-    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/core": "^0.3.0",
     "react": "^19.0.0",
     "three": ">=0.187.0"
   },

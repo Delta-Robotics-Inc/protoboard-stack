@@ -3,7 +3,7 @@
   "id": "@fixtures/fake-circuit-a",
   "version": "0.1.0",
   "description": "TEST FIXTURE: fake circuit provider A. Native design is JSON; exports metric Gerber/Excellon and minimal bodies. Not a real PCB tool.",
-  "compatibility": { "protoboard": "^0.2.0" },
+  "compatibility": { "protoboard": "^0.3.0" },
   "capabilities": [
     {
       "id": "circuit",

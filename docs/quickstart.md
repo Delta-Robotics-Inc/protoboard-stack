@@ -1,7 +1,7 @@
 # Quickstart
 
 From nothing to a checked, viewed and released hardware project with
-Protoboard Stack 0.2.
+Protoboard Stack 0.3.
 
 What you get at each step is shown from the three reference projects
 (`examples/quadcopter-5in`, `examples/wearable-watch`, `examples/smart-bottle`).
@@ -17,7 +17,7 @@ command line alone (Node.js 22 or later):
 
 ```sh
 npm i -g @protoboardai/cli
-protoboard --version          # 0.2.0
+protoboard --version          # 0.3.0
 protoboard agents setup       # connect your agents (optional)
 ```
 
@@ -37,7 +37,7 @@ git clone https://github.com/Delta-Robotics-Inc/protoboard-stack.git
 (cd uhd && npm install && npm run build)
 (cd uhd-viewer && npm install && npm run build)    # the viewer `protoboard dev` serves
 cd protoboard-stack && npm install
-npx protoboard --version                           # 0.2.0
+npx protoboard --version                           # 0.3.0
 ```
 
 Inside the repository, `npx protoboard` runs the CLI from the workspace;
@@ -314,5 +314,5 @@ against Claude Code.
 
 ## Next
 
-- [Stack 0.2 release notes](releases/stack-v0.2.md): what is in the release, its known limits, and upgrading a 0.1 project.
+- [Stack 0.3 release notes](releases/stack-v0.3.md): what is in the release, its known limits, and upgrading a 0.2 project.
 - [Writing a capability provider](guides/writing-a-capability-provider.md).

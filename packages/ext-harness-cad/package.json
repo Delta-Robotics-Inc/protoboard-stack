@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-harness-cad",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Protoboard extension: 3D wire harness routing from your assembled design.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -33,9 +33,9 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/core": "^0.3.0",
     "@deltarobotics/uhd": ">=0.3.0",
-    "@protoboardai/ext-release": "^0.2.0"
+    "@protoboardai/ext-release": "^0.3.0"
   },
   "peerDependenciesMeta": {
     "@protoboardai/ext-release": {
