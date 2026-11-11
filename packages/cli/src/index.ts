@@ -2049,6 +2049,8 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
       signedInAs(session);
     } catch (e) {
       if (!(e instanceof AccountError && e.code === "LINK_UNSUPPORTED")) throw e;
+      // --start promises a link and an exit: an older service has no link to give, and its sign-in waits
+      if (cli.flags.start) throw new AccountError("NOT_STARTED", `${service} has no sign-in in two steps (an older service). Run \`protoboard login --device\`: it shows a code to approve and waits for it.`);
       await older();
     }
   } catch (e) {
