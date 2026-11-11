@@ -55,7 +55,7 @@ function project(name: string, extensions: Record<string, { manifest: unknown; f
   return dir;
 }
 
-const base = (id: string, extra: object = {}) => ({ schema: "protoboard.extension/v0", id, version: "0.1.0", compatibility: { protoboard: "^0.2.0" }, ...extra });
+const base = (id: string, extra: object = {}) => ({ schema: "protoboard.extension/v0", id, version: "0.1.0", compatibility: { protoboard: "^0.3.0" }, ...extra });
 
 /** A tool found through a variable, the way the CAD extensions find PROTOBOARD_PYTHON. */
 const pyTool = (packages: string[] = []) => ({

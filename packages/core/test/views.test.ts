@@ -14,7 +14,7 @@ const TMP = join(HERE, ".tmp-views");
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
 const manifest = (id: string, contributes?: unknown): ExtensionManifest =>
-  ({ schema: "protoboard.extension/v0", id, version: "0.1.0", compatibility: { protoboard: "^0.2.0" }, ...(contributes !== undefined ? { contributes } : {}) }) as ExtensionManifest;
+  ({ schema: "protoboard.extension/v0", id, version: "0.1.0", compatibility: { protoboard: "^0.3.0" }, ...(contributes !== undefined ? { contributes } : {}) }) as ExtensionManifest;
 
 function project(name: string, extensions: Record<string, ExtensionManifest>) {
   const dir = join(TMP, name);

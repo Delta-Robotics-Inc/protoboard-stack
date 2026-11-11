@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-hardware",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Protoboard extension: system design, wiring, BOM, test and release skills for agents.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -26,7 +26,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/core": "^0.3.0",
     "@deltarobotics/uhd": ">=0.3.0"
   },
   "keywords": [

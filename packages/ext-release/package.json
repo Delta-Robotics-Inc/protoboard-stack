@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-release",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Protoboard extension: the manufacturing package, from BOM and ordering list to assembly guide and test plan.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -33,11 +33,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@protoboardai/ext-docs": "^0.2.0",
-    "@protoboardai/ext-sourcing": "^0.2.0"
+    "@protoboardai/ext-docs": "^0.3.0",
+    "@protoboardai/ext-sourcing": "^0.3.0"
   },
   "peerDependencies": {
-    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/core": "^0.3.0",
     "@deltarobotics/uhd": ">=0.3.0"
   },
   "keywords": [

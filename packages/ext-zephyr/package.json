@@ -1,6 +1,6 @@
 {
   "name": "@protoboardai/ext-zephyr",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Protoboard extension: Zephyr board definitions for nRF52840 boards.",
   "license": "Apache-2.0",
   "author": "Delta Robotics, Inc.",
@@ -27,7 +27,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@protoboardai/core": "^0.2.0",
+    "@protoboardai/core": "^0.3.0",
     "@deltarobotics/uhd": ">=0.3.0"
   },
   "keywords": [

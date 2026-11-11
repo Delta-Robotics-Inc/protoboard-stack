@@ -1,10 +1,10 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-docs",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Technical documents (datasheet, assembly guide) for a project's system: every value a query into the UHD model, figures rendered from the CAD artifacts, stand-in test data watermarked until measured data replaces it, and a verifier.",
   "compatibility": {
-    "protoboard": "^0.2.0",
+    "protoboard": "^0.3.0",
     "uhd": ">=0.3.0"
   },
   "skills": [

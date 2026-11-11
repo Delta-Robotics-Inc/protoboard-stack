@@ -3,7 +3,7 @@
   "id": "@fixtures/fake-circuit-b",
   "version": "0.2.0",
   "description": "TEST FIXTURE: fake circuit provider B. Native design is a line-based text file; exports inch Gerber with Protel extensions, an .xln drill file and minimal bodies. Not a real PCB tool.",
-  "compatibility": { "protoboard": "^0.2.0" },
+  "compatibility": { "protoboard": "^0.3.0" },
   "capabilities": [
     {
       "id": "circuit",
