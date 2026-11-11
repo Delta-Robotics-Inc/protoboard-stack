@@ -84,8 +84,9 @@ export function activateRestricted(context: vscode.ExtensionContext, views: read
       say();
     }
   };
-  const folders = (vscode.workspace.workspaceFolders ?? []).filter((f) => f.uri.scheme === "file");
-  if (folders.some((f) => existsSync(join(f.uri.fsPath, "protoboard.config.ts")))) show();
+  // a local folder is checked directly; a remote one (SSH, WSL, a container) only through VS Code's search
+  const folders = vscode.workspace.workspaceFolders ?? [];
+  if (folders.some((f) => f.uri.scheme === "file" && existsSync(join(f.uri.fsPath, "protoboard.config.ts")))) show();
   else if (folders.length) void Promise.resolve(vscode.workspace.findFiles("**/protoboard.config.ts", "**/{node_modules,.git,.protoboard}/**", 1)).then((found) => found.length && show(), () => undefined);
   const all = vscode.Disposable.from(...subs);
   const end = () => {
