@@ -210,6 +210,9 @@ export class StartController implements vscode.Disposable {
       if (!facts.shown && facts.hadBefore) await state.update(START_SHOWN_KEY, true);
       return "not-opened";
     }
+    // claimed before anything else is written, so a second window starting at the same moment is likelier to see it
+    // (window state is not locked across windows: two restored at once can still both open the page)
+    await state.update(START_SHOWN_KEY, true);
     // the page is the offer of the themes and of the agents: neither is also asked in a notification
     await state.update(THEME_OFFERED_KEY, true);
     if (state.get(AGENTS_OFFERED_KEY) === undefined) await state.update(AGENTS_OFFERED_KEY, new Date().toISOString());

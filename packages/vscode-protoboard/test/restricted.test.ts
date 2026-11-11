@@ -111,12 +111,15 @@ describe("in a folder that is not trusted", () => {
     // the extension and the CAD viewer (it draws a file of the folder in a page with scripts) are made in one place only
     expect(ext.match(/new ProtoboardExtension\(/g)).toHaveLength(1);
     expect(ext.match(/CadEditorProvider\.register\(/g)).toHaveLength(1);
-    expect(ext).toMatch(/const begin = \(\) => \{[^}]*cad = CadEditorProvider\.register\(context\);\s*instance = new ProtoboardExtension\(context\);\s*\};/);
+    expect(ext).toMatch(/const begin = \(\) => \{\s*\/\/[^\n]*\n\s*\/\/[^\n]*\n\s*try \{\s*tightenUserFolders\(\);\s*\} catch \{\}[^}]*cad = CadEditorProvider\.register\(context\);\s*instance = new ProtoboardExtension\(context\);\s*\};/);
     // what stands in for it can reach no CLI, dev server or project file: it imports none of that
     const imports = [...src("src/restricted.ts").matchAll(/^import .* from "([^"]+)";$/gm)].map((m) => m[1]);
     expect(imports.sort()).toEqual(["./html.js", "./startPage.js", "node:fs", "node:path", "vscode"]);
     expect([...src("src/html.ts").matchAll(/^import .* from "([^"]+)";$/gm)].map((m) => m[1])).toEqual(["node:crypto"]);
     expect([...src("src/startPage.ts").matchAll(/^import .* from "([^"]+)";$/gm)].map((m) => m[1]).sort()).toEqual(["./example.js", "./html.js"]);
+    // the user's folders are tightened only once trusted: in Restricted Mode nothing on the machine changes
+    const head = ext.slice(ext.indexOf("export function activate("), ext.indexOf("const begin = () =>"));
+    expect(head).not.toContain("tightenUserFolders(");
   });
 
   it("every Protoboard command answers with the line and the way to trust the folder", () => {

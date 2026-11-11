@@ -138,15 +138,16 @@ interface NewProjectArgs {
 
 
 export function activate(context: vscode.ExtensionContext) {
-  // the user's Protoboard folders (sign-ins, the stack) are readable by the user only, also when an earlier version made them (PB-1048)
-  try {
-    tightenUserFolders();
-  } catch {}
   // the extension runs in every window (`onStartupFinished`), so that a project made in it later is noticed
   // (PB-931); what a project needs (its views gathered, the Inspector in front) starts when there is one
   // Restricted Mode (restricted.ts): nothing of Protoboard runs in a folder VS Code does not trust; its views say so,
   // and it starts here, with no reload, when the folder is trusted
   const begin = () => {
+    // the user's Protoboard folders (sign-ins, the stack) are readable by the user only, also when an earlier version
+    // made them (PB-1048). Only in a trusted window: in Restricted Mode Protoboard changes nothing on the machine
+    try {
+      tightenUserFolders();
+    } catch {}
     // the CAD viewer first: a STEP or GLB opened before any project is found still has its editor. It reads a file of
     // the folder into a page with scripts, so it too waits for a trusted folder
     cad = CadEditorProvider.register(context);
