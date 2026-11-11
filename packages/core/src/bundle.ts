@@ -12,6 +12,9 @@ import { FRAMEWORK_VERSION } from "./extensions.js";
 import { artifactBaseDir, importTs } from "./load.js";
 import { attachedArtifacts, withArtifacts } from "./capabilities.js";
 import type { Project } from "./project.js";
+import { modelTable, projectHas3d, writeModelFiles, type ModelTable } from "./part-files.js";
+import { projectRelative } from "./paths.js";
+import { annotateFindings, projectNames } from "./findings-text.js";
 
 interface ProjectScenario {
   id: string;
@@ -21,7 +24,7 @@ interface ProjectScenario {
   overrides?: ModuleDef[];
 }
 
-export async function uhdBundle(p: Project): Promise<UhdBundle> {
+export async function uhdBundle(p: Project, models?: ModelTable): Promise<UhdBundle> {
   if (!p.rootDef) throw new Error("project has no root system");
   const defs = reachableDefinitions(p.rootDef, p.lookup);
   const scenarios: UhdBundleScenario[] = [];
@@ -54,6 +57,37 @@ export async function uhdBundle(p: Project): Promise<UhdBundle> {
     if (base) artifactBases[d.id] = base;
   }
 
+  // bodies the resolver found outside a definition's own artifacts (PB-1174): a placeholder box, a vendor
+  // model fetched into parts/files. They join the definition as one more body GLB, so a viewer that draws
+  // a definition's body draws them; a definition whose base is not the project is re-based on it (its paths
+  // prefixed) so the file is inside the base the viewer serves
+  const table = models ?? modelTable(p);
+  const extra = new Map<string, string>();
+  // a project that draws nothing in 3D gets no boxes either (as check reports no missing model there)
+  for (const e of projectHas3d(p) ? table.instances : []) {
+    if (e.drawnBy || !e.file || e.format !== "glb" || e.file.startsWith("cache:") || e.file.startsWith("package:")) continue;
+    if (e.source !== "placeholder" && e.source !== "vendor" && e.source !== "pin") continue;
+    extra.set(e.part, e.file);
+  }
+  for (let i = 0; i < defs.length; i++) {
+    const file = extra.get(defs[i].id);
+    if (!file) continue;
+    const d = defs[i];
+    const base = artifactBases[d.id];
+    const prefix = base && base !== p.root ? projectRelative(p.root, base) : "";
+    if (prefix.startsWith("..")) continue; // a package's definition: its base is outside the project
+    const rebased = prefix ? (d.artifacts ?? []).map((a) => (a.filePath ? { ...a, filePath: `${prefix}/${a.filePath}` } : a)) : (d.artifacts ?? []);
+    const placeholder = table.instances.some((e) => e.part === d.id && e.source === "placeholder");
+    defs[i] = {
+      ...d,
+      artifacts: [
+        ...rebased.map((a) => (a.role === "body" && a.format === "glb" ? { ...a, role: "source" as const } : a)),
+        { id: "resolved_glb", name: placeholder ? `${d.name ?? d.id} (placeholder)` : `${d.name ?? d.id} (vendor model)`, type: "3d_model", role: "body", format: "glb", units: "m", filePath: file, provenance: { tool: "@protoboardai/core part-files" } },
+      ],
+    };
+    artifactBases[d.id] = p.root;
+  }
+
   const displayFile = join(p.root, p.config.display ?? ".protoboard/display.json");
   const display = existsSync(displayFile) ? (JSON.parse(readFileSync(displayFile, "utf8")) as Record<string, unknown>) : undefined;
 
@@ -63,7 +97,27 @@ export async function uhdBundle(p: Project): Promise<UhdBundle> {
     definitions: defs.sort((a, b) => a.id.localeCompare(b.id)),
     artifactBases,
     ...(scenarios.length ? { scenarios } : {}),
-    diagnostics: p.diagnostics.map((d) => ({ code: d.code, severity: d.severity, message: d.message, entity: d.entity, ...(d.source ? { source: d.source } : {}), validator: d.validator })),
+    // `location` (a provider's finding on a design: board mm, pads, vias) is kept so the viewer pins the finding to
+    // the 3D model (W3-B, PB-1184). It is an extra field beyond UHD's `UhdBundleDiagnostic` (UHD is read only: the
+    // field is noted in for-mark.md); readers that do not know it ignore it.
+    // `title` and `summary` (wave R2, D3: plain words for people, findings-text.ts) are extra fields too: the 3D view's
+    // callouts show them, `message` stays the raw detail; a finding added after loading (the diagram's layout) gets
+    // them here. Additive: readers that do not know them ignore them.
+    diagnostics: annotateFindings(p.diagnostics, projectNames(p)).map((d) => ({
+      code: d.code,
+      severity: d.severity,
+      message: d.message,
+      ...(d.title ? { title: d.title } : {}),
+      ...(d.summary ? { summary: d.summary } : {}),
+      // wave R3 gate: `value` and `tier` (a measured number and how it was measured: the viewer's risk card VALUE
+      // row), extra and additive like `title` and `summary`
+      ...(d.value ? { value: d.value } : {}),
+      ...(d.tier ? { tier: d.tier } : {}),
+      entity: d.entity,
+      ...(d.source ? { source: d.source } : {}),
+      ...(d.location ? { location: d.location } : {}),
+      validator: d.validator,
+    })),
     ...(display ? { display } : {}),
     meta: { name: p.name, producer: "@protoboardai/core", producerVersion: FRAMEWORK_VERSION },
   };
@@ -72,7 +126,9 @@ export async function uhdBundle(p: Project): Promise<UhdBundle> {
 export async function writeBundle(p: Project, outDir = join(p.root, ".protoboard", "build")) {
   const file = join(outDir, "uhd-bundle.json");
   mkdirSync(dirname(file), { recursive: true });
-  const data = stableStringify(await uhdBundle(p));
+  const models = modelTable(p);
+  writeModelFiles(p, models);
+  const data = stableStringify(await uhdBundle(p, models));
   writeFileSync(file, data);
   return { file, bytes: data.length };
 }

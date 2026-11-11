@@ -52,10 +52,11 @@ const isUnavailableVendorFile = (p: Project, d: ProjectDiagnostic) => {
 describe("quadcopter reference project", async () => {
   const p = await loadProject(QUAD);
 
-  it("loads headlessly with no errors (the one warning is the real propulsion finding)", () => {
+  it("loads headlessly with no errors (the warnings are the real propulsion finding and the strap with no model)", () => {
     expect(p.diagnostics.filter((d) => d.severity === "error")).toEqual([]);
     const warnings = p.diagnostics.filter((d) => d.severity === "warning" && !isUnavailableVendorFile(p, d));
-    expect(warnings.map((d) => d.code)).toEqual(["UHD_PROPULSION_CURRENT"]);
+    // PB-1174: the battery strap's library revision carries no body, so the model resolver draws a placeholder
+    expect(warnings.map((d) => `${d.code}${d.code === "PB_MODEL_MISSING" ? ` ${d.entity.id}` : ""}`)).toEqual(["UHD_PROPULSION_CURRENT", "PB_MODEL_MISSING strap"]);
     expect(p.checks.map((c) => `${c.validator}:${c.status}`)).toEqual([
       "protoboard/registry:ran",
       "protoboard/resolve:ran",
@@ -67,6 +68,11 @@ describe("quadcopter reference project", async () => {
       "uhd/checkSystem:ran",
       "uhd/assemble:ran",
       "uhd/geometryBindings:ran",
+      // the one model resolver's findings (PB-1174), once the providers' outputs are attached
+      "protoboard/part-files:ran",
+      "protoboard/model-size:ran",
+      // wave R2 (deliberate change): a board part's model upside down or through the board (PB_MODEL_ORIENTATION)
+      "protoboard/model-orientation:ran",
       "ext:@protoboardai/ext-hardware/evidence:ran",
       "ext:@protoboardai/ext-frame-cad/frames:ran",
       "ext:@protoboardai/ext-frame-cad/hardware:ran",

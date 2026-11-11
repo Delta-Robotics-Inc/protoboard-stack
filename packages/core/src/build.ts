@@ -6,6 +6,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import type { Project } from "./project.js";
+import type { SequenceBuild } from "./sequence/index.js";
 import { definitionTrust } from "./project-parts.js";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
@@ -13,6 +14,7 @@ import { FRAMEWORK_VERSION } from "./extensions.js";
 import { packageRoot, revisionLabel } from "./load.js";
 import { formatPassive, placementPart } from "./placement.js";
 import { projectRelative } from "./paths.js";
+import { modelTable, writeModelFiles } from "./part-files.js";
 
 export const RESOLVED_SCHEMA = "protoboard.resolved/v0";
 
@@ -141,9 +143,30 @@ export function resolvedProject(p: Project) {
 }
 
 export function writeBuild(p: Project, outDir = join(p.root, ".protoboard", "build")) {
-  const data = stableStringify(resolvedProject(p));
+  // the model table (PB-1174): what the resolver chose for every drawn instance, one table for the
+  // viewer, the exports and the CAD extensions. Kept out of resolvedProject(), whose digest operation
+  // records use: a re-exported body changes the table, not the project
+  const models = modelTable(p);
+  writeModelFiles(p, models);
+  const data = stableStringify({ ...resolvedProject(p), models });
   const file = join(outDir, "resolved.json");
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, data);
-  return { file, digest: "sha256:" + createHash("sha256").update(data).digest("hex"), bytes: data.length };
+  return { file, digest: "sha256:" + createHash("sha256").update(data).digest("hex"), bytes: data.length, models: { ...models.counts, placeholderInstances: models.instances.filter((e) => e.placeholder).map((e) => e.instance) } };
+}
+
+/**
+ * The build's assembly sequence step (PB-1183, W2-C): generate, patch and write
+ * `.protoboard/build/sequence.json`, which the 3D view plays to explode and assemble.
+ * Tolerant: a sequence that cannot be built is a warning, never a failed build.
+ * `line` is the text output's line; `sequence` is undefined when the project has no root system.
+ */
+export async function writeBuildSequence(p: Project): Promise<{ sequence?: SequenceBuild; line?: string; warning?: string }> {
+  try {
+    const { writeSequence, sequenceLine } = await import("./sequence/index.js");
+    const sequence = await writeSequence(p);
+    return sequence ? { sequence, line: sequenceLine(sequence, p.root) } : {};
+  } catch (e) {
+    return { warning: `sequence: not written (${(e as Error).message.split("\n")[0]}); the 3D view generates its default sequence itself` };
+  }
 }

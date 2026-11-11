@@ -22,9 +22,20 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `inspect [instance]` | System summary, or one instance's definition, origin, links, artifacts, diagnostics |
 | `artifacts [instance]` | Artifacts of the definitions in use (or of one instance), with the instances using them and the file each resolves to |
 | `check` | Resolve the project and run every available validator (exit 1 on errors) |
-| `build` | Write .protoboard/build/resolved.json (derived data only) |
+| `build` | Write .protoboard/build/resolved.json (derived data only) with the model table: what the one model resolver chose for every drawn body (file, sha256, tier, provenance, placeholder), and an amber placeholder box per part with no model at any tier. Offline; --fetch first restores the vendor files parts/sources.json records that are not on this machine (parts fetch), over the network when they are not cached. Then the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json: merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after. Also .protoboard/build/sequence.json: the assembly sequence (fit and fasten steps from the mates and fastener stacks, patched by src/assembly.uhd.ts) the 3D view plays |
 | `layout [level]` | The diagram's layout measured, level by level, as the viewer draws it: line crossings, overlapping cards, the longest row or column of cards (a strip), the aspect ratio and lines under cards, with what to fix. A level is an instance path ("" is the top; default: every level). --apply lays the level(s) out afresh, --tidy keeps the saved arrangement and fixes it; either writes .protoboard/display.json where the result reads better (--force: anyway). --pin <card> keeps a card where it is (repeatable; remembered in the file). --check: exit 1 when a level still has something to fix. check reports the levels of modules that need it as PB_DIAGRAM_LAYOUT (info) |
-| `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. The Library tab is skipped, with the reason, while no library can be used from here (signed out, sign-in refused, service out of reach). --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs |
+| `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. The Library tab is skipped, with the reason, while no library can be used from here (signed out, sign-in refused, service out of reach). --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs through the project's warm render service (started when none runs); --no-service opens a browser of its own |
+| `views capture` | One view as an image for a document or an agent, through the warm render service: --view 3d\|diagram\|..., --level <instance path>, --state <json\|@file> (camera, explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend), --size, --format png\|jpeg\|webp, --out <file>; writes x.capture.json beside the image and a snapshot the visible viewer opens from. --no-service runs it in this process |
+| `geometry measure` | Exact measurement through build123d (PB-1187): measure <request.json \| -> (a protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on stdin and stdout) |
+| `drawing inspect` | Drawings to CAD (PB-1190): inspect <file> (vector or raster, units, scale, projection, title block, PDF permission flags), views <file>, crop <file> --view vN\|--bbox x0,y0,x1,y1 [--dpi] [--out x.png], dimensions <file> [--part <id> --write], compare <file> --part <instance>\|--model <x.step> [--view-map v1=front] [--tolerance mm]; --page N, --ocr, --ignore-pdf-permissions (a PDF whose flags forbid extraction is refused without it); needs the CAD runtime |
+| `mates list\|suggest\|validate [--json]` | Mates from traits and sidecars; heuristic suggestions (.protoboard/build/mates-suggested.json) |
+| `interference [--at <keyframe\|t>] [--json]` | Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where one exists) |
+| `inventory [--json]` | What is installed: the CLI, the stack, extensions and their packages (PB-1168) |
+| `settings get [<key>] \| set <key> <value> \| reset <key> \| log` | Your Protoboard settings (viewer defaults, the STEP viewer, the export folder), the same ones the extension's Settings page and the agent's settings tools change (R2-E) |
+| `update check [--json] [--force] \| status \| on \| off` | Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the background after a command (off in CI) |
+| `package write` | A part as one .uhdpkg (PB-1195): its revision envelope, unchanged, and its files, zipped: write <part-id \| folder> [--out <file>] [--exclude <path>] [--allow-unpinned] [--created-at <iso>] [--stored]; read <file.uhdpkg> <folder> unpacks after every check; verify <file.uhdpkg> checks without writing (exit 1 on any failure) |
+| `views doctor` | Can this machine render headless: the browser, the GL backend (GPU or SwiftShader; --backend auto\|gpu\|swiftshader), WebGL 2, a test frame, the capture encoders |
+| `views service \| status \| stop` | Run the render service in the foreground (one warm headless browser per project, loopback only, a session token in .protoboard/local/render-service.json; it stops after 15 minutes idle), say whether one runs, or stop it |
 | `dev` | Serve the UHD viewer on the project: rebuilds on every source change, saves diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch) |
 | `bom` | The bill of materials, by top-level module, in US dollars: what one unit needs, the offer used for each line, what must be bought (whole packs, minimum orders), the cost per unit and the cost of the order. --units <n> builds n (default: the project's setting, else 1); --release <version> lists that release's ordering list instead of the design; --format json carries everything, --format csv is the export. Offline: prices are the offers the project holds |
 | `bom units <n>` | Set the units to build (parts/bom.json) |
@@ -35,6 +46,13 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `parts taxonomy` | The libraries' category taxonomy merged, with part counts over --domain, --protocol, --tag and the words given |
 | `parts add <id[@rev]...>` | Vendor library revisions (default: the recommended one) with their closure and files into parts/catalog, pinned in parts/origins.json. The part comes from the first library that has it, unless --library names one or origins pins one. Its .uhd.ts source comes too (linted, and checked to evaluate to the pinned definition); --compiled vendors the definition JSON only |
 | `parts migrate` | Move vendored parts from the folder layout of 0.1.6 and earlier (which repeats the part id in every path, too long for Windows in a nested project) to the short one; offline, the pins stay. check reports PB_CATALOG_LAYOUT_EARLIER (info) while there are some |
+| `parts models [instance]` | The model resolver's table: per drawn body, the file used, its trust tier (M1 library verified ... M8 placeholder) and where it came from. Offline |
+| `parts import <file> --part <id> [--board] [--replace]` | Use an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body: recorded in parts/sources.json (imported, sha256), the module bound to ext-parts' cad capability (constraints.import, no script), then cad:generate and cad:export. A board's STEP (--board, or a module with children) also maps each component node to its instance by designator, then LCSC C-number. Offline |
+| `parts fetch <part> --lcsc <C-number> \| --kicad <library:name> \| --link <https url>` | Fetch one vendor model for a part, on this machine, for the user: EasyEDA's model for an LCSC C-number (terms unknown: kept on this machine), KiCad's 3D library (the installed copy first, offline), or a link (--file-format, --terms). The bytes go to the machine cache and parts/files/<part>/model.<key>.<ext> (gitignored; never committed), the link, sha256 and terms to parts/sources.json; a STEP gets a GLB for the viewer when the CAD runtime is installed (--no-convert skips it). --offline refuses the network. Never runs on its own |
+| `parts fetch [part]` | Restore the vendor files parts/sources.json records that are not on this machine: the machine cache, KiCad's installed library, else their links (--offline: no network) |
+| `parts export <part\|instance> --format step\|stl\|3mf\|glb` | Write a part's full-resolution body for another tool (.protoboard/exports/, with a record) |
+| `parts import-step <file.step> --part <id>` | Make a STEP inside the project the part's body (sha256 recorded, converted on the CAD runtime; --tool records it as evidence) |
+| `parts attach <part> <file> --kind evidence\|drawing\|datasheet` | Copy a file into the part's folder with its sha256 and terms (evidence: --tool, --measure) |
 | `parts update [id...]` | Show the recommended revision of vendored parts and what it changes; writes nothing |
 | `parts update <id> --to <rev\|recommended>` | Deliberately re-pin a vendored part (the replaced pin is kept as previous); --library moves it to another library; --compiled as for add |
 | `parts offers [id...]` | Vendor the service's supplier offers for catalog parts into parts/offers.json (what a release quotes offline; replaces those parts' entries) |
@@ -72,6 +90,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `agents config` | The command, JSON and steps for any other MCP client. Prints only |
 | `agents refresh` | Write or update Protoboard's launcher (in its own folder; no agent's file), for a client set up by hand from agents config |
 | `mcp` | The Protoboard MCP server on stdio: what an agent starts (it takes no arguments) |
+| `telemetry [status\|show\|export\|clear\|on\|off]` | Local crash and performance records of the viewer (.protoboard/local/telemetry/, never sent): status, show (--days), export prints the redacted bundle and writes it (--out <file>); --send records your consent and, in this release, sends nothing (a stub); clear; on\|off is the CLI's own switch (PROTOBOARD_TELEMETRY=off overrides) |
 
 ## Options
 
@@ -126,6 +145,23 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 | `--no-agents` | setup: leave the agents' configuration alone |
 | `--scope user\|project` | agents: your own configuration (default) or the project's shared file. A project's entry is "npx --no-install protoboard mcp" when the project depends on the CLI (--portable forces that, --no-portable writes this machine's launcher) |
 | `--ci` | evals: the CI hook: scripted host only, exit 1 on any failed trial or broken case |
+| `--send` | telemetry export: the consent to send that bundle (a stub in this release) |
+| `--out <file>` | telemetry export: where to write the bundle |
+| `--part <id>` | parts import, parts fetch: the module or part the file is for |
+| `--board` | parts import: map a board STEP's component nodes onto the board's instances |
+| `--lcsc <C-number>` | parts fetch: EasyEDA's model for that LCSC part (terms unknown: kept on this machine) |
+| `--kicad <lib:name>` | parts fetch: a model of KiCad's 3D library (the installed copy first) |
+| `--link <https url>` | parts fetch: a model at a link (--file-format step\|glb\|stl\|3mf, --terms redistributable\|internal\|unknown) |
+| `--offline` | parts fetch, build --fetch: never reach the network |
+| `--kind <kind>` | parts attach: evidence, drawing or datasheet |
+| `--tool <id>` | parts import-step, parts attach: a reference tool (docs/reference/reference-tools.md) |
+| `--measure <name=value unit>` | parts attach: a measurement (repeatable; ref: measures the tool itself) |
+| `--license <text>` | parts attach: the file's licence |
+| `--no-run` | parts import-step: record and bind only (no conversion) |
+| `--date <YYYY-MM-DD>` | parts attach: when the evidence was taken |
+| `--no-convert` | parts fetch: no GLB made from a fetched STEP |
+| `--fetch` | build: first restore recorded vendor files that are not on this machine (parts fetch) |
+| `--no-view` | build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json) |
 
 ## The help text
 
@@ -174,7 +210,16 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     artifacts [instance]    Artifacts of the definitions in use (or of one instance), with the instances
                             using them and the file each resolves to
     check                   Resolve the project and run every available validator (exit 1 on errors)
-    build                   Write .protoboard/build/resolved.json (derived data only)
+    build                   Write .protoboard/build/resolved.json (derived data only) with the model table: what
+                            the one model resolver chose for every drawn body (file, sha256, tier, provenance,
+                            placeholder), and an amber placeholder box per part with no model at any tier.
+                            Offline; --fetch first restores the vendor files parts/sources.json records that are
+                            not on this machine (parts fetch), over the network when they are not cached. Then
+                            the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json:
+                            merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one
+                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after.
+                            Also .protoboard/build/sequence.json: the assembly sequence (fit and fasten steps
+                            from the mates and fastener stacks, patched by src/assembly.uhd.ts) the 3D view plays
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -188,7 +233,45 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             fails (exit 1) on a tab that throws, shows an empty state or draws nothing.
                             The Library tab is skipped, with the reason, while no library can be used
                             from here (signed out, sign-in refused, service out of reach).
-                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs
+                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs
+                            through the project's warm render service (started when none runs); --no-service
+                            opens a browser of its own
+    views capture           One view as an image for a document or an agent, through the warm render service:
+                            --view 3d|diagram|..., --level <instance path>, --state <json|@file> (camera,
+                            explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend),
+                            --size, --format png|jpeg|webp, --out <file>; writes x.capture.json beside the image
+                            and a snapshot the visible viewer opens from. --no-service runs it in this process
+    geometry measure        Exact measurement through build123d (PB-1187): measure <request.json | -> (a
+                            protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces
+                            <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on
+                            stdin and stdout)
+    drawing inspect         Drawings to CAD (PB-1190): inspect <file> (vector or raster, units, scale, projection, title
+                            block, PDF permission flags), views <file>, crop <file> --view vN|--bbox x0,y0,x1,y1 [--dpi]
+                            [--out x.png], dimensions <file> [--part <id> --write], compare <file> --part <instance>|--model
+                            <x.step> [--view-map v1=front] [--tolerance mm]; --page N, --ocr, --ignore-pdf-permissions
+                            (a PDF whose flags forbid extraction is refused without it); needs the CAD runtime
+    mates list|suggest|validate [--json]
+                            Mates from traits and sidecars; heuristic suggestions (.protoboard/build/mates-suggested.json)
+    interference [--at <keyframe|t>] [--json]
+                            Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where
+                            one exists)
+    inventory [--json]      What is installed: the CLI, the stack, extensions and their packages (PB-1168)
+    settings get [<key>] | set <key> <value> | reset <key> | log
+                            Your Protoboard settings (viewer defaults, the STEP viewer, the export folder), the same
+                            ones the extension's Settings page and the agent's settings tools change (R2-E)
+    update check [--json] [--force] | status | on | off
+                            Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the
+                            background after a command (off in CI)
+    package write           A part as one .uhdpkg (PB-1195): its revision envelope, unchanged, and its files,
+                            zipped: write <part-id | folder> [--out <file>] [--exclude <path>] [--allow-unpinned]
+                            [--created-at <iso>] [--stored]; read <file.uhdpkg> <folder> unpacks after every check;
+                            verify <file.uhdpkg> checks without writing (exit 1 on any failure)
+    views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
+                            --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
+    views service | status | stop
+                            Run the render service in the foreground (one warm headless browser per project,
+                            loopback only, a session token in .protoboard/local/render-service.json; it stops
+                            after 15 minutes idle), say whether one runs, or stop it
     dev                     Serve the UHD viewer on the project: rebuilds on every source change, saves
                             diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch)
     bom                     The bill of materials, by top-level module, in US dollars: what one unit needs, the
@@ -221,6 +304,32 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     parts migrate           Move vendored parts from the folder layout of 0.1.6 and earlier (which repeats the part
                             id in every path, too long for Windows in a nested project) to the short one; offline,
                             the pins stay. check reports PB_CATALOG_LAYOUT_EARLIER (info) while there are some
+    parts models [instance]
+                            The model resolver's table: per drawn body, the file used, its trust tier (M1 library
+                            verified ... M8 placeholder) and where it came from. Offline
+    parts import <file> --part <id> [--board] [--replace]
+                            Use an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body:
+                            recorded in parts/sources.json (imported, sha256), the module bound to ext-parts'
+                            cad capability (constraints.import, no script), then cad:generate and cad:export.
+                            A board's STEP (--board, or a module with children) also maps each component node
+                            to its instance by designator, then LCSC C-number. Offline
+    parts fetch <part> --lcsc <C-number> | --kicad <library:name> | --link <https url>
+                            Fetch one vendor model for a part, on this machine, for the user: EasyEDA's model for
+                            an LCSC C-number (terms unknown: kept on this machine), KiCad's 3D library (the
+                            installed copy first, offline), or a link (--file-format, --terms). The bytes go to
+                            the machine cache and parts/files/<part>/model.<key>.<ext> (gitignored; never
+                            committed), the link, sha256 and terms to parts/sources.json; a STEP gets a GLB for
+                            the viewer when the CAD runtime is installed (--no-convert skips it). --offline
+                            refuses the network. Never runs on its own
+    parts fetch [part]      Restore the vendor files parts/sources.json records that are not on this machine:
+                            the machine cache, KiCad's installed library, else their links (--offline: no network)
+    parts export <part|instance> --format step|stl|3mf|glb
+                            Write a part's full-resolution body for another tool (.protoboard/exports/, with a record)
+    parts import-step <file.step> --part <id>
+                            Make a STEP inside the project the part's body (sha256 recorded, converted on the CAD
+                            runtime; --tool records it as evidence)
+    parts attach <part> <file> --kind evidence|drawing|datasheet
+                            Copy a file into the part's folder with its sha256 and terms (evidence: --tool, --measure)
     parts update [id...]    Show the recommended revision of vendored parts and what it changes; writes nothing
     parts update <id> --to <rev|recommended>
                             Deliberately re-pin a vendored part (the replaced pin is kept as previous);
@@ -330,6 +439,11 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     agents refresh          Write or update Protoboard's launcher (in its own folder; no agent's file), for a
                             client set up by hand from agents config
     mcp                     The Protoboard MCP server on stdio: what an agent starts (it takes no arguments)
+    telemetry [status|show|export|clear|on|off]
+                            Local crash and performance records of the viewer (.protoboard/local/telemetry/, never
+                            sent): status, show (--days), export prints the redacted bundle and writes it (--out
+                            <file>); --send records your consent and, in this release, sends nothing (a stub);
+                            clear; on|off is the CLI's own switch (PROTOBOARD_TELEMETRY=off overrides)
 
   Options
     --format text|json      Output format (default text); --json is the same as --format json.
@@ -401,4 +515,23 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             entry is "npx --no-install protoboard mcp" when the project depends on the CLI
                             (--portable forces that, --no-portable writes this machine's launcher)
     --ci                    evals: the CI hook: scripted host only, exit 1 on any failed trial or broken case
+    --send                  telemetry export: the consent to send that bundle (a stub in this release)
+    --out <file>            telemetry export: where to write the bundle
+    --part <id>             parts import, parts fetch: the module or part the file is for
+    --board                 parts import: map a board STEP's component nodes onto the board's instances
+    --lcsc <C-number>       parts fetch: EasyEDA's model for that LCSC part (terms unknown: kept on this machine)
+    --kicad <lib:name>      parts fetch: a model of KiCad's 3D library (the installed copy first)
+    --link <https url>      parts fetch: a model at a link (--file-format step|glb|stl|3mf, --terms
+                            redistributable|internal|unknown)
+    --offline               parts fetch, build --fetch: never reach the network
+    --kind <kind>           parts attach: evidence, drawing or datasheet
+    --tool <id>             parts import-step, parts attach: a reference tool (docs/reference/reference-tools.md)
+    --measure <name=value unit>
+                            parts attach: a measurement (repeatable; ref: measures the tool itself)
+    --license <text>        parts attach: the file's licence
+    --no-run                parts import-step: record and bind only (no conversion)
+    --date <YYYY-MM-DD>     parts attach: when the evidence was taken
+    --no-convert            parts fetch: no GLB made from a fetched STEP
+    --fetch                 build: first restore recorded vendor files that are not on this machine (parts fetch)
+    --no-view               build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json)
 ```

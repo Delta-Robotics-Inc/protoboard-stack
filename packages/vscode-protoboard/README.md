@@ -59,9 +59,12 @@ Local work needs no account. The parts library needs a Protoboard account.
 
 ## Privacy
 
-The extension sends no telemetry. Your project files never leave your
-machine; the Protoboard service sees only your sign-in and the library
-requests you make.
+The extension records crash and performance data of its viewer tabs on
+your machine only, in each project's git-ignored `.protoboard/local/telemetry/`
+(setting `protoboard.telemetry.local`; off whenever VS Code's own telemetry
+is off). It sends nothing unless you approve a specific report. Your project
+files never leave your machine; the Protoboard service sees only your sign-in
+and the library requests you make. Details: [local telemetry](https://github.com/Delta-Robotics-Inc/protoboard-stack/blob/main/docs/reference/telemetry.md).
 
 ## Learn more
 

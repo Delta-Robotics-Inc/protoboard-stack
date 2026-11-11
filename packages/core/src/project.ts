@@ -20,6 +20,10 @@ import { isSafePath } from "@protoboardai/cloud/client";
 import { bomFileDiagnostics } from "./bom-files.js";
 import { formerScopeDiagnostics } from "./scope.js";
 import { isInsideReal } from "./paths.js";
+import { PART_FILES_VALIDATOR, bodyArtifact, partFileDiagnostics } from "./part-files.js";
+import { runModelSizeCheck } from "./model-size.js";
+import { runModelOrientationCheck } from "./model-orientation.js";
+import { annotateFindings, projectNames } from "./findings-text.js";
 import { artifactBaseDir, artifactBaseLabel, findProjectRoot, freshImporter, importTs, loadConfig, loadDefinitions, locateId, originEntry, type TsImporter } from "./load.js";
 import type {
   CheckRun,
@@ -307,7 +311,12 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
   project.diagnostics.push(...bomFileDiagnostics(root));
   if (options.extensions === false) {
     project.diagnostics.push(...formerScopeDiagnostics(root, config));
-    if (options.checks !== false) runModelChecks(project);
+    if (options.checks !== false) {
+      runModelChecks(project);
+      runPartFileChecks(project);
+      runModelSizeCheck(project);
+      runModelOrientationCheck(project);
+    }
   } else {
     const { loadExtensions, runExtensionChecks } = await import("./extensions.js");
     const capabilities = await import("./capabilities.js");
@@ -327,11 +336,32 @@ export async function loadProject(dir = process.cwd(), options: LoadOptions = {}
     capabilities.attachDeclaredArtifacts(project);
     if (options.checks !== false) {
       runModelChecks(project);
+      // after the providers' outputs are attached: a body a provider exported counts
+      runPartFileChecks(project);
+      // a placed 3D model far off its package body size (PB_MODEL_SIZE_MISMATCH; reads the build's view sidecars)
+      runModelSizeCheck(project);
+      // a board's part whose 3D model sits upside down or through the board (PB_MODEL_ORIENTATION; the same sidecars)
+      runModelOrientationCheck(project);
       await runExtensionChecks(project, extensions);
       await capabilities.runCapabilityChecks(project);
     }
   }
+  // plain words for people on every finding (wave R2, D3): `title` and `summary` from docs/reference/diagnostic-codes.md
+  annotateFindings(project.diagnostics, projectNames(project));
   return project;
+}
+
+/** The model findings of the one resolver (part-files.ts): PB_MODEL_MISSING, PB_MODEL_PLACEHOLDER and the sources record's. */
+function runPartFileChecks(p: Project): void {
+  let r: ReturnType<typeof partFileDiagnostics>;
+  try {
+    r = partFileDiagnostics(p);
+  } catch (e) {
+    p.checks.push({ validator: PART_FILES_VALIDATOR, status: "skipped", reason: (e as Error).message, counts: { error: 0, warning: 0, info: 0 } });
+    return;
+  }
+  p.diagnostics.push(...r.diagnostics);
+  p.checks.push({ validator: PART_FILES_VALIDATOR, status: r.ran ? "ran" : "skipped", ...(r.reason ? { reason: r.reason } : {}), counts: count(p.diagnostics, PART_FILES_VALIDATOR) });
 }
 
 /**
@@ -439,6 +469,31 @@ function netPortRef(def: ModuleDef, ref: string | undefined, lookup: ModuleLooku
   }
 }
 
+/**
+ * The instance the assembly is placed from (PB-1137), the same rule as the 3D viewer's (uhd-viewer
+ * `src/cad/state/view.ts` `assemblyRoot`, docs/reference/display.md `root`): (1) `spatialRoot` when it
+ * names an instance; (2) else the system itself when it has a body of its own; (3) else the top-level
+ * module, not a harness, with the most interface frames, the first declared on a tie. `path` is empty
+ * for the system itself; `rule: "none"` when nothing qualifies.
+ */
+export function assemblyRoot(system: ModuleDef, lookup: (id: string) => ModuleDef | undefined, spatialRoot?: string): { path: string[]; rule: "display" | "own-body" | "most-frames" | "none" } {
+  if (spatialRoot) {
+    const parts = spatialRoot.split("/").filter(Boolean);
+    let def: ModuleDef | undefined = system;
+    for (const id of parts) def = def ? lookup(def.children?.find((c) => c.id === id)?.moduleDefId ?? "") : undefined;
+    if (def && parts.length) return { path: parts, rule: "display" };
+  }
+  if (bodyArtifact(system, ["glb"])) return { path: [], rule: "own-body" };
+  let best: { id: string; frames: number } | undefined;
+  for (const c of system.children ?? []) {
+    const def = lookup(c.moduleDefId);
+    if (!def || def.kind === "harness") continue;
+    const frames = def.interfaces.filter((i) => i.geometry?.frame).length;
+    if (frames && (!best || frames > best.frames)) best = { id: c.id, frames };
+  }
+  return best ? { path: [best.id], rule: "most-frames" } : { path: [], rule: "none" };
+}
+
 /** UHD validators: system rules (incl. link DRC), assembly, geometry bindings. */
 export function runModelChecks(p: Project): void {
   // PB_DEFINITION_INVALID: the root is imported apart from the registry, so a malformed root would still reach checkSystem
@@ -491,25 +546,29 @@ export function runModelChecks(p: Project): void {
     }
     p.checks.push({ validator: "uhd/checkSystem", status: "ran", counts: count(p.diagnostics, "uhd/checkSystem") });
 
-    const firstStructure = p.instances.find((i) => i.parent === "" && p.lookup(i.definition)?.interfaces.some((f) => f.geometry?.frame));
-    if (!firstStructure) skip("uhd/assemble", "no instance with interface frames");
+    // the assembly root by the viewer's rule (PB-1137; uhd-viewer `src/cad/state/view.ts` `assemblyRoot`):
+    // the display file's `spatial.root` when it names an instance, else the system when it has a body of
+    // its own, else the top-level module (not a harness) with the most interface frames
+    const displayFile = join(p.root, p.config.display ?? ".protoboard/display.json");
+    let spatial: { root?: string; placements?: Record<string, { matrix?: Mat4 }> } | undefined;
+    try {
+      spatial = existsSync(displayFile) ? (JSON.parse(readFileSync(displayFile, "utf8")) as { spatial?: typeof spatial }).spatial : undefined;
+    } catch {
+      // an unreadable display file only loses the hints
+    }
+    const chosen = assemblyRoot(p.rootDef, p.lookup, typeof spatial?.root === "string" ? spatial.root : undefined);
+    if (chosen.rule === "none") skip("uhd/assemble", "no root: the system has no body and no top-level module has interface frames");
     else {
       // the project's display placements (parts held, bonded or strapped, which no mate places), as the viewer uses them
-      const displayFile = join(p.root, p.config.display ?? ".protoboard/display.json");
-      let fixed: Record<string, Mat4> | undefined;
-      try {
-        const spatial = existsSync(displayFile) ? (JSON.parse(readFileSync(displayFile, "utf8")) as { spatial?: { root?: string; placements?: Record<string, { matrix?: Mat4 }> } }).spatial : undefined;
-        if (spatial?.root === firstStructure.path && spatial.placements)
-          fixed = Object.fromEntries(Object.entries(spatial.placements).filter(([, v]) => Array.isArray(v.matrix) && v.matrix.length === 16).map(([k, v]) => [k, v.matrix!]));
-      } catch {
-        // an unreadable display file only loses the hints
-      }
-      const asm = assemble(p.rootDef, p.lookup, { root: [firstStructure.path], ...(fixed ? { fixed } : {}) });
+      const fixed = spatial?.placements
+        ? Object.fromEntries(Object.entries(spatial.placements).filter(([, v]) => Array.isArray(v?.matrix) && v.matrix.length === 16).map(([k, v]) => [k, v.matrix!]))
+        : undefined;
+      const asm = assemble(p.rootDef, p.lookup, { root: chosen.path, ...(fixed && Object.keys(fixed).length ? { fixed } : {}) });
       // instances inside a placed module that has a body of its own (a board's components in its
       // board.glb) are drawn by that body, as the viewer does: not reported as unplaced one by one
       const defAt = (path: string[]) => path.reduce<ModuleDef | undefined>((d, id) => (d ? p.lookup(d.children?.find((c) => c.id === id)?.moduleDefId ?? "") : undefined), p.rootDef);
       const holders = asm.placements
-        .filter((pl) => !pl.body && defAt(pl.path)?.artifacts?.some((a) => a.role === "body" && a.format === "glb"))
+        .filter((pl) => { const d = !pl.body && defAt(pl.path); return !!d && !!bodyArtifact(d, ["glb"]); })
         .map((pl) => `${pl.path.join("/")}/`);
       for (const i of asm.issues) {
         if (i.severity === "info" && holders.some((h) => i.subject.startsWith(h))) continue;
@@ -522,7 +581,7 @@ export function runModelChecks(p: Project): void {
           validator: "uhd/assemble",
         });
       }
-      p.checks.push({ validator: "uhd/assemble", status: "ran", counts: count(p.diagnostics, "uhd/assemble") });
+      p.checks.push({ validator: "uhd/assemble", status: "ran", root: chosen.path.join("/"), rootRule: chosen.rule, counts: count(p.diagnostics, "uhd/assemble") });
     }
   }
 

@@ -22,7 +22,10 @@ export interface InspectorRow {
   /** Lucide icon name. */
   icon: string;
   label: string;
+  /** A muted second part: beside the label, or under it for a finding (its plain sentence, wave R2 D3). */
   detail?: string;
+  /** What the row's tooltip says instead of label and detail: the ids behind a name for people (D7). */
+  hint?: string;
   chips?: InspectorChip[];
   /** A dot in the severity colour. */
   tone?: string;
@@ -30,6 +33,12 @@ export interface InspectorRow {
   action?: { type: "focus"; path: string } | { type: "finding"; key: string };
   /** A finding's code, under its message. */
   code?: string;
+  /**
+   * A finding's explanation (D7, R1-E): opened under its row by its chevron, not in a tab. What its code means and
+   * what to do (the extension's codes reference), the whole message when the row shows only its first clause, who
+   * reported it, and whether the full reference page exists (a small "Open full page" link).
+   */
+  explain?: { severity?: string; validator?: string; means?: string; todo?: string; message?: string; page?: boolean };
 }
 
 export interface InspectorSection {
@@ -48,7 +57,10 @@ export interface InspectorSection {
 export interface InspectorFinding {
   key: string;
   code: string;
+  /** The finding's plain sentence for people (wave R2, D3), else its message's first clause. */
   message: string;
+  /** Its plain title (wave R2, D3), when the check wrote one. */
+  title?: string;
   severity: "error" | "warning" | "info";
   /** Links as the viewer selects them (`owner/local`, `local` at the root; a derived link by its own id), interfaces as `path:id`. */
   refs: string[];
@@ -140,6 +152,11 @@ export interface InspectorCard<F = string> {
   details?: InspectorDetails<F>;
   /** Artifact cards of the card's own (an interface's geometry), before the sections. */
   artifacts?: InspectorArtifact<F>[];
+  /**
+   * F5 (R1-E): a board part's way to its 3D: the board's 3D view with the part selected and framed, and its own
+   * vendor model when it has one. A card's click calls `open3d` with its `artifactId`.
+   */
+  threeD?: InspectorArtifact<F>[];
 }
 
 /** The project's UHD bundle as the page loads it: a URL, and a version that changes with every build. */
@@ -166,6 +183,8 @@ export interface InspectorActions {
   interfaceSource?(request: InspectorInterfaceRequest): void;
   /** An open slot's Connect…: where a link from it is written. */
   connect?(request: InspectorInterfaceRequest): void;
+  /** A 3D card (F5): its `artifactId` says which. */
+  open3d?(which: string): void;
 }
 
 // ---- the DRC panel
@@ -174,6 +193,9 @@ export interface DrcRowModel {
   key: string;
   code: string;
   summary: string;
+  /** Plain words for people (wave R2, D3): the row shows the title, the open row the sentence before the detail. */
+  title?: string;
+  plain?: string;
   message: string;
   reasons: string[];
   module: string;

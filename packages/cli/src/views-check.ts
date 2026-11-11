@@ -20,6 +20,13 @@
  * levels a person drills into: a board, an enclosure, an assembly);
  * `--module` picks one (an instance path, or a module id: its first
  * instance), parts included.
+ *
+ * Render service (PB-1180): `protoboard views check` runs inside the
+ * project's warm render service by default (one browser, one page host,
+ * serialized with captures; `--no-service` opens its own as before). The
+ * service passes its browser and page as `session`; the check then neither
+ * starts nor closes them. Every tab reports how long it took to draw, and the
+ * report names the GL backend.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -41,6 +48,8 @@ export interface TabResult {
   ink?: number;
   /** The PNG written for it (`--out`). */
   shot?: string;
+  /** Milliseconds from the click to the verdict (drawing, settling, the PNG). */
+  ms?: number;
 }
 
 export interface LevelResult {
@@ -51,6 +60,8 @@ export interface LevelResult {
   tabs: TabResult[];
   /** Tabs the viewer showed that the rules did not list, or the other way round (should be none). */
   mismatch?: string;
+  /** Milliseconds to open the level (navigate and the shell's tabs). */
+  openMs?: number;
 }
 
 export interface ViewsCheckReport {
@@ -60,8 +71,21 @@ export interface ViewsCheckReport {
   /** Why nothing was rendered (no browser, --no-render). */
   reason?: string;
   failed: number;
+  /** The GL backend that drew (`gpu` or `swiftshader`) and its renderer. */
+  backend?: { kind: string; renderer?: string; fallback?: string };
+  /** Whether a warm render service did the drawing. */
+  service?: boolean;
+  /** Milliseconds for the whole check (browser start and page host included when not warm). */
+  ms?: number;
   /** Tabs opened but not judged (the Library tab while no library can be used). */
   skipped: number;
+}
+
+/** A browser and viewer page someone else keeps warm (the render service). */
+export interface ViewsCheckSession {
+  browser: import("@protoboardai/core/cdp").Browser;
+  /** The page host's URL (`protoboard dev`'s server). */
+  url: string;
 }
 
 /** Why the Library tab cannot show the libraries from this machine: a reason and one line for a person. */
@@ -79,6 +103,8 @@ export interface ViewsCheckOptions {
   /** Seconds to wait for a tab to draw (default 45: a board's GLB in a software renderer takes a while). */
   timeout?: number;
   log?: (line: string) => void;
+  /** Draw with this browser and page host instead of starting (and closing) new ones. */
+  session?: ViewsCheckSession;
   /** Whether the project's libraries can be used from here (default: `checkAccess` for each library's service); tests replace it. */
   libraryAccess?: (config: ProtoboardConfig) => Promise<LibraryAccessProblem | undefined>;
 }
@@ -127,6 +153,7 @@ export function environmentTokenSent(l: { id: string; url: string; authEnv?: str
   return l.id === DEFAULT_LIBRARY_ID && !!env.PROTOBOARD_CLOUD_TOKEN && cloudTokenAllowed(l.url, env);
 }
 
+/** DEFAULT (PB-1030): the CSS size each tab is opened at (a laptop's viewer). */
 const W = 1440;
 const H = 900;
 /** The floating header the shell draws over the top of the view. */
@@ -137,8 +164,10 @@ const HEADER = 52;
  * inspector on the right), which would count as ink on a blank view.
  */
 const MIDDLE = { x: Math.round(W * 0.16), y: HEADER + 70, width: Math.round(W * 0.56), height: H - HEADER - 170, scale: 0.5 };
-/** Below this share of differing pixels, a view counts as blank. */
+/** DEFAULT (PB-1030): below this share of differing pixels (0.2 %), a view counts as blank. */
 const MIN_INK = 0.002;
+/** DEFAULT (PB-1030): seconds a tab may take to draw (a board's GLB in a software renderer takes a while). */
+const DEFAULT_TIMEOUT_S = 45;
 
 /** The page's errors that are the view's: not a missing favicon, an aborted load or the reload channel. */
 const pageErrors = (errors: string[]) => errors.filter((e) => !/favicon|ERR_ABORTED|EventSource/i.test(e));
@@ -208,10 +237,14 @@ const PANEL = `(() => {
   const empties = [...panel.querySelectorAll('div.flex.flex-col.items-center.justify-center.text-center')]
     .filter((e) => e.offsetParent !== null && e.querySelector('.uppercase'))
     .map((e) => e.querySelector('.uppercase').textContent.trim());
-  return { panel: true, drawings, rows, empties, text: panel.innerText.slice(0, 160) };
+  return { panel: true, drawings, rows, empties, text: panel.innerText.slice(0, 160), cad: !!panel.querySelector('.cad-view') };
 })()`;
 
+/** In the page: the 3D view has every model loaded and its frame settled (window.__cad, PB-1175). */
+const CAD_SETTLED = `!!(window.__cad && window.__cad.ready && window.__cad.ready() && window.__cad.settled())`;
+
 export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheckReport> {
+  const started = Date.now();
   const log = options.log ?? (() => {});
   const root = findProjectRoot(options.cwd);
   if (!root) throw new Error(`no protoboard.config.ts in ${options.cwd} or its parents (run \`protoboard init\`)`);
@@ -230,15 +263,19 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
   const { launchBrowser } = await import("@protoboardai/core/cdp");
   const { startDev } = await import("./dev/server.js");
   let browser: Awaited<ReturnType<typeof launchBrowser>>;
+  const own = !options.session;
   try {
-    browser = await launchBrowser({ purpose: "`protoboard views check` opens each tab in a headless Chromium-family browser", echoErrors: false });
+    browser = options.session?.browser ?? (await launchBrowser({ purpose: "`protoboard views check` opens each tab in a headless Chromium-family browser", echoErrors: false }));
   } catch (e) {
     return { ...report, reason: (e as Error).message.split("\n")[0], failed: result.reduce((n, l) => n + l.tabs.length, 0) };
   }
-  const dev = await startDev({ root, port: 0, watch: false, record: false });
+  const dev = options.session ? { url: options.session.url, close: async () => {} } : await startDev({ root, port: 0, watch: false, record: false });
+  const bk = browser.backend;
+  report.backend = { kind: bk.kind, ...(bk.gl?.renderer ? { renderer: bk.gl.renderer } : {}), ...(bk.fallback ? { fallback: bk.fallback } : {}) };
+  report.service = !own;
   const out = options.out ? resolve(options.cwd, options.out) : undefined;
   if (out) mkdirSync(out, { recursive: true });
-  const timeout = (options.timeout ?? 45) * 1000;
+  const timeout = (options.timeout ?? DEFAULT_TIMEOUT_S) * 1000;
   // asked once, when a Library tab comes up
   let libraryAccess: Promise<LibraryAccessProblem | undefined> | undefined;
   const libraryProblem = () => (libraryAccess ??= (options.libraryAccess ?? projectLibraryAccess)(p.config).catch(() => undefined));
@@ -247,6 +284,7 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
     for (const level of result) {
       const url = `${dev.url}?theme=protoboard-dark${level.path ? `&drill=${encodeURIComponent(level.path.split("/").join(","))}` : ""}`;
       log(`${level.path || "(root)"} ${level.module}: ${level.tabs.map((t) => t.title).join(", ")}`);
+      const opened = Date.now();
       await browser.navigate(url);
       // the shell's tabs, once it has mounted the level
       // the shell's tabs, once it has mounted the level (the same as the rules', or settled for 3 s)
@@ -261,6 +299,7 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
       }
       const extra = shown.filter((t) => !expected.includes(t));
       const missing = expected.filter((t) => !shown.includes(t));
+      level.openMs = Date.now() - opened;
       if (extra.length || missing.length) level.mismatch = `${missing.length ? `not shown: ${missing.join(", ")}` : ""}${extra.length && missing.length ? "; " : ""}${extra.length ? `shown besides: ${extra.join(", ")}` : ""}`;
       browser.takeErrors();
       for (const tab of level.tabs) {
@@ -269,21 +308,31 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
           tab.detail = "the viewer does not offer this tab here";
           continue;
         }
+        const clicked = Date.now();
         await browser.evaluate(`[...document.querySelectorAll('[role=tablist] [role=tab]')].find((b) => ${TITLE} === ${JSON.stringify(tab.title)}).click()`);
         // wait for it to draw: something inked and a drawing or rows in the panel, or until the time is up
         // wait for it to draw: inked and unchanged across two looks (a model still loading changes), or an
         // empty state that stays, or until the time is up
-        let panel: { panel: boolean; drawings?: number; rows?: number; empties?: string[]; text?: string } = { panel: false };
+        let panel: { panel: boolean; drawings?: number; rows?: number; empties?: string[]; text?: string; cad?: boolean } = { panel: false };
         let ink = 0;
         let before = -1;
-        for (const t0 = Date.now(); Date.now() - t0 < timeout; await sleep(600)) {
+        // (PB-1180) looks every 300 ms, not 600; the 3D tab is done when the viewer says it is settled (every
+        // model loaded) and the view is inked and unchanged; a tab with neither a drawing nor rows is done once its
+        // ink has held for four looks past 2 s (it waited a flat 4 s). The verdicts are the same as before.
+        let still = 0;
+        for (const t0 = Date.now(); Date.now() - t0 < timeout; await sleep(300)) {
           panel = await browser.evaluate(PANEL);
           const png = await browser.screenshot(MIDDLE);
           ink = await browser.evaluate<number>(`(${INK})(${JSON.stringify(png.toString("base64"))})`);
           const settled = Math.abs(ink - before) < 0.0005;
+          still = settled ? still + 1 : 0;
           before = ink;
-          if ((panel.empties ?? []).length && !(panel.drawings ?? 0) && Date.now() - t0 > 3000) break;
-          if (ink >= MIN_INK && settled && ((panel.drawings ?? 0) > 0 || (panel.rows ?? 0) > 0 || Date.now() - t0 > 4000)) break;
+          const waited = Date.now() - t0;
+          if ((panel.empties ?? []).length && !(panel.drawings ?? 0) && waited > 3000) break;
+          if (ink < MIN_INK || !settled) continue;
+          if ((panel.drawings ?? 0) > 0 || (panel.rows ?? 0) > 0) {
+            if (!panel.cad || (await browser.evaluate<boolean>(CAD_SETTLED))) break;
+          } else if (waited > 4000 || (still >= 4 && waited > 2000)) break;
         }
         await sleep(600);
         const errors = pageErrors(browser.takeErrors());
@@ -322,16 +371,19 @@ export async function viewsCheck(options: ViewsCheckOptions): Promise<ViewsCheck
           writeFileSync(file, await browser.screenshot());
           tab.shot = file;
         }
-        log(`  ${tab.status.padEnd(5)} ${tab.title}${tab.detail ? `: ${tab.detail}` : ""}`);
+        tab.ms = Date.now() - clicked;
+        log(`  ${tab.status.padEnd(5)} ${tab.title}${tab.detail ? `: ${tab.detail}` : ""} (${(tab.ms / 1000).toFixed(1)} s)`);
       }
     }
   } finally {
-    await browser.close();
-    await dev.close();
+    if (own) {
+      await browser.close();
+      await dev.close();
+    }
   }
   const failed = result.reduce((n, l) => n + l.tabs.filter((t) => t.status === "empty" || t.status === "error").length, 0);
   const skipped = result.reduce((n, l) => n + l.tabs.filter((t) => t.status === "skipped").length, 0);
-  return { ...report, rendered: true, failed, skipped };
+  return { ...report, rendered: true, failed, skipped, ms: Date.now() - started };
 }
 
 const MARK: Record<TabStatus, string> = { ok: "✓", "not-rendered": "·", skipped: "–", empty: "✗", error: "✗" };
@@ -341,12 +393,13 @@ export function formatViewsCheck(r: ViewsCheckReport): string {
   const lines: string[] = [];
   for (const l of r.levels) {
     lines.push(`${l.path || "(root)"}  ${l.module}`);
-    for (const t of l.tabs) lines.push(`  ${MARK[t.status]} ${t.title.padEnd(10)} ${t.status === "ok" || t.status === "not-rendered" ? "" : t.status === "skipped" && t.reason ? `skipped (${t.reason})` : t.status}${t.detail ? `${t.status === "ok" ? "" : ": "}${t.detail}` : ""}${t.shot ? `  ${t.shot}` : ""}`.trimEnd());
+    for (const t of l.tabs) lines.push(`  ${MARK[t.status]} ${t.title.padEnd(10)} ${t.status === "ok" || t.status === "not-rendered" ? "" : t.status === "skipped" && t.reason ? `skipped (${t.reason})` : t.status}${t.detail ? `${t.status === "ok" ? "" : ": "}${t.detail}` : ""}${t.ms !== undefined ? `  ${(t.ms / 1000).toFixed(1)} s` : ""}${t.shot ? `  ${t.shot}` : ""}`.trimEnd());
     if (l.mismatch) lines.push(`  ! the viewer's tabs differ from the rules: ${l.mismatch}`);
   }
   const tabs = r.levels.reduce((n, l) => n + l.tabs.length, 0);
   lines.push("");
   const skipped = r.skipped ? `, ${r.skipped} skipped` : "";
   lines.push(r.rendered ? `${tabs} tab(s) on ${r.levels.length} level(s): ${r.failed ? `${r.failed} failed` : r.skipped ? "every other one draws" : "every one draws"}${skipped}` : `${tabs} tab(s) on ${r.levels.length} level(s), not rendered: ${r.reason}`);
+  if (r.rendered && r.backend) lines.push(`Drawn on ${r.backend.kind === "gpu" ? "the GPU" : "SwiftShader (CPU)"}${r.backend.renderer ? ` (${r.backend.renderer})` : ""}${r.service ? ", in the warm render service" : ""}${r.ms !== undefined ? `, ${(r.ms / 1000).toFixed(1)} s` : ""}${r.backend.fallback ? `; GPU not used: ${r.backend.fallback}` : ""}`);
   return lines.join("\n");
 }

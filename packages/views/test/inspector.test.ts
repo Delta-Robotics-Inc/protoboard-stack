@@ -12,6 +12,7 @@ import { ThemeProvider, keptInspectorState, vscodeTheme, staticTheme } from "@de
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { isProtoboardColourTheme, vscodeViewThemeAdapter } from "../src/theme.js";
 import { DrcPanel, SelectionInspector, type DrcPanelActions, type DrcPanelModel, type InspectorActions, type InspectorCard } from "../src/inspector/index.js";
+import { FindingExplain, artifactGlyph, glyphPicture } from "../src/inspector/SelectionInspector.js";
 
 const require = createRequire(import.meta.url);
 const shell = createRequire(new URL("../../web-viewer/package.json", import.meta.url));
@@ -105,14 +106,18 @@ describe("the Inspector's selection", () => {
     // every artifact is a card; none is a plain row
     expect(count(html, /class="uhd-artifact-card /g)).toBe(4);
     expect(html).not.toContain("artifact-file");
-    // the model shows the picture the shell named, and nothing else is loaded: no model, no remote picture
-    expect(count(html, /<img /g)).toBe(1);
+    // the model shows the picture the shell named, and nothing else is loaded: no model, no remote picture (a file
+    // with no picture shows its type as a glyph drawn in the page, a data URL: F6, R1-E)
+    expect(count(html, /<img (?![^>]*src="data:image\/svg\+xml)/g)).toBe(1);
     expect(html).toContain('src="https://file+.vscode-resource.test/p/docs/images/part-sample-imu-enclosure.png"');
     expect(html).toContain('loading="lazy"');
     expect(html).not.toContain("artifact-cad");
-    // a finding leads to it, says its code, and can be explained
+    // a finding leads to it, says its code, and opens its explanation under it (D7, R1-E: a chevron, not a tab; no
+    // tooltip repeating the row's own text)
     expect(html).toContain('data-row-finding="CAD_INTERFERENCE"');
-    expect(html).toContain('data-tooltip="Explain CAD_INTERFERENCE"');
+    expect(html).toContain('data-finding-toggle="CAD_INTERFERENCE"');
+    expect(html).toContain('aria-label="Explain CAD_INTERFERENCE"');
+    expect(html).not.toContain('data-tooltip="The lid does not close');
     // secondary sections start closed and say what they hold in their headers
     const section = (id: string) => html.slice(html.indexOf(`data-section="${id}"`)).split("</section>")[0];
     expect(section("host:Checks")).toContain('aria-expanded="true"');
@@ -149,10 +154,11 @@ describe("the Inspector's selection", () => {
     const with_ = card({ details: { target: { kind: "module", path: "board" }, files: { "sample-imu-board\nboard/out/schematic.svg": "https://file+.vscode-resource.test/p/board/out/schematic.svg" }, previews: {}, links: [] } });
     const html = render(createElement(SelectionInspector, { content: { card: with_, project: "pod" }, bundle, actions }));
     expect(count(html, /class="uhd-artifact-card /g)).toBe(8);
-    // the schematic was named; the PCB drawings and the board's model were not: they show their icons
-    expect(count(html, /<img /g)).toBe(1);
+    // the schematic was named; the PCB drawings and the board's model were not: they show their icons, or their type
+    // as a glyph drawn in the page (F6, R1-E: a data URL, nothing loaded)
+    expect(count(html, /<img (?![^>]*src="data:image\/svg\+xml)/g)).toBe(1);
     expect(html).toContain("board/out/schematic.svg");
-    expect(count(html, /data-artifact-picture="icon"/g)).toBe(7);
+    expect(count(html, /data-artifact-picture="icon"/g) + count(html, /<img [^>]*src="data:image\/svg\+xml/g)).toBe(7);
   });
 
   it("shows a link with its pair, a library part from its definition, and says why when there is nothing", () => {
@@ -195,6 +201,19 @@ describe("the Inspector's selection", () => {
     expect(html).not.toContain("uhd-selection-details");
   });
 
+  it("a finding's row: its plain title, its plain sentence under it, its code; a named link's ids on hover (wave R2, D3 and D7)", () => {
+    const rows = [
+      { icon: "triangle-alert", label: "I2C line has no pull-up", detail: "The I2C clock line i2c0_scl on Power needs a pull-up resistor to its supply; none is connected.", tone: "warning", code: "UHD_BUS_PULLUP", action: { type: "finding" as const, key: "0" } },
+    ];
+    const links = [{ icon: "link", label: "12 V barrel plug (12 V 3 A wall adapter) to 12 V DC jack (Mainboard B1_4)", hint: "psu_plug: psu:dc_plug ↔ pcb:dc_jack" }];
+    const html = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 1, rows }, { title: "Links", count: 1, rows: links }] }), project: "pod" }, actions }));
+    const finding = html.slice(html.indexOf('data-row-finding="UHD_BUS_PULLUP"'));
+    expect(finding.indexOf("I2C line has no pull-up")).toBeLessThan(finding.indexOf("needs a pull-up resistor"));
+    expect(finding.indexOf("needs a pull-up resistor")).toBeLessThan(finding.indexOf(">UHD_BUS_PULLUP<"));
+    expect(html).toContain('data-tooltip="psu_plug: psu:dc_plug ↔ pcb:dc_jack"');
+    expect(html).toContain(">12 V barrel plug (12 V 3 A wall adapter) to 12 V DC jack (Mainboard B1_4)<");
+  });
+
   it("a long list shows ten rows at a time, with Show 10 more (PB-1088)", () => {
     const rows = Array.from({ length: 23 }, (_, i) => ({ icon: "circle-x", label: `Finding ${i}`, tone: "error", code: "UHD_X", action: { type: "finding" as const, key: String(i) } }));
     const html = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 23, rows }] }), project: "pod" }, actions }));
@@ -203,6 +222,53 @@ describe("the Inspector's selection", () => {
     expect(html).not.toContain("Show fewer");
     const short = render(createElement(SelectionInspector, { content: { card: card({ details: undefined, sections: [{ title: "Checks", count: 3, rows: rows.slice(0, 3) }] }), project: "pod" }, actions }));
     expect(short).not.toContain("data-load-more");
+  });
+
+  it("explains a finding under its row, with a small link to the full page (D7, R1-E)", () => {
+    const row = { icon: "circle-x", label: "The lid does not close", tone: "error", code: "CAD_INTERFERENCE", action: { type: "finding" as const, key: "3" }, explain: { severity: "error", validator: "ext:enclosure/check", means: "Two bodies overlap where `lid` meets `base`.", todo: "Move the lid\nor cut a relief.", message: "The lid does not close; overlap 0.4 mm at the hinge", page: true } };
+    const pressed: unknown[][] = [];
+    const el = FindingExplain({ row, onPage: () => pressed.push(["page"]) }) as ReactElement;
+    const html = render(el);
+    expect(html).toContain('data-finding-explain="CAD_INTERFERENCE"');
+    expect(html).toContain("error · CAD_INTERFERENCE");
+    expect(html).toContain("What it means");
+    expect(html).toContain("<code");
+    expect(html).toContain(">lid</code>");
+    expect(html).toContain("What to do");
+    expect(html).toContain("overlap 0.4 mm at the hinge");
+    expect(html).toContain("ext:enclosure/check");
+    expect(html).toContain("Open full page");
+    // no reference page: no link; no reference entry: it says so
+    const bare = render(FindingExplain({ row: { ...row, explain: { severity: "warning" } } }) as ReactElement);
+    expect(bare).not.toContain("Open full page");
+    expect(bare).toContain("No explanation of this code in the reference yet.");
+  });
+
+  it("gives a file with no picture its type as a glyph on no matte, and a board part a 3D section (F5, F6, R1-E)", () => {
+    expect(artifactGlyph({ filePath: "cad/cover.step" })).toBe("STEP");
+    expect(artifactGlyph({ filePath: "part-cad/body.py" })).toBe("PY");
+    expect(artifactGlyph({ filePath: "out/body.manifest.json" })).toBe("JSON");
+    expect(artifactGlyph({ format: "stp", filePath: "x" })).toBe("STEP");
+    expect(artifactGlyph({ url: "https://lcsc.com/product-detail/C393939.html" })).toBeUndefined();
+    expect(artifactGlyph({ filePath: "notes.unknownext" })).toBeUndefined();
+    const svg = decodeURIComponent(glyphPicture("STEP", "#a8a8a8").replace(/^data:image\/svg\+xml;utf8,/, ""));
+    expect(svg).toContain(">STEP</text>");
+    // no rectangle fills the tile: the card's own surface shows through
+    expect(svg).not.toMatch(/<rect/);
+    const part = card({
+      details: undefined,
+      threeD: [
+        { defId: "shouhan-type-c16pin", artifactId: "3d:holder", title: "In Mainboard B1_4 (rev-a)", kindLabel: "3D view", source: "pcb", icon: "rotate-3d" },
+        { defId: "shouhan-type-c16pin", artifactId: "3d:own", title: "Its own 3D model", kindLabel: "3D model", source: "shouhan-type-c16pin", icon: "box" },
+      ],
+    });
+    const html = render(createElement(SelectionInspector, { content: { card: part, project: "clientx" }, actions: { ...actions, open3d: (w) => posted.push(["open3d", w]) } }));
+    expect(html).toContain('data-section="host:3d"');
+    expect(html).toContain("In Mainboard B1_4 (rev-a)");
+    expect(html).toContain("Its own 3D model");
+    // the drawn models and the glyphs sit on the card's surface, photos keep the paper matte
+    expect(html).toContain('[data-artifact-picture="model"]');
+    expect(html).toContain("background: transparent");
   });
 
   it("uses the deeper severity shades the parts views use on a light page", () => {
@@ -342,6 +408,16 @@ describe("the DRC panel", () => {
     expect(open).toContain("<code");
     expect(open).toContain("<b>incompatible</b>");
     expect(open).toContain("What to do: ");
+  });
+
+  it("shows a finding's plain title on its row, and its plain sentence before the raw detail when open (wave R2, D3)", () => {
+    const plainRow = { ...row("0", "UHD_LINK_STATE", "gpio1 drives 3.3 V into a 2.0 V LED"), title: "Link protocols do not match", plain: "GPIO1 and the LED anode share no protocol, so they cannot connect as modelled." };
+    const m: DrcPanelModel = { ...model, model: { ...model.model!, lanes: [{ id: "blocking", title: "Blocking", total: 1, shown: 1, groups: [{ key: "m:board", label: "Main board", items: [plainRow] }] }] } };
+    const closed = render(createElement(DrcPanel, { model: m, actions: none }));
+    expect(closed).toContain(">Link protocols do not match<");
+    const open = render(createElement(DrcPanel, { model: m, actions: { ...none, saved: { expanded: [`UHD_LINK_STATE|${plainRow.message}`] } } }));
+    expect(open.indexOf("share no protocol")).toBeGreaterThan(-1);
+    expect(open.indexOf("share no protocol")).toBeLessThan(open.indexOf(">gpio1 drives 3.3 V into a 2.0 V LED<"));
   });
 
   it("says what to do without a project or a build", () => {

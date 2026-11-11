@@ -5,7 +5,7 @@
  * (core's findBrowser); without one they are skipped.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
@@ -13,7 +13,10 @@ import { accessMessage, findBrowser, type AccessRefusal } from "@protoboardai/co
 import { environmentTokenSent, formatViewsCheck, libraryAccessProblem, viewsCheck, type ViewsCheckReport } from "../src/views-check.js";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
-const TMP = join(HERE, ".tmp-views-check");
+// per run (wave 2 gate): two vitest processes running this file at once must not share a folder; the parent
+// stays inside packages/cli/test so the fixtures resolve @protoboardai/core, and it is gitignored
+mkdirSync(join(HERE, ".tmp-views-check"), { recursive: true });
+const TMP = mkdtempSync(join(HERE, ".tmp-views-check", "run-"));
 const CLI = join(HERE, "../bin/protoboard.mjs");
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 

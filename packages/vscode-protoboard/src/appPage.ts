@@ -23,7 +23,19 @@ export interface AppPage {
   nonce: string;
   /** A Library screen written while the library needs a sign-in (PB-928): it draws its sign-in card at once, before any message arrives. */
   signedOut?: { reason?: string; message?: string };
+  /**
+   * R2-E (F1): tell the extension each click's modifiers before the page's own message about that click
+   * (`protoboard:pointer`, `newTab` for Ctrl, Cmd or the middle button), so a card's open can be in place or a new tab
+   * without the page knowing. The page's one `acquireVsCodeApi()` is shared with the app.
+   */
+  pointerModifiers?: boolean;
 }
+
+/** The script `pointerModifiers` adds (before the app's own, which then gets the same VS Code API object). */
+export const POINTER_SCRIPT =
+  "(function(){var a=window.acquireVsCodeApi;if(typeof a!=='function')return;var api=a();window.acquireVsCodeApi=function(){return api};" +
+  "function tell(e){api.postMessage({type:'protoboard:pointer',newTab:!!(e.ctrlKey||e.metaKey||e.button===1)})}" +
+  "addEventListener('click',tell,true);addEventListener('auxclick',function(e){if(e.button===1)tell(e)},true)})();";
 
 export function appCsp(p: Pick<AppPage, "cspSource" | "nonce">): string {
   return [
@@ -52,7 +64,8 @@ export function appHtml(p: AppPage): string {
 </head>
 <body data-screen="${escapeHtml(p.screen)}" data-theme="vscode"${p.signedOut ? ` data-signed-out="${escapeHtml(p.signedOut.reason ?? "signed-out")}" data-signed-out-message="${escapeHtml(p.signedOut.message ?? "")}"` : ""}>
 <div id="root"></div>
-<script type="module" nonce="${escapeHtml(p.nonce)}" src="${escapeHtml(p.script)}"></script>
+${p.pointerModifiers ? `<script nonce="${escapeHtml(p.nonce)}">${POINTER_SCRIPT}</script>
+` : ""}<script type="module" nonce="${escapeHtml(p.nonce)}" src="${escapeHtml(p.script)}"></script>
 </body>
 </html>`;
 }

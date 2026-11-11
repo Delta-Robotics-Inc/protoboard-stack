@@ -329,6 +329,12 @@ Vendor STEP in a project: record it in `sources.json` (with its licence) and
 in `terms.json`, and measure it as evidence, but bind geometry generated from
 the drawing, unless the part is authored in the library, where
 `vendor_step.py` binds vendor CAD. Say which in the modelling notes.
+Never draw a body only to fill a gap: when a source has the model (the
+library revision, the part's LCSC C-number through `protoboard parts fetch`,
+the maker's STEP, an existing file through `protoboard parts import`), use
+it; when none does, ask before modelling, and otherwise leave the part
+bodiless: the build's model resolver draws it as a flagged amber placeholder
+(`PB_MODEL_MISSING`), which is the only placeholder there is.
 
 ### 4. Load it
 
@@ -353,7 +359,7 @@ in the library, export the part from `library/parts/index.ts` and run
 | --- | --- |
 | A value with no source | An `assumption` trait that says so, or leave it out; never a plain parameter. |
 | No existing protocol type or role fits | Prefer `custom` plus a trait; a new one needs a `type: "vocabulary"` entry in `.research/gaps.json` and goes to the integrator. |
-| Vendor CAD or generated | Library: vendor CAD when research found it, whatever its licence; a generated body with the vendor STEP kept internal as evidence when its terms keep it in the team and the part is simple to generate, or when it cannot be bound (step 3). Project: generated from the drawing, with the vendor STEP as evidence. |
+| Vendor CAD or generated | Library: vendor CAD when research found it, whatever its licence; a generated body with the vendor STEP kept internal as evidence when its terms keep it in the team and the part is simple to generate, or when it cannot be bound (step 3). Project: generated from the drawing, with the vendor STEP as evidence, only once no source has a usable model and the person agreed; never a placeholder body (the build draws its own, flagged). |
 | A value from a sibling product | An `assumption` trait naming the sibling, the source and why it applies. |
 | A multi-position socket or header | A `Connector()` composite per physical socket, binding the leaves (not connector traits on the leaves). |
 | Terms of a file you made | From a vendor file: that file's terms. Otherwise the library's own (`preset: "library"`). |

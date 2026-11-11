@@ -1,42 +1,42 @@
 /**
- * kicad-cli (KiCad 10): found on PATH, at KiCad's usual install places, or
- * where PROTOBOARD_KICAD_CLI points. Every call is synchronous, has a timeout
- * and reports KiCad's own words when it fails.
+ * kicad-cli (KiCad 10 or newer): found by detect.cjs, the one search shared
+ * with the tool probe (probe.cjs): PROTOBOARD_KICAD_CLI, then PATH, then
+ * KiCad's install folders for any version (newest first). The version is
+ * asked once per process and kept. Every call is synchronous, has a timeout
+ * and reports KiCad's own words when it fails. Only kicad-cli subcommands are
+ * used: no SWIG bindings, no Python (KiCad 11 removes those, not kicad-cli).
  */
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { describeKicadCli, kicadCliCached, type KicadCli } from "./detect.cjs";
 
-const PLACES = [
-  "/usr/bin/kicad-cli",
-  "/usr/local/bin/kicad-cli",
-  "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli",
-  "C:\\Program Files\\KiCad\\10.0\\bin\\kicad-cli.exe",
-];
+export type { KicadCli, KicadCliSearch, KicadCliSource } from "./detect.cjs";
+// resetKicadCliCache: look again (after KiCad was installed or PROTOBOARD_KICAD_CLI changed, in a long-running process)
+export { describeKicadCli, findKicadCli, resetKicadCliCache } from "./detect.cjs";
 
-let found: string | null | undefined;
-
-/** The kicad-cli to run, or undefined when KiCad is not installed. */
-export function kicadCli(): string | undefined {
-  if (found !== undefined) return found ?? undefined;
-  const env = process.env.PROTOBOARD_KICAD_CLI;
-  const candidates = [...(env ? [env] : []), "kicad-cli", ...PLACES];
-  for (const c of candidates) {
-    if (c !== "kicad-cli" && !existsSync(c)) continue;
-    const r = spawnSync(c, ["version"], { encoding: "utf8", timeout: 20_000 });
-    if (r.status === 0 && /\d+\.\d+/.test(r.stdout)) {
-      found = c;
-      return c;
-    }
-  }
-  found = null;
-  return undefined;
+/** The kicad-cli in use, `{ path, version, major, minor, source, nightly }`, or undefined when there is none. */
+export function kicadCliInfo(): KicadCli | undefined {
+  return kicadCliCached().cli;
 }
 
-/** `kicad-cli version`, e.g. "10.0.6". */
+/** Why there is no kicad-cli (undefined when there is one). */
+export function kicadCliMissing(): string | undefined {
+  return kicadCliCached().reason;
+}
+
+/** One line: the version, the path and where it was found; or why there is none. */
+export function kicadCliSummary(): string {
+  const r = kicadCliCached();
+  return r.cli ? describeKicadCli(r.cli) : (r.reason ?? "kicad-cli not found");
+}
+
+/** The kicad-cli to run, or undefined when KiCad (10 or newer) is not installed. */
+export function kicadCli(): string | undefined {
+  return kicadCliInfo()?.path;
+}
+
+/** `kicad-cli version` as it answered, e.g. "10.0.6" (asked once, when kicad-cli was found). */
 export function kicadVersion(): string | undefined {
-  const cli = kicadCli();
-  if (!cli) return undefined;
-  return spawnSync(cli, ["version"], { encoding: "utf8", timeout: 20_000 }).stdout.trim() || undefined;
+  return kicadCliInfo()?.version;
 }
 
 export interface CliRun {
@@ -48,7 +48,7 @@ export interface CliRun {
 /** Run kicad-cli; throws when it is not installed. A non-zero exit is returned, not thrown (DRC exits 5 on violations with --exit-code-violations). */
 export function runKicad(args: string[], options: { cwd?: string; timeoutMs?: number } = {}): CliRun {
   const cli = kicadCli();
-  if (!cli) throw new Error("kicad-cli (KiCad 10) is not installed or not on PATH; install KiCad 10, or set PROTOBOARD_KICAD_CLI to its kicad-cli");
+  if (!cli) throw new Error(kicadCliMissing() ?? "kicad-cli (KiCad 10 or newer) not found; install KiCad, or set PROTOBOARD_KICAD_CLI to its kicad-cli");
   const r = spawnSync(cli, args, { encoding: "utf8", cwd: options.cwd, timeout: options.timeoutMs ?? 300_000, maxBuffer: 64 * 1024 * 1024 });
   if (r.error) throw new Error(`kicad-cli ${args.slice(0, 3).join(" ")}: ${r.error.message}`);
   return { status: r.status ?? 1, stdout: r.stdout ?? "", stderr: r.stderr ?? "" };

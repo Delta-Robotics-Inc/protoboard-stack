@@ -24,7 +24,7 @@ import { boardManifest, bomCsv, renders, type PartEdgeFrame } from "../lib/outpu
 import { projectOffers, supplierColumns, supplierNumbers } from "../lib/suppliers.ts";
 import { packageVersion } from "../lib/runtime.ts";
 import { shiftStepAssembly, withoutShapes } from "../lib/stepfile.ts";
-import { kicadCli, kicadVersion, mustKicad, reframeKicadGlb, runKicad } from "../lib/kicad/cli.ts";
+import { kicadCli, kicadCliMissing, kicadVersion, mustKicad, reframeKicadGlb, runKicad } from "../lib/kicad/cli.ts";
 import { DRC_COMMAND, drcLine, runDrc, summariseDrc, type DrcReport } from "../lib/kicad/drc.ts";
 import { componentFields, lcscNumbers, type ComponentFields } from "../lib/kicad/fields.ts";
 import { compare, comparisonDiagnostics, handoffFile, HANDOFF_SCHEMA, kicadDir, readHandoff, type Handoff } from "../lib/kicad/handoff.ts";
@@ -230,7 +230,7 @@ export const lock: CapabilityOperationFn = async (ctx) => {
     ctx.writeOutput(handoffFile(dir), JSON.stringify(record, null, 2) + "\n", "KiCad handoff record (re-recorded)");
     return { status: "succeeded", summary: `${board}: handoff re-recorded from the model and ${kicadDir(dir)}/ as they are now; the board stays locked` };
   }
-  if (!kicadCli()) return failed("circuit:lock needs kicad-cli (KiCad 10): install KiCad 10, or set PROTOBOARD_KICAD_CLI");
+  if (!kicadCli()) return failed(`circuit:lock needs kicad-cli (KiCad 10 or newer): ${kicadCliMissing()}`);
   if (!native) return failed(`no built board in ${ctx.module.native}/; run circuit:generate first`);
   // lock what tscircuit has now: refuse a build that no longer follows the model or its source
   const digest = digestOf(JSON.stringify(netlist));
@@ -407,7 +407,7 @@ export async function exportLocked(ctx: CapabilityContext): Promise<CapabilityRe
   const board = ctx.module.id;
   const out = ctx.module.out;
   const folder = kicadDir(ctx.module.dir);
-  if (!kicadCli()) return failed(`${board} is locked and its fabrication outputs come from KiCad, but kicad-cli (KiCad 10) is not installed; install KiCad 10, or set PROTOBOARD_KICAD_CLI`);
+  if (!kicadCli()) return failed(`${board} is locked and its fabrication outputs come from KiCad, but there is no usable kicad-cli: ${kicadCliMissing()}`);
   if (!existsSync(join(root, folder, `${board}.kicad_pcb`))) return failed(`${board} is locked but ${folder}/${board}.kicad_pcb is missing`);
   const netlist = netlistOf(ctx);
   const native = readNative(root, ctx.module.native);

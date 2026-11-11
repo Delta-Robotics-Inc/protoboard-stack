@@ -10,6 +10,12 @@
  * Inspector, which follows the focused tab, and the DRC panel). The theme is
  * VS Code's (high contrast included); the Protoboard faces apply only under a
  * Protoboard colour theme.
+ *
+ * R2-E (walkthrough F1, 2026-11-02): the header has back and forward (the
+ * viewer's own 3D history, then the tab's: tab-history.ts), every view keeps
+ * the header (the BOM is drawn in the tab now, with its tab bar and
+ * breadcrumbs, from the extension's data), and the extension can move the tab
+ * in place (`go`) instead of opening another.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import {
@@ -45,12 +51,13 @@ import {
   type UhdViewerOptions,
 } from "@deltarobotics/uhd-viewer/components";
 import type { ResolvedView } from "@protoboardai/core";
-import { MissingPartsHint, PartStatusStyles, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, type HostAdapter, type PartTrust, type ViewDefinition } from "@protoboardai/views";
+import { MissingPartsHint, PartStatusStyles, PartsDataProvider, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, type HostAdapter, type PartTrust, type PartsData, type ViewDefinition } from "@protoboardai/views";
 import { isProtoboardColourTheme, vscodeViewThemeAdapter } from "@protoboardai/views/theme";
 import { Logo } from "../Logo.js";
 import { LoadingScreen } from "./Loading.js";
 import { DEV_SERVER_IS, type ViewerStatus } from "./devLink.js";
-import type { DevAction, FromWebview, HierarchyAction, HierarchyRowContext, ModuleSource, SourceAction } from "./protocol.js";
+import type { DevAction, FromWebview, HierarchyAction, HierarchyRowContext, ModuleSource, SourceAction, TabLocation, ViewerCommand, ViewerSettings } from "./protocol.js";
+import { backGoesTo, emptyTabHistory, forwardGoesTo, recordMove, stepTab, type TabHistory, type ViewerHistoryFlags } from "./tab-history.js";
 import { tabModule } from "./tab-module.js";
 import { fitTabs } from "./tabs-fit.js";
 
@@ -81,6 +88,20 @@ export interface ShellBridge {
   onHierarchyState?(state: HierarchyPanelState): void;
   /** The extension's commands for the hierarchy panel (reveal a module, the filter, open or fold): subscribe; returns the unsubscribe. */
   onHierarchy?(listener: (command: { type: HierarchyAction; path?: string }) => void): () => void;
+  /** R2-E (F1): the extension moves the tab in place (`go`): subscribe; returns the unsubscribe. */
+  onGo?(listener: (to: TabLocation) => void): () => void;
+  /** R2-E (F1): VS Code's Alt+Left / Alt+Right in this tab: subscribe; returns the unsubscribe. */
+  onHistoryStep?(listener: (delta: -1 | 1) => void): () => void;
+  /** R2-E (F1): the viewer's own 3D history as it last said (`uhd-viewer:history`), and its changes. */
+  viewerHistory?: () => ViewerHistoryFlags | null;
+  onViewerHistory?(listener: () => void): () => void;
+  /** A host message for the viewer (`uhd-viewer:drill`, `uhd-viewer:historyGo`). */
+  command?(command: ViewerCommand): void;
+  /** R2-E (F1): the tab's own history as the webview's state kept it, and where its changes go. */
+  tabHistory?: TabHistory;
+  onTabHistory?(history: TabHistory): void;
+  /** R2-E (F1): the place the tab shows now, kept with the tab (so a restored tab comes back there). */
+  onLocation?(location: TabLocation): void;
 }
 
 export interface VsCodeViewerOptions extends UhdViewerOptions {
@@ -90,6 +111,13 @@ export interface VsCodeViewerOptions extends UhdViewerOptions {
   registry?: ViewRegistry;
   /** Every definition's part status by id (PB-932; the dev server's state): the dot on a module in the diagram. */
   partStatus?: Record<string, { trust: PartTrust; basis?: string; blank?: boolean }>;
+  /** R2-E: the BOM view's data, from the extension (the BOM is drawn in the tab, with its header). */
+  partsData?: PartsData;
+  /**
+   * R2-E (J1): the user's viewer settings (core settings.ts), passed to the viewer as they are: R2-A reads
+   * `modelInfo` and `hoverLongDelayMs` from here; `zoomToCursor` is applied through the view hub's controls.
+   */
+  settings?: ViewerSettings;
 }
 
 /** The colour theme VS Code applies is a Protoboard one (the extension's Protoboard Dark or Light). */
@@ -112,10 +140,12 @@ export function VsCodeShell(props: VsCodeViewerOptions) {
     <ThemeProvider adapter={adapter} className="pb-vscode">
       <PartStatusStyles />
       {props.bundle || props.bundleUrl ? (
-        <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
-          <Shell bridge={props.bridge} views={props.views} registry={props.registry} />
-          {status && <StatusCard status={status} bridge={props.bridge} over />}
-        </UhdViewer>
+        <PartsDataProvider data={props.partsData ?? null}>
+          <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
+            <Shell bridge={props.bridge} views={props.views} registry={props.registry} />
+            {status && <StatusCard status={status} bridge={props.bridge} over />}
+          </UhdViewer>
+        </PartsDataProvider>
       ) : (
         <Waiting status={status ?? { message: "Loading the project…", busy: true }} bridge={props.bridge} />
       )}
@@ -156,7 +186,9 @@ function StatusCard({ status, bridge, over }: { status: ViewerStatus; bridge: Sh
     return (
       <div role="status" className={cx(card, "flex max-w-[min(520px,calc(100%-32px))] items-start gap-2.5 px-3 py-2", over && "absolute bottom-16 left-1/2 -translate-x-1/2")}>
         {mark}
-        <span className="min-w-0">{message}</span>
+        <span className="min-w-0" title={status.detail}>
+          {message}
+        </span>
       </div>
     );
   }
@@ -222,8 +254,12 @@ function useRegistry(views: ResolvedView[] | undefined, given?: ViewRegistry): V
   return registry;
 }
 
-/** Views VS Code shows in editors of their own (PB-912): the BOM editor. */
-const NATIVE_VIEWS = new Set(["bom"]);
+/**
+ * Views VS Code shows in editors of their own (PB-912). R2-E (F1, walkthrough 3060-1 "in the BOM those menu options
+ * disappear, even the breadcrumbs"): none any more; the BOM is drawn in the tab, under the header, from the
+ * extension's data (its own BOM editor still opens from the Cloud panel and for a release's ordering list).
+ */
+const NATIVE_VIEWS = new Set<string>();
 
 /**
  * Views a VS Code viewer tab does not offer (PB-1070): the library is the
@@ -242,6 +278,16 @@ function Header({ children }: { children?: ReactNode }) {
       <Logo />
       {children}
     </header>
+  );
+}
+
+/** The header's back and forward (R2-E, F1): Alt+Left and Alt+Right, and the mouse's back and forward buttons, do the same. */
+function NavButtons({ back, forward, backTitle, forwardTitle, onBack, onForward }: { back: boolean; forward: boolean; backTitle?: string; forwardTitle?: string; onBack: () => void; onForward: () => void }) {
+  return (
+    <div className="flex shrink-0 items-center" role="group" aria-label="History" data-tab-history={`${back ? "back" : ""}${back && forward ? " " : ""}${forward ? "forward" : ""}`}>
+      <IconButton size="sm" icon="arrow-left" label={backTitle ? `Back to ${backTitle}` : "Back"} shortcut="Alt+Left" disabled={!back} onClick={onBack} className="disabled:opacity-40" data-nav="back" />
+      <IconButton size="sm" icon="arrow-right" label={forwardTitle ? `Forward to ${forwardTitle}` : "Forward"} shortcut="Alt+Right" disabled={!forward} onClick={onForward} className="disabled:opacity-40" data-nav="forward" />
+    </div>
   );
 }
 
@@ -267,6 +313,24 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
     } else setDomain(id);
   };
   useEffect(() => bridge.onShowView(show));
+  // R2-E (F1): the module the tab is on, which an in-place navigation moves (it starts where the tab was opened)
+  // (`level`: the tab followed the viewer to a level it moved to, so the path is that level, never a part below it)
+  const [target, setTarget] = useState<{ path: string; view: string; seq: number; level?: boolean }>(() => ({ path: bridge.startPath ?? "", view: bridge.startView, seq: 0 }));
+  // where the tab is for its name and its 3D scope: a level it followed is the level shown (a module the viewer drilled
+  // into, then left again, is not a part of the level above: the tab's title went with it, CI on 2026-11-10)
+  const tabPath = target.level ? path : target.path;
+  const goSeq = useRef(0);
+  const goTo = useCallback(
+    (to: TabLocation) => {
+      setTarget({ path: to.path, view: to.view, seq: ++goSeq.current });
+      // the level that holds it (a part with no level of its own shows the level around it), then the view
+      bridge.command?.({ type: "uhd-viewer:drill", path: to.path });
+      show(to.view);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bridge, c.setView],
+  );
+  useEffect(() => bridge.onGo?.((to) => goTo(to)), [bridge, goTo]);
   // views with an editor of their own in VS Code (the BOM editor): their tab opens it
   const opensNative = (id: string) => NATIVE_VIEWS.has(id);
   const host = useMemo<HostAdapter>(
@@ -290,16 +354,30 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   // the extension titles the tab and follows the level (the Inspector, a new tab's module)
   // (a part's name as its level declares it: the diagram's own labels are capitals)
   const parts = ((c.levelDef.children ?? []) as { id: string; name?: string; moduleDefId?: string }[]).map((ch) => ({ id: ch.id, label: ch.name ?? c.defFor(ch.moduleDefId)?.name ?? ch.id }));
-  const on = tabModule(c.drill, bridge.startPath ?? "", c.vm.path[c.vm.path.length - 1]?.label ?? c.source.name, parts);
+  const on = tabModule(c.drill, tabPath, c.vm.path[c.vm.path.length - 1]?.label ?? c.source.name, parts);
   const label = on.label;
   const viewId = active?.id ?? "diagram";
   const nodes = c.drawn.nodes.length;
   const tabKey = tabs.map((t) => `${t.id}:${t.title}`).join(",");
   // a tab opened on a module (or on 3D) says nothing until the viewer shows it; a path the bundle no longer has gives up after a moment
-  const startPath = bridge.startPath ?? "";
-  const wantsStart = startPath !== "" || bridge.startView === "3d";
+  // (R2-E: the same after an in-place navigation, which moves the target)
+  const startPath = target.path;
+  const wantsStart = startPath !== "" || target.view === "3d";
   const [settled, setSettled] = useState(!wantsStart);
-  const atStart = path === startPath && (bridge.startView !== "3d" || c.view === "3d");
+  const settledFor = useRef(target.seq);
+  if (settledFor.current !== target.seq) {
+    settledFor.current = target.seq;
+    if (settled) setSettled(false);
+  }
+  // a part with no level of its own is shown at the level that holds it
+  const startLevel = on.part ? startPath.split("/").slice(0, -1).join("/") : startPath;
+  const atStart = (path === startPath || path === startLevel) && (target.view !== "3d" || c.view === "3d");
+  // once there, a level the person moves to (a breadcrumb, a diagram drill, the 3D view's own Back) is where the tab is
+  useEffect(() => {
+    if (!settled) return;
+    if (path !== startPath && path !== startLevel) setTarget((t) => (t.path === path && t.level ? t : { ...t, path, level: true }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settled, path]);
   const loaded = !!c.source.bundle;
   // definitions the project names and has not fetched: the tab says how many, and the extension's log with it
   const missing = c.scenario.missing.length;
@@ -316,8 +394,83 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bridge, settled, path, label, viewId, nodes, tabKey, missing, on.path]);
 
+  // ---- back and forward (R2-E, F1): the viewer's own 3D history, then the tab's (tab-history.ts)
+  const here = useMemo<TabLocation>(() => ({ path: on.path, view: viewId }), [on.path, viewId]);
+  const [history, setHistoryState] = useState<TabHistory>(() => bridge.tabHistory ?? emptyTabHistory());
+  const setHistory = useCallback(
+    (next: TabHistory) => {
+      setHistoryState(next);
+      bridge.onTabHistory?.(next);
+    },
+    [bridge],
+  );
+  const viewerHistory = useSyncExternalStore(
+    (l) => bridge.onViewerHistory?.(l) ?? (() => undefined),
+    () => bridge.viewerHistory?.() ?? null,
+  );
+  // the place last shown, and a step of the history under way (its arrival is not a new move)
+  const shown = useRef<TabLocation | null>(null);
+  const stepping = useRef<TabLocation | null>(null);
+  useEffect(() => {
+    if (!settled) return;
+    const was = shown.current;
+    shown.current = here;
+    bridge.onLocation?.(here);
+    if (!was || (was.path === here.path && was.view === here.view)) return;
+    const step = stepping.current;
+    if (step && step.path === here.path && step.view === here.view) {
+      stepping.current = null;
+      return;
+    }
+    stepping.current = null;
+    // the viewer's own history keeps 3D levels once it has said it keeps one (R2-A); before that the tab does
+    setHistory(recordMove(history, was, here, viewerHistory !== null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settled, here]);
+  const backTo = backGoesTo(viewId, viewerHistory, history, here);
+  const forwardTo = forwardGoesTo(viewId, viewerHistory, history, here);
+  const step = useCallback(
+    (delta: -1 | 1) => {
+      const where = delta < 0 ? backTo : forwardTo;
+      if (where === "viewer") return bridge.command?.({ type: "uhd-viewer:historyGo", delta });
+      if (where !== "tab") return;
+      const s = stepTab(history, here, delta);
+      if (!s) return;
+      stepping.current = s.to;
+      setHistory(s.history);
+      goTo(s.to);
+    },
+    [backTo, forwardTo, bridge, history, here, setHistory, goTo],
+  );
+  const stepRef = useRef(step);
+  stepRef.current = step;
+  useEffect(() => bridge.onHistoryStep?.((d) => stepRef.current(d)), [bridge]);
+  // the extension's Go Back keys follow whether there is somewhere to go (else Alt+Left is VS Code's own)
+  useEffect(() => bridge.post({ type: "historyState", back: backTo !== "none", forward: forwardTo !== "none" }), [bridge, backTo, forwardTo]);
+  // the mouse's own back and forward buttons (button 3 and 4)
+  useEffect(() => {
+    const onUp = (e: globalThis.MouseEvent) => {
+      if (e.button !== 3 && e.button !== 4) return;
+      e.preventDefault();
+      stepRef.current(e.button === 3 ? -1 : 1);
+    };
+    window.addEventListener("mouseup", onUp);
+    return () => window.removeEventListener("mouseup", onUp);
+  }, []);
+  const titleOf = (to: "viewer" | "tab" | "none", delta: -1 | 1): string | undefined => {
+    if (to === "viewer") {
+      const v = viewerHistory as (ViewerHistoryFlags & { index?: number; entries?: { label: string }[] }) | null;
+      return v?.entries?.[(v.index ?? 0) + delta]?.label;
+    }
+    if (to !== "tab") return undefined;
+    const s = stepTab(history, here, delta);
+    if (!s) return undefined;
+    const title = tabs.find((t) => t.id === s.to.view)?.title ?? s.to.view;
+    return `${title}${s.to.path === here.path ? "" : ` of ${s.to.path.split("/").pop() || "the system"}`}`;
+  };
+
   // 3D shows the module the tab is on (PB-897): the level, or the part the tab was opened on when it has no level of its own
-  const startAt = startPath ? startPath.split("/") : [];
+  const startAt = tabPath ? tabPath.split("/") : [];
   const scope = startAt.length > c.drill.length && c.drill.every((d, i) => startAt[i] === d) ? startAt : c.drill;
   // a board's 3D model is an output of its circuit tool: say how it is made where there is none (PB-946)
   // (a board: a module with nets, whether or not its drawings exist yet; and the tab is on the board itself, not on one of its parts)
@@ -356,6 +509,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
   return (
     <div className="relative size-full min-h-[240px] min-w-[320px] overflow-hidden bg-background text-fg" style={INSETS}>
       <Header>
+        <NavButtons back={backTo !== "none"} forward={forwardTo !== "none"} backTitle={titleOf(backTo, -1)} forwardTitle={titleOf(forwardTo, 1)} onBack={() => step(-1)} onForward={() => step(1)} />
         <ToolbarSeparator />
         <ViewTabs tabs={tabs} active={active?.id} opensEditor={opensNative} onOpen={(id, beside) => (beside || opensNative(id) ? bridge.post({ type: "openView", view: id, path }) : show(id))} />
         <ToolbarSeparator />
@@ -374,7 +528,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
         ) : active?.id === "3d" ? (
           <Scene3D inspector={false} scope={scope} emptyHint={modelHint} />
         ) : (
-          active && <View module={c.levelDef} path={path} bundle={c.source.bundle} host={host} view={active} {...(bridge.startParams && active.id === bridge.startView ? { params: bridge.startParams } : {})} />
+          active && <View module={c.levelDef} path={path} bundle={c.source.bundle} host={host} view={active} {...(bridge.startParams && active.id === bridge.startView && target.seq === 0 ? { params: bridge.startParams } : {})} />
         )}
       </div>
       <ViewerNodeMenu />

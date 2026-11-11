@@ -10,7 +10,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { KNOWN_AGENTS, MCP_SERVER_NAME, otherClientConfig, otherClientName, type AgentChange, type AgentState } from "@protoboardai/core/agents";
 import { cliOriginOf, installLauncher, launcherCommand, type CliOrigin, type LauncherPlace, type LauncherState, type ServerCommand } from "@protoboardai/core/agent-launcher";
-import type { AccountModel, AgentRowModel, OtherClientsModel, SettingsLinkModel, SettingsModel } from "@protoboardai/views/parts-model";
+import type { AccountModel, AgentRowModel, OtherClientsModel, SettingRowModel, SettingsLinkModel, SettingsModel } from "@protoboardai/views/parts-model";
 import { resolveCli, type CliCommand, type CliSettings } from "./cli.js";
 
 /**
@@ -159,6 +159,8 @@ export interface SettingsInput {
   notes?: Record<string, { text: string; tone: NonNullable<AgentRowModel["detailTone"]> }>;
   working?: ReadonlySet<string>;
   links?: SettingsLinkModel[];
+  /** R2-E (J1): the Viewer section's rows. */
+  viewer?: SettingRowModel[];
 }
 
 const ORIGIN: Record<string, string> = { setting: "from the protoboard.cliPath setting", project: "the project's own", path: "found on PATH", none: "not found", carried: "carried by the extension", store: "a stack copy the extension keeps", extension: "carried by the extension", npm: "installed on this machine" };
@@ -177,6 +179,7 @@ export function settingsModel(i: SettingsInput): SettingsModel {
     // named as the rows name it: beside another server called protoboard (the alpha app's), this one has the other name
     other: otherClients(i.command, otherClientName(i.agents)),
     ...(i.links?.length ? { links: i.links } : {}),
+    ...(i.viewer?.length ? { viewer: i.viewer } : {}),
   };
 }
 

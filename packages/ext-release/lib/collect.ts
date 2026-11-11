@@ -11,7 +11,7 @@
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, join, relative } from "node:path";
-import type { CapabilityBinding, Project } from "@protoboardai/core";
+import { isViewSidecarFile, type CapabilityBinding, type Project } from "@protoboardai/core";
 import { cutList, cutListCsv, isCable } from "./cutlist.ts";
 import type { PackageFile, Unit } from "./types.ts";
 import { unitBom } from "./bom.ts";
@@ -22,7 +22,8 @@ const listFiles = (abs: string, base = abs): string[] =>
     ? []
     : readdirSync(abs)
         .sort(byCode)
-        .flatMap((f) => (statSync(join(abs, f)).isDirectory() ? listFiles(join(abs, f), base) : [posix(relative(base, join(abs, f)))]));
+        // never the build's view sidecars (X.view.glb, ...): simplified for display, not a manufacturing file
+        .flatMap((f) => (statSync(join(abs, f)).isDirectory() ? listFiles(join(abs, f), base) : isViewSidecarFile(f) ? [] : [posix(relative(base, join(abs, f)))]));
 
 /** What kind of folder a bound module's files go to. */
 export function fileGroup(p: Project, b: CapabilityBinding): "boards" | "mechanical" | "harnesses" | "firmware" {

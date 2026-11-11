@@ -19,8 +19,18 @@ import * as vscode from "vscode";
 import { openOutside } from "./openOutside.js";
 import { CAD_VIEWER, cadSource, cadViewerHtml, type CadTabState } from "./cadFiles.js";
 import { nonce } from "./html.js";
+import { readSettings } from "@protoboardai/core/settings";
 
 export { CAD_VIEWER, isCadFile } from "./cadFiles.js";
+
+/** The person's `viewer.modelInfo` (R2-E, J1; R2 integration): read when a tab opens; the DEFAULT (on) when unreadable. */
+function modelInfoSetting(): boolean {
+  try {
+    return readSettings().values["viewer.modelInfo"] !== false;
+  } catch {
+    return true;
+  }
+}
 
 class CadDocument implements vscode.CustomDocument {
   constructor(readonly uri: vscode.Uri) {}
@@ -74,6 +84,7 @@ export class CadEditorProvider implements vscode.CustomReadonlyEditorProvider<Ca
       name: basename(file),
       cspSource: w.cspSource,
       nonce: nonce(),
+      modelInfo: modelInfoSetting(),
     });
   }
 }

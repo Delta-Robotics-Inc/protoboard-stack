@@ -16,6 +16,7 @@ import { appHtml } from "./appPage.js";
 import { nonce } from "./html.js";
 import { pageContent, type InspectorCard, type InspectorContent } from "./inspector.js";
 import { vscodeBefore } from "./newProject.js";
+import { clickWantsNewTab } from "./navigation.js";
 
 export type { InspectorAction, InspectorContent };
 
@@ -26,14 +27,16 @@ export interface InspectorActions {
   select(selection: { kind: "node" | "link"; id: string }): unknown;
   finding(key: string): unknown;
   explain(key: string): unknown;
-  /** An artifact's card: opened as Open Artifact opens it. */
-  openArtifact(card: InspectorCard, defId: string, artifactId: string): unknown;
+  /** An artifact's card: opened as Open Artifact opens it; a model in place unless `newTab` (Ctrl+click, R2-E). */
+  openArtifact(card: InspectorCard, defId: string, artifactId: string, options?: { newTab: boolean }): unknown;
   /** A web address among the card's links. */
   openLink(url: string): unknown;
   /** An interface card's Open in source (PB-1042). */
   interfaceSource?(request: InspectorInterfaceRequest): unknown;
   /** An open slot's Connect…: where a link from it is written. */
   connect?(request: InspectorInterfaceRequest): unknown;
+  /** A board part's 3D card (F5): its board's 3D view with the part framed (`3d:holder`), or its own model (`3d:own`). */
+  open3d?(card: InspectorCard, which: string, options?: { newTab: boolean }): unknown;
   /** Folders the page may load from (the projects, their artifact packages, the library's cache). */
   roots(): string[];
   /** A picture did not load (a file outside the roots, or gone): for the log. */
@@ -50,6 +53,9 @@ export type InspectorPageMessage =
   | { type: "openArtifact"; defId: string; artifactId: string }
   | { type: "openLink"; url: string }
   | { type: "interfaceSource" | "connect"; request: InspectorInterfaceRequest }
+  | { type: "open3d"; which: string }
+  /** R2-E: the modifiers of the click that comes next (appPage.ts `pointerModifiers`). */
+  | { type: "protoboard:pointer"; newTab: boolean }
   | ({ type: "drawn" } & PageDrawn);
 
 /** What the page says it drew, once settled (the log and the tests read it). */
@@ -82,6 +88,8 @@ export class InspectorViewProvider implements vscode.WebviewViewProvider {
   private applied = "";
   /** What the page last said it drew. */
   drawn: PageDrawn | undefined;
+  /** R2-E (F1): the modifiers of the page's last click (Ctrl: a new tab). */
+  private pointer: { newTab: boolean; at: number } | undefined;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
@@ -100,6 +108,8 @@ export class InspectorViewProvider implements vscode.WebviewViewProvider {
       script: view.webview.asWebviewUri(vscode.Uri.joinPath(dist, "views-app.js")).toString(),
       style: view.webview.asWebviewUri(vscode.Uri.joinPath(dist, "views-app.css")).toString(),
       nonce: nonce(),
+      // R2-E (F1): a card's Ctrl+click opens a new tab; a plain click in place
+      pointerModifiers: true,
     });
     view.webview.onDidReceiveMessage((m: InspectorPageMessage) => this.receive(m));
     view.onDidChangeVisibility(() => {
@@ -214,7 +224,10 @@ export class InspectorViewProvider implements vscode.WebviewViewProvider {
         if (typeof m.key === "string") void this.actions.explain(m.key);
         return;
       case "openArtifact":
-        if (card && typeof m.defId === "string" && typeof m.artifactId === "string") void this.actions.openArtifact(card, m.defId, m.artifactId);
+        if (card && typeof m.defId === "string" && typeof m.artifactId === "string") void this.actions.openArtifact(card, m.defId, m.artifactId, { newTab: clickWantsNewTab(this.pointer) });
+        return;
+      case "protoboard:pointer":
+        this.pointer = { newTab: m.newTab === true, at: Date.now() };
         return;
       case "drawn":
         this.drawn = { what: String(m.what), details: !!m.details, cards: Number(m.cards) || 0, rows: Number(m.rows) || 0, loaded: Number(m.loaded) || 0, failed: Number(m.failed) || 0, icons: Number(m.icons) || 0, scrolls: !!m.scrolls, width: Number(m.width) || 0, height: Number(m.height) || 0 };
@@ -227,6 +240,10 @@ export class InspectorViewProvider implements vscode.WebviewViewProvider {
         if (ok) void (m.type === "connect" ? this.actions.connect : this.actions.interfaceSource)?.({ path: r.path, interfaceId: r.interfaceId, owner: r.owner, links: r.links });
         return;
       }
+      case "open3d":
+        // only a 3D card the card itself offers
+        if (card && typeof m.which === "string" && card.threeD?.some((c) => c.artifactId === m.which)) void this.actions.open3d?.(card, m.which, { newTab: clickWantsNewTab(this.pointer) });
+        return;
       case "openLink":
         // only an address the card itself names (an artifact's or an evidence source's), and only the web
         if (card && typeof m.url === "string" && /^https?:\/\//i.test(m.url) && card.details?.links?.includes(m.url)) void this.actions.openLink(m.url);

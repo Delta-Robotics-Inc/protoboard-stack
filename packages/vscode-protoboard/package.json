@@ -171,6 +171,16 @@
         "icon": "$(book)"
       },
       {
+        "command": "protoboard.updates.show",
+        "title": "Show Update and Vulnerability Check",
+        "category": "Protoboard"
+      },
+      {
+        "command": "protoboard.viewer.takeOver",
+        "title": "Take Over the 3D View from Agents",
+        "category": "Protoboard"
+      },
+      {
         "command": "protoboard.help.feedback",
         "title": "Send Feedback or Report an Issue",
         "category": "Protoboard",
@@ -181,6 +191,12 @@
         "title": "Join the Discord",
         "category": "Protoboard",
         "icon": "$(protoboard-discord)"
+      },
+      {
+        "command": "protoboard.telemetry.status",
+        "title": "Local Crash and Performance Data",
+        "category": "Protoboard",
+        "icon": "$(pulse)"
       },
       {
         "command": "protoboard.hierarchy.toggle",
@@ -426,11 +442,44 @@
         "title": "Install a Tool Runtime (CAD, Circuit)…",
         "category": "Protoboard",
         "icon": "$(tools)"
+      },
+      {
+        "command": "protoboard.viewer.back",
+        "title": "Back in the Viewer Tab",
+        "category": "Protoboard",
+        "icon": "$(arrow-left)"
+      },
+      {
+        "command": "protoboard.viewer.forward",
+        "title": "Forward in the Viewer Tab",
+        "category": "Protoboard",
+        "icon": "$(arrow-right)"
+      },
+      {
+        "command": "protoboard.viewer.export",
+        "title": "Export the View or Part (to the Export Folder)",
+        "category": "Protoboard",
+        "icon": "$(desktop-download)"
+      },
+      {
+        "command": "protoboard.settings.edit",
+        "title": "Change a Protoboard Setting",
+        "category": "Protoboard"
       }
     ],
     "configuration": {
       "title": "Protoboard",
       "properties": {
+        "protoboard.updates.check": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Check once a day for newer Protoboard releases, known vulnerabilities (OSV.dev) and lookalike packages in what is installed, and show a toast. Sends only package names and versions to registry.npmjs.org and api.osv.dev. Never installs anything. See docs/reference/update-check.md."
+        },
+        "protoboard.telemetry.local": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Record crash and performance data of the viewer tabs (load times, frame times, draw calls, GPU name, errors with hashed stacks) **on this machine only**, in each project's `.protoboard/local/telemetry/` (git-ignored; kept 30 days or 50 MB). Nothing is sent: `protoboard telemetry export` shows exactly what a report would carry, and it goes only after you approve it. Paths are hashed; no source, file contents, part names or text you type are recorded. Off when VS Code's own telemetry is off (`#telemetry.telemetryLevel#`); its `crash` or `error` level keeps crash records only."
+        },
         "protoboard.cliPath": {
           "type": "string",
           "default": "",
@@ -749,6 +798,18 @@
         "command": "protoboard.part.back",
         "key": "alt+left",
         "when": "activeWebviewPanelId == 'protoboard.part'"
+      },
+      {
+        "command": "protoboard.viewer.back",
+        "key": "alt+left",
+        "mac": "ctrl+-",
+        "when": "activeCustomEditorId == 'protoboard.viewer' && protoboard.viewer.canGoBack"
+      },
+      {
+        "command": "protoboard.viewer.forward",
+        "key": "alt+right",
+        "mac": "ctrl+shift+-",
+        "when": "activeCustomEditorId == 'protoboard.viewer' && protoboard.viewer.canGoForward"
       }
     ],
     "menus": {
@@ -1048,6 +1109,22 @@
         {
           "command": "protoboard.viewer.copyRelativeSourcePath",
           "when": "activeCustomEditorId == 'protoboard.viewer'"
+        },
+        {
+          "command": "protoboard.viewer.back",
+          "when": "activeCustomEditorId == 'protoboard.viewer'"
+        },
+        {
+          "command": "protoboard.viewer.forward",
+          "when": "activeCustomEditorId == 'protoboard.viewer'"
+        },
+        {
+          "command": "protoboard.viewer.export",
+          "when": "activeCustomEditorId == 'protoboard.viewer'"
+        },
+        {
+          "command": "protoboard.settings.edit",
+          "when": "false"
         }
       ],
       "editor/title": [
@@ -1203,7 +1280,7 @@
     "@vscode/vsce": "^4.0.0",
     "esbuild": "^0.28.2",
     "occt-import-js": "^0.0.23",
-    "three": "^0.180.0"
+    "three": "0.187.0"
   },
   "keywords": [
     "hardware",

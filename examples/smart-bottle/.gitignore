@@ -18,3 +18,8 @@ parts/evidence/*/.research/
 release/
 # a board's KiCad preview (circuit:kicad), rewritten each time; a locked board's kicad/ is committed
 src/boards/*/tscircuit/kicad/
+
+# View sidecars written by the build (phase 1 export pipeline): merged, instanced, compressed copies of body GLBs
+*.view.glb
+*.view.coarse.glb
+*.view.json

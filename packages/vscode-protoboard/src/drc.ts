@@ -6,6 +6,7 @@
  */
 import type { CheckDiagnostic, CheckRun, Severity } from "./check.js";
 import { lookupCode, type CodeReference } from "./codes.js";
+import { plainFinding } from "@protoboardai/core/findings-text";
 import { diagnosticTarget, SEVERITY_RANK, type ProjectIndex, type SourceLocation, type Target } from "./model.js";
 
 export type FindingSource = "uhd" | "extension" | "provider" | "protoboard";
@@ -17,14 +18,22 @@ export interface Finding {
   key: string;
   code: string;
   severity: Severity;
-  /** One line. */
+  /** One line: the message's first clause. */
   summary: string;
+  /**
+   * For people (wave R2, D3): the finding's plain title and one-sentence summary, as the check wrote them
+   * (core findings-text.ts), else worded here from its code and message.
+   */
+  title?: string;
+  plain?: string;
   /** The rest of the message, clause by clause. */
   reasons: string[];
   message: string;
   validator: string;
   source: FindingSource;
   target: Target;
+  /** What the diagnostic names (`kind`, `id`), as the check wrote it: the 3D view's finding id is made from it (D7). */
+  entity?: { kind: string; id: string };
   location?: SourceLocation;
   /** From the extension's diagnostic-codes reference. */
   means?: string;
@@ -74,16 +83,22 @@ export function findings(index: ProjectIndex, diagnostics: CheckDiagnostic[], re
   return diagnostics.map((d, i) => {
     const entry = lookupCode(ref, d.code);
     const { summary, reasons } = splitMessage(d.message);
+    // the check's plain words (fields a CLI before wave R2 does not write: worded here then)
+    const given = d as { title?: unknown; summary?: unknown };
+    const plain = typeof given.title === "string" && typeof given.summary === "string" ? { title: given.title, summary: given.summary } : plainFinding(d);
     return {
       key: String(i),
       code: d.code,
       severity: d.severity,
       summary,
+      title: plain.title,
+      plain: plain.summary,
       reasons,
       message: d.message,
       validator: d.validator,
       source: findingSource(d.validator),
       target: diagnosticTarget(index, d),
+      ...(d.entity && typeof d.entity.kind === "string" && typeof d.entity.id === "string" ? { entity: { kind: d.entity.kind, id: d.entity.id } } : {}),
       location: d.source,
       means: entry?.means,
       todo: entry?.todo,
@@ -140,7 +155,7 @@ const groupOf = (f: Finding, by: GroupBy): { key: string; label: string } => {
 export function matchesText(f: Finding, text: string): boolean {
   const words = text.toLowerCase().split(/\s+/).filter(Boolean);
   if (!words.length) return true;
-  const hay = [f.code, f.message, f.target.label, f.target.path, f.target.defId, f.validator, SOURCE_LABEL[f.source]].filter(Boolean).join(" ").toLowerCase();
+  const hay = [f.code, f.title, f.plain, f.message, f.target.label, f.target.path, f.target.defId, f.validator, SOURCE_LABEL[f.source]].filter(Boolean).join(" ").toLowerCase();
   return words.every((w) => hay.includes(w));
 }
 
@@ -186,6 +201,9 @@ export interface DrcRow {
   key: string;
   code: string;
   summary: string;
+  /** Plain words for people (wave R2, D3): the row shows the title, the open row the sentence first. */
+  title?: string;
+  plain?: string;
   message: string;
   reasons: string[];
   module: string;
@@ -215,6 +233,8 @@ export const toRow = (f: Finding): DrcRow => ({
   key: f.key,
   code: f.code,
   summary: f.summary,
+  title: f.title,
+  plain: f.plain,
   message: f.message,
   reasons: f.reasons,
   module: f.target.linkId ? `link ${f.target.label}` : f.target.path === "" ? `${f.target.label} (root)` : f.target.label,

@@ -31,11 +31,26 @@
     "./agents": "./src/agents.ts",
     "./agent-launcher": "./src/agent-launcher.ts",
     "./user-folders": "./src/user-folders.ts",
-    "./private-dir": "./src/private-dir.ts"
+    "./private-dir": "./src/private-dir.ts",
+    "./part-files": "./src/part-files.ts",
+    "./telemetry": "./src/telemetry.ts",
+    "./view-model": "./src/view-model/index.ts",
+    "./sequence": "./src/sequence/index.ts",
+    "./render-service": "./src/render-service/index.ts",
+    "./geometry-service": "./src/geometry-service/index.ts",
+    "./uhdpkg": "./src/uhdpkg/index.ts",
+    "./update": "./src/update/index.ts",
+    "./mates": "./src/mates/index.ts",
+    "./reference-tool": "./src/reference-tool/index.ts",
+    "./findings-anchors": "./src/findings-anchors.ts",
+    "./findings-text": "./src/findings-text.ts",
+    "./settings": "./src/settings.ts",
+    "./reference/*": "./reference/*"
   },
   "files": [
     "src",
     "templates",
+    "reference",
     "README.md",
     "LICENSE",
     "NOTICE"
@@ -54,8 +69,12 @@
   },
   "dependencies": {
     "@deltarobotics/uhd": "^0.3.1",
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "@gltf-transform/functions": "4.5.1",
     "@protoboardai/cloud": "^0.3.0",
     "jsonc-parser": "^3.3.1",
+    "meshoptimizer": "1.3.0",
     "smol-toml": "^1.9.0",
     "tsx": "^4.23.8"
   },

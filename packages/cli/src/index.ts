@@ -78,6 +78,7 @@ import {
   listArtifacts,
   loadProject,
   writeBuild,
+  writeBuildSequence,
   writeBundle,
   type Project,
   type ProjectDiagnostic,
@@ -191,7 +192,16 @@ const cli = meow(
     artifacts [instance]    Artifacts of the definitions in use (or of one instance), with the instances
                             using them and the file each resolves to
     check                   Resolve the project and run every available validator (exit 1 on errors)
-    build                   Write .protoboard/build/resolved.json (derived data only)
+    build                   Write .protoboard/build/resolved.json (derived data only) with the model table: what
+                            the one model resolver chose for every drawn body (file, sha256, tier, provenance,
+                            placeholder), and an amber placeholder box per part with no model at any tier.
+                            Offline; --fetch first restores the vendor files parts/sources.json records that are
+                            not on this machine (parts fetch), over the network when they are not cached. Then
+                            the view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json:
+                            merged, instanced, compressed copies the 3D view loads; X.glb is unchanged) and one
+                            line of pre-flight counts for a 3D frame: draws, triangles and nodes before and after.
+                            Also .protoboard/build/sequence.json: the assembly sequence (fit and fasten steps
+                            from the mates and fastener stacks, patched by src/assembly.uhd.ts) the 3D view plays
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -205,7 +215,45 @@ const cli = meow(
                             fails (exit 1) on a tab that throws, shows an empty state or draws nothing.
                             The Library tab is skipped, with the reason, while no library can be used
                             from here (signed out, sign-in refused, service out of reach).
-                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs
+                            --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs. Runs
+                            through the project's warm render service (started when none runs); --no-service
+                            opens a browser of its own
+    views capture           One view as an image for a document or an agent, through the warm render service:
+                            --view 3d|diagram|..., --level <instance path>, --state <json|@file> (camera,
+                            explode, selection), --annotate <ref[=label],...> (an SVG overlay and a legend),
+                            --size, --format png|jpeg|webp, --out <file>; writes x.capture.json beside the image
+                            and a snapshot the visible viewer opens from. --no-service runs it in this process
+    geometry measure        Exact measurement through build123d (PB-1187): measure <request.json | -> (a
+                            protoboard.geometry-request/v0, as the viewer's exactRequest makes it), faces
+                            <instance> [--limit N], bounds <instance>, load <instance>, serve (JSON lines on
+                            stdin and stdout)
+    drawing inspect         Drawings to CAD (PB-1190): inspect <file> (vector or raster, units, scale, projection, title
+                            block, PDF permission flags), views <file>, crop <file> --view vN|--bbox x0,y0,x1,y1 [--dpi]
+                            [--out x.png], dimensions <file> [--part <id> --write], compare <file> --part <instance>|--model
+                            <x.step> [--view-map v1=front] [--tolerance mm]; --page N, --ocr, --ignore-pdf-permissions
+                            (a PDF whose flags forbid extraction is refused without it); needs the CAD runtime
+    mates list|suggest|validate [--json]
+                            Mates from traits and sidecars; heuristic suggestions (.protoboard/build/mates-suggested.json)
+    interference [--at <keyframe|t>] [--json]
+                            Static interference at the assembly sequence's keyframes (BVH; the enclosure voxel field where
+                            one exists)
+    inventory [--json]      What is installed: the CLI, the stack, extensions and their packages (PB-1168)
+    settings get [<key>] | set <key> <value> | reset <key> | log
+                            Your Protoboard settings (viewer defaults, the STEP viewer, the export folder), the same
+                            ones the extension's Settings page and the agent's settings tools change (R2-E)
+    update check [--json] [--force] | status | on | off
+                            Newer releases, known vulnerabilities (OSV.dev) and lookalike packages; once a day in the
+                            background after a command (off in CI)
+    package write           A part as one .uhdpkg (PB-1195): its revision envelope, unchanged, and its files,
+                            zipped: write <part-id | folder> [--out <file>] [--exclude <path>] [--allow-unpinned]
+                            [--created-at <iso>] [--stored]; read <file.uhdpkg> <folder> unpacks after every check;
+                            verify <file.uhdpkg> checks without writing (exit 1 on any failure)
+    views doctor            Can this machine render headless: the browser, the GL backend (GPU or SwiftShader;
+                            --backend auto|gpu|swiftshader), WebGL 2, a test frame, the capture encoders
+    views service | status | stop
+                            Run the render service in the foreground (one warm headless browser per project,
+                            loopback only, a session token in .protoboard/local/render-service.json; it stops
+                            after 15 minutes idle), say whether one runs, or stop it
     dev                     Serve the UHD viewer on the project: rebuilds on every source change, saves
                             diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch)
     bom                     The bill of materials, by top-level module, in US dollars: what one unit needs, the
@@ -238,6 +286,32 @@ const cli = meow(
     parts migrate           Move vendored parts from the folder layout of 0.1.6 and earlier (which repeats the part
                             id in every path, too long for Windows in a nested project) to the short one; offline,
                             the pins stay. check reports PB_CATALOG_LAYOUT_EARLIER (info) while there are some
+    parts models [instance]
+                            The model resolver's table: per drawn body, the file used, its trust tier (M1 library
+                            verified ... M8 placeholder) and where it came from. Offline
+    parts import <file> --part <id> [--board] [--replace]
+                            Use an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body:
+                            recorded in parts/sources.json (imported, sha256), the module bound to ext-parts'
+                            cad capability (constraints.import, no script), then cad:generate and cad:export.
+                            A board's STEP (--board, or a module with children) also maps each component node
+                            to its instance by designator, then LCSC C-number. Offline
+    parts fetch <part> --lcsc <C-number> | --kicad <library:name> | --link <https url>
+                            Fetch one vendor model for a part, on this machine, for the user: EasyEDA's model for
+                            an LCSC C-number (terms unknown: kept on this machine), KiCad's 3D library (the
+                            installed copy first, offline), or a link (--file-format, --terms). The bytes go to
+                            the machine cache and parts/files/<part>/model.<key>.<ext> (gitignored; never
+                            committed), the link, sha256 and terms to parts/sources.json; a STEP gets a GLB for
+                            the viewer when the CAD runtime is installed (--no-convert skips it). --offline
+                            refuses the network. Never runs on its own
+    parts fetch [part]      Restore the vendor files parts/sources.json records that are not on this machine:
+                            the machine cache, KiCad's installed library, else their links (--offline: no network)
+    parts export <part|instance> --format step|stl|3mf|glb
+                            Write a part's full-resolution body for another tool (.protoboard/exports/, with a record)
+    parts import-step <file.step> --part <id>
+                            Make a STEP inside the project the part's body (sha256 recorded, converted on the CAD
+                            runtime; --tool records it as evidence)
+    parts attach <part> <file> --kind evidence|drawing|datasheet
+                            Copy a file into the part's folder with its sha256 and terms (evidence: --tool, --measure)
     parts update [id...]    Show the recommended revision of vendored parts and what it changes; writes nothing
     parts update <id> --to <rev|recommended>
                             Deliberately re-pin a vendored part (the replaced pin is kept as previous);
@@ -347,6 +421,11 @@ const cli = meow(
     agents refresh          Write or update Protoboard's launcher (in its own folder; no agent's file), for a
                             client set up by hand from agents config
     mcp                     The Protoboard MCP server on stdio: what an agent starts (it takes no arguments)
+    telemetry [status|show|export|clear|on|off]
+                            Local crash and performance records of the viewer (.protoboard/local/telemetry/, never
+                            sent): status, show (--days), export prints the redacted bundle and writes it (--out
+                            <file>); --send records your consent and, in this release, sends nothing (a stub);
+                            clear; on|off is the CLI's own switch (PROTOBOARD_TELEMETRY=off overrides)
 
   Options
     --format text|json      Output format (default text); --json is the same as --format json.
@@ -418,6 +497,25 @@ const cli = meow(
                             entry is "npx --no-install protoboard mcp" when the project depends on the CLI
                             (--portable forces that, --no-portable writes this machine's launcher)
     --ci                    evals: the CI hook: scripted host only, exit 1 on any failed trial or broken case
+    --send                  telemetry export: the consent to send that bundle (a stub in this release)
+    --out <file>            telemetry export: where to write the bundle
+    --part <id>             parts import, parts fetch: the module or part the file is for
+    --board                 parts import: map a board STEP's component nodes onto the board's instances
+    --lcsc <C-number>       parts fetch: EasyEDA's model for that LCSC part (terms unknown: kept on this machine)
+    --kicad <lib:name>      parts fetch: a model of KiCad's 3D library (the installed copy first)
+    --link <https url>      parts fetch: a model at a link (--file-format step|glb|stl|3mf, --terms
+                            redistributable|internal|unknown)
+    --offline               parts fetch, build --fetch: never reach the network
+    --kind <kind>           parts attach: evidence, drawing or datasheet
+    --tool <id>             parts import-step, parts attach: a reference tool (docs/reference/reference-tools.md)
+    --measure <name=value unit>
+                            parts attach: a measurement (repeatable; ref: measures the tool itself)
+    --license <text>        parts attach: the file's licence
+    --no-run                parts import-step: record and bind only (no conversion)
+    --date <YYYY-MM-DD>     parts attach: when the evidence was taken
+    --no-convert            parts fetch: no GLB made from a fetched STEP
+    --fetch                 build: first restore recorded vendor files that are not on this machine (parts fetch)
+    --no-view               build: skip the view sidecars (X.view.glb, X.view.coarse.glb, X.view.json)
 `,
   {
     importMeta: import.meta,
@@ -504,6 +602,34 @@ const cli = meow(
       refreshGuidance: { type: "boolean", default: false },
       render: { type: "boolean", default: true },
       timeout: { type: "number" },
+      // parts import | fetch (PB-1174)
+      part: { type: "string" },
+      board: { type: "boolean", default: false },
+      lcsc: { type: "string" },
+      kicad: { type: "string" },
+      link: { type: "string" },
+      fileFormat: { type: "string" },
+      terms: { type: "string" },
+      offline: { type: "boolean", default: false },
+      convert: { type: "boolean", default: true },
+      fetch: { type: "boolean", default: false },
+      // build: --no-view skips the view sidecars (PB-1173, W1-A)
+      view: { type: "boolean", default: true },
+      // telemetry export (PB-1181, W1-E)
+      send: { type: "boolean", default: false },
+      out: { type: "string" },
+      // package write (PB-1195, W4-D)
+      exclude: { type: "string", isMultiple: true },
+      allowUnpinned: { type: "boolean" },
+      createdAt: { type: "string" },
+      stored: { type: "boolean" },
+      // parts export | import-step | attach (PB-1191, W4-B)
+      kind: { type: "string" },
+      tool: { type: "string" },
+      measure: { type: "string", isMultiple: true },
+      license: { type: "string" },
+      run: { type: "boolean", default: true },
+      date: { type: "string" },
     },
   },
 );
@@ -727,12 +853,18 @@ async function main() {
   // The account's own commands and `setup` do not: a sign-in is the user's, and its service is read without loading
   // the project (projectService), so asking who is signed in never changes a project (first builds review, item 23)
   // `upgrade` changes the ranges first and links after, so it does not link to a copy the old ranges choose
-  const linked = command && !["init", "stack", "login", "logout", "whoami", "account", "setup", "upgrade"].includes(command) ? linkIfCarried() : undefined;
+  const linked = command && !["init", "stack", "login", "logout", "whoami", "account", "setup", "upgrade", "settings"].includes(command) ? linkIfCarried() : undefined;
   // PB-1024: the CLI and the stack the project links to are different versions (`stack` says it in its own report)
-  if (command && !["stack", "setup", "login", "logout", "whoami", "account", "upgrade"].includes(command)) {
+  if (command && !["stack", "setup", "login", "logout", "whoami", "account", "upgrade", "settings"].includes(command)) {
     const root = findProjectRoot(cwd);
     const mismatch = root ? stackVersionMismatch(root, String(cli.pkg.version)) : undefined;
     if (mismatch) process.stderr.write(`protoboard: warning: ${mismatch}\n`);
+  }
+  // local crash records (PB-1181): append-only, on uncaughtExceptionMonitor, so Node's own exit is unchanged; the
+  // component is the command name, never its arguments (DEFAULT: the MCP server records too)
+  if (command) {
+    const { installCrashTelemetry } = await import("./telemetry.js");
+    installCrashTelemetry({ component: command, cwd });
   }
   // PB-928: only what uses the cloud needs a sign-in (gate.ts); local work never asks
   const gate = commandGate(command, args[0], { check: cli.flags.check });
@@ -928,6 +1060,15 @@ async function main() {
       const layout = await layoutDiagnostics(p);
       p.diagnostics.push(...layout);
       if (p.rootDef) p.checks.push({ validator: "protoboard/layout", status: "ran", counts: { error: 0, warning: 0, info: layout.length } });
+      // the assembly sequence's patches (PB-1183): an unknown step, member or sequence id is a SEQUENCE_PATCH_* warning
+      const { runMateChecks, runSequenceChecks } = await import("@protoboardai/core/sequence");
+      await runSequenceChecks(p);
+      // the mates (PB-1185): traits and sidecars validated, problems under protoboard/mates (wave 4 gate)
+      await runMateChecks(p);
+      // R2-D (D3), applied at the R2 integration: the findings pushed after loading (the diagram's layout, the sequence
+      // patches, the mates) get their plain title and summary too; one already worded is kept
+      const { annotateFindings, projectNames } = await import("@protoboardai/core/findings-text");
+      annotateFindings(p.diagnostics, projectNames(p));
       const min = SEV_RANK[cli.flags.severity as keyof typeof SEV_RANK] ?? 1;
       const shown = p.diagnostics.filter((d) => SEV_RANK[d.severity] <= min).sort((a, b) => SEV_RANK[a.severity] - SEV_RANK[b.severity]);
       out({ checks: p.checks, diagnostics: p.diagnostics }, () =>
@@ -956,10 +1097,35 @@ async function main() {
       return;
     }
     case "build": {
+      // --fetch: restore recorded vendor files first (the only network a build may use, and only when asked)
+      if (cli.flags.fetch) {
+        const { partsFetch } = await import("./part-files.js");
+        await partsFetch(cwd, [], { offline: cli.flags.offline }, (_data, text) => process.stderr.write(`${text()}\n`));
+      }
       const p = await loadProject(cwd);
       const r = writeBuild(p);
       const b = await writeBundle(p);
-      out({ ...r, bundle: b }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)\n${summaryLine(p)}`);
+      // the assembly sequence (PB-1183): .protoboard/build/sequence.json beside the bundle; a sequence that
+      // cannot be built is a warning, never a failed build
+      const sq = await writeBuildSequence(p);
+      if (sq.warning) process.stderr.write(`warning: ${sq.warning}\n`);
+      const sequence = sq.sequence
+        ? { file: sq.sequence.path, steps: sq.sequence.steps, sequences: sq.sequence.sequences, problems: sq.sequence.diagnostics.length }
+        : sq.warning
+          ? { error: sq.warning }
+          : undefined;
+      // view sidecars beside every body GLB (W1-A, PB-1173): after resolved.json and the bundle, which it reads;
+      // a sidecar that cannot be written is logged and skipped, never a failed build
+      let view: { line?: string } | undefined;
+      if (cli.flags.view) {
+        const { writeProjectViewSidecars } = await import("@protoboardai/core/view-model");
+        view = await writeProjectViewSidecars(p.root, { log: (l: string) => process.stderr.write(`${l}\n`) });
+      }
+      const m = r.models;
+      const held = m.placeholders ? ` (${m.placeholderInstances.slice(0, 6).join(", ")}${m.placeholderInstances.length > 6 ? ", …" : ""})` : "";
+      const viewLine = view?.line ? `\n${view.line}` : "";
+      const seqLine = sq.line ? `\n${sq.line}` : "";
+      out({ ...r, bundle: b, ...(sequence ? { sequence } : {}), ...(view ? { view } : {}) }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)${seqLine}\nmodels: ${m.instances} drawn bodies, ${m.resolved} resolved, ${m.placeholders} placeholder(s)${held}; ${m.files} distinct files (protoboard parts models)${viewLine}\n${summaryLine(p)}`);
       process.exitCode = errorCount(p) ? 1 : 0;
       return;
     }
@@ -1107,7 +1273,7 @@ async function main() {
           ...(tools.length
             ? tools.map(
                 (t) =>
-                  `  ${t.available ? "✓" : "✗"} ${t.id.padEnd(20)} ${t.purpose}${t.source === "runtime" ? `  (project runtime ${t.runtime})` : t.source === "environment" ? "  (from the environment)" : ""}${t.note ? `  (${t.note})` : ""}${t.available ? "" : `\n      missing: ${t.detail}${t.install ? `\n      install: ${t.install}` : ""}`}`,
+                  `  ${t.available ? "✓" : "✗"} ${t.id.padEnd(20)} ${t.purpose}${t.source === "runtime" ? `  (project runtime ${t.runtime})` : t.source === "environment" ? "  (from the environment)" : ""}${t.note ? `  (${t.note})` : ""}${t.available ? (t.detail ? `\n      found: ${t.detail}` : "") : `\n      missing: ${t.detail}${t.install ? `\n      install: ${t.install}` : ""}`}`,
               )
             : ["  (no external tools required)"]),
           ...(runtimes.length ? ["", "Runtimes (.protoboard/tools)", ...runtimes.map(fmtRuntime)] : []),
@@ -1301,13 +1467,109 @@ async function main() {
       await evals();
       return;
     }
-    case "views": {
-      if (args[0] !== "check") throw new Error("usage: protoboard views check [--module <instance path or module id>] [--out-dir <folder for PNGs>] [--no-render] [--timeout <s>]");
-      const { viewsCheck, formatViewsCheck } = await import("./views-check.js");
-      const r = await viewsCheck({ cwd, module: cli.flags.module, out: cli.flags.outDir, render: cli.flags.render, timeout: cli.flags.timeout, log: json ? undefined : (line) => process.stderr.write(line + "\n") });
-      out(r, () => formatViewsCheck(r));
-      process.exitCode = r.failed || (!r.rendered && cli.flags.render) ? 1 : 0;
+    case "telemetry": {
+      const { telemetryCommand } = await import("./telemetry.js");
+      const r = telemetryCommand(args, { cwd, send: cli.flags.send, out: cli.flags.out, days: cli.flags.days });
+      out(r.data, () => r.text);
+      process.exitCode = r.exitCode;
       return;
+    }
+    case "geometry": {
+      // W3-D (PB-1187): the exact tier's measurements; flags are read from args in geometry.ts
+      process.exitCode = await (await import("./geometry.js")).geometryCommand(cwd, args, out);
+      return;
+    }
+    case "drawing": {
+      // W4-C (PB-1190): the raw argv, because the shared flag table makes --view a boolean and would eat `--view v1`
+      process.exitCode = await (await import("./drawing.js")).drawingCommand(cwd, process.argv.slice(process.argv.indexOf("drawing") + 1), out);
+      return;
+    }
+    case "mates": {
+      // W4-E (PB-1185)
+      process.exitCode = await (await import("./mates.js")).matesCommand(cwd, args, out);
+      return;
+    }
+    case "interference": {
+      // W4-E (PB-1185)
+      process.exitCode = await (await import("./interference.js")).interferenceCommand(cwd, args, out);
+      return;
+    }
+    case "inventory": {
+      // W4-A (PB-1168)
+      process.exitCode = await (await import("./inventory.js")).inventoryCommand(cwd, args, out);
+      return;
+    }
+    case "update": {
+      // W4-A (PB-1168): top-level `update`; `parts update` is its own command
+      process.exitCode = await (await import("./update-check.js")).updateCommand(cwd, args, out, { force: cli.flags.force });
+      return;
+    }
+    case "package": {
+      // W4-D (PB-1195): .uhdpkg write | read | verify; meow takes the flags out of args, so they come as cli.flags
+      process.exitCode = await (await import("./package.js")).packageCommand(cwd, args, out, cli.flags);
+      return;
+    }
+    case "views": {
+      // W2-D (PB-1180): this case is the render service's; its flags are read from argv in views-capture.ts
+      const sub = args[0];
+      const viewsArgv = process.argv.slice(process.argv.indexOf("views") + 2);
+      const viewsUsage =
+        "usage: protoboard views check [--module <instance path or module id>] [--out-dir <folder for PNGs>] [--no-render] [--timeout <s>] [--no-service]\n" +
+        "       protoboard views capture [--view 3d|diagram|...] [--level <instance path>] [--state <json|@file>] [--annotate <ref[=label],...>] [--size 1600x1000] [--dpr 1] [--zoom 1] [--padding 24] [--format png|jpeg|webp] [--quality 85] [--theme protoboard-light] [--no-document] [--overlay burned+svg|svg|none] [--if-changed] [--max-long-edge 2576] [--batch N] [--out <file>] [--from <x.capture.json>] [--no-service]\n" +
+        "       protoboard views doctor [--backend auto|gpu|swiftshader]\n" +
+        "       protoboard views service | status | stop";
+      const views = await import("./views-capture.js");
+      const version = String(cli.pkg.version);
+      if (sub === "check") {
+        const { viewsCheck, formatViewsCheck } = await import("./views-check.js");
+        const log = json ? undefined : (line: string) => process.stderr.write(line + "\n");
+        const viaService = cli.flags.render && !process.argv.includes("--no-service");
+        const root = viaService ? findProjectRoot(cwd) : undefined;
+        const direct = () => viewsCheck({ cwd, module: cli.flags.module, out: cli.flags.outDir, render: cli.flags.render, timeout: cli.flags.timeout, log });
+        // the service is the fast path; when it cannot start (no browser, a broken page host) the check runs here and says why
+        const r = root
+          ? await views.viewsCheckViaService(root, version, { ...(cli.flags.module ? { module: cli.flags.module } : {}), ...(cli.flags.outDir ? { out: resolve(cwd, cli.flags.outDir) } : {}), ...(cli.flags.timeout ? { timeout: cli.flags.timeout } : {}) }, log).catch((e: Error) => {
+              process.stderr.write(`the render service could not run the check (${e.message.split("\n")[0]}); checking without it\n`);
+              return direct();
+            })
+          : await direct();
+        out(r, () => formatViewsCheck(r));
+        process.exitCode = r.failed || (!r.rendered && cli.flags.render) ? 1 : 0;
+        return;
+      }
+      if (sub === "capture") {
+        const r = await views.viewsCapture(viewsArgv, cwd, version);
+        out(r.response, () => views.formatCapture(r.response, r.root));
+        return;
+      }
+      if (sub === "doctor") {
+        const core = await import("@protoboardai/core/render-service");
+        const b = views.parseViewsArgv(viewsArgv).values.get("backend")?.at(-1);
+        if (b !== undefined && b !== "auto" && b !== "gpu" && b !== "swiftshader") throw new Error("--backend takes auto, gpu or swiftshader");
+        const r = await views.viewsDoctor(cwd, b ? { backend: b } : {});
+        out({ ...r.report, viaService: r.viaService }, () => `${core.formatDoctor(r.report)}${r.viaService ? "\n(probed on the warm render service's browser)" : ""}`);
+        process.exitCode = r.report.ok ? 0 : 1;
+        return;
+      }
+      if (sub === "service") {
+        const root = findProjectRoot(cwd);
+        if (!root) throw new Error(`no protoboard.config.ts in ${cwd} or its parents (run \`protoboard init\`)`);
+        const { runRenderServiceProcess } = await import("./views-service.js");
+        const b = views.parseViewsArgv(viewsArgv).values.get("backend")?.at(-1) as "auto" | "gpu" | "swiftshader" | undefined;
+        await runRenderServiceProcess({ root, version, ...(b ? { backend: b } : {}) });
+        return;
+      }
+      if (sub === "status" || sub === "stop") {
+        const core = await import("@protoboardai/core/render-service");
+        const root = findProjectRoot(cwd);
+        const running = root ? await core.connectRenderService(root) : undefined;
+        if (sub === "stop" && running) await running.shutdown();
+        const h = running && sub === "status" ? await running.health() : undefined;
+        const { describeHealth } = await import("./views-service.js");
+        out({ running: !!running, ...(h ? { health: h } : {}), ...(sub === "stop" ? { stopped: !!running } : {}) }, () => (sub === "stop" ? (running ? "render service stopped" : "no render service runs here") : h ? `render service ${describeHealth(h)}` : "no render service runs here"));
+        return;
+      }
+      throw new Error(viewsUsage);
     }
     case "upgrade": {
       await upgradeCommand(args[0]);
@@ -1342,6 +1604,11 @@ async function main() {
         },
       );
       process.exitCode = process.exitCode || setupExitCode(r);
+      return;
+    }
+    case "settings": {
+      // R2-E (J1): the user's settings (core settings.ts), local work
+      process.exitCode = (await import("./settings.js")).settingsCommand(args, out);
       return;
     }
     case "mcp": {
@@ -1656,9 +1923,29 @@ const fmtAdd = (r: AddResult[], showLibrary = false) =>
 
 /** `parts search|add|update|offers|prices|publish` (and `usage`, for the library's publishers): the only commands that talk to part libraries. */
 async function parts(sub: string | undefined, rest: string[]) {
-  const usage = "usage: protoboard parts list [--check] | search [words] [--sort <order>] | taxonomy [words] | add <id[@rev]...> | update [id...] [--to <rev>] | offers [id...] | prices <id> [--mpn <code>] | publish <path> [--dry-run] | migrate";
+  const usage = "usage: protoboard parts list [--check] | search [words] [--sort <order>] | taxonomy [words] | add <id[@rev]...> | update [id...] [--to <rev>] | offers [id...] | prices <id> [--mpn <code>] | publish <path> [--dry-run] | migrate | models [instance] | import <file> --part <id> | fetch [part] [--lcsc <C#> | --kicad <lib:name> | --link <url>] | export <part|instance> --format step|stl|3mf|glb | import-step <file.step> --part <id> [--tool <id>] | attach <part> <file> --kind evidence|drawing|datasheet";
   // `usage` is the library owners' command (publishers only): it works, and is left out of the help users read
-  if (!["list", "search", "taxonomy", "add", "update", "offers", "prices", "usage", "publish", "migrate"].includes(sub ?? "")) throw new Error(usage);
+  if (!["list", "search", "taxonomy", "add", "update", "offers", "prices", "usage", "publish", "migrate", "import", "fetch", "models", "export", "import-step", "attach"].includes(sub ?? "")) throw new Error(usage);
+  // reference tools and print (PB-1191, W4-B): local, the project's own files
+  if (sub === "export") {
+    process.exitCode = await (await import("./parts-export.js")).partsExport(cwd, rest, { format: cli.flags.fileFormat ?? cli.flags.format, out: cli.flags.out, from: cli.flags.from }, out);
+    return;
+  }
+  if (sub === "import-step") {
+    process.exitCode = await (await import("./parts-import-step.js")).partsImportStep(cwd, rest, { part: cli.flags.part, tool: cli.flags.tool, replace: cli.flags.replace, run: cli.flags.run }, out);
+    return;
+  }
+  if (sub === "attach") {
+    process.exitCode = await (await import("./parts-attach.js")).partsAttach(cwd, rest, { kind: cli.flags.kind, tool: cli.flags.tool, measure: cli.flags.measure, terms: cli.flags.terms, license: cli.flags.license, url: cli.flags.url, date: cli.flags.date }, out);
+    return;
+  }
+  // the one model resolver's commands (PB-1174): local; fetch reaches a vendor only for the part it is given
+  if (sub === "import" || sub === "fetch" || sub === "models") {
+    const pf = await import("./part-files.js");
+    const flags = { part: cli.flags.part, board: cli.flags.board, replace: cli.flags.replace, lcsc: cli.flags.lcsc, kicad: cli.flags.kicad, link: cli.flags.link, fileFormat: cli.flags.fileFormat, terms: cli.flags.terms, offline: cli.flags.offline, convert: cli.flags.convert };
+    process.exitCode = sub === "import" ? await pf.partsImport(cwd, rest, flags, out) : sub === "fetch" ? await pf.partsFetch(cwd, rest, flags, out) : await pf.partsModels(cwd, rest, out);
+    return;
+  }
   const p = await loadProject(cwd, { checks: sub === "publish" });
   if (sub === "list" && !cli.flags.check) return listParts(projectParts(p));
   if (sub === "migrate") {
@@ -2139,7 +2426,13 @@ async function libraries(sub: string | undefined, rest: string[]) {
   }
 }
 
-main().catch((e: Error) => {
+main()
+  .then(async () => {
+    // W4-A (PB-1168): the once-a-day update check after a command; never throws, never waits, stderr only, skips
+    // update/inventory/mcp/dev/telemetry, off in CI and tests
+    (await import("./update-check.js")).afterCommand(cwd, command);
+  })
+  .catch((e: Error) => {
   if (e instanceof AccessError) {
     // PB-928: one line, and its own exit code so a script or the extension can tell it from a failed command
     if (json) process.stdout.write(JSON.stringify({ error: e.message, code: e.code, access: e.access }) + "\n");

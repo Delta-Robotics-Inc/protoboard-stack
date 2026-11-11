@@ -38,7 +38,7 @@
     "access": "public"
   },
   "dependencies": {
-    "three": "^0.180.0"
+    "three": "0.187.0"
   },
   "peerDependencies": {
     "@protoboardai/core": "^0.3.0",

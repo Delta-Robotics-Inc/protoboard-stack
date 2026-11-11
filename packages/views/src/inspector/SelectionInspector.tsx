@@ -33,7 +33,6 @@ import {
 } from "@deltarobotics/uhd-viewer/components";
 import { PartStatusDot } from "../parts/PartStatus.js";
 import { PartsSurface } from "../parts/Surface.js";
-import { RowAction } from "../parts/ui.js";
 import type { InspectorActions, InspectorCard, InspectorChip, InspectorContent, InspectorRow, InspectorSection } from "./model.js";
 
 type Bundle = NonNullable<Parameters<typeof SelectionDetails>[0]["bundle"]>;
@@ -52,6 +51,34 @@ type Definitions = NonNullable<Parameters<typeof SelectionDetails>[0]["definitio
 
 const TONE: Record<string, string> = { error: "text-error", warning: "text-warning", info: "text-info", ok: "text-ok" };
 const SEVERITY_ICON: Record<string, string> = { error: "circle-x", warning: "triangle-alert", info: "info" };
+
+/** The type a file's card says with a glyph when it has no picture (F6, R1-E): STEP, PY, JSON… */
+const GLYPHS: Record<string, string> = { step: "STEP", stp: "STEP", py: "PY", json: "JSON", ts: "TS", js: "JS", stl: "STL", "3mf": "3MF", glb: "GLB", gltf: "GLTF", dxf: "DXF", pdf: "PDF", csv: "CSV", kicad_pcb: "PCB", kicad_sch: "SCH", md: "MD", txt: "TXT", yaml: "YAML", yml: "YAML", toml: "TOML" };
+
+/**
+ * A typed glyph as a picture: a page with its type on it, in the theme's quiet ink, on no background (the card's
+ * own surface shows through). An SVG data URL; the page's images are its own files or these.
+ */
+export function glyphPicture(label: string, ink: string): string {
+  const size = label.length <= 2 ? 15 : label.length === 3 ? 13 : 10.5;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" data-pb-glyph="${label}"><path d="M18 8h20l10 10v38H18z" fill="none" stroke="${ink}" stroke-width="2" stroke-linejoin="round" opacity="0.55"/><path d="M38 8v10h10" fill="none" stroke="${ink}" stroke-width="2" stroke-linejoin="round" opacity="0.55"/><text x="33" y="44" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-weight="700" font-size="${size}" letter-spacing="0.5" fill="${ink}">${label}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+/** The glyph of an artifact that has no picture: by its format, else its file's extension; none for a web page. */
+export function artifactGlyph(artifact: { format?: string; filePath?: string; url?: string }): string | undefined {
+  const file = artifact.filePath ?? "";
+  if (!file && artifact.url) return undefined;
+  const ext = (file.split(/[\\/]/).pop() ?? "").split(".").slice(1).pop()?.toLowerCase();
+  return GLYPHS[(artifact.format ?? "").toLowerCase()] ?? (ext ? GLYPHS[ext] : undefined);
+}
+
+/**
+ * The Inspector's pictures sit on its own surface (F6, walkthrough 27:36 "that shouldn't be a white background,
+ * that should be transparent and the color should match"): a drawn model and a glyph have no matte; photos and
+ * drawings keep the viewer's paper matte (they are made for a light page).
+ */
+const PICTURE_STYLE = `.pb-inspector-sections [data-artifact-picture="model"], .pb-inspector-sections [data-artifact-picture="image"]:has(> img[src^="data:image/svg+xml"]) { background: transparent; }`;
 
 /** The header's look (design A), in one place. */
 export const INSPECTOR_HEADER_LOOK = {
@@ -119,18 +146,78 @@ function Counts({ counts }: { counts: InspectorCard["counts"] }) {
   );
 }
 
+/** Reference text with its `code spans` drawn as code, line breaks kept. */
+function ReferenceText({ text }: { text: string }) {
+  return (
+    <>
+      {text.split("`").map((part, i) => (i % 2 ? <code key={i} className="font-code text-[10px] text-fg">{part}</code> : <span key={i}>{part}</span>))}
+    </>
+  );
+}
+
+/**
+ * A finding's explanation, under its row (D7, R1-E; walkthrough 45:11 "why is that a button? that should be a
+ * dropdown, click to expand for more information"): its code, what it means and what to do, the whole message, who
+ * reported it, and a small link to the full page.
+ */
+export function FindingExplain({ row, onPage }: { row: InspectorRow; onPage?: () => void }) {
+  const x = row.explain ?? {};
+  const label = "font-label text-[9px] tracking-[0.06em] text-fg-faint uppercase";
+  return (
+    <div data-finding-explain={row.code} className="mb-1.5 ml-[21px] flex flex-col gap-1.5 border-l border-line-subtle py-0.5 pl-2.5 text-[11px] leading-[1.45] whitespace-pre-line text-fg-muted">
+      <span className="font-code text-[10px] text-fg">
+        {x.severity ? `${x.severity} · ` : ""}
+        {row.code}
+      </span>
+      {x.means && (
+        <span className="flex flex-col gap-0.5">
+          <span className={label}>What it means</span>
+          <span>
+            <ReferenceText text={x.means} />
+          </span>
+        </span>
+      )}
+      {x.todo && (
+        <span className="flex flex-col gap-0.5">
+          <span className={label}>What to do</span>
+          <span>
+            <ReferenceText text={x.todo} />
+          </span>
+        </span>
+      )}
+      {x.message && (
+        <span className="flex flex-col gap-0.5">
+          <span className={label}>This finding</span>
+          <span className="break-words">{x.message}</span>
+        </span>
+      )}
+      {!x.means && !x.todo && <span>No explanation of this code in the reference yet.</span>}
+      <span className="flex items-center gap-3">
+        {x.validator && <span className="font-code text-[9.5px] text-fg-faint">{x.validator}</span>}
+        {x.page && onPage && (
+          <button type="button" data-finding-page="" className="ml-auto cursor-pointer text-[10.5px] text-link hover:underline focus-visible:outline focus-visible:outline-1 focus-visible:outline-focus" onClick={onPage}>
+            Open full page
+          </button>
+        )}
+      </span>
+    </div>
+  );
+}
+
 /** A row of a section: a module, a link's end, a finding (its message and its code under it), a fact. */
 function Row({ row, actions }: { row: InspectorRow; actions: InspectorActions }) {
   const act = row.action;
   const go = act ? () => (act.type === "focus" ? actions.focus(act.path) : actions.finding(act.key)) : undefined;
   const finding = act?.type === "finding" || row.code;
+  const [open, setOpen] = useState(false);
+  const explains = act?.type === "finding";
   return (
+    <>
     <div
       role={go ? "button" : undefined}
       tabIndex={go ? 0 : undefined}
-      data-tooltip={`${row.label}${row.detail ? ` · ${row.detail}` : ""}`}
-      data-tooltip-clamp="3"
-      data-tooltip-delay="600"
+      // a finding's row shows its whole message already: no tooltip repeating it (D7); a click shows it on the model
+      {...(finding ? { title: act?.type === "finding" ? "Show on the model" : undefined } : { "data-tooltip": row.hint ?? `${row.label}${row.detail ? ` · ${row.detail}` : ""}`, "data-tooltip-clamp": "3", "data-tooltip-delay": "600" })}
       data-row-finding={row.code}
       onClick={go}
       onKeyDown={
@@ -152,6 +239,8 @@ function Row({ row, actions }: { row: InspectorRow; actions: InspectorActions })
       {finding ? (
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="leading-[1.4]">{row.label}</span>
+          {/* a finding's plain sentence (wave R2, D3), under its title */}
+          {row.detail && <span className="text-[11px] leading-[1.4] text-fg-muted">{row.detail}</span>}
           {row.code && <span className="font-code text-[9.5px] leading-none text-fg-faint">{row.code}</span>}
         </span>
       ) : (
@@ -163,12 +252,25 @@ function Row({ row, actions }: { row: InspectorRow; actions: InspectorActions })
       {(row.chips ?? []).map((c) => (
         <Chip key={c.text} chip={c} />
       ))}
-      {act?.type === "finding" && (
-        <span className="flex shrink-0 opacity-0 group-focus-within/row:opacity-100 group-hover/row:opacity-100">
-          <RowAction icon="circle-help" label={`Explain ${row.code ?? "this finding"}`} onClick={() => actions.explain(act.key)} />
-        </span>
+      {explains && (
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-label={`${open ? "Hide" : "Explain"} ${row.code ?? "this finding"}`}
+          data-finding-toggle={row.code}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen((v) => !v);
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+          className="-my-0.5 grid size-5 shrink-0 cursor-pointer place-items-center rounded-[4px] text-fg-muted hover:bg-active hover:text-fg focus-visible:outline focus-visible:outline-1 focus-visible:-outline-offset-1 focus-visible:outline-focus"
+        >
+          <Icon name={open ? "chevron-up" : "chevron-down"} size={13} strokeWidth={1.75} aria-hidden />
+        </button>
       )}
     </div>
+    {explains && open && <FindingExplain row={row} onPage={() => actions.explain(act.key)} />}
+    </>
   );
 }
 
@@ -339,6 +441,8 @@ export function SelectionInspector({ content, bundle, actions }: SelectionInspec
   const card = content && "card" in content ? content.card : undefined;
   const details = card?.details;
   const light = useTheme().theme.scheme.includes("light");
+  // the glyphs' ink: the theme's muted text, as a colour an image can hold
+  const ink = light ? "#5f5f5f" : "#a8a8a8";
   const resolve = useCallback((defId: string, filePath: string) => details?.files[`${defId}\n${filePath}`], [details]);
   const shown = useMemo(() => ownArtifactsOnly(bundle, details?.artifactsOf), [bundle, details?.artifactsOf]);
   const host = useMemo<HostActions>(
@@ -347,13 +451,19 @@ export function SelectionInspector({ content, bundle, actions }: SelectionInspec
       openLink: actions.openLink,
       // nothing is loaded for a 3D preview here: a model is a card, drawn small only when the shell says it may be
       artifactModels: "cards",
-      artifactPreview: (def, artifact) => details?.previews[`${def.id}#${artifact.id}`],
+      // a file with no picture of its own shows its type (F6): STEP, PY, JSON…
+      artifactPreview: (def, artifact) => {
+        const given = details?.previews[`${def.id}#${artifact.id}`];
+        if (given) return given;
+        const glyph = artifactGlyph(artifact as { format?: string; filePath?: string; url?: string });
+        return glyph ? { kind: "image" as const, src: glyphPicture(glyph, ink) } : undefined;
+      },
       ...(actions.drawModel ? { drawModel: actions.drawModel } : {}),
       // pictures come from the shell's own files only
       remoteImages: false,
       evidence: (defId) => details?.evidence?.[defId] as ReturnType<NonNullable<HostActions["evidence"]>>,
     }),
-    [actions, details],
+    [actions, details, ink],
   );
   if (!card)
     return (
@@ -387,8 +497,23 @@ export function SelectionInspector({ content, bundle, actions }: SelectionInspec
     ...(x.preview ? { preview: x.preview } : {}),
     remote: false,
   }));
+  // a board part's way to its 3D (F5): the board's view with the part framed, and its own model
+  const threeD: ArtifactCardModel[] = (card.threeD ?? []).map((x) => ({
+    key: `3d#${x.artifactId}`,
+    defId: x.defId,
+    artifactId: x.artifactId,
+    title: x.title,
+    kind: "model",
+    group: "models",
+    kindLabel: x.kindLabel,
+    ...(x.source ? { source: x.source } : {}),
+    icon: x.icon,
+    preview: x.preview ?? { kind: "image", src: glyphPicture("3D", ink) },
+    remote: false,
+  }));
   return (
     <PartsSurface place="sidebar" className="bg-transparent!">
+      <style>{PICTURE_STYLE}</style>
       <div className="contents" style={light ? LIGHT_STATES : undefined}>
         {/* a new selection starts at its top (the scroll is the selection's, not the view's) */}
         <ScrollArea key={`${card.kind}:${card.path}:${card.linkId ?? card.part?.partId ?? ""}:${card.title}`} className="size-full" contentClassName="min-w-[188px] pb-4 font-ui">
@@ -422,6 +547,13 @@ export function SelectionInspector({ content, bundle, actions }: SelectionInspec
               <HostCards host={host}>
                 <DetailsSection id="host:artifacts" title="Artifacts" count={own.length}>
                   <ArtifactGrid cards={own} />
+                </DetailsSection>
+              </HostCards>
+            )}
+            {threeD.length > 0 && (
+              <HostCards host={{ ...host, openArtifact: (_def, id) => actions.open3d?.(id) }}>
+                <DetailsSection id="host:3d" title="3D" count={threeD.length}>
+                  <ArtifactGrid cards={threeD} />
                 </DetailsSection>
               </HostCards>
             )}

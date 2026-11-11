@@ -188,6 +188,20 @@ export interface ProjectDiagnostic {
   validator: string;
   /** Where on a design the finding is, when a provider can say (a board's check: mm in the board frame). */
   location?: DiagnosticLocation;
+  /**
+   * For people (wave R2, D3): what is wrong in plain words, at most 60 characters ("I2C line has no pull-up").
+   * Filled from docs/reference/diagnostic-codes.md by `findings-text.ts`; `message` stays the raw detail.
+   */
+  title?: string;
+  /** For people (wave R2, D3): one sentence, at most 160 characters, with the human names of the parts and links. */
+  summary?: string;
+  /**
+   * Wave R3 (additive; the viewer's risk card shows it in its VALUE row): the measured number as shown, at most 40
+   * characters ("3.1 mm ±0.2", "6.5 mm against 10 mm"), when a check measures one.
+   */
+  value?: string;
+  /** Wave R3 (additive): how `value` was measured: the UHD numbers, the meshes, the exact B-rep, or on the part. */
+  tier?: "nominal" | "mesh" | "exact" | "measured";
 }
 
 /**
@@ -220,6 +234,10 @@ export interface CheckRun {
   subject?: string;
   status: "ran" | "skipped";
   reason?: string;
+  /** uhd/assemble only: the instance path the assembly was placed from ("" = the system itself), as `__cad.observe().root` reports it (PB-1137). */
+  root?: string;
+  /** uhd/assemble only: which step of the root rule chose it (docs/reference/display.md `root`). */
+  rootRule?: "display" | "own-body" | "most-frames";
   counts: Record<Severity, number>;
 }
 

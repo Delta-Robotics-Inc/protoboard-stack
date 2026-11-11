@@ -13,7 +13,61 @@ export type ViewerCommand =
   | { type: "uhd-viewer:focus"; path: string }
   | { type: "uhd-viewer:select"; ids: string[]; reveal?: boolean }
   | { type: "uhd-viewer:drill"; path: string }
-  | { type: "uhd-viewer:setView"; view: "diagram" | "3d" };
+  | { type: "uhd-viewer:setView"; view: "diagram" | "3d" }
+  /** Write the 3D view's state as the host (uhd-viewer's `setViewState`: selection, highlight, ...). */
+  | { type: "uhd-viewer:setViewState"; state: Record<string, unknown> }
+  /**
+   * R1-E (D7, 2026-11-01): show one finding on the model: select and frame what it names and pin its callout
+   * open. `id` is the viewer's finding id (`drc:<code>:<entity kind>:<entity id>`, findings-anchors.ts); `path`
+   * the module it is about. A viewer that does not know this message ignores it (the host sends a focus too).
+   */
+  | { type: "uhd-viewer:openFinding"; id: string; code: string; path?: string }
+  /** R2-A (F1): move through the viewer's own 3D history (-1 Back, +1 Forward). */
+  | { type: "uhd-viewer:historyGo"; delta: number };
+
+/**
+ * The viewer settings the extension passes to a tab (R2-E, J1: core settings.ts, the user's
+ * `<home>/settings.json`), at the start (`WebviewConfig.settings`) and on every change (`settings`). Each a DEFAULT
+ * there: models open in place, zoom toward the pointer, model info on, the long hover after 900 ms.
+ */
+export interface ViewerSettings {
+  openModelsInPlace: boolean;
+  zoomToCursor: boolean;
+  modelInfo: boolean;
+  hoverLongDelayMs: number;
+  /** R4-B (wave R4 gate): the 3D view's units, floor grid, scale label and cube for scale (core `viewer.units`, DEFAULT mm). */
+  units: "mm" | "in";
+  /** R4-B (wave R4 gate): what the 3D view's scale button shows (core `viewer.scaleReference`, DEFAULT banana). */
+  scaleReference: "banana" | "cube" | "benchy";
+}
+
+export const DEFAULT_VIEWER_SETTINGS: ViewerSettings = { openModelsInPlace: true, zoomToCursor: true, modelInfo: true, hoverLongDelayMs: 900, units: "mm", scaleReference: "banana" };
+
+/**
+ * The viewer settings a 3D view may write back itself (wave R4 gate): the toolbar's scale chooser and its units. The
+ * extension takes `uhd-viewer:setting` only for these keys (a tab never sets a path or an app), logged as the person.
+ */
+export const VIEWER_SAVABLE_SETTINGS = ["viewer.units", "viewer.scaleReference"] as const;
+
+/** A tab's place for its own back and forward (R2-E, F1): the module it is on and the view (a registry view id, or `diagram`, `3d`). */
+export interface TabLocation {
+  path: string;
+  view: string;
+}
+
+/** What a navigation opens (R2-A's `NavigateTarget`): a module's 3D level, or a model artifact of a part. */
+export type NavigateTarget = { module: string } | { model: { defId: string; artifactId: string; path?: string } };
+
+/** One place of the viewer's own history (R2-A's `ViewerHistoryEntry`). */
+export interface ViewerHistoryEntry {
+  scope: string;
+  label: string;
+  kind: "open" | "drill" | "frame" | "isolate";
+}
+
+/** The formats an export writes (G3): a picture of the view, or a part's model file. */
+export type ExportFormat = "png" | "glb" | "step" | "stl";
+export const EXPORT_FORMATS: readonly ExportFormat[] = ["png", "glb", "step", "stl"];
 
 export interface ViewerSelection {
   kind: "node" | "link";
@@ -21,6 +75,14 @@ export interface ViewerSelection {
   defId?: string;
   /** Modules selected together (two or more, paths from the root); `id` is the first (QA B10). */
   ids?: string[];
+  /**
+   * R1-A/R1-E (M2, 2026-11-01): a component picked inside a body in the 3D view (a board's part): its instance
+   * path from the root, the body that draws it (`holder`, the board) and that body's definition. Absent for a
+   * pick of a whole body.
+   */
+  component?: string;
+  holder?: string;
+  holderDefId?: string;
 }
 
 /** As in uhd-viewer's host contract (`LinkLayout`). */
@@ -60,6 +122,26 @@ export interface WebviewConfig {
   params?: Record<string, string>;
   /** The source file of the module the tab opens on, when the extension knows it already. */
   source?: ModuleSource;
+  /** The project's saved live 3D view state (`.protoboard/local/viewer-state.json`, PB-1178); the tab's own state wins over it. */
+  viewState?: ViewerStateFile;
+  /** The user's viewer settings (R2-E, J1). */
+  settings?: ViewerSettings;
+}
+
+/** uhd-viewer's `ViewerStateFile` (src/cad/state/serialize.ts): the live view state per scope, as the viewer hands it over. */
+export interface ViewerStateFile {
+  schema: "protoboard.viewer-state/v0";
+  viewState: "uhd-viewer.view-state/v1";
+  scope: string;
+  scopes: Record<string, Record<string, unknown>>;
+}
+
+/** Named views and annotations (uhd-viewer's `ViewerPresentation`): written to the display file on an explicit save. */
+export interface ViewerPresentation {
+  namedViews: Record<string, unknown>;
+  annotations: unknown[];
+  /** The person's explicit "Save callouts" (W4-D, D10): only then are the annotations written to the display file. */
+  saveAnnotations?: true;
 }
 
 /** The file a module is written in: project-relative, with the line of its definition when the build records it. */
@@ -103,7 +185,24 @@ export type ToWebview =
    */
   | { type: "hierarchy"; command: HierarchyAction; path?: string }
   /** Test hook: report the hierarchy panel's rows. */
-  | { type: "reportHierarchy" };
+  | { type: "reportHierarchy" }
+  /**
+   * A live-tab bridge batch for this tab's viewer (PB-1178): uhd-viewer's `BridgeRequest`, from an agent session the
+   * dev server authenticated; the page answers with `bridgeReply`.
+   */
+  | { type: "bridge"; request: Record<string, unknown> }
+  /**
+   * R2-E (F1): show a module (its level, or the part the tab is on) on a view in this tab, in place: an in-place
+   * navigation the extension decided (`uhd-viewer:navigate` with `replace`, an Inspector card). The tab's back
+   * returns.
+   */
+  | { type: "go"; path: string; view: string }
+  /** R2-E (F1): VS Code's Alt+Left / Alt+Right (or the Go Back command) in this tab: the header's back or forward. */
+  | { type: "historyStep"; delta: -1 | 1 }
+  /** R2-E (J1): the user's viewer settings changed. */
+  | { type: "settings"; settings: ViewerSettings }
+  /** R2-E: the answer to a `parts` request of the in-place BOM (by its `ask`). */
+  | { type: "partsAnswer"; ask: number; ok: boolean; value?: unknown; error?: string };
 
 export type HierarchyAction = "reveal" | "filter" | "open" | "close" | "toggle";
 
@@ -172,7 +271,61 @@ export type FromWebview =
   | { type: "source"; action: SourceAction }
   | { type: "theme"; vars: Record<string, string>; classes: string[]; themeId?: string }
   /** The hierarchy panel's rows (`reportHierarchy`), whether it is open, and the tab's width in CSS pixels. */
-  | { type: "hierarchy"; open: boolean; rows: HierarchyRowReport[]; width?: number };
+  | { type: "hierarchy"; open: boolean; rows: HierarchyRowReport[]; width?: number }
+  /**
+   * Local telemetry (PB-1181): the viewer's session or crash record (uhd-viewer src/telemetry/). The extension host
+   * writes it to the project's .protoboard/local/telemetry/ when recording is on, after sanitising every field
+   * (@protoboardai/core telemetry.ts); here only the envelope is checked.
+   */
+  | { type: "telemetry"; record: Record<string, unknown> }
+  /** The 3D view's live state (PB-1178), 400 ms after it last changed: the extension host saves it to .protoboard/local/viewer-state.json. */
+  | { type: "viewState"; file: ViewerStateFile }
+  /** Named views or annotations were saved (PB-1178): the extension host writes them to the display file when they changed. */
+  | { type: "presentation"; presentation: ViewerPresentation }
+  /** The viewer's reply to a bridge batch (`bridge`), by the delivery's id. */
+  | { type: "bridgeReply"; id: string; reply: Record<string, unknown> }
+  /** Who is here (PB-1196): the camera holder, agent leases and intents, at most every 250 ms. Data to show, never instructions. */
+  | { type: "presence"; presence: Record<string, unknown> }
+  /**
+   * A save point of the 3D view (PB-1180): the frame on settle or hide (`png`, base64) and what it shows; the
+   * extension host keeps it in .protoboard/local/snapshots/ for the next tab.
+   */
+  | { type: "savePoint"; png: string; meta: Record<string, unknown> }
+  /**
+   * R1-E (M9, 2026-11-01): a right-click without a drag on the viewer (VS Code's own Cut/Copy/Paste menu is
+   * suppressed there): where, in CSS pixels of the tab, and what the 3D view has under the pointer (`pick`:
+   * uhd-viewer's `__cad.pick`, paths in the tab's scope). The hook for R2's context menu; today it is only kept.
+   */
+  | { type: "contextmenu"; x: number; y: number; view?: string; pick?: ContextMenuPick }
+  /**
+   * R2-E (F1): the BOM view's data, in the tab (it has its tab bar and breadcrumbs there): asked of the extension,
+   * which reads and writes the project's bill of materials as the BOM editor does; answered with `partsAnswer`.
+   */
+  | { type: "parts"; ask: number; op: PartsOp; args?: Record<string, unknown> }
+  /**
+   * R2-E (G3): a file the page would download (a view's "Export CSV"): VS Code webviews cannot save one, so the
+   * extension writes it to the export folder (DEFAULT: Downloads) without asking. `data` is base64.
+   */
+  | { type: "download"; name: string; data: string }
+  /** R2-E (F1): whether the header's back and forward have somewhere to go (the extension's Go Back keys follow). */
+  | { type: "historyState"; back: boolean; forward: boolean };
+
+/** What the in-place BOM asks the extension (R2-E). */
+export type PartsOp = "bom" | "saveBom" | "refreshOffers" | "openSource" | "openLink";
+const PARTS_OPS: readonly PartsOp[] = ["bom", "saveBom", "refreshOffers", "openSource", "openLink"];
+/** DEFAULT (R2-E): a download the page hands the extension is at most 16 MiB of base64. */
+export const DOWNLOAD_MAX_CHARS = 16 * 1024 * 1024;
+
+/** What the 3D view has under a right-click (uhd-viewer's `__cad.pick`, the fields a menu needs). */
+export interface ContextMenuPick {
+  /** The module or component's instance path in the tab's scope. */
+  instancePath?: string;
+  /** The body's placement key (`path`, `path#artifact`). */
+  body?: string;
+  harness?: string;
+  /** The B-rep face (feature) id when the model has them. */
+  face?: number;
+}
 
 export type SourceAction = "open" | "reveal" | "copy" | "copyRelative";
 const SOURCE_ACTIONS: readonly SourceAction[] = ["open", "reveal", "copy", "copyRelative"];
@@ -189,10 +342,32 @@ export type ViewerEvent =
   | { type: "uhd-viewer:selectionChanged"; selection: ViewerSelection | null }
   | { type: "uhd-viewer:openSource"; defId: string; instancePath?: string }
   | { type: "uhd-viewer:openArtifact"; defId: string; artifactId: string }
-  | { type: "uhd-viewer:openModule"; path: string }
+  /** `view: "3d"` (PB-1072): a bought part, or a part double-clicked in the 3D view, opens on its 3D view. */
+  | { type: "uhd-viewer:openModule"; path: string; view?: "3d" }
   | { type: "uhd-viewer:openPair"; linkId: string; a: string; b: string }
   /** INSPECT in a module's context menu: the Protoboard Inspector, in front and focused. */
-  | { type: "uhd-viewer:inspect"; path: string; defId?: string };
+  | { type: "uhd-viewer:inspect"; path: string; defId?: string }
+  /** R2-A (F1, F3): open a part's own 3D model, in place (`replace`) or in a new tab (`newTab`); the extension decides with the setting. */
+  | { type: "uhd-viewer:navigate"; target: NavigateTarget; how: "replace" | "newTab"; view?: "3d"; from?: string }
+  /** R2-A (F1): the viewer's own back and forward history (the header's buttons). */
+  | { type: "uhd-viewer:history"; index: number; length: number; canBack: boolean; canForward: boolean; entries: ViewerHistoryEntry[] }
+  /**
+   * R2-E (G3), for R2-B's toolbar Export button: write the view as a PNG, or a part's model, to the export folder
+   * without asking (`target`: an instance path from the root; absent: the module the tab is on).
+   */
+  | { type: "uhd-viewer:export"; format: ExportFormat; target?: string }
+  /**
+   * Wave R4 gate (R4-B's handoff): the 3D toolbar's scale chooser or units, saved to the person's settings file
+   * (`VIEWER_SAVABLE_SETTINGS` only; core `checkSetting` checks the value again).
+   */
+  | { type: "uhd-viewer:setting"; key: (typeof VIEWER_SAVABLE_SETTINGS)[number]; value: string };
+
+/** DEFAULT (wave 2 gate item 9): JSON characters of one bridge reply from the webview (the viewer's own reply cap). */
+export const BRIDGE_REPLY_MAX_CHARS = 2 * 1024 * 1024;
+/** DEFAULT (wave 2 gate item 9): JSON characters of a presentation save (named views and annotations together). */
+export const PRESENTATION_MAX_CHARS = 512 * 1024;
+/** DEFAULT (gate 3): JSON characters of one presence message (PB-1196). */
+export const PRESENCE_MAX_CHARS = 64 * 1024;
 
 const str = (v: unknown): v is string => typeof v === "string";
 const obj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -240,21 +415,80 @@ function parseEvent(v: unknown): ViewerEvent | undefined {
       if (s === null || s === undefined) return { type: v.type, selection: null };
       if (!obj(s) || (s.kind !== "node" && s.kind !== "link") || !str(s.id)) return undefined;
       const ids = Array.isArray(s.ids) ? s.ids.filter(str).slice(0, 500) : [];
-      return { type: v.type, selection: { kind: s.kind, id: s.id, ...(str(s.defId) ? { defId: s.defId } : {}), ...(ids.length > 1 ? { ids } : {}) } };
+      // a component picked in a body (M2): its path, its holder body and the holder's definition, as short strings
+      const short = (x: unknown): x is string => str(x) && x.length <= 1024;
+      const parts = { ...(short(s.component) ? { component: s.component } : {}), ...(short(s.holder) ? { holder: s.holder } : {}), ...(short(s.holderDefId) ? { holderDefId: s.holderDefId } : {}) };
+      return { type: v.type, selection: { kind: s.kind, id: s.id, ...(str(s.defId) ? { defId: s.defId } : {}), ...(ids.length > 1 ? { ids } : {}), ...(s.kind === "node" ? parts : {}) } };
     }
     case "uhd-viewer:openSource":
       return str(v.defId) ? { type: v.type, defId: v.defId, ...(str(v.instancePath) ? { instancePath: v.instancePath } : {}) } : undefined;
     case "uhd-viewer:openArtifact":
       return str(v.defId) && str(v.artifactId) ? { type: v.type, defId: v.defId, artifactId: v.artifactId } : undefined;
     case "uhd-viewer:openModule":
-      return str(v.path) ? { type: v.type, path: v.path } : undefined;
+      return str(v.path) ? { type: v.type, path: v.path, ...(v.view === "3d" ? { view: "3d" as const } : {}) } : undefined;
     case "uhd-viewer:openPair":
       return str(v.linkId) && str(v.a) && str(v.b) ? { type: v.type, linkId: v.linkId, a: v.a, b: v.b } : undefined;
     case "uhd-viewer:inspect":
       return str(v.path) ? { type: v.type, path: v.path, ...(str(v.defId) ? { defId: v.defId } : {}) } : undefined;
+    case "uhd-viewer:navigate":
+      return parseNavigate(v);
+    case "uhd-viewer:history": {
+      const n = (x: unknown): x is number => Number.isInteger(x) && (x as number) >= -1 && (x as number) <= 1000;
+      if (!n(v.index) || !n(v.length) || typeof v.canBack !== "boolean" || typeof v.canForward !== "boolean" || !Array.isArray(v.entries)) return undefined;
+      const KINDS = ["open", "drill", "frame", "isolate"];
+      const entries = v.entries
+        .slice(-50)
+        .filter((e): e is Record<string, unknown> => obj(e) && pathLike(e.scope) && str(e.label) && KINDS.includes(e.kind as string))
+        .map((e) => ({ scope: e.scope as string, label: (e.label as string).slice(0, 200), kind: e.kind as ViewerHistoryEntry["kind"] }));
+      return { type: v.type, index: v.index, length: v.length, canBack: v.canBack, canForward: v.canForward, entries };
+    }
+    case "uhd-viewer:export":
+      if (!(EXPORT_FORMATS as readonly unknown[]).includes(v.format) || (v.target !== undefined && !pathLike(v.target))) return undefined;
+      return { type: v.type, format: v.format as ExportFormat, ...(v.target !== undefined ? { target: v.target as string } : {}) };
+    case "uhd-viewer:setting":
+      if (!(VIEWER_SAVABLE_SETTINGS as readonly unknown[]).includes(v.key) || typeof v.value !== "string" || v.value.length > 64) return undefined;
+      return { type: v.type, key: v.key as (typeof VIEWER_SAVABLE_SETTINGS)[number], value: v.value };
     default:
       return undefined;
   }
+}
+
+/** An instance path as a message carries it: a string of at most 1024 characters, no control characters ("" is the root). */
+const pathLike = (x: unknown): x is string => typeof x === "string" && x.length <= 1024 && !/[\u0000-\u001f]/.test(x);
+
+/** A `uhd-viewer:navigate` event, checked as uhd-viewer's own relay checks it (R2-A `parseNavigateEvent`). */
+function parseNavigate(v: Record<string, unknown>): Extract<ViewerEvent, { type: "uhd-viewer:navigate" }> | undefined {
+  if (v.how !== "replace" && v.how !== "newTab") return undefined;
+  if (v.view !== undefined && v.view !== "3d") return undefined;
+  if (v.from !== undefined && !pathLike(v.from)) return undefined;
+  const t = v.target;
+  if (!obj(t)) return undefined;
+  let target: NavigateTarget;
+  if ("module" in t) {
+    if (!pathLike(t.module)) return undefined;
+    target = { module: t.module };
+  } else {
+    const a = t.model;
+    const id = (x: unknown): x is string => pathLike(x) && x.length > 0;
+    if (!obj(a) || !id(a.defId) || !id(a.artifactId) || (a.path !== undefined && !pathLike(a.path))) return undefined;
+    target = { model: { defId: a.defId, artifactId: a.artifactId, ...(a.path !== undefined ? { path: a.path as string } : {}) } };
+  }
+  return { type: "uhd-viewer:navigate", target, how: v.how, ...(v.view ? { view: "3d" as const } : {}), ...(v.from !== undefined ? { from: v.from as string } : {}) };
+}
+
+/** Viewer settings as a message or a config carries them; the defaults for anything missing or wrong. */
+export function parseViewerSettings(v: unknown): ViewerSettings {
+  const o = obj(v) ? v : {};
+  const b = (x: unknown, d: boolean) => (typeof x === "boolean" ? x : d);
+  const ms = typeof o.hoverLongDelayMs === "number" && Number.isFinite(o.hoverLongDelayMs) ? Math.min(5000, Math.max(200, Math.round(o.hoverLongDelayMs))) : DEFAULT_VIEWER_SETTINGS.hoverLongDelayMs;
+  return {
+    openModelsInPlace: b(o.openModelsInPlace, DEFAULT_VIEWER_SETTINGS.openModelsInPlace),
+    zoomToCursor: b(o.zoomToCursor, DEFAULT_VIEWER_SETTINGS.zoomToCursor),
+    modelInfo: b(o.modelInfo, DEFAULT_VIEWER_SETTINGS.modelInfo),
+    hoverLongDelayMs: ms,
+    units: o.units === "in" ? "in" : DEFAULT_VIEWER_SETTINGS.units,
+    scaleReference: o.scaleReference === "cube" || o.scaleReference === "benchy" ? o.scaleReference : DEFAULT_VIEWER_SETTINGS.scaleReference,
+  };
 }
 
 /** A message from the webview, checked field by field; anything else is undefined. */
@@ -311,7 +545,71 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
         .map((r) => ({ path: r.path as string, label: r.label as string, ...(str(r.kind) ? { kind: r.kind } : {}), ...(r.selected === true ? { selected: true } : {}), ...(r.current === true ? { current: true } : {}) }));
       return { type: "hierarchy", open: data.open, rows, ...(typeof data.width === "number" && Number.isFinite(data.width) ? { width: data.width } : {}) };
     }
+    case "telemetry": {
+      const r = data.record;
+      if (!obj(r) || (r.schema !== "pb.render-session/v0" && r.schema !== "pb.crash/v0")) return undefined;
+      // one record is small (numbers, short strings); anything larger is not a record of ours
+      if (JSON.stringify(r).length > 64 * 1024) return undefined;
+      return { type: "telemetry", record: r };
+    }
+    case "viewState": {
+      const file = parseViewerStateFile(data.file);
+      return file && { type: "viewState", file };
+    }
+    case "presentation": {
+      const p = data.presentation;
+      // DEFAULT (wave 2 gate item 9): 512 kB of JSON for the named views and annotations together
+      if (!obj(p) || !obj(p.namedViews) || !Array.isArray(p.annotations) || JSON.stringify(p).length > PRESENTATION_MAX_CHARS) return undefined;
+      // the person's explicit "Save callouts" (W4-D, collaboration D10) travels on: the extension writes the
+      // annotations to the display file only when the save says so (wave 4 gate); anything but `true` is dropped
+      return { type: "presentation", presentation: { namedViews: p.namedViews, annotations: p.annotations, ...(p.saveAnnotations === true ? { saveAnnotations: true as const } : {}) } };
+    }
+    case "savePoint": {
+      // a PNG of the view, at most 16 MB of base64; the meta's fields are checked where it is written
+      // DEFAULT: 16 MiB of base64
+      if (!str(data.png) || data.png.length > 16 * 1024 * 1024 || !/^[A-Za-z0-9+/=]+$/.test(data.png) || !obj(data.meta)) return undefined;
+      const m = data.meta;
+      if (!str(m.level) || !str(m.view) || typeof m.width !== "number" || typeof m.height !== "number") return undefined;
+      return { type: "savePoint", png: data.png, meta: m };
+    }
+    case "bridgeReply":
+      // DEFAULT (wave 2 gate item 9): a reply is at most 2 MB of JSON (the viewer's own cap)
+      if (!str(data.id) || data.id.length > 128 || !obj(data.reply) || JSON.stringify(data.reply).length > BRIDGE_REPLY_MAX_CHARS) return undefined;
+      return { type: "bridgeReply", id: data.id, reply: data.reply };
+    case "contextmenu": {
+      const n = (x: unknown): x is number => typeof x === "number" && Number.isFinite(x);
+      if (!n(data.x) || !n(data.y)) return undefined;
+      const p = obj(data.pick) ? data.pick : undefined;
+      const s512 = (x: unknown): x is string => str(x) && x.length <= 1024;
+      const pick: ContextMenuPick | undefined = p
+        ? { ...(s512(p.instancePath) ? { instancePath: p.instancePath } : {}), ...(s512(p.body) ? { body: p.body } : {}), ...(s512(p.harness) ? { harness: p.harness } : {}), ...(Number.isInteger(p.face) ? { face: p.face as number } : {}) }
+        : undefined;
+      return { type: "contextmenu", x: Math.round(data.x), y: Math.round(data.y), ...(str(data.view) && data.view.length <= 64 ? { view: data.view } : {}), ...(pick && Object.keys(pick).length ? { pick } : {}) };
+    }
+    case "parts": {
+      if (!Number.isInteger(data.ask) || !(PARTS_OPS as readonly unknown[]).includes(data.op)) return undefined;
+      const args = obj(data.args) && JSON.stringify(data.args).length <= 4096 ? data.args : undefined;
+      return { type: "parts", ask: data.ask as number, op: data.op as PartsOp, ...(args ? { args } : {}) };
+    }
+    case "download":
+      // a name with no folder in it, and base64 under the cap
+      if (!str(data.name) || !data.name.trim() || data.name.length > 200 || /[\\/\u0000-\u001f]/.test(data.name)) return undefined;
+      if (!str(data.data) || data.data.length > DOWNLOAD_MAX_CHARS || !/^[A-Za-z0-9+/=]*$/.test(data.data)) return undefined;
+      return { type: "download", name: data.name, data: data.data };
+    case "historyState":
+      return typeof data.back === "boolean" && typeof data.forward === "boolean" ? { type: "historyState", back: data.back, forward: data.forward } : undefined;
+    case "presence":
+      // DEFAULT: 64 kB of JSON (presence is a few leases and intents; anything larger is not ours)
+      if (!obj(data.presence) || JSON.stringify(data.presence).length > PRESENCE_MAX_CHARS) return undefined;
+      return { type: "presence", presence: data.presence };
     default:
       return undefined;
   }
+}
+
+/** A viewer-state file, its envelope checked (the viewer checks every value it reads back); undefined for anything else. */
+export function parseViewerStateFile(v: unknown): ViewerStateFile | undefined {
+  if (!obj(v) || v.schema !== "protoboard.viewer-state/v0" || v.viewState !== "uhd-viewer.view-state/v1" || !obj(v.scopes)) return undefined;
+  if (Object.keys(v.scopes).length > 200 || !Object.values(v.scopes).every(obj) || JSON.stringify(v).length > 1024 * 1024) return undefined;
+  return { schema: v.schema, viewState: v.viewState, scope: str(v.scope) ? v.scope : "", scopes: v.scopes as ViewerStateFile["scopes"] };
 }

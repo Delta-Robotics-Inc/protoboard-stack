@@ -75,6 +75,7 @@ import type { ProtoboardConfig } from "./types.js";
 import { CLOUD_PROVIDER, DEFAULT_LIBRARY_ID, LIBRARY_PROVIDER, cloudUrl, configuredLibraries, connectLibrary, recordLibrary, type LibraryConnection } from "./libraries.js";
 import { PartsError, explainCloudError, type AccountTokens } from "./library-client.js";
 import { projectRelative } from "./paths.js";
+import { isViewSidecarFile } from "./view-model/names.js";
 import { migrateRecord, recordLayout, stripPrefixFor, storedPath, vendoredDirName, type MigrateResult } from "./vendored-layout.js";
 
 export { PartsError, explainCloudError };
@@ -692,10 +693,12 @@ const mediaTypeFor = (path: string) => MEDIA_TYPES[extname(path).toLowerCase()] 
 const NOT_DISTRIBUTED = /(^|\/)\.research\//;
 const NOT_DISTRIBUTED_REASON = "not distributed: a research working file";
 
+// view sidecars (X.view.glb, X.view.json) are derived build files beside a GLB: never published with a part
 const listFiles = (dir: string, prefix = ""): string[] =>
   existsSync(dir)
     ? readdirSync(dir)
         .sort()
+        .filter((n) => !isViewSidecarFile(n))
         .flatMap((n) => (statSync(join(dir, n)).isDirectory() ? listFiles(join(dir, n), `${prefix}${n}/`) : [`${prefix}${n}`]))
     : [];
 

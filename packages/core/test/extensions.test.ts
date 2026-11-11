@@ -222,6 +222,6 @@ describe("quadcopter extensions", () => {
     expect(p.extensions.map((e) => e.manifest.id)).toEqual(["@protoboardai/ext-hardware", "@protoboardai/ext-parts", "@protoboardai/ext-docs", "@protoboardai/ext-drone", "@protoboardai/ext-frame-cad", "@protoboardai/ext-harness-cad", "@protoboardai/ext-release"]);
     expect(p.checks.find((c) => c.validator === "ext:@protoboardai/ext-hardware/evidence")?.status).toBe("ran");
     expect(p.diagnostics.filter((d) => d.severity === "error")).toEqual([]);
-    expect(resolveSkills(p, p.extensions).filter((s) => s.file)).toHaveLength(18); // 17 + build-a-project (PB-844)
+    expect(resolveSkills(p, p.extensions).filter((s) => s.file)).toHaveLength(19); // 17 + build-a-project (PB-844) + scan-to-part (ext-parts, W4-B PB-1191; wave 4 gate)
   });
 });

@@ -15,6 +15,7 @@ import { extname, join } from "node:path";
 import type { GeometryManifest, ModuleDef, ModuleLookup } from "@deltarobotics/uhd";
 import type { CapabilityId } from "./extensions.js";
 import type { Severity } from "./types.js";
+import { isViewSidecarFile } from "./view-model/names.js";
 
 /** A finding about one output file. `file` is relative to the module's `out/` folder. */
 export interface OutputFinding {
@@ -78,8 +79,12 @@ export const OWNED_OUTPUTS: Partial<Record<CapabilityId, string[]>> = {
  */
 export function ownedOutputs(outDir: string, capability: CapabilityId, neighbours: CapabilityId[]): string[] {
   if (!existsSync(outDir) || !statSync(outDir).isDirectory()) return [];
+  // view sidecars (X.view.glb, X.view.coarse.glb, X.view.json) are written by the build beside a body GLB, not by
+  // an export: no capability owns them, so the export record and the edited-output check never see them, and the
+  // sidecar's own source hash says when it is stale (view-model/names.ts)
   const entries = readdirSync(outDir)
     .sort()
+    .filter((n) => !isViewSidecarFile(n))
     .map((n) => (statSync(join(outDir, n)).isDirectory() ? `${n}/` : n));
   const own = OWNED_OUTPUTS[capability];
   if (own) return entries.filter((e) => own.includes(e));

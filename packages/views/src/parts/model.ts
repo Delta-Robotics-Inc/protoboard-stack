@@ -500,6 +500,35 @@ export interface SettingsModel {
   other?: OtherClientsModel;
   /** More actions: the first steps, the bill of materials, the stack's folder, the command on PATH. */
   links?: SettingsLinkModel[];
+  /**
+   * The Viewer section (R2-E's J1 settings, the R2 integration): the person's Protoboard settings
+   * (`<home>/settings.json`, the same ones `protoboard settings` and an agent's `settings_set` change), one row each.
+   */
+  viewer?: SettingRowModel[];
+}
+
+/** One of the person's Protoboard settings as the Settings page's Viewer section shows it (core `settings.ts`). */
+export interface SettingRowModel {
+  /** The setting's key (`viewer.zoomToCursor`, `files.exportFolder`, ...). */
+  key: string;
+  title: string;
+  description: string;
+  /** A switch, a number box, a folder picker, the STEP app picker, or a choice of a few values (R4-B: units, for scale). */
+  kind: "boolean" | "number" | "folder" | "app" | "choice";
+  /** The value: on or off, the number, the folder or app chosen (null: none chosen, the default applies). */
+  value: boolean | number | string | null;
+  /** The value in words ("900 ms", "Downloads (~/Downloads)", "Autodesk Fusion"). */
+  text: string;
+  /** The value is the default (no Reset offered). */
+  isDefault: boolean;
+  /** A number's range and unit. */
+  min?: number;
+  max?: number;
+  unit?: string;
+  /** A lucide icon name. */
+  icon?: string;
+  /** A choice's values and their words (kind "choice"). */
+  options?: readonly { value: string; label: string }[];
 }
 
 /** A row of the settings page that opens something of the host's. */
@@ -534,6 +563,10 @@ export interface SettingsActions {
   showLog?(): void;
   /** One of `links`, by id. */
   run?(id: string): void;
+  /** A setting of the Viewer section to a value (a switch, a number); null resets it to its default (R2-E, J1). */
+  setSetting?(key: string, value: boolean | number | string | null): void;
+  /** Ask for a setting's value the host's way: a folder picker, the STEP app question (R2-E, J1). */
+  chooseSetting?(key: string): void;
 }
 
 // ---------------------------------------------------------------- bill of materials

@@ -525,6 +525,8 @@ Every other code: **system-compose** [diagnostic codes](../system-compose/refere
    project-local install.
 8. Never make placeholder CAD or 3D models from datasheets while the part's
    UHD artifacts or its JLC/LCSC source has one; when none does, ask first.
+   A placeholder is the build's amber box, flagged by `PB_MODEL_MISSING`,
+   never a body an agent draws.
 9. A board change goes where it belongs (the model, the tscircuit stage, a
    stack bug, then KiCad), said before the edit; a locked board is unlocked
    and re-locked for an upstream change, by the person's decision.

@@ -43,6 +43,11 @@ export interface PartsData {
   openLink?(url: string): void;
   /** Where a part's definition is written, opened by the host. */
   openSource?(file: string, line?: number): void;
+  /**
+   * Save a file the page made (the BOM's Export CSV) the host's way (R2-E's handoff, R2 integration): the VS Code tab
+   * writes it to the export folder without a dialog. Absent: a browser download.
+   */
+  exportCsv?(name: string, text: string): void;
 }
 
 const Ctx = createContext<PartsData | null>(null);
@@ -424,7 +429,7 @@ export function BomView({ host }: ViewProps) {
                   },
                 }
               : {}),
-            exportCsv: (shown) => downloadText(`${shown.project}-bom.csv`, bomCsv(shown), "text/csv;charset=utf-8"),
+            exportCsv: (shown) => (data.exportCsv ? data.exportCsv(`${shown.project}-bom.csv`, bomCsv(shown)) : downloadText(`${shown.project}-bom.csv`, bomCsv(shown), "text/csv;charset=utf-8")),
           }}
         />
       </div>

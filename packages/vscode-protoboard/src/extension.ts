@@ -12,6 +12,7 @@ import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { basename, delimiter, dirname, extname, isAbsolute, join, relative, sep } from "node:path";
 import * as vscode from "vscode";
 import { START_COMMAND, helpCommands, helpMarkdown, registerHelp } from "./help.js";
+import { registerUpdateToast } from "./updateToast.js";
 import { buildArtifacts, describeArtifact, describeInstances, openMode, partChoices, sortArtifacts, type ArtifactEntry, type PartChoice } from "./artifacts.js";
 import { openOutside } from "./openOutside.js";
 import { countDiagnostics, mapDiagnostics, parseCheck, skippedChecks, statusLabel, statusText, type Counts, type MappedDiagnostic } from "./check.js";
@@ -40,7 +41,7 @@ import { nonce } from "./html.js";
 import { BUNDLE_FILE, indexProject, linkFromViewer, localLinkId, readBuild, RESOLVED_FILE, viewerMessages, type BuildOutput, type ProjectIndex } from "./model.js";
 import { IGNORED_DIRS, chooseProject, projectOf, projectRoots } from "./project.js";
 import type { ViewerCommand as HostToViewer } from "../../web-viewer/src/vscode/protocol.js";
-import { boardSection, groupCard, interfaceCard, libraryPartCard, linkCard, linkHarnessDefs, moduleCard, partCard, type DetailFiles, type InspectorCard } from "./inspector.js";
+import { boardSection, findingMessages, groupCard, holderOf, interfaceCard, libraryPartCard, linkCard, linkHarnessDefs, moduleCard, partCard, selectionPath, THREE_D_OWN, type DetailFiles, type InspectorCard } from "./inspector.js";
 import { detailFiles, interfaceArtifacts, resourceRoots, smallModel } from "./inspectorFiles.js";
 import { InspectorViewProvider, type InspectorAction, type InspectorContent } from "./inspectorView.js";
 import { displayFile, saveLayout } from "./display.js";
@@ -59,6 +60,15 @@ import { registerPartsViews, type PartsViews } from "./partsViews.js";
 import { canInitIn, partsFailure, folderFromName, folderHolding, folderNameProblem, folderNotice, initArgs, npxCommand, partsAddArgs, partsNotFetchedMessage, registryRefusal, templateChoices, toolsInstallHint, vscodeBefore, withoutRunHint } from "./newProject.js";
 import { lensTitle, moduleAtLine, modulesInFile, type SourceModule } from "./sourceModules.js";
 import { SettingsController, type SettingsLink } from "./settingsPage.js";
+// R2-E (F1, J1, G2, G3): navigation in place, the user's settings, the STEP viewer, export
+import { UserSettings, editSetting, viewerRows } from "./userSettings.js";
+import { askStepViewer, isTrustedProgram, openStepFile, trustProgram } from "./stepViewer.js";
+import { openWithSystem, setStepOpener } from "./openOutside.js";
+import { downloadParts, exportToast, exportWhat, writeExport } from "./exportFiles.js";
+import { cardOpensModule, decideNavigate } from "./navigation.js";
+import { exportFileName, exportFolder, isSettingKey, safeName } from "@protoboardai/core/settings";
+import { projectBom, writeBomSettings } from "./cost.js";
+import type { ExportFormat, PartsOp } from "../../web-viewer/src/vscode/protocol.js";
 import { StartController } from "./start.js";
 import { activateRestricted } from "./restricted.js";
 
@@ -228,7 +238,17 @@ export function activate(context: vscode.ExtensionContext) {
         selection: e.selection,
         loads: e.readyCount,
         states: e.stateCount,
+        // R2-E (F1): the header's back and forward, the in-place moves, the viewer's own 3D history
+        history: e.history,
+        moves: [...e.moves],
+        viewerHistory: e.viewerHistory,
       })),
+    // R2-E: move the focused tab in place, send it a page message, read the settings, export, open a file outside
+    viewerGo: (path: string, view: string) => instance!.viewers.focused?.go(path, view),
+    viewerPost: (m: Record<string, unknown>) => instance!.viewers.focused?.post(m as never),
+    userSettings: () => instance!.userSettings.values,
+    exportFromTab: (format: "png" | "glb" | "step" | "stl", target?: string) => instance!.exportFromTab(instance!.viewers.focused!, format, target),
+    openOutside: (file: string) => void openOutside(vscode.Uri.file(file)),
     viewerTheme: () => (instance!.viewers.focused ?? [...instance!.viewers.editors][0])?.reportTheme(),
     /** A viewer tab's hierarchy panel, as its page reports it (PB-1042): by the tab's URI, else the focused tab. */
     viewerHierarchy: (uri?: string) => ([...instance!.viewers.editors].find((e) => e.document.uri.toString() === uri) ?? instance!.viewers.focused)?.reportHierarchy(),
@@ -348,6 +368,8 @@ class ProtoboardExtension {
   readonly partsViews: PartsViews;
   /** The settings page and the agents' MCP configuration (PB-930; settingsPage.ts). */
   readonly settings: SettingsController;
+  /** R2-E (J1): the user's Protoboard settings (`<home>/settings.json`), shared with the CLI and the agent's tools. */
+  readonly userSettings: UserSettings;
   /** Getting started (start.ts): the page of a first install, the Start view, the example. */
   readonly getStarted: StartController;
   /** `protoboard release` runs, by project: the Cloud view shows the state of the current one. */
@@ -381,6 +403,14 @@ class ProtoboardExtension {
     else if (choice === "Show Log") this.log.show();
   }
 
+  /** The STEP question from the Settings page: a program the person picks in the file dialog is theirs (wave R2 gate). */
+  private async askStepProgram(): Promise<string | undefined> {
+    const v = await askStepViewer(this.userSettings.values["tools.stepViewer"]);
+    // an app id has no path separator; a program picked in the file dialog is an absolute path
+    if (v && (v.includes("/") || v.includes("\\"))) trustProgram(this.context.globalState, v);
+    return v;
+  }
+
   constructor(private readonly context: vscode.ExtensionContext) {
     // the log's first line: which version this is (the extension's and the stack's are one number)
     this.log.info(aboutLine(String(context.extension.packageJSON.version)));
@@ -399,6 +429,9 @@ class ProtoboardExtension {
         ? `this extension carries the Protoboard stack ${this.carried.version} (UHD ${this.carried.uhd}) for ${this.carried.platforms.join(", ")}; it is unpacked to ${stackDir(this.home, this.carried.version)} the first time it is needed`
         : "this build of the extension carries no stack (a development build): a project uses its own installed packages, a Protoboard installed for the user, or protoboard.cliPath",
     );
+    // W4-A (PB-1168): the once-a-day update and vulnerability toast for the projects open in this window. Here, so that
+    // like the rest of the extension it starts only in a trusted window (Restricted Mode, restricted.ts)
+    registerUpdateToast(context, () => (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath).filter((p) => existsSync(join(p, "protoboard.config.ts"))), { extensionVersion: String(context.extension.packageJSON.version) });
     this.showLock();
     this.status.name = "Protoboard";
     this.status.command = "protoboard.check";
@@ -410,8 +443,26 @@ class ProtoboardExtension {
     const builds = vscode.workspace.createFileSystemWatcher(`**/${RESOLVED_FILE.split("\\").join("/")}`);
     // what the Cloud view's cost and package come from: releases, vendored offers, sourcing evidence
     const costs = vscode.workspace.createFileSystemWatcher("**/{release/*/manifest.json,release/*/system/ordering-list.csv,parts/offers.json,parts/bom.json,parts/fx-rates.json,parts/evidence/*/sourcing.json}");
+    this.userSettings = new UserSettings(this.log);
+    // G2: "Open in the system's application" on a STEP file asks once for the preferred viewer, then uses it
+    setStepOpener((uri) =>
+      openStepFile(uri, {
+        log: this.log,
+        choice: () => this.userSettings.values["tools.stepViewer"],
+        choose: (value) => void this.userSettings.set("tools.stepViewer", value),
+        // wave R2 gate: the programs the person confirmed live in VS Code's own global state, not in a file agents write
+        trusted: (exe) => isTrustedProgram(context.globalState, exe),
+        trust: (exe) => trustProgram(context.globalState, exe),
+        openInViewer: async (u) => openCad(u, vscode.ViewColumn.Active),
+        openSystem: (u) => openWithSystem(u),
+      }),
+    );
     this.viewers = new ViewerEditors(context.extensionUri, {
       log: this.log,
+      // R2-E: the user's viewer settings, the in-tab BOM's data, a download from a tab
+      settings: () => this.userSettings.viewer,
+      parts: (editor, op, args) => this.viewerParts(editor, op, args),
+      download: (editor, name, data) => this.viewerDownload(editor, name, data),
       ensureDev: (root) => this.ensureDev(root),
       retryDev: (root) => this.retryDev(root),
       account: (action) => this.accountAction(action),
@@ -431,9 +482,12 @@ class ProtoboardExtension {
       focusPath: (path) => this.guard(() => this.current && this.toViewer(this.current, viewerMessages({ path }), true)),
       // something picked inside the details: the viewer shows it, and the Inspector follows the viewer's selection
       select: (sel) => this.guard(() => this.current && this.toViewer(this.current, sel.kind === "node" ? viewerMessages({ path: sel.id }) : [{ type: "uhd-viewer:select", ids: [`link:${sel.id}`] }], true)),
-      finding: (key) => this.guard(() => this.locateFinding(key)),
+      // a check row (D7): the finding shown on the model in the focused viewer tab (its part framed, its callout pinned)
+      finding: (key) => this.guard(() => this.showFinding(key)),
+      // a board part's 3D cards (F5)
+      open3d: (card, which, o) => this.guard(() => this.openIn3d(card, which, o)),
       explain: (key) => this.guard(() => this.explainFinding(key)),
-      openArtifact: (card, defId, artifactId) => this.guard(() => this.openCardArtifact(card, defId, artifactId)),
+      openArtifact: (card, defId, artifactId, o) => this.guard(() => this.openCardArtifact(card, defId, artifactId, o)),
       openLink: (url) => this.guard(() => openWeb(url)),
       // an interface card's Open in source and an open slot's Connect… (PB-1042, design A)
       interfaceSource: (req) => this.guard(() => this.openInterfaceSource(req, false)),
@@ -510,6 +564,13 @@ class ProtoboardExtension {
       // the launcher an agent starts uses the CLI this extension itself would run (PB-929): the carried stack and its runtime
       cliSettings: (folder) => this.cliSettings(folder),
       links: () => this.settingsLinks(),
+      // R2-E (J1), the page's Viewer section (R2 integration): the rows, a value set, a folder or app chosen
+      viewerSettings: () => viewerRows(this.userSettings.values),
+      setSetting: (key, value) => {
+        if (!isSettingKey(key)) return;
+        this.userSettings.set(key, value);
+      },
+      chooseSetting: (key) => editSetting(this.userSettings, key, () => this.askStepProgram()),
       openLibraries: () => this.library.setManage(true),
       guard: (fn) => this.guard(fn),
     });
@@ -525,6 +586,13 @@ class ProtoboardExtension {
     context.subscriptions.push(
       this.getStarted,
       this.settings,
+      // R2-E (J1): a change from here, the CLI or an agent reaches the open tabs and the Settings page
+      this.userSettings,
+      this.userSettings.onDidChange(() => {
+        this.viewers.settingsChanged(this.userSettings.viewer);
+        this.settings.refresh();
+      }),
+      { dispose: () => setStepOpener(undefined) },
       this.log,
       this.diagnostics,
       this.status,
@@ -607,6 +675,10 @@ class ProtoboardExtension {
       cmd("protoboard.showLog", () => this.log.show()),
       cmd("protoboard.about", () => this.about()),
       cmd("protoboard.openSettings", () => this.settings.open()),
+      // R2-E (J1): a row of the Settings page (toggle, number, folder, app)
+      cmd("protoboard.settings.edit", (key?: unknown) => editSetting(this.userSettings, key, () => this.askStepProgram())),
+      // R2-E (G3): export from the focused viewer tab (the toolbar's Export button sends `uhd-viewer:export`)
+      cmd("protoboard.viewer.export", (format?: unknown) => this.exportFromPalette(format)),
       cmd("protoboard.agents.connect", () => this.settings.connectPicked()),
       // a module's commands: from a row of a viewer tab's hierarchy (its right-click menu), the Command Palette, or the tests
       cmd("protoboard.explorer.focus", (n?: NodeArg) => this.focusNode(n, true)),
@@ -2599,13 +2671,14 @@ class ProtoboardExtension {
    */
   /**
    * The Open Viewer command and a viewer tab's request for a view as its own
-   * tab: the library and the BOM have editors of their own in VS Code
-   * (PB-912), so those open there; every other view is a viewer tab.
+   * tab: the library has an editor of its own in VS Code (PB-912), so it
+   * opens there; every other view, the BOM included (R2-E F1), is a viewer tab.
    */
   async openViewOf(arg?: OpenViewerArg): Promise<ViewerEditor | undefined> {
     const view = typeof arg === "object" ? arg.view : undefined;
     if (view === "library") return void (await vscode.commands.executeCommand("protoboard.library.openPage"));
-    if (view === "bom") return void (await vscode.commands.executeCommand("protoboard.openBom", await this.project(typeof arg === "object" ? arg.root : undefined)));
+    // R2-E (F1): the BOM is a viewer tab too now (its tab bar and breadcrumbs, walkthrough 3060-1); the Cloud panel's
+    // "Open bill of materials" and a release's ordering list keep the BOM editor
     return this.openViewer(arg);
   }
 
@@ -2708,8 +2781,38 @@ class ProtoboardExtension {
         await this.inspector.reveal({ focus: true, log: (text) => this.log.warn(text) });
         return;
       case "uhd-viewer:openModule":
-        // double-click on a module (PB-897): a new viewer tab on it, next to this one
-        await this.openViewer({ root, path: m.path });
+        // double-click on a module (PB-897): a new viewer tab on it, next to this one; a bought part, or a part
+        // double-clicked in 3D, opens on its own 3D view (PB-1072). R2-E: a viewer from before R2-A's navigate, and
+        // the hierarchy's "Open in New Tab": a new tab, as asked
+        await this.openViewer({ root, path: m.path, ...(m.view === "3d" ? { view: "3d" } : {}) });
+        return;
+      case "uhd-viewer:navigate": {
+        // R2-E (F1, F3): in place by default (`viewer.openModelsInPlace`), a new tab when asked (Ctrl, the menu)
+        const d = decideNavigate(m, this.userSettings.values["viewer.openModelsInPlace"]);
+        this.log.info(`${basename(root)}: open ${"module" in m.target ? m.target.module || "the system" : `${m.target.model.defId}#${m.target.model.artifactId}`} (${m.how}) -> ${d.kind}${d.kind === "model" ? (d.sameGroup ? " in this group" : " beside") : ""}`);
+        if (d.kind === "go") return void editor.go(d.path, d.view);
+        if (d.kind === "tab") return void (await this.openViewer({ root, path: d.path, view: d.view }));
+        const part = data && buildArtifacts(root, data.index, d.defId);
+        const a = part?.artifacts.find((x) => x.id === d.artifactId);
+        if (!a?.resolved || !isCadFile(a.resolved)) throw new Error(`${d.defId} has no model ${d.artifactId} to open (run Protoboard: Check if it was just added)`);
+        await openCad(vscode.Uri.file(a.resolved), d.sameGroup ? (editor.panel.viewColumn ?? vscode.ViewColumn.Active) : vscode.ViewColumn.Beside);
+        return;
+      }
+      case "uhd-viewer:history":
+        // the viewer's own 3D history (R2-A): the page's header uses it; kept on the tab (ViewerEditors)
+        return;
+      case "uhd-viewer:export":
+        // G3 (R2-B's toolbar Export button): to the export folder, no dialog
+        await this.exportFromTab(editor, m.format, m.target);
+        return;
+      case "uhd-viewer:setting":
+        // wave R4 gate (R4-B's handoff): the 3D toolbar's scale chooser or units, to the settings file as the person
+        // (protocol.ts lets only VIEWER_SAVABLE_SETTINGS through; core's checkSetting checks the value; a bad one is logged)
+        try {
+          this.userSettings.set(m.key, m.value);
+        } catch (e) {
+          this.log.warn(`settings: ${m.key} from the 3D view was not saved: ${(e as Error).message}`);
+        }
         return;
       case "uhd-viewer:openPair": {
         // the pair view of a link (PB-894 §3, PB-905): an editor tab of its own, at the level that holds the link, beside this one
@@ -2827,7 +2930,8 @@ class ProtoboardExtension {
         ? { card: moduleCard(data.index, node, data.findings, level, node.defId ? this.filesOf(root, data.index, node.defId) : undefined, level ? undefined : boardSection(data.index, node, (f) => this.readCached(root, f)), this.costLines(root)), project, ...bundle }
         : undefined;
     };
-    if (sel?.kind === "node") return at(sel.id) ?? at(editor.path, true) ?? { empty: "Select a module or a link in the viewer.", project };
+    // M2: a component picked in the 3D view is the component (not the board that draws it, not the level)
+    if (sel?.kind === "node") return at(selectionPath(sel, (p) => !!this.fullNode(data, p))) ?? at(editor.path, true) ?? { empty: "Select a module or a link in the viewer.", project };
     return at(editor.path, true) ?? { empty: "Select a module or a link in the viewer.", project };
   }
 
@@ -2891,7 +2995,12 @@ class ProtoboardExtension {
   }
 
   private showInspector() {
-    this.inspector.show(this.inspectorContent());
+    // M2 (the walkthrough's 26 s): nothing here waits; a slow card is said in the log with what it was
+    const t0 = Date.now();
+    const content = this.inspectorContent();
+    const ms = Date.now() - t0;
+    if (ms > 250) this.log.warn(`the Inspector's card took ${ms} ms (${"card" in content ? `${content.card.kind} ${content.card.path || content.card.title}` : "empty"})`);
+    this.inspector.show(content);
   }
 
   /** A project file's text, read again only when it changed (the routed board's files are large and read on every selection). */
@@ -2952,10 +3061,20 @@ class ProtoboardExtension {
   }
 
   /** An artifact's card, opened as Open Artifact opens it; an artifact that is only a web address of a part outside the build opens in the browser. */
-  async openCardArtifact(card: InspectorCard, defId: string, artifactId: string) {
+  async openCardArtifact(card: InspectorCard, defId: string, artifactId: string, options: { newTab?: boolean } = {}) {
     const root = this.current;
     const data = root ? this.data.get(root) : undefined;
     const a = root && data ? buildArtifacts(root, data.index, defId)?.artifacts.find((x) => x.id === artifactId) : undefined;
+    // R2-E (F1, walkthrough 1273-1 "opening a model opens a split editor"): a module's model opens in place, its 3D
+    // view in the focused viewer tab; Ctrl+click (or the setting off) keeps the CAD viewer beside it
+    if (root && a && card.path !== undefined && !options.newTab && this.userSettings.values["viewer.openModelsInPlace"] && cardOpensModule(a)) {
+      const tab = this.viewers.of(root)[0];
+      if (tab) {
+        tab.panel.reveal(undefined, false);
+        tab.go(card.path, "3d");
+        return;
+      }
+    }
     if (root && a) return this.openOne(root, a);
     // a library part's definition is not in the build: its artifacts that are web addresses open as links
     const def = (card.details?.definitions as { id?: string; artifacts?: { id?: string; url?: string }[] }[] | undefined)?.find((d) => d?.id === defId);
@@ -2993,6 +3112,55 @@ class ProtoboardExtension {
   private async locateFinding(key: string) {
     const f = this.current ? this.data.get(this.current)?.findings.find((x) => x.key === key) : undefined;
     if (f) await this.locate(f);
+  }
+
+  /**
+   * A check row of the Inspector (D7, walkthrough 45:11 "this should go towards the issue"): the finding in the
+   * project's focused viewer tab. In 3D its part is selected and framed and its callout pinned open; on the diagram
+   * its module or link is shown as Locate does.
+   */
+  private async showFinding(key: string) {
+    const root = this.current;
+    const data = root ? this.data.get(root) : undefined;
+    const f = data?.findings.find((x) => x.key === key);
+    if (!root || !data || !f) return;
+    const editor = this.viewers.of(root)[0];
+    const messages = findingMessages(data.index, f, editor?.state?.view ?? editor?.document.target.view);
+    if (!messages.length) return this.locate(f);
+    await this.toViewer(root, messages, true);
+  }
+
+  /**
+   * A board part's 3D cards (F5, walkthrough 19:30 "it doesn't give me the 3D model"). `3d:holder`: the part where
+   * its board draws it, selected and framed: in the focused viewer tab when that tab's level holds it (switched to
+   * 3D in place), else in the board's own 3D tab. `3d:own`: the part's own model, as a tab of its own.
+   */
+  private async openIn3d(card: InspectorCard, which: string, options: { newTab?: boolean } = {}) {
+    const root = this.current;
+    const data = root ? this.data.get(root) : undefined;
+    if (!root || !data || !card.path) return;
+    if (which === THREE_D_OWN) {
+      // R2-E (F1): the part's own model in place in the focused tab; Ctrl+click (or the setting off) a new tab
+      const tab = this.viewers.of(root)[0];
+      if (tab && !options.newTab && this.userSettings.values["viewer.openModelsInPlace"]) {
+        tab.panel.reveal(undefined, false);
+        return void tab.go(card.path, "3d");
+      }
+      return void (await this.openViewer({ root, path: card.path, view: "3d" }));
+    }
+    const holder = holderOf(data.index, card.path);
+    if (!holder) throw new Error(`${card.title} is not drawn inside another module's model`);
+    const focus = { type: "command" as const, command: { type: "uhd-viewer:focus" as const, path: card.path } };
+    const tab = this.viewers.of(root)[0];
+    const holds = tab && (tab.path === "" || card.path.startsWith(`${tab.path}/`));
+    if (tab && holds) {
+      tab.panel.reveal(undefined, false);
+      if ((tab.state?.view ?? tab.document.target.view) !== "3d") tab.post({ type: "showView", view: "3d" });
+      tab.post(focus);
+      return;
+    }
+    const board = await this.openViewer({ root, path: holder, view: "3d" });
+    board.post(focus);
   }
 
   /** Save a tab's layout edits into the project's display file (the dev server reports which file that is). */
@@ -3730,6 +3898,111 @@ class ProtoboardExtension {
       return;
     }
     if ((await openOutside(uri)) === "reveal") this.log.warn(`${file} is not a type Protoboard hands to another application, or none opened it; shown in the file manager instead`);
+  }
+
+  // ---- R2-E: the BOM in a viewer tab, downloads and export (G3)
+
+  /** The BOM drawn in a viewer tab: its data and writes, as the BOM editor reads and writes them (partsViews.ts). */
+  private async viewerParts(editor: ViewerEditor, op: PartsOp, args: Record<string, unknown>): Promise<unknown> {
+    const root = editor.root;
+    switch (op) {
+      case "bom": {
+        const data = this.data.get(root);
+        const model = projectBom(root, data?.index.resolved.project?.name ?? basename(root), data?.index);
+        if (!model) throw new Error(`${basename(root)} has no build yet: run Protoboard: Check first`);
+        return model;
+      }
+      case "saveBom": {
+        if (typeof args.units === "number" && Number.isInteger(args.units) && args.units > 0 && args.units <= 1_000_000) writeBomSettings(root, { units: args.units });
+        else if (typeof args.line === "string" && (args.offer === null || typeof args.offer === "string")) writeBomSettings(root, { offer: { line: args.line, offer: args.offer } });
+        else throw new Error("not a change of the bill of materials");
+        return undefined;
+      }
+      case "refreshOffers":
+        await vscode.commands.executeCommand("protoboard.fetchOffers", root);
+        return "The offers were asked for; the bill follows when they are written.";
+      case "openLink":
+        if (typeof args.url !== "string" || !/^https?:\/\//i.test(args.url)) throw new Error("only web addresses open from here");
+        await openWeb(args.url);
+        return undefined;
+      case "openSource": {
+        // only a file of the project, by its project-relative path
+        const file = typeof args.file === "string" ? args.file : "";
+        if (!file || isAbsolute(file) || file.split(/[\\/]/).includes("..")) throw new Error("not a file of the project");
+        await this.openLocation(root, file, typeof args.line === "number" ? args.line : undefined);
+        return undefined;
+      }
+    }
+  }
+
+  /** A file a viewer tab would download (the BOM's Export CSV): the export folder gets it, no dialog (G3). */
+  private async viewerDownload(editor: ViewerEditor, name: string, data: Buffer) {
+    const project = this.data.get(editor.root)?.index.resolved.project?.name ?? basename(editor.root);
+    const parts = downloadParts(name);
+    // wave R2 gate: data and pictures only (a page cannot drop a program or a shortcut into Downloads)
+    if (!parts) {
+      this.log.warn(`download refused: ${name} is not a data or picture file`);
+      void vscode.window.showWarningMessage(`Protoboard: ${name} was not saved (only data and picture files are exported).`);
+      return;
+    }
+    const { what, ext } = parts;
+    // the page names it `<project>-<what>`: the export's own name puts the project first already
+    const own = safeName(project);
+    const file = writeExport(exportFolder(), project, what.startsWith(`${own}-`) ? what.slice(own.length + 1) : what, ext, data);
+    void exportToast(file, this.log);
+  }
+
+  /**
+   * Export from a viewer tab (G3, Kevin: "export goes to the Downloads folder, don't even ask"): the view as a PNG
+   * (the 3D view's last save point), or a part's model (`protoboard parts export`), to `files.exportFolder` (DEFAULT
+   * Downloads) as `<project>-<view or part>-<date>.<ext>`, then a toast with Reveal.
+   */
+  async exportFromTab(editor: ViewerEditor, format: ExportFormat, target?: string): Promise<string> {
+    const root = editor.root;
+    const project = this.data.get(root)?.index.resolved.project?.name ?? basename(root);
+    const folder = exportFolder();
+    const view = editor.state?.view ?? editor.document.target.view;
+    if (format === "png") {
+      const shot = editor.lastSavePoint;
+      if (view !== "3d" || !shot) throw new Error("A picture of the view is exported from the 3D view once it has drawn (open the 3D tab and let it settle).");
+      const file = writeExport(folder, project, exportWhat(editor.module, "3d"), "png", Buffer.from(shot.png, "base64"));
+      void exportToast(file, this.log);
+      return file;
+    }
+    const part = target ?? editor.module;
+    if (!part) throw new Error(`Choose a part to export as ${format.toUpperCase()} (the whole system has no single model file).`);
+    // wave R2 gate: an instance path from the page never reads as a CLI flag
+    if (part.startsWith("-")) throw new Error(`${part} is not a part's instance path`);
+    mkdirSync(folder, { recursive: true });
+    const out = join(folder, exportFileName(project, exportWhat(part, view), format, { exists: (n) => existsSync(join(folder, n)) }));
+    const r = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Protoboard: exporting ${part} as ${format.toUpperCase()}` }, () => runCli(this.trustedCli(root), ["parts", "export", part, "--format", format, "--out", out, "--json"], { cwd: root }));
+    if (r.code !== 0) {
+      const detail = (r.stderr.trim() || r.stdout.trim()).split("\n").slice(-2).join(" ");
+      throw new Error(`${part} was not exported as ${format.toUpperCase()}${detail ? `: ${detail}` : ""}`);
+    }
+    void exportToast(out, this.log);
+    return out;
+  }
+
+  /** Protoboard: Export… from the Command Palette: the format, then the same export as the toolbar's button. */
+  private async exportFromPalette(format?: unknown): Promise<string | undefined> {
+    const editor = this.viewers.focused;
+    if (!editor) throw new Error("Open a Protoboard viewer tab first: an export is of the view or the part it shows.");
+    const formats: ExportFormat[] = ["png", "step", "stl", "glb"];
+    let chosen = formats.find((f) => f === format);
+    if (!chosen) {
+      const pick = await vscode.window.showQuickPick(
+        [
+          { label: "PNG", description: "a picture of the 3D view as it is", id: "png" as const },
+          { label: "STEP", description: `the model of ${editor.module || "the part"}`, id: "step" as const },
+          { label: "STL", description: "for a slicer", id: "stl" as const },
+          { label: "GLB", description: "glTF, metres, Y up", id: "glb" as const },
+        ],
+        { title: `Export to ${exportFolder()}` },
+      );
+      chosen = pick?.id;
+    }
+    return chosen ? this.exportFromTab(editor, chosen) : undefined;
   }
 
   /**

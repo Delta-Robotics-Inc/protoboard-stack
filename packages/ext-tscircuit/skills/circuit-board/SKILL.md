@@ -125,7 +125,11 @@ silent hand edit. When the stack can do it upstream, move it there.
   needs doing at all for this board.
 - **No placeholder CAD.** Never make a placeholder land pattern, CAD or 3D
   model from a datasheet while the part's UHD artifacts or its JLC/LCSC
-  source has one. When no source has one, ask the person first.
+  source has one. When no source has one, ask the person first. A component
+  with no body is not yours to fill: a placeholder is the build's own amber
+  box, which the model resolver draws for a part with no model at any tier
+  and flags (`PB_MODEL_MISSING`); look for a source first (`protoboard parts
+  models`, `parts fetch`, `parts import`).
 
 ### 1. Model the board
 

@@ -19,8 +19,8 @@ inputs:
     default: v0.3.1
   uhd-viewer-ref:
     description: The Delta-Robotics-Inc/uhd-viewer tag (or commit) to build against
-    # the 0.2.1 release: the floating hierarchy, Harnesses & links, the legend at the bottom right
-    default: v0.2.1
+    # the CAD viewer overhaul (uhd-viewer PR #14, branch kevin/cad-viewer-phase1); replace with its release tag once #14 merges and is tagged
+    default: 09ddfbd9a1180a77734c1b3314fd36978b7a0b00
 
 runs:
   using: composite

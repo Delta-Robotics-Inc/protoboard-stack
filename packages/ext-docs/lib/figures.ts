@@ -5,11 +5,13 @@
  * parts ranked by where they sit on the joint (the fastenerStack positions and
  * the mate gaps), so the exploded order is the stacking order.
  */
+import { existsSync, readFileSync } from "fs";
+import { join } from "path";
 import type { InterfaceDef, ModuleDef } from "@deltarobotics/uhd";
 import { applyMat4, bodyKey, IDENTITY, type MateEdge } from "@deltarobotics/uhd";
 import type { RenderBody, RenderSpec } from "./render/renderer.ts";
 import { matTranslation, offsetMatrix, worldFrame, type SceneBody, type SceneModel } from "./model.ts";
-import type { CameraSpec } from "./types.ts";
+import type { CameraSpec, StepGroupSpec } from "./types.ts";
 
 export const ISO: number[] = [1, -1.18, 0.82];
 
@@ -192,4 +194,55 @@ export function interfaceAnchor(scene: SceneModel, spec: string): { p: number[];
     return { p: applyMat4(b.matrix, frame.origin), body: b, iface };
   }
   return undefined;
+}
+
+// ---------------------------------------------------------------------------
+// The assembly sequence (PB-1183): the build's `.protoboard/build/sequence.json`, the same step list the 3D viewer
+// plays. Read structurally (no import of the generator): ext-docs only needs each step's links and harness.
+// ---------------------------------------------------------------------------
+
+/** What the docs read of a sequence file (`protoboard.sequence/v0`, @protoboardai/core `sequence/types.ts`). */
+export interface SequenceSteps {
+  schema: string;
+  main: string;
+  sequences: { id: string; steps: { id: string; title: string; kind: string; links?: string[]; harness?: string; sequence?: string }[] }[];
+}
+
+/** The project's built sequence, when the build wrote one (undefined otherwise, or when it is not a sequence file). */
+export function readSequence(root: string): SequenceSteps | undefined {
+  const file = join(root, ".protoboard", "build", "sequence.json");
+  if (!existsSync(file)) return undefined;
+  try {
+    const s = JSON.parse(readFileSync(file, "utf8")) as SequenceSteps;
+    return s.schema === "protoboard.sequence/v0" && Array.isArray(s.sequences) ? s : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Every mate link the sequence makes, with its harness, in the order the sequence first names it (all nested sequences). */
+export function sequenceLinks(seq: SequenceSteps): Map<string, string | undefined> {
+  const out = new Map<string, string | undefined>();
+  for (const s of seq.sequences) for (const step of s.steps) for (const l of step.links ?? []) if (!out.has(l)) out.set(l, step.harness);
+  return out;
+}
+
+/**
+ * The automatic step groups for the mates a doc spec leaves out, read from the
+ * sequence: one group per harness (the link itself when it has none), in the
+ * mates' own order, ids and titles as `planSteps` makes them. Used only where
+ * the sequence is a strict superset of those mates with the same harnesses;
+ * undefined otherwise, so the caller keeps its own grouping (an out-of-date
+ * sequence never changes a document).
+ */
+export function autoStepsFromSequence(seq: SequenceSteps | undefined, leftMates: readonly MateEdge[]): StepGroupSpec[] | undefined {
+  if (!seq) return undefined;
+  const links = sequenceLinks(seq);
+  if (leftMates.some((m) => !links.has(m.linkId) || links.get(m.linkId) !== m.harness)) return undefined;
+  const byHarness = new Map<string, string[]>();
+  for (const m of leftMates) {
+    const h = links.get(m.linkId) ?? m.linkId;
+    byHarness.set(h, [...(byHarness.get(h) ?? []), m.linkId]);
+  }
+  return [...byHarness].map(([h, ids]) => ({ id: `auto-${h.replace(/[^A-Za-z0-9_-]+/g, "-")}`, title: `Assemble ${h}`, mates: ids }));
 }

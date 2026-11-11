@@ -12,16 +12,19 @@
 import type { Severity } from "./check.js";
 import type { Finding } from "./drc.js";
 import { linkFromViewer, localLinkId, viewerMessages, type ProjectIndex } from "./model.js";
+import type { ViewerCommand as HostToViewer } from "../../web-viewer/src/vscode/protocol.js";
 import { TIER_LABEL, type ExplorerNode, type NodeKind } from "./tree.js";
 import { BLANK_BLOCK_TEXT, PART_TRUST_TEXT, partTrustTooltip, type PartTrust } from "@protoboardai/views/part-status";
 import { definitionSource } from "./source.js";
-import type { InspectorCard as Card, InspectorChip, InspectorContent as PageContent, InspectorDetails, InspectorFinding, InspectorRow } from "@protoboardai/views/inspector-model";
+import type { InspectorArtifact, InspectorCard as Card, InspectorChip, InspectorContent as PageContent, InspectorDetails, InspectorFinding, InspectorRow } from "@protoboardai/views/inspector-model";
 import { partSync, rev } from "./libraryModel.js";
 import { money, type CostLine } from "./cost.js";
+import { humanId, humanLinkName, shortName, type LinkEnd } from "@protoboardai/core/findings-text";
 
 export type { InspectorChip, InspectorDetails, InspectorRow };
 /** The card on the extension's side: its files are paths on disk. */
 export type InspectorCard = Card<string>;
+type InspectorArtifactCard = InspectorArtifact<string>;
 
 /** What the view shows: a card (with the build's bundle, for its details), or why there is none. Files are paths on disk. */
 export type InspectorContent = { card: InspectorCard; project: string; bundle?: { file: string; version: string } } | { empty: string; project?: string };
@@ -46,6 +49,7 @@ export function pageContent(c: InspectorContent, url: (file: string) => string):
       ...card,
       ...(card.details ? { details: withUrls(card.details, url) } : {}),
       ...(card.artifacts ? { artifacts: card.artifacts.map((a) => (a.preview ? { ...a, preview: { ...a.preview, src: url(a.preview.src) } } : a)) } : {}),
+      ...(card.threeD ? { threeD: card.threeD.map((a) => (a.preview ? { ...a, preview: { ...a.preview, src: url(a.preview.src) } } : a)) } : {}),
     },
     ...(bundle ? { bundle: { src: url(bundle.file), version: bundle.version } } : {}),
   };
@@ -201,9 +205,128 @@ const countOf = (list: Finding[]) => ({
   info: list.filter((f) => f.severity === "info").length,
 });
 
-/** Findings as the Checks section's rows (design A): every severity, the worst first, each with its code under its message. */
+/** A cell of the codes reference as plain text: its escaped bars and line breaks undone. */
+const referenceText = (t: string | undefined) => (t ? t.replace(/\\\|/g, "|").replace(/<br\s*\/?>/gi, "\n").trim() : undefined);
+
+/**
+ * Findings as the Checks section's rows (design A): every severity, the worst first, each with its code under its
+ * message. A click shows the finding on the model (D7); its explanation opens under the row (what it means, what to
+ * do, the whole message), not in a tab of its own.
+ */
 function findingRows(list: Finding[]): { rows: InspectorRow[] } {
-  return { rows: list.map((f) => ({ icon: f.severity === "error" ? "circle-x" : f.severity === "warning" ? "triangle-alert" : "info", label: f.summary, code: f.code, tone: f.severity, action: { type: "finding", key: f.key } })) };
+  return {
+    rows: list.map((f) => {
+      const means = referenceText(f.means);
+      const todo = referenceText(f.todo);
+      // plain words for people first (wave R2, D3: the title, its sentence under it); the raw message stays in the
+      // explanation ("This finding"), the code under the row
+      const label = f.title ?? f.summary;
+      const detail = f.plain && f.plain !== label ? f.plain : undefined;
+      return {
+        icon: f.severity === "error" ? "circle-x" : f.severity === "warning" ? "triangle-alert" : "info",
+        label,
+        ...(detail ? { detail } : {}),
+        code: f.code,
+        tone: f.severity,
+        action: { type: "finding", key: f.key },
+        explain: { severity: f.severity, validator: f.validator, ...(means ? { means } : {}), ...(todo ? { todo } : {}), ...(f.message.trim() !== (detail ?? label).trim() ? { message: f.message } : {}), page: !!f.reference },
+      };
+    }),
+  };
+}
+
+/**
+ * The module a viewer's selection is about, as the hierarchy names it (M2): the component picked inside a body
+ * first (a board's part, not the board), then the selection's own id; an id the build does not know is tried under
+ * its holder (an older viewer named a component by its id in the body) and without a `#artifact` suffix; else the
+ * nearest module above it that the build knows. Undefined when nothing applies (the tab's level is shown then).
+ */
+export function selectionPath(sel: { id: string; component?: string; holder?: string } | null | undefined, has: (path: string) => boolean): string | undefined {
+  if (!sel) return undefined;
+  const tries: string[] = [];
+  const add = (p: string | undefined) => {
+    if (p !== undefined && !tries.includes(p)) tries.push(p);
+  };
+  add(sel.component);
+  add(sel.id);
+  const bare = sel.id.split("#")[0];
+  add(bare);
+  if (sel.holder !== undefined && bare !== sel.holder && !bare.startsWith(`${sel.holder}/`)) add(sel.holder ? `${sel.holder}/${bare}` : bare);
+  for (const p of tries) if (has(p)) return p;
+  // the nearest known module above what was picked (never the root: the tab's level says that already)
+  for (const p of tries)
+    for (let at = p.lastIndexOf("/"); at > 0; at = p.lastIndexOf("/", at - 1)) {
+      const up = p.slice(0, at);
+      if (has(up)) return up;
+    }
+  return undefined;
+}
+
+/** The 3D view's id of a finding (uhd-viewer findings-anchors.ts: `drc:<code>:<entity kind>:<entity id>`). */
+export const viewerFindingId = (f: Pick<Finding, "code" | "entity">) => `drc:${f.code}:${f.entity?.kind ?? "none"}:${f.entity?.id ?? ""}`;
+
+/**
+ * What a click on a finding's row sends the project's viewer tab (D7): on the diagram, its module or its link as
+ * before; in the 3D view, the module it names (a link's first end that is a module: a link is not drawn there) is
+ * selected and framed, and the finding's callout is pinned open (`uhd-viewer:openFinding`; a viewer without it
+ * ignores it and the focus still shows the part).
+ */
+export function findingMessages(index: ProjectIndex, f: Finding, view: string | undefined): HostToViewer[] {
+  const t = f.target;
+  if (t.path === undefined) return [];
+  if (view !== "3d") return viewerMessages({ ...t, path: t.path });
+  let path: string = t.path;
+  if (t.linkId) {
+    const link = index.links.get(t.linkId);
+    const ends = link ? [link.a, link.b].map((ref) => (ref.includes(":") ? ref.slice(0, ref.lastIndexOf(":")) : ref)).map((m) => (link.owner ? `${link.owner}/${m}` : m)) : [];
+    path = ends.find((p) => index.instances.has(p)) ?? t.path;
+  }
+  return [
+    { type: "uhd-viewer:focus", path },
+    { type: "uhd-viewer:openFinding", id: viewerFindingId(f), code: f.code, path },
+  ];
+}
+
+/** Whether a definition has a body model of its own (a GLB or STEP that is not an interface's geometry). */
+export function hasOwnModel(index: ProjectIndex, defId: string | undefined): boolean {
+  if (!defId) return false;
+  return (index.artifacts.get(defId) ?? []).some((a) => {
+    if (a.present !== true || a.role === "interface") return false;
+    const format = (a.format ?? (a.resolved ?? a.filePath ?? "").split(".").pop() ?? "").toLowerCase();
+    return ["glb", "gltf", "step", "stp"].includes(format);
+  });
+}
+
+/**
+ * The module whose body draws a module that has no body of its own (F5): the nearest module above it with a body
+ * model (a board's GLB holds its parts). Undefined for the root, and when nothing above has a model.
+ */
+export function holderOf(index: ProjectIndex, path: string): string | undefined {
+  if (!path) return undefined;
+  for (let at = path.lastIndexOf("/"); at > 0; at = path.lastIndexOf("/", at - 1)) {
+    const up = path.slice(0, at);
+    if (hasOwnModel(index, index.instances.get(up)?.definition)) return up;
+  }
+  return undefined;
+}
+
+/** The ids of the 3D cards (F5): the part where its holder draws it, or its own model on its own. */
+export const THREE_D_HOLDER = "3d:holder";
+export const THREE_D_OWN = "3d:own";
+
+/**
+ * A board part's 3D cards (F5, walkthrough 19:30): the part is drawn inside its board's model, so its card offers
+ * the board's 3D view with the part selected and framed; a part with a STEP or GLB of its own offers that model as
+ * well. None for a module that is not drawn inside another's body (its own model's cards are its artifacts).
+ */
+export function threeDCards(index: ProjectIndex, node: Pick<ExplorerNode, "path" | "defId">): InspectorArtifactCard[] {
+  const holder = holderOf(index, node.path);
+  if (!holder) return [];
+  const inst = index.instances.get(holder);
+  const name = inst?.name ?? index.defs.get(inst?.definition ?? "")?.name ?? holder;
+  const cards: InspectorArtifactCard[] = [{ defId: node.defId ?? "", artifactId: THREE_D_HOLDER, title: `In ${name}`, kindLabel: "3D view", source: holder, icon: "rotate-3d" }];
+  if (hasOwnModel(index, node.defId)) cards.push({ defId: node.defId ?? "", artifactId: THREE_D_OWN, title: "Its own 3D model", kindLabel: "3D model", source: node.defId, icon: "box" });
+  return cards;
 }
 
 /** The Checks section: every finding here and below, the worst first; the count is all of them. */
@@ -231,7 +354,7 @@ export function interfaceFindings(findings: Finding[], path: string): InspectorF
       refs.push(viewerLinkId(t.path ?? "", t.linkId));
       if (t.derivedId) refs.push(viewerLinkId(t.path ?? "", t.derivedId));
     } else if (!t.linkId && t.label.includes(":") && inside(t.label.slice(0, t.label.lastIndexOf(":")))) refs.push(t.label);
-    return refs.length ? [{ key: f.key, code: f.code, message: f.summary, severity: f.severity, refs }] : [];
+    return refs.length ? [{ key: f.key, code: f.code, message: f.plain ?? f.summary, ...(f.title ? { title: f.title } : {}), severity: f.severity, refs }] : [];
   });
 }
 
@@ -389,7 +512,8 @@ export function moduleCard(
       title: "Links",
       count: links.length,
       collapsed: true,
-      ...cut(links.map<InspectorRow>((l) => ({ icon: "link", label: names.get(localLinkId(l)) ?? localLinkId(l), detail: `${l.a} ↔ ${l.b}` }))),
+      // named for people (D7): "12 V barrel plug (12 V 3 A wall adapter) to 12 V DC jack (Mainboard B1_4)"; the ids on hover
+      ...cut(links.map<InspectorRow>((l) => ({ icon: "link", label: linkName(index, l, names.get(localLinkId(l))), hint: `${localLinkId(l)}: ${l.a} ↔ ${l.b}` }))),
     });
   }
   const sourcing = sourcingOf(cost, node.path);
@@ -409,12 +533,36 @@ export function moduleCard(
     // what Open source opens: the action is drawn with the file's name (D7: it is the way to the code)
     ...(node.defId && moduleSourceFile(index, node) ? { source: moduleSourceFile(index, node)! } : {}),
     path: node.path,
+    // a board's part (F5): where its board draws it, and its own model when it has one
+    ...(() => {
+      const threeD = level ? [] : threeDCards(index, node);
+      return threeD.length ? { threeD } : {};
+    })(),
     // the module as the viewer's inspector shows it; without a bundle there is nothing to show it from
     ...(index.bundle && bdef
       ? { details: { target: { kind: "module", path: node.path }, artifactsOf: bdef.id, ...files, links: [...(files.links ?? []), ...interfaceSourceLinks(index, node.defId)], findings: interfaceFindings(findings, node.path) } }
       : {}),
   };
 }
+
+/**
+ * One end of a link named for a person (D7): its interface's name (without a trailing parenthetical) and the name of
+ * the module that holds it, from the build's definitions; the ids in words when a name is missing.
+ */
+export function linkEnd(index: ProjectIndex, owner: string, ref: string): LinkEnd {
+  const at = ref.lastIndexOf(":");
+  const mod = at >= 0 ? ref.slice(0, at) : ref;
+  const id = at >= 0 ? ref.slice(at + 1) : "";
+  const inst = index.instances.get(owner ? `${owner}/${mod}` : mod);
+  const def = inst ? index.bundleDefs.get(inst.definition) : undefined;
+  const holder = shortName(inst?.name ?? def?.name ?? index.defs.get(inst?.definition ?? "")?.name) ?? humanId(mod);
+  const iface = shortName(def?.interfaces?.find((i) => i.id === id)?.name ?? def?.exports?.find((e) => e.id === id)?.name) ?? humanId(id || mod);
+  return { iface, holder };
+}
+
+/** A link named for a person (D7, core `humanLinkName`): "<name> (<holder>) to <interface> (<holder>)". */
+export const linkName = (index: ProjectIndex, l: { owner: string; a: string; b: string }, name?: string): string =>
+  humanLinkName({ name, a: linkEnd(index, l.owner, l.a), b: linkEnd(index, l.owner, l.b) });
 
 /** The card for a link the viewer selected (by its canonical id), or undefined when it is not one of the build's links. */
 /**
@@ -468,14 +616,17 @@ export function linkCard(index: ProjectIndex, viewerId: string, findings: Findin
   const end = (ref: string): InspectorRow => {
     const [mod, iface] = ref.includes(":") ? [ref.slice(0, ref.lastIndexOf(":")), ref.slice(ref.lastIndexOf(":") + 1)] : [ref, ""];
     const path = link.owner ? `${link.owner}/${mod}` : mod;
-    return { icon: "plug", label: iface || ref, detail: mod, action: index.instances.has(path) ? { type: "focus", path } : undefined };
+    // named for people (D7), the ids on hover
+    const named = linkEnd(index, link.owner, ref);
+    return { icon: "plug", label: iface ? named.iface : ref, detail: named.holder, hint: ref, action: index.instances.has(path) ? { type: "focus", path } : undefined };
   };
   return {
     kind: "link",
     kindLabel: link.harness ? "Harness link" : "Link",
     icon: link.harness ? "cable" : "link",
-    title: name ?? local,
-    subtitle: `${local}${link.owner ? ` in ${link.owner}` : " in the system"}`,
+    title: name ?? linkName(index, link),
+    // the ends for people (D7), then the id the code uses
+    subtitle: `${name ? `${linkName(index, link, name)} · ` : ""}${local}${link.owner ? ` in ${link.owner}` : " in the system"}`,
     chips: link.harness ? [{ text: `harness ${link.harness}` }] : [],
     counts: countOf(mine),
     sections: [{ title: "Ends", count: 2, rows: [end(link.a), end(link.b)] }, ...checksSection(mine)],
@@ -541,7 +692,9 @@ export function interfaceCard(index: ProjectIndex, node: ExplorerNode, artifacts
         const other = l.a === ref ? l.b : l.a;
         const mod = other.includes(":") ? other.slice(0, other.lastIndexOf(":")) : other;
         const path = owner ? `${owner}/${mod}` : mod;
-        return { icon: "link", label: other, detail: names.get(localLinkId(l)) ?? localLinkId(l), ...(index.instances.has(path) ? { action: { type: "focus", path } } : {}) };
+        // the other end for people (D7): "<interface> (<holder>)", the link's name beside it, the ids on hover
+        const e = linkEnd(index, owner, other);
+        return { icon: "link", label: `${e.iface} (${e.holder})`, detail: names.get(localLinkId(l)) ?? localLinkId(l), hint: `${other} · ${localLinkId(l)}`, ...(index.instances.has(path) ? { action: { type: "focus", path } } : {}) };
       }),
     });
   }

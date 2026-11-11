@@ -14,14 +14,19 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { z, type ZodRawShape } from "zod";
 import { LIBRARY_SORTS, findProjectRoot, packageRoot } from "@protoboardai/core";
+import { plainFinding } from "@protoboardai/core/findings-text";
 
 /** Whether a project's packages are installed: the framework resolves from it (its own node_modules, or a workspace's further up). */
 const installedIn = (root: string) => !!packageRoot(root, "@protoboardai/core");
 import { DESCRIPTION_LIMIT } from "./instructions.js";
+import { geometryTools, viewTools } from "./view-tools.js";
+import { reportTools } from "./report-tools.js";
+import { settingsTools } from "./settings-tools.js";
 
-/** What a tool hands back: data (sent as JSON text) and whether it is a failure. */
+/** What a tool hands back: data (sent as JSON text), images (base64, only when asked for) and whether it is a failure. */
 export interface ToolOutcome {
   data: unknown;
+  images?: { data: string; mimeType: string }[];
   isError?: boolean;
 }
 
@@ -42,6 +47,8 @@ export interface ToolContext {
   /** The server's own version and instructions. */
   version: string;
   about: string;
+  /** What the connected client calls itself (MCP clientInfo name), for the author of what an agent writes in the view. */
+  clientName?: () => string | undefined;
 }
 
 export interface ToolSpec<S extends ZodRawShape = ZodRawShape> {
@@ -156,6 +163,18 @@ export function compactBom(data: unknown): unknown {
 
 const SEVERITY = ["error", "warning", "info"] as const;
 
+/**
+ * Every tool the server offers: the CLI's commands, then the agent's view tools (PB-1179, ./view-tools.ts),
+ * which talk to the person's live viewer tab or the headless render service instead of running a command.
+ */
+export function protoboardTools(templates: string[]): ToolSpec[] {
+  // W4-D: the exact measurement tier (PB-1187) and issue and feature reports (PB-1197; a draft, shown, then sent only on confirm)
+  // R2-E: the user's settings (settings_get, settings_set)
+  const specs = [...cliTools(templates), ...viewTools(), ...geometryTools(), ...reportTools(), ...settingsTools()];
+  for (const s of specs) if (s.description.length > DESCRIPTION_LIMIT) throw new Error(`the description of ${s.name} is ${s.description.length} characters; clients cut it at ${DESCRIPTION_LIMIT}`);
+  return specs;
+}
+
 export function cliTools(templates: string[]): ToolSpec[] {
   const specs: ToolSpec[] = [
     tool({
@@ -234,15 +253,17 @@ export function cliTools(templates: string[]): ToolSpec[] {
       name: "project_check",
       title: "Check the project",
       description:
-        "Resolves the project and runs every available validator (`protoboard check`). Returns the validators that ran or were skipped, the diagnostics at or above `severity` (default warning) with their code, message and source location, and the counts of all of them. `ok` is false when there are errors. Run it before and after every change. A passing check validates the model only; it does not establish physical readiness. Reads only.",
+        "Resolves the project and runs every available validator (`protoboard check`). Returns the validators that ran or were skipped, the diagnostics at or above `severity` (default warning) with their code, message, title, summary and source location, and the counts of all of them. `message` is the raw detail for you; `title` (at most 60 characters) and `summary` (one sentence, at most 160) are plain words for people, with the parts and links by their human names: when you tell a person about a finding, start from them and rewrite the summary for that person if it helps; never drop the code. `ok` is false when there are errors. When the project patches its assembly sequence (src/assembly.uhd.ts `sequencePatches`, src/assembly.sequence.json), an unknown step, member or sequence id is a SEQUENCE_PATCH_* warning (validator protoboard/sequence). Run it before and after every change. A passing check validates the model only; it does not establish physical readiness. Reads only.",
       input: { dir: DIR, severity: z.enum(SEVERITY).optional().describe("The lowest severity to return: error, warning (default) or info.") },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       async handler({ dir: given, severity }, ctx) {
         const dir = await ctx.dir(given);
         const rank = SEVERITY.indexOf(severity ?? "warning");
         return command(ctx, dir, cliArgs(["check"]), (data) => {
-          const d = data as { checks?: unknown; diagnostics?: { severity: (typeof SEVERITY)[number] }[] };
-          const all = d.diagnostics ?? [];
+          const d = data as { checks?: unknown; diagnostics?: { severity: (typeof SEVERITY)[number]; code: string; message: string; title?: string; summary?: string }[] };
+          // plain words for people (wave R2, D3): a finding the CLI wrote without them (added after loading, or an
+          // older CLI) gets them here, worded from its code and message alone
+          const all = (d.diagnostics ?? []).map((x) => (typeof x.title === "string" && typeof x.summary === "string" ? x : { ...x, ...plainFinding(x) }));
           const counts = Object.fromEntries(SEVERITY.map((s) => [s, all.filter((x) => x.severity === s).length]));
           const shown = all.filter((x) => SEVERITY.indexOf(x.severity) <= rank);
           return { ok: !counts.error, counts, checks: d.checks, diagnostics: shown, ...(shown.length < all.length ? { notShown: `${all.length - shown.length} below ${severity ?? "warning"}; pass severity: "info" for all` } : {}) };
@@ -262,7 +283,7 @@ export function cliTools(templates: string[]): ToolSpec[] {
       name: "project_build",
       title: "Build the project",
       description:
-        "Writes the resolved project and the UHD bundle the viewer reads (`protoboard build`). CHANGES FILES: only derived data under .protoboard/build/ in the project, which is rebuilt from the sources every time and is not committed. Returns the files written and the diagnostic counts. Publishes nothing.",
+        "Writes the resolved project and the UHD bundle the viewer reads (`protoboard build`). CHANGES FILES: only derived data under .protoboard/build/ in the project, which is rebuilt from the sources every time and is not committed: resolved.json with the model table (the body file, sha256, trust tier and provenance the one model resolver chose for every drawn instance) and an amber placeholder box for each part with no model at any tier. Also writes view sidecars beside every body GLB (X.view.glb, X.view.coarse.glb, X.view.json: merged, instanced, compressed copies the 3D view loads; X.glb is unchanged), next to the GLBs (in out/ folders and parts/catalog, not only under .protoboard/build/; derived and not committed), and reports the pre-flight draw-call and triangle counts of one 3D frame before and after (`view.line`). Also writes .protoboard/build/sequence.json: the assembly sequence (fit and fasten steps from the mates and fastener stacks, patched by src/assembly.uhd.ts `sequencePatches` or src/assembly.sequence.json), which the 3D view plays to explode and assemble (`sequence`: steps, sequences, patch problems). Returns the files written, the diagnostic counts, `models` (how many drawn bodies resolved and how many are placeholders) and `view`. Offline; publishes nothing.",
       input: { dir: DIR },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       handler: async ({ dir }, ctx) => command(ctx, await ctx.dir(dir), cliArgs(["build"])),
@@ -333,6 +354,70 @@ export function cliTools(templates: string[]): ToolSpec[] {
       input: { dir: DIR, checkUpdates: z.boolean().optional().describe("Ask the libraries for updates (network).") },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       handler: async ({ dir, checkUpdates }, ctx) => command(ctx, await ctx.dir(dir), cliArgs(["parts", "list", ...(checkUpdates ? ["--check"] : [])])),
+    }),
+    tool({
+      name: "parts_models",
+      title: "List the body models the resolver chose",
+      description:
+        "The one model resolver's table (`protoboard parts models`): for every instance drawn as a body, the file used, its sha256, its trust tier (M1 a verified library body ... M6 parametric, M7 hand-modelled, M8 placeholder; `design` for a designed module's own generated body) and where it came from (artifact, provider output, a fetched vendor file, the machine cache, or a placeholder). `instance` narrows it to one instance and what it holds (a board's components, with the board STEP node that draws each when the board was imported). Before modelling a body, look here and at `PB_MODEL_MISSING` in project_check: reuse a source; never make placeholder CAD when one exists. Offline. Reads only.",
+      input: { dir: DIR, instance: z.string().optional().describe("An instance path (board, arm_fl/motor); left out: every drawn body.") },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async ({ dir, instance }, ctx) => command(ctx, await ctx.dir(dir), cliArgs(["parts", "models"], {}, instance ? [instance] : [])),
+    }),
+    tool({
+      name: "parts_import",
+      title: "Use an existing CAD file as a module's body",
+      description:
+        "Records an existing CAD file (STEP, STL or 3MF, inside the project) as a module's body (`protoboard parts import <file> --part <id>`): parts/sources.json gets the file with provenance imported and its sha256, the module is bound to ext-parts' cad capability with constraints.import (no hand-written script), then cad:generate and cad:export write out/body.step, body.glb and body.manifest.json (needs the CAD runtime). For a board's ECAD STEP (`board: true`, or a module with children) it also maps each component node of the STEP to its instance by designator, then by LCSC C-number, for the model table. An existing cad.config.ts is kept unless `replace` is true. CHANGES FILES: parts/sources.json, the module's cad.config.ts, part-cad/source.json and out/. Offline.",
+      input: {
+        dir: DIR,
+        file: z.string().describe("The CAD file, relative to the project (cad/plate.step)."),
+        part: z.string().describe("The module or part id whose body it is."),
+        board: z.boolean().optional().describe("Map a board STEP's component nodes onto the board's instances."),
+        replace: z.boolean().optional().describe("Replace an existing cad.config.ts binding with the import."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      async handler({ dir: given, file, part, board, replace }, ctx) {
+        const dir = await ctx.dir(given);
+        // importing a large board STEP takes minutes (ClientX's 148 MB: about 192 s)
+        const r = readCliJson(await ctx.cli(dir, cliArgs(["parts", "import", ...(board ? ["--board"] : []), ...(replace ? ["--replace"] : [])], { part }, [file]), { timeoutMs: 25 * 60 * 1000 }));
+        return r.ok ? { data: r.data } : failure(r.message, dir, r.code);
+      },
+    }),
+    tool({
+      name: "telemetry_export",
+      title: "Export the local crash and performance records",
+      description:
+        "The redacted local crash and performance records of this project (.protoboard/local/telemetry/) as the exact bundle a report would carry, plus its sha256. Show it to the person. Only after they approve that bundle, call again with send: true and confirm: true; in this release send is a stub that records the consent and sends nothing. Writes the bundle file (and, with confirm, one consent line) under .protoboard/local/telemetry/.",
+      input: {
+        dir: DIR,
+        send: z.boolean().optional().describe("Go on to send the bundle (needs confirm: true; a stub in this release)."),
+        confirm: z.boolean().optional().describe("The person saw this bundle and agreed to send it."),
+        days: z.number().optional().describe("Only records from the last n days."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+      async handler({ dir: given, send, confirm, days }, ctx) {
+        const dir = await ctx.dir(given);
+        const root = findProjectRoot(dir);
+        if (!root) return failure("not a protoboard project (no protoboard.config.ts)", dir);
+        try {
+          const { telemetryExport } = await import("../telemetry.js");
+          const r = telemetryExport({ root, send, confirm, days });
+          return {
+            data: {
+              sha256: r.sha256,
+              file: r.file,
+              sent: r.sent,
+              note: r.note,
+              bundle: r.bundle,
+              ...(r.request ? { request: { method: r.request.method, url: r.request.url, headers: r.request.headers } } : {}),
+              ...(r.consent ? { consent: r.consent } : {}),
+            },
+          };
+        } catch (e) {
+          return { data: { message: (e as Error).message }, isError: true };
+        }
+      },
     }),
     tool({
       name: "skills_list",

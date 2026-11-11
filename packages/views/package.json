@@ -44,7 +44,7 @@
     "@deltarobotics/uhd": ">=0.3.0",
     "@protoboardai/core": "^0.3.0",
     "react": "^19.0.0",
-    "three": ">=0.170.0"
+    "three": ">=0.187.0"
   },
   "keywords": [
     "protoboard",
