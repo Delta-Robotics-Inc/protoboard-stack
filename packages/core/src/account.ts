@@ -414,7 +414,11 @@ export function jwtClaims(token: string): Record<string, unknown> {
 /** Trade a Firebase custom token (device sign-in) for an ID token and a refresh token. */
 export async function signInWithCustomToken(info: { apiKey: string; emulator?: string }, customToken: string, doFetch: typeof fetch = fetch): Promise<{ idToken: string; refreshToken: string; expiresIn: number }> {
   const res = await doFetch(authEndpoints(info).customToken, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token: customToken, returnSecureToken: true }) });
-  const body = (await res.json().catch(() => ({}))) as { idToken?: string; refreshToken?: string; expiresIn?: string; error?: { message?: string } };
+  // an accepted trade whose answer was cut short did not get through: the caller may make it again
+  const body = ((await res.json().catch(() => {
+    if (res.ok) throw new AccountError("UNREACHABLE", "Firebase Auth's answer was cut short");
+    return {};
+  })) ?? {}) as { idToken?: string; refreshToken?: string; expiresIn?: string; error?: { message?: string } };
   if (!res.ok || !body.idToken || !body.refreshToken) throw new AccountError("SIGN_IN_FAILED", `Firebase Auth refused the sign-in (${body.error?.message ?? res.status})`);
   return { idToken: body.idToken, refreshToken: body.refreshToken, expiresIn: Number(body.expiresIn ?? 3600) };
 }
