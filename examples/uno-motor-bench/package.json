@@ -8,7 +8,7 @@
     "inspect": "protoboard inspect"
   },
   "dependencies": {
-    "@deltarobotics/uhd": "0.3.0",
+    "@deltarobotics/uhd": "0.3.1",
     "@protoboardai/core": "^0.2.0",
     "@protoboardai/ext-hardware": "^0.2.0"
   },

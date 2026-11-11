@@ -43,7 +43,7 @@ cloud client is a package of this repository.
 | --- | --- | --- |
 | Linux | `ubuntu-latest` | type-check; the lints (brand spelling, npm scope, licence files, nothing presents the older web app); every test; the eval cases with the scripted host (their summary goes to the run's Summary); `check` and `build` on every example |
 | macOS | `macos-latest` | the probe of what the Mac gives the stack (`scripts/macos/probe.mjs`); the tests of what differs on a Mac (viewer connection, Python selection, browser lookup, dev server, the agents' set-up, `protoboard setup`); every template in a path with spaces; the quadcopter example; the extension's integration test in VS Code stable |
-| Windows | `windows-latest` | the CLI from Git Bash and PowerShell; the sign-in link's opener and the PATH entry; re-linking a project to another stack copy through junctions, and the terminal's command; every template in a path with spaces, from both shells; the quadcopter example. The integration test and, on `main` and by hand, the whole suite run and report without failing the job (below) |
+| Windows | `windows-latest` | the CLI from Git Bash and PowerShell; the sign-in link's opener and the PATH entry; re-linking a project to another stack copy through junctions, and the terminal's command; every template in a path with spaces, from both shells; the quadcopter example, also checked as a process that cannot make symbolic links (below). The integration test and, on `main` and by hand, the whole suite run and report without failing the job (below) |
 
 Run by hand with `cad` (Actions, CI, Run workflow) to add the Python CAD
 steps: build123d installed, the CAD generator tests, `tools install cad` and
@@ -82,6 +82,23 @@ What the Windows job has found, and what is still open:
 Passing on Windows: the installs and builds, the CLI from Git Bash and
 PowerShell, the sign-in link's opener and the PATH entry, every template in
 a path with spaces from both shells, and the quadcopter example.
+
+**As a standard user.** The runner's processes are elevated and the image has
+Developer Mode on; most people's machines have neither, so a step that needs
+a privilege a standard user does not hold passes in CI and fails for them.
+That happened with UHD 0.3.0: `check` evaluates the source that parts carry
+in a confined child process, which linked the UHD package with a symbolic
+link, and a standard user got `EPERM: operation not permitted, symlink` on
+the quadcopter example while this job was green (fixed in UHD 0.3.1, which
+makes a junction). The step "check (the quadcopter example) as a process
+that cannot make symbolic links" runs `protoboard check` through
+`scripts/windows/as-standard-user.ps1`, which removes
+`SeCreateSymbolicLinkPrivilege` from its own token (the command inherits
+that), turns Developer Mode off while the command runs and puts it back,
+and first proves that Node.js is refused a symbolic link: when it is not,
+the script exits 2 without running anything. It covers that one privilege,
+not everything that differs for a standard user (the process still writes
+where an administrator may).
 
 **Reading a run.** The job's page lists the steps; a red one is where to
 look. The whole suite's step never turns the run red: its result is in the
