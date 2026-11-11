@@ -2035,7 +2035,9 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
         service,
         {
           write: (text) => void process.stderr.write(text),
-          emit: (event) => void process.stdout.write(JSON.stringify(event) + "\n"),
+          // events are lines on stdout only for a program that asked to read them (--wait --format json); with
+          // --format json alone stdout is one document, the result, and the link goes where a person reads it
+          emit: (event) => void (lines ? process.stdout : process.stderr).write(JSON.stringify(event) + "\n"),
           input: process.stdin,
           interactive: atTerminal,
           open: (url) => openUrl(url),
