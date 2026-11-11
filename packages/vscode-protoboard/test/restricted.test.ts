@@ -14,6 +14,8 @@ const said: string[] = [];
 let grant: (() => void) | undefined;
 let tabs: { label: string; input: unknown }[] = [];
 const closed: unknown[] = [];
+const panels: { type: string; title: string; show: { preserveFocus?: boolean }; options: { enableScripts?: boolean; enableCommandUris?: readonly string[]; localResourceRoots?: unknown[] }; webview: { html: string }; iconPath?: unknown; open: boolean; dispose(): void }[] = [];
+let failPanel = false;
 let trustedFolders: { uri: { scheme: string; fsPath: string } }[] = [];
 
 vi.mock("vscode", () => {
@@ -28,6 +30,8 @@ vi.mock("vscode", () => {
   }
   return {
     Disposable,
+    ViewColumn: { Active: -1 },
+    Uri: { joinPath: (base: string, ...parts: string[]) => [base, ...parts].join("/") },
     window: {
       tabGroups: {
         get all() {
@@ -38,6 +42,12 @@ vi.mock("vscode", () => {
       showInformationMessage: (m: string) => {
         said.push(m);
         return Promise.resolve(undefined);
+      },
+      createWebviewPanel: (type: string, title: string, show: { preserveFocus?: boolean }, options: object) => {
+        if (failPanel) throw new Error("no webview here");
+        const panel = { type, title, show, options, webview: { html: "" }, open: true, dispose: () => void (panel.open = false) };
+        panels.push(panel);
+        return panel;
       },
       registerTreeDataProvider: (id: string) => {
         trees.push(id);
@@ -65,10 +75,10 @@ vi.mock("vscode", () => {
 });
 const commands: Record<string, () => void> = {};
 
-const { TRUST_ACTION, TRUST_COMMAND, UNLISTED_COMMANDS, activateRestricted, contributedCommands } = await import("../src/restricted.js");
+const { RESTRICTED_PANEL, TRUST_ACTION, TRUST_COMMAND, UNLISTED_COMMANDS, activateRestricted, contributedCommands } = await import("../src/restricted.js");
 const src = (f: string) => readFileSync(fileURLToPath(new URL(`../${f}`, import.meta.url)), "utf8");
 const pkg = JSON.parse(src("package.json"));
-const context = () => ({ extension: { packageJSON: pkg }, subscriptions: [] as { dispose(): void }[] });
+const context = () => ({ extension: { packageJSON: pkg }, extensionUri: "ext", subscriptions: [] as { dispose(): void }[] });
 const VIEWS = ["protoboard.start.library", "protoboard.start.parts", "protoboard.start.cloud", "protoboard.start.inspector"];
 
 describe("in a folder that is not trusted", () => {
@@ -98,7 +108,8 @@ describe("in a folder that is not trusted", () => {
     expect(ext).toMatch(/const begin = \(\) => \{[^}]*cad = CadEditorProvider\.register\(context\);\s*instance = new ProtoboardExtension\(context\);\s*\};/);
     // what stands in for it can reach no CLI, dev server or project file: it imports none of that
     const imports = [...src("src/restricted.ts").matchAll(/^import .* from "([^"]+)";$/gm)].map((m) => m[1]);
-    expect(imports.sort()).toEqual(["./startPage.js", "node:fs", "node:path", "vscode"]);
+    expect(imports.sort()).toEqual(["./html.js", "./startPage.js", "node:fs", "node:path", "vscode"]);
+    expect([...src("src/html.ts").matchAll(/^import .* from "([^"]+)";$/gm)].map((m) => m[1])).toEqual(["node:crypto"]);
     expect([...src("src/startPage.ts").matchAll(/^import .* from "([^"]+)";$/gm)].map((m) => m[1]).sort()).toEqual(["./example.js", "./html.js"]);
   });
 
@@ -133,15 +144,55 @@ describe("in a folder that is not trusted", () => {
     expect(src("src/extension.ts")).toContain("{ commands: helpCommands(), register: registerHelp }");
   });
 
-  it("a Protoboard project in the folder is told once, unasked; any other folder is not", () => {
+  const EXAMPLE_FOLDER = [{ uri: { scheme: "file", fsPath: fileURLToPath(new URL("../../../examples/quadcopter-5in", import.meta.url)) } }];
+
+  it("a Protoboard project in the folder gets a tab that stays, with the line and Trust This Folder; any other folder does not", () => {
     said.length = 0;
-    trustedFolders = [{ uri: { scheme: "file", fsPath: fileURLToPath(new URL("../../../examples/quadcopter-5in", import.meta.url)) } }];
-    activateRestricted(context() as never, VIEWS, () => undefined).dispose();
-    expect(said).toEqual(["Protoboard is off until you trust this folder."]);
-    said.length = 0;
+    panels.length = 0;
+    trustedFolders = EXAMPLE_FOLDER;
+    const handle = activateRestricted(context() as never, VIEWS, () => undefined);
+    expect(panels).toHaveLength(1);
+    const panel = panels[0]!;
+    expect(panel).toMatchObject({ type: RESTRICTED_PANEL, title: "Protoboard", show: { preserveFocus: true }, open: true });
+    // the tab runs no script, loads nothing, and may call one command: VS Code's trust page
+    expect(panel.options).toEqual({ enableScripts: false, enableCommandUris: [TRUST_COMMAND], localResourceRoots: [] });
+    expect(panel.webview.html).toContain("Protoboard is off until you trust this folder.");
+    expect(panel.webview.html).toContain(`<a class="btn" href="command:${TRUST_COMMAND}">${TRUST_ACTION}</a>`);
+    expect(panel.webview.html).not.toContain("<script");
+    // the tab is the unasked prompt: no notification beside it, which would be gone in seconds
+    expect(said).toEqual([]);
+    handle.dispose();
+    expect(panel.open).toBe(false);
+    panels.length = 0;
     trustedFolders = [{ uri: { scheme: "file", fsPath: fileURLToPath(new URL("../src", import.meta.url)) } }];
     activateRestricted(context() as never, VIEWS, () => undefined).dispose();
+    expect(panels).toEqual([]);
     expect(said).toEqual([]);
+  });
+
+  it("the tab closes when the folder is trusted, before Protoboard starts", () => {
+    panels.length = 0;
+    trustedFolders = EXAMPLE_FOLDER;
+    const open: boolean[] = [];
+    activateRestricted(context() as never, VIEWS, () => open.push(panels[0]!.open));
+    expect(panels[0]!.open).toBe(true);
+    grant!();
+    expect(open).toEqual([false]);
+    trustedFolders = [];
+  });
+
+  it("a window that cannot show the tab is told in a notification", () => {
+    said.length = 0;
+    panels.length = 0;
+    trustedFolders = EXAMPLE_FOLDER;
+    failPanel = true;
+    try {
+      activateRestricted(context() as never, VIEWS, () => undefined).dispose();
+    } finally {
+      failPanel = false;
+      trustedFolders = [];
+    }
+    expect(said).toEqual(["Protoboard is off until you trust this folder."]);
   });
 
   it("trusting the folder starts Protoboard once, with no reload, after its stand-ins are gone", () => {

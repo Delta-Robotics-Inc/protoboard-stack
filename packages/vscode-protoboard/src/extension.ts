@@ -1165,8 +1165,9 @@ class ProtoboardExtension {
   /**
    * A project made outside this window's folders (first builds review, item
    * 35): open it, in a new window first, and say what VS Code asks then.
-   * `now`: the caller asked for it to be opened (this window when it holds no
-   * folder, else a new one).
+   * Asked in a dialog, which stays until it is answered (a notification
+   * leaves the screen after some seconds). `now`: the caller asked for it to
+   * be opened (this window when it holds no folder, else a new one).
    */
   private async offerToOpen(dir: string, now = false) {
     const uri = vscode.Uri.file(dir);
@@ -1178,7 +1179,7 @@ class ProtoboardExtension {
       ? none
         ? here
         : fresh
-      : await vscode.window.showInformationMessage(`Protoboard: created ${basename(dir)} in ${dirname(dir)}. Trust the folder when VS Code asks.`, fresh, here, ...(none ? [] : [add]));
+      : await vscode.window.showInformationMessage(`Open ${basename(dir)}?`, { modal: true, detail: `Created in ${dirname(dir)}. Trust the folder when VS Code asks.` }, fresh, here, ...(none ? [] : [add]));
     if (a === add) vscode.workspace.updateWorkspaceFolders(vscode.workspace.workspaceFolders?.length ?? 0, 0, { uri });
     else if (a) await vscode.commands.executeCommand("vscode.openFolder", uri, { forceNewWindow: a === fresh });
   }

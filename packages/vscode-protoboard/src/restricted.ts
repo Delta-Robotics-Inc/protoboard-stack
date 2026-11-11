@@ -3,9 +3,11 @@
  * its code, so in a folder VS Code does not trust it runs nothing: no CLI, no
  * dev server, no check, no stack unpacked, no account asked. What it does do
  * there is say so. Its views carry one line and the way out (VS Code's own
- * trust page), and every Protoboard command answers the same instead of
- * "command not found". When the folder is trusted, the extension starts as in
- * any trusted window, with no reload.
+ * trust page), every Protoboard command answers the same instead of
+ * "command not found", and a folder that holds a Protoboard project gets a
+ * tab with the line and the button where its viewer would be: a notification
+ * leaves the screen after some seconds, the tab stays. When the folder is
+ * trusted, the extension starts as in any trusted window, with no reload.
  *
  * The manifest declares `untrustedWorkspaces.supported: "limited"` for this
  * and nothing more: the settings that name a program to run
@@ -16,7 +18,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import * as vscode from "vscode";
-import { RESTRICTED_LINE } from "./startPage.js";
+import { nonce } from "./html.js";
+import { RESTRICTED_LINE, RESTRICTED_TITLE, restrictedHtml } from "./startPage.js";
 
 /** VS Code's page where a folder is trusted. */
 export const TRUST_COMMAND = "workbench.trust.manage";
@@ -36,6 +39,20 @@ function closeTrustPage(): void {
   if (tabs.length) void vscode.window.tabGroups.close(tabs).then(undefined, () => undefined);
 }
 
+export const RESTRICTED_PANEL = "protoboard.restricted";
+
+/**
+ * The tab of a Restricted Mode window with a Protoboard project in it. It
+ * runs no script and reads nothing of the folder; its one link calls VS
+ * Code's trust page. Opened without taking the focus.
+ */
+function openRestrictedPage(context: vscode.ExtensionContext): vscode.Disposable {
+  const panel = vscode.window.createWebviewPanel(RESTRICTED_PANEL, RESTRICTED_TITLE, { viewColumn: vscode.ViewColumn.Active, preserveFocus: true }, { enableScripts: false, enableCommandUris: [TRUST_COMMAND], localResourceRoots: [] });
+  panel.iconPath = vscode.Uri.joinPath(context.extensionUri, "media", "protoboard.svg");
+  panel.webview.html = restrictedHtml({ nonce: nonce() }, TRUST_ACTION, TRUST_COMMAND);
+  return panel;
+}
+
 /**
  * What runs in an untrusted window: empty views (their welcome says the
  * line), and commands that say it. `start` is called once, when the folder is
@@ -51,10 +68,18 @@ export function activateRestricted(context: vscode.ExtensionContext, views: read
       .map((id) => vscode.commands.registerCommand(id, say)),
     ...views.map((id) => vscode.window.registerTreeDataProvider(id, { getChildren: () => [], getTreeItem: (x: vscode.TreeItem) => x })),
   ];
-  // a Protoboard project in the folder (the example just opened, a clone): said once, where it is seen, with the way
-  // out. Only a file's name is looked at; nothing of the project is read or run.
+  // a Protoboard project in the folder (the example just opened, a clone): said unasked, with the way out, in a tab
+  // that stays until the folder is trusted or the tab is closed (a notification is gone in ten seconds). Only a
+  // file's name is looked at; nothing of the project is read or run.
   const project = (vscode.workspace.workspaceFolders ?? []).some((f) => f.uri.scheme === "file" && existsSync(join(f.uri.fsPath, "protoboard.config.ts")));
-  if (project) say();
+  if (project) {
+    try {
+      subs.push(openRestrictedPage(context));
+    } catch {
+      // a window that cannot show the tab is still told
+      say();
+    }
+  }
   let done = false;
   const all = vscode.Disposable.from(...subs);
   const granted = vscode.workspace.onDidGrantWorkspaceTrust(() => {

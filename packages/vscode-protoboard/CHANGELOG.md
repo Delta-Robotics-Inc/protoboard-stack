@@ -10,7 +10,8 @@
 - A window with no project shows the example's card and what the Library
   looks like before a sign-in.
 - In Restricted Mode the views say that Protoboard is off and offer to
-  trust the folder.
+  trust the folder; a project's window shows the same in a tab that stays.
+- A new project made in another folder is offered to open in a dialog.
 - A stack that cannot be set up at the first start is reported, with Try
   Again.
 - Windows: **Add to PATH** appends its folder to your user `Path` and

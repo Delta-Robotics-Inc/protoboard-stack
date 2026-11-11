@@ -15,6 +15,8 @@ import type { PreviewPart } from "./example.js";
 export const START_TITLE = "Get Started with Protoboard";
 export const START_LINE = "Sign in, connect your agent, open the drone example.";
 export const RESTRICTED_LINE = "Protoboard is off until you trust this folder.";
+/** The tab a Restricted Mode window with a project in it shows. */
+export const RESTRICTED_TITLE = "Protoboard";
 
 export type StepId = "signIn" | "agents" | "example" | "theme" | "project";
 
@@ -353,4 +355,34 @@ export interface StartViewModel {
 /** The Start view of a window with no project (the Protoboard Library side bar). */
 export function startViewHtml(e: PageEnv, model: StartViewModel): string {
   return page(e, "Protoboard", VIEW_CSS, VIEW_JS, model, `<div id="root"></div>`);
+}
+
+const RESTRICTED_CSS = `${BASE_CSS}
+body{padding:36px 48px 48px}
+main{max-width:1180px;margin:0 auto}
+h1{margin:0 0 6px;font-size:22px;font-weight:600;color:var(--vscode-foreground)}
+.lead{margin:0 0 18px;color:var(--vscode-descriptionForeground)}
+a.btn{text-decoration:none}
+`;
+
+/**
+ * What a Restricted Mode window that holds a Protoboard project shows in
+ * the place of the viewer: the line, and the way out as a button that stays
+ * until it is used. No script: the button is a link to `trustCommand`, the
+ * one command the page may call.
+ */
+export function restrictedHtml(e: Pick<PageEnv, "nonce">, trustAction: string, trustCommand: string): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="${escapeHtml(["default-src 'none'", `style-src 'nonce-${e.nonce}'`, "base-uri 'none'", "form-action 'none'"].join("; "))}">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(RESTRICTED_TITLE)}</title>
+<style nonce="${escapeHtml(e.nonce)}">${RESTRICTED_CSS}</style>
+</head>
+<body>
+<main><h1>${escapeHtml(RESTRICTED_TITLE)}</h1><p class="lead">${escapeHtml(RESTRICTED_LINE)}</p><a class="btn" href="command:${escapeHtml(trustCommand)}">${escapeHtml(trustAction)}</a></main>
+</body>
+</html>`;
 }

@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import { EXAMPLE, copyExample, exampleParts, exampleSkips, exampleSource, exampleTarget, hasExample } from "../src/example.js";
-import { RESTRICTED_LINE, START_LINE, START_TITLE, isProtoboardTheme, shouldOpenStart, startHtml, startSteps, startViewHtml, themeClick, themeLabel, type StartModel } from "../src/startPage.js";
+import { RESTRICTED_LINE, RESTRICTED_TITLE, START_LINE, START_TITLE, isProtoboardTheme, shouldOpenStart, startHtml, startSteps, startViewHtml, restrictedHtml, themeClick, themeLabel, type StartModel } from "../src/startPage.js";
 
 const here = (f: string) => fileURLToPath(new URL(`../${f}`, import.meta.url));
 const src = (f: string) => readFileSync(here(f), "utf8");
@@ -323,5 +323,22 @@ describe("a failed first set-up", () => {
 describe("Restricted Mode's one line", () => {
   it("is the same in the views and in the message", () => {
     expect(RESTRICTED_LINE).toBe("Protoboard is off until you trust this folder.");
+  });
+
+  it("is on a page of its own with the button, which is a link to the one command and needs no script", () => {
+    const html = restrictedHtml({ nonce: "n0nce" }, "Trust This Folder", "workbench.trust.manage");
+    expect(html).toContain(`<h1>${RESTRICTED_TITLE}</h1><p class="lead">${RESTRICTED_LINE}</p><a class="btn" href="command:workbench.trust.manage">Trust This Folder</a>`);
+    expect(html).toContain(`default-src &#39;none&#39;; style-src &#39;nonce-n0nce&#39;; base-uri`);
+    expect(html).not.toMatch(/<script|script-src|img-src/);
+  });
+});
+
+describe("a project made outside the window's folders", () => {
+  it("is offered to open in a dialog, which stays until it is answered", () => {
+    const ext = src("src/extension.ts");
+    const offer = ext.slice(ext.indexOf("private async offerToOpen("), ext.indexOf("private async offerToOpen(") + 1200);
+    expect(offer).toContain("await vscode.window.showInformationMessage(`Open ${basename(dir)}?`, { modal: true, detail: `Created in ${dirname(dir)}. Trust the folder when VS Code asks.` }, fresh, here, ...(none ? [] : [add]));");
+    // a cancelled dialog opens nothing
+    expect(offer).toContain("else if (a) await vscode.commands.executeCommand(\"vscode.openFolder\"");
   });
 });

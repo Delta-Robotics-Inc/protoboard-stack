@@ -830,7 +830,10 @@ the extension stays on only to say that it is off
 (`untrustedWorkspaces.supported: "limited"`): its views carry "Protoboard is
 off until you trust this folder." with **Trust This Folder** (VS Code's own
 Workspace Trust page), every Protoboard command answers the same, and a
-folder that holds a `protoboard.config.ts` is told once, unasked. Nothing
+folder that holds a `protoboard.config.ts` gets a **Protoboard** tab with the
+line and the button, unasked (a notification leaves the screen after about
+ten seconds; the tab stays until the folder is trusted). The tab runs no
+script: its button is a link to the trust page. Nothing
 else starts: no CLI, no dev server, no check, no stack unpacked, no account
 asked; the links to the documentation are the one thing left as they are.
 When the folder is trusted the extension starts as in any trusted window,
