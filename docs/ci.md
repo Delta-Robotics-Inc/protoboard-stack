@@ -230,13 +230,14 @@ service, all against a stand-in, and a service that cannot check sign-ins
 right now. `packages/cli/test/sign-in-emulator.test.ts` runs the real
 sign-in end to end: the CLI, the parts service from the `protoboard-cloud`
 checkout with Firebase sign-in, and the Firebase Auth emulator (firebase-tools:
-`FIREBASE`, or `firebase` on `PATH`). It covers `login --device`,
+`FIREBASE`, or `firebase` on `PATH`). It covers `login --device` (the older
+code sign-in, which stays for scripts written against it),
 `whoami --check`, `parts search`, a second project with the same sign-in, a
 service whose revocation check cannot run, and `logout`. It runs where the
 service tests run (with the checkout beside the stack, as in `ci-stack.sh`)
 and is skipped, saying why, without the checkout or firebase-tools. A project's own CI that adds library parts
 from the hosted library sets `PROTOBOARD_CLOUD_TOKEN` (the service token) or
-signs in with `protoboard login --device`. The service token goes to the
+signs in with `protoboard login --start` and `--code`. The service token goes to the
 hosted service's origin only; a CI that uses another service (a staging one,
 or one on the runner) lists its origin in `PROTOBOARD_CLOUD_TOKEN_ORIGINS`.
 

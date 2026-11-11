@@ -221,7 +221,7 @@ jobs:
 
       # The suites of the agents' set-up and of `protoboard setup` assume a POSIX file system in their fixtures
       # (docs/ci.md, "Windows"): they are in the whole suite below, which reports, until they run here.
-      - name: Unit tests (sign-in link, PATH entry, re-linking a project through junctions, the terminal's command)
+      - name: Unit tests (sign-in link, PATH entry, re-linking a project through junctions, the terminal's command and its exit code, a sign-in saved with DPAPI)
         working-directory: protoboard-stack
         run: >
           npx vitest run
@@ -229,6 +229,7 @@ jobs:
           packages/core/test/path-setup.test.ts
           packages/core/test/stack-relink.test.ts
           packages/cli/test/upgrade-relink.test.ts
+          packages/core/test/windows-commands.test.ts
 
       - name: init, check and build on every template in a path with spaces (Git Bash)
         working-directory: protoboard-stack

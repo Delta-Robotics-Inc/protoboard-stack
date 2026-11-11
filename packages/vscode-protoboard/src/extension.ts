@@ -15,9 +15,10 @@ import { helpCommands, helpMarkdown, registerHelp } from "./help.js";
 import { buildArtifacts, describeArtifact, describeInstances, openMode, partChoices, sortArtifacts, type ArtifactEntry, type PartChoice } from "./artifacts.js";
 import { openOutside } from "./openOutside.js";
 import { countDiagnostics, mapDiagnostics, parseCheck, skippedChecks, statusLabel, statusText, type Counts, type MappedDiagnostic } from "./check.js";
-import { SCOPE_RENAMED_MESSAGE, canRun, chooseRuntime, describeCli, describeRuntime, parseJsonOutput, resolveCli, resolveNode, runCli, type CliCommand, type CliSettings, type Runtime } from "./cli.js";
+import { SCOPE_RENAMED_MESSAGE, canRun, chooseRuntime, describeCli, describeRuntime, loginProcess, parseJsonOutput, resolveCli, resolveNode, runCli, type CliCommand, type CliSettings, type Runtime } from "./cli.js";
 import { compareVersions, listStacks, needsLink, npmAuthProblem, readLinkRecord, stackDir, stackHome } from "@protoboardai/core/stack";
 import { configDir, signInStamp } from "@protoboardai/core/account";
+import { runSignInPrompt, type PromptBox } from "./signInPrompt.js";
 import { tightenUserFolders } from "@protoboardai/core/user-folders";
 import { ProjectTrust, trustQuestion, type TrustAnswer } from "./trust.js";
 import { TERMINAL_PATH_ENV, applyPathPlan, describePathPlan, pathPlan } from "@protoboardai/core/path-setup";
@@ -598,7 +599,6 @@ class ProtoboardExtension {
       cmd("protoboard.cloud.refresh", () => this.showCloud()),
       cmd("protoboard.account", () => this.accountActions()),
       cmd("protoboard.signIn", () => this.signIn()),
-      cmd("protoboard.signInDevice", () => this.signIn(true)),
       cmd("protoboard.signOut", () => this.signOut()),
       cmd("protoboard.manageAccount", () => this.manageAccount()),
       cmd("protoboard.account.check", () => this.refreshAccount(true)),
@@ -1148,7 +1148,7 @@ class ProtoboardExtension {
 
   /** An account button of a Protoboard page (the Library's sign-in card, the settings page). */
   accountAction(action: AccountAction) {
-    void this.guard(() => (action === "signIn" ? this.signIn() : action === "signInDevice" ? this.signIn(true) : action === "signOut" ? this.signOut() : action === "showLog" ? this.log.show() : this.refreshAccount(true)));
+    void this.guard(() => (action === "signIn" || action === "signInDevice" ? this.signIn() : action === "signOut" ? this.signOut() : action === "showLog" ? this.log.show() : this.refreshAccount(true)));
   }
 
   /**
@@ -1201,9 +1201,8 @@ class ProtoboardExtension {
   private async askSignIn() {
     this.signInPrompts.push(this.lock.message);
     const again = this.lock.reason === "unreachable" || this.lock.reason === "check-unavailable" || this.lock.reason === "unknown" || this.lock.reason === "checking";
-    const choice = await vscode.window.showWarningMessage(`Protoboard: ${this.lock.message}`, ...(again ? ["Check Again", "Show Log"] : ["Sign In", "Sign In with a Code"]));
+    const choice = await vscode.window.showWarningMessage(`Protoboard: ${this.lock.message}`, ...(again ? ["Check Again", "Show Log"] : ["Sign In"]));
     if (choice === "Sign In") await this.signIn();
-    else if (choice === "Sign In with a Code") await this.signIn(true);
     else if (choice === "Check Again") await this.refreshAccount(true);
     else if (choice === "Show Log") this.log.show();
   }
@@ -2003,32 +2002,49 @@ class ProtoboardExtension {
     else if (pick?.id === "settings") this.settings.open();
   }
 
+  /** The sign-in prompt is open (one at a time). */
+  private signingIn = false;
+  private signInShown: (() => void) | undefined;
+
   /**
-   * Sign in with the CLI's `protoboard login`, in a terminal: it opens the
-   * browser (or shows a device code where there is none), and the person sees
-   * what it asks. The state refreshes while it runs and when it closes.
+   * Sign in: the CLI's `protoboard login` runs in the background and one
+   * input box at the top of the window stands for it (signInPrompt.ts). The
+   * link opens in the person's browser, in a remote window too; the box
+   * closes by itself when the page hands the sign-in over, and takes the code
+   * the page shows when it cannot reach this window.
    */
-  async signIn(device = false) {
+  async signIn() {
     if (this.accountState.state === "open") return void vscode.window.showInformationMessage(`${this.accountState.service} signs no one in: everything there is open, with no account.`);
     // before there is a project, the sign-in is for the hosted Protoboard library (what a new project uses). The
-    // sign-in is the user's, not a project's: a project whose packages are not installed yet (PB-931) signs in
+    // sign-in is the user's, not a project's: a project whose packages are not installed yet signs in
     // through whatever CLI this window can run
-    const root = this.current ?? (await this.roots())[0];
     if (this.signInTerminal) return this.signInTerminal.show();
+    // a second Sign In while one waits brings its prompt (and its link) back. Taken before anything is
+    // awaited: two Sign Ins in a row must not both get past this line
+    if (this.signingIn) return void this.signInShown?.();
+    this.signingIn = true;
+    try {
+      await this.signInOnce();
+    } finally {
+      this.signingIn = false;
+      this.signInShown = undefined;
+    }
+  }
+
+  /** The sign-in itself; `signIn` lets one run at a time. */
+  private async signInOnce() {
+    const root = this.current ?? (await this.roots())[0];
     const found = root && !this.waiting.has(root) && this.cliReady(root) ? this.cli(root) : this.cliOutside();
-    // a service that does not answer cannot sign anyone in: one line now, rather than a terminal that ends with its exit code
+    // a service that does not answer cannot sign anyone in: one line now, rather than a prompt that ends with an error
     if (canRun(found) && signInUnavailable(await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: "Protoboard: signing in" }, () => this.refreshAccount(true)))) {
-      this.log.warn(`sign-in: the service does not answer (${"problem" in this.accountState ? this.accountState.problem : this.accountState.state}); no terminal opened`);
+      this.log.warn(`sign-in: the service does not answer (${"problem" in this.accountState ? this.accountState.problem : this.accountState.state}); no prompt opened`);
       return void vscode.window.showWarningMessage(signInUnavailableMessage(this.accountState));
     }
-    // a remote window (SSH, WSL, a container) has no browser of its own: the code, approved on any device
-    const byCode = device || !!vscode.env.remoteName;
-    const args = ["login", ...(byCode ? ["--device"] : [])];
     const cwd = root ?? this.baseFolder();
     if (!canRun(found)) {
       // no CLI this window can run (a build of the extension that carries no stack, and nothing installed): the
       // CLI of this version through npm, typed into a shell
-      const line = npxCommand(String(this.context.extension.packageJSON.version), args);
+      const line = npxCommand(String(this.context.extension.packageJSON.version), ["login"]);
       const t = vscode.window.createTerminal({ name: "Protoboard: Sign In", cwd, env: this.library.cliEnv() as Record<string, string>, iconPath: new vscode.ThemeIcon("account") });
       this.signInTerminal = t;
       this.log.info(`sign-in: no CLI found in this window; running ${line} in a terminal`);
@@ -2038,18 +2054,31 @@ class ProtoboardExtension {
     }
     const cli = found;
     await cli.prepare?.();
-    // The terminal runs the login itself, not a shell: nothing is quoted for PowerShell, cmd or fish, and what
-    // the CLI needs in its environment (ELECTRON_RUN_AS_NODE, when VS Code's runtime runs it) is given to that one
-    // process, not to a shell someone types into afterwards. VS Code closes the terminal when the login succeeds
-    // and keeps it, with the exit code, when it fails. A .cmd or .bat (protoboard.cliPath) needs a shell.
-    const direct = !/\.(cmd|bat)$/i.test(cli.command);
-    const env = { ...(this.library.cliEnv() as Record<string, string>), ...(direct ? (cli.env ?? {}) : {}) };
-    const t = vscode.window.createTerminal({ name: "Protoboard: Sign In", cwd, env, iconPath: new vscode.ThemeIcon("account"), ...(direct ? { shellPath: cli.command, shellArgs: [...cli.args, ...args] } : {}) });
-    this.signInTerminal = t;
-    this.log.info(`sign-in: running ${terminalCommand(cli, args)} in a terminal`);
-    t.show();
-    if (!direct) t.sendText(terminalCommand(cli, args));
-    this.watchSignIn(t);
+    const args = ["login", "--wait", "--no-browser", "--format", "json"];
+    this.log.info(`sign-in: running ${terminalCommand(cli, args)} behind the sign-in prompt`);
+    const result = await runSignInPrompt({
+      box: () => {
+        const box = signInBox();
+        this.signInShown = () => box.show();
+        return box;
+      },
+      start: () => loginProcess(cli, args, cwd, { ...(this.library.cliEnv() as NodeJS.ProcessEnv), PROTOBOARD_LOGIN_CLIENT: "vscode" }),
+      // the person's own browser: in a remote window VS Code opens it on their machine, not the far one
+      open: async (url) => vscode.env.openExternal(vscode.Uri.parse(url, true)),
+      copy: async (text) => {
+        await vscode.env.clipboard.writeText(text);
+        vscode.window.setStatusBarMessage("$(copy) Sign-in link copied", 3000);
+      },
+      log: (line) => this.log.info(`sign-in: ${line}`),
+    });
+    if (result.signedIn) {
+      await this.refreshAccount(true);
+      vscode.window.setStatusBarMessage(this.lock.locked ? "$(account) Signed in; this account is not invited to the Protoboard library yet" : `$(account) Signed in to Protoboard${result.email ? ` as ${result.email}` : ""}`, 5000);
+    } else if (result.reason === "failed") {
+      this.log.warn(`sign-in: ${result.message}`);
+      const state = await this.refreshAccount(true);
+      void vscode.window.showWarningMessage(signInUnavailable(state) ? signInUnavailableMessage(state) : `Protoboard: ${result.message}`);
+    } else this.log.info("sign-in: cancelled");
   }
 
   /** Notice the sign-in as soon as it is saved, while its terminal is there. */
@@ -3674,4 +3703,63 @@ function readText(root: string, file: string): string | undefined {
 /** The line where `id` is declared, from a line down. */
 function findIdLine(text: string | undefined, id: string, from: number): number | undefined {
   return text ? idLine(text, id, from) : undefined;
+}
+
+/** VS Code's input box, as the sign-in prompt uses it (signInPrompt.ts). */
+function signInBox(): PromptBox {
+  const b = vscode.window.createInputBox();
+  b.ignoreFocusOut = true;
+  const open: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon("link-external"), tooltip: "Open link again" };
+  const copy: vscode.QuickInputButton = { iconPath: new vscode.ThemeIcon("copy"), tooltip: "Copy link" };
+  b.buttons = [open, copy];
+  let hidden = false;
+  return {
+    get title() {
+      return b.title ?? "";
+    },
+    set title(v) {
+      b.title = v;
+    },
+    get placeholder() {
+      return b.placeholder ?? "";
+    },
+    set placeholder(v) {
+      b.placeholder = v;
+    },
+    get prompt() {
+      return b.prompt ?? "";
+    },
+    set prompt(v) {
+      b.prompt = v;
+    },
+    get value() {
+      return b.value;
+    },
+    set value(v) {
+      b.value = v;
+    },
+    get busy() {
+      return b.busy;
+    },
+    set busy(v) {
+      b.busy = v;
+    },
+    get validationMessage() {
+      return typeof b.validationMessage === "string" ? b.validationMessage : b.validationMessage?.message;
+    },
+    set validationMessage(v) {
+      b.validationMessage = v;
+    },
+    show: () => b.show(),
+    hide: () => {
+      if (hidden) return;
+      hidden = true;
+      b.hide();
+      b.dispose();
+    },
+    onAccept: (run) => void b.onDidAccept(run),
+    onButton: (run) => void b.onDidTriggerButton((x) => run(x === copy ? "copy" : "open")),
+    onHide: (run) => void b.onDidHide(run),
+    onChange: (run) => void b.onDidChangeValue(run),
+  };
 }

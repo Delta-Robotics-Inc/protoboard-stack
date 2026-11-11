@@ -507,7 +507,7 @@ async function stackAndSignIn(api, step) {
   const stack = api.stack();
   step(`the CLI is the project's own (${cli.command} ${cli.args[0]}); this build ${stack.carried ? `carries the stack ${stack.carried} (${stack.unpacked ? "unpacked" : "not unpacked yet"} in ${stack.home})` : "carries no stack"}`);
   const commands = await vscode.commands.getCommands(true);
-  for (const id of ["protoboard.newProject", "protoboard.signIn", "protoboard.signInDevice", "protoboard.account.check", "protoboard.stack.show", "protoboard.stack.update", "protoboard.stack.install", "protoboard.stack.fromVsix"]) assert.ok(commands.includes(id), `${id} is not registered`);
+  for (const id of ["protoboard.newProject", "protoboard.signIn", "protoboard.account.check", "protoboard.stack.show", "protoboard.stack.update", "protoboard.stack.install", "protoboard.stack.fromVsix"]) assert.ok(commands.includes(id), `${id} is not registered`);
 
   // the test's library signs no one in: its cloud features are open, with nobody signed in (the test's own config folder)
   assert.deepEqual(api.lock(), { locked: false, reason: "ok", message: "" }, "the test's library signs no one in, so nothing needs a sign-in");

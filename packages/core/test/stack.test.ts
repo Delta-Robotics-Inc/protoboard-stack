@@ -307,6 +307,21 @@ describe("the command scripts", () => {
     expect(cmd).toContain("\r\n");
   });
 
+  it("the Windows command ends with the CLI itself, so the CLI's exit code is the command's (PB-1226)", () => {
+    for (const kind of ["home", "project"] as const) {
+      const lines = windowsCommand({ kind, cli: "C:\\s\\cli.mjs", home: "C:\\h" }).split("\r\n");
+      // the last command of the file: nothing runs after the CLI, in its line or after it
+      expect(lines.slice(-3), kind).toEqual([":go", '"%PROG%" "%CLI%" %*', ""]);
+      expect(lines.filter((l) => l.includes('"%CLI%" %*')), kind).toHaveLength(1);
+      // Node.js from PATH when it is new enough, else the editor's runtime as Node; both go to that one line
+      expect(lines.some((l) => l.endsWith('&& set "PROG=node"')), kind).toBe(true);
+      expect(lines).toContain("if defined PROG goto go");
+      expect(lines).toContain('if defined RT if exist "%RT%" ( set "PROG=%RT%" & set "ELECTRON_RUN_AS_NODE=1" & goto go )');
+      // with neither, the line that says what to install, and 127
+      expect(lines.indexOf("exit /b 127")).toBeLessThan(lines.indexOf(":go"));
+    }
+  });
+
   it.skipIf(process.platform === "win32")("with no Node on PATH, run the CLI with the fallback runtime as Node", () => {
     const home = join(TMP, "home-rt");
     mkdirSync(join(home, "bin"), { recursive: true });

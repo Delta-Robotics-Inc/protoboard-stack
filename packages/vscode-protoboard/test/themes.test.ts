@@ -164,7 +164,7 @@ describe("the extension's manifest", () => {
     // no welcome stands in for a view while signed out: the start views say what to do with no project, nothing else
     for (const w of welcomes) expect(w.when ?? "", w.view).not.toMatch(/locked|access ==/);
     const commands = new Set(pkg.contributes.commands.map((c: { command: string }) => c.command));
-    for (const id of ["protoboard.signIn", "protoboard.signInDevice", "protoboard.signOut", "protoboard.account.check", "protoboard.newProject", "protoboard.stack.show", "protoboard.stack.update", "protoboard.stack.install"]) expect(commands.has(id), id).toBe(true);
+    for (const id of ["protoboard.signIn", "protoboard.signOut", "protoboard.account.check", "protoboard.newProject", "protoboard.stack.show", "protoboard.stack.update", "protoboard.stack.install"]) expect(commands.has(id), id).toBe(true);
   });
 
   it("offers a walkthrough for a first start: a project, the viewer, the library's sign-in (optional), the terminal (PB-929, PB-928)", () => {

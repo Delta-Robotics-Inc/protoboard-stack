@@ -219,7 +219,7 @@ describe("a template whose parts were not fetched, and signing in before there i
     expect(palette.find((m) => m.command === "protoboard.account")).toBeUndefined();
     for (const w of (c.viewsWelcome as { view: string; contents: string; when?: string }[]).filter((w) => w.view.startsWith("protoboard.start.") && w.when === "protoboard.noProject && !protoboard.needsSetup && !protoboard.signedIn")) expect(w.contents, w.view).toContain("(command:protoboard.signIn)");
     // signing in with no project: any CLI the window can run (the carried stack first), else the scoped package through npm
-    expect(src).toContain("npxCommand(String(this.context.extension.packageJSON.version), args)");
+    expect(src).toContain('npxCommand(String(this.context.extension.packageJSON.version), ["login"])');
   });
 
   it("runs any CLI command through npm by the scoped name and this version", () => {

@@ -7,7 +7,7 @@ import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, 
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { CredentialStore, accountPage, accountPageUrl, DPAPI_PROTECT, DPAPI_UNPROTECT, accountStatus, accountToken, accountTokensFor, connectLibraries, explainCloudError, fetchProblem, loginWithBrowser, loginWithDevice, logout, SIGN_IN_CHECK_UNAVAILABLE, type Runner, type Session } from "../src/index.js";
+import { CredentialStore, accountPage, accountPageUrl, DPAPI_PROTECT, DPAPI_UNPROTECT, accountStatus, accountToken, accountTokensFor, connectLibraries, explainCloudError, fetchProblem, loginWithBrowser, loginWithDevice, logout, SIGN_IN_CHECK_UNAVAILABLE, windowsPowerShellEnv, type Runner, type Session } from "../src/index.js";
 import { CloudError } from "@protoboardai/cloud/client";
 
 const fileStore = () => new CredentialStore({ env: { PROTOBOARD_CONFIG_DIR: mkdtempSync(join(tmpdir(), "pb-account-")), PROTOBOARD_CREDENTIAL_STORE: "file" } });
@@ -125,6 +125,37 @@ describe("credential store", () => {
     expect(() => broken.put(session())).toThrow(/DPAPI.*PROTOBOARD_CREDENTIAL_STORE=file/);
     expect(new CredentialStore({ env: { ...env, PROTOBOARD_CREDENTIAL_STORE: "file" }, platform: "win32", runner }).backend).toBe("file");
     expect(() => new CredentialStore({ env: { PROTOBOARD_CREDENTIAL_STORE: "dpapi" }, platform: "linux", runner })).toThrow(/dpapi is for Windows/);
+  });
+
+  it("Windows PowerShell is started without the module path of the PowerShell 7 terminal this runs in (PB-1226)", () => {
+    const seven = "C:\\Users\\ada\\Documents\\PowerShell\\Modules;C:\\Program Files\\PowerShell\\Modules;c:\\program files\\powershell\\7\\Modules;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules";
+    expect(windowsPowerShellEnv({ Path: "C:\\Windows", PSModulePath: seven, USERPROFILE: "C:\\Users\\ada" })).toEqual({ Path: "C:\\Windows", USERPROFILE: "C:\\Users\\ada" });
+    // Windows' variable names have no case of their own
+    expect(windowsPowerShellEnv({ PSMODULEPATH: seven, psmodulepath: seven, SystemRoot: "C:\\Windows" })).toEqual({ SystemRoot: "C:\\Windows" });
+    // the store's helper gets that environment, for saving and for reading
+    const envs: (NodeJS.ProcessEnv | undefined)[] = [];
+    const runner: Runner = (_command, args, input, options) => {
+      envs.push(options?.env);
+      return args.at(-1) === DPAPI_PROTECT ? { status: 0, stdout: "abcd\r\n" } : { status: 0, stdout: `${Buffer.from(JSON.stringify(session())).toString("base64")}\r\n` };
+    };
+    const local = mkdtempSync(join(tmpdir(), "pb-local-"));
+    const before = process.env.PSModulePath;
+    process.env.PSModulePath = seven;
+    try {
+      const store = new CredentialStore({ env: { LOCALAPPDATA: local, APPDATA: local, PSModulePath: seven, PB_MARK: "store" }, platform: "win32", runner });
+      store.put(session());
+      expect(store.get(SERVICE)?.email).toBe("ada@example.com");
+    } finally {
+      if (before === undefined) delete process.env.PSModulePath;
+      else process.env.PSModulePath = before;
+    }
+    expect(envs).toHaveLength(2);
+    for (const env of envs) {
+      expect(Object.keys(env ?? {}).filter((k) => k.toLowerCase() === "psmodulepath")).toEqual([]);
+      // the rest of the environment is there: the store's own, over this process's
+      expect(env).toMatchObject({ LOCALAPPDATA: local, PB_MARK: "store" });
+      expect(env?.PATH ?? env?.Path).toBe(process.env.PATH ?? process.env.Path);
+    }
   });
 
   it("makes the config folder 0700, also when it was there with a looser mode (PB-1048)", () => {

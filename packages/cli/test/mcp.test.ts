@@ -526,7 +526,10 @@ describe("the sign-in gate and other refusals", () => {
 
   it("how to sign in names the route that always exists: the VS Code extension, for a user who has no `protoboard` command", () => {
     const action = (failure("AUTH_REQUIRED: not signed in", EMPTY).data as { action: string }).action;
-    expect(action).toMatch(/In VS Code: the command "Protoboard: Sign In to Protoboard Cloud"/);
+    expect(action).toMatch(/In VS Code: the command "Protoboard: Sign In" \(/);
+    // the two steps an agent may run for the user: the link, then the code the page shows them
+    expect(action).toMatch(/`protoboard login --start`/);
+    expect(action).toMatch(/`protoboard login --code <code>`/);
     expect(action).toMatch(/`protoboard login` where that command exists/);
     expect(action).not.toMatch(/npx (?!--no-install )protoboard/);
     // the command it names is the extension's

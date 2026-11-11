@@ -351,12 +351,6 @@
         "icon": "$(add)"
       },
       {
-        "command": "protoboard.signInDevice",
-        "title": "Sign In with a Code (Remote or Headless)",
-        "category": "Protoboard",
-        "icon": "$(key)"
-      },
-      {
         "command": "protoboard.account.check",
         "title": "Check the Account Again",
         "category": "Protoboard",
@@ -941,10 +935,6 @@
           "when": "!protoboard.signedIn"
         },
         {
-          "command": "protoboard.signInDevice",
-          "when": "!protoboard.signedIn"
-        },
-        {
           "command": "protoboard.signOut",
           "when": "protoboard.signedIn"
         },
@@ -1186,7 +1176,7 @@
           {
             "id": "signIn",
             "title": "Use the Protoboard library (optional)",
-            "description": "Library parts, their files and prices need an account.\n[Sign In](command:protoboard.signIn)\nRemote or headless window: [Sign In with a Code](command:protoboard.signInDevice)",
+            "description": "Library parts, their files and prices need an account.\n[Sign In](command:protoboard.signIn)",
             "media": {
               "markdown": "media/walkthrough/sign-in.md"
             },
