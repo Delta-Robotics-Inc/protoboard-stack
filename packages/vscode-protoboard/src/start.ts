@@ -259,7 +259,12 @@ export class StartController implements vscode.Disposable {
     const fallback = clicked === PROTOBOARD_THEMES.light ? "Default Light Modern" : "Default Dark Modern";
     const change = themeClick(clicked, current, state.get<string>(THEME_BEFORE_KEY), choices, fallback);
     await state.update(THEME_BEFORE_KEY, change.previous);
-    if (change.set !== undefined) await vscode.workspace.getConfiguration("workbench").update("colorTheme", change.set, vscode.ConfigurationTarget.Global);
+    if (change.set !== undefined) {
+      // a workspace that sets its own theme wins over the user's setting: the theme is changed where it is in effect
+      const workbench = vscode.workspace.getConfiguration("workbench");
+      const inWorkspace = workbench.inspect<string>("colorTheme")?.workspaceValue !== undefined;
+      await workbench.update("colorTheme", change.set, inWorkspace ? vscode.ConfigurationTarget.Workspace : vscode.ConfigurationTarget.Global);
+    }
     this.refresh();
     return change.set;
   }
