@@ -2011,8 +2011,13 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
         // nobody to type a code here (an agent, a script): the link now, the code in a second command
         const begun = await beginLinkLogin(service);
         // the second command names the same service as this one
-        const next = `protoboard login${cli.flags.url ? ` --url ${cli.flags.url}` : ""} --code <code>`;
-        out({ service, signedIn: false, url: begun.url, expiresIn: begun.expiresIn, next }, () => [begun.url, `Sign in there, then run: ${next}`].join("\n"));
+        // a URL with a character a shell reads (& ? ; and the like) is quoted, so the line runs as shown;
+        // `nextArgs` is the same command as arguments, for a caller that starts it without a shell
+        const url = cli.flags.url ? String(cli.flags.url) : undefined;
+        const shown = url === undefined ? "" : ` --url ${/^[A-Za-z0-9_\-.:\/@%+=,~]+$/.test(url) ? url : `"${url.replace(/(["\\$`])/g, "\\$1")}"`}`;
+        const next = `protoboard login${shown} --code <code>`;
+        const nextArgs = ["login", ...(url === undefined ? [] : ["--url", url]), "--code", "<code>"];
+        out({ service, signedIn: false, url: begun.url, expiresIn: begun.expiresIn, next, nextArgs }, () => [begun.url, `Sign in there, then run: ${next}`].join("\n"));
         return;
       }
       const { copyToClipboard, runLinkLogin } = await import("./login.js");
