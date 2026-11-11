@@ -368,12 +368,6 @@
         "icon": "$(star-empty)"
       },
       {
-        "command": "protoboard.signInDevice",
-        "title": "Sign In with a Code (Remote or Headless)",
-        "category": "Protoboard",
-        "icon": "$(key)"
-      },
-      {
         "command": "protoboard.account.check",
         "title": "Check the Account Again",
         "category": "Protoboard",
@@ -973,10 +967,6 @@
         },
         {
           "command": "protoboard.signIn",
-          "when": "!protoboard.signedIn"
-        },
-        {
-          "command": "protoboard.signInDevice",
           "when": "!protoboard.signedIn"
         },
         {

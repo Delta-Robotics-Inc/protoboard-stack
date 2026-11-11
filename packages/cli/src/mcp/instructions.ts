@@ -41,7 +41,7 @@ The command is \`protoboard …\`. If the shell does not find it: a new VS Code 
 
 - \`protoboard stack link\` in a project whose packages are missing: links them to the Protoboard installed on this machine (no npm).
 - \`protoboard extensions add <name>\`: adds an extension (ext-tscircuit, ext-enclosure-cad, …) and exports its skills.
-- Signing in is the user's to do, never yours: in VS Code the command "Protoboard: Sign In to Protoboard Cloud" (or the account on the page "Protoboard: Open Settings"); in a terminal \`protoboard login\` (a browser, or a code with --device).
+- Signing in is the user's to do, never yours: in VS Code the command "Protoboard: Sign In" (or the account on the page "Protoboard: Open Settings"); in a terminal \`protoboard login\`. You may fetch the link for them: \`protoboard login --start\` prints it, the user opens it and signs in, and \`protoboard login --code <code>\` finishes with the code the page shows them.
 - \`protoboard doctor\`: extensions, external tools and runtimes; \`protoboard tools install <cad|circuit|all>\` installs a runtime.
 - \`protoboard skills read <name>\`: a skill's text, as skill_read gives it.
 - \`protoboard release\`: writes the Manufacturing Package; release_check says first whether it would be refused.

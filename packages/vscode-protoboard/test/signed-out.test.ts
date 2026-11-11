@@ -138,12 +138,9 @@ describe("local work is never covered, disabled or held back", () => {
     ]);
   });
 
-  it("Sign In with a Code is in the palette only while signed out, like Sign In", () => {
+  it("Sign In is in the palette only while signed out, and is the one sign-in command", () => {
     const palette = pkg.contributes.menus.commandPalette.filter((m) => m.command === "protoboard.signIn" || m.command === "protoboard.signInDevice");
-    expect(palette.map((m) => [m.command, m.when])).toEqual([
-      ["protoboard.signIn", "!protoboard.signedIn"],
-      ["protoboard.signInDevice", "!protoboard.signedIn"],
-    ]);
+    expect(palette.map((m) => [m.command, m.when])).toEqual([["protoboard.signIn", "!protoboard.signedIn"]]);
   });
 
   it("Project Parts lists the project's own parts with no word about a sign-in", () => {

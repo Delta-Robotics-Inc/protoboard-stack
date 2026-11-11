@@ -122,8 +122,8 @@ describe("the account commands are offered before there is a project (PB-929: si
   };
   const when = (id: string) => manifest.contributes.menus.commandPalette.find((m) => m.command === id)?.when;
 
-  it("Sign In, Sign In with a Code, Check the Account Again, the account, New Project and the log need no project in the Command Palette", () => {
-    for (const id of ["protoboard.signIn", "protoboard.signInDevice", "protoboard.account.check", "protoboard.account", "protoboard.newProject", "protoboard.showLog", "protoboard.about", "protoboard.stack.show", "protoboard.stack.fromVsix"]) {
+  it("Sign In, Check the Account Again, the account, New Project and the log need no project in the Command Palette", () => {
+    for (const id of ["protoboard.signIn", "protoboard.account.check", "protoboard.account", "protoboard.newProject", "protoboard.showLog", "protoboard.about", "protoboard.stack.show", "protoboard.stack.fromVsix"]) {
       expect(manifest.contributes.commands.some((c) => c.command === id), id).toBe(true);
       expect(when(id) ?? "", id).not.toContain("protoboard.hasProject");
       expect(when(id), id).not.toBe("false");
@@ -138,7 +138,9 @@ describe("the account commands are offered before there is a project (PB-929: si
       return i === "signin".length;
     };
     const titles = (manifest.contributes.commands as { command: string; title: string }[]).filter((c) => when(c.command) !== "false" && fuzzy(c.title)).map((c) => c.title);
-    expect(titles.sort()).toEqual(["Sign In", "Sign In with a Code (Remote or Headless)"]);
+    expect(titles.sort()).toEqual(["Sign In"]);
+    // one sign-in for a window on this machine and a remote one: there is no second command for a code
+    expect(manifest.contributes.commands.some((c) => c.command === "protoboard.signInDevice")).toBe(false);
   });
 
   it("the extension starts with VS Code, so the stack, the status bar item and the terminal's command are there without a project", () => {

@@ -518,10 +518,11 @@ stop before changing anything, with one line saying to sign in, and exit
 code 4.
 
 In the editor: **Sign in** in the status bar, or **Protoboard: Sign In** from
-the command palette. A browser page opens; the editor continues by itself
-when you are signed in. In a remote window (SSH, WSL, a container), or when
-no browser opens, use **Protoboard: Sign In with a Code (Remote or
-Headless)** and approve the code on any device.
+the command palette. A prompt appears at the top of the window and the
+sign-in page opens in your browser; the prompt closes by itself when you are
+signed in. In a remote window (SSH, WSL, a container) the page opens in your
+own browser and shows a short code: paste it into the prompt. The prompt's
+buttons open the link again or copy it, to sign in on another device.
 
 In a terminal:
 
@@ -530,8 +531,11 @@ protoboard login
 protoboard whoami --check
 ```
 
-`protoboard login --device` prints a code to approve on another device, for
-a machine with no browser. `protoboard logout` signs out. The sign-in is kept
+`protoboard login` prints a link and opens it. Sign in on that page, on this
+machine or any other: the terminal continues by itself, or the page shows a
+short code to paste into it (over SSH, for instance). From a script or an
+agent, `protoboard login --start` prints the link and
+`protoboard login --code <code>` finishes. `protoboard logout` signs out. The sign-in is kept
 in your system's keychain, else in a file only you can read, and never in a
 project. In CI, set `PROTOBOARD_CLOUD_TOKEN` to a service token instead.
 
@@ -540,7 +544,7 @@ everywhere, delete it): `protoboard account` prints its page and opens it,
 and **Manage Account** in Protoboard Settings or the Cloud view opens it from
 the editor.
 
-<!-- verified: the commands that need an account and exit code 4 (the CLI's help, "Sign-in"; ACCESS_EXIT_CODE in packages/core/src/access.ts); login, --device, whoami --check, logout, account (packages/core/src/account-login.ts accountPage); the credential store (packages/core/src/account.ts). -->
+<!-- verified: the commands that need an account and exit code 4 (the CLI's help, "Sign-in"; ACCESS_EXIT_CODE in packages/core/src/access.ts); login, --start, --code, whoami --check, logout (packages/cli/src/login.ts, packages/core/src/account-link.ts); account (packages/core/src/account-login.ts accountPage); the credential store (packages/core/src/account.ts). -->
 
 > **If you are an agent doing this for someone:** you cannot sign in for
 > them and must not work around it. Ask whether they want the library now;

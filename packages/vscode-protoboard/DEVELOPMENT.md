@@ -53,7 +53,7 @@ extension carries** and **Sign-in** below say how; the design is
 | Command | What it does |
 | --- | --- |
 | **Protoboard: New Project…** | Asks for a template (`drone`, `wearable`, `iot`, or empty), a name and a folder, runs `protoboard init` and opens the project. Given `{ template, name, folder, open }` as its argument it asks only what is missing. |
-| **Protoboard: Sign In** / **Sign In with a Code (Remote or Headless)** / **Sign Out** | `protoboard login` in a terminal: the browser sign-in, or a code to approve on another device (what a remote window uses by itself). They work before there is a project. |
+| **Protoboard: Sign In** / **Sign Out** | Sign In shows one prompt at the top of the window (`src/signInPrompt.ts`) while `protoboard login --wait --format json` runs behind it, with pipes and no terminal: the link opens in the person's browser, the prompt closes by itself when the page hands the sign-in over, and takes the code the page shows when it cannot (a remote window). Its buttons open the link again and copy it; Escape cancels; a second Sign In brings the prompt back. They work before there is a project. |
 | **Protoboard: Check the Account Again** | Asks the service again whether the account may use Protoboard. |
 | **Protoboard: Show Where the Stack Is Installed** | Opens `~/.protoboard/stack/<version>`. |
 | **Protoboard: Update Project to the Stack This Extension Carries** | Re-points a project's links from an older copy to the carried one (`protoboard stack link --force --carried`). |
@@ -773,7 +773,7 @@ Inspector, the hierarchy, the DRC panel, Project Parts' list, the BOM and the
 Cloud view work as signed in; the first check, the dev server and every local
 command run; nothing is covered or disabled. **The cloud asks:** the
 Library's side bar, its full page and a part's detail show **Sign in to use
-the Protoboard library** (with **Sign In** and **Sign In with a Code**) in
+the Protoboard library** (with **Sign In**) in
 place of the library, and list no parts. The commands in
 `CLOUD_COMMANDS` (`src/account.ts`) ask to sign in instead of running:
 **Fetch Parts**, **Add Part…**, **Check Libraries for Updates**, **Update
