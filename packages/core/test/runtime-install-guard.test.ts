@@ -12,6 +12,9 @@ import { addExtension } from "../src/extensions-add.js";
 import { deniedPins } from "../src/tools.js";
 import { installRuntimes, loadProject, type Exec } from "../src/index.js";
 
+// the fake extension is compatible with this stack whatever its version (a ^0.2.0 pin broke at the 0.3.0 release)
+const CORE_VERSION: string = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version;
+
 const TMP = join(fileURLToPath(new URL(".", import.meta.url)), ".tmp-install-guard");
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
@@ -24,10 +27,10 @@ function project(name: string, packages: string[]) {
   };
   write("protoboard.config.ts", `import { defineConfig } from "@protoboardai/core";\nexport default defineConfig({ root: { source: "src/sys.uhd.ts", export: "SYS" }, extensions: ["ext-board"] });\n`);
   write("src/sys.uhd.ts", `export const SYS = { id: "sys", interfaces: [] };\n`);
-  write("package.json", JSON.stringify({ name, type: "module", dependencies: { "@protoboardai/core": "^0.2.0" } }));
+  write("package.json", JSON.stringify({ name, type: "module", dependencies: { "@protoboardai/core": `^${CORE_VERSION}` } }));
   const tool = { id: "fake-node", purpose: "node packages from the project runtime", probe: ["fake-node", "--version"], runtime: { id: "circuit", kind: "node", packages, env: "FAKE_NODE_MODULES" } };
   write("node_modules/ext-board/package.json", JSON.stringify({ name: "ext-board", version: "0.1.0", type: "module" }));
-  write("node_modules/ext-board/protoboard-extension.json", JSON.stringify({ schema: "protoboard.extension/v0", id: "ext-board", version: "0.1.0", compatibility: { protoboard: "^0.2.0" }, tools: [tool] }));
+  write("node_modules/ext-board/protoboard-extension.json", JSON.stringify({ schema: "protoboard.extension/v0", id: "ext-board", version: "0.1.0", compatibility: { protoboard: `^${CORE_VERSION}` }, tools: [tool] }));
   return dir;
 }
 
