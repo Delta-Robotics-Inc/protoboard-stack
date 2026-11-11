@@ -3,6 +3,8 @@
  * is planned per system, and that nothing is written until it is applied.
  * Every system is tested here by giving the platform and the environment.
  */
+import { spawnSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { PATH_MARK, TERMINAL_PATH_ENV, addToPathValue, applyPathPlan, describePathPlan, lastingPath, onPathValue, parseUserPath, pathPlan, powerShellEnv, readUserPathScript, removeFromPathValue, removeFromUserPath, writeUserPathScript } from "../src/path-setup.js";
 
@@ -124,6 +126,54 @@ describe("the stored Windows Path (PB-1225)", () => {
 
   it("Windows PowerShell is started without PowerShell 7's module path", () => {
     expect(powerShellEnv({ Path: "C:\\Windows", PSModulePath: "C:\\Program Files\\PowerShell\\7\\Modules", psmodulepath: "x", USERPROFILE: "C:\\Users\\Ada" })).toEqual({ Path: "C:\\Windows", USERPROFILE: "C:\\Users\\Ada" });
+  });
+});
+
+describe.runIf(process.platform === "win32")("on Windows itself: the commands against a real registry value (a scratch key, never the user's Path)", () => {
+  const key = `Software\\ProtoboardTest\\path-${randomBytes(6).toString("hex")}`;
+  const powershell = `${process.env.SystemRoot ?? "C:\\Windows"}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`;
+  const ps = (script: string) => spawnSync(powershell, ["-NoProfile", "-NonInteractive", "-Command", script], { encoding: "utf8", env: powerShellEnv() });
+  const reg = (...args: string[]) => spawnSync("reg.exe", args, { encoding: "utf8" });
+  const stored = () => reg("query", `HKCU\\${key}`, "/v", "Path").stdout;
+
+  it("an expandable value is read unexpanded and written back expandable, with only the folder added; a plain one stays plain; a missing one is created", () => {
+    try {
+      // no value yet
+      expect(reg("add", `HKCU\\${key}`, "/f").status).toBe(0);
+      const none = ps(readUserPathScript(key));
+      expect(none.stderr).toBe("");
+      expect(parseUserPath(none.stdout)).toEqual({ kind: "missing" });
+
+      // expandable, with variables and a trailing semicolon (reg.exe is started without a shell: the % stay)
+      const before = "%USERPROFILE%\\go\\bin;%LOCALAPPDATA%\\Programs\\Zoë\\bin;C:\\Tools;";
+      expect(reg("add", `HKCU\\${key}`, "/v", "Path", "/t", "REG_EXPAND_SZ", "/d", before, "/f").status).toBe(0);
+      const read = ps(readUserPathScript(key));
+      expect(read.stderr).toBe("");
+      expect(parseUserPath(read.stdout)).toEqual({ kind: "ExpandString", value: before });
+      const next = addToPathValue(before, DIR, process.env);
+      expect(next).toEqual({ value: `${before}${DIR}`, changed: true });
+      const wrote = ps(writeUserPathScript(next.value, "ExpandString", key));
+      expect(wrote.stderr).toBe("");
+      expect(wrote.status).toBe(0);
+      expect(wrote.stdout.trim()).toBe("written");
+      expect(stored()).toContain("REG_EXPAND_SZ");
+      expect(parseUserPath(ps(readUserPathScript(key)).stdout)).toEqual({ kind: "ExpandString", value: `${before}${DIR}` });
+
+      // taken out again: the other entries as they were
+      const without = removeFromPathValue(`${before}${DIR}`, DIR, process.env);
+      expect(ps(writeUserPathScript(without.value, "ExpandString", key)).status).toBe(0);
+      expect(parseUserPath(ps(readUserPathScript(key)).stdout)).toEqual({ kind: "ExpandString", value: before.slice(0, -1) });
+
+      // a plain string stays a plain string
+      expect(reg("add", `HKCU\\${key}`, "/v", "Path", "/t", "REG_SZ", "/d", "C:\\Tools", "/f").status).toBe(0);
+      expect(parseUserPath(ps(readUserPathScript(key)).stdout)).toEqual({ kind: "String", value: "C:\\Tools" });
+      expect(ps(writeUserPathScript(`C:\\Tools;${DIR}`, "String", key)).status).toBe(0);
+      expect(stored()).toMatch(/REG_SZ/);
+      expect(stored()).not.toContain("REG_EXPAND_SZ");
+      expect(parseUserPath(ps(readUserPathScript(key)).stdout)).toEqual({ kind: "String", value: `C:\\Tools;${DIR}` });
+    } finally {
+      reg("delete", `HKCU\\${key}`, "/f");
+    }
   });
 });
 

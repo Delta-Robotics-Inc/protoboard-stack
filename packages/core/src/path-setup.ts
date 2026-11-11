@@ -116,6 +116,8 @@ export function removeFromPathValue(value: string | undefined, dir: string, env:
 }
 
 const POWERSHELL_FLAGS = ["-NoProfile", "-NonInteractive", "-Command"];
+/** The key under HKEY_CURRENT_USER that holds the user's environment variables. The scripts take another key only for the test that runs them on Windows itself. */
+const USER_ENVIRONMENT_KEY = "Environment";
 const b64 = (text: string) => Buffer.from(text, "utf8").toString("base64");
 
 /**
@@ -124,10 +126,10 @@ const b64 = (text: string) => Buffer.from(text, "utf8").toString("base64");
  * the console's code page never touches it). `[Environment]::GetEnvironmentVariable`
  * is not used: it returns the value with its variables expanded.
  */
-export function readUserPathScript(): string {
+export function readUserPathScript(key = USER_ENVIRONMENT_KEY): string {
   return [
     "$ErrorActionPreference='Stop'",
-    "$k=[Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment')",
+    `$k=[Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('${key.replace(/'/g, "''")}')`,
     "$v=if ($null -eq $k) { $null } else { $k.GetValue('Path',$null,[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) }",
     "if ($null -eq $v) { 'missing' } else { $k.GetValueKind('Path').ToString()+' '+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes([string]$v)) }",
   ].join("; ");
@@ -149,11 +151,11 @@ export function parseUserPath(stdout: string): { kind: string; value: string } |
  * for the value (it writes a plain string); deleting a variable that does
  * not exist through it changes nothing and sends the same broadcast.
  */
-export function writeUserPathScript(value: string, kind: "String" | "ExpandString"): string {
+export function writeUserPathScript(value: string, kind: "String" | "ExpandString", key = USER_ENVIRONMENT_KEY): string {
   return [
     "$ErrorActionPreference='Stop'",
     `$v=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${b64(value)}'))`,
-    "$k=[Microsoft.Win32.Registry]::CurrentUser.CreateSubKey('Environment')",
+    `$k=[Microsoft.Win32.Registry]::CurrentUser.CreateSubKey('${key.replace(/'/g, "''")}')`,
     `$k.SetValue('Path',$v,[Microsoft.Win32.RegistryValueKind]::${kind})`,
     "$k.Close()",
     "[Environment]::SetEnvironmentVariable('PROTOBOARD_PATH_CHANGED',$null,'User')",
