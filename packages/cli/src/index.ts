@@ -1984,7 +1984,12 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
           },
           // the platform only: the machine's name is the user's, and the approval page needs none of it
           { store, client: `protoboard CLI (${process.platform})` },
-        )
+        ).catch((e) => {
+          // a service with no code sign-in at all, asked from a program (the editor's prompt has no terminal):
+          // its browser sign-in is the one it has, and the system opens the page
+          if (cli.flags.device || !(e instanceof AccountError && e.code === "NO_SIGN_IN")) throw e;
+          return loginWithBrowser(service, openUrl, { store, log });
+        })
       : await loginWithBrowser(service, openUrl, { store, log });
     signedInAs(session);
   };
