@@ -137,6 +137,30 @@ describe("sign-in by link", () => {
     expect(store.get(SERVICE)?.via).toBe("link");
   });
 
+  it("asks for the token again when the request did not get through, and gives up as unreachable after three tries", async () => {
+    const s = standIn();
+    const store = fileStore();
+    let drop = 1;
+    const flaky: typeof fetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      if (/\/token$/.test(String(url)) && drop-- > 0) throw new TypeError("fetch failed");
+      return s.fetch(url, init);
+    }) as typeof fetch;
+    const login = await startLinkLogin(SERVICE, { store, fetch: flaky });
+    s.approve(login.requestId, "BDFG-HJKL");
+    expect((await login.submitCode("BDFG-HJKL")).status).toBe("signed-in");
+    expect(store.get(SERVICE)?.via).toBe("link");
+
+    drop = 99;
+    const lost = await startLinkLogin(SERVICE, { store: fileStore(), fetch: flaky });
+    s.approve(lost.requestId, "BDFG-HJKL");
+    const before = s.calls.length;
+    await expect(lost.submitCode("BDFG-HJKL")).rejects.toMatchObject({ code: "UNREACHABLE" });
+    expect(99 - drop).toBe(3);
+    expect(s.calls.length).toBe(before);
+    lost.cancel();
+    await lost.done.catch(() => undefined);
+  });
+
   it("too many wrong codes, or a request that ran out of time, ends the sign-in as expired", async () => {
     const s = standIn();
     const login = await startLinkLogin(SERVICE, { store: fileStore(), fetch: s.fetch });

@@ -77,13 +77,30 @@ async function post(doFetch: typeof fetch, url: string, body: unknown): Promise<
   return { ok: res.ok, status: res.status, body: (await res.json().catch(() => ({}))) as ApiAnswer["body"] };
 }
 
+/** The waits before the token is asked for again after a request that did not get through (ms). */
+const EXCHANGE_RETRIES = [500, 2000] as const;
+
 /** Trade a code and the verifier for the session, and keep it. */
-async function exchange(service: string, info: AccountInfo & { apiKey: string }, requestId: string, verifier: string, code: string, options: { store?: CredentialStore; fetch?: typeof fetch; active?: () => boolean }): Promise<CodeResult> {
+async function exchange(service: string, info: AccountInfo & { apiKey: string }, requestId: string, verifier: string, code: string, options: { store?: CredentialStore; fetch?: typeof fetch; active?: () => boolean; retryMs?: readonly number[] }): Promise<CodeResult> {
   const doFetch = options.fetch ?? fetch;
   // whatever was pasted is a wrong code at worst: the service takes 40 characters
-  const r = await post(doFetch, `${serviceKey(service)}/v1/auth/signin/${encodeURIComponent(requestId)}/token`, { verifier, code: code.trim().slice(0, 40) });
-  if (r.ok && typeof r.body.customToken === "string") {
-    const t = await signInWithCustomToken(info, r.body.customToken, options.fetch);
+  // the answer that carries the token can be lost on the way (a dropped connection): the service gives the
+  // same verifier and code a token again for a minute, so a request that did not get through is made again
+  let r: ApiAnswer | undefined;
+  let t: Awaited<ReturnType<typeof signInWithCustomToken>> | undefined;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      r = await post(doFetch, `${serviceKey(service)}/v1/auth/signin/${encodeURIComponent(requestId)}/token`, { verifier, code: code.trim().slice(0, 40) });
+      if (r.ok && typeof r.body.customToken === "string") t = await signInWithCustomToken(info, r.body.customToken, options.fetch).catch((e) => {
+        throw e instanceof AccountError ? e : new AccountError("UNREACHABLE", `the sign-in service: ${fetchProblem(e)}`);
+      });
+      break;
+    } catch (e) {
+      if (!(e instanceof AccountError && e.code === "UNREACHABLE") || attempt >= EXCHANGE_RETRIES.length || (options.active && !options.active())) throw e;
+      await new Promise((ok) => setTimeout(ok, options.retryMs?.[attempt] ?? EXCHANGE_RETRIES[attempt]));
+    }
+  }
+  if (t) {
     // cancelled or timed out while this was on its way: the person was told nothing completed, so nothing is kept
     if (options.active && !options.active()) return { status: "expired" };
     const session = sessionFrom(service, info, t, "link");
