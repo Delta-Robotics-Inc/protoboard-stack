@@ -102,6 +102,16 @@ export class StartController implements vscode.Disposable {
     });
   }
 
+  /** This workspace sets its own theme: a tile changes that value, not the user's. */
+  private themeInWorkspace(): boolean {
+    return vscode.workspace.getConfiguration("workbench").inspect<string>("colorTheme")?.workspaceValue !== undefined;
+  }
+
+  /** Where the theme to go back to is kept: with the setting a tile changes, so one workspace's does not replace another's or the user's. */
+  private themeState(): vscode.Memento {
+    return this.themeInWorkspace() ? this.context.workspaceState : this.context.globalState;
+  }
+
   private currentTheme(): string {
     return vscode.workspace.getConfiguration("workbench").get<string>("colorTheme") ?? "";
   }
@@ -127,7 +137,7 @@ export class StartController implements vscode.Disposable {
         onPath: this.host.onPath(),
       },
       example: this.exampleModel(),
-      theme: { choices: this.themeChoices(), current: this.currentTheme(), ...(this.context.globalState.get<string>(THEME_BEFORE_KEY) ? { previous: this.context.globalState.get<string>(THEME_BEFORE_KEY)! } : {}) },
+      theme: { choices: this.themeChoices(), current: this.currentTheme(), ...(this.themeState().get<string>(THEME_BEFORE_KEY) ? { previous: this.themeState().get<string>(THEME_BEFORE_KEY)! } : {}) },
       hasProject: this.ownProjects().length > 0,
     };
     return { ...base, steps: startSteps({ ...base, exampleOpened: !!this.context.globalState.get(EXAMPLE_OPENED_KEY) }) };
@@ -176,8 +186,9 @@ export class StartController implements vscode.Disposable {
 
   /**
    * The first start after an install: the page opens by itself, once. A
-   * profile that had the extension before the page existed is marked as shown
-   * without opening it. It replaces the one-off theme offer, which the page's
+   * profile that used the extension on a project before the page existed is
+   * marked as shown without opening it; one that only installed it has no
+   * mark of use, and is shown the page once, which is who the page is for. It replaces the one-off theme offer, which the page's
    * theme step is.
    */
   async auto(): Promise<"opened" | "not-opened"> {
@@ -255,15 +266,13 @@ export class StartController implements vscode.Disposable {
   async chooseTheme(clicked: string): Promise<string | undefined> {
     const choices = this.themeChoices();
     const current = this.currentTheme();
-    const state = this.context.globalState;
+    const state = this.themeState();
     const fallback = clicked === PROTOBOARD_THEMES.light ? "Default Light Modern" : "Default Dark Modern";
     const change = themeClick(clicked, current, state.get<string>(THEME_BEFORE_KEY), choices, fallback);
     await state.update(THEME_BEFORE_KEY, change.previous);
     if (change.set !== undefined) {
       // a workspace that sets its own theme wins over the user's setting: the theme is changed where it is in effect
-      const workbench = vscode.workspace.getConfiguration("workbench");
-      const inWorkspace = workbench.inspect<string>("colorTheme")?.workspaceValue !== undefined;
-      await workbench.update("colorTheme", change.set, inWorkspace ? vscode.ConfigurationTarget.Workspace : vscode.ConfigurationTarget.Global);
+      await vscode.workspace.getConfiguration("workbench").update("colorTheme", change.set, this.themeInWorkspace() ? vscode.ConfigurationTarget.Workspace : vscode.ConfigurationTarget.Global);
     }
     this.refresh();
     return change.set;

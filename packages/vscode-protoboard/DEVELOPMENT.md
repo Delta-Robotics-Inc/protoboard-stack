@@ -624,8 +624,9 @@ it is closed), the DRC in the panel.
 editor tab of the extension's own that looks like VS Code's walkthroughs. It
 opens by itself once, at the first start after an install, in place of the
 "is installed" notice, the theme offer and the agents offer (a profile that
-had the extension before the page existed is not shown it unasked; neither is
-a test run). **Protoboard: Get Started** and the first row of Help open it
+had used the extension on a project before the page existed is not shown it
+unasked; one that installed it and never opened a project is, once, since the
+page is for exactly that; a test run is not). **Protoboard: Get Started** and the first row of Help open it
 again. Its steps, each with its own content, are marked done by what is so on
 the machine, not by a click:
 

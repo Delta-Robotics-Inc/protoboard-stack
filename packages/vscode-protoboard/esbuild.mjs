@@ -3,8 +3,9 @@
 // model preview) are built by Vite below. The viewer tabs' shell (@protoboardai/web-viewer's VS Code shell, built by Vite)
 // is copied into dist/webview: every webview loads only files the extension ships, never a CDN.
 import { context, build } from "esbuild";
-import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { spawnSync } from "node:child_process";
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, sep } from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -111,7 +112,16 @@ function copyExample() {
       (parts[0] === "parts" && parts[1] === "evidence" && parts[3] === ".research")
     );
   };
-  cpSync(from, to, { recursive: true, filter: (src) => !skips(relative(from, src)) });
+  // in a checkout, only what Git tracks is carried: a file left beside the example (an export, a note, a
+  // .env) never reaches the extension. Outside one (a source archive) the folder is what there is
+  const listed = spawnSync("git", ["ls-files", "-z", "--", "."], { cwd: from, encoding: "utf8" });
+  const tracked = listed.status === 0 && listed.stdout ? new Set(listed.stdout.split("\0").filter(Boolean).map((f) => f.split("/").join(sep))) : undefined;
+  const carried = (src) => {
+    const rel = relative(from, src);
+    if (rel === "" || skips(rel)) return rel === "";
+    return !tracked || statSync(src).isDirectory() || tracked.has(rel);
+  };
+  cpSync(from, to, { recursive: true, filter: carried });
 }
 copyExample();
 
