@@ -450,7 +450,7 @@ function signedOutContent(reason: string): { title: string; buttons: [label: str
     case "sign-in-invalid":
       return { title: "Your sign-in no longer works", buttons: [["Sign In Again", "signIn", "Opens the sign-in page in your browser"]] };
     default:
-      return { title: "Sign in to use the Protoboard library", buttons: [["Sign In", "signIn", "Opens the sign-in page in your browser"], ["Sign In with a Code", "signInDevice", "For a remote or headless window"]] };
+      return { title: "Sign in to use the Protoboard library", buttons: [["Sign In", "signIn", "Opens the sign-in page in your browser"]] };
   }
 }
 

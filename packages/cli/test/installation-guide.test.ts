@@ -187,7 +187,7 @@ describe("docs/guides/installation.md", () => {
 
   it("names the sign-in's commands, and only the library needs it", () => {
     const s = sectionOf("Signing in for the library");
-    for (const c of ["protoboard login", "protoboard whoami --check", "`protoboard login --device`", "`protoboard logout`", "PROTOBOARD_CLOUD_TOKEN", "exit code 4"]) expect(s.replace(/\s+/g, " "), c).toContain(c);
+    for (const c of ["protoboard login", "protoboard whoami --check", "`protoboard login --start`", "`protoboard login --code <code>`", "`protoboard logout`", "PROTOBOARD_CLOUD_TOKEN", "exit code 4"]) expect(s.replace(/\s+/g, " "), c).toContain(c);
     expect(help).toMatch(/Local work needs no account/);
     expect(read("packages/core/src/access.ts")).toContain("export const ACCESS_EXIT_CODE = 4;");
   });

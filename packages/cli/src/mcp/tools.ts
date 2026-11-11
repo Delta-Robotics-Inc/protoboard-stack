@@ -71,7 +71,7 @@ const DIR = z.string().optional().describe("The project folder, absolute or rela
 const SIGN_IN = /protoboard login|not signed in|sign[- ]in (is )?(required|needed)|needs? (a|an|your)? ?(signed-in account|sign-in|account)|sign in (first|again|to )/i;
 /** How the user signs in. The extension's route comes first: a user who has only the extension has no `protoboard` command outside a VS Code terminal. */
 export const SIGN_IN_ACTION =
-  'Ask the user to sign in, then call this tool again. In VS Code: the command "Protoboard: Sign In to Protoboard Cloud" (or the account on the page "Protoboard: Open Settings"). In a terminal: `protoboard login` where that command exists (a VS Code terminal, or a machine with the CLI installed), or `npx --no-install protoboard login` in a project whose packages are installed; `--device` gives a code in place of a browser. Do not sign in for them, and never write a sign-in to a file.';
+  'Ask the user to sign in, then call this tool again. In VS Code: the command "Protoboard: Sign In" (or the account on the page "Protoboard: Open Settings"). In a terminal: `protoboard login` where that command exists (a VS Code terminal, or a machine with the CLI installed), or `npx --no-install protoboard login` in a project whose packages are installed. You may fetch the link for them: `protoboard login --start` prints it, and `protoboard login --code <code>` finishes with the code the page shows them once they have signed in. Do not sign in for them, and never write a sign-in to a file.';
 
 /** The JSON a `--format json` command printed, or why there is none. */
 export function readCliJson(r: CliRun): { ok: true; data: unknown } | { ok: false; message: string; code?: string } {

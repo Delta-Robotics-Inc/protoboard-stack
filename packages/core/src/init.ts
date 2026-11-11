@@ -33,7 +33,7 @@ const STACK_RANGE = stackRangeFor(CORE_PKG.version);
  * the project to them. The stack declares them in its package.json
  * (`protoboard.toolchain`).
  */
-export const TOOLCHAIN = { uhd: CORE_PKG.protoboard?.toolchain?.uhd ?? "0.3.0", typescript: CORE_PKG.protoboard?.toolchain?.typescript ?? "7.0.2" };
+export const TOOLCHAIN = { uhd: CORE_PKG.protoboard?.toolchain?.uhd ?? "0.3.1", typescript: CORE_PKG.protoboard?.toolchain?.typescript ?? "7.0.2" };
 
 /** The templates shipped with @protoboardai/core. */
 export const TEMPLATES_DIR = fileURLToPath(new URL("../templates/", import.meta.url));

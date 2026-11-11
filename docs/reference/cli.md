@@ -58,7 +58,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `parts offers [id...]` | Vendor the service's supplier offers for catalog parts into parts/offers.json (what a release quotes offline; replaces those parts' entries) |
 | `parts prices <id>` | A library part's prices by source: each supplier's price breaks, stock, pack and minimum order, the link and when it was observed (--mpn for one ordering code of a series part). Needs a signed-in account; writes nothing |
 | `parts publish <path>` | Publish a project-researched part (parts/local) as its next catalog revision (needs a publisher: signed in as one, or PROTOBOARD_CLOUD_TOKEN; --dry-run shows the revision without publishing) |
-| `login` | Sign in to Protoboard Cloud (the parts service at --url, else the project's cloud.url, else the hosted Protoboard library): a browser sign-in, or --device for agents and machines without a browser (a code to approve on the sign-in site). The sign-in goes to Linux's keyring, Windows' DPAPI, else a file only you can read; never to the project. Everything in the library needs it: search, adding parts, prices and downloads |
+| `login` | Sign in to Protoboard Cloud (the parts service at --url, else the project's cloud.url, else the hosted Protoboard library). It prints a link and opens it where there is a browser; the same link works from any other machine. The terminal continues by itself, or takes the code the page shows. An agent or a script signs in in two steps: --start prints the link, --code <code> finishes. The sign-in goes to Linux's keyring, Windows' DPAPI, else a file only you can read; never to the project. Everything in the library needs it: search, adding parts, prices and downloads |
 | `logout` | Forget the sign-in for the service at --url |
 | `whoami` | Who is signed in to the service at --url (--check asks the service) |
 | `account` | Print the account page of the service at --url (the profile, sign-ins, sign out everywhere, delete the account) and open it in the browser |
@@ -103,7 +103,10 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 | `--url <service>` | parts: the Protoboard library's URL (default PROTOBOARD_CLOUD_URL, then cloud.url in protoboard.config.ts, then the hosted Protoboard library). Only parts commands, init --template (its catalog parts) and login, logout and whoami use it. |
 | `--library <id>` | parts: the library to use (search: only that one) |
 | `--compiled` | parts add, parts update --to: vendor the definition JSON only, not its .uhd.ts source |
-| `--device` | login: sign in with a code approved on another device (the default when this terminal has no browser: no TTY, CI, SSH or no display) |
+| `--start` | login: print the sign-in link and stop (the first of two steps; the default with no terminal to type at) |
+| `--code <code>` | login: finish the sign-in begun with --start, with the code the page shows |
+| `--wait` | login: with no terminal, wait for the sign-in instead of stopping after the link (codes are read from standard input, one per line) |
+| `--no-browser` | login: do not open a browser, only print the link |
 | `--severity <level>` | check: lowest severity to print (error\|warning\|info, default warning) |
 | `--module <ref>` | run <capability>:<op>: instance path (board) or module id (watch-mainboard) |
 | `--port <n>` | dev: first port to try (default 5180; taken ports are skipped unless given) |
@@ -174,7 +177,7 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     The Protoboard library does, browsing included: parts search, parts taxonomy, libraries,
     parts add, parts update, parts list --check, parts offers, parts prices and parts publish.
     Signed out, those stop with exit code 4 and one line saying to sign in with "protoboard login".
-    CI: set PROTOBOARD_CLOUD_TOKEN (the service token), or "protoboard login --device".
+    CI: set PROTOBOARD_CLOUD_TOKEN (the service token).
 
   Commands
     init <dir>              Scaffold a portable Protoboard project; --template drone|wearable|iot starts from a
@@ -340,11 +343,13 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             (needs a publisher: signed in as one, or PROTOBOARD_CLOUD_TOKEN; --dry-run shows
                             the revision without publishing)
     login                   Sign in to Protoboard Cloud (the parts service at --url, else the project's
-                            cloud.url, else the hosted Protoboard library): a browser sign-in, or
-                            --device for agents and machines without a browser (a code to approve on the
-                            sign-in site). The sign-in goes to Linux's keyring, Windows' DPAPI, else a file
-                            only you can read; never to the project. Everything in the library needs it: search,
-                            adding parts, prices and downloads
+                            cloud.url, else the hosted Protoboard library). It prints a link and opens it
+                            where there is a browser; the same link works from any other machine. The
+                            terminal continues by itself, or takes the code the page shows. An agent or a
+                            script signs in in two steps: --start prints the link, --code <code> finishes.
+                            The sign-in goes to Linux's keyring, Windows' DPAPI, else a file only you can
+                            read; never to the project. Everything in the library needs it: search, adding
+                            parts, prices and downloads
     logout                  Forget the sign-in for the service at --url
     whoami                  Who is signed in to the service at --url (--check asks the service)
     account                 Print the account page of the service at --url (the profile, sign-ins, sign out
@@ -450,8 +455,12 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     --library <id>          parts: the library to use (search: only that one)
     --compiled              parts add, parts update --to: vendor the definition JSON only, not its .uhd.ts
                             source
-    --device                login: sign in with a code approved on another device (the default when this
-                            terminal has no browser: no TTY, CI, SSH or no display)
+    --start                 login: print the sign-in link and stop (the first of two steps; the default
+                            with no terminal to type at)
+    --code <code>           login: finish the sign-in begun with --start, with the code the page shows
+    --wait                  login: with no terminal, wait for the sign-in instead of stopping after the
+                            link (codes are read from standard input, one per line)
+    --no-browser            login: do not open a browser, only print the link
     --severity <level>      check: lowest severity to print (error|warning|info, default warning)
     --module <ref>          run <capability>:<op>: instance path (board) or module id (watch-mainboard)
     --port <n>              dev: first port to try (default 5180; taken ports are skipped unless given)

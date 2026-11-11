@@ -518,6 +518,7 @@ export const VALUE_OPTIONS: readonly string[] = [
   "--allow-host",
   "--auth-env",
   "--case",
+  "--code",
   "--created-at",
   "--cursor",
   "--cwd",
@@ -654,10 +655,12 @@ export function windowsCommand(o: CommandOptions): string {
         ]
       : []),
     'if not exist "%CLI%" ( echo protoboard: %CLI% is missing ^(the stack copy was removed^). Open the project in VS Code with the Protoboard extension, or run npm install in the project. 1>&2 & exit /b 127 )',
-    "where node >nul 2>nul && node -e \"process.exit(+process.versions.node.split('.')[0] >= 22 ? 0 : 1)\" >nul 2>nul && ( node \"%CLI%\" %* & exit /b )",
+    'set "PROG="',
+    "where node >nul 2>nul && node -e \"process.exit(+process.versions.node.split('.')[0] >= 22 ? 0 : 1)\" >nul 2>nul && set \"PROG=node\"",
+    "if defined PROG goto go",
     'set "RT="',
     'if exist "%PBHOME%\\runtime" set /p RT=<"%PBHOME%\\runtime"',
-    'if defined RT if exist "%RT%" ( set "ELECTRON_RUN_AS_NODE=1" & "%RT%" "%CLI%" %* & exit /b )',
+    'if defined RT if exist "%RT%" ( set "PROG=%RT%" & set "ELECTRON_RUN_AS_NODE=1" & goto go )',
     `echo ${NEED_NODE.replace(/[()&|<>^]/g, "^$&")} 1>&2`,
     "exit /b 127",
     ...(o.kind === "home"
@@ -673,6 +676,10 @@ export function windowsCommand(o: CommandOptions): string {
           "exit /b",
         ]
       : []),
+    "rem The CLI is the last command this file runs, with nothing after it, so its exit code is this command's:",
+    "rem with `exit /b` after it on the same line, a failed command came back to PowerShell as 0.",
+    ":go",
+    '"%PROG%" "%CLI%" %*',
     "",
   ].join("\r\n");
 }

@@ -106,6 +106,8 @@ import {
   configuredLibraries,
   loginWithBrowser,
   loginWithDevice,
+  beginLinkLogin,
+  finishLinkLogin,
   logout,
   serviceKey,
   ACCESS_EXIT_CODE,
@@ -157,7 +159,7 @@ const cli = meow(
     The Protoboard library does, browsing included: parts search, parts taxonomy, libraries,
     parts add, parts update, parts list --check, parts offers, parts prices and parts publish.
     Signed out, those stop with exit code 4 and one line saying to sign in with "protoboard login".
-    CI: set PROTOBOARD_CLOUD_TOKEN (the service token), or "protoboard login --device".
+    CI: set PROTOBOARD_CLOUD_TOKEN (the service token).
 
   Commands
     init <dir>              Scaffold a portable Protoboard project; --template drone|wearable|iot starts from a
@@ -323,11 +325,13 @@ const cli = meow(
                             (needs a publisher: signed in as one, or PROTOBOARD_CLOUD_TOKEN; --dry-run shows
                             the revision without publishing)
     login                   Sign in to Protoboard Cloud (the parts service at --url, else the project's
-                            cloud.url, else the hosted Protoboard library): a browser sign-in, or
-                            --device for agents and machines without a browser (a code to approve on the
-                            sign-in site). The sign-in goes to Linux's keyring, Windows' DPAPI, else a file
-                            only you can read; never to the project. Everything in the library needs it: search,
-                            adding parts, prices and downloads
+                            cloud.url, else the hosted Protoboard library). It prints a link and opens it
+                            where there is a browser; the same link works from any other machine. The
+                            terminal continues by itself, or takes the code the page shows. An agent or a
+                            script signs in in two steps: --start prints the link, --code <code> finishes.
+                            The sign-in goes to Linux's keyring, Windows' DPAPI, else a file only you can
+                            read; never to the project. Everything in the library needs it: search, adding
+                            parts, prices and downloads
     logout                  Forget the sign-in for the service at --url
     whoami                  Who is signed in to the service at --url (--check asks the service)
     account                 Print the account page of the service at --url (the profile, sign-ins, sign out
@@ -433,8 +437,12 @@ const cli = meow(
     --library <id>          parts: the library to use (search: only that one)
     --compiled              parts add, parts update --to: vendor the definition JSON only, not its .uhd.ts
                             source
-    --device                login: sign in with a code approved on another device (the default when this
-                            terminal has no browser: no TTY, CI, SSH or no display)
+    --start                 login: print the sign-in link and stop (the first of two steps; the default
+                            with no terminal to type at)
+    --code <code>           login: finish the sign-in begun with --start, with the code the page shows
+    --wait                  login: with no terminal, wait for the sign-in instead of stopping after the
+                            link (codes are read from standard input, one per line)
+    --no-browser            login: do not open a browser, only print the link
     --severity <level>      check: lowest severity to print (error|warning|info, default warning)
     --module <ref>          run <capability>:<op>: instance path (board) or module id (watch-mainboard)
     --port <n>              dev: first port to try (default 5180; taken ports are skipped unless given)
@@ -581,6 +589,10 @@ const cli = meow(
       compiled: { type: "boolean", default: false },
       ci: { type: "boolean", default: false },
       device: { type: "boolean", default: false },
+      start: { type: "boolean", default: false },
+      code: { type: "string" },
+      wait: { type: "boolean", default: false },
+      browser: { type: "boolean", default: true },
       force: { type: "boolean", default: false },
       agent: { type: "string", isMultiple: true },
       all: { type: "boolean", default: false },
@@ -2233,9 +2245,15 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
     process.exitCode = (s.signedIn && s.valid !== false) || (!s.signedIn && (s.needsAccount === false || access.via === "open-service")) ? 0 : 1;
     return;
   }
-  const device = cli.flags.device || !hasBrowser();
   const log = (line: string) => process.stderr.write(`${line}\n`);
-  try {
+  // a program reading the waiting sign-in's events (--wait --format json) gets every answer as one line, as the events are
+  const lines = json && cli.flags.wait;
+  const answer = (value: Record<string, unknown>, text: () => string) => (lines ? void process.stdout.write(JSON.stringify(value) + "\n") : out(value, text));
+  const signedInAs = (session: { email?: string; uid: string; via: string }) =>
+    answer({ service, signedIn: true, email: session.email, uid: session.uid, via: session.via, store: store.describe() }, () => `✓ Signed in as ${session.email ?? session.uid}\nThe sign-in is kept in ${store.describe()}, never in a project.`);
+  /** The sign-in of a service from before sign-in by link: a browser on this machine, else a code approved on its site. */
+  const older = async () => {
+    const device = cli.flags.device || !hasBrowser();
     const session = device
       ? await loginWithDevice(
           service,
@@ -2251,14 +2269,83 @@ async function account(sub: "login" | "logout" | "whoami" | "account") {
                 ].join("\n"),
               );
           },
-          // the platform only: the machine's name is the user's, and the approval page needs none of it (PB-1047)
+          // the platform only: the machine's name is the user's, and the approval page needs none of it
           { store, client: `protoboard CLI (${process.platform})` },
-        )
+        ).catch((e) => {
+          // a service with no code sign-in at all, asked from a program (the editor's prompt has no terminal):
+          // its browser sign-in is the one it has, and the system opens the page
+          if (cli.flags.device || !(e instanceof AccountError && e.code === "NO_SIGN_IN")) throw e;
+          return loginWithBrowser(service, openUrl, { store, log });
+        })
       : await loginWithBrowser(service, openUrl, { store, log });
-    out({ service, signedIn: true, email: session.email, uid: session.uid, via: session.via, store: store.describe() }, () => `Signed in to ${service} as ${session.email ?? session.uid}. The sign-in is kept in ${store.describe()}, never in a project.`);
+    signedInAs(session);
+  };
+  try {
+    if (typeof cli.flags.code === "string") {
+      // the second of two steps: the code the page showed
+      const r = await finishLinkLogin(service, cli.flags.code, { store });
+      if (r.status === "signed-in") return signedInAs(r.session);
+      const message =
+        r.status === "mismatch"
+          ? "That code doesn't match. Check it and try again."
+          : r.status === "pending"
+            ? "Nobody has signed in on that page yet. Sign in there first, then give the code it shows."
+            : "That code has expired. Run `protoboard login --start` for a new link.";
+      out({ service, signedIn: false, status: r.status, ...(r.status === "mismatch" ? { attemptsLeft: r.attemptsLeft } : {}), message }, () => message);
+      process.exitCode = 1;
+      return;
+    }
+    // --device stays for scripts written against it: the older sign-in, as before
+    if (cli.flags.device) return await older();
+    const atTerminal = !!process.stdin.isTTY && !!process.stderr.isTTY && !process.env.CI;
+    try {
+      if (cli.flags.start || (!atTerminal && !cli.flags.wait)) {
+        // nobody to type a code here (an agent, a script): the link now, the code in a second command
+        const begun = await beginLinkLogin(service);
+        // the second command names the same service as this one
+        // a URL with a character a shell reads (& ? ; and the like) is quoted, so the line runs as shown;
+        // `nextArgs` is the same command as arguments, for a caller that starts it without a shell
+        const url = cli.flags.url ? String(cli.flags.url) : undefined;
+        // quoted for the shells of this platform: single quotes where they are literal (sh and its kin); on
+        // Windows double quotes, which cmd and PowerShell both take (PowerShell still reads a `$` inside them:
+        // `nextArgs` is the exact command)
+        const quoted = (v: string) => (process.platform === "win32" ? `"${v}"` : `'${v.replace(/'/g, `'\\''`)}'`);
+        const shown = url === undefined ? "" : ` --url ${/^[A-Za-z0-9_\-.:\/@%+=,~]+$/.test(url) ? url : quoted(url)}`;
+        const next = `protoboard login${shown} --code <code>`;
+        const nextArgs = ["login", ...(url === undefined ? [] : ["--url", url]), "--code", "<code>"];
+        out({ service, signedIn: false, url: begun.url, expiresIn: begun.expiresIn, next, nextArgs }, () => [begun.url, `Sign in there, then run: ${next}`].join("\n"));
+        return;
+      }
+      const { copyToClipboard, runLinkLogin } = await import("./login.js");
+      const remote = !!process.env.CI || (!!process.env.SSH_CONNECTION && !process.env.DISPLAY) || (process.platform === "linux" && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY);
+      const session = await runLinkLogin(
+        service,
+        {
+          write: (text) => void process.stderr.write(text),
+          // events are lines on stdout only for a program that asked to read them (--wait --format json); with
+          // --format json alone stdout is one document, the result, and the link goes where a person reads it
+          emit: (event) => void (lines ? process.stdout : process.stderr).write(JSON.stringify(event) + "\n"),
+          input: process.stdin,
+          interactive: atTerminal,
+          open: (url) => openUrl(url),
+          copy: (text) => copyToClipboard(text, { tty: !!process.stderr.isTTY }),
+          remote,
+        },
+        // the editor's extension runs this command for its own sign-in prompt and says so, for the page's wording
+        { store, json, noBrowser: !cli.flags.browser, client: process.env.PROTOBOARD_LOGIN_CLIENT === "vscode" ? "vscode" : "terminal" },
+      );
+      if (!json && atTerminal) process.stderr.write("\n");
+      signedInAs(session);
+    } catch (e) {
+      if (!(e instanceof AccountError && e.code === "LINK_UNSUPPORTED")) throw e;
+      // --start promises a link and an exit: an older service has no link to give, and its sign-in waits
+      if (cli.flags.start) throw new AccountError("NOT_STARTED", `${service} has no sign-in in two steps (an older service). Run \`protoboard login --device\`: it shows a code to approve and waits for it.`);
+      await older();
+    }
   } catch (e) {
-    if (e instanceof AccountError && e.code === "NO_SIGN_IN") {
-      out({ service, signedIn: false, message: e.message }, () => e.message);
+    if (e instanceof AccountError && (e.code === "NO_SIGN_IN" || e.code === "NOT_STARTED" || e.code === "SIGN_IN_EXPIRED")) {
+      answer({ service, signedIn: false, message: e.message }, () => e.message);
+      if (e.code !== "NO_SIGN_IN") process.exitCode = 1;
       return;
     }
     if (e instanceof AccountError && e.code === "UNREACHABLE") throw new Error(signInUnreachable(service, e.message, chosen.source, root ? join(root, CONFIG_FILE) : undefined));

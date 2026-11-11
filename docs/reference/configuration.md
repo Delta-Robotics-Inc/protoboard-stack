@@ -54,7 +54,7 @@ the TypeScript it is written for. A project pins both exactly in
 
 ```json
 {
-  "dependencies": { "@deltarobotics/uhd": "0.3.0" },
+  "dependencies": { "@deltarobotics/uhd": "0.3.1" },
   "devDependencies": { "typescript": "7.0.2" }
 }
 ```
@@ -77,6 +77,9 @@ does not admit 0.3.0. UHD 0.3.0 only widened it (its changelog: definitions
 written for 0.2.x are valid 0.3.0 definitions unchanged), so the stack runs
 a part whose source declares a 0.2 range under UHD 0.3.x as well, without a
 `PB_SOURCE_UHD_RANGE` error. A project on Stack 0.2.0 moves its pin to 0.3.0.
+
+The stack pins UHD 0.3.1, a patch release that keeps the 0.3 schema.
+`protoboard upgrade` moves a project's pin from 0.3.0 to it.
 
 ## `protoboard.config.ts`
 

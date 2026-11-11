@@ -62,9 +62,8 @@ export const DELIVERED = [
   // the views and the web viewer: every label a person reads
   { path: "packages/views/src/**", read: "code" },
   { path: "packages/web-viewer/src/**", read: "code" },
-  // the VS Code extension: manifest (commands, settings, walkthrough), walkthrough pages, themes, source and pages
+  // the VS Code extension: manifest (commands, settings), themes, source (the getting-started page is in it) and pages
   { path: "packages/vscode-protoboard/package.json", read: "text" },
-  { path: "packages/vscode-protoboard/media/walkthrough/**", read: "text" },
   { path: "packages/vscode-protoboard/themes/**", read: "text" },
   { path: "packages/vscode-protoboard/src/**", read: "code" },
   { path: "packages/vscode-protoboard/webview/**", read: "code" },

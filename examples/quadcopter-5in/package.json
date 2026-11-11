@@ -10,7 +10,7 @@
     "inspect": "protoboard inspect"
   },
   "dependencies": {
-    "@deltarobotics/uhd": "0.3.0",
+    "@deltarobotics/uhd": "0.3.1",
     "@protoboardai/core": "^0.2.0",
     "@protoboardai/ext-docs": "^0.2.0",
     "@protoboardai/ext-drone": "^0.2.0",

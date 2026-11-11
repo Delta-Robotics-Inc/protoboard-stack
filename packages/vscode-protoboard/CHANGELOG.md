@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+- **Get Started with Protoboard** opens after a first install: choose a
+  theme, sign in, connect your agent, open the drone example, start a
+  project. Each step shows whether it is done.
+- **The drone example** is carried by the extension and opens in a folder
+  you choose, with no account and no npm.
+- A window with no project shows the example's card and what the Library
+  looks like before a sign-in.
+- In Restricted Mode the views say that Protoboard is off and offer to
+  trust the folder; a project's window shows the same in a tab that stays.
+- A new project made in another folder is offered to open in a dialog.
+- A stack that cannot be set up at the first start is reported, with Try
+  Again.
+- Windows: **Add to PATH** appends its folder to your user `Path` and
+  leaves the rest as it was, `%USERPROFILE%` entries included.
+
 ## 0.2.3
 
 - Sign-in works again with the hosted library, and when the service can't check

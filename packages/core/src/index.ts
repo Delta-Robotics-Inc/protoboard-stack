@@ -403,6 +403,7 @@ export {
   SIGN_IN_CHECK_UNAVAILABLE,
   signInStamp,
   signInWithCustomToken,
+  windowsPowerShellEnv,
   type AccountInfo,
   type AccountStatus,
   type CredentialBackend,
@@ -412,6 +413,7 @@ export {
 export { ensurePrivateDir, tightenDir } from "./private-dir.js";
 export { AUTH_ENV_NAME, CLOUD_TOKEN_ORIGINS_ENV, browserUrlProblem, cloudTokenAllowed, cloudTokenOrigins, isAuthEnvName, isLoopbackHost, tokenTransportProblem } from "./web-urls.js";
 export { tightenUserFolders } from "./user-folders.js";
+export { beginLinkLogin, finishLinkLogin, pendingSignInFile, startLinkLogin, type CodeResult, type LinkLogin, type LinkLoginOptions } from "./account-link.js";
 export { accountPage, accountPageUrl, loginWithBrowser, loginWithDevice, logout, serviceAccount, type DevicePrompt, type LoginOptions } from "./account-login.js";
 // The cloud's sign-in (PB-928): whether this machine may use a service's account features
 export {
@@ -430,7 +432,7 @@ export {
   type AccessRefusal,
   type AccessVia,
 } from "./access.js";
-export { PATH_MARK, TERMINAL_PATH_ENV, applyPathPlan, describePathPlan, lastingPath, onPathValue, pathPlan, type PathApplied, type PathLook, type PathPlan } from "./path-setup.js";
+export { PATH_MARK, TERMINAL_PATH_ENV, addToPathValue, applyPathPlan, describePathPlan, lastingPath, onPathValue, pathPlan, removeFromPathValue, removeFromUserPath, type PathApplied, type PathLook, type PathPlan } from "./path-setup.js";
 // Stack copies outside a project, and a project's links to one (PB-929)
 export {
   LINK_RECORD,

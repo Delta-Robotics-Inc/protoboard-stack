@@ -60,7 +60,7 @@
   },
   "protoboard": {
     "toolchain": {
-      "uhd": "0.3.0",
+      "uhd": "0.3.1",
       "typescript": "7.0.2"
     }
   },
@@ -68,7 +68,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@deltarobotics/uhd": "^0.3.0",
+    "@deltarobotics/uhd": "^0.3.1",
     "@gltf-transform/core": "4.5.1",
     "@gltf-transform/extensions": "4.5.1",
     "@gltf-transform/functions": "4.5.1",

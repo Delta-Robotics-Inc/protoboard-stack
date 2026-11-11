@@ -19,7 +19,7 @@ const pkg = JSON.parse(src("package.json")) as {
     commands: { command: string; enablement?: string }[];
     menus: Record<string, { command?: string; when?: string; group?: string }[]>;
     viewsWelcome: { view: string; contents: string; when?: string }[];
-    walkthroughs: { description: string; steps: { id: string; title: string; description: string; when?: string }[] }[];
+    walkthroughs?: unknown;
   };
 };
 /** A function's body in a source file, from its signature to the next member. */
@@ -138,12 +138,9 @@ describe("local work is never covered, disabled or held back", () => {
     ]);
   });
 
-  it("Sign In with a Code is in the palette only while signed out, like Sign In", () => {
+  it("Sign In is in the palette only while signed out, and is the one sign-in command", () => {
     const palette = pkg.contributes.menus.commandPalette.filter((m) => m.command === "protoboard.signIn" || m.command === "protoboard.signInDevice");
-    expect(palette.map((m) => [m.command, m.when])).toEqual([
-      ["protoboard.signIn", "!protoboard.signedIn"],
-      ["protoboard.signInDevice", "!protoboard.signedIn"],
-    ]);
+    expect(palette.map((m) => [m.command, m.when])).toEqual([["protoboard.signIn", "!protoboard.signedIn"]]);
   });
 
   it("Project Parts lists the project's own parts with no word about a sign-in", () => {
@@ -190,16 +187,11 @@ describe("the cloud's commands (CLOUD_COMMANDS) ask to sign in instead of runnin
   });
 });
 
-describe("the walkthrough", () => {
-  it("makes a project and shows it first; signing in is an optional step where the library comes in", () => {
-    const w = pkg.contributes.walkthroughs[0]!;
-    expect(w.steps.map((s) => s.id)).toEqual(["newProject", "viewer", "signIn", "terminal"]);
-    const step = w.steps.find((s) => s.id === "signIn")!;
-    expect(step.when).toBeUndefined();
-    expect(step.title).toBe("Use the Protoboard library (optional)");
-    expect(w.description).toMatch(/No account needed/);
-    for (const s of w.steps) expect(s.description, s.id).not.toMatch(/for now|needs a signed-in, invited account/);
-    expect(src("media/walkthrough/sign-in.md")).not.toMatch(/unlocks|for now/);
+describe("getting started", () => {
+  it("is Protoboard's own page (start.test.ts), not VS Code's walkthrough; no step is switched off signed out", () => {
+    expect(pkg.contributes.walkthroughs).toBeUndefined();
+    expect(pkg.contributes.commands.map((c) => c.command)).toEqual(expect.arrayContaining(["protoboard.start", "protoboard.openExample"]));
+    expect(src("src/startPage.ts")).not.toMatch(/for now|needs a signed-in, invited account/);
     expect(src("src/extension.ts")).not.toContain("protoboard.signInOff");
   });
 });

@@ -261,7 +261,7 @@ export async function setupCommand(flags: SetupFlags, io: SetupIo, deps: SetupDe
     else if (!flags.yes && !(await io.confirm!(`Put the protoboard command on your PATH, for terminals outside the editor? ${describePathPlan(plan)}`))) result.path = { dir: bin, action: "declined", message: `Left as it is. The command is ${join(bin, win ? "protoboard.cmd" : "protoboard")}; the editor's own terminals have it.` };
     else {
       try {
-        const applied = applyPathPlan(plan, { ...(deps.append ? { append: deps.append } : {}), ...(deps.run ? { run: (command: string, args: string[]) => deps.run!({ command, args }) } : {}) });
+        const applied = applyPathPlan(plan, { env, ...(deps.append ? { append: deps.append } : {}), ...(deps.run ? { run: (command: string, args: string[]) => deps.run!({ command, args }) } : {}) });
         result.path = { dir: bin, action: applied.changed ? "added" : "already", message: applied.message };
       } catch (e) {
         result.path = { dir: bin, action: "failed", message: (e as Error).message };

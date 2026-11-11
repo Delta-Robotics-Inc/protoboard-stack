@@ -32,8 +32,15 @@ export const HELP_VIEW = "protoboard.help";
 
 export const helpCommand = (l: HelpLink) => `protoboard.help.${l.id}`;
 
-/** The Help view's rows: one per link, a click opens it; then the local telemetry row (`mode`: as recording is now). */
+/** Get Started (start.ts): the page of a first install, kept within reach. */
+export const START_COMMAND = "protoboard.start";
+
+/** The Help view's rows: Get Started, then one per link, a click opens it; then the local telemetry row (`mode`: as recording is now). */
 export function helpItems(mode: ReturnType<typeof extensionTelemetryMode> = extensionTelemetryMode()): vscode.TreeItem[] {
+  const start = new vscode.TreeItem("Get Started");
+  start.id = "start";
+  start.iconPath = new vscode.ThemeIcon("star-empty");
+  start.command = { command: START_COMMAND, title: "Get Started" };
   const links = HELP_LINKS.map((l) => {
     const item = new vscode.TreeItem(l.label);
     item.id = l.id;
@@ -47,7 +54,7 @@ export function helpItems(mode: ReturnType<typeof extensionTelemetryMode> = exte
   telemetry.iconPath = new vscode.ThemeIcon(mode.mode === "off" ? "circle-slash" : "pulse");
   telemetry.tooltip = telemetryStatusText(mode);
   telemetry.command = { command: TELEMETRY_COMMAND, title: telemetryLabel(mode.mode) };
-  return [...links, telemetry];
+  return [start, ...links, telemetry];
 }
 
 /** The view, the three link commands and the telemetry status command; the telemetry row follows its settings. */
@@ -64,4 +71,5 @@ export function registerHelp(): vscode.Disposable[] {
 /** The links as one Markdown line, for a tooltip whose Markdown trusts these commands (`helpCommands`). */
 export const helpMarkdown = (): string => HELP_LINKS.map((l) => `[$(${l.icon}) ${l.label}](command:${helpCommand(l)})`).join(" · ");
 
-export const helpCommands = (): string[] => HELP_LINKS.map(helpCommand);
+/** The commands registerHelp registers: the links and the telemetry status (Restricted Mode keeps them, restricted.ts). */
+export const helpCommands = (): string[] => [...HELP_LINKS.map(helpCommand), TELEMETRY_COMMAND];
