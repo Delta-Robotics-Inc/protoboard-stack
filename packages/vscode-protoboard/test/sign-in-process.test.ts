@@ -5,11 +5,11 @@
  * runtime prints nothing into a pseudo-terminal on Windows: a sign-in shown
  * in a terminal stayed empty there.)
  */
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { chooseRuntime, loginProcess, type CliCommand } from "../src/cli.js";
+import { chooseRuntime, loginProcess, loginTreeKill, type CliCommand } from "../src/cli.js";
 import { runSignInPrompt, type PromptBox } from "../src/signInPrompt.js";
 
 const dir = mkdtempSync(join(tmpdir(), "pb-sign-in-process-"));
@@ -119,5 +119,11 @@ describe("the sign-in process, with no Node.js on the machine", () => {
     const done = runSignInPrompt({ box: () => b, start: () => loginProcess({ command: join(dir, "no-such-runtime"), args: [], from: "carried" }, [], dir, {}), open: () => true, copy: () => {}, log: () => {} });
     expect(await done).toMatchObject({ signedIn: false, reason: "failed" });
     expect(b.shown).toBe(false);
+  });
+
+  it("behind a shell on Windows a cancelled sign-in ends the whole tree, not the shell alone", () => {
+    expect(loginTreeKill(4242)).toEqual({ command: "taskkill", args: ["/pid", "4242", "/T", "/F"] });
+    const src = readFileSync(new URL("../src/cli.ts", import.meta.url), "utf8");
+    expect(src).toContain('shell && process.platform === "win32" && proc.pid !== undefined ? loginTreeKill(proc.pid) : undefined');
   });
 });

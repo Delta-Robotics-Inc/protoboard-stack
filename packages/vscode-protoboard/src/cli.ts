@@ -429,6 +429,9 @@ export function parseJsonOutput<T>(r: CliResult, what: string): T {
   return data as T;
 }
 
+/** What ends a process and everything it started, on Windows. */
+export const loginTreeKill = (pid: number) => ({ command: "taskkill", args: ["/pid", String(pid), "/T", "/F"] });
+
 /**
  * `protoboard login --wait --format json`, as the sign-in prompt drives it:
  * its lines out, codes in. Pipes, never a terminal: VS Code's own runtime
@@ -437,7 +440,8 @@ export function parseJsonOutput<T>(r: CliResult, what: string): T {
  */
 export function loginProcess(cli: CliCommand, args: string[], cwd: string, env: NodeJS.ProcessEnv): LoginProcess {
   // a .cmd or .bat (protoboard.cliPath) needs a shell on Windows
-  const proc = spawn(cli.command, [...cli.args, ...args], { cwd, env: { ...process.env, ...env, ...(cli.env ?? {}) }, stdio: ["pipe", "pipe", "pipe"], windowsHide: true, shell: /\.(cmd|bat)$/i.test(cli.command) });
+  const shell = /\.(cmd|bat)$/i.test(cli.command);
+  const proc = spawn(cli.command, [...cli.args, ...args], { cwd, env: { ...process.env, ...env, ...(cli.env ?? {}) }, stdio: ["pipe", "pipe", "pipe"], windowsHide: true, shell });
   let lastError = "";
   const lines = (stream: NodeJS.ReadableStream, each: (line: string) => void) => {
     let pending = "";
@@ -456,6 +460,12 @@ export function loginProcess(cli: CliCommand, args: string[], cwd: string, env: 
       proc.on("close", (code) => run(code, lastError));
     },
     write: (line) => void proc.stdin.write(`${line}\n`),
-    kill: () => void proc.kill(),
+    kill: () => {
+      // behind a shell (a .cmd on Windows) killing the process ends the shell only: the CLI it started would
+      // keep its listener and could still save a sign-in the person cancelled. The whole tree goes
+      const tree = shell && process.platform === "win32" && proc.pid !== undefined ? loginTreeKill(proc.pid) : undefined;
+      if (tree) spawn(tree.command, tree.args, { stdio: "ignore", windowsHide: true }).on("error", () => void proc.kill());
+      else proc.kill();
+    },
   };
 }
