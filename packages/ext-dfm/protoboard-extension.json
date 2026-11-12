@@ -1,0 +1,29 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-dfm",
+  "version": "0.2.2",
+  "description": "Design for manufacturing: the process ladder (cheapest accessible method first), a layered DFM profile of machine and material limits with a status and a source on every value, process playbooks starting with 3D printing, the DfX checklist, design aids, and an independent DFM review before anything is made.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "dfm",
+      "summary": "Start here for any mechanical design (a part, enclosure, bracket, mount, jig, case or fixture; a board moved into CAD to build around it): establish the manufacturing process (asked or inferred; FDM by default, cheapest rung first), resolve the DFM profile, load the process playbook, balance style against the process limits, record waivers, prove risky fits with a coupon or a printed slice, and cross-check with DfX",
+      "path": "skills/dfm/SKILL.md",
+      "verifiedBy": "dfm-review"
+    },
+    {
+      "id": "dfm-3d-printing",
+      "summary": "Design rules for 3D printed parts, FDM first: walls, overhangs, bridges, holes, orientation, materials, fits and clearances per side, heat-set inserts, captured nuts, embedded magnets, other printing processes, and test coupons",
+      "path": "skills/dfm-3d-printing/SKILL.md",
+      "verifiedBy": "dfm-review"
+    },
+    {
+      "id": "dfm-review",
+      "summary": "Independent check of a model against the resolved DFM profile and the process playbook before it is made: each value measured or read first, then compared; findings carry rule, value, limit, status, source and location, with OK / FAILED / NOT CHECKED / WAIVED results that advise and never block",
+      "path": "skills/dfm-review/SKILL.md"
+    }
+  ]
+}

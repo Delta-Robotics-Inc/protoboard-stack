@@ -1,0 +1,22 @@
+{
+  "schema": "protoboard.extension/v0",
+  "id": "@protoboardai/ext-style",
+  "version": "0.2.2",
+  "description": "The style system for agents: one house style (Hazard Protocol) shared by every domain, with a branch per domain that adds its own tokens, classes and guards. Ships the shared core conventions and the 3D CAD branch; the PCB branch is @protoboardai/board-style.",
+  "compatibility": {
+    "protoboard": "^0.2.0",
+    "uhd": ">=0.3.0"
+  },
+  "skills": [
+    {
+      "id": "style-system",
+      "summary": "Find and resolve the style for any domain, explain why a token has its value, apply it through the domain's own skill, record a decision when the user states a preference, promote a repeated project decision, add an asset or example image, bring or author a theme, and report drift without blocking",
+      "path": "skills/style-system/SKILL.md"
+    },
+    {
+      "id": "cad-style",
+      "summary": "The 3D CAD branch: resolve the CAD style with the DFM profile so process floors apply, then apply the form language, radii and chamfer ladder, datums and margins, splits and seams, fasteners, text and marks, bounded patterns (isogrid, Voronoi, hex) and color, material and finish, with a non-blocking self-check",
+      "path": "skills/cad-style/SKILL.md"
+    }
+  ]
+}

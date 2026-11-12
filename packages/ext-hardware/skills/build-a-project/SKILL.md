@@ -301,6 +301,11 @@ steps.
 
 ### 6. Enclosures and structures (cad capability)
 
+Before a custom mechanical module is designed, follow **dfm**: it settles how
+the part will be made, resolves the process limits and balances the style
+(**cad-style**) against them; a printed part then follows
+**dfm-3d-printing**, and **dfm-review** checks the result before it is made.
+
 Each custom mechanical module gets a `cad.config.ts` naming its provider:
 
 | Module | SOP | Provider |

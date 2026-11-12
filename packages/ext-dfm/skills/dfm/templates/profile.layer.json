@@ -1,0 +1,27 @@
+{
+  "schema": "protoboard.dfm.layer/v1",
+  "extends": "fdm",
+  "notes": [
+    "Example user layer. Copy it to <config>/dfm/profile.json (the user's printer and habits), to <project>/dfm/profile.json (this project), or to <part folder>/dfm.json (one part), then edit. Every value here is an example, not a recommendation.",
+    "<config> is PROTOBOARD_CONFIG_DIR, else %APPDATA%\\protoboard on Windows, else $XDG_CONFIG_HOME/protoboard or ~/.config/protoboard.",
+    "A bare value (\"machine.nozzle\": 0.6) is a value the user stated: status user, source layer file, unit kept from the shipped profile. Every width that is a formula over machine.nozzle recomputes.",
+    "machine.family names the printer; use the model name as the package's printers-bambu-lab.json lists it, or a plain description. Copy the build volume you rely on into a value of your own if a part comes near it.",
+    "material.default is the filament parts are designed for unless a part says otherwise.",
+    "clearance.sliding.side is PER SIDE (radial). The diametral clearance is twice that: a 0.15 mm per-side fit around a 6 mm pin is a 6.3 mm hole. Paths ending in .side are per side; paths ending in .diametral are on the diameter.",
+    "The entry object form records evidence: status proven means a coupon measured it on this printer; the note says which coupon and when. Use status failed, with what happened, for a value that did not work.",
+    "Run: node node_modules/@protoboardai/ext-dfm/skills/dfm/scripts/resolve-profile.mjs --format table to see the result, and --explain <path> to see where a value came from. The format is skills/dfm/references/profile-format.md."
+  ],
+  "values": {
+    "machine.family": "Bambu Lab P1S",
+    "machine.nozzle": 0.4,
+    "material.default": "PETG",
+    "clearance.sliding.side": {
+      "value": 0.15,
+      "unit": "mm",
+      "status": "proven",
+      "source": "slot fit coupon, printed by the user",
+      "note": "Example: PETG, 0.2 mm layers, measured 2026-11-12 with the lid and slot fit coupon; per side."
+    }
+  },
+  "waivers": []
+}

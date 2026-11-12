@@ -2,7 +2,7 @@
 
 # Extensions and skills
 
-The 12 first-party extensions in this repository, what each provides, and every skill
+The 14 first-party extensions in this repository, what each provides, and every skill
 they ship. A project uses an extension by installing its package and listing it in
 `extensions` in `protoboard.config.ts`; a capability provider is also loaded when a module's
 `<capability>.config.ts` names it. In a project, `protoboard doctor` lists what is configured,
@@ -28,6 +28,9 @@ Start with **build-a-project**: it takes an agent from a brief to a release and 
 
 | Skill | Extension | Verified by | Summary |
 | --- | --- | --- | --- |
+| [`dfm`](../../packages/ext-dfm/skills/dfm/SKILL.md) | `@protoboardai/ext-dfm` | `dfm-review` | Start here for any mechanical design (a part, enclosure, bracket, mount, jig, case or fixture; a board moved into CAD to build around it): establish the manufacturing process (asked or inferred; FDM by default, cheapest rung first), resolve the DFM profile, load the process playbook, balance style against the process limits, record waivers, prove risky fits with a coupon or a printed slice, and cross-check with DfX |
+| [`dfm-3d-printing`](../../packages/ext-dfm/skills/dfm-3d-printing/SKILL.md) | `@protoboardai/ext-dfm` | `dfm-review` | Design rules for 3D printed parts, FDM first: walls, overhangs, bridges, holes, orientation, materials, fits and clearances per side, heat-set inserts, captured nuts, embedded magnets, other printing processes, and test coupons |
+| [`dfm-review`](../../packages/ext-dfm/skills/dfm-review/SKILL.md) | `@protoboardai/ext-dfm` | — | Independent check of a model against the resolved DFM profile and the process playbook before it is made: each value measured or read first, then compared; findings carry rule, value, limit, status, source and location, with OK / FAILED / NOT CHECKED / WAIVED results that advise and never block |
 | [`uhd-tech-docs`](../../packages/ext-docs/skills/uhd-tech-docs/SKILL.md) | `@protoboardai/ext-docs` | `uhd-tech-docs-verify` | Generate datasheets and assembly guides whose every value is a query into the UHD model |
 | [`uhd-tech-docs-verify`](../../packages/ext-docs/skills/uhd-tech-docs-verify/SKILL.md) | `@protoboardai/ext-docs` | — | Verify generated technical documents: values, units, stand-in watermarks, layout, coverage |
 | [`firmware-config`](../../packages/ext-drone/skills/firmware-config/SKILL.md) | `@protoboardai/ext-drone` | `firmware-verify` | Derive a flight-controller configuration from UHD links and part facts, every line cited, every setting checked against pinned firmware sources |
@@ -54,12 +57,22 @@ Start with **build-a-project**: it takes an agent from a brief to a release and 
 | [`lifecycle-alternates`](../../packages/ext-sourcing/skills/lifecycle-alternates/SKILL.md) | `@protoboardai/ext-sourcing` | `sourcing-verify` | Check lifecycle (active, NRND, LTB, EOL, obsolete) at the manufacturer, apply the selection disqualifiers, and name alternates with a form-fit-function comparison; near-misses are kept |
 | [`part-handoff`](../../packages/ext-sourcing/skills/part-handoff/SKILL.md) | `@protoboardai/ext-sourcing` | — | Hand a sourced part to local UHD authoring (project-researched tier): parts/local and parts/evidence layout, which facts become UHD and which stay sourcing evidence, then uhd-part-author and uhd-part-verify |
 | [`sourcing-verify`](../../packages/ext-sourcing/skills/sourcing-verify/SKILL.md) | `@protoboardai/ext-sourcing` | — | Independent audit of sourcing evidence: re-open offers and lifecycle sources, re-run the quote check, re-test the disqualifiers, and record what was confirmed, wrong or unverifiable |
+| [`style-system`](../../packages/ext-style/skills/style-system/SKILL.md) | `@protoboardai/ext-style` | — | Find and resolve the style for any domain, explain why a token has its value, apply it through the domain's own skill, record a decision when the user states a preference, promote a repeated project decision, add an asset or example image, bring or author a theme, and report drift without blocking |
+| [`cad-style`](../../packages/ext-style/skills/cad-style/SKILL.md) | `@protoboardai/ext-style` | — | The 3D CAD branch: resolve the CAD style with the DFM profile so process floors apply, then apply the form language, radii and chamfer ladder, datums and margins, splits and seams, fasteners, text and marks, bounded patterns (isogrid, Voronoi, hex) and color, material and finish, with a non-blocking self-check |
 | [`circuit-board`](../../packages/ext-tscircuit/skills/circuit-board/SKILL.md) | `@protoboardai/ext-tscircuit` | — | Design a custom PCB through the circuit capability: the board as a UHD module, circuit.config.ts, circuit:generate/export/extract/check, and what each CIRCUIT_* finding means |
 | [`kicad-layout-review`](../../packages/ext-tscircuit/skills/kicad-layout-review/SKILL.md) | `@protoboardai/ext-tscircuit` | — | Review and finish a locked board's layout in KiCad 10: what to check, DRC/ERC reports, Update PCB from Schematic keeping placement, and acting on CIRCUIT_KICAD_* findings |
 | [`kicad-cli`](../../packages/ext-tscircuit/skills/kicad-cli/SKILL.md) | `@protoboardai/ext-tscircuit` | — | kicad-cli exports and checks for a KiCad 10 project (DRC, ERC, Gerber, drill, position, STEP/GLB, SVG/PDF, netlist, BOM, upgrade), and the fallback before lock |
 | [`firmware-config-zephyr`](../../packages/ext-zephyr/skills/firmware-config-zephyr/SKILL.md) | `@protoboardai/ext-zephyr` | — | SOP: configure Zephyr for a UHD board with an nRF52840 module (firmware capability): config, generate, check, export, build hand-off; every setting cited |
 
 ## Extensions
+
+### @protoboardai/ext-dfm
+
+Design for manufacturing: the process ladder (cheapest accessible method first), a layered DFM profile of machine and material limits with a status and a source on every value, process playbooks starting with 3D printing, the DfX checklist, design aids, and an independent DFM review before anything is made. Version 0.2.2; source [packages/ext-dfm](../../packages/ext-dfm).
+
+Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+
+Skills: `dfm`, `dfm-3d-printing`, `dfm-review`.
 
 ### @protoboardai/ext-docs
 
@@ -264,6 +277,14 @@ Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 Skills: `part-search`, `datasheet-extract`, `supplier-compare`, `lifecycle-alternates`, `part-handoff`, `sourcing-verify`.
 
 Eval cases: `record-ldo-offers` (Record a regulator's supplier offers and lifecycle as sourcing evidence).
+
+### @protoboardai/ext-style
+
+The style system for agents: one house style (Hazard Protocol) shared by every domain, with a branch per domain that adds its own tokens, classes and guards. Ships the shared core conventions and the 3D CAD branch; the PCB branch is @protoboardai/board-style. Version 0.2.2; source [packages/ext-style](../../packages/ext-style).
+
+Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+
+Skills: `style-system`, `cad-style`.
 
 ### @protoboardai/ext-tscircuit
 

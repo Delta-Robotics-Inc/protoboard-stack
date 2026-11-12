@@ -1,0 +1,6 @@
+{
+  "schema": "protoboard.cad-style.layer/v1",
+  "extends": "hazard-protocol",
+  "tokens": {},
+  "notes": {}
+}
