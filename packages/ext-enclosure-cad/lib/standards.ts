@@ -182,6 +182,7 @@ export interface Insert extends Cited {
   thread: string;
   outer_d_mm: number;
   length_mm: number;
+  /** The finished hole the insert's maker states; the generator models a printed hole larger (INSERT_HOLE_COMPENSATION). */
   hole_d_mm: number;
   hole_depth_mm: number;
   min_wall_mm: number;
@@ -221,6 +222,30 @@ export const CNC_KITCHEN_M2: Insert = {
 };
 
 export const INSERTS: Record<string, Insert> = { "ruthex-rx-m2x4": RUTHEX_RX_M2X4, "cnc-kitchen-m2": CNC_KITCHEN_M2 };
+
+/**
+ * How much larger (DIAMETRAL, mm) an insert hole is modeled than the finished
+ * hole the insert's maker states (`Insert.hole_d_mm`), by process. An FDM
+ * hole whose axis is vertical as printed (a stack of circles in the layer
+ * plane) comes out about 0.1 to 0.25 mm small on the diameter, and CNC
+ * Kitchen models insert holes 0.2 to 0.3 mm over the datasheet size; 0.2 mm
+ * puts an M2 hole (finished Ø3.2) at Ø3.4 in the model. A machined hole
+ * comes out at size, so machining adds nothing. A project sets the value its
+ * own printer is proven to need with the `insert_hole_compensation_mm`
+ * constraint. The value applies to holes vertical in their part's print
+ * orientation only: a horizontal hole is built from layer steps and sags at
+ * the top, and needs a teardrop or flat roof and about a layer of droop
+ * allowance instead (no hole this generator cuts for an insert is horizontal).
+ */
+export const INSERT_HOLE_COMPENSATION = {
+  print_mm: 0.2,
+  machine_mm: 0,
+  source: "https://www.cnckitchen.com/blog/are-our-heat-set-insert-datasheets-wrong (holes measured 0.1 to 0.25 mm small; model the hole 0.2 to 0.3 mm larger)",
+  assumption: "0.2 mm, the low end of CNC Kitchen's range, with the slicer's XY hole compensation at 0 (one method only); check a first print and set insert_hole_compensation_mm to what the printer needs",
+} as const satisfies Cited & { print_mm: number; machine_mm: number };
+
+/** The diameter an insert hole is modeled at: the finished hole plus the compensation (diametral), to 0.001 mm. */
+export const modeledInsertHole = (insert: Pick<Insert, "hole_d_mm">, compensation_mm: number) => Math.round((insert.hole_d_mm + compensation_mm) * 1000) / 1000;
 
 /** A screw that closes a joint (mm). */
 export interface Screw extends Cited {

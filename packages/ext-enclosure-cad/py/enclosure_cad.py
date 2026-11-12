@@ -93,6 +93,16 @@ FIXED_TIME = "2000-01-01T00:00:00"
 TOOL = "build123d"
 MIN = (Align.CENTER, Align.CENTER, Align.MIN)
 
+# How each part the shell is cut into lies on the bed: its build direction (bed toward nozzle) in the
+# enclosure's coordinates. The base prints on its floor, open side up; the lid on its outer face (the
+# work order says the same: ops/package.ts orientation(), and a twist lid's "print" fact).
+BUILD_DIRECTION = {"base": (0.0, 0.0, 1.0), "lid": (0.0, 0.0, -1.0)}
+# Diametral allowance on a heat-set insert hole by process, for a job that does not state one
+# (lib/standards.ts INSERT_HOLE_COMPENSATION, cited there; the job's design.insert_hole_compensation wins).
+INSERT_HOLE_COMPENSATION = {"print": 0.2, "machine": 0.0}
+# An insert hole whose axis is within this of its part's build direction is vertical as printed.
+VERTICAL_DEG = 1.0
+
 
 # ---------------------------------------------------------------------------------------------
 # Small geometry helpers
@@ -199,6 +209,40 @@ def feature_shape(name: str, faces: list[Face], pad: float = 0.2) -> Compound | 
     return Compound(label=name, children=solids) if solids else None
 
 
+def insert_hole(e: "Enclosure", problems: list[str], fid: str, ins: dict, part: str, axis) -> dict:
+    """The hole a heat-set insert goes into: the finished size its maker states, and the size it is modeled at.
+
+    Printed, a hole whose axis is vertical in its part's print orientation (a stack of circles in the layer
+    plane) comes out small on the diameter, so it is modeled larger by the design's compensation. A printed
+    hole on any other axis is built from layer steps and sags at its top: it needs a teardrop or flat roof and
+    about a layer of droop allowance, not a uniform diametral increase, so it is left at the finished size and
+    reported. Every insert hole this generator cuts is vertical as printed (boss holes, whose frame must face
+    +Z, and lid-screw column holes, both in the base, which prints on its floor); the direction is checked
+    here rather than assumed, and the fact states it. Machined, a hole comes out at size: the design's
+    compensation is 0 unless the config states one, and the axis does not matter.
+    """
+    finished = float(ins["hole_d_mm"])
+    printed = e.job["process"] == "print"
+    up = BUILD_DIRECTION[part]
+    tilt = math.degrees(math.acos(min(1.0, abs(float(np.dot(unit(axis), up))))))
+    vertical = tilt <= VERTICAL_DEG
+    comp = e.insert_comp if (vertical or not printed) else 0.0
+    if printed and not vertical:
+        problems.append(f"{fid}: an insert hole {tilt:.0f}° from vertical in the {part}'s print orientation is left at its finished Ø{finished:g}; a printed hole on that axis sags at its top: give it a teardrop or flat roof, or drill it to size")
+    return {
+        "finished_d_mm": round(finished, 3),
+        "modeled_d_mm": round(finished + comp, 3),
+        "compensation_mm": round(comp, 3),
+        "depth_mm": ins["hole_depth_mm"],
+        "part": part,
+        "axis": "vertical" if vertical else f"{tilt:.0f}° from vertical",
+        "basis": (f"printed: the hole's axis is the {part}'s build direction ({'floor' if part == 'base' else 'outer face'} on the bed), modeled {comp:g} mm over the finished Ø{finished:g}" if printed and vertical
+                  else f"printed off vertical: modeled at the finished Ø{finished:g}" if printed
+                  else f"machined: cut {comp:g} mm over the finished Ø{finished:g}" if comp
+                  else f"machined: cut at the finished Ø{finished:g}"),
+    }
+
+
 # ---------------------------------------------------------------------------------------------
 # The enclosure
 # ---------------------------------------------------------------------------------------------
@@ -217,6 +261,10 @@ class Enclosure:
         self.lid = d["lid"]
         self.clr = d["clearance"]
         self.mw = d["min_wall"]
+        # diametral allowance on insert holes vertical as printed; a job written before the design value existed
+        # takes the default by process (lib/standards.ts INSERT_HOLE_COMPENSATION)
+        self.insert_comp = float(d.get("insert_hole_compensation", INSERT_HOLE_COMPENSATION.get(job["process"], 0.0)))
+        self.column_hole: dict | None = None
         feats = job["features"]
         self.joint_feature = next((f for f in feats if f["kind"] == "joint"), None)
         self.joint_gland = next((f for f in feats if f["kind"] == "seal_gland" and f["params"].get("at") == "joint" and f["params"]["type"] == "face"), None)
@@ -294,7 +342,10 @@ class Enclosure:
             if not jf or "insert" not in jf["params"] or "screw" not in jf["params"]:
                 raise SystemExit('fasteners "screws" needs a joint feature stating its screw and insert (enclosure_feature kind "joint")')
             ins = jf["params"]["insert"]
-            self.rc = ins["hole_d_mm"] / 2 + max(ins.get("min_wall_mm", 0.0), self.mw)
+            # the column holes stand along +Z in the base, which prints on its floor: vertical as printed
+            self.column_hole = insert_hole(self, self.problems, jf["id"], ins, "base", (0.0, 0.0, 1.0))
+            # the column's wall is measured from the hole as modeled (compensated), not the finished hole
+            self.rc = self.column_hole["modeled_d_mm"] / 2 + max(ins.get("min_wall_mm", 0.0), self.mw)
             self.columns = self.column_centres(jf["params"].get("count", 4))
         self.cw = self.mw  # wall around a column where it bulges out of the shell
         self.tw = self.plan_twist() if self.twist else None
@@ -925,12 +976,16 @@ def boss(e: Enclosure, b: Built, f: dict) -> None:
     if abs(unit(fr["normal"])[2] - 1) > 1e-6:
         b.problems.append(f"{f['id']}: a boss frame must face +Z (bosses stand on the floor)")
         return
-    od = ins["hole_d_mm"] + 2 * max(ins.get("min_wall_mm", 0.0), e.mw)
+    # the boss stands on the base's floor and its hole runs down its axis (+Z): vertical as printed
+    hole = insert_hole(e, b.problems, f["id"], ins, "base", fr["normal"])
+    hd = hole["modeled_d_mm"]
+    # the wall around the insert is measured from the hole as modeled (compensated), not the finished hole
+    od = hd + 2 * max(ins.get("min_wall_mm", 0.0), e.mw)
     od = max(od, p.get("boss_d_mm", 0.0))
     solids, holes = [], []
     for hx, hy in p["holes"]:
         solids.append(Pos(hx, hy, e.z_floor - 0.01) * Cylinder(od / 2, top - e.z_floor + 0.01, align=MIN))
-        holes.append(Pos(hx, hy, top - ins["hole_depth_mm"]) * Cylinder(ins["hole_d_mm"] / 2, ins["hole_depth_mm"] + 0.01, align=MIN))
+        holes.append(Pos(hx, hy, top - ins["hole_depth_mm"]) * Cylinder(hd / 2, ins["hole_depth_mm"] + 0.01, align=MIN))
     for s in solids:
         b.adds.append((f["id"], s))
     for hx, hy in p["holes"]:
@@ -940,8 +995,8 @@ def boss(e: Enclosure, b: Built, f: dict) -> None:
     tops = [Pos(hx, hy, top - 0.05) * Cylinder(od / 2 + 1e-3, 0.05, align=MIN) for hx, hy in p["holes"]]
     b.marks[f["id"]] = [("base", t) for t in tops]
     b.frames[f["id"]] = frame_of(fr["origin"], fr["normal"], fr.get("xAxis"))
-    b.facts[f["id"]] = {"kind": "boss", "boss_d_mm": round(od, 3), "top_z": top, "height_mm": round(top - e.z_floor, 3), "insert": ins, "holes": p["holes"]}
-    b.walls.append({"feature": f["id"], "what": "boss wall around the insert", "mm": round((od - ins["hole_d_mm"]) / 2, 3), "min_mm": max(ins.get("min_wall_mm", 0.0), e.mw)})
+    b.facts[f["id"]] = {"kind": "boss", "boss_d_mm": round(od, 3), "top_z": top, "height_mm": round(top - e.z_floor, 3), "insert": ins, "insert_hole": hole, "holes": p["holes"]}
+    b.walls.append({"feature": f["id"], "what": "boss wall around the insert", "mm": round((od - hd) / 2, 3), "min_mm": max(ins.get("min_wall_mm", 0.0), e.mw)})
     b.walls.append({"feature": f["id"], "what": "floor skin under the insert hole", "mm": round(top - ins["hole_depth_mm"] - e.z_bottom, 3), "min_mm": e.mw})
     for key in f.get("mates", []):
         b.zones.setdefault(key, []).extend({"centre": [hx, hy], "radius": od / 2 + e.clr + 0.5, "z": [top - 1.0, top + 1.0]} for hx, hy in p["holes"])
@@ -1139,8 +1194,9 @@ def joint(e: Enclosure, b: Built, f: dict) -> None:
         p = f["params"]
         ins, sc = p["insert"], p["screw"]
         grip = e.z_top - e.z_cav_top + (e.jc if e.joint_style == "rabbet" else 0.0)
-        fact.update({"columns": [r3([c[0], c[1], e.z_cav_top]) for c in e.columns], "column_d_mm": round(2 * e.rc, 3), "grip_mm": round(grip, 3), "insert": ins, "screw": sc})
-        b.walls.append({"feature": f["id"], "what": "column wall around the insert", "mm": round(e.rc - ins["hole_d_mm"] / 2, 3), "min_mm": max(ins.get("min_wall_mm", 0.0), e.mw)})
+        hole = e.column_hole
+        fact.update({"columns": [r3([c[0], c[1], e.z_cav_top]) for c in e.columns], "column_d_mm": round(2 * e.rc, 3), "grip_mm": round(grip, 3), "insert": ins, "insert_hole": hole, "screw": sc})
+        b.walls.append({"feature": f["id"], "what": "column wall around the insert", "mm": round(e.rc - hole["modeled_d_mm"] / 2, 3), "min_mm": max(ins.get("min_wall_mm", 0.0), e.mw)})
         if sc.get("length_mm") is not None:
             fact["screw_reach_mm"] = round(sc["length_mm"] - grip, 3)
             if sc["length_mm"] - grip > ins["hole_depth_mm"]:
@@ -1379,8 +1435,9 @@ def build(job: dict, out: Path, root: Path) -> dict:
     if e.columns:
         jp = e.joint_feature["params"]
         ins, sc = jp["insert"], jp["screw"]
+        hd = e.column_hole["modeled_d_mm"]  # vertical in the base as printed (Enclosure.__init__)
         for c in e.columns:
-            parts["base"] = parts["base"] - Pos(c[0], c[1], e.z_cav_top - ins["hole_depth_mm"]) * Cylinder(ins["hole_d_mm"] / 2, ins["hole_depth_mm"] + 0.01, align=MIN)
+            parts["base"] = parts["base"] - Pos(c[0], c[1], e.z_cav_top - ins["hole_depth_mm"]) * Cylinder(hd / 2, ins["hole_depth_mm"] + 0.01, align=MIN)
             parts["lid"] = parts["lid"] - Pos(c[0], c[1], e.z_split - 0.5) * Cylinder(sc["clearance_d_mm"] / 2, e.z_top - e.z_split + 1, align=MIN)
     # a face gland at a frame is cut into the surface its frame lies on
     skin = Compound(parts["base"].faces())

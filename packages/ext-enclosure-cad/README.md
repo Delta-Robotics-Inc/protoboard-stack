@@ -59,7 +59,7 @@ candidate for a UHD link kind; until UHD has one it is a trait parameter.
 | `button` | `Button` | A bore, and a separate printed plunger: shaft to `gap_mm` short of the actuator, `protrude_mm` outside, and a flange behind the wall, trimmed (a polygon around the axis) to keep the design clearance from the walls and from every body inside | Alignment; gap ≥ 0 (not pressed at rest) and gap + switch travel ≤ protrusion (it can press the switch); room for the flange; after trimming, the flange overlaps the wall by ≥ 0.5 mm over ≥ half its edge (assumption: enough that it cannot tilt out through the bore); the plunger intersects no wall (exact) and no body inside (voxel) |
 | `window` | `Window` | An aperture and a pocket for the cover (glass, lens, IR window), outside (flush) or inside | Alignment; the ledge holding the cover and the wall left under the pocket |
 | `light_pipe` | `LightPipe` | A hole for the pipe plus clearance | Alignment; edge margins |
-| `boss` | `InsertBosses` | Bosses from the floor to the frame (a structure bolt pattern), with heat-set insert holes; the floor is lowered if the insert hole needs it | Boss wall ≥ the insert's minimum wall; skin under the hole; the board mated to them sits on them (contact there is by design) |
+| `boss` | `InsertBosses` | Bosses from the floor to the frame (a structure bolt pattern), with heat-set insert holes at their modeled size (below); the floor is lowered if the insert hole needs it | Boss wall around the modeled hole ≥ the insert's minimum wall; skin under the hole; the board mated to them sits on them (contact there is by design) |
 | `seal_gland` | `SealGland` | Face groove in the base rim at the lid joint (`at: "joint"`, flat joint), a radial groove round a twist lid's collar (radial, `at: "joint"`), a face groove ring at a frame, or a static radial (female) gland around a rod or tube, with a boss when the wall is too thin | Squeeze within the gland table's range; installed stretch ≤ 5 %; face groove within +1 % of the O-ring's I.D. (external pressure) or −1 % of its O.D. (internal); rim ledges |
 | `thread` | `Thread` | An internal single-start thread in a skirt under the floor (a cap on a neck) | Skirt wall; turns of engagement are reported |
 | `strap_lugs` | `StrapLugs` | Two lugs at the ±Y end with blind spring-bar holes; the bar clears the case by `strap_gap_mm` at the strap's centre line | Lug wall and edge beyond the holes |
@@ -77,6 +77,7 @@ The standard parts these take are cited in `lib/standards.ts`:
 | Face groove sized by the O-ring's I.D. (+1 %) or O.D. (−1 %) | Parker ORD 5700 Design Chart 4-2 notes |
 | ruthex RX-M2x4 insert (Ø3.6 × 4.0, hole Ø3.2, wall ≥ 1.3) | ruthex product data, as read by the watch and bottle projects |
 | CNC Kitchen M2 insert (Ø3.6 × 3.0, hole Ø3.2, wall ≥ 1.3) | 3DJake product page |
+| Insert hole print compensation, `INSERT_HOLE_COMPENSATION` (0.2 mm diametral printed, 0 machined) | CNC Kitchen, "Are our heat-set insert datasheets wrong?" (holes print 0.1 to 0.25 mm small; model them 0.2 to 0.3 mm larger) |
 | M2 × 6 pan head screw; Ø2.4 clearance hole | Accu SPP-M2-6-A2 data; ISO 273 medium series |
 | Esslinger 82.2225 spring bar (Ø1.5, tips Ø0.8, 25.0 overall, 21.8 compressed) | Esslinger product page |
 | USB Type-C plug, `USB_C_PLUG` (overmold 12.35 × 6.5 max, plug 8.25 × 2.40, length 6.65) | USB Type-C Compliance Document rev 1.2, Appendix B, Figure B-1 |
@@ -87,6 +88,22 @@ by process (print 0.8 mm: two 0.4 mm extrusions; machine 0.5 mm), the
 alignment tolerance (0.3 mm, 2°), the plunger flange's hold (0.5 mm over
 half its edge). A module states its own values where it knows better, with a
 `source` or an `assumption`.
+
+### Insert holes: finished and modeled
+
+The insert tables keep the finished hole the insert's maker states (Ø3.2 for
+M2); a printed hole whose axis is vertical as printed comes out about 0.1 to
+0.25 mm small, so `process: "print"` models it larger by
+`insert_hole_compensation_mm` (default 0.2 mm diametral: M2 is cut at Ø3.4),
+while `process: "machine"` cuts the finished size (default 0), and the boss and
+column walls are measured from the modeled hole (`insert_hole` in each boss and
+joint fact gives both diameters). Every insert hole this generator makes is
+vertical as printed (boss and lid-screw column holes stand in the base, which
+prints on its floor); a printed hole on a horizontal axis sags at its top and
+needs a teardrop or flat roof with about a layer of droop allowance instead, so
+the generator would leave one at the finished size and report it. Set
+`insert_hole_compensation_mm` in `cad.config.ts` to the value a test hole on
+the project's printer proves.
 
 ### Cuts across the lid joint
 
@@ -149,6 +166,7 @@ export default defineCapabilityConfig({
 | `fasteners` | `screws` if a joint states screws | `screws` or `none` |
 | `exclude` | — | Placed instance paths that are not inside |
 | `resolution_mm` | 0.25 | Voxel size of the fit analysis |
+| `insert_hole_compensation_mm` | print 0.2, machine 0 | How much larger (diametral) a heat-set insert hole is modeled than the insert's finished hole, for a hole vertical as printed; set the value a test print on the project's printer needs (0 to under 1 mm) |
 
 `process` decides the manufacturing exports: `print` gives an STL and a 3MF
 per printed part (the report marks the parts `printed`), `machine` the STEP
@@ -290,7 +308,9 @@ each unit that builds an enclosure this provider designs:
   the minimum wall is two 0.4 mm extrusions; perimeters from `wall_mm`),
   each printed part with its volume, orientation and supports (a side-wall
   cut wider than 10 mm, an assumption for a tuned printer, needs them), and
-  post-processing: heat-set inserts, O-rings, plungers, lid screws.
+  post-processing: heat-set inserts (which features' holes take them, the
+  holes' finished and modeled diameters, and a first-print hole check),
+  O-rings, plungers, lid screws.
 - `package:test-plan`: the enclosure's own checks from the build report: seal
   squeeze against the gland table, buttons, plugs, the lid joint, and every
   body the fit analysis found tight.
@@ -374,7 +394,8 @@ round case (windows, a light pipe, lugs, a joint O-ring, screws), a bottle
 cap (thread, lip and probe seals), a bayonet and a threaded twist lid on an
 80 mm shell (the shell stays 80 mm across, the collar's levels, the seal's
 stretch and squeeze through the check, and no volume shared by the built base
-and lid), and a box case whose openings cross the lid joint, and runs the
+and lid), a box case whose openings cross the lid joint, and a machined case's
+insert bosses (holes at the finished size), and runs the
 check rules on a fabricated report. The generator tests need Python with build123d and scipy
 (`PROTOBOARD_PYTHON`, else the quadcopter example's `tools install cad`
 runtime, else the older `../uhd/.venv-cad`; see `packages/core/test/cad-python.ts`);

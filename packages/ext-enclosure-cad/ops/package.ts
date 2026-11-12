@@ -86,7 +86,37 @@ function supports(e: Enclosure, part: string): string {
   return feats.length ? `none: ${feats.length} side-wall cut${feats.length === 1 ? "" : "s"} bridge ≤ ${BRIDGE_MM} mm` : "none";
 }
 
-export const workOrder: SectionFn = ({ project: p, unit, release }: SectionContext) => {
+/** An insert hole as the build report states it: the insert's finished size and the size it was modeled at. */
+interface InsertHole {
+  finished_d_mm: number;
+  modeled_d_mm: number;
+  compensation_mm: number;
+  part?: string;
+}
+
+/**
+ * The heat-set inserts the print order sets, grouped by insert and hole size: which features' holes take
+ * them (boss holes, lid-screw column holes) and in which part. A report from before the generator recorded
+ * `insert_hole` cut the holes at the insert's finished size.
+ */
+function insertGroups(e: Enclosure): { name: string; part: string; hole?: InsertHole; at: string[]; count: number }[] {
+  const groups = new Map<string, { name: string; part: string; hole?: InsertHole; at: string[]; count: number }>();
+  for (const [id, f] of Object.entries(e.report?.features ?? {})) {
+    const count = f.kind === "boss" ? ((f.holes as unknown[] | undefined)?.length ?? 0) : f.kind === "joint" && Array.isArray(f.columns) ? f.columns.length : 0;
+    if (!count) continue;
+    const ins = f.insert as { name?: string; hole_d_mm?: number } | undefined;
+    const hole = (f.insert_hole as InsertHole | undefined) ?? (ins?.hole_d_mm !== undefined ? { finished_d_mm: ins.hole_d_mm, modeled_d_mm: ins.hole_d_mm, compensation_mm: 0 } : undefined);
+    const part = hole?.part ?? "base";
+    const key = JSON.stringify([ins?.name ?? "", part, hole?.finished_d_mm, hole?.modeled_d_mm]);
+    const g = groups.get(key) ?? { name: ins?.name ?? "", part, hole, at: [], count: 0 };
+    g.at.push(`${id} (${count} ${f.kind === "boss" ? "boss" : "lid-screw column"} hole${count === 1 ? "" : "s"})`);
+    g.count += count;
+    groups.set(key, g);
+  }
+  return [...groups.values()];
+}
+
+export const workOrder: SectionFn =({ project: p, unit, release }: SectionContext) => {
   const es = enclosures(p, unit).filter((e) => e.b.process === "print");
   if (!es.length) return undefined;
   const builds = unit.perProduct * release.build;
@@ -115,20 +145,15 @@ export const workOrder: SectionFn = ({ project: p, unit, release }: SectionConte
       });
     const def = p.definitions.get(e.id)!.def;
     const post: string[] = ["Remove brim and any supports; deburr every opening and bore."];
-    let inserts = 0;
-    let insertName = "";
-    for (const f of Object.values(e.report?.features ?? {})) {
-      const ins = f.insert as { name?: string } | undefined;
-      if (f.kind === "boss") {
-        inserts += (f.holes as unknown[] | undefined)?.length ?? 0;
-        insertName ||= ins?.name ?? "";
-      }
-      if (f.kind === "joint" && Array.isArray(f.columns)) {
-        inserts += f.columns.length;
-        insertName ||= ins?.name ?? "";
-      }
+    for (const g of insertGroups(e)) {
+      const h = g.hole;
+      const sizes = !h
+        ? ""
+        : h.compensation_mm > 0
+          ? ` The holes are modeled Ø${n(h.modeled_d_mm, 3)} mm for the insert's finished Ø${n(h.finished_d_mm, 3)} mm (${n(h.compensation_mm, 3)} mm diametral print compensation; each hole's axis is vertical as printed): measure one printed hole before setting the inserts, and if it is not about Ø${n(h.finished_d_mm, 3)} mm, set insert_hole_compensation_mm in ${e.b.config} to what this printer needs and regenerate.`
+          : ` The holes are Ø${n(h.finished_d_mm, 3)} mm, the insert's finished size (no print compensation).`;
+      post.push(`Set ${g.count} heat-set insert${g.count === 1 ? "" : "s"}${g.name ? ` (${g.name})` : ""} in the ${g.part}: ${g.at.join(" and ")}, with a soldering iron and insert tip at the material's insert temperature; each flush and square.${sizes}`);
     }
-    if (inserts) post.push(`Set ${inserts} heat-set insert${inserts === 1 ? "" : "s"}${insertName ? ` (${insertName})` : ""} with a soldering iron and insert tip at the material's insert temperature; each flush and square.`);
     // light pipes the module says are filled after printing (LightPipe fill)
     const fills = new Map<string, string[]>();
     for (const [id, f] of Object.entries(e.report?.features ?? {}).filter(([, f]) => f.kind === "light_pipe")) {
