@@ -1,0 +1,507 @@
+{
+  "schema": "protoboard.dfm.profile/v1",
+  "id": "fdm",
+  "name": "FDM 3D printing",
+  "process": "fdm",
+  "description": "House defaults for fused-filament (FDM/FFF) parts: a tuned single-nozzle printer with a 0.4 mm nozzle, 0.2 mm layers and PLA, designed for no generated supports. Geometry rules are formulas over machine.nozzle, line.width and layer.height so they recompute for another nozzle or layer height. Clearance paths ending in .side are per side (radial); the diametral value is twice that and is stated in each note. Every value is a recommendation the agent applies by default; a value the user states overrides it. Rule ids and reasons: skills/dfm-3d-printing/references/fdm-rules.md.",
+  "values": {
+    "machine.family": {
+      "value": "generic",
+      "unit": null,
+      "status": "house",
+      "source": "house default",
+      "note": "No printer model assumed; the printers-bambu-lab.json table gives build volumes and temperatures when a model is named."
+    },
+    "machine.nozzle": {
+      "value": 0.4,
+      "unit": "mm",
+      "status": "house",
+      "source": "house default (0.4 mm is the most common desktop FDM nozzle; it is the default nozzle on every current Bambu Lab model, for example: https://bambulab.com/en/compare)",
+      "note": "Change this one value for a 0.2, 0.6 or 0.8 mm nozzle; the geometry rules below recompute."
+    },
+    "layer.height": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "house",
+      "source": "house default; strength drops once layer height exceeds half the nozzle diameter: https://www.cnckitchen.com/blog/the-influence-of-layer-height-on-the-strength-of-fdm-3d-prints",
+      "note": "Bambu Studio's range for a 0.4 mm nozzle is 0.08 to 0.28 mm: https://wiki.bambulab.com/en/software/bambu-studio/layer-height"
+    },
+    "layer.first": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://wiki.bambulab.com/en/software/bambu-studio/layer-height",
+      "note": "Default first-layer height in Bambu Studio."
+    },
+    "layer.max.structural": {
+      "formula": "round(0.5 * machine.nozzle, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.cnckitchen.com/blog/the-influence-of-layer-height-on-the-strength-of-fdm-3d-prints",
+      "note": "MEASURED: strength falls once layer height exceeds half the nozzle; 0.2 mm at a 0.4 mm nozzle."
+    },
+    "line.width": {
+      "formula": "round(machine.nozzle * 1.125, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "PrusaSlicer uses 0.45 mm on a 0.4 mm nozzle: https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135; Bambu Studio stock process profile (VENDOR): https://raw.githubusercontent.com/bambulab/BambuStudio/master/resources/profiles/BBL/process/fdm_process_common.json",
+      "note": "0.45 mm at a 0.4 mm nozzle. Bambu Studio's stock profile for a 0.4 mm nozzle (VENDOR, now confirmed) uses 0.42 mm for the default line, outer wall, top surface, solid infill and support, and 0.45 mm for inner walls and sparse infill (0.5 mm first layer); the Bambu wiki recommends 0.75 to 1.5 x nozzle. The 1.125 x nozzle formula is kept unchanged: it equals Bambu's own inner-wall width, which makes up most of a multi-perimeter wall, and rounding walls up to 0.45 multiples is the safe side (a 0.9 mm wall is one 0.42 outer plus one 0.45 inner line, about 0.87 mm, so it still fills). 0.6 and 0.8 mm nozzle widths on Bambu (about 0.62 and 0.82) remain SNIPPET: https://calibr.pro/tables/nozzle-size-layer-height-chart/."
+    },
+    "material.default": {
+      "value": "PLA",
+      "unit": null,
+      "status": "house",
+      "source": "house default; easiest, stiffest, lowest-shrink common material: https://wiki.bambulab.com/en/general/filament-guide-material-table",
+      "note": "Switch when the part is warm (over about 45 to 50 C), outdoors, preloaded, impact-loaded or flexed beyond about 1 percent strain; see references/materials.md."
+    },
+    "supports.policy": {
+      "value": "avoid",
+      "unit": null,
+      "status": "house",
+      "source": "house default; design for zero generated supports: https://www.youtube.com/watch?v=9Hp-VRO1hVQ",
+      "note": "Supports are acceptable only where the playbook's decision table allows them, and then recorded in the print assumptions."
+    },
+    "wall.min": {
+      "formula": "line.width",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135",
+      "note": "One perimeter: the thinnest wall that prints at all. Below this the Classic wall generator drops the wall and Arachne widens it to 85 percent of the nozzle (https://wiki.bambulab.com/en/software/bambu-studio/wall-generator)."
+    },
+    "wall.structural": {
+      "formula": "round(2 * line.width, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Two perimeters, 0.9 mm at 0.4 mm. The minimum for any wall that carries load or must survive handling."
+    },
+    "wall.loadbearing": {
+      "formula": "round(4 * line.width, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules and https://www.youtube.com/watch?v=AmEaNAwFSfI",
+      "note": "Three to four perimeters (1.35 to 1.8 mm) for load paths; strength tracks perimeters more than infill (MEASURED, CNC Kitchen)."
+    },
+    "wall.unit": {
+      "formula": "line.width",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135",
+      "note": "Walls should be whole multiples of this increment so the slicer fills them with whole beads."
+    },
+    "wall.unknown.printer": {
+      "value": 1.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://simplemachining.com/blogs/dfm-for-3d-printing-a-practical-design-guide",
+      "note": "Conservative floor when the printer is unknown or the part goes to a print service (1.0 to 1.2 mm in the source). Alternative for a load-bearing wall sent to a service bureau: 1.5 mm (Xometry gives 1.2 to 1.5 for supporting walls, 1.5 recommended, VENDOR, https://cdn2.hubspot.net/hubfs/340051/Design_Guides/Xometry_DesignGuide_FDM.pdf; Simple Machining designs to 1.5 x the process minimum). Protolabs' FDM service minimum is 0.8 mm (https://www.protolabs.com/services/3d-printing/fused-deposition-modeling/)."
+    },
+    "overhang.max.angle": {
+      "value": 45,
+      "unit": "deg",
+      "status": "typical",
+      "source": "https://www.hubs.com/knowledge-base/how-design-parts-fdm-3d-printing/",
+      "note": "Degrees from vertical; Xometry also gives 45 deg from vertical (VENDOR, https://cdn2.hubspot.net/hubfs/340051/Design_Guides/Xometry_DesignGuide_FDM.pdf). DERIVED planning aid: the physical limit is a step per layer of about half a line width, angle = atan(0.5 * line.width / layer.height), about 48 deg at 0.2 mm layers and 37 deg at 0.3 mm."
+    },
+    "overhang.cooled.max.angle": {
+      "value": 60,
+      "unit": "deg",
+      "status": "typical",
+      "source": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135",
+      "note": "Use only on a printer known to have strong part cooling and with a coupon; Prusa states 45 to 60 deg depending on nozzle and settings. Bambu's PLA data sheet lists 55 deg (VENDOR)."
+    },
+    "bridge.max.span": {
+      "value": 10,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Design limit for straight bridges between parallel walls on hidden or internal faces. Xometry Europe also gives 10 mm (VENDOR; docs/specs/dfm-research/08-skipped-sources-addendum.md section 3)."
+    },
+    "bridge.conservative.span": {
+      "value": 5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hubs.com/knowledge-base/how-design-parts-fdm-3d-printing/",
+      "note": "Span with no visible sag; use for cosmetic or mating faces and for an unknown printer. Also 5 mm in Xometry's quick-guide table (https://xometry.pro/en-eu/3d-printing-design-guide/quick-guide/) and Unionfab (https://www.unionfab.com/blog/2026/03/design-for-manufacturing-3d-printing), VENDOR."
+    },
+    "bridge.sacrificial.first": {
+      "formula": "layer.height",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Sequential bridging over a hole that starts in mid-air: first layer of tangent rectangles one layer thick, then a second pair rotated 90 deg (bridge.sacrificial.second)."
+    },
+    "bridge.sacrificial.second": {
+      "formula": "round(2 * layer.height, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Cumulative height of the second sacrificial bridge pair."
+    },
+    "hole.min.diameter": {
+      "value": 2.0,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Below this a hole may close up; for any accurate hole print undersize and drill. Protolabs' FDM service also uses 2.0 mm (VENDOR, https://www.protolabs.com/services/3d-printing/fused-deposition-modeling/). Labeled alternative, not adopted: Xometry's 1.0 mm (VENDOR, now read at Xometry: https://cdn2.hubspot.net/hubfs/340051/Design_Guides/Xometry_DesignGuide_FDM.pdf and https://www.xometry.com/manufacturing-standards/) is a roundness floor on industrial FDM, holes over 1.0 mm diametral stay round, best printed vertical; it is not a functional minimum. The playbook keeps 2.0."
+    },
+    "hole.compensation.diametral": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://simplemachining.com/blogs/dfm-for-3d-printing-a-practical-design-guide and https://www.cnckitchen.com/blog/are-our-heat-set-insert-datasheets-wrong",
+      "note": "DIAMETRAL (0.1 per side). Added in CAD to a hole that must come out at a stated finished size (insert holes, screw clearance holes), with slicer XY hole compensation at 0. Not added on top of a fit clearance: the clearance values already are CAD gaps. Sources: +0.2 to +0.4 for holes under 5 mm (VENDOR); CNC Kitchen measured holes 0.1 to 0.25 small (MEASURED). Alternative for an unknown printer or small holes: 0.4 diametral (0.2 per side; PRACTITIONER, https://www.youtube.com/watch?v=yP7_qZ_Mi78, which also says to use one method only: model offset, drill or slicer compensation, never two)."
+    },
+    "hole.horizontal.droop": {
+      "formula": "layer.height",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Relief at the top of a horizontal hole when a teardrop is not used; Hydra uses one layer height (two at 0.1 mm layers)."
+    },
+    "hole.facets.min": {
+      "value": 32,
+      "unit": "count",
+      "status": "typical",
+      "source": "https://hydraraptor.blogspot.com/2011/02/polyholes.html",
+      "note": "Export round holes with at least 32 segments so facet chords do not shrink them; a 10-sided hole is 5 percent small (MEASURED/derived in the source)."
+    },
+    "pin.min.diameter": {
+      "formula": "round(4 * line.width, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "1.8 mm at 0.4 mm. Pins under 5 mm print as perimeters only; add a base fillet and prefer printing load-bearing pins lying down (https://www.hubs.com/knowledge-base/how-design-parts-fdm-3d-printing/)."
+    },
+    "feature.min.size": {
+      "formula": "round(4 * line.width, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Standalone feature in XY; anything structural is at least wall.structural thick. Xometry industrial FDM: 0.89 mm resolvable, 1.14 mm safest, 1.2 to 1.5 recommended (VENDOR, https://community.xometry.com/kb/articles/745-fdm-3d-printing). Protolabs gives 2.0 on its FDM service page but 0.2 in its hub table and guides, one of them a decimal slip (UNVERIFIED which)."
+    },
+    "feature.min.gap": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.unionfab.com/blog/2026/03/design-for-manufacturing-3d-printing",
+      "note": "A single gap between features of one part that must stay separate, not a fit clearance (0.4 to 0.5 mm in the source). Use 0.75 mm for an unknown printer: a Protolabs multi-process advisory that never names FDM (its example is an SLA gear) and equals its SLS/MJF channel gap of 0.762 (https://www.protolabs.com/resources/design-tips/how-to-solve-for-size-constraints-small-gaps-and-thin-walls-in-3d-printed-parts/). Xometry Europe FDM: 0.5 capability, 1.0 recommended (VENDOR, https://xometry.pro/en-eu/3d-printing-design-guide/quick-guide/). Moving parts printed together use clearance.printinplace.side instead."
+    },
+    "text.min.height": {
+      "value": 5,
+      "unit": "mm",
+      "status": "derived",
+      "source": "derived from https://www.hydraresearch3d.com/design-rules and https://3dprintcalcs.uk/design/text-emboss-calculator/ (SNIPPET)",
+      "note": "Bold sans-serif character height. The calculator gives about 4.5 mm bold and 6 mm regular at a 0.4 mm nozzle. Xometry Europe: 5 mm recommended, 3.5 mm capability (VENDOR, https://xometry.pro/en-eu/3d-printing-design-guide/quick-guide/)."
+    },
+    "text.min.stroke": {
+      "formula": "round(2 * line.width, 3)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Embossed stroke at least two lines wide (0.9 mm); engraved strokes may go to 0.5 mm."
+    },
+    "text.emboss.height": {
+      "formula": "round(3 * layer.height, 3)",
+      "unit": "mm",
+      "status": "derived",
+      "source": "derived from https://3dprintcalcs.uk/design/text-emboss-calculator/ (SNIPPET) and https://hlhrapid.com/knowledge/design-guide-fdm-3d-printing/ (SNIPPET, 0.3 mm minimum)",
+      "note": "Three layers raised (0.6 mm at 0.2 mm layers). Never on the first layer. For an industrial FDM order use at least 1.0 mm (Xometry: 0.5 minimum, 1.0 at its 0.254 mm layers, VENDOR, https://cdn2.hubspot.net/hubfs/340051/Design_Guides/Xometry_DesignGuide_FDM.pdf); Protolabs gives 0.3048 mm for all processes."
+    },
+    "text.engrave.depth": {
+      "formula": "round(4 * layer.height, 3)",
+      "unit": "mm",
+      "status": "derived",
+      "source": "derived from https://3dprintcalcs.uk/design/text-emboss-calculator/ (SNIPPET); engraving at least 0.5 mm deep per https://hlhrapid.com/knowledge/design-guide-fdm-3d-printing/ (SNIPPET)",
+      "note": "Four layers deep (0.8 mm at 0.2 mm layers). On a vertical wall keep engraving under 0.9 mm deep (Hydra). For an industrial FDM order use at least 1.0 mm (Xometry, VENDOR, see text.emboss.height)."
+    },
+    "chamfer.bed.edge": {
+      "formula": "max(0.5, layer.first + layer.height)",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules (0.3 mm) and https://www.youtube.com/watch?v=9Hp-VRO1hVQ (1 mm)",
+      "note": "45 deg chamfer on every bed-contact edge to hide elephant's foot. Sources range 0.3 to 1 mm; the playbook adopts 0.5 mm, never less than first layer plus one layer; use 1 mm for an unknown printer. A chamfer, never a fillet."
+    },
+    "corner.bed.radius.large": {
+      "value": 4,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Minimum radius on vertical corners of a large bed footprint, to spread warping stress. Most important for ABS, ASA, PC, nylon and PP."
+    },
+    "clearance.press.side": {
+      "value": 0.05,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.sovol3d.com/blogs/news/fdm-3d-printing-tolerances-clearances-how-to-design-parts-that-fit and https://totalelement.com/blogs/magnet-projects/how-to-embed-magnets-in-3d-prints",
+      "note": "PER SIDE; diametral 0.10. A CAD gap that prints as a light interference because printed holes come out small. Prove with a coupon before relying on it. Comparison, not adopted: Markforged's press fit is 0.00 to 0.05 DIAMETRAL (0 to 0.025 per side) on its calibrated composite printers (VENDOR, https://markforged.com/resources/learn/design-for-additive-manufacturing-plastics-composites/3d-printing-strategies-for-composites/composites-3d-printing-design-tips)."
+    },
+    "clearance.snug.side": {
+      "value": 0.1,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://3dprinting.stackexchange.com/questions/6576 (SNIPPET)",
+      "note": "PER SIDE; diametral 0.20. Locating pins and lids that must not rattle; pushes in by hand. Comparison, not adopted: Markforged's close fit is 0.05 to 0.10 DIAMETRAL (0.025 to 0.05 per side), VENDOR, calibrated industrial printers (see clearance.press.side)."
+    },
+    "clearance.sliding.side": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "house",
+      "source": "house default (the house standard for a smooth fit on a tuned 0.4 mm printer); sourced range 0.15 to 0.25 per side: https://www.sovol3d.com/blogs/news/fdm-3d-printing-tolerances-clearances-how-to-design-parts-that-fit",
+      "note": "PER SIDE; diametral 0.40. Use clearance.unknown.printer.side (0.3 per side, 0.6 diametral) when the printer is unknown or untuned. Slicer XY hole compensation assumed 0. Comparison, not adopted: Markforged's sliding joinery uses 0.08 per side (0.16 diametral) on a Mark Two (VENDOR, https://markforged.com/resources/blog/joinery-onyx); Xometry gives 0.2 to 0.3 for sliding fits without saying per side or diametral. Markforged's values are 2 to 4 times tighter because they describe calibrated industrial composite printers."
+    },
+    "clearance.free.side": {
+      "value": 0.3,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://grandpacad.com/en/tools/tolerance-fit-calculator (SNIPPET, 0.5 to 0.8 diametral)",
+      "note": "PER SIDE; diametral 0.60. Shafts that spin freely and loose assemblies. Comparison, not adopted: Markforged's free fit is 0.10 to 0.20 DIAMETRAL (0.05 to 0.10 per side), VENDOR, calibrated industrial printers (see clearance.press.side)."
+    },
+    "clearance.support.face.extra.side": {
+      "value": 0.07,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://markforged.com/resources/blog/joinery-onyx",
+      "note": "PER SIDE; diametral 0.14. Added to the fit clearance of any mating face that is printed resting on support, because support-side faces are rough and inaccurate: Markforged raises its 0.08 per side sliding joinery to about 0.15 per side there (VENDOR, Mark Two). A vendor allowance on a calibrated industrial printer; prove it with a slice on a desktop printer."
+    },
+    "clearance.printinplace.side": {
+      "value": 0.35,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=TYuLVN3YHw8 and https://www.sovol3d.com/blogs/news/print-in-place-3d-printing-how-to-design-hinges-joints-and-moving-parts-that-actually-work (SNIPPET)",
+      "note": "PER SIDE; diametral 0.70. Parts printed already assembled. A tuned printer freed 0.2 mm gaps, an average one needed 0.3 (MEASURED, Maker's Muse); sourced range 0.25 to 0.4. Service-bureau alternative: Xometry Europe uses 0.5 mm for moving parts (VENDOR, https://xometry.pro/en-eu/3d-printing-design-guide/quick-guide/); the source does not say per side or diametral, so reading it as per side is UNVERIFIED."
+    },
+    "clearance.printinplace.z": {
+      "formula": "round(2 * layer.height, 3)",
+      "unit": "mm",
+      "status": "unverified",
+      "source": "research lane 04 section A8 (one to two layers; the two-layer figure is UNVERIFIED)",
+      "note": "Vertical gap between a top surface and the underside of the part above it in a print-in-place joint; pair it with 45 to 60 deg overhangs on the upper face."
+    },
+    "clearance.unknown.printer.side": {
+      "value": 0.3,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135 and https://simplemachining.com/blogs/dfm-for-3d-printing-a-practical-design-guide",
+      "note": "PER SIDE; diametral 0.60. Sliding fit when the printer is unknown, untuned, or a service bureau."
+    },
+    "clearance.snapfit.side": {
+      "value": 0.3,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.hubs.com/knowledge-base/how-design-snap-fit-joints-3d-printing/ (0.5 mm, per side or total not stated) and https://www.fictiv.com/articles/how-to-design-snap-fit-components (SNIPPET, 0.3 close fit)",
+      "note": "PER SIDE; diametral 0.60. Clearance around the body of a snap fit, not the undercut. Sources do not say per side or total; normalized here by inference."
+    },
+    "accuracy.tuned": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135",
+      "note": "Plus or minus, on a known calibrated printer; holes and the first layers are worse. Alternative for long parts: Xometry's desktop standard, plus or minus one layer (0.2 mm) for the first inch plus 0.05 mm per further inch (VENDOR, https://www.xometry.com/manufacturing-standards/)."
+    },
+    "accuracy.unknown": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.protolabs.com/services/3d-printing/fused-deposition-modeling/ (VENDOR) and https://www.hubs.com/knowledge-base/what-is-fdm-3d-printing/ (SNIPPET)",
+      "note": "Plus or minus, or 0.5 percent of the dimension if larger, on an unknown desktop printer. Now VENDOR-confirmed: Protolabs prototyping FDM plus or minus 0.5 percent with a 0.5 mm floor (its industrial FDM 0.3 percent, 0.3 mm floor); Xometry Europe 0.5 percent."
+    },
+    "strength.z.fraction": {
+      "value": 0.5,
+      "unit": "ratio",
+      "status": "typical",
+      "source": "https://www.cnckitchen.com/blog/comparing-pla-petg-amp-asa-feat-prusament and https://www.youtube.com/watch?v=7aJ4dDyyf20",
+      "note": "Across-layer strength as a fraction of in-layer strength for the default material (PLA): MEASURED 49 to 55 percent on open printers. On untuned stock profiles PLA measured 0.40 (pull ring) and 0.48 (bend), single samples (MEASURED, https://www.youtube.com/watch?v=a6m_GnN5j4c), a lower bound to keep in mind for an untuned or unknown printer; 0.5 stays adopted. Other materials: materials-fdm.json."
+    },
+    "strength.z.impact.fraction": {
+      "value": 0.25,
+      "unit": "ratio",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=a6m_GnN5j4c",
+      "note": "Across-layer impact strength as a fraction of in-layer impact strength: MEASURED (Izod, stock profiles on a Prusa MK3, single samples) PLA 0.23 to 0.26, PETG 0.23 to 0.31. Much lower than the tensile fraction, so an impact or drop load must never cross the layers: orient so it runs along them."
+    },
+    "orientation.tilt.min": {
+      "value": 45,
+      "unit": "deg",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=7aJ4dDyyf20",
+      "note": "If tilting a part to move load off layer lines, tilt at least this far; small tilts barely help (MEASURED)."
+    },
+    "perimeters.structural": {
+      "value": 3,
+      "unit": "count",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=AmEaNAwFSfI",
+      "note": "Wall loops for functional parts; raise to 4 or more before raising infill (MEASURED: 6 perimeters at 15 percent infill matched 2 perimeters at 100 percent). Independent confirmation: at equal mass a thicker shell always beat more infill in PETG bending; infill 15 to 20 percent, rarely over 30, and cubic was the strongest pattern at equal mass (MEASURED, https://www.youtube.com/watch?v=nV3GbN6hLjg). Exception: small, thin or detailed parts may use 100 percent infill (PRACTITIONER, https://www.youtube.com/watch?v=ct-n2lI0I9g)."
+    },
+    "skin.top.min": {
+      "value": 0.9,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://help.prusa3d.com/article/layers-and-perimeters_1748",
+      "note": "Top solid skin; a horizontal plate thinner than about twice this prints fully solid."
+    },
+    "insert.m2.nominal": { "value": 3.2, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Finished hole for the CNC Kitchen M2 x 3 insert (OD 3.6). ruthex uses the same 3.2 mm hole and 1.3 mm wall (VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf). Use the datasheet of the insert actually chosen." },
+    "insert.m2.length": { "value": 3.0, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Insert length of the CNC Kitchen M2 x 3. The standard ruthex M2 is 4.0 mm long (depth 5.0; VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf): set this to the length of the insert actually chosen, and insert.m2.depth follows." },
+    "insert.m2.hole": { "formula": "round(insert.m2.nominal + hole.compensation.diametral, 3)", "unit": "mm", "status": "derived", "source": "derived from insert.m2.nominal and hole.compensation.diametral (CNC Kitchen adds 0.2 to 0.3 in CAD: https://www.cnckitchen.com/blog/are-our-heat-set-insert-datasheets-wrong)", "note": "CAD diameter, DIAMETRAL offset already included (3.4 mm). Straight hole, not tapered." },
+    "insert.m2.depth": { "formula": "round(insert.m2.length + 1, 3)", "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf and https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf (both give L + 1 minimum, blind or through)", "note": "Blind depth = insert length + 1 mm." },
+    "insert.m2.wall": { "value": 1.3, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Minimum solid wall around the hole; set slicer walls so it is solid plastic, not infill." },
+    "insert.m2p5.nominal": { "value": 4.0, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "M2.5 x 4 insert (OD 4.6). ruthex uses the same 4.0 mm hole and 1.6 mm wall (VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf)." },
+    "insert.m2p5.length": { "value": 4.0, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Insert length of the CNC Kitchen M2.5 x 4. The standard ruthex M2.5 is 5.7 mm long (depth 6.7; VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf): set this to the length of the insert actually chosen, and insert.m2p5.depth follows." },
+    "insert.m2p5.hole": { "formula": "round(insert.m2p5.nominal + hole.compensation.diametral, 3)", "unit": "mm", "status": "derived", "source": "derived from insert.m2p5.nominal and hole.compensation.diametral", "note": "CAD diameter, 4.2 mm." },
+    "insert.m2p5.depth": { "formula": "round(insert.m2p5.length + 1, 3)", "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf and https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf (both give L + 1 minimum, blind or through)", "note": "Insert length + 1 mm." },
+    "insert.m2p5.wall": { "value": 1.6, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Minimum wall." },
+    "insert.m3.nominal": { "value": 4.0, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Standard M3 x 5.7 insert (OD 4.6); the ruthex datasheet also gives 4.0 for RX-M3x5.7 (VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf)." },
+    "insert.m3.length": { "value": 5.7, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Insert length." },
+    "insert.m3.hole": { "formula": "round(insert.m3.nominal + hole.compensation.diametral, 3)", "unit": "mm", "status": "derived", "source": "derived; 4.2 mm CAD retained about 90 percent of maximum pull-out in CNC Kitchen's test: https://www.cnckitchen.com/blog/are-our-heat-set-insert-datasheets-wrong", "note": "CAD diameter, 4.2 mm. Pull-out fell sharply when the finished hole exceeded about 4.1 to 4.2 mm (MEASURED)." },
+    "insert.m3.depth": { "formula": "round(insert.m3.length + 1, 3)", "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf and https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf (both give L + 1 minimum, blind or through)", "note": "6.7 mm." },
+    "insert.m3.wall": { "value": 1.6, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Minimum wall; boss OD of at least 2 x insert OD is the conservative alternative (https://www.spirol.com/assets/files/ins-wp-how-to-design-the-proper-hole-for-heat-ultrasonic-inserts-us.pdf)." },
+    "insert.m4.nominal": { "value": 5.7, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "M4 x 8.1 insert (OD 6.3). The ruthex datasheet gives 5.6 (VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf), matching ruthex's own drill set. The profile keeps the CNC Kitchen 5.7 because the whole insert table (length, OD, wall) is the CNC Kitchen family; with ruthex inserts set this to 5.6 in a layer. The smaller hole holds harder, the larger installs easier." },
+    "insert.m4.length": { "value": 8.1, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Insert length." },
+    "insert.m4.hole": { "formula": "round(insert.m4.nominal + hole.compensation.diametral, 3)", "unit": "mm", "status": "derived", "source": "derived from insert.m4.nominal and hole.compensation.diametral", "note": "CAD diameter, 5.9 mm." },
+    "insert.m4.depth": { "formula": "round(insert.m4.length + 1, 3)", "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf and https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf (both give L + 1 minimum, blind or through)", "note": "9.1 mm." },
+    "insert.m4.wall": { "value": 2.1, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Minimum wall." },
+    "insert.m5.nominal": { "value": 6.5, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "M5 x 9.5 insert (OD 7.1). The ruthex datasheet gives 6.4 (VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf); the profile keeps the CNC Kitchen 6.5 for the same reason as insert.m4.nominal; with ruthex inserts set 6.4 in a layer." },
+    "insert.m5.length": { "value": 9.5, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Insert length." },
+    "insert.m5.hole": { "formula": "round(insert.m5.nominal + hole.compensation.diametral, 3)", "unit": "mm", "status": "derived", "source": "derived from insert.m5.nominal and hole.compensation.diametral", "note": "CAD diameter, 6.7 mm." },
+    "insert.m5.depth": { "formula": "round(insert.m5.length + 1, 3)", "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf and https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf (both give L + 1 minimum, blind or through)", "note": "10.5 mm." },
+    "insert.m5.wall": { "value": 2.6, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Minimum wall (ruthex also 2.6). For a joint that should outlast the insert use insert.m5.wall.full_strength." },
+    "insert.m5.wall.full_strength": { "value": 3.6, "unit": "mm", "status": "typical", "source": "https://www.youtube.com/watch?v=lYXTiJo_FQQ", "note": "MEASURED, PLA, short M5 heat-set inserts, flat or on edge: about 3.6 mm of solid perimeter around the hole (4 shells of 0.9 mm lines) with at least 20 percent infill let the insert pull out before the part cracked; infill above 40 percent added nothing. Joints fail where the perimeter ring separates from the infill (MEASURED, https://www.youtube.com/watch?v=eNMAFTeowFs), so this band must be perimeters or a solid modifier, not infill. Measured at M5 only; no per-size value exists for other inserts." },
+    "insert.m6.nominal": { "value": 8.1, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "M6 x 12.7 insert (OD 8.7). The ruthex datasheet gives 8.0 (VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf); the profile keeps the CNC Kitchen 8.1 for the same reason as insert.m4.nominal; with ruthex inserts set 8.0 in a layer." },
+    "insert.m6.length": { "value": 12.7, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Insert length." },
+    "insert.m6.hole": { "formula": "round(insert.m6.nominal + hole.compensation.diametral, 3)", "unit": "mm", "status": "derived", "source": "derived from insert.m6.nominal and hole.compensation.diametral", "note": "CAD diameter, 8.3 mm." },
+    "insert.m6.depth": { "formula": "round(insert.m6.length + 1, 3)", "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf and https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf (both give L + 1 minimum, blind or through)", "note": "13.7 mm." },
+    "insert.m6.wall": { "value": 3.3, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Minimum wall." },
+    "insert.m8.nominal": { "value": 9.7, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "M8 x 12.7 insert (OD 10.2). ruthex alternative: OD 10.1, hole 9.6, wall 4.5 (VENDOR, https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf); set 9.6 in a layer with ruthex inserts." },
+    "insert.m8.length": { "value": 12.7, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Insert length." },
+    "insert.m8.hole": { "formula": "round(insert.m8.nominal + hole.compensation.diametral, 3)", "unit": "mm", "status": "derived", "source": "derived from insert.m8.nominal and hole.compensation.diametral", "note": "CAD diameter, 9.9 mm." },
+    "insert.m8.depth": { "formula": "round(insert.m8.length + 1, 3)", "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf and https://www.igo3d.com/mediafiles/Sonstiges/Ruthex/ruthex_Datenblatt_RX-Serie.pdf (both give L + 1 minimum)", "note": "13.7 mm." },
+    "insert.m8.wall": { "value": 4.5, "unit": "mm", "status": "typical", "source": "https://www.cnckitchen.com/s/CNCKitchen_Heat-Set-Insert-Dimensions-and-Design-Guidelines.pdf", "note": "Minimum wall (ruthex also 4.5)." },
+    "insert.iron.over.print": {
+      "value": 15,
+      "unit": "C",
+      "status": "typical",
+      "source": "https://www.cnckitchen.com/blog/tips-and-tricks-for-heat-set-inserts",
+      "note": "Iron 10 to 20 C above the print temperature (about 225 C PLA, 245 C PETG, 265 C ABS). A person installs inserts."
+    },
+    "nut.pocket.clearance.af": {
+      "value": 0.3,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://loftsmith.com/guides/screw-holes-3d-printing (SNIPPET) and https://3dprintcalcs.uk/mechanical/nut-trap-calculator/ (SNIPPET)",
+      "note": "DIAMETRAL across flats (0.15 per flat) for a drop-in nut held by the screw: M3 nut 5.5 AF gives a 5.8 mm pocket. Press-in nut: 0.1 to 0.15 across flats. Model across flats, a flat parallel to the bed, from the measured nut: nominal can be about 0.15 mm large (a measured M5 nut was 7.85 AF x 3.85 vs 8 x 4). Alternatives: a nut embedded during a pause, 0.05 to 0.08 per side on all faces over the measured nut (0.10 to 0.16 diametral; VENDOR, Markforged machines, https://markforged.com/resources/blog/embedding-nuts-3d-printing); a slip-in M6 or larger nut that slides in by hand, +0.7 diametral across flats (0.35 per flat; PRACTITIONER, https://www.youtube.com/watch?v=yP7_qZ_Mi78)."
+    },
+    "nut.pocket.depth.extra": {
+      "value": 0.3,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://loftsmith.com/guides/screw-holes-3d-printing (SNIPPET)",
+      "note": "Pocket depth = nut height + 0.2 to 0.3 mm."
+    },
+    "screw.selftap.m3.pilot": {
+      "value": 2.7,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.cnckitchen.com/blog/threaded-inserts-for-3d-prints-cheap-vs-expensive",
+      "note": "Hole for an M3 machine screw driven straight into plastic. Rule of thumb for other sizes: 96 percent of major diameter (Hydra, SNIPPET). Torque limit about 1 Nm (MEASURED). Easier-driving alternative: tap drill + 0.4 mm, M3 2.9 and M4 3.9 diametral (PRACTITIONER, https://www.youtube.com/watch?v=yP7_qZ_Mi78); 2.7 stays adopted because it is the measured pull-out value."
+    },
+    "screw.clearance.m3": {
+      "formula": "round(3.4 + hole.compensation.diametral, 3)",
+      "unit": "mm",
+      "status": "derived",
+      "source": "derived: ISO 273 medium clearance 3.4 mm plus hole.compensation.diametral",
+      "note": "Printed clearance hole for an M3 screw, 3.6 mm. Other sizes: ISO 273 medium + hole.compensation.diametral."
+    },
+    "magnet.pocket.press.diametral": {
+      "value": 0.15,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://totalelement.com/blogs/magnet-projects/how-to-embed-magnets-in-3d-prints",
+      "note": "DIAMETRAL (0.075 per side), range 0.1 to 0.15. On one tested printer a 6.2 mm pocket was the firm press for a 6 mm disc and 6.3 let the nozzle pull it out (MEASURED, https://draftid.com.au/how-to-embed-magnets-in-3d-prints/): prove with the magnet ladder coupon. Consistent with Markforged's embedded-component offset of about 0.08 per side (0.16 diametral; VENDOR, https://markforged.com/resources/blog/embedding-components-in-3d-printed-parts)."
+    },
+    "magnet.pocket.glue.diametral": {
+      "value": 0.25,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://totalelement.com/blogs/magnet-projects/how-to-embed-magnets-in-3d-prints",
+      "note": "DIAMETRAL (0.125 per side), range 0.2 to 0.3. For magnets glued in after printing, never for a magnet the nozzle prints over."
+    },
+    "magnet.pocket.depth.open": {
+      "value": 0.15,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://totalelement.com/blogs/magnet-projects/how-to-embed-magnets-in-3d-prints",
+      "note": "Open pocket depth = magnet height + 0.1 to 0.2 mm."
+    },
+    "magnet.pocket.depth.enclosed": {
+      "value": 0.4,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://draftid.com.au/how-to-embed-magnets-in-3d-prints/",
+      "note": "Enclosed (pause-and-embed) pocket depth = magnet height + 0.4 to 0.5 mm so the nozzle never scrapes the magnet."
+    },
+    "magnet.cover.layers": {
+      "value": 2,
+      "unit": "count",
+      "status": "typical",
+      "source": "https://draftid.com.au/how-to-embed-magnets-in-3d-prints/ and https://totalelement.com/blogs/magnet-projects/how-to-embed-magnets-in-3d-prints",
+      "note": "Solid layers over an enclosed magnet (2 to 4 in the sources). A 0.4 mm skin keeps about 45 percent of a 6 x 2 mm N52 disc's pull to steel, 1 mm about 21 percent (VENDOR test)."
+    },
+    "magnet.cover.thickness": {
+      "formula": "round(magnet.cover.layers * layer.height, 3)",
+      "unit": "mm",
+      "status": "derived",
+      "source": "derived from magnet.cover.layers and layer.height",
+      "note": "0.4 mm at 0.2 mm layers."
+    },
+    "magnet.max.temperature": {
+      "value": 80,
+      "unit": "C",
+      "status": "typical",
+      "source": "https://totalelement.com/blogs/magnet-projects/how-to-embed-magnets-in-3d-prints",
+      "note": "Standard N-grade NdFeB working limit. Hot beds and heated chambers for ABS, ASA, PC exceed it; specify H or SH grade or glue magnets in after printing."
+    },
+    "snapfit.root.radius.factor": {
+      "value": 0.5,
+      "unit": "ratio",
+      "status": "typical",
+      "source": "https://www.hubs.com/knowledge-base/how-design-snap-fit-joints-3d-printing/",
+      "note": "Root fillet radius at least 0.5 x root thickness; print the beam lying in XY."
+    },
+    "fitfeature.compliant.gap.min": {
+      "value": 0.3,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=XKrDUnZCmQQ",
+      "note": "PRACTITIONER (Slant 3D, 0.4 mm nozzle). Width of the single undercut slot behind a compliant fit feature (grip fins, flexing walls): under 0.3 some CAD or STL tools close it. A slot width, not a fit clearance, so neither per side nor diametral."
+    },
+    "fitfeature.compliant.gap.max": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=XKrDUnZCmQQ",
+      "note": "PRACTITIONER (Slant 3D, 0.4 mm nozzle). Upper limit of the same slot: over 0.5 the feature deforms instead of gripping."
+    },
+    "flexure.leaf.min": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=YG_8wYoxVfs",
+      "note": "PRACTITIONER, 0.4 mm nozzle, no fatigue data: thinnest compliant leaf (the source calls it two lines), at the center of a tapered leaf; thicker in PETG. Fixed value, does not recompute with the nozzle. Size the actual leaf to whole line-width multiples, one or two perimeters per side (0.84 or 1.68 mm at a 0.42 line; https://www.youtube.com/watch?v=xV36ITRjP_4), and check the slicer preview with Classic perimeters because Arachne can starve a thin joint. Prove with a coupon."
+    },
+    "flexure.leaf.root": {
+      "value": 1.0,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=YG_8wYoxVfs",
+      "note": "PRACTITIONER, no fatigue data: leaf thickness at the roots of a tapered leaf (taper about 1.0 at the roots to 0.5 at the center), also the thickness for a stiffer uniform leaf. Fillet every root; prefer long leaves, arcs or coils over notch hinges (a notch hinge fatigued in a few cycles in PLA)."
+    },
+    "thread.min.modeled": {
+      "value": "M5",
+      "unit": null,
+      "status": "typical",
+      "source": "https://www.hydraresearch3d.com/design-rules",
+      "note": "Do not model threads smaller than M5 (#10); never in horizontal holes. Smaller threads: inserts, self-tapping screws or a tapped hole. Prefer M6 or larger, and go 1 to 2 sizes up or use an insert where strength matters: an M5 printed thread was often weaker than an M4 heat-set insert (MEASURED, PLA, https://www.youtube.com/watch?v=eNMAFTeowFs; printed threads only at M6 and up, https://www.youtube.com/watch?v=HgEEtk85rAY). Disputed: one source's test suggests a printed thread with its axis vertical is the worse case, which may contradict the horizontal-hole rule; the video does not make the axis unambiguous, so the rule stands until test coupon C20 decides."
+    }
+  }
+}

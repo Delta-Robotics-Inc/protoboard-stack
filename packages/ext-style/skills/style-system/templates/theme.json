@@ -1,0 +1,9 @@
+{
+  "schema": "protoboard.cad-style.theme/v1",
+  "id": "my-theme",
+  "name": "My theme",
+  "extends": "hazard-protocol",
+  "description": "Say what it looks like in plain words: the edges and corners, the pattern if any, how parts meet, the colors and finish, and what it is made with.",
+  "tokens": {},
+  "notes": {}
+}

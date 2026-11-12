@@ -1,0 +1,42 @@
+{
+  "name": "@protoboardai/ext-dfm",
+  "version": "0.2.2",
+  "description": "Protoboard extension: design for manufacturing playbooks for agents, starting with 3D printing.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-dfm"
+  },
+  "type": "module",
+  "files": [
+    "protoboard-extension.json",
+    "skills",
+    "profiles",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.2.0",
+    "@deltarobotics/uhd": ">=0.3.0"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "agents",
+    "skills",
+    "dfm",
+    "3d-printing"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

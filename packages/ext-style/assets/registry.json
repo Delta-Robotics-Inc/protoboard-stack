@@ -1,0 +1,58 @@
+{
+  "schema": "protoboard.style.assets/v1",
+  "notes": "Shipped registry. File paths are relative to this folder and point into the Protoboard Stack repository (design/brand and packages/ext-docs/fonts); they are not copied into this package, so in an installed copy without the repository these entries resolve as not verified and a user or project registers its own files. The hashes were taken from the files on 2026-11-12.",
+  "assets": [
+    {
+      "id": "discord-mark",
+      "kind": "icon",
+      "format": "svg",
+      "file": "../../../design/brand/discord-mark.svg",
+      "sha256": "f905fe9ce11e8a59e541c7329acf0e8b41cba139a48c78a8ddb26ece2c1721f6",
+      "source": "design/brand/discord-mark.svg in the Protoboard Stack repository (a community link icon)",
+      "license": "unknown",
+      "status": "unresolved",
+      "traced": false,
+      "domains": ["documents", "ui"],
+      "notes": "A third party's mark: never a house mark and never on a part or a board. Use only as that owner's brand terms allow."
+    },
+    {
+      "id": "kode-mono-bold",
+      "kind": "font",
+      "format": "ttf",
+      "file": "../../ext-docs/fonts/KodeMono-Bold.ttf",
+      "sha256": "fb8e3bd30f23195495f577c21919a4e56f74a204e8e895bbfc667da86e42b6dd",
+      "source": "packages/ext-docs/fonts/KodeMono-Bold.ttf (the Kode Mono project), shipped by @protoboardai/ext-docs",
+      "license": "OFL-1.1",
+      "status": "ok",
+      "traced": false,
+      "domains": ["documents", "renders", "cad", "pcb", "ui"],
+      "notes": "Display face of the house style. For CAD text, outline it in the CAD tool or pass the file to the text feature."
+    },
+    {
+      "id": "kode-mono-regular",
+      "kind": "font",
+      "format": "ttf",
+      "file": "../../ext-docs/fonts/KodeMono-Regular.ttf",
+      "sha256": "76b65c04b353e2e38f8b0f7fecad2d1820c902d2dde500f161d009a011a3b153",
+      "source": "packages/ext-docs/fonts/KodeMono-Regular.ttf (the Kode Mono project), shipped by @protoboardai/ext-docs",
+      "license": "OFL-1.1",
+      "status": "ok",
+      "traced": false,
+      "domains": ["documents", "renders", "cad", "pcb", "ui"],
+      "notes": "Body and mono face of the house style."
+    },
+    {
+      "id": "protoboard-logo-black",
+      "kind": "logo",
+      "format": "svg",
+      "file": "../../../design/brand/pb-logo-black.svg",
+      "sha256": "47e306bfded6300d0a8d3dffb8ecb164904a35110eb821228217f84a9f227755",
+      "source": "design/brand/pb-logo-black.svg in the Protoboard Stack repository",
+      "license": "proprietary (owner's own mark)",
+      "status": "ok",
+      "traced": false,
+      "domains": ["documents", "renders", "cad", "pcb", "ui"],
+      "notes": "A trademark of Delta Robotics, Inc. (see NOTICE): house mode only. The PCB branch still draws polygon placeholders until this file is converted to its polygon format; a CAD emboss uses the SVG outline."
+    }
+  ]
+}
