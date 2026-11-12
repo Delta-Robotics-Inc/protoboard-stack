@@ -68,9 +68,9 @@ Start with **build-a-project**: it takes an agent from a brief to a release and 
 
 ### @protoboardai/ext-dfm
 
-Design for manufacturing: the process ladder (cheapest accessible method first), a layered DFM profile of machine and material limits with a status and a source on every value, process playbooks starting with 3D printing, the DfX checklist, design aids, and an independent DFM review before anything is made. Version 0.2.2; source [packages/ext-dfm](../../packages/ext-dfm).
+Design for manufacturing: the process ladder (cheapest accessible method first), a layered DFM profile of machine and material limits with a status and a source on every value, process playbooks starting with 3D printing, the DfX checklist, design aids, and an independent DFM review before anything is made. Version 0.3.0; source [packages/ext-dfm](../../packages/ext-dfm).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 Skills: `dfm`, `dfm-3d-printing`, `dfm-review`.
 
@@ -280,9 +280,9 @@ Eval cases: `record-ldo-offers` (Record a regulator's supplier offers and lifecy
 
 ### @protoboardai/ext-style
 
-The style system for agents: one house style (Hazard Protocol) shared by every domain, with a branch per domain that adds its own tokens, classes and guards. Ships the shared core conventions and the 3D CAD branch; the PCB branch is @protoboardai/board-style. Version 0.2.2; source [packages/ext-style](../../packages/ext-style).
+The style system for agents: one house style (Hazard Protocol) shared by every domain, with a branch per domain that adds its own tokens, classes and guards. Ships the shared core conventions and the 3D CAD branch; the PCB branch is @protoboardai/board-style. Version 0.3.0; source [packages/ext-style](../../packages/ext-style).
 
-Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
+Compatibility: `protoboard ^0.3.0`, `uhd >=0.3.0`.
 
 Skills: `style-system`, `cad-style`.
 

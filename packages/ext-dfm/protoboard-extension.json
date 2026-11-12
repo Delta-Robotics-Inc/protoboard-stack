@@ -1,10 +1,10 @@
 {
   "schema": "protoboard.extension/v0",
   "id": "@protoboardai/ext-dfm",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Design for manufacturing: the process ladder (cheapest accessible method first), a layered DFM profile of machine and material limits with a status and a source on every value, process playbooks starting with 3D printing, the DfX checklist, design aids, and an independent DFM review before anything is made.",
   "compatibility": {
-    "protoboard": "^0.2.0",
+    "protoboard": "^0.3.0",
     "uhd": ">=0.3.0"
   },
   "skills": [

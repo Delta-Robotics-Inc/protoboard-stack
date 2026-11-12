@@ -37,8 +37,8 @@ Design Handbook, 1973).
 | d | rib depth, from the skin | `pattern.isogrid.rib.depth` |
 | t | skin thickness | `pattern.isogrid.skin` |
 
-Two ratios govern it (source): alpha = b d / (t h), the rib-to-skin material ratio, and delta = d / t. The handbook
-reports that many optimum aerospace designs land near alpha about one third, which gives about four thirds of the
+Two ratios govern it (source): α = b d / (t h), the rib-to-skin material ratio, and δ = d / t. The handbook
+reports that many optimum aerospace designs land near α of about one third, which gives about four thirds of the
 skin's extensional stiffness and a very large gain in bending stiffness for twice the skin's weight. Those optima are
 for thin metal skins in compression buckling, not for printed parts (derived: they imply ribs over twelve times as
 deep as the skin and cells dozens of rib widths tall).
