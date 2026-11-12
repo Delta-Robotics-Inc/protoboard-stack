@@ -109,6 +109,9 @@
         },
         "resolution_mm": {
           "description": "voxel size of the fit analysis (default 0.25)"
+        },
+        "insert_hole_compensation_mm": {
+          "description": "how much larger (diametral) a heat-set insert hole is modeled than the insert's finished hole, for a hole vertical as printed (default by process: print 0.2, machine 0); set the value a test print on the project's printer needs"
         }
       }
     }

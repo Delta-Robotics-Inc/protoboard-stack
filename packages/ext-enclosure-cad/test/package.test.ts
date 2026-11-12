@@ -23,6 +23,8 @@ const mech = (id: string, normal: number[]) => ({ id, name: id, domain: "mechani
 const CASE = { id: "fixture-case", name: "Fixture case", interfaces: ["usb", "slot", "btn", "seal", "bosses", "lid_joint"].map((id) => mech(id, [1, 0, 0])) };
 const SYSTEM = { id: "device", name: "Device", interfaces: [], children: [{ id: "case", moduleDefId: "fixture-case" }] };
 const feature = (kind: string, parts: string[], normal: number[], extra: Record<string, unknown> = {}) => ({ kind, parts, frame: { origin: [0, 0, 5], normal }, ...extra });
+// the generator's insert hole fact for an M2 insert in a printed base (finished Ø3.2, modeled 0.2 mm over)
+const INSERT_HOLE = { finished_d_mm: 3.2, modeled_d_mm: 3.4, compensation_mm: 0.2, depth_mm: 5, part: "base", axis: "vertical", basis: "printed: the hole's axis is the base's build direction (floor on the bed), modeled 0.2 mm over the finished Ø3.2" };
 const REPORT = {
   schema: "protoboard.enclosure-cad.report/v0",
   module: "fixture-case",
@@ -33,8 +35,8 @@ const REPORT = {
     slot: feature("opening", ["base"], [0, 1, 0], { size_mm: [14, 3] }),
     btn: feature("button", ["base"], [0, -1, 0], { hole_d_mm: 2.5, gap_mm: 0.2 }),
     seal: feature("seal_gland", ["base"], [0, 0, 1], { type: "face", oring: "AS568-024", w_mm: 1.78, gland_depth_mm: 1.3, gap_mm: 0 }),
-    bosses: feature("boss", ["base"], [0, 0, 1], { holes: [[0, 0], [1, 0], [0, 1], [1, 1]], insert: { name: "ruthex RX-M2x4" } }),
-    lid_joint: feature("joint", ["base"], [0, 0, 1], { columns: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]], screw: { name: "M2 × 6 pan head screw" }, insert: { name: "ruthex RX-M2x4" } }),
+    bosses: feature("boss", ["base"], [0, 0, 1], { holes: [[0, 0], [1, 0], [0, 1], [1, 1]], insert: { name: "ruthex RX-M2x4", hole_d_mm: 3.2 }, insert_hole: INSERT_HOLE }),
+    lid_joint: feature("joint", ["base"], [0, 0, 1], { columns: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]], screw: { name: "M2 × 6 pan head screw" }, insert: { name: "ruthex RX-M2x4", hole_d_mm: 3.2 }, insert_hole: INSERT_HOLE }),
   },
   walls: [],
   problems: [],
@@ -77,9 +79,33 @@ describe("package:work-order", () => {
     const post = c.blocks.find((b) => b.kind === "list");
     expect(post?.kind === "list" && post.items).toEqual([
       "Remove brim and any supports; deburr every opening and bore.",
-      "Set 8 heat-set inserts (ruthex RX-M2x4) with a soldering iron and insert tip at the material's insert temperature; each flush and square.",
+      "Set 8 heat-set inserts (ruthex RX-M2x4) in the base: bosses (4 boss holes) and lid_joint (4 lid-screw column holes), with a soldering iron and insert tip at the material's insert temperature; each flush and square. The holes are modeled Ø3.4 mm for the insert's finished Ø3.2 mm (0.2 mm diametral print compensation; each hole's axis is vertical as printed): measure one printed hole before setting the inserts, and if it is not about Ø3.2 mm, set insert_hole_compensation_mm in src/enclosures/case/cad.config.ts to what this printer needs and regenerate.",
       "Keep the parts open and unassembled: the O-ring (AS568-024), the button plunger, the lid and its 4 × M2 × 6 pan head screw are fitted during assembly, once what the enclosure holds is inside (the assembly operations).",
     ]);
+  });
+
+  it("states the insert holes as the report gives them: an override of 0 cuts them at the finished size, and an older report's holes too", async () => {
+    const file = join(TMP, "device/src/enclosures/case/build123d/fixture-case.report.json");
+    const inserts = async (report: unknown) => {
+      writeFileSync(file, JSON.stringify(report));
+      const c = one(await workOrder(t.context("system", "work-order")));
+      const post = c.blocks.find((b) => b.kind === "list");
+      return (post?.kind === "list" ? post.items : []).filter((x) => x.startsWith("Set "));
+    };
+    try {
+      const zero = { ...INSERT_HOLE, modeled_d_mm: 3.2, compensation_mm: 0 };
+      expect(await inserts({ ...REPORT, features: { ...REPORT.features, bosses: { ...REPORT.features.bosses, insert_hole: zero }, lid_joint: { ...REPORT.features.lid_joint, insert_hole: zero } } })).toEqual([
+        "Set 8 heat-set inserts (ruthex RX-M2x4) in the base: bosses (4 boss holes) and lid_joint (4 lid-screw column holes), with a soldering iron and insert tip at the material's insert temperature; each flush and square. The holes are Ø3.2 mm, the insert's finished size (no print compensation).",
+      ]);
+      // a report from before the generator recorded insert_hole: the holes were cut at the insert's finished size
+      const { insert_hole: _b, ...bosses } = REPORT.features.bosses as Record<string, unknown>;
+      expect(await inserts({ ...REPORT, features: { ...REPORT.features, bosses, lid_joint: { ...REPORT.features.lid_joint, insert_hole: { ...INSERT_HOLE, finished_d_mm: 4, modeled_d_mm: 4.2 } } } })).toEqual([
+        "Set 4 heat-set inserts (ruthex RX-M2x4) in the base: bosses (4 boss holes), with a soldering iron and insert tip at the material's insert temperature; each flush and square. The holes are Ø3.2 mm, the insert's finished size (no print compensation).",
+        "Set 4 heat-set inserts (ruthex RX-M2x4) in the base: lid_joint (4 lid-screw column holes), with a soldering iron and insert tip at the material's insert temperature; each flush and square. The holes are modeled Ø4.2 mm for the insert's finished Ø4 mm (0.2 mm diametral print compensation; each hole's axis is vertical as printed): measure one printed hole before setting the inserts, and if it is not about Ø4 mm, set insert_hole_compensation_mm in src/enclosures/case/cad.config.ts to what this printer needs and regenerate.",
+      ]);
+    } finally {
+      writeFileSync(file, JSON.stringify(REPORT));
+    }
   });
 });
 

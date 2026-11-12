@@ -119,7 +119,7 @@ Enclosure CAD: a printed or machined case generated with build123d from the UHD 
 
 Compatibility: `protoboard ^0.2.0`, `uhd >=0.3.0`.
 
-**Capability `cad`**: Enclosures (cases, caps, back covers) with build123d: generated from the features they provide and what goes inside them. Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`. Constraints: `wall_mm` (required), `floor_mm`, `lid_mm`, `clearance_mm`, `clearance_top_mm`, `min_wall_mm`, `material`, `shape`, `cavity_mm`, `split_z_mm`, `joint`, `fasteners`, `exclude`, `resolution_mm`.
+**Capability `cad`**: Enclosures (cases, caps, back covers) with build123d: generated from the features they provide and what goes inside them. Operations `cad:generate`, `cad:export`, `cad:extract`, `cad:check`. Constraints: `wall_mm` (required), `floor_mm`, `lid_mm`, `clearance_mm`, `clearance_top_mm`, `min_wall_mm`, `material`, `shape`, `cavity_mm`, `split_z_mm`, `joint`, `fasteners`, `exclude`, `resolution_mm`, `insert_hole_compensation_mm`.
 
 | Operation | Effect | Needs | Summary |
 | --- | --- | --- | --- |

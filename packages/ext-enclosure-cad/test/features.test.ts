@@ -43,7 +43,7 @@ const table = (type: "face" | "radial", w: number) => {
 };
 const design = (o: Partial<Job["design"]>): Job["design"] => ({
   shape: "round", wall: 1.6, floor: 1.6, lid: 1.6, clearance: 0.3, clearance_top: 0.3, min_wall: 0.8, cavity: null, split_z: null,
-  joint: { style: "rabbet", lip_height: 1.5, clearance: 0.15 }, fasteners: "none", resolution: 0.3, ...o,
+  joint: { style: "rabbet", lip_height: 1.5, clearance: 0.15 }, fasteners: "none", resolution: 0.3, insert_hole_compensation: 0.2, ...o,
 });
 const job = (name: string, d: Job["design"], contents: Job["contents"], features: JobFeature[]): Job => ({ schema: "protoboard.enclosure-cad.job/v0", module: name, name, root: ".", process: "print", material: "PETG", inputsDigest: `sha256:${name}`, design: d, contents, features });
 
@@ -210,8 +210,25 @@ describe.skipIf(!hasPy)("generator: round case and bottle cap", () => {
     const stretch = (f.case_seal.groove_inner_perimeter_mm as number) / (f.case_seal.oring_inner_perimeter_mm as number) - 1;
     expect(stretch).toBeGreaterThanOrEqual(0);
     expect(stretch).toBeLessThanOrEqual(0.01);
-    expect(f.back_joint).toMatchObject({ style: "flat", scheme: "screws", column_d_mm: 5.8 });
+    // the column's insert hole, vertical in the printed base, is modeled 0.2 mm over the finished Ø3.2: Ø3.4 + 2 × 1.3
+    expect(f.back_joint).toMatchObject({ style: "flat", scheme: "screws", column_d_mm: 6, insert_hole: { finished_d_mm: 3.2, modeled_d_mm: 3.4, part: "base", axis: "vertical" } });
     expect(f.back_joint.screw_reach_mm as number).toBeLessThanOrEqual(RUTHEX_RX_M2X4.hole_depth_mm);
+  });
+
+  it("insert bosses on a machined case: the holes are cut at the insert's finished size, and the wall measured from them", async () => {
+    const dir = join(TMP, "machined");
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, "block.glb"), glbBoxes([{ name: "block", min: [-10, -8, 3], max: [10, 8, 6] }]));
+    const holes = [[-8, -6], [8, -6], [8, 6], [-8, 6]];
+    const r = await build(dir, {
+      ...job("machined", design({ shape: "box", wall: 1.8, insert_hole_compensation: 0 }), [{ key: "block", label: "Block", glb: "block.glb", digest: "-", matrix: T(0, 0, 0) }], [
+        { id: "mount", kind: "boss", params: { insert: RUTHEX_RX_M2X4, holes }, frame: { origin: [0, 0, 3], normal: [0, 0, 1] }, mates: ["block"] },
+      ]),
+      process: "machine",
+    });
+    expect(r.problems).toEqual([]);
+    expect(r.features.mount).toMatchObject({ boss_d_mm: 5.8, insert_hole: { finished_d_mm: 3.2, modeled_d_mm: 3.2, compensation_mm: 0, basis: "machined: cut at the finished Ø3.2" } });
+    expect(r.walls.find((w) => w.what === "boss wall around the insert")).toEqual({ feature: "mount", what: "boss wall around the insert", mm: 1.3, min_mm: 1.3 });
   });
 
   it("a flat seat for a plug on a round wall, and window covers as parts of their own", async () => {
