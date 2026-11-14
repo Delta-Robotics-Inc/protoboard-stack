@@ -25,6 +25,8 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `build` | Write .protoboard/build/resolved.json (derived data only) |
 | `layout [level]` | The diagram's layout measured, level by level, as the viewer draws it: line crossings, overlapping cards, the longest row or column of cards (a strip), the aspect ratio and lines under cards, with what to fix. A level is an instance path ("" is the top; default: every level). --apply lays the level(s) out afresh, --tidy keeps the saved arrangement and fixes it; either writes .protoboard/display.json where the result reads better (--force: anyway). --pin <card> keeps a card where it is (repeatable; remembered in the file). --check: exit 1 when a level still has something to fix. check reports the levels of modules that need it as PB_DIAGRAM_LAYOUT (info) |
 | `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. The Library tab is skipped, with the reason, while no library can be used from here (signed out, sign-in refused, service out of reach). --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs |
+| `editors` | The editors the project's extensions contribute (contributes.editors): the files each opens, its page and its host process, and what is missing (a page not built). --file <path> says which one opens that file: the first enabled extension that claims it, in protoboard.config.ts order |
+| `editors host <extension> <editor>` | The host process of an extension's editor, as the VS Code extension starts it: it loads the editor's host entry and speaks JSON lines on stdin and stdout (@protoboardai/core/editor-protocol). Started by the shell, not by hand |
 | `dev` | Serve the UHD viewer on the project: rebuilds on every source change, saves diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch) |
 | `bom` | The bill of materials, by top-level module, in US dollars: what one unit needs, the offer used for each line, what must be bought (whole packs, minimum orders), the cost per unit and the cost of the order. --units <n> builds n (default: the project's setting, else 1); --release <version> lists that release's ordering list instead of the design; --format json carries everything, --format csv is the export. Offline: prices are the offers the project holds |
 | `bom units <n>` | Set the units to build (parts/bom.json) |
@@ -90,6 +92,7 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 | `--no-browser` | login: do not open a browser, only print the link |
 | `--severity <level>` | check: lowest severity to print (error\|warning\|info, default warning) |
 | `--module <ref>` | run <capability>:<op>: instance path (board) or module id (watch-mainboard) |
+| `--file <path>` | editors: the file whose editor to name (the first enabled extension that claims it) |
 | `--port <n>` | dev: first port to try (default 5180; taken ports are skipped unless given) |
 | `--host <addr>` | dev: interface to bind (default 127.0.0.1) |
 | `--open` | dev: open the viewer in the default browser |
@@ -189,6 +192,14 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
                             The Library tab is skipped, with the reason, while no library can be used
                             from here (signed out, sign-in refused, service out of reach).
                             --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs
+    editors                 The editors the project's extensions contribute (contributes.editors): the files
+                            each opens, its page and its host process, and what is missing (a page not built).
+                            --file <path> says which one opens that file: the first enabled extension that
+                            claims it, in protoboard.config.ts order
+    editors host <extension> <editor>
+                            The host process of an extension's editor, as the VS Code extension starts it: it
+                            loads the editor's host entry and speaks JSON lines on stdin and stdout
+                            (@protoboardai/core/editor-protocol). Started by the shell, not by hand
     dev                     Serve the UHD viewer on the project: rebuilds on every source change, saves
                             diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch)
     bom                     The bill of materials, by top-level module, in US dollars: what one unit needs, the
@@ -349,6 +360,7 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     --no-browser            login: do not open a browser, only print the link
     --severity <level>      check: lowest severity to print (error|warning|info, default warning)
     --module <ref>          run <capability>:<op>: instance path (board) or module id (watch-mainboard)
+    --file <path>           editors: the file whose editor to name (the first enabled extension that claims it)
     --port <n>              dev: first port to try (default 5180; taken ports are skipped unless given)
     --host <addr>           dev: interface to bind (default 127.0.0.1)
     --open                  dev: open the viewer in the default browser

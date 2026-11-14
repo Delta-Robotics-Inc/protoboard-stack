@@ -971,6 +971,33 @@ registry, run `npm install`), and `protoboard check` reports the same as
   nothing loads from a CDN). The viewer's inspector, the Explorer and the
   pair, schematic and PCB views open STEP and GLB artifacts here through the
   same path (`openArtifact`).
+- **Extension editors** (`src/extensionEditors.ts`, `src/extensionEditorPage.ts`;
+  `contributes.editors`, docs/specs/viewer-stack.md) are one text-backed
+  custom editor, `protoboard.extensionEditor`, for files a project's enabled
+  extensions claim. VS Code takes a custom editor's file patterns from the
+  manifest only, so package.json declares the ones extensions claim today
+  (`*.canvas`, JSON Canvas); which extension opens a file is asked of the
+  project each time a tab opens (`protoboard editors --file <path> --format
+  json`, the first extension in `protoboard.config.ts` that claims it). The
+  tab loads the extension's prebuilt page (one module script, one
+  stylesheet) with the extension's package and the project as its only local
+  roots, under a nonce Content-Security-Policy with no network; a prelude
+  script with the same nonce reports any violation to the log. The page's
+  messages go to the editor's host process, `protoboard editors host
+  <package> <editor>`, started with pipes in the project (never code loaded
+  into VS Code's extension host), and its messages come back; both may call
+  the tab's services (`@protoboardai/core/editor-protocol`: apply an edit to
+  the text document as one undo step, save, undo, redo, open or reveal a
+  file, the clipboard, open an http(s) address, a webview URI, a notice or a
+  question) and are told of document changes (with why: applied, undo,
+  redo, change), saves and theme changes. Closing the tab sends the host
+  `dispose` and ends the process (its whole tree on Windows) after 3 s. In
+  Restricted Mode, in a project whose code was not trusted, for a file no
+  enabled extension claims and for a page that was not built, the tab says
+  which, with **Open as Text** (no script; the link is a command); a file
+  outside every Protoboard project reopens in the text editor at once. The
+  provider is registered in every window, so a tab opened in Restricted Mode
+  opens its editor when the folder or the project is trusted.
 
 ## Licence
 

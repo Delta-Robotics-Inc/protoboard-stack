@@ -258,6 +258,87 @@ a malformed view refuses the extension with the reason) and lists the views
 and ignored). `protoboard dev` passes the list to the web viewer (`views` in
 `/__protoboard/state`), which adds them to its registry.
 
+### Extensions declare editors: `contributes.editors`
+
+A view draws a module; an editor edits a file. An extension may declare
+editors for files of the project (a canvas, a board file), each with the
+page a shell loads to edit it and, optionally, a host process for what the
+page needs of the extension's own code:
+
+```json
+{
+  "contributes": {
+    "editors": [
+      {
+        "id": "canvas",
+        "title": "Canvas",
+        "icon": "layout-dashboard",
+        "files": ["*.canvas"],
+        "webview": { "script": "./dist/editor.js", "style": "./dist/editor.css" },
+        "host": "./host/editor-host.ts#createEditorHost"
+      }
+    ]
+  }
+}
+```
+
+- `id`: unique in the extension (the view id rule).
+- `files`: patterns; one without a slash is matched against the file's name,
+  one with a slash against its project-relative path (`*`, `**`, `?`, `{a,b}`).
+  The first enabled extension that claims a file, in `protoboard.config.ts`
+  order, opens it; a pattern two extensions claim is reported
+  (`PB_EXTENSION_EDITOR_SHARED`, a warning).
+- `webview`: the page, prebuilt: one script, loaded as a module, and one
+  optional stylesheet, both inside the package. Files the stylesheet names
+  (fonts) sit beside it. The page gets nothing from a network.
+- `host`: a module inside the package and its export (`default` when none
+  is named), loaded as operations are (tsx: a TypeScript entry runs as it
+  is). It runs in a process of its own, never in a shell's process.
+
+Core validates the section with the views (`validateContributes`: ids, a
+Lucide icon, paths inside the package, no duplicates, no unknown keys; a
+malformed editor refuses the extension) and resolves it (`resolveEditors`:
+absolute paths, and the files that are missing, such as a page that was not
+built; `editorFor`: the editor of a file). `protoboard editors [--file
+<path>]` prints both; it loads only `protoboard.config.ts` and the
+extensions, never the model.
+
+**The protocol** (`@protoboardai/core/editor-protocol`, one file with no
+imports that an extension can type against or copy):
+
+```
+page (webview)  <-- postMessage -->  shell  <-- stdio, one JSON object per line -->  host process
+```
+
+- The shell owns the text document and the window and offers the same
+  services to the page and to the host: `document.applyEdit` (the whole
+  text, one undo step, labeled), `document.save`, `document.undo`,
+  `document.redo`, `file.open` (default, beside, preview, or the system's
+  application), `file.reveal` (the file tree or the system's file manager),
+  `clipboard.write`, `external.open` (http and https only), `webview.uri`,
+  `ui.notify` and `ui.confirm`. A path outside the project is refused, except
+  a `webview.uri` of a file in the extension's package.
+- The host process gets `init` first (the editor, the extension, the project,
+  the file, the theme, the URI prefixes the page loads the project's and the
+  package's files with, and the document), then the page's messages
+  (`webview`), document changes with their reason (`applied`, `undo`, `redo`,
+  `change`), `saved`, `theme` changes and the replies to its calls; it posts
+  to the page (`webview`), calls services (`call`), logs (`log`) or says it
+  could not start (`failed`). `dispose` ends it.
+- Messages the shell does not know are relayed as they are. Its own
+  envelopes to and from the page carry a `protoboard` key and no `type`
+  (`hello`, `call`, `csp` from the page; `init`, `reply`, `document`,
+  `theme`, `host` to it), so a page whose messages are `{ type }` objects
+  tells them apart. The host owns the document when there is one; a page
+  without a host gets the document in `init` and its changes.
+
+`protoboard editors host <package> <editor>` is the host process: it reads
+the shell's lines on stdin and writes its own on stdout; everything else the
+extension's code writes to stdout goes to stderr. The VS Code shell
+(`protoboard.extensionEditor`, packages/vscode-protoboard/DEVELOPMENT.md)
+starts it only in a project whose code may run, and ends it when the tab
+closes.
+
 ## Shells
 
 | | Web (`@protoboardai/web-viewer`) | VS Code (`vscode-protoboard`, stage 2) |

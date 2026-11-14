@@ -374,6 +374,7 @@ const cli = meow(
     --no-browser            login: do not open a browser, only print the link
     --severity <level>      check: lowest severity to print (error|warning|info, default warning)
     --module <ref>          run <capability>:<op>: instance path (board) or module id (watch-mainboard)
+    --file <path>           editors: the file whose editor to name (the first enabled extension that claims it)
     --port <n>              dev: first port to try (default 5180; taken ports are skipped unless given)
     --host <addr>           dev: interface to bind (default 127.0.0.1)
     --open                  dev: open the viewer in the default browser
