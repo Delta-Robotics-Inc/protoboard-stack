@@ -98,10 +98,10 @@ describe("protoboard editors", () => {
     let stderr = "";
     proc.stderr.on("data", (d) => (stderr += d));
     const send = (m: ToHost) => proc.stdin.write(JSON.stringify(m) + "\n");
-    const waitFor = async <T extends FromHost>(pred: (m: FromHost) => boolean): Promise<T> => {
+    const waitFor = async <T = FromHost>(pred: (m: FromHost) => boolean): Promise<T> => {
       for (let i = 0; i < 600; i++) {
         const m = got.find(pred);
-        if (m) return m as T;
+        if (m) return m as unknown as T;
         await new Promise((r) => setTimeout(r, 50));
       }
       throw new Error(`timed out; got ${JSON.stringify(got)}; stderr ${stderr}`);
