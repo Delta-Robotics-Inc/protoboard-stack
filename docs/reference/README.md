@@ -12,6 +12,7 @@ The Protoboard Stack v0.1 reference set. New here: start with the
 | [Diagnostic codes](../../packages/ext-hardware/skills/system-compose/references/diagnostic-codes.md) | Every code `protoboard check` reports, what it means and what to do; pointers to the `FW_*` and `REL_*` tables | `packages/cli/test/skills-sop.test.ts` fails on a code the stack emits that it does not list |
 | [display.json](display.md) | `.protoboard/display.json`: the diagram's layout, and the 3D view's root, placements (row-major 4×4, millimetres), labels, appearance and camera | Written against the viewer's `DisplayConfig` and UHD's `assemble`; every project's AGENTS.md carries the short form |
 | [Manufacturing Package](manufacturing-package.md) | `release/<version>/`: layout, `manifest.json` (`protoboard.release/v0`), reproducibility | `scripts/compare-release.mjs` against the committed release records |
+| [Design aids](design-aids.md) | The standing pointer for test prints: the planned modular calibration kit (one coupon per parameter, per process), the print-a-slice practice, and where the coupon list lives. The kit's models are not built yet | Kept by hand; the coupon list is `packages/ext-dfm/skills/dfm-3d-printing/references/test-coupons.md` |
 | [Library protocol](library-protocol.md) | Pointer to UHD's `uhd-library/v1`, and how the CLI uses it | UHD's own protocol tests |
 
 Guides:

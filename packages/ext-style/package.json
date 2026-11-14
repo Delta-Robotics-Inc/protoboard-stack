@@ -1,0 +1,45 @@
+{
+  "name": "@protoboardai/ext-style",
+  "version": "0.3.0",
+  "description": "Protoboard extension: the style system for agents, one house style across domains with a branch per domain, starting with 3D CAD.",
+  "license": "Apache-2.0",
+  "author": "Delta Robotics, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Delta-Robotics-Inc/protoboard-stack.git",
+    "directory": "packages/ext-style"
+  },
+  "type": "module",
+  "files": [
+    "protoboard-extension.json",
+    "themes",
+    "assets",
+    "skills",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@protoboardai/core": "^0.3.0",
+    "@deltarobotics/uhd": ">=0.3.0"
+  },
+  "keywords": [
+    "protoboard",
+    "hardware",
+    "agents",
+    "skills",
+    "design-system",
+    "cad",
+    "style"
+  ],
+  "homepage": "https://protoboard.ai",
+  "bugs": {
+    "url": "https://github.com/Delta-Robotics-Inc/protoboard-stack/issues"
+  }
+}

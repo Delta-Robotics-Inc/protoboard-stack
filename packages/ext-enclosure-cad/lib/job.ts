@@ -40,7 +40,7 @@ import {
 import { stableStringify, type CadProcess, type CapabilityBinding, type Project } from "@protoboardai/core";
 import { projectAssembly } from "@protoboardai/ext-harness-cad/job";
 import { EXTERNAL_KINDS, readFeatures, type FeatureSpec } from "./features.ts";
-import { glandRow, type ORing } from "./standards.ts";
+import { INSERT_HOLE_COMPENSATION, glandRow, type ORing } from "./standards.ts";
 
 export const JOB_SCHEMA = "protoboard.enclosure-cad.job/v0";
 
@@ -57,6 +57,11 @@ export interface Design {
   joint: { style: "rabbet" | "flat" | "twist"; lip_height: number; clearance: number };
   fasteners: "screws" | "none";
   resolution: number;
+  /**
+   * Heat-set insert holes: how much larger (diametral, mm) the hole is modeled than the insert's finished hole,
+   * for a hole vertical in its part's print orientation (INSERT_HOLE_COMPENSATION: print 0.2, machine 0).
+   */
+  insert_hole_compensation: number;
 }
 
 export interface JobContent {
@@ -140,6 +145,16 @@ const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : u
  */
 export const MIN_WALL: Record<CadProcess, number> = { print: 0.8, machine: 0.5, cut: 0 };
 
+/**
+ * The insert hole compensation (diametral, mm): the config's `insert_hole_compensation_mm` (a value proven on the
+ * project's printer) when it states a valid one, else the default by process (INSERT_HOLE_COMPENSATION).
+ */
+export function insertHoleCompensation(constraints: Record<string, unknown>, process: CadProcess): number {
+  const v = num(constraints.insert_hole_compensation_mm);
+  if (v !== undefined && v >= 0 && v < 1) return v;
+  return process === "print" ? INSERT_HOLE_COMPENSATION.print_mm : INSERT_HOLE_COMPENSATION.machine_mm;
+}
+
 /** cad.config.ts constraints → design values. */
 export function designOf(constraints: Record<string, unknown>, process: CadProcess, features: FeatureSpec[]): { design: Design; problems: string[] } {
   const problems: string[] = [];
@@ -163,6 +178,9 @@ export function designOf(constraints: Record<string, unknown>, process: CadProce
   if (!twist && style === "twist") problems.push('joint.style "twist" needs a TwistLid interface in the module');
   if (fasteners !== "screws" && fasteners !== "none") problems.push(`fasteners must be "screws" or "none" (snap fits are not generated yet), not ${JSON.stringify(fasteners)}`);
   if (fasteners === "screws" && !joint) problems.push('fasteners "screws" needs a joint interface stating its screw and insert (Joint({ … }) in the module)');
+  const comp = constraints.insert_hole_compensation_mm;
+  if (comp !== undefined && (num(comp) === undefined || (comp as number) < 0 || (comp as number) >= 1))
+    problems.push(`insert_hole_compensation_mm must be a diametral allowance from 0 to under 1 mm (the value a test print on this printer needs; default print ${INSERT_HOLE_COMPENSATION.print_mm}, machine ${INSERT_HOLE_COMPENSATION.machine_mm}), not ${JSON.stringify(comp)}`);
   const w = wall ?? 1;
   return {
     problems,
@@ -179,6 +197,7 @@ export function designOf(constraints: Record<string, unknown>, process: CadProce
       joint: { style: (twist ? "twist" : style) as Design["joint"]["style"], lip_height: num(j.lip_height_mm) ?? 1.5, clearance: num(j.clearance_mm) ?? 0.15 },
       fasteners: fasteners as Design["fasteners"],
       resolution: num(constraints.resolution_mm) ?? 0.25,
+      insert_hole_compensation: insertHoleCompensation(constraints, process),
     },
   };
 }

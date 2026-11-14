@@ -1,0 +1,21 @@
+{
+  "schema": "protoboard.cad-style.theme/v1",
+  "id": "neutral",
+  "name": "Conventional",
+  "description": "A plain, conventional part: one fillet radius on outer edges and plan-view corners, a small chamfer only where the part sits on the bed, no signature pattern, fasteners where they fall, engraved text as written, butt-jointed halves, no marks, and colors as the material comes.",
+  "tokens": {
+    "corner.radius.set": [2],
+    "edge.chamfer.bottom": 0.4,
+    "edge.top.treatment": "fillet",
+    "edge.vertical.treatment": "round",
+    "form.language": "fillet",
+    "marks.logo": "none",
+    "marks.placement": "none",
+    "pattern.default": "none",
+    "split.style": "butt",
+    "text.style": "engrave"
+  },
+  "notes": {
+    "edge.chamfer.bottom": "Even a conventional printed part keeps its bed edge printable; 0.4 mm is an assumption, and the DFM floor wins when larger."
+  }
+}

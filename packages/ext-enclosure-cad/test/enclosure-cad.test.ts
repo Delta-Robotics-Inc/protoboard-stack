@@ -24,7 +24,7 @@ import { checkManifest, checkStl, checkThreeMf, loadProject, runCapabilityOperat
 import { Button, Opening, SealGland, StrapLugs, readFeatures } from "../lib/features.ts";
 import { buildJob, designOf, invertRigid } from "../lib/job.ts";
 import { axisOffset, jobChanges, type Report } from "../lib/check.ts";
-import { ESSLINGER_82_2225, FACE_GLANDS, RADIAL_GLANDS, USB_C_PLUG, as568, glandRow, lugHole } from "../lib/standards.ts";
+import { CNC_KITCHEN_M2, ESSLINGER_82_2225, FACE_GLANDS, INSERT_HOLE_COMPENSATION, RADIAL_GLANDS, RUTHEX_RX_M2X4, USB_C_PLUG, as568, glandRow, lugHole, modeledInsertHole } from "../lib/standards.ts";
 import { BOARD, BOSS_TOP, LED, boardBoxes, boardManifest, glbBoxes, writeFixture } from "./fixture.ts";
 import { cadPython } from "../../core/test/cad-python.ts";
 
@@ -118,6 +118,26 @@ describe("feature vocabulary", () => {
     expect(designOf({ wall_mm: 2, fasteners: "snap" }, "print", []).problems[0]).toMatch(/snap fits are not generated yet/);
   });
 
+  it("insert holes: the library keeps the finished hole; print models it 0.2 mm over, machine at size, and a project may set its own", () => {
+    // the datasheet value stays the finished hole
+    expect([RUTHEX_RX_M2X4.hole_d_mm, CNC_KITCHEN_M2.hole_d_mm]).toEqual([3.2, 3.2]);
+    expect(INSERT_HOLE_COMPENSATION).toMatchObject({ print_mm: 0.2, machine_mm: 0, source: expect.stringContaining("https://www.cnckitchen.com/blog/are-our-heat-set-insert-datasheets-wrong") });
+    expect(designOf({ wall_mm: 2 }, "print", []).design.insert_hole_compensation).toBe(0.2);
+    expect(designOf({ wall_mm: 2 }, "machine", []).design.insert_hole_compensation).toBe(0);
+    expect(modeledInsertHole(RUTHEX_RX_M2X4, designOf({ wall_mm: 2 }, "print", []).design.insert_hole_compensation)).toBe(3.4);
+    expect(modeledInsertHole(RUTHEX_RX_M2X4, designOf({ wall_mm: 2 }, "machine", []).design.insert_hole_compensation)).toBe(3.2);
+    // a value proven on the project's printer, for either process
+    const own = designOf({ wall_mm: 2, insert_hole_compensation_mm: 0.3 }, "print", []);
+    expect([own.problems, own.design.insert_hole_compensation]).toEqual([[], 0.3]);
+    expect(designOf({ wall_mm: 2, insert_hole_compensation_mm: 0 }, "print", []).design.insert_hole_compensation).toBe(0);
+    expect(designOf({ wall_mm: 2, insert_hole_compensation_mm: 0.1 }, "machine", []).design.insert_hole_compensation).toBe(0.1);
+    for (const bad of [-0.1, 1.5, "0.2"]) {
+      const r = designOf({ wall_mm: 2, insert_hole_compensation_mm: bad }, "print", []);
+      expect(r.problems, String(bad)).toEqual([expect.stringMatching(/^insert_hole_compensation_mm must be a diametral allowance from 0 to under 1 mm/)]);
+      expect(r.design.insert_hole_compensation).toBe(0.2);
+    }
+  });
+
   it("rigid transforms invert", () => {
     const c = Math.cos(0.3), s = Math.sin(0.3);
     const m = [c, -s, 0, 4, s, c, 0, -2, 0, 0, 1, 7, 0, 0, 0, 1];
@@ -137,6 +157,8 @@ describe("job from the synthetic device", async () => {
     expect(b).toMatchObject({ capability: "cad", provider: "@protoboardai/ext-enclosure-cad", native: `${CASE}/build123d`, process: "print", instances: ["case"] });
     expect(errors(p.diagnostics.filter((d) => !d.validator.startsWith("ext:")))).toEqual([]);
     expect(built.problems).toEqual([]);
+    // printed: insert holes are modeled 0.2 mm (diametral) over the insert's finished hole
+    expect(built.job!.design.insert_hole_compensation).toBe(0.2);
   });
 
   it("puts the board (its exported body) and the cell inside, in the case's coordinates", () => {
@@ -196,7 +218,8 @@ export default defineCapabilityConfig({ provider: "@protoboardai/ext-enclosure-c
   it("reads every feature, with nothing wrong", () => {
     expect(built.problems).toEqual([]);
     expect(built.job!.process).toBe("machine");
-    expect(built.job!.design).toMatchObject({ shape: "round", wall: 3, fasteners: "none" });
+    // machined: insert holes are cut at the insert's finished size
+    expect(built.job!.design).toMatchObject({ shape: "round", wall: 3, fasteners: "none", insert_hole_compensation: 0 });
     expect([...f.keys()]).toEqual(["led_pipe", "status_window", "lugs", "neck", "seal", "probe_seal", "board_mount"]);
   });
 
@@ -254,8 +277,9 @@ describe.skipIf(!hasPy)("enclosure generation with build123d", () => {
       ["battery", "clear", "exact", 0],
       ["board", "clear", "exact", 0],
     ]);
-    // the cavity is the contents plus the clearance, so the closest any body comes is the clearance itself
-    expect(Math.min(...report.fit.bodies.map((b) => b.min_clearance_mm!))).toBeCloseTo(0.3, 3);
+    // the cavity is the contents plus the clearance, so the closest any body comes is the clearance itself (to
+    // 0.001 mm: the fit reads the lid screw columns' centres as the report rounds them, to 0.001 mm per axis)
+    expect(Math.abs(Math.min(...report.fit.bodies.map((b) => b.min_clearance_mm!)) - 0.3)).toBeLessThanOrEqual(0.001 + 1e-9);
     // the rabbet's tongue and the lid's skirt are each (1.7 - 0.1) / 2 mm: the minimum wall
     expect(report.walls.filter((w) => w.feature === "lid_joint" && /tongue|skirt/.test(w.what)).map((w) => w.mm)).toEqual([0.8, 0.8]);
     for (const w of report.walls) expect(w.mm, `${w.feature}: ${w.what}`).toBeGreaterThanOrEqual(w.min_mm);
@@ -307,6 +331,16 @@ describe.skipIf(!hasPy)("enclosure generation with build123d", () => {
     expect(ex.frames.board_mount).toMatchObject({ origin: [0, 0, 6], normal: [0, 0, 1] });
     expect(ex.artifacts.map((a) => a.id)).toEqual(expect.arrayContaining(["cad_source", "cad_step", "cad_glb", "cad_manifest", "base_stl", "lid_3mf"]));
 
+    // insert holes: printed, vertical in the base as it prints (floor on the bed), so modeled 0.2 mm over the
+    // insert's finished Ø3.2; the boss and the column walls are measured from the Ø3.4 hole actually cut
+    const hole = { finished_d_mm: 3.2, modeled_d_mm: 3.4, compensation_mm: 0.2, depth_mm: 5, part: "base", axis: "vertical" };
+    expect(report.features.board_mount).toMatchObject({ insert_hole: hole, boss_d_mm: 6 });
+    expect(report.features.lid_joint).toMatchObject({ insert_hole: hole, column_d_mm: 6 });
+    expect(report.walls.filter((w) => /around the insert/.test(w.what))).toEqual([
+      { feature: "board_mount", what: "boss wall around the insert", mm: 1.3, min_mm: 1.3 },
+      { feature: "lid_joint", what: "column wall around the insert", mm: 1.3, min_mm: 1.3 },
+    ]);
+
     // recess and plunger facts the checks read
     expect(report.features.usb_opening.recess_mm).toBeCloseTo(1.7 + 0.3, 6);
     expect(report.features.btn_a).toMatchObject({ gap_mm: 0.1, plunger: "plunger_btn_a" });
@@ -355,7 +389,7 @@ describe.skipIf(!hasPy)("enclosure generation with build123d", () => {
   it("generates the same files again from the same model", async () => {
     const p = await loadProject(dir);
     const rec = await runCapabilityOperation(p, "cad", "generate", "case", {}, { record: false });
-    expect(rec.status).toBe("succeeded");
+    expect(rec.status, rec.summary).toBe("succeeded");
     const build = join(dir, CASE, "build123d/build");
     const out = join(dir, CASE, "out");
     for (const [b, o] of [["body.step", "body.step"], ["body.glb", "body.glb"], ["body.manifest.json", "body.manifest.json"], ["parts/base.stl", "base.stl"], ["parts/lid.3mf", "lid.3mf"]]) {

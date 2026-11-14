@@ -1,0 +1,18 @@
+{
+  "schema": "protoboard.style.theme/v1",
+  "id": "neutral",
+  "name": "Conventional",
+  "description": "A plain, conventional look with no house identity: a muted blue accent used freely, light grays on a white ground, the system sans-serif and monospace faces, text as written, free callout routing, and no marks.",
+  "tokens": {
+    "brand.mode": "neutral",
+    "marks.logo": "none",
+    "palette.accent": "#3B6EA8",
+    "palette.background": "#FFFFFF",
+    "palette.body": "#E5E5E5",
+    "palette.bodySecondary": "#525252",
+    "type.family.body": "sans-serif",
+    "type.family.display": "sans-serif",
+    "type.family.mono": "monospace",
+    "voice.tags.case": "asis"
+  }
+}
