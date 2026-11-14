@@ -206,6 +206,14 @@ const cli = meow(
                             The Library tab is skipped, with the reason, while no library can be used
                             from here (signed out, sign-in refused, service out of reach).
                             --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs
+    editors                 The editors the project's extensions contribute (contributes.editors): the files
+                            each opens, its page and its host process, and what is missing (a page not built).
+                            --file <path> says which one opens that file: the first enabled extension that
+                            claims it, in protoboard.config.ts order
+    editors host <extension> <editor>
+                            The host process of an extension's editor, as the VS Code extension starts it: it
+                            loads the editor's host entry and speaks JSON lines on stdin and stdout
+                            (@protoboardai/core/editor-protocol). Started by the shell, not by hand
     dev                     Serve the UHD viewer on the project: rebuilds on every source change, saves
                             diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch)
     bom                     The bill of materials, by top-level module, in US dollars: what one unit needs, the
@@ -504,6 +512,7 @@ const cli = meow(
       refreshGuidance: { type: "boolean", default: false },
       render: { type: "boolean", default: true },
       timeout: { type: "number" },
+      file: { type: "string" },
     },
   },
 );
@@ -1307,6 +1316,14 @@ async function main() {
       const r = await viewsCheck({ cwd, module: cli.flags.module, out: cli.flags.outDir, render: cli.flags.render, timeout: cli.flags.timeout, log: json ? undefined : (line) => process.stderr.write(line + "\n") });
       out(r, () => formatViewsCheck(r));
       process.exitCode = r.failed || (!r.rendered && cli.flags.render) ? 1 : 0;
+      return;
+    }
+    case "editors": {
+      const { editorHostMain, formatEditors, listEditors } = await import("./editors.js");
+      if (args[0] === "host") return void (await editorHostMain(cwd, args[1], args[2]));
+      if (args[0] !== undefined) throw new Error("usage: protoboard editors [--file <path>] | protoboard editors host <extension> <editor>");
+      const r = await listEditors(cwd, cli.flags.file);
+      out(r, () => formatEditors(r));
       return;
     }
     case "upgrade": {
