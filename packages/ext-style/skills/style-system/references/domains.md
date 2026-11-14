@@ -9,7 +9,7 @@ which branches exist, where each one's style lives today, what carries over from
 | --- | --- | --- | --- | --- |
 | core | built (this package) | `themes/core/` | `protoboard.style.theme/v1`, `protoboard.style.layer/v1` | every branch, by reference |
 | cad | built (this package) | `themes/cad/` | `protoboard.cad-style.theme/v1`, `protoboard.cad-style.layer/v1` | **cad-style** inside **enclosure-cad** and **frame-cad** |
-| pcb | built, separate | `@protoboardai/board-style` (`packages/board-style`) | `protoboard.board-style.theme/v1`, `protoboard.board-style.layer/v1` | the library's tools; boards follow **circuit-board** |
+| pcb | in development, separate (lands with the PCB editor; not in this release) | `@protoboardai/board-style` (`packages/board-style`) | `protoboard.board-style.theme/v1`, `protoboard.board-style.layer/v1` | the library's tools; boards follow **circuit-board** |
 | documents | not connected | ext-docs house style: `packages/ext-docs/skills/uhd-tech-docs/references/house-style.md`, tokens in `packages/ext-docs/lib/templates/doc.css` | none (CSS custom properties) | **uhd-tech-docs** |
 | renders | not connected | the Hazard Protocol render style guide in the Protoboard protocols collection (Blender, outside this repository) | none (a written guide with token roles) | the render procedures |
 | packaging | not connected | nowhere yet | none | nothing yet |

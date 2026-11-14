@@ -71,6 +71,14 @@ Source keys used in the tables (full list: [sources](sources.md)):
 | SLANT-TOL | https://www.youtube.com/watch?v=XKrDUnZCmQQ |
 | SLANT-MICRO | https://www.youtube.com/watch?v=Lq-SoGgKOcQ |
 
+Rules added from the production-farm pass (FDM-WALL-8 and later ids in each
+section) cite their videos by full URL; the research record, with every video,
+the conflicts and the claims not adopted, is
+`docs/specs/dfm-research/10-slant-3d-videos.md`. That source is one print farm
+designing for its own automated production; its numbers are practitioner
+values and never replace a measured or multi-source value. Designing for a
+production run as a mode of its own is [production runs](production-runs.md).
+
 ## 1. Walls (FDM-WALL)
 
 | Id | Rule | Value at N 0.4, L 0.2 | Formula | Why | Tag | Source |
@@ -82,6 +90,12 @@ Source keys used in the tables (full list: [sources](sources.md)):
 | FDM-WALL-5 | Wall for an unknown printer or a service | 1.2 mm; 1.5 mm for a load-bearing wall sent to a service bureau | constant (`wall.unknown.printer`) | Machine variation; bureaus recommend 1.5 for supporting walls and design to 1.5 x the process minimum | VENDOR | SIMPLE; XOM-FDM (1.2 to 1.5, 1.5 recommended); PROTOLABS-FDM (0.8 service minimum) |
 | FDM-WALL-6 | Never model a wall under 1 W unless the slicer result is checked | see section 1.1 | under 1 W | The slicer drops or widens it | VENDOR, DERIVED | BAMBU-WALL |
 | FDM-WALL-7 | Wall strength tracks total thickness, not loop count | 2 loops at 200 percent width held 39 kg vs 4 loops at 100 percent 33 kg (PLA hook) | | Wider beads bond better (peak about 150 percent width) | MEASURED | CNCK-WIDTH |
+| FDM-WALL-8 | Cautious production floor: every wall and standalone feature at least 1.0 mm in XY | 1.0 mm | constant (`wall.min.cautious`) | Two lines plus side squash survive machine variation across a farm; 2 W (0.9) stays the floor on one tuned printer | PRACTITIONER (agrees with SIMPLE 1.0 to 1.2) | https://www.youtube.com/watch?v=1n_R8shlGcs, https://www.youtube.com/watch?v=qpo4WsEeYJo |
+| FDM-WALL-9 | Blunt every modeled knife edge, blade or tip to a flat at least one line width wide; never a true point | 0.45 mm | 1 W (`edge.blunt.min`, status unverified) | A point makes the slicer thin the flow, so the tip flakes off; the layers under a point have no time to cool and the tip deforms | PRACTITIONER (the spoken 0.2 to 0.4 was reconstructed from auto-captions; the floor used is FDM-WALL-1's) | https://www.youtube.com/watch?v=oz51t5p9gXo, https://www.youtube.com/watch?v=Iauvzy5mR90, https://www.youtube.com/watch?v=aWz1mz4hhu8 |
+
+Also from the production source: check the thinnest wall again after scaling a
+model down, since a wall that printed at one size can fall under 1 W
+(PRACTITIONER, https://www.youtube.com/watch?v=Iauvzy5mR90).
 
 Published minimums disagree. The playbook keeps them as tiers rather than one
 number:
@@ -136,6 +150,29 @@ floor is 0.17 mm and 1 W is about 0.23 mm; at N 0.6 mm they are 0.51 and
 | FDM-OVH-8 | Hole that starts in mid-air (counterbore from below): sequential sacrificial bridges | first pair 0.2 mm, second pair at 0.4 mm | 1 L then 2 L cumulative (`bridge.sacrificial.first`, `.second`) | Each layer bridges a straight span instead of a circle over air | VENDOR | HYDRA; HACKADAY (PRACTITIONER) |
 | FDM-OVH-9 | Sacrificial membranes only for small, non-structural holes | | | Strands left in the hole; punching through can tear the bottom layer | PRACTITIONER | SLANT-HOLES |
 | FDM-OVH-10 | A horizontal ledge overhang (past 45 deg) stays short | 2 mm maximum length; anything over 5 mm long needs support even if narrower | | Bureau limit for unsupported overhang length | VENDOR | XOM-EU |
+| FDM-OVH-11 | Grow every island from the main body: a feature that would start in mid-air on supports (a chin, a hand, a hanging lip) gets a joining block back to the part | | | An island on supports gets knocked off its support; many support islands warp, catch the nozzle and shift layers | PRACTITIONER (a production change described) | https://www.youtube.com/watch?v=ZgrlGfftm0k |
+| FDM-OVH-12 | A round profile lying on its side (rod, axle, arm) gets an octagon (45 deg facets) or a hexagon with a flat down, or a flat cut on the bed side; a vertical rod only when short, with a chamfered foot | octagon meets 45 deg exactly | | A round on the bed is a line contact that needs a brim, and its underside overhangs past 45 deg | PRACTITIONER | https://www.youtube.com/watch?v=WfP-ZOnlFPM, https://www.youtube.com/watch?v=YMk7EfbemGY |
+| FDM-OVH-13 | Dome interiors: keep the outside a true dome and make the inside pointed (a cone) or egg-shaped; printing does not need a constant wall | | | The inside crown of a hemisphere is a near-flat overhang that drags and strings, and on a thin wall it shows outside | PRACTITIONER | https://www.youtube.com/watch?v=udEeJjzEQZI |
+| FDM-OVH-14 | A bottom edge that must look round: a curve that meets the bed at an angle, or an arc truncated before it turns horizontal (internal teeth less than a semicircle), never a fillet tangent to the bed | | | A tangent fillet starts horizontal, sags and warps | PRACTITIONER | https://www.youtube.com/watch?v=IrvxX0MtGMM, https://www.youtube.com/watch?v=m20UPm0TOto, https://www.youtube.com/watch?v=tb1yqVOyAM8 |
+| FDM-OVH-15 | Thin or flexing overhanging features (snap tabs, lips) stay steeper than 45 deg | as steep as the design allows | | A filament color change alone flipped a marginal thin tab between sag and no sag | PRACTITIONER | https://www.youtube.com/watch?v=EoIlALcMJB8 |
+
+On FDM-OVH-4 the production source offers one escape the playbook does not
+adopt: fill the corner under a ledge with a large fillet and round its tip so
+nothing ends horizontal
+(https://www.youtube.com/watch?v=FMs-VGAu_PQ). The chamfer stays the rule; the
+same video calls a chamfer the most manufacturable fix and says to make it as
+steep as possible at high volume. On FDM-OVH-12, a flat cut on a round rod
+leaves the underside next to the flat past 45 deg; the source's "tangent at
+least 35 deg" for that flat does not say from which axis and is not adopted.
+For a dome that must stay round inside, use the mushroom support of FDM-SUP-9,
+or flatten the inside apex so generated supports meet a flat and release
+(same dome video).
+
+Overhang angles stated by the production source range from 30 to 60 deg
+across its videos, mostly without saying from which axis, and its print
+service generates supports only past 50 deg
+(https://www.youtube.com/watch?v=f4fJ5AbUF6Q). None of these replaces
+FDM-OVH-1.
 
 A diamond hole (a square turned 45 deg) is a practitioner alternative to the
 teardrop for horizontal holes and pegs: no flat roof, and the matching peg
@@ -155,11 +192,17 @@ cool strongly, after an overhang-fan coupon.
 | FDM-BRG-4 | Bridge straight spans between parallel walls | | | Curved bridge edges droop; sacrificial bridging converts curves to straight spans | VENDOR | HYDRA |
 | FDM-BRG-5 | Low infill under a flat top needs more top layers | about 0.9 mm skin | (`skin.top.min`) | Top skin bridges between infill lines; too few layers pillow | VENDOR | PRUSA-LAYERS |
 | FDM-BRG-6 | A long thin roof tying two walls pulls them in ("shrink line") | | | Tilting spreads the roof over many layers | MEASURED (observed) | CNCK-ORIENT |
+| FDM-BRG-7 | Shrink line where a thick solid floor meets a thin wall: cut a groove around the inside of the floor along the wall (an offset of the interior outline), or texture the outer wall; thicker walls did not help; a raised grid on the floor must be continuous, never islands | groove about 1 mm deep | constant (`shrinkline.groove.depth`, status unverified) | The groove disconnects the floor's top skin from the wall; the line nearly vanished | PRACTITIONER, one print per variant | https://www.youtube.com/watch?v=d61u_lKFa-U, https://www.youtube.com/watch?v=cdyqNocFCpQ |
 
 **Adopted:** 10 mm for hidden or internal bridges; 5 mm on cosmetic or mating
 faces and for an unknown printer. Bambu's data sheets list 30 mm for PLA and
 PETG and 20 mm for TPU (VENDOR, see [materials](materials.md)); treat those as
-best case.
+best case. The production source says most machines bridge 25 to 50 mm and
+supports vent slots only past about 25 mm
+(https://www.youtube.com/watch?v=3AZWuVRUh2c,
+https://www.youtube.com/watch?v=bO39lWkaspA,
+https://www.youtube.com/watch?v=vcgsQyMSSiY): its stated position, not
+adopted. Where a span is long, add a mid rib or cross member to shorten it.
 
 ## 4. Supports by design (FDM-SUP)
 
@@ -172,6 +215,23 @@ best case.
 | FDM-SUP-5 | Designed breakaway fins where something must overhang | sprues 0.5 to 1 mm wide, horizontal in the layer plane; foot disc 1 to 2 mm thick; label "R" | Peel off leaving a small dimple; rigid attachment stops warping stress popping the part loose | PRACTITIONER | SLANT-MASS; CNCK-ORIENT (MEASURED anecdote) |
 | FDM-SUP-6 | A part resting on an edge or corner gets a flat chamfer pad | about 1 mm | A line contact comes loose | PRACTITIONER | SLANT-MASS |
 | FDM-SUP-7 | Supports are acceptable for a large horizontal hole that must be crisp, one-off prototypes, and hidden or machined faces | | | PRACTITIONER | SLANT-HOLES |
+| FDM-SUP-8 | A designed support fin, in detail: tines (sprues) flat in the layer plane, one continuous extrusion through tine and part, never tines standing perpendicular to the face; fin foot a disc or ellipse about 1 mm thick; fin top rounded; about five tines, dense near the bed then every few layers; fins near an edge or corner, not mid-face, and at both ends of a long part, merged slightly inboard of the corners so nubs cut flush; a small break notch in each tine at the part | gap where support and part are not joined 0.2 mm (`support.designed.gap`); tine 0.5 thick (`support.designed.tine.height`) by 0.5 to 1 wide (`support.designed.tine.width`); round sprue or stem 1 mm (`support.designed.sprue.diameter`) | Perpendicular tines are stacks of one-layer islands that break and leave balls; 1 mm wide tines left visible nubs; a separate fin 0.2 mm away holds the part in one direction only | PRACTITIONER, some CLAIMED-TEST | https://www.youtube.com/watch?v=vnn4XeKQobs, https://www.youtube.com/watch?v=3VUQd_Tl5x0, https://www.youtube.com/watch?v=3AZWuVRUh2c, https://www.youtube.com/watch?v=8NKVNwVaZU0, https://www.youtube.com/watch?v=6gPPAiqSkBc |
+| FDM-SUP-9 | Designed support shapes for other cases: pointed towers under an undercut; a thumbtack (1 mm stem, wide flat head) under a small downward point; a mushroom (wide cap, thin stem) under a dome, cap 0.5 mm or more below it; a cup with 0.2 mm gap all round under a sphere; a small hollow block tapering to a slightly rounded contact; a support comb for a tall thin part (FDM-SUP-13) | tower tip 0.5 mm (`support.designed.point`, status unverified) | Each lets the slicer print the support with no generated support of its own and leaves one small mark on a non-show face | PRACTITIONER | https://www.youtube.com/watch?v=B6r8m93MNGQ, https://www.youtube.com/watch?v=YL5lYEXbLDo, https://www.youtube.com/watch?v=udEeJjzEQZI, https://www.youtube.com/watch?v=m3Cxw-j19bU, https://www.youtube.com/watch?v=WYQbxIVLz6Y |
+| FDM-SUP-10 | Designed supports are sized for one nozzle (the values above are for 0.4 mm): never scale them with the part; redraw them for another nozzle and prove them with coupon C22 | | Scaled down, the slicer stops printing the stem or tine; scaled up, the gap fuses or the mark grows | PRACTITIONER | https://www.youtube.com/watch?v=YL5lYEXbLDo |
+| FDM-SUP-11 | Landing pads, cautious: a part stood on an edge gets a flat chamfer about 2 mm wide (FDM-SUP-6's 1 mm stays the minimum); a peaked part printed upside down gets its apex cropped to a flat strip about 6 mm wide; keep the center of gravity over the pad and the stance symmetric | edge 2 mm (`landing.edge.width`); apex 6 mm (`landing.apex.width`, status unverified) | A failed print on a narrow land is shown; an asymmetric stance tips and detaches | PRACTITIONER | https://www.youtube.com/watch?v=vnn4XeKQobs, https://www.youtube.com/watch?v=ip70-Tw6tBE, https://www.youtube.com/watch?v=reIXSlL6mKA, https://www.youtube.com/watch?v=9ERY20MRJPo |
+| FDM-SUP-12 | A channel or tunnel that would otherwise need support (a print-in-place slide, a long bridge) gets a removable block modeled in it: gap above and below, edges chamfered so it twists out, a hole through it so pliers can crush it, and the word SUPPORT or REMOVE embossed on it | gap above 0.2, below 0.2 to 0.3 mm | The block prints on generic settings and comes out in one piece | PRACTITIONER | https://www.youtube.com/watch?v=3AZWuVRUh2c, https://www.youtube.com/watch?v=4wRKmcWXEkw |
+| FDM-SUP-13 | A tall, thin part printed upright (a panel, a fin, a near-vertical plate) gets one or two thin breakaway fins on its back as outriggers, or a support comb: a post close to the part with 1 mm horizontal fingers trimmed to its profile and pushed slightly into it, stopping below the top | fingers 1 mm (`support.designed.sprue.diameter`) | Tall thin parts wobble and band near the top, worst on moving-bed printers; generated support cannot reach a vertical plate | PRACTITIONER | https://www.youtube.com/watch?v=DnPu7slvBVk, https://www.youtube.com/watch?v=3Acks3Wzjjo |
+
+The production source's offset support gap was also spoken as "2 to 3" in
+several videos, read as 0.2 to 0.3 mm because the auto-captions drop leading
+decimals (UNVERIFIED reading); its in-channel block gap was spoken in a garbled
+form most likely meaning 0.3 mm (UNVERIFIED). Its preferred workflow for a
+part a designed fin cannot serve is to generate thick tree supports in a
+slicer and export them as part of the mesh, so every printer gets the same
+support (https://www.youtube.com/watch?v=3AZWuVRUh2c). A 1 mm sprue under a
+snap tab on a part assembled once can be left to break on first assembly
+(https://www.youtube.com/watch?v=6DkCCOc5O1Y). Generated supports can use less
+material than designed ones on a large dome (FDM-OVH-13).
 
 ## 5. Orientation and anisotropy (FDM-ORI)
 
@@ -189,6 +249,22 @@ best case.
 | FDM-ORI-10 | Impact and drop loads must never cross the layers | across-layer impact about 0.25 of in-layer (`strength.z.impact.fraction`; PLA 0.23 to 0.26, PETG 0.23 to 0.31, Izod) | Impact is far more anisotropic than tensile strength | MEASURED | MWL-STRENGTH (Prusa MK3, stock profiles, single samples) |
 | FDM-ORI-11 | Snap fits and gear or ratchet teeth print lying on their side | | No layer boundary crosses the flexing or loaded section | VENDOR | https://markforged.com/resources/blog/joinery-onyx |
 | FDM-ORI-12 | Put critical dimensions in the XY plane; use metal pins, shoulder bolts or bushings for wear, alignment and concentricity | | XY is the accurate plane; printed bores wear | VENDOR | https://markforged.com/resources/learn/design-for-additive-manufacturing-plastics-composites/3d-printing-strategies-for-composites/composites-3d-printing-design-tips |
+| FDM-ORI-13 | Reinforcing a screw hole whose axis crosses the layers: thin disc cuts around the hole at mid-thickness of the tab (repeat for a thick tab), or slits placed off the hole's center plane and angled; never a single slit plane through the hole center | cuts 0.1 to 0.2 mm wide (`microfeature.slot.width`) | The slicer fills the cuts with walls so the ring around the hole prints solid; one plane through the center acts as a zipper along which the layers split | PRACTITIONER | https://www.youtube.com/watch?v=UfJIMn4nvsA, https://www.youtube.com/watch?v=ip70-Tw6tBE |
+| FDM-ORI-14 | Strap and belt slots run parallel to the layer lines; lanyard and cord loops lie in the layer plane (flush with a face) or run as an internal channel between two flush holes | | The layers then form continuous loops around the strap; a loop standing across the layers snaps at a layer line | PRACTITIONER | https://www.youtube.com/watch?v=lGnpz8q4STw, https://www.youtube.com/watch?v=oYEV-ndgwdk, https://www.youtube.com/watch?v=Iauvzy5mR90 |
+| FDM-ORI-15 | Orientation by cropping: a three-way corner bracket is cropped at the corner and stands on that crop so its layers loop around the joint; a box or enclosure turned 45 deg about one horizontal axis on a chamfered landing has every interior face at 45 deg and needs no support | | Removes interior supports and gives every outside face the same finish; the strength claim is in FDM-ORI-3's terms, not "strongest in every feature" | PRACTITIONER, CLAIMED-TEST (sliced, no supports generated) | https://www.youtube.com/watch?v=csUGcIPNNkk, https://www.youtube.com/watch?v=8TIhkxQNINY, https://www.youtube.com/watch?v=8NKVNwVaZU0 |
+
+Refinements from the production source. FDM-ORI-6: the slits it lists are
+placed off the center plane for the reason in FDM-ORI-13. FDM-ORI-8 and
+FDM-ORI-11: a ring with snap clips printed flat snaps its clips; printed on its
+side with the clips at 45 deg to horizontal, no clip has layers across its
+flex plane; chamfering the clip roots moves the flexing into the ring
+(https://www.youtube.com/watch?v=_y8Yvu1FQIE). Springs, snap tabs and
+flexures put all their force in the layer plane; a spring printed at an angle
+loses most of its return ([hardware](hardware.md) section 9). FDM-ORI-3: the
+source's claim that a part printed at 45 deg is strongest in every feature
+(https://www.youtube.com/watch?v=8NKVNwVaZU0) and that angled walls stop
+cracks (https://www.youtube.com/watch?v=YMk7EfbemGY) are not adopted beyond
+the measured curve; a 45 deg tilt measured 40 MPa against 63 flat.
 
 ## 6. Bed contact, first layer, warping (FDM-BED)
 
@@ -201,6 +277,30 @@ best case.
 | FDM-BED-5 | No text, logos or fine islands on the first layer; keep the first layer on a hidden or bottom face for production parts | | Small islands do not stick and shift | PRACTITIONER | SLANT-MASS |
 | FDM-BED-6 | Large flat bases warp; ABS, ASA, PC warp most | | Uneven cooling lifts edges | VENDOR | UNIONFAB, PRUSA-WARP, HUBS-FDM |
 | FDM-BED-7 | Brim first; designed mouse ears if needed | ears 1 L thick, snap off; for severe curl 10 to 20 mm diameter and 3 to 5 layers thick (thin brims tear off) | 1 L | Holds lifting corners | VENDOR, PRACTITIONER | PRUSA-WARP; MAKER-HACKS (severe-warp alternative, PRACTITIONER) |
+| FDM-BED-8 | Keep the first layer one simple region: cosmetic holes stop short of the bed face (blind from above); thin isolated spines, bosses or spring tips on the bed are tied into one continuous outline by small sprues or about 0.3 mm connectors, snipped later or left | | | Islands on the first layer get knocked over or lift; one outline prints as a continuous path | PRACTITIONER | https://www.youtube.com/watch?v=X8kqMaxwB4M, https://www.youtube.com/watch?v=SSHoQLuVJFk, https://www.youtube.com/watch?v=Iauvzy5mR90, https://www.youtube.com/watch?v=rsfZgT3ZEI8 |
+| FDM-BED-9 | Warp countermeasures in the geometry of a large flat base: round its corners; cut shallow relief slits up into the underside in a checkerboard (first layer left continuous); ripple or slightly bow long walls; add small internal cavities at the corners to break long infill paths | slits about 0.5 mm deep at about 25 mm pitch (`warp.relief.depth`, `warp.relief.pitch`, both status unverified) | The longest continuous shrink path drives warp; breaking it lowers the pull on the corners | PRACTITIONER, CLAIMED-TEST (one demo plate), no measurement | https://www.youtube.com/watch?v=iPZoDltS30A |
+| FDM-BED-10 | A mouse ear as a sprue: a one-layer disc joined to the corner tip by a short neck, kept as close to the corner as possible | disc 1 L thick (`production.brim.thickness`) | One snip removes it with little residue; a long neck stretches under warp and the corner still lifts | PRACTITIONER | https://www.youtube.com/watch?v=MCcFMDv_4eo |
+
+Refinements from the production source. FDM-BED-3: make footprint corners as
+large as the design allows, 5 to 10 mm better than 1 mm, ideally a round
+footprint (https://www.youtube.com/watch?v=X8kqMaxwB4M). FDM-BED-4: fillet
+vertical edges at least about 1 mm; 3 mm fillets on a cube cut the slicer's
+estimate by about 2.5 to 3 percent (one slicer estimate), reduce ringing where
+the head stops and reverses at a sharp corner, and keep a part from catching
+the nozzle and being knocked loose (PRACTITIONER, CLAIMED-TEST,
+https://www.youtube.com/watch?v=C0H_4fOm9CQ,
+https://www.youtube.com/watch?v=3VUQd_Tl5x0,
+https://www.youtube.com/watch?v=Wd0MR4sPcK0). FDM-BED-5: the source allows
+text one layer deep on the bed face and a logo there if it is one continuous
+motion; not adopted, the first layer stays free of text and logos. FDM-BED-2:
+the source also fillets bed edges in some videos and calls the bed chamfer
+optional in one; not adopted, the chamfer stays. The source reports parts
+shrinking about 1 percent (0.1 mm over 10 mm); the calculator values in
+[materials](materials.md) section 2 stay the reference, and a test part
+calibrates either.
+
+A production run that must release from the bed shapes and reduces bed contact
+on purpose: [production runs](production-runs.md) section 2.
 
 Elephant's foot range: 0.3 mm (Hydra) is the smallest chamfer that hides the
 lip; 1 mm (Slant 3D) is robust against machine variation. **Adopted:** 0.5 mm
@@ -210,7 +310,8 @@ preference ([fits](fits-and-clearances.md)).
 
 Quantified warp versus footprint size: no measured study found (UNVERIFIED).
 A flat ABS, ASA or PC plate over about 100 mm on an open printer is high risk
-(UNVERIFIED heuristic from research lane 03).
+(UNVERIFIED heuristic from `docs/specs/dfm-research/03-materials.md`). FDM-BED-9
+gives practitioner geometry against warp, still without a measurement.
 
 ## 7. Holes and pins (FDM-HOLE, FDM-PIN)
 
@@ -223,7 +324,7 @@ A flat ABS, ASA or PC plate over about 100 mm on an open printer is high risk
 | FDM-HOLE-5 | Minimum hole | 2.0 mm; labeled alternative, not adopted: 1.0 mm diametral as Xometry's industrial roundness floor (holes over 1.0 stay round, best printed vertical), not a functional minimum | constant (`hole.min.diameter`) | Smaller holes close up | VENDOR | HYDRA; PROTOLABS-FDM (2.0); https://ultimaker.com/learn/design-for-fff-3d-printing-maximize-your-success/ (SNIPPET); XOM-FDM, XOM-STD (1.0 roundness floor) |
 | FDM-HOLE-6 | Critical diameters (bearing, dowel, press fit): print undersize and drill or ream | | Printing cannot hold it | VENDOR | HUBS-FDM, HYDRA |
 | FDM-HOLE-7 | Vertical holes are round but small; horizontal holes are oval (top sag, stepped bottom) | | | VENDOR | HUBS-FDM |
-| FDM-HOLE-8 | Pilot holes as a fraction of size: tap 90 percent of major diameter; self-tapping screw 96 percent; heat-set insert 98 percent of insert OD | | | VENDOR (SNIPPET in lane 04) | HYDRA |
+| FDM-HOLE-8 | Pilot holes as a fraction of size: tap 90 percent of major diameter; self-tapping screw 96 percent; heat-set insert 98 percent of insert OD | | | VENDOR (SNIPPET in research file 04) | HYDRA |
 | FDM-HOLE-9 | Fit-tolerant features instead of exact diameters: 1 to 2 deg tapered pin, split compliant pin, lead-in chamfer, crush ribs, grip fins (about 1 mm, slightly under the shaft, undercut slot gap 0.3 mm minimum and 0.5 mm maximum, `fitfeature.compliant.gap.min`, `.max`) | | Fit survives printer variation; under 0.3 some CAD or STL tools close the slot, over 0.5 the feature deforms | PRACTITIONER | SLANT-MASS, SLANT-HOLES, SLANT-TOL |
 | FDM-PIN-1 | Minimum pin diameter | 1.8 mm | 4 W (`pin.min.diameter`) | At least two full perimeters form | VENDOR | HYDRA |
 | FDM-PIN-2 | Pins under 5 mm are perimeters only: base fillet | | | VENDOR | HUBS-FDM |
@@ -231,6 +332,16 @@ A flat ABS, ASA or PC plate over about 100 mm on an open printer is high risk
 A composite formula (shrink percent + slicer compensation + 0.10 mm for
 vertical holes) seen in a search excerpt is UNVERIFIED and not used
 (https://tools.creative3dp.com/blog/3d-printed-holes-too-small/).
+
+Refinements from the production source. FDM-HOLE-7: model a side hole slightly
+tall (oval) so it sags round; no amount is given
+(https://www.youtube.com/watch?v=sza8wg5FIxQ); the teardrop and the droop
+relief stay the sized methods. FDM-HOLE-9: grip fins in detail, locating fins
+instead of pins, keyhole and tab pins: [fits and clearances](fits-and-clearances.md)
+sections 10 and 11. Vertical pins: a cross-shaped or wrinkled section with
+0.2 mm internal slots carried into the base prints nearly solid; a slight
+taper (root wider than the hole, tip narrower) presses in and wears in
+(PRACTITIONER, https://www.youtube.com/watch?v=uMA-Wt-z_BU).
 
 Fits and clearances between mating parts: [fits and clearances](fits-and-clearances.md).
 
@@ -244,6 +355,8 @@ Fits and clearances between mating parts: [fits and clearances](fits-and-clearan
 | FDM-FEAT-4 | Outside vertical corners always have a radius of about N/2 | | Round nozzle | VENDOR | HUBS-FDM |
 | FDM-FEAT-5 | Inside vertical corners can be sharp; Z edges are limited by L (stair steps) | | | VENDOR, PRACTITIONER | HUBS-FDM, SLANT-CURVE |
 | FDM-FEAT-6 | Fillets at least 1 mm where used; never on downward-facing edges | 1 mm | | | VENDOR | HYDRA |
+| FDM-FEAT-7 | Break the edge where a hole meets a face: a small fillet where a side hole meets its wall; a chamfer (or a fillet) at the rim of a vertical hole in a top face; a fillet on the top edges of a part printed flat | about 1 mm on a top-face hole rim | | A sharp hole edge ripples the toolpath and a plain hole's loop bonds poorly to the top skin; a tiny hole with an edge break stays open; rounded top edges let the walls merge into the top skin | PRACTITIONER | https://www.youtube.com/watch?v=Bd7Yyn61XWQ, https://www.youtube.com/watch?v=3BIvSiuQVWQ, https://www.youtube.com/watch?v=aWz1mz4hhu8, https://www.youtube.com/watch?v=NaQ_Sa1BaqU |
+| FDM-FEAT-8 | Decorative patterns as relief (embossed or debossed about 1 mm, with a solid border), not through-cuts; vents as slots cut at an angle through a thickened wall, or slots following the layers, not grids of small round holes; aim for one continuous outline per layer (a fin handle rather than a loop handle) | texture about 1 mm deep, border about 10 mm (7 where proportions need it) | Through-cuts and hole grids make islands, retractions, stringing and a weak perforated line; one outline per layer prints without retractions | PRACTITIONER | https://www.youtube.com/watch?v=31FVZIg4rDs, https://www.youtube.com/watch?v=YMk7EfbemGY, https://www.youtube.com/watch?v=vcgsQyMSSiY, https://www.youtube.com/watch?v=m20UPm0TOto, https://www.youtube.com/watch?v=rUUq4kgi7t4 |
 | FDM-TXT-1 | Embossed stroke width | 0.9 mm | 2 W (`text.min.stroke`) | | VENDOR | HYDRA |
 | FDM-TXT-2 | Engraved stroke width | 0.5 mm | constant | | VENDOR | HYDRA, HLH (SNIPPET) |
 | FDM-TXT-3 | Character height, bold sans-serif | 5 mm | constant (`text.min.height`) | Calculator: about 4.5 mm bold, 6 mm regular at N 0.4 (stroke times 5.6 to 6); Xometry Europe 5 recommended, 3.5 capability | DERIVED | TEXTCALC (SNIPPET), HYDRA, XOM-EU |
@@ -251,10 +364,21 @@ Fits and clearances between mating parts: [fits and clearances](fits-and-clearan
 | FDM-TXT-5 | Engraved depth | 0.8 mm; at least 1.0 mm on an industrial FDM order | 4 L (`text.engrave.depth`) | | DERIVED | TEXTCALC (SNIPPET); HLH 0.5 mm min (SNIPPET); XOM-FDM |
 | FDM-TXT-6 | On vertical faces: embossed at most about 0.9 mm out, engraved under 0.9 mm deep | | Larger features sag | VENDOR | HYDRA |
 | FDM-TXT-7 | Text on vertical walls or top faces, never on the first layer | | | PRACTITIONER | SLANT-MASS |
+| FDM-TXT-8 | Text on a vertical face, cautious depths: raised at most 0.5 mm, engraved about 0.5 mm and no deeper; side walls are the best place for text | 0.5 mm each (`text.sidewall.emboss.max`, `text.sidewall.engrave.max`) | caps `text.emboss.height` and `text.engrave.depth` on vertical faces only | Raised 1 mm sagged at the letter bottoms; deeper engraving made defects; a side wall resolves one layer (0.2) where a top face resolves one nozzle width, so side text is about twice as crisp | PRACTITIONER, CLAIMED-TEST | https://www.youtube.com/watch?v=upf9ixYtDG4, https://www.youtube.com/watch?v=TH82TSjI67I, https://www.youtube.com/watch?v=aWz1mz4hhu8, https://www.youtube.com/watch?v=DnPu7slvBVk |
+| FDM-TXT-9 | Text on a top face: engrave rather than emboss; avoid it unless the letters are large and bold | | | Raised letters on a top face are islands with retractions, stringing and smearing | PRACTITIONER | https://www.youtube.com/watch?v=upf9ixYtDG4, https://www.youtube.com/watch?v=TH82TSjI67I |
 
 Other text guides range from 3 mm height with a 0.8 mm stroke to 5 to 6 mm
 raised (VENDOR, SNIPPET). The nozzle-relative formula halves every value at a
-0.2 mm nozzle.
+0.2 mm nozzle. The production source puts its minimum at 3 mm on a side wall
+(about 1/8 in), 4 to 5 mm preferred, strokes 0.5 to 1 mm
+(https://www.youtube.com/watch?v=upf9ixYtDG4,
+https://www.youtube.com/watch?v=aWz1mz4hhu8): a production alternative to
+prove with coupon C26, not a replacement for `text.min.height` (5 mm). Its
+other text advice: dark filament for text (light colors give low contrast);
+leave raised text smooth on a textured face for contrast; part numbers or
+codes can sit just under the skin, readable against a light
+(https://www.youtube.com/watch?v=DnPu7slvBVk,
+https://www.youtube.com/watch?v=TH82TSjI67I).
 
 ## 9. Strength (FDM-STR)
 
@@ -264,12 +388,77 @@ raised (VENDOR, SNIPPET). The nozzle-relative formula halves every value at a
 | FDM-STR-2 | Practical ceiling for strong parts | about 4 perimeters and 50 percent infill; CNC Kitchen's functional default is 3 perimeters, 30 percent (`perimeters.structural` = 3); infill 15 to 20 percent, rarely over 30 (exceptions: large flat parts, corrugated walls). Small, thin or detailed parts may use 100 percent infill | 100 percent infill is uneconomical on large parts | MEASURED, PRACTITIONER | CNCK-INFILL, MWL-INFILL; MAKER-HACKS (small-part exception, PRACTITIONER) |
 | FDM-STR-3 | Infill pattern at 30 percent: triangular 60 kg, honeycomb 57, grid 52, rectilinear 48, wiggle 45 (PLA hooks). Alternative at equal mass: cubic strongest by a clear margin, gyroid third; lightning, Hilbert, Archimedean chords and octagram unsuitable for load; honeycomb, gyroid and similar print about a third slower | Default to cubic or adaptive cubic | The ranking depends on the comparison: equal percentage (CNC Kitchen) vs equal mass (Made with Layers, PETG, one geometry) | MEASURED | CNCK-INFILL, MWL-INFILL |
 | FDM-STR-4 | Design solid shapes and let the slicer fill them; do not copy molding-style thin shells with ribs and draft | | Ribs remove a wall and weaken a printed part; no draft needed | PRACTITIONER | SLANT-MASS |
-| FDM-STR-5 | Ribs, where used: whole multiples of W, at least 2 W, in the XY plane | | Strands along the load | DERIVED | research lane 01 section 9 (no FDM rib ratio source; molding ratios do not transfer) |
+| FDM-STR-5 | Ribs, where used: whole multiples of W, at least 2 W, in the XY plane | | Strands along the load | DERIVED | `docs/specs/dfm-research/01-fdm-design-rules.md` section 9 (no FDM rib ratio source; molding ratios do not transfer) |
 | FDM-STR-6 | Fillet internal corners in XY (at least 1 mm); chamfer downward-facing internal corners | | Stress relief without overhang | VENDOR | HYDRA, HUBS-FDM |
 | FDM-STR-7 | Top skin at least about 0.9 mm (3 layers at 0.3, 9 at 0.1) | 0.9 mm | Prusa profiles always use at least 2 perimeters | VENDOR | PRUSA-LAYERS |
 | FDM-STR-8 | A plate thinner than top plus bottom skin (about 1.6 to 2 mm) prints solid | | | DERIVED | PRUSA-LAYERS |
 | FDM-STR-9 | Gradient infill: about 30 percent more stiffness per weight | | | MEASURED (SNIPPET) | https://www.cnckitchen.com/blog/gradient-infill-for-3d-prints |
 | FDM-STR-10 | Microfeatures: cut slots, holes or ribs about 0.2 mm wide into the model to force fused extra perimeters | 0.2 mm at N 0.4; if wide enough to print as two walls they make a weak sleeve | Designs strength in independent of slicer settings; ribs tested best | PRACTITIONER | SLANT-MICRO |
+| FDM-STR-11 | Where a rib is needed, make it self-supporting: a triangular, chamfered or rounded underside, a diagonal layout on a flat sheet, or cross members that shorten a molded-style shelf; a thin rib on one side of an upright thin arm acts as a shear web | | A molding rib leaves horizontal shelves that sag; a web stops an upright arm snapping across layers | PRACTITIONER, one CLAIMED-TEST (squeeze demo) | https://www.youtube.com/watch?v=8vz9b0zNMVg, https://www.youtube.com/watch?v=GDEMxa4WdRw, https://www.youtube.com/watch?v=as84ZBjdmxU |
+| FDM-STR-12 | A screw head clamps solid material: counterbore or countersink so the web under the head is all walls and skins, not infill | example: 5 mm hole, 15 mm counterbore, 6 mm web with 1 to 2 mm skins | Cracks start where walls backed by infill take the clamp load | PRACTITIONER | https://www.youtube.com/watch?v=Wd0MR4sPcK0, https://www.youtube.com/watch?v=YMk7EfbemGY |
+| FDM-STR-13 | Microfeature sizing (refines FDM-STR-10): slots 0.1 to 0.2 mm (slicers may close gaps near 0.05); around a screw hole, a ring of small holes or slots about 2 mm from the hole wall, starting 1 to 2 mm below the top face; never a full ring slot, which isolates a loose cylinder; the slot depth sets the depth of the induced wall | 0.2 mm (`microfeature.slot.width`); 2 mm (`microfeature.hole.offset`) | A ribbed rod was claimed about 3 times as strong as a plain one with a 1 mm wall (no data shown) | PRACTITIONER, CLAIMED-TEST | https://www.youtube.com/watch?v=3BIvSiuQVWQ, https://www.youtube.com/watch?v=ip70-Tw6tBE, https://www.youtube.com/watch?v=Lq-SoGgKOcQ, https://www.youtube.com/watch?v=81qmDc5unYM, https://www.youtube.com/watch?v=OcxfQeeKn-s |
+| FDM-STR-14 | Infill density data from the production source (section 9.1) supports the existing rules: strength rose about in proportion to mass from 10 to 80 percent and jumped at 90 and 100; about 50 percent is the most a part normally needs | | Use the tables, not the narration, which says infill hardly matters below 100 percent | PRACTITIONER, CLAIMED-TEST | https://www.youtube.com/watch?v=ZNX7Mzjq_fk, https://www.youtube.com/watch?v=-LHQtlxYQII |
+| FDM-STR-15 | Wall thickness data from the same source (section 9.1) confirms FDM-STR-1: compression strength of an empty cube rose steeply with wall thickness | | Only the pound values are data; the stated newtons are wrong | PRACTITIONER, CLAIMED-TEST | https://www.youtube.com/watch?v=PQHKQH5imkI |
+
+The same source uses enclosed internal cavities on purpose to force thick
+walls where it wants local stiffness, keeping a skin over them
+(https://www.youtube.com/watch?v=AURCtaRrUGM); and argues against lightening
+cavities, which add walls, time and surface area. It contradicts itself on
+ribs ("no ribs, fill solid" in most videos, thin webs added in others) and on
+microfeature size (0.2 mm here; tiny holes of about 0.5 mm in
+https://www.youtube.com/watch?v=boN1uiaIdVA, which can print as separate walls
+and form the weak sleeve FDM-STR-10 warns of): 0.2 stays.
+
+### 9.1 Test data from the production source, with caveats
+
+PRACTITIONER, CLAIMED-TEST throughout: PLA unless stated, mostly one specimen
+per condition, wall count, layer height and print orientation often not
+stated. Read them as trends, never as design values.
+
+Cantilever bending, 20 mm PLA rods loaded 40 mm from the pivot, rectilinear
+infill, three tests per density (https://www.youtube.com/watch?v=ZNX7Mzjq_fk):
+
+| Infill | Average break force | Strength per weight (as stated) |
+| --- | --- | --- |
+| 10% | 71 N | about 9 to 10 |
+| 20% | 96 N | about 9 to 10 |
+| 30% | 130 N | about 9 to 10 |
+| 40% | about 140 N (one break quoted) | 9.9 |
+| 50% | 165 N | 9.7 |
+| 60% | 175 N | 9.3 |
+| 70% | 202 N | 9.6 |
+| 80% | 232 N | 9.9 |
+| 90% | 330 N | 12.6 |
+| 100% | 520 N | 18.8 |
+
+20 percent infill took about 25 percent more print time than 10 percent. The
+jump at 90 and 100 percent is the source's hypothesis of better bonding from
+overlap and retained heat; it supports the small-part 100 percent exception in
+FDM-STR-2 without changing "perimeters before infill" (walls were not varied).
+
+Compression, 30 mm PLA cube on its side, grid infill
+(https://www.youtube.com/watch?v=-LHQtlxYQII): about 0.2 kN at 10 percent,
+1 kN at 30, 1.7 kN at 40, 3.5 kN at 60, over 6 kN (the load cell's limit) at
+70; one specimen each, and the narration's units are partly inconsistent at
+50 percent. The source concludes that about 50 percent is the most a part
+normally needs, consistent with FDM-STR-2. Its two crush tests of infill
+patterns disagree with each other (cubic strongest in
+https://www.youtube.com/watch?v=IIS9UagZaWI; grid or triangle "best" in
+https://www.youtube.com/watch?v=SEfEicLNAfc, no forces shown): FDM-STR-3's
+cubic default stands.
+
+Compression, 40 mm PLA cubes with 0 percent infill
+(https://www.youtube.com/watch?v=PQHKQH5imkI): 1 mm wall 70 lb (buckled),
+2 mm 384 lb, 3 mm 609 lb, 5 mm over 1,330 lb (load cell limit). The narrator's
+newton figures do not match the pounds (70 lb is about 311 N, not the 36 N
+stated; 384 lb is about 1,708 N, not 176 N); they look like kilogram-force, so
+only the pound values are data and the 4 mm figure is uncertain.
+
+Compression by material, one sample each, geometry not stated
+(https://www.youtube.com/watch?v=5CFVcPYFEiE): PLA 530 lb, PETG 485 lb, ABS
+472 lb, PA6 nylon 200 lb (moisture state not stated), TPU 47 lb before its
+walls buckled. TPU 95A stiffness by infill is in [materials](materials.md)
+section 9.
 
 ## 10. Accuracy, seams, curved tops (FDM-ACC, FDM-SEAM)
 
@@ -283,7 +472,19 @@ raised (VENDOR, SNIPPET). The nozzle-relative formula halves every value at a
 | FDM-SEAM-2 | Seams weaken hole precision and may start cracks on round bosses | | | VENDOR (precision), UNVERIFIED (cracks) | BAMBU-HOLE |
 | FDM-SEAM-3 | Shallow curved tops terrace; fixes in order: print the curve on its side, replace with facets or chamfers, intentional 1 mm steps, texture, variable layers (about 50 percent slower) | | | PRACTITIONER | SLANT-CURVE, MUSE-CHAMFER |
 
-Expect no better than plus or minus 0.2 mm without post-machining.
+Expect no better than plus or minus 0.2 mm without post-machining. The
+production source's claim that FDM holds below 0.1 mm with enough system
+control (https://www.youtube.com/watch?v=FaFY1mIVBvw) is not adopted; its own
+other videos give about 0.2 mm.
+
+FDM-SEAM-3, refined: the production source uses texture as its general
+cosmetic default rather than finer layers, a CAD texture about 0.2 to 1 mm
+deep, or slicer noise. Fuzzy skin changes the part's dimensions, so a print
+service may not apply it and it never goes on a mating face; a CAD texture
+enlarges the mesh file (PRACTITIONER, https://www.youtube.com/watch?v=f4fJ5AbUF6Q,
+https://www.youtube.com/watch?v=FVZ5wAzNAB0,
+https://www.youtube.com/watch?v=jIanWhvsWMc). Texture styling belongs to
+**cad-style**; the dimension effect is a DFM fact.
 
 ## 11. Comparison with other published thresholds
 
@@ -328,3 +529,29 @@ source, it is described as such. The playbook's choice and the reason:
 14. Gaps under 0.5 mm meant to stay open (FDM-FEAT-3).
 15. Shallow domes and smooth cylinders on cosmetic faces (FDM-SEAM-1, -3).
 16. Expecting better than plus or minus 0.2 mm (FDM-ACC-1).
+17. Sharp modeled points and knife edges (FDM-WALL-9).
+18. Generated supports where a designed one would do, or a designed one
+    scaled with the part (FDM-SUP-8 to -10).
+19. A single reinforcing slit through a hole's center plane (FDM-ORI-13).
+20. Screw heads clamping infill (FDM-STR-12).
+21. Islands that start in mid-air, and through-cut decorative patterns
+    (FDM-OVH-11, FDM-FEAT-8).
+
+## 13. Production-farm positions recorded but not adopted
+
+The production source (one print farm,
+`docs/specs/dfm-research/10-slant-3d-videos.md`) is looser than the playbook
+on these; the playbook keeps its value and records the source's figure as its
+stated position or a production alternative:
+
+| Topic | Source's position | Playbook keeps | Why |
+| --- | --- | --- | --- |
+| Overhang before supports | its service supports past 50 deg; 30 to 60 deg elsewhere, axis mostly unstated | 45 deg (FDM-OVH-1) | Multi-source vendor value; the source contradicts itself |
+| Bridge span | 25 to 50 mm "readily" | 10 mm design, 5 mm cosmetic (FDM-BRG-1, -2) | Vendor values; the source's figure is an unmeasured claim |
+| Text height | 3 mm minimum on a side wall | 5 mm (FDM-TXT-3) | Production alternative only, after coupon C26 |
+| Text on the bed face | one layer deep, connected glyphs | never on the first layer (FDM-TXT-7, FDM-BED-5) | Islands and cosmetic risk on any printer |
+| Layer height for strong parts | 0.3 mm on a 0.4 mm nozzle | at most 0.5 N (FDM-ORI-4) | MEASURED: standing hooks at 0.3 held half the load |
+| Gap between two halves printed together | 0.1 mm | `feature.min.gap` 0.5, print in place 0.35 per side | At 0.1 the halves fuse |
+| Insert boss wall | 1 to 2 mm | the insert datasheet wall; 3.6 mm for a full-strength M5 | VENDOR and MEASURED values |
+| Bed contact | as small as possible | a large flat face down on one printer (SKILL step 2) | Different mode: [production runs](production-runs.md) |
+

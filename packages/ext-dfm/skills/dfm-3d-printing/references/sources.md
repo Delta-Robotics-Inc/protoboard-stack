@@ -1,14 +1,16 @@
 # Sources
 
 Every source this playbook uses, grouped by topic, with what it supports. All
-were gathered in the research lanes under `docs/specs/dfm-research/` (01
+are recorded in the research files under `docs/specs/dfm-research/` (01
 geometry, 02 other processes, 03 materials, 04 hardware, fits, Bambu,
 coupons), accessed 2026-11-12. A follow-up pass read the
 sources the first pass skipped or only partly read
 (`docs/specs/dfm-research/08-skipped-sources-addendum.md`); its sources are
 listed under each topic below, marked "(08)". "SNIPPET" means only a search
 excerpt was read; values from those pages are labeled SNIPPET or UNVERIFIED
-where used.
+where used. A third pass read 234 videos of one production print farm's
+channel (`docs/specs/dfm-research/10-slant-3d-videos.md`); the videos the
+playbook cites are listed in "Production print farm videos (10)" below.
 
 ## FDM geometry rules
 
@@ -65,7 +67,7 @@ where used.
 | https://www.youtube.com/watch?v=noYuQlQN8pw | (08) Teaching Tech design series part 4: 1 mm fit templates (PRACTITIONER) |
 | https://teachingtechyt.github.io/calibration.html | (08) calibration only; nothing adopted |
 | https://markforged.com/resources/learn/design-for-additive-manufacturing-plastics-composites/3d-printing-strategies-for-composites/composites-3d-printing-design-tips | (08) critical dimensions in XY, metal pins and bushings for wear (VENDOR) |
-| https://www.slant3d.com/blog/51fe073a-45f4-45ca-951b-84397418730a | (08) Slant 3D print service envelope (0.4 nozzle, 220 mm cube); its settings table is an image (excerpt only) |
+| https://www.slant3d.com/blog/51fe073a-45f4-45ca-951b-84397418730a | (08) Slant 3D print service envelope (0.4 nozzle, 220 mm cube); its settings table is an image (excerpt only); (10) the same service's baseline settings are stated aloud in https://www.youtube.com/watch?v=f4fJ5AbUF6Q |
 
 ## Materials
 
@@ -208,10 +210,226 @@ where used.
 | https://markforged.com/resources/learn/design-for-additive-manufacturing-plastics-composites/3d-printing-strategies-for-composites/composites-3d-printing-design-tips | unit test (print a slice) |
 | https://markforged.com/resources/blog/3d-printed-unit-tests | (08) worked unit-test example: dovetail offset ladder |
 
+## Production print farm videos (10)
+
+One print farm's channel (Slant 3D), read from auto-captions; every item is
+PRACTITIONER, with CLAIMED-TEST where a test was shown. The record, with the
+conflicts, self-contradictions, claims not adopted and the full index of
+videos read, is `docs/specs/dfm-research/10-slant-3d-videos.md`. Videos the
+playbook already cited before this pass are listed above.
+
+### Bed contact, ejection and production mode
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=SZwXREFoWKA | one-layer bottom recess; deeper pocket with a self-supporting roof; no large outer chamfer to cut contact |
+| https://www.youtube.com/watch?v=X8kqMaxwB4M | ring contact down to 1 mm in PLA; cosmetic holes blind from above; large footprint corners |
+| https://www.youtube.com/watch?v=kIFGtNMmxuM | conical underside recess, ring-only contact |
+| https://www.youtube.com/watch?v=xEjtyA2b5I0 | conical underside chamfer on a lamp; hook-shaped cord slot; fillet everything |
+| https://www.youtube.com/watch?v=cBVgwIjP02w | bottom cavity against staining; grip fins around a bought part |
+| https://www.youtube.com/watch?v=9ERY20MRJPo | center of gravity over the contact; corner chamfer stands; board standoffs and pockets |
+| https://www.youtube.com/watch?v=YMk7EfbemGY | octagon profiles; screw heads on solid walls; center of gravity; texture instead of through holes; one screw |
+| https://www.youtube.com/watch?v=d6bt-QtZhqI | flat discs need depth; no multicolor; print-in-place clips vary by machine; matching bed and top faces |
+| https://www.youtube.com/watch?v=rgV_mtfRLB0 | bowls printed rim down |
+| https://www.youtube.com/watch?v=1n_R8shlGcs | 1.0 mm production wall floor; minimize bed contact; fillet vertical edges for speed |
+| https://www.youtube.com/watch?v=iWHBH_T-xqI | moving-bed printers shake tall, thin and heavy parts loose |
+| https://www.youtube.com/watch?v=uCxRJxvsoe0 | thin parts standing on a support comb; vertical racks need a fixed bed |
+| https://www.youtube.com/watch?v=rszX16LFW3U | model brims, ears, textures and supports in CAD, not the slicer |
+| https://www.youtube.com/watch?v=f4fJ5AbUF6Q | the print service's baseline settings; tree supports baked into the mesh; fuzzy skin changes dimensions |
+
+### Brims, rafts and mouse ears
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=4GxZXxNraY0 | CAD brim one layer thick, ring brims, 0.5 mm break chamfer, REMOVE label |
+| https://www.youtube.com/watch?v=3AZWuVRUh2c | brims, rafts and supports in CAD; removable channel block; tree supports exported into the mesh |
+| https://www.youtube.com/watch?v=7KVh19WpOcc | CAD raft gap of one layer, 1 mm struts, one-layer relief under the raft |
+| https://www.youtube.com/watch?v=4LTkVb6rP84 | raft gap 0.2 (0.15 matte, 0.1 fuses), 1 mm raft, corner pins, Z datum, kit tray |
+| https://www.youtube.com/watch?v=ZpmiK0aY9VM | batching small parts on one raft card |
+| https://www.youtube.com/watch?v=MCcFMDv_4eo | sprue mouse ears; labor dominates cost |
+| https://www.youtube.com/watch?v=O33g62Kwq9s | 1 mm back plate as a raft; scaling flat mechanisms; variable infill for ballast |
+
+### Designed supports
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=vnn4XeKQobs | fin tines flat in the layer plane, tine size, fin foot, placement; 2 mm edge land |
+| https://www.youtube.com/watch?v=3VUQd_Tl5x0 | sprue size, fins inboard of corners; cube on an edge; vertical edge fillets |
+| https://www.youtube.com/watch?v=8NKVNwVaZU0 | fin 0.5 to 1 mm behind a tilted part, break notches; boxes printed diagonally |
+| https://www.youtube.com/watch?v=6gPPAiqSkBc | designed support beside an edge-standing part; grip fins cut free under the roots |
+| https://www.youtube.com/watch?v=m3Cxw-j19bU | cup support with 0.2 mm gap; sphere truncation; no gaps under 0.2 mm |
+| https://www.youtube.com/watch?v=B6r8m93MNGQ | pointed support towers with 0.5 mm contact; a flat cropped on a round hub |
+| https://www.youtube.com/watch?v=YL5lYEXbLDo | thumbtack supports with a 1 mm stem; supports not scaled |
+| https://www.youtube.com/watch?v=udEeJjzEQZI | dome interiors; mushroom support |
+| https://www.youtube.com/watch?v=WYQbxIVLz6Y | tapered support with a rounded contact; fillets end horizontal |
+| https://www.youtube.com/watch?v=3Acks3Wzjjo | support comb for tall thin parts, 1 mm fingers |
+| https://www.youtube.com/watch?v=DnPu7slvBVk | breakaway outrigger fins; raised text 0.5 to 0.75 mm; smooth text on a textured face |
+| https://www.youtube.com/watch?v=4wRKmcWXEkw | support block in a print-in-place channel; peaked ceilings in moving gaps |
+| https://www.youtube.com/watch?v=6DkCCOc5O1Y | 1 mm sprue under a snap tab, left to break on assembly |
+| https://www.youtube.com/watch?v=SWOnmWCi6bY | designed support posts at about 0.3 mm |
+| https://www.youtube.com/watch?v=Iauvzy5mR90 | blunt tips; tie first-layer islands; spiked supports; check walls after scaling |
+
+### Overhangs, edges and fillets
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=ZgrlGfftm0k | islands grown from the body; mesh defects; pigment and nozzle wear |
+| https://www.youtube.com/watch?v=WfP-ZOnlFPM | rods lying down with a flat or a hex to octagon section |
+| https://www.youtube.com/watch?v=IrvxX0MtGMM | non-tangent curve for a rounded bottom edge; contradictory overhang angles |
+| https://www.youtube.com/watch?v=m20UPm0TOto | truncated bottom curves; angled vent slots; merged standoffs; one flat datum face |
+| https://www.youtube.com/watch?v=tb1yqVOyAM8 | arcs under a semicircle; adhesive-strip pockets |
+| https://www.youtube.com/watch?v=EoIlALcMJB8 | thin tabs need margin; color flipped a marginal overhang; metal hook bundled |
+| https://www.youtube.com/watch?v=FMs-VGAu_PQ | chamfer over fillet under a ledge; steeper at high volume |
+| https://www.youtube.com/watch?v=C0H_4fOm9CQ | vertical fillets cut print time about 2.5 to 3 percent, reduce ringing |
+| https://www.youtube.com/watch?v=NaQ_Sa1BaqU | fillet top edges; light colors scrap more |
+| https://www.youtube.com/watch?v=oz51t5p9gXo | blunt knife edges to about one nozzle width (auto-caption value) |
+| https://www.youtube.com/watch?v=aWz1mz4hhu8 | features at least one nozzle wide; text depth limits; 1 mm fillet at a hole rim |
+| https://www.youtube.com/watch?v=3BIvSiuQVWQ | edge breaks at hole rims; ring of holes 2 mm from a hole; grip fins absorb 0.1 to 0.2 |
+| https://www.youtube.com/watch?v=Wd0MR4sPcK0 | screw heads on solid material; fillet to avoid nozzle catch; 1 mm per side housing fit |
+
+### Orientation
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=8TIhkxQNINY | box turned 45 deg on a landing, no interior supports |
+| https://www.youtube.com/watch?v=csUGcIPNNkk | bracket on a cropped corner; thumb screws printed flat |
+| https://www.youtube.com/watch?v=lGnpz8q4STw | enclosures on an edge; strap slots parallel to layers; mounting lugs |
+| https://www.youtube.com/watch?v=jNguIjkLo6g | enclosure on a corner with a rib; chunky standoffs |
+| https://www.youtube.com/watch?v=-gm6hzbAqLk | cube on a corner; bottom cavity; 1 mm bed chamfer |
+| https://www.youtube.com/watch?v=reIXSlL6mKA | peaked part on a cropped apex about 6 mm wide |
+| https://www.youtube.com/watch?v=W5WdUF4Y_FI | tilted parting plane for enclosure halves |
+| https://www.youtube.com/watch?v=31FVZIg4rDs | parting line below the ports; relief patterns, not through-cuts; the 0.1 mm co-printed gap (not adopted) |
+| https://www.youtube.com/watch?v=Jps5YPF2iRU | bed contact as a narrow chamfered seam; very low infill for bulk |
+| https://www.youtube.com/watch?v=WVTJOAeZLQ8 | narrow seam contact on a side-printed part |
+| https://www.youtube.com/watch?v=yFUBXBoDT4I | long parts across the bed diagonal |
+| https://www.youtube.com/watch?v=_y8Yvu1FQIE | ring clips printed on the side at 45 deg |
+| https://www.youtube.com/watch?v=oYEV-ndgwdk | loops in the layer plane; internal channel loops |
+
+### Walls, ribs, strength and test data
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=qpo4WsEeYJo | 1 mm default wall, about 20 percent infill; 0.3 mm layers (not adopted) |
+| https://www.youtube.com/watch?v=UfJIMn4nvsA | mid-thickness disc cuts around screw holes |
+| https://www.youtube.com/watch?v=81qmDc5unYM | ribbed rods, side loops, handles, ring clips |
+| https://www.youtube.com/watch?v=OcxfQeeKn-s | truss patterns as 0.2 mm internal slots |
+| https://www.youtube.com/watch?v=8vz9b0zNMVg | self-supporting rib shapes, diagonal ribs |
+| https://www.youtube.com/watch?v=GDEMxa4WdRw | shear web on an upright arm; offset fold pivot |
+| https://www.youtube.com/watch?v=as84ZBjdmxU | blended bracket junctions; start from a block |
+| https://www.youtube.com/watch?v=AURCtaRrUGM | cavities do not lighten; enclosed cavities to force walls |
+| https://www.youtube.com/watch?v=boN1uiaIdVA | 0.5 mm microfeature holes (contradiction); consolidation on a through rod |
+| https://www.youtube.com/watch?v=ZNX7Mzjq_fk | infill versus cantilever strength table |
+| https://www.youtube.com/watch?v=-LHQtlxYQII | infill versus compression, 50 percent ceiling |
+| https://www.youtube.com/watch?v=IIS9UagZaWI | infill patterns crushed: cubic strongest |
+| https://www.youtube.com/watch?v=SEfEicLNAfc | infill patterns crushed: grid or triangle (contradiction) |
+| https://www.youtube.com/watch?v=PQHKQH5imkI | wall thickness versus compression (pound values only) |
+| https://www.youtube.com/watch?v=5CFVcPYFEiE | compression by material |
+| https://www.youtube.com/watch?v=FaFY1mIVBvw | claims not adopted (15 percent Z loss, under 0.1 mm); labor dominates cost |
+
+### Warping and shrink lines
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=iPZoDltS30A | checkerboard base relief, rippled walls, corner cavities |
+| https://www.youtube.com/watch?v=d61u_lKFa-U | floor groove against shrink lines; texture hides them |
+| https://www.youtube.com/watch?v=cdyqNocFCpQ | thick zones beside thin walls; drawer printed with its case |
+| https://www.youtube.com/watch?v=SSHoQLuVJFk | first-layer islands tied into one outline |
+| https://www.youtube.com/watch?v=rsfZgT3ZEI8 | 0.3 mm connectors tying spring tips on the first layer |
+
+### Text, texture and color
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=upf9ixYtDG4 | side-wall text depths and height; side text twice as crisp; light colors give low contrast |
+| https://www.youtube.com/watch?v=TH82TSjI67I | engraved 0.5 on a side; engrave on top faces; hidden subsurface text |
+| https://www.youtube.com/watch?v=FVZ5wAzNAB0 | texture options; 0.2 mm default layers |
+| https://www.youtube.com/watch?v=jIanWhvsWMc | CAD texture before height map before fuzzy skin |
+| https://www.youtube.com/watch?v=scv4am8kbqs | white shows every defect |
+| https://www.youtube.com/watch?v=iiCsQIN_PyQ | simple first layer; light colors stain |
+| https://www.youtube.com/watch?v=22p4ThOfEO0 | titanium dioxide white is abrasive and pasty |
+| https://www.youtube.com/watch?v=DiupjIdI3KQ | color varies spool to spool; lot control |
+| https://www.youtube.com/watch?v=rUUq4kgi7t4 | one continuous outline per layer (fin handles) |
+| https://www.youtube.com/watch?v=vcgsQyMSSiY | vent slots at an angle; no grids of small holes |
+
+### Holes, pins, fits, joints and lids
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=uMA-Wt-z_BU | vertical pins: cross section, wrinkled outline, taper |
+| https://www.youtube.com/watch?v=Iyxp_Rjz3wo | keyhole pins and tapered tabs |
+| https://www.youtube.com/watch?v=sza8wg5FIxQ | oval side holes; insert boss 1 to 2 mm (not adopted); thread size floor |
+| https://www.youtube.com/watch?v=yzg_NXM-NRs | grip fins: free-cut, chamfered starts, trapezoid, trade-offs, material |
+| https://www.youtube.com/watch?v=GRlX27WgySQ | PLA grades; wider tolerances lower cost; PLA flexes enough for fins (contradiction) |
+| https://www.youtube.com/watch?v=IZKh6lo9SP4 | lid lip contact reduced; fins with 0.3 mm gap |
+| https://www.youtube.com/watch?v=7YAylxQFe3k | bayonet lids; triangular thread flanks; press-on lids |
+| https://www.youtube.com/watch?v=RTQjvYENR7w | sprung T-slot, round slot, clicking tongues |
+| https://www.youtube.com/watch?v=djm5tCFn9S0 | diamond pegs, S-clips, C-clips |
+| https://www.youtube.com/watch?v=xog9YlMt9UU | fins in slots instead of pins; cone pins; at most two locators |
+| https://www.youtube.com/watch?v=qXHjM_L3vi0 | sprung shaft socket; small printed threads (not adopted) |
+| https://www.youtube.com/watch?v=CpQGNRWWXs8 | drawer printed in place with its frame; shipping sprue |
+
+### Hardware, glue, hinges and springs
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=BwUzOJ8B_H0 | magnet paired with steel; cylindrical magnets; side entry past center; pause costs pull |
+| https://www.youtube.com/watch?v=WMbmDfGEygk | captive nut dropped into a channel without a pause; pauses idle the printer |
+| https://www.youtube.com/watch?v=F3ViXSLH_ZM | nut side slot with friction lock; halves on hex pegs; insert for a premium thread |
+| https://www.youtube.com/watch?v=d0BGz4nRjus | weight capsules instead of poured weight |
+| https://www.youtube.com/watch?v=Nsv3YSTDYmA | glue injected through a bore; spiral indicator groove |
+| https://www.youtube.com/watch?v=qV1xXXbzM4Y | glue pits, relief cuts, marked pads, glue channels |
+| https://www.youtube.com/watch?v=7-LP9UcdAWc | identical halves; a liner for liquids |
+| https://www.youtube.com/watch?v=BWsUk1xSSn4 | pin hinge orientation; cone and double-cone pins; kerf hinges |
+| https://www.youtube.com/watch?v=TiEyFle6lTM | living hinge types; axle orientation trade-off; reject rate |
+| https://www.youtube.com/watch?v=AAKsl8zW-Ds | print-in-place mechanisms; planar springs |
+| https://www.youtube.com/watch?v=wpriGP45Unw | planar zigzag, membrane and spiral springs |
+| https://www.youtube.com/watch?v=Lmr4LKI0Hfc | printed threads in backstopped compression |
+| https://www.youtube.com/watch?v=hSP9CkqhZSQ | feet: side printing, chamfers, rubber-foot pockets |
+| https://www.youtube.com/watch?v=m1HG1nBTD0E | side loops and zip-tie lugs |
+| https://www.youtube.com/watch?v=FF4D_Moywgk | chamfered mounting tabs and clips; double-chamfered wire loops |
+| https://www.youtube.com/watch?v=NLeTvSaPJIs | bracket wrapping an extrusion |
+| https://www.youtube.com/watch?v=bO39lWkaspA | rain-shedding vents |
+| https://www.youtube.com/watch?v=prMUfQ9y7Rk | gasketless labyrinth lid |
+| https://www.youtube.com/watch?v=Yk0I4Tf-E8c | watertight claims (not adopted as general) |
+| https://www.youtube.com/watch?v=cbxD8Oz9L8Q | watertight floats without overhangs or support interfaces |
+| https://www.youtube.com/watch?v=MiCRp2uV1MM | ESD-safe and flame-rated enclosure materials |
+
+### Materials
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=3gxsLZITN2c | TPU 95A stiffness by infill |
+| https://www.youtube.com/watch?v=XtU0p-bdZMo | TPU tuned to a target hardness by pattern |
+| https://www.youtube.com/watch?v=pZLxi9OaFLg | one TPU grade, soft to solid |
+| https://www.youtube.com/watch?v=3WvN8uVnSpU | TPU enclosure infill; TPU not auto-ejected |
+| https://www.youtube.com/watch?v=vE0806yUq7U | PETG overhangs against layer bonding; gloss by color |
+| https://www.youtube.com/watch?v=0rdIIvhLghw | carbon fiber wears a brass nozzle in about 500 g |
+| https://www.youtube.com/watch?v=kQ8FkVi-Kes | fine features in carbon-fiber prints are brittle |
+| https://www.youtube.com/watch?v=rYjZvSz2O_M | qualitative impact and abrasion by material |
+| https://www.youtube.com/watch?v=qDcskdl16UM | striking faces in ABS or nylon with metal on wear faces |
+| https://www.youtube.com/watch?v=nF5k_tmQ7k0 | UV behavior by material (PETG outdoor default not adopted) |
+
+### Production consistency, quality, consolidation and cost
+
+| URL | Supports |
+| --- | --- |
+| https://www.youtube.com/watch?v=PbGnxQifEq0 | written QC standard; bottom cavity; bought-part variation; color changes fit |
+| https://www.youtube.com/watch?v=wuoF0xLxZcM | one machine model, controlled supply, climate control; QC checklist |
+| https://www.youtube.com/watch?v=vpKJZOfMO0c | the farm's per-part checks |
+| https://www.youtube.com/watch?v=qD0vnoo5kh0 | QC checklist contents and sampling |
+| https://www.youtube.com/watch?v=9JC8KOVKoIE | reject-rate target; assemblies that cannot go in backwards |
+| https://www.youtube.com/watch?v=uvnJ9E7_VWA | 5 molded parts and 2 screws to 2 printed parts |
+| https://www.youtube.com/watch?v=BTIoITF3P8U | 6 molded parts to 1 |
+| https://www.youtube.com/watch?v=plzcdgsNn4M | about 35 to 55 parts to under 20 |
+| https://www.youtube.com/watch?v=u52ypRRQV3c | clamp halves and pin to one part |
+| https://www.youtube.com/watch?v=cbtVDk3R6XI | three parts to one; flex tabs in the layer plane |
+| https://www.youtube.com/watch?v=9qe-_ClObaw | about two distinct bought items |
+| https://www.youtube.com/watch?v=t0mCGcM2w7g | the one quoted cost case against injection molding |
+
 ## Other processes
 
 Listed as S-keys at the end of [other processes](other-processes.md) (research
-lane 02; S22 and S23 upgraded and S52 to S61 added by the follow-up pass).
+file 02; S22 and S23 upgraded and S52 to S61 added by the follow-up pass).
 
 ## Read in the follow-up pass, nothing adopted
 
@@ -251,10 +469,15 @@ in place.
 3. **Gothic-arch horizontal holes; support-free thread profiles:** no primary
    source. Diamond holes and pegs now have a practitioner source (Slant 3D,
    https://www.youtube.com/watch?v=vsHpiHhB3RU).
-4. **Warping versus geometry:** no measured study of footprint size, corner
-   radius or rib layout versus lift; no sourced maximum flat footprint for any
-   material.
+4. **Warping versus geometry** (partly closed): practitioner techniques now
+   exist (checkerboard relief slits in a base, rippled or bowed walls, corner
+   cavities, raft reliefs, sprue mouse ears; FDM-BED-9, FDM-BED-10) from one
+   production print farm, with one demo plate and no measurement. Still open:
+   a measured study of footprint size, corner radius or rib layout versus
+   lift, and a sourced maximum flat footprint for any material.
 5. **FDM rib and gusset ratios:** none found; molding ratios do not transfer.
+   Practitioner rib shapes that self-support now exist (FDM-STR-11), still
+   without a ratio.
 6. **Seam crack initiation on round bosses:** practitioner lore only.
 7. **High-speed machines:** no source quantified how much faster printing moves
    the overhang, bridge or accuracy numbers.
@@ -284,10 +507,12 @@ in place.
     values (leaf 0.5 mm minimum, 1.0 stiffer, taper 1.0 to 0.5, line-width
     multiples, root fillets) but no fatigue data; square nuts are preferred
     over hex in slots and embeds (practitioner and vendor) with no
-    print-specific clearance. Still open: heat staking, zip-tie slots, O-ring
-    grooves in prints, threaded lids, D-shafts, RFID and spring embedding,
-    glue bond-line gap, reuse count for screws in plastic, magnet loss on hot
-    beds.
+    print-specific clearance. Zip-tie lugs and loops, threaded and bayonet
+    lids and glue injection now have practitioner geometry without numbers
+    ([hardware](hardware.md) sections 11, 13 and 15). Still open: heat
+    staking, numeric zip-tie slot sizes, O-ring grooves in prints, a proven
+    threaded-lid profile, D-shafts, RFID and spring embedding, glue bond-line
+    gap, reuse count for screws in plastic, magnet loss on hot beds.
 15. **ruthex official insert datasheet:** closed. Read at a reseller (official
     ruthex document, agreeing with ruthex.de): M2 hole 3.2 (L 4.0), M2.5 4.0
     (L 5.7), M3 4.0, M4 5.6, M5 6.4, M6 8.0, M8 9.6 (OD 10.1); walls as CNC
@@ -305,9 +530,10 @@ in place.
 18. **Unread creator and vendor sources:** closed for Xometry's FDM guide (the
     older public PDF), Markforged's DfAM page, Made with Layers (nine videos),
     Teaching Tech (three), two maker videos, 3D Printing Nerd (one) and the
-    Slant 3D written blog (no design guide). Still not read: Teaching Tech
-    design series parts 1 to 3, 6 and 7; Slant 3D videos xog9YlMt9UU and
-    3AZWuVRUh2c; Made with Layers' PLA and ABS material videos (unmvWkfpmRE,
+    Slant 3D written blog (no design guide), and now for Slant 3D videos
+    xog9YlMt9UU and 3AZWuVRUh2c (read in the production-farm pass, gap 23).
+    Still not read: Teaching Tech design series parts 1 to 3, 6 and 7; Made
+    with Layers' PLA and ABS material videos (unmvWkfpmRE,
     YCdvL87bv0w) and 30-filament review (fjhW2NiILZc); Protolabs'
     surface-finish PDF and its material and cost tips; Xometry's MJF, binder
     jet, Carbon DLS, CNC, sheet and laser guide pages, /technical-resources/
@@ -326,6 +552,27 @@ in place.
     a wall typo for one resin; Xometry's current gated guides may differ from
     the older public PDFs read; HP's MJF handbook was read only to page 40
     (Protolabs-hosted copy).
+22. **Print-service settings** (closed): the Slant 3D service's baseline,
+    previously available only as an image, is stated aloud in
+    https://www.youtube.com/watch?v=f4fJ5AbUF6Q: 0.2 mm layers, 1 mm walls,
+    25 percent infill, supports generated past 50 deg, no brim, and a 0.3 mm
+    first layer (that reading UNVERIFIED). Recorded in
+    [production runs](production-runs.md) section 7; the 50 deg threshold is
+    not adopted over FDM-OVH-1.
+23. **Production-farm videos: caption quality and the unread remainder.** The
+    234 videos read were taken from auto-captions, which drop leading decimals
+    ("2 mm" spoken for 0.2) and garble some numbers; every value reconstructed
+    from context is status `unverified` and must be checked against the video
+    or a coupon. Several numbers were shown on screen in CAD and never spoken,
+    so they are "not stated" (fin slot clearance, sprue neck size, cone angle
+    reference). Not read: 294 of the channel's 528 non-podcast videos (most of
+    them business, news or product promotion, plus 10 design videos, of which
+    two were already sources and two are segments of compilations that were
+    read) and all 121 podcast episodes. The list worth a later pass is in
+    `docs/specs/dfm-research/10-slant-3d-videos.md` section 7.
+24. **Production-farm test data:** single specimens, settings often unstated,
+    and in one video newton values that do not match the pound values
+    ([FDM rules](fdm-rules.md) section 9.1). Trends only.
 
 ### Unreachable sources, and why
 
@@ -340,6 +587,6 @@ So nobody repeats these attempts blindly:
 | Desktop Metal Binder Jet Design Guide at its original desktopmetal.com URL | redirects to another company's home page (the site has moved) | the public web.archive.org copy |
 | Protolabs design aids (Design Cube, material cards) | ordering is a request form; not filled | the public descriptions |
 | Made with Layers' self-forming thread geometry | exists only in a linked CAD document, not as text | the video transcript |
-| Slant 3D print-service settings table | published as an image | the search excerpt |
+| Slant 3D print-service settings table | published as an image | the search excerpt; now closed by the service video (gap 22) |
 | Bambu /en/p1/tech-specs and /en/x1/tech-specs | return 404 | the official spec PDFs |
 | Xometry's HubSpot CNC guide PDF | returns 404 | not needed for printing |

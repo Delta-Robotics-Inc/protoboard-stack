@@ -63,7 +63,8 @@ The unknown-printer column adds 0.05 to 0.1 per side to the house values
 Unionfab's checklist also gives a mating-gap range of 0.2 to 0.5 mm without
 saying per side or diametral (VENDOR).
 
-How the house sliding fit behaves (lane 04, B4): between two printed surfaces,
+How the house sliding fit behaves (`docs/specs/dfm-research/04-hardware-fits-calibration.md`,
+B4): between two printed surfaces,
 0.2 per side frees with a little force on a well-tuned machine (Maker's Muse's
 tuned printer freed 0.2 and partly welded 0.15 where seams start). Around a
 metal pin, 0.4 mm diametral fits "edge to edge without force"; after a printed
@@ -321,4 +322,105 @@ machining after printing, or another process.
   (StackExchange, SNIPPET).
 - D-shafts: give the flat the same per-side clearance as the round part and
   orient the hole vertical so the flat is an accurate wall (UNVERIFIED, no
-  dedicated source).
+  dedicated source). A socket that must take shafts of varying size can be two
+  halves pressed together by internal leaf springs (PRACTITIONER,
+  https://www.youtube.com/watch?v=qXHjM_L3vi0).
+- Lids, more from the production source (PRACTITIONER): a solid lip shrank
+  more and fit looser than a thin-walled lip of the same CAD size, so a thin
+  lip holds its size (https://www.youtube.com/watch?v=XKrDUnZCmQQ); cut the
+  lip's contact down with holes or a few nubs so layer lines do not interlock
+  (https://www.youtube.com/watch?v=IZKh6lo9SP4); a press-on or plug lid gets
+  a lead-in chamfer and a slight taper so it starts easily and tightens, and
+  internal ripples to cut contact (https://www.youtube.com/watch?v=7YAylxQFe3k).
+  Bayonet and threaded lids: [hardware](hardware.md) sections 10 and 13.
+- Horizontal pins (PRACTITIONER, https://www.youtube.com/watch?v=Iyxp_Rjz3wo):
+  a "keyhole" pin chamfered top and bottom prints without support and takes
+  its fit on the side walls, which lie in the accurate XY plane; better, a
+  chamfered rectangular tab in a slot, tapered so it tightens as it goes in;
+  two offset tabs self-center; a split tab (two prongs) fits any machine.
+- Other joints from the same source (PRACTITIONER): a sprung T-slot whose
+  flanges act as springs, entered at an angle so the first layer is a plain
+  square; a round tongue in a round slot (one dimension to control); two
+  flexing tongues with bumps that click into grooves inside the hole
+  (https://www.youtube.com/watch?v=RTQjvYENR7w); for broad flat faces a
+  separate printed S-clip slid into symmetric slots sets the clamping force by
+  its size (https://www.youtube.com/watch?v=djm5tCFn9S0). No dimensions are
+  given; prove with a slice.
+- A loose housing for a bought box: about 1 mm per side, with tall walls to
+  keep the slop low (PRACTITIONER, https://www.youtube.com/watch?v=Wd0MR4sPcK0),
+  the same as the drop-in tray value above. On a first design leave more room
+  rather than less; adding material later is easier.
+
+## 10. Grip fins in detail
+
+Grip fins are thin compliant fins around a hole or on a tongue that flex to
+take up size error, where a plain friction fit would depend on expansion,
+machine tuning, flow and room temperature. Two printed parts in a friction
+fit also interlock their layer lines and stick or wear. All PRACTITIONER
+(one production print farm):
+
+| Rule | Value or condition | Source |
+| --- | --- | --- |
+| Fins flex in the layer plane | so they flex within layers and last until the material fatigues | https://www.youtube.com/watch?v=yzg_NXM-NRs |
+| Cut each fin free along its whole length, including at the back of the hole (a disc cut under the fin roots does this) | fins still joined at the top stiffen with depth and bind | https://www.youtube.com/watch?v=yzg_NXM-NRs, https://www.youtube.com/watch?v=6gPPAiqSkBc |
+| Undercut gap behind or under the fins | 0.3 mm minimum, 0.5 maximum (`fitfeature.compliant.gap.min`, `.max`); one video uses 0.2 above and below side-hole fins, not adopted, because under 0.3 some CAD or mesh tools close the gap | https://www.youtube.com/watch?v=XKrDUnZCmQQ, https://www.youtube.com/watch?v=IZKh6lo9SP4, https://www.youtube.com/watch?v=ip70-Tw6tBE |
+| Chamfer the start of each fin where the hole opens onto the bed, so the fin begins above the first layer | thin fin footprints on the first layer delaminate or warp; the chamfers also form a funnel lead-in | https://www.youtube.com/watch?v=yzg_NXM-NRs |
+| Fins higher in a part get a trapezoid (chamfered) profile | they self-support | https://www.youtube.com/watch?v=yzg_NXM-NRs |
+| Tuning | thinner or longer is softer; longer adds slop and lets the inserted part cock; thinner raises fatigue risk, so not for high-cycle insertion; fewer fins are stiffer | https://www.youtube.com/watch?v=yzg_NXM-NRs, https://www.youtube.com/watch?v=3BIvSiuQVWQ |
+| What they absorb | about 0.1 to 0.2 mm of size error; they also suit heat-set inserts | https://www.youtube.com/watch?v=3BIvSiuQVWQ |
+| Material | PETG and ABS preferred; PLA works but flexes less and is more brittle (another video of the same channel says PLA flexes enough) | https://www.youtube.com/watch?v=yzg_NXM-NRs, https://www.youtube.com/watch?v=GRlX27WgySQ |
+| Interference | one example only: a 12 mm rod in fins with an 11 mm inner diameter, 0.5 mm per side = 1.0 mm diametral (`fitfeature.gripfin.interference.side.example`, status unverified). Large: prove with coupon C24 before using anything near it | https://www.youtube.com/watch?v=Bd7Yyn61XWQ |
+| Around a bought molded part | the bought part's size varied by molder and fill level, so a fit verified in house failed at the customer; fins sized to a stated pull-out force (1 to 2 lb, about 4.5 to 9 N, in that case) replaced the bored hole | https://www.youtube.com/watch?v=PbGnxQifEq0 |
+| Creep | small, because each fin deflects little (OPINION) | https://www.youtube.com/watch?v=XKrDUnZCmQQ |
+
+Stated line for a grip-fin joint: "Grip fins: fin inner diameter <d> mm on a
+<D> mm shaft, interference <(D - d) / 2> mm per side = <D - d> mm diametral;
+undercut gap 0.3 mm; proven with C24: <yes or no>."
+
+## 11. Locating features: fins in slots, cones, and at most two
+
+From one production print farm (PRACTITIONER,
+https://www.youtube.com/watch?v=xog9YlMt9UU), consistent with FDM-ORI-7 (pins
+standing in Z are weakest at the base):
+
+- Avoid printed cylindrical locating pins: upright they break along layer
+  lines and lose precision, flipped they need support, and their holes must be
+  enlarged.
+- Prefer fins on one part that drop into slots in the other. A fin is
+  supported along its length, so even printed upright it is stronger than a
+  round pin; a cross-shaped fin locates in two directions; chamfer the fin
+  ends so they are lead-ins and print upright without an overhang. The
+  assembler finds a slot, not a hole. The example used 7 mm deep fins on a
+  40 mm block with 5 mm margins. The slot clearance was not stated: take it
+  from the clearance table (snug or sliding, per side and diametral, with the
+  one-line rule).
+- For a pure locator with no press or friction duty, turn the pin into a cone
+  (a fully chamfered pin): it prints in any orientation and costs nothing,
+  because the inside is infill. The source keeps the cone "within 30 degrees"
+  without saying from which axis. Printed point up, a cone never overhangs;
+  printed hanging point down, keep its flanks within 45 deg of vertical
+  (FDM-OVH-1).
+- Use the fewest locating features that constrain the part: a lid located in
+  two directions needs two features, not four; one fin can be enough. Other
+  videos of the same source apply the same rule to screws: one screw where
+  the mating part supplies the other constraints
+  (https://www.youtube.com/watch?v=Wd0MR4sPcK0,
+  https://www.youtube.com/watch?v=YMk7EfbemGY).
+
+## 12. Parts printed side by side or together
+
+- Two halves of an enclosure printed standing up "about 0.1 mm apart" so they
+  support each other was proposed as an idea by the production source
+  (https://www.youtube.com/watch?v=31FVZIg4rDs), not shown. **Not adopted:**
+  at 0.1 mm the halves fuse. Two separate parts on one plate keep at least
+  `feature.min.gap` (0.5 mm) apart; parts meant to move after printing take
+  the print-in-place clearance (0.35 per side, 0.70 diametral) and coupon C3.
+- A drawer and its housing printed together upright, as one print-in-place
+  assembly, with a bottom chamfer that keeps both on the bed without touching
+  (https://www.youtube.com/watch?v=CpQGNRWWXs8,
+  https://www.youtube.com/watch?v=cdyqNocFCpQ): no gap was stated; use the
+  print-in-place clearance and coupon C3. A small breakaway sprue can tie the
+  moving part to the frame for shipping.
+- Small parts can be linked on the bed by tiny compliant tabs or one modeled
+  raft so they succeed or fail together and eject as one unit
+  ([production runs](production-runs.md) section 3).

@@ -216,7 +216,8 @@ process is outside this playbook and ask for the specialist's rules.
 
 ## Source keys
 
-From research lane 02 (accessed 2026-11-12):
+From research file 02, `docs/specs/dfm-research/02-processes-selection-dfx.md`
+(accessed 2026-11-12):
 
 | Key | URL |
 | --- | --- |

@@ -4,7 +4,10 @@ Metal hardware raises the quality of a printed part: threads that survive
 service, magnets that close a lid, weights, bearings. This file covers each
 method's geometry, installation, strength and failure modes, and says where
 the research found no numeric source. Findings from the follow-up pass
-(`docs/specs/dfm-research/08-skipped-sources-addendum.md`) are folded in.
+(`docs/specs/dfm-research/08-skipped-sources-addendum.md`) are folded in, and
+so are practitioner techniques from a production print farm's videos
+(`docs/specs/dfm-research/10-slant-3d-videos.md`), labeled PRACTITIONER with
+their video URLs; sections 13 to 16 come from that pass.
 
 Tags as in [FDM rules](fdm-rules.md). Clearances are stated per side and
 diametral as in [fits and clearances](fits-and-clearances.md). Installing
@@ -131,7 +134,17 @@ Disagreements:
   of an M5 insert see section 2.4.
 - Chamfer: CNC Kitchen says none needed; creative3dp calls a 1 mm x 45 deg
   lead-in mandatory (SNIPPET). Adopted: 0.3 to 0.5 mm lead-in at most, so the
-  top of the knurl still engages (sizing UNVERIFIED).
+  top of the knurl still engages (sizing UNVERIFIED). A production print farm
+  puts a 1 mm fillet on the rim of every vertical hole in a top face, as a
+  lead-in and against pull-out (PRACTITIONER,
+  https://www.youtube.com/watch?v=aWz1mz4hhu8); for an insert hole the 0.5 mm
+  cap stays.
+- Wall, a looser practitioner figure: the same farm gives about 1 to 2 mm of
+  material around an insert in a nearly solid part
+  (https://www.youtube.com/watch?v=sza8wg5FIxQ). That matches the poster for
+  M2 to M3 but is thinner than the poster from M4 up (2.1 to 4.5 mm) and far
+  thinner than the measured full-strength M5 band (3.6 mm, section 2.4): the
+  playbook keeps the datasheet and measured values.
 - Taper: straight holes for the common 3D-print inserts (CNC Kitchen); tapered
   inserts need tapered holes (Spirol: 8 deg included; Markforged tapered
   counterbore). Match the hole to the insert type. Markforged's CAD method for
@@ -245,6 +258,18 @@ Methods:
   be flat so the roof bridges; a part whose top is not flat (or a hex nut with
   its axis in XY) needs a printed filler piece to give the nozzle a flat
   surface.
+- **Captive nut without a pause** (PRACTITIONER, production print farm,
+  https://www.youtube.com/watch?v=WMbmDfGEygk): a narrow slot opening at the
+  top leads into an internal channel about the nut's size; the nut is dropped
+  in, shaken flat, settles about 2 mm below the face, and the screw draws it up
+  tight. Washers go in the same way. No clearance was given: size the channel
+  as a drop-in pocket (`nut.pocket.clearance.af`) and prove with C10. The same
+  video loads nuts from the back through a hex channel held by an assembly
+  jig. Another: a side slot with a slight friction lock, or two printed halves
+  that capture the nut on hexagonal pegs (hex so they print lying down),
+  pressed closed in a jig (https://www.youtube.com/watch?v=F3ViXSLH_ZM). The
+  farm's own view that an embedded nut holds better than a heat-set insert
+  agrees in direction with the measured table in section 1.
 
 ## 4. Embedded magnets
 
@@ -282,6 +307,29 @@ Rules:
   locks (PRACTITIONER, https://www.youtube.com/watch?v=9Hp-VRO1hVQ).
 - Write the polarity in the design notes and on any assembly drawing.
 
+More from the same production print farm (PRACTITIONER,
+https://www.youtube.com/watch?v=BwUzOJ8B_H0):
+
+- **Pair a magnet with steel** where only one side has to be a magnet: a
+  steel ball or a screw head on the other part halves the magnet count and
+  removes polarity errors in assembly altogether. Prefer it whenever the
+  steel side need not attract anything else.
+- **Cylindrical magnets for press fits in PLA:** press-fit disc magnets in
+  PLA crept loose over time under load; a long cylinder (2 x 9 mm in the
+  video) has far more sidewall friction, leads in with its tip and stays.
+  This matches PLA's measured creep ([materials](materials.md) section 5).
+- **Side entry past center:** a cylinder magnet pressed sideways into a bore
+  whose axis sits 0.5 to 1 mm below the face, so the bore breaks the surface
+  slightly (a small fillet on the edge); pressed past center it cannot pop
+  out, and the magnet face meets its mate metal to metal. A slightly loose
+  bore lets it rotate and self-orient; a sphere magnet in a free spherical
+  cavity self-orients in all three axes. Two magnets that slide past each
+  other are angled so they fall onto each other. A side-entry slot with a
+  separate printed cover plug is the simplest no-press option.
+- **Embedding by a pause costs pull:** about 0.5 mm of skin on each part
+  leaves about a 1 mm air gap between two magnets, so much less pull than
+  metal to metal; this agrees with the cover-versus-pull data above.
+
 ## 5. Pause and embed: magnets, nuts, weights, bearings, RFID, springs
 
 1. Model a closed cavity: item size + press clearance (glue clearance if the
@@ -315,6 +363,17 @@ antenna) and springs (compress and capture under a lid) follow the same rule;
 item-specific numbers were not found (UNVERIFIED). A bearing pressed in during
 a pause must not protrude above the pause layer.
 
+A production print farm avoids pauses altogether: the printer sits idle, the
+resumed layer can show a line where the part cooled, and a poured weight can
+contaminate or rattle (PRACTITIONER,
+https://www.youtube.com/watch?v=WMbmDfGEygk,
+https://www.youtube.com/watch?v=d0BGz4nRjus). Its alternatives for weight: a
+subtracted cavity holding a filled capsule retained by a thread rather than a
+press fit, or denser infill in the base for ballast
+(https://www.youtube.com/watch?v=O33g62Kwq9s). For production, prefer a
+no-pause method (section 3, section 4) and keep the pause for the case where
+the item must be fully enclosed.
+
 ## 6. Screws straight into plastic
 
 | Approach | Pilot or geometry | Source |
@@ -343,7 +402,21 @@ a pause must not protrude above the pause layer.
   power tap: about a third of power-tapped M3 threads in PETG were ruined
   (MEASURED, https://www.youtube.com/watch?v=eNMAFTeowFs). Prefer inserts.
 - Holes whose axis crosses layer lines split under a wedging screw: see
-  [FDM rules](fdm-rules.md) FDM-ORI-5 and -6.
+  [FDM rules](fdm-rules.md) FDM-ORI-5, -6 and -13.
+- The screw head bears on solid material: counterbore or countersink so the
+  web under the head is walls and skins, not infill ([FDM rules](fdm-rules.md)
+  FDM-STR-12).
+- From a production print farm (PRACTITIONER): plain holes are fine for small
+  screws, but a large one (M10) needs an undersize hole that tends to split
+  and suits one-time assembly; give it relief slats for the thread to cut into
+  (https://www.youtube.com/watch?v=WMbmDfGEygk). Proud ridges inside a screw
+  hole let the screw bite the ridges instead of spreading the whole cylinder
+  (https://www.youtube.com/watch?v=3BIvSiuQVWQ). Its rule of at least 1 mm of
+  wall around a screw hole from the top
+  (https://www.youtube.com/watch?v=sza8wg5FIxQ) is looser than the 2 to 2.5 x
+  d1 boss above; the boss stays. A collar of about 2 mm more material around
+  mounting holes cuts breakout and vibration fatigue
+  (https://www.youtube.com/watch?v=lGnpz8q4STw).
 
 ## 7. Press fits: dowels, bearings, shafts
 
@@ -357,7 +430,10 @@ a pause must not protrude above the pause layer.
 
 For a critical bore (bearing seat, dowel location), print undersize and ream;
 or use crush ribs, which tolerate printer variation better than an exact
-interference.
+interference. Grip fins in detail (free-cut along their length, chamfered
+starts, trapezoid fins, the thinner-or-longer trade-off, material, the one
+interference example): [fits and clearances](fits-and-clearances.md) section
+10. Locating fins and cones instead of pins: section 11 of the same file.
 
 ## 8. Snap fits
 
@@ -432,6 +508,63 @@ choice is in [materials](materials.md) section 5.
 | Material ranking | nylon best; PETG best practical; ASA works but whitens; PLA snapped after a few cycles; TPU too soft and takes a set | Teaching Tech |
 | Single-use fold crease | about 0.2 mm (origami-style folds printed flat) | Teaching Tech |
 | Process | keep seams off flex junctions; let the part cool fully before flexing | Teaching Tech |
+| Rest angle | a compliant hinge springs back to its as-printed angle: model the rest angle wanted (printed at 90 deg it returns to 90) | Slant 3D, https://www.youtube.com/watch?v=YG_8wYoxVfs |
+| Symmetry | a symmetric double hinge springs back equally both ways; an asymmetric two-fin hinge bends one way only | same |
+
+### 9.1 Print-in-place hinges, living hinges and printed springs
+
+From one production print farm (PRACTITIONER; no clearance or cycle numbers
+are given, so gaps come from section 9 above and coupon C3):
+
+- **Pin hinge orientation.** Printed lying flat, the pin lies in the layer
+  plane and is strong; printed upright, the pin tears out through the layers.
+  Keep knuckles chunky; thin outer loops break
+  (https://www.youtube.com/watch?v=BWsUk1xSSn4). Axle vertical gives smooth
+  motion but needs chamfered faces inside so layers do not sag onto each
+  other, and is weaker in torsion; axle horizontal is stronger but the axle
+  settles oval and runs rough, fine for cheap parts and long doors
+  (https://www.youtube.com/watch?v=TiEyFle6lTM).
+- **Cone and double-cone pins** for a hinge printed upright: the pin flares to
+  a cone inside the knuckle, so it is captured with no side travel and both
+  leaves stand on the bed; size it up, because layers cross its root. Short
+  double cones (about 2 mm) remove the lever arm, but the upper knuckle's
+  overhang can sag onto the lower one and fuse: join the two upper cones into
+  one self-supporting profile, point one cone up on one link and down on the
+  next, or print the hinge on its side so the cones lie in plane
+  (https://www.youtube.com/watch?v=BWsUk1xSSn4,
+  https://www.youtube.com/watch?v=AAKsl8zW-Ds).
+- **Ceilings inside a print-in-place gap** are peaked or chamfered, never flat,
+  so sag cannot jam the moving part
+  (https://www.youtube.com/watch?v=4wRKmcWXEkw).
+- **Living hinge types:** a thin flap works only in TPU or polypropylene,
+  printed on its side, and is a fatigue point; a loop (ring) hinge spreads
+  strain and adds a spring return; grooves in the loop tune its flexibility;
+  a zigzag chain of small spring hinges suits gripper fingers; a kerf lattice
+  of slats that twist, designed to the bend radius, gives long life
+  (https://www.youtube.com/watch?v=TiEyFle6lTM,
+  https://www.youtube.com/watch?v=AAKsl8zW-Ds,
+  https://www.youtube.com/watch?v=BWsUk1xSSn4). A fold-flat living-hinge case
+  in PLA must print flat; PP or PETG can print it upright
+  (https://www.youtube.com/watch?v=31FVZIg4rDs).
+- **Planar springs:** never print a coil spring (its layers split); flatten
+  it to a planar zigzag (the top view of a coil) with every bend rounded,
+  since stress collects at square bends; thin to about 1 mm for a soft spring
+  and thicken in Z for more force; membrane (ring) springs return push
+  buttons; spiral springs store energy; all force acts in the layer plane, and
+  a spring printed at an angle loses most of its return; springs can print
+  captured inside a part (https://www.youtube.com/watch?v=wpriGP45Unw,
+  https://www.youtube.com/watch?v=AAKsl8zW-Ds). The 1 mm soft-spring floor and
+  the 0.5 mm hinge leaf (`flexure.leaf.min`) come from different videos of the
+  same channel for different parts; both stay, each for its use.
+- **Scaling a flat mechanism:** thicken it in Z rather than lengthening it;
+  rippled fins act thicker (https://www.youtube.com/watch?v=O33g62Kwq9s).
+- **Production cost:** print-in-place hinges raise the reject rate, a simple
+  living hinge adds almost nothing (OPINION,
+  https://www.youtube.com/watch?v=TiEyFle6lTM); print-in-place clips vary from
+  machine to machine (https://www.youtube.com/watch?v=d6bt-QtZhqI). The claim
+  that a well-designed print-in-place joint works at any layer height, infill
+  and material (https://www.youtube.com/watch?v=AAKsl8zW-Ds) is not adopted:
+  the measured gap depends on the printer (section 9 above), so prove it.
 
 ## 10. Threads
 
@@ -464,6 +597,18 @@ choice is in [materials](materials.md) section 5.
   a first print.
 - Never use a printed metric thread for a metal screw that is assembled more
   than a few times.
+- From a production print farm (PRACTITIONER): a thread profile with about
+  45 deg flanks (triangular) avoids sag, against the trapezoidal or buttress
+  profile above (both unproven; prove with a slice), and overhangs under 30
+  deg from horizontal are unreliable
+  (https://www.youtube.com/watch?v=7YAylxQFe3k). Modeled threads cannot be
+  finer than about one nozzle width; for a small screw in a side hole, model
+  fine ripples for it to bite instead (https://www.youtube.com/watch?v=ip70-Tw6tBE).
+  Printed thumb screws print lying flat with one side cropped flat, so layers
+  run along the axis (https://www.youtube.com/watch?v=csUGcIPNNkk; relevant to
+  C20). Printed threads are acceptable where the joint is in compression and
+  backstopped, so the threads only retain
+  (https://www.youtube.com/watch?v=Lmr4LKI0Hfc).
 
 ## 11. Joints for split parts
 
@@ -483,6 +628,28 @@ Further rules (standard practice, UNVERIFIED): alignment features on every cut
 high-stress regions; budget the stack-up across every joint; glue joints with
 registration and a 0.1 to 0.2 mm bond gap for epoxy (gap number UNVERIFIED).
 
+Glue joints designed for assembly (PRACTITIONER, one production print farm;
+no dimensions given):
+
+- **Inject the glue after assembly** through a single entry hole into a
+  central bore with exit holes along the joint, so the glue spreads evenly;
+  longer pegs get more exit holes. Or cut one spiral groove up the peg: glue
+  goes down the bore, climbs the spiral and appears at the top when the joint
+  is full, an indicator for the assembler and one clean exit to wipe
+  (https://www.youtube.com/watch?v=Nsv3YSTDYmA). Glue columns run through a
+  part as "rebar" across the layers were suggested untested (same video).
+- **Glue faces:** many small holes that widen inward key the glue
+  mechanically; relief cuts give squeezed glue somewhere to go so it does not
+  jack the fit apart; marked glue pads show the assembler where and how much;
+  a bead channel holds hot glue; an internal channel can route glue or thread
+  locker after assembly (https://www.youtube.com/watch?v=qV1xXXbzM4Y).
+  Grooves along a glued peg add area (https://www.youtube.com/watch?v=Nsv3YSTDYmA).
+- Identical halves joined by a tongue and groove make one model print twice
+  (https://www.youtube.com/watch?v=7-LP9UcdAWc). Put the parting line where
+  the cutouts (ports, I/O) land in one half only
+  (https://www.youtube.com/watch?v=31FVZIg4rDs); a tilted parting plane is in
+  [production runs](production-runs.md) section 5.
+
 ## 12. No numeric source found
 
 Heat staking, zip-tie slots, O-ring grooves in prints, threaded lids,
@@ -490,8 +657,123 @@ D-shafts, RFID and spring embedding, glue bond-line gap, reuse count for
 screws in plastic, measured magnet loss on hot beds; fatigue data for
 flexures; a print-specific square-nut clearance. Flexures (section 9) and
 square nuts (section 3) now have practitioner and vendor guidance but no
-measured numbers. Interim values above are labeled UNVERIFIED or PRACTITIONER;
+measured numbers. Zip-tie lugs and loops (section 15), threaded and bayonet
+lids (sections 10 and 13), glue injection (section 11) and printed springs
+(section 9.1) now have practitioner geometry, still without numbers.
+Interim values above are labeled UNVERIFIED or PRACTITIONER;
 prove them with a coupon ([test coupons](test-coupons.md)). For O-ring glands use a standard gland
 calculator (this repository's **enclosure-cad** cites the Parker O-ring
 handbook) and treat FDM sealing as unproven without post-processing: layer
-lines leak.
+lines leak. A production print farm claims watertight prints from a tuned
+profile, several perimeters on a sealing wall, no overhangs or support
+interfaces, and parts no bigger than a fist for pressure
+(https://www.youtube.com/watch?v=Yk0I4Tf-E8c,
+https://www.youtube.com/watch?v=cbxD8Oz9L8Q); without test numbers this is
+not adopted as a general claim. Those are the method to try when sealing is
+required, with a pressure coupon; a printed shell around a bought liner or
+bladder is the reliable route for liquids
+(https://www.youtube.com/watch?v=7-LP9UcdAWc).
+
+## 13. Bayonet lids
+
+A nub on one part locks into a channel in the other with a quarter turn
+(PRACTITIONER, one production print farm,
+https://www.youtube.com/watch?v=7YAylxQFe3k; no dimensions beyond the depth):
+
+- Angle the channel so the lid tightens as it turns, or add detent bumps.
+- On a curved wall keep the channel under 2 mm deep, or chamfer its top edge,
+  so it does not overhang.
+- Give nub and channel V-shaped (pyramidal) profiles; no horizontal overhang
+  anywhere in the channel.
+- Keep the nub small and protected under a chamfer, or it needs support from
+  the base.
+- Threaded lids: section 10; press-on and plug lids:
+  [fits and clearances](fits-and-clearances.md) section 9.
+
+## 14. Circuit board standoffs and pockets
+
+From one production print farm (PRACTITIONER), for an enclosure printed
+around a board (**enclosure-cad** generates the case; this playbook applies
+to its printed parts):
+
+- Standoffs as thick as the board's solder points allow, never thin molding
+  bosses; chunky, shelf-like or merged into the wall
+  (https://www.youtube.com/watch?v=9ERY20MRJPo,
+  https://www.youtube.com/watch?v=31FVZIg4rDs,
+  https://www.youtube.com/watch?v=jNguIjkLo6g).
+- Chamfer, never fillet, the base of a standoff where it meets the floor, so
+  it prints without support in any orientation; this costs about a gram,
+  because the inside is infill. Or run ribs from the standoff to the wall,
+  along the build direction (https://www.youtube.com/watch?v=9ERY20MRJPo).
+- Instead of standoffs, a pocket tracing the outline of the board's
+  underside leads, extruded back to the tallest lead (3 mm in the example),
+  seats the board on a solid face and locates it for the screws; the back
+  wall gets thick (same video).
+- Merge separate standoffs into one plate with holes
+  (https://www.youtube.com/watch?v=m20UPm0TOto).
+- Fillet inside corners as large as the board allows (5 mm in the example,
+  against FDM-STR-6's 1 mm minimum; same video).
+- Screws into standoffs: self-tapping or heat-set inserts per sections 2 and 6.
+
+## 15. Feet, loops, lugs and mounting features
+
+PRACTITIONER, one production print farm:
+
+- **Feet:** a part with feet on its bottom cannot print feet down without
+  supporting the whole bottom; print it on its side or a diagonal, chamfer
+  the feet all round, or use shallow inset pockets for stick-on rubber feet
+  (https://www.youtube.com/watch?v=hSP9CkqhZSQ). Three small feet keep an
+  enclosure stable and off dust (https://www.youtube.com/watch?v=31FVZIg4rDs).
+- **Side loops and zip-tie lugs:** a plate as large as possible with a round
+  or oval hole, not a thin wire loop; a rib on the outer plate or a small
+  T-flange at the outer edge resists pull-out; no flat overhang under it
+  (https://www.youtube.com/watch?v=m1HG1nBTD0E,
+  https://www.youtube.com/watch?v=81qmDc5unYM). No hole size was given.
+- **Lanyard and cord loops:** in the layer plane, flush with a face, or an
+  internal channel joining two flush holes; a loop standing across the layers
+  snaps (https://www.youtube.com/watch?v=oYEV-ndgwdk). A wire-retaining loop
+  on a wall gets two chamfers, front face then inner edge, so nothing
+  overhangs (https://www.youtube.com/watch?v=FF4D_Moywgk). Strap slots run
+  parallel to the layers (FDM-ORI-14).
+- **Mounting tabs:** no flat tongue sticking out; chamfer the underside into
+  the wall, or grow a monolithic lug out of the wall, counterbored and drilled
+  through; if a free tab is unavoidable, round its corners and underside
+  (https://www.youtube.com/watch?v=lGnpz8q4STw,
+  https://www.youtube.com/watch?v=FF4D_Moywgk). Integrate DIN-rail or
+  extrusion features instead of adding hardware
+  (https://www.youtube.com/watch?v=lGnpz8q4STw); a bracket can wrap an
+  extrusion profile so each layer is a closed loop around it
+  (https://www.youtube.com/watch?v=NLeTvSaPJIs).
+- **Adhesive-mounted parts:** recess pockets as deep as the adhesive strip so
+  the part sits flush, and move the pads forward so the pull is direct, not a
+  peeling lever (https://www.youtube.com/watch?v=tb1yqVOyAM8).
+- **Cord exits:** a hook-shaped one-way slot the cord wraps into retains it
+  without glue; leave room (5.5 mm for a 5 mm cord)
+  (https://www.youtube.com/watch?v=xEjtyA2b5I0).
+
+## 16. Rain-shedding vents and gasketless lids
+
+PRACTITIONER, one production print farm, demonstrations without numbers
+except where stated:
+
+- **Vents that shed water:** several rows of offset, overlapping slats with
+  no line of sight through: air flows around them, water hits a slat and
+  drains down. Drain only at the bottom; drains in every direction let rain
+  in from the top, so the vent has an up and is installed that way. Lay the
+  layer lines along each slat (across a slat it snaps). Slats were 1.5 mm in
+  the demo; the 0.5 mm the video suggests for vertical printing is under
+  `wall.min.cautious` and not adopted. Where slats bridge, add internal ribs so
+  no span exceeds `bridge.max.span` (the video's 25 to 50 mm is not adopted)
+  (https://www.youtube.com/watch?v=bO39lWkaspA).
+- **Cooling vents:** slots cut at an angle through a thickened wall, or
+  S-curved channels, give more cross-section, hide the interior and need less
+  support than straight slots; grids of small round holes make islands and a
+  weak perforated line; curve grille slots to follow the layers
+  (https://www.youtube.com/watch?v=vcgsQyMSSiY,
+  https://www.youtube.com/watch?v=m20UPm0TOto).
+- **Gasketless rain-proof lid:** a groove inset in the base rim under an
+  outer lip of the lid; water that enters the crease is turned back against
+  the box wall into a channel that drains out through small holes at the
+  corners and bottom. Only very high pressure or volume overwhelms it. It is
+  a drainage labyrinth, not a seal, and its undercuts cannot be molded
+  (https://www.youtube.com/watch?v=prMUfQ9y7Rk). Sealing claims: section 12.

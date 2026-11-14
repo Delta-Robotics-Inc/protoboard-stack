@@ -45,7 +45,7 @@ Options: `--process <id>`, `--project <dir>`, `--part <dir>`, `--user <dir>` or 
 ## Not done yet
 
 - Playbooks for laser cutting, CNC, sheet metal, casting and molding. Until they land, `dfm` uses headline rules (`skills/dfm/references/moving-up-the-ladder.md`) and says so.
-- A measuring check: `dfm-review` measures with the CAD source, the stack's STEP measurement (`protoboard geometry`) or a mesh tool when one is available, and marks the rest NOT CHECKED. An automated rule check built on mesh and STEP measurement is planned.
+- A measuring check: `dfm-review` measures with the CAD source, a STEP measuring tool when one is available or a mesh tool when one is available, and marks the rest NOT CHECKED. An automated rule check built on mesh and STEP measurement is planned.
 - The calibration kit's coupon models and the branded test print (the coupon list exists in the printing playbook).
 - Wiring into `build-a-project` and the CAD providers (`enclosure-cad`, `frame-cad`) so they read the resolved profile directly.
 - The resolver does not merge the reference tables beside the profiles (`materials-fdm.json`, `printers-bambu-lab.json`); the playbook reads them.

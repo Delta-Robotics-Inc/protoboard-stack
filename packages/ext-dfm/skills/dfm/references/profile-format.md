@@ -134,8 +134,7 @@ Last wins:
 | 4 | `part` | `<part folder>/dfm.json` | `--part <dir>` (or a `.json` file) |
 | 5 | `session` | none | `--set path=value`, repeatable |
 
-`<config>` is the Protoboard config folder, resolved as the CLI and the PCB
-style system resolve it (`packages/board-style/src/paths.ts`):
+`<config>` is the Protoboard config folder, resolved as the CLI resolves it:
 `PROTOBOARD_CONFIG_DIR` when set, else `%APPDATA%\protoboard` on Windows,
 else `$XDG_CONFIG_HOME/protoboard`, else `~/.config/protoboard`.
 

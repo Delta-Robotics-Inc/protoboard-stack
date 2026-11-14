@@ -25,6 +25,8 @@ The rules that matter most:
 3. **No supports by design:** 45 deg maximum overhang from vertical, chamfers
    not fillets on downward edges, teardrop tops on horizontal holes, bridges
    under 10 mm (5 mm on show faces), split the part when nothing else works.
+   A support that cannot be designed out is modeled in CAD with a stated gap
+   (0.2 mm), never left to the slicer.
 4. **Every clearance per side AND diametral.** House sliding fit: 0.20 mm per
    side = 0.40 mm diametral; 0.30 per side for an unknown printer. State the
    one-line clearance rule each time one is applied.
@@ -39,6 +41,9 @@ The rules that matter most:
    print.
 9. **Write down the print assumptions** (orientation, material, nozzle, layer,
    supports, pauses) for the person who slices it.
+10. **A production run is its own mode:** printed in quantity or on a farm,
+    the part shapes its bed contact for release and models its own brims,
+    rafts and supports ([production runs](references/production-runs.md)).
 
 ```
 resolved DFM profile (dfm) ──► process, printer, nozzle, layer, material
@@ -72,7 +77,7 @@ result.
 | Input | Where | From |
 | --- | --- | --- |
 | Resolved DFM profile: process, machine, nozzle, layer height, material, values | the resolution the **dfm** skill produces ([profile format](../dfm/references/profile-format.md)) | **dfm** |
-| The part: geometry or intent, loads, mating parts, cosmetic faces, environment (temperature, outdoors, preload) | the part's CAD source and its module or brief | the designing skill (**enclosure-cad**, **uhd-part-author**, **scan-to-part**, or the user) |
+| The part: geometry or intent, loads, mating parts, cosmetic faces, environment (temperature, outdoors, preload) | the part's CAD source and its module or brief | the designing skill (**enclosure-cad**, **uhd-part-author**, or the user) |
 | House FDM values | `profiles/fdm.json` in this extension | this extension |
 | Material data | `profiles/materials-fdm.json` | this extension |
 | Printer data | `profiles/printers-bambu-lab.json` | this extension |
@@ -112,7 +117,10 @@ Decide, in this order, and record the result:
 2. **Cosmetic face.** The best faces are vertical walls and the bed face on a
    textured plate; shallow tops terrace.
 3. **Bed contact.** A large flat face down; no point or edge contact (give it a
-   1 mm chamfer pad); the first layer on a hidden or bottom face.
+   1 mm chamfer pad, 2 mm `landing.edge.width` for tall parts); the first
+   layer on a hidden or bottom face. A production run shapes and reduces
+   contact for release instead ([production runs](references/production-runs.md)
+   section 2).
 
 If the arms of a part load in different directions, tilt at least 45 deg
 (`orientation.tilt.min`) or split it (step 10). Model in the print orientation
@@ -132,7 +140,9 @@ and export in it. Rules: [FDM rules](references/fdm-rules.md) section 5.
   (3) and design solid shapes; do not copy molding-style thin ribbed shells or
   draft.
 - Ribs, where used: whole multiples of the line width, at least two lines, in
-  the XY plane.
+  the XY plane, with self-supporting undersides (FDM-STR-11).
+- Blunt every modeled knife edge, blade or tip to a flat at least one line
+  width wide; a true point thins the flow and flakes (FDM-WALL-9).
 - Keep layer height at or under half the nozzle for strong parts
   (`layer.max.structural`).
 
@@ -151,8 +161,14 @@ Work through the overhangs in the chosen orientation:
   `bridge.max.span` (10 mm) hidden, `bridge.conservative.span` (5 mm) on show
   or mating faces.
 - Use angled brackets and gussets instead of flat shelves.
-- Where something must still overhang: reorient, split (step 10), or add a
-  designed breakaway fin; generated supports only as the decision table allows.
+- Grow islands from the body instead of starting them on supports
+  (FDM-OVH-11).
+- Where something must still overhang: reorient, split (step 10), or model the
+  support in CAD: a fin with flat tines, a thumbtack, a pointed tower or a
+  comb, gap `support.designed.gap` (0.2 mm), tines `support.designed.tine.*`.
+  These are sized for the 0.4 mm nozzle and never scaled with the part
+  ([FDM rules](references/fdm-rules.md) FDM-SUP-8 to -13). Generated supports
+  only as the decision table allows.
 
 ### 5. Holes, pins and fits
 
@@ -177,6 +193,9 @@ Work through the overhangs in the chosen orientation:
   ([FDM rules](references/fdm-rules.md) FDM-ORI-6) or reorient.
 - Prefer fit-tolerant features (tapers, lead-in chamfers, crush ribs, grip
   fins) over exact diameters.
+- Locate with fins in slots, or cone pins, not printed cylindrical pins, and
+  use at most two locating features
+  ([fits and clearances](references/fits-and-clearances.md) section 11).
 
 ### 6. Embedded hardware
 
@@ -199,13 +218,17 @@ Use [hardware](references/hardware.md) for geometry:
 - **Magnets:** press pocket + `magnet.pocket.press.diametral` (printed over
   after a pause) or glue pocket + `magnet.pocket.glue.diametral` (after
   printing); enclosed depth + 0.4, cover `magnet.cover.layers` (2 layers);
-  polarity written down; N grades limited to about 80 C.
+  polarity written down; N grades limited to about 80 C. Where only one side
+  must be a magnet, pair it with steel (a ball or a screw head): no polarity
+  to get wrong ([hardware](references/hardware.md) section 4).
 - **Pause and embed** (magnets, nuts, weights, bearings): a closed cavity with
   press clearance, depth + 0.2 to 0.5, a bridged or 45 deg roof; the pause goes
   before the first layer that covers it. A person performs the pause and the
   insertion.
 - **Screws straight into plastic:** only for joints opened a few times, about
   1 Nm on M3; pilot `screw.selftap.m3.pilot` (2.7 for M3).
+- **Screw heads clamp solid material:** counterbore or countersink so the web
+  under the head is walls and skins, not infill (FDM-STR-12).
 - **Snap fits, hinges, flexures, threads, split-part joints:** the strain
   limits, thicknesses and connector rules in the same file. Flexure leaves
   (practitioner values, no fatigue data): at least `flexure.leaf.min` (0.5 mm)
@@ -245,7 +268,9 @@ values.
   open at least `feature.min.gap` (0.5 mm).
 - Text: bold sans-serif, at least `text.min.height` (5 mm), stroke
   `text.min.stroke` (0.9), raised `text.emboss.height` (0.6) or engraved
-  `text.engrave.depth` (0.8); on vertical walls or top faces.
+  `text.engrave.depth` (0.8); on vertical walls or top faces. On a vertical
+  wall keep both at or under 0.5 (`text.sidewall.emboss.max`,
+  `text.sidewall.engrave.max`); on a top face engrave rather than emboss.
 - Give cosmetic parts a seam home (an inside vertical corner or a groove on a
   hidden side); avoid shallow domes and smooth cylinders on show faces.
 
@@ -279,6 +304,7 @@ waiver in the same layer, with the rule id from
 
 ```text
 Print assumptions: <part>
+  mode:                single printer | production run (quantity, farm or service)
   process / printer:   FDM, <printer model> (or "unknown, 256 mm bed assumed")
   nozzle / line / layer: 0.4 / 0.45 / 0.2 mm; first layer 0.2
   material:            PLA (or ..., with why)
@@ -308,6 +334,7 @@ Then hand the part to **dfm-review**.
 | Change the material | Over about 45 to 50 C, outdoors, sustained preload, impact, or repeated flexing over about 1 percent strain: per [materials](references/materials.md) section 7. The user's named material wins; state the trade-off. |
 | Prove with a coupon first | Press fits, print in place, snap fits, living hinges, pause-and-embed, any value tagged UNVERIFIED, SNIPPET or `assumption`, a different printer, nozzle or material than the one a value was proven on, a long or costly print, or a design past a typical limit ([test coupons](references/test-coupons.md) section 4). |
 | Which value wins | The user's stated value always; then a `proven` value from a coupon on this printer; then the profile's `house` and `typical` values; the unknown-printer values when the printer is unknown. |
+| Production run or single printer | Printed in quantity, on an automated farm, or by a print service from one file: production mode per [production runs](references/production-runs.md) (bed contact shaped for release, brims, rafts and supports modeled in CAD, no per-job settings, the cautious `wall.min.cautious` and landing values, coupons C22 to C26 and a sample batch). Otherwise the steps above as written. Record the mode in the print assumptions. |
 
 ## Outputs
 
@@ -370,6 +397,8 @@ Print failures traced back to design causes:
 | Text illegible | Too small, too thin, on the first layer or a shallow slope | 5 mm, 2 line widths, on a wall or top face |
 | PLA part deformed in use | Heat over about 45 to 50 C, or sustained preload creep | PETG, ASA, PC per the materials guide; through-bolts with washers |
 | Visible support scars on a show face | Supports accepted on a cosmetic face | Redesign the overhang; reorient |
+| Designed support fused to the part, or fell away | Gap too small, or the support scaled with the part | `support.designed.gap` at the production nozzle; redraw, never scale; prove with C22 |
+| Production part will not release or stains on the bed | Large solid bed contact | Ring, pocket or edge contact per [production runs](references/production-runs.md) section 2; prove with C25 |
 
 Model-level problems the CLI reports are listed in **dfm**'s own failure
 handling and its review in **dfm-review**.

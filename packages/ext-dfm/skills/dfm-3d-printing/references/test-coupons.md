@@ -37,7 +37,11 @@ are proposals added after the follow-up research pass
 (`docs/specs/dfm-research/08-skipped-sources-addendum.md`): they test open
 questions rather than prove a profile value. Flexure leaves
 (`flexure.leaf.min`, `flexure.leaf.root`, practitioner values) are proved
-with C14-style beams or a printed slice.
+with C14-style beams or a printed slice. C22 to C26 are proposals added with
+the production-run guidance ([production runs](production-runs.md);
+`docs/specs/dfm-research/10-slant-3d-videos.md`): they prove practitioner
+values from one print farm on the user's own printer and filament before a
+production run depends on them.
 
 | # | Coupon | Purpose | Size | Steps | Read off | Proves |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -63,6 +67,11 @@ with C14-style beams or a printed slice.
 | C20 | Thread axis strength (**proposal**) | Settle whether a modeled thread is weaker with its axis vertical (Z) or horizontal (XY): one source's test may contradict "never in horizontal holes" ([hardware](hardware.md) section 10) | one block per size with a modeled internal thread printed with its axis in Z and an identical block with the axis in XY; same profile, walls and infill (proposed) | M5, M6, M8; steel screw of grade 8.8 | whether the thread runs by hand without chasing; torque to failure with a torque wrench, three samples per orientation; failure mode (thread strip vs boss split) | `thread.min.modeled` and the horizontal-hole rule; the rule stands until this is printed |
 | C21a | Stiffened panel, equal depth (**proposal**) | Whether an isogrid panel beats a closed two-skin printed wall of the same overall depth | two flat panels of equal footprint and total depth: an isogrid (skin plus ribs at house rib width) and a closed wall with top and bottom skins over sparse infill, both at house walls and infill (proposed) | one pair; weigh both | three-point bend: stiffness from load vs deflection and the failure load, each divided by measured mass | whether a patterned or ribbed wall may be counted as structural; reasoning in `docs/specs/dfm-research/09-isogrid-fdm-recheck.md` |
 | C21b | Stiffened panel, equal mass (**proposal**) | The same comparison at equal mass | as C21a, with the closed wall thinned (or the isogrid deepened) until both weigh the same, checked on a scale (proposed) | one pair | three-point bend as C21a | as C21a |
+| C22 | Designed-support gap ladder (**proposal**) | Gap and tine size for supports modeled in CAD | a 20 mm block with a 10 mm flat overhang held by a designed fin, one per step, plus a fin tied by tines (proposed) | gap 0.10, 0.15, 0.20, 0.25, 0.30 mm; tines 0.5 x 0.5 and 0.5 x 1.0 mm; one thumbtack and one pointed tower | the smallest gap that releases cleanly by hand with an acceptable underside; the tine that holds through the print and snaps flush | `support.designed.gap`, `support.designed.tine.height`, `support.designed.tine.width`, `support.designed.sprue.diameter`, `support.designed.point` |
+| C23 | CAD raft gap ladder by filament finish (**proposal**) | Raft gap that holds during the print and releases after | 1 mm thick round raft under a 20 mm disc, one per step, in each filament finish used (glossy PLA, matte PLA, PETG) (proposed) | gap 0.10, 0.15, 0.20, 0.25, 0.30 mm | the gap that holds the part flat through the print and pops off without tools, per finish | `production.raft.gap`, `production.raft.gap.matte`, `production.raft.thickness` |
+| C24 | Grip-fin interference ladder (**proposal**) | Interference a grip-fin hole can take on the real shaft | block with grip-fin holes for the actual shaft (or a 12 mm rod), fins cut free along their length, 0.3 mm undercut gap (proposed) | interference per side 0.1, 0.2, 0.3, 0.4, 0.5 mm (0.2 to 1.0 diametral); two fin thicknesses | insertion force by hand, hold (pull-out against a stated force), fin cracking or whitening after 10 insertions | `fitfeature.gripfin.interference.side.example`, `fitfeature.compliant.gap.min`, `.max` |
+| C25 | Ejection base variants (**proposal**) | Bed contact shaped for release in a production run | the same 60 mm disc or the real part with a flat base, a one-layer recess, a deeper pocket with a 45 deg cone roof, and conical recesses leaving rings 1, 2 and 3 mm wide (proposed) | five variants, same printer, plate and filament | adhesion through the print (no lift, no shift), release force after cooling, warp measured with a feeler under the edge, first-layer cosmetics | `production.base.recess.depth`, `production.contact.ring.min` |
+| C26 | Side-wall text depth ladder (**proposal**) | Legible text on a vertical face without sag | a vertical plate with the same word at each step, printed standing (proposed) | raised and engraved 0.25, 0.50, 0.75, 1.00 mm; heights 3, 4, 5 mm; bold sans-serif | the deepest raised text with no sag at the letter bottoms, the engraving depth with clean floors, the smallest legible height | `text.sidewall.emboss.max`, `text.sidewall.engrave.max`, `text.min.height` |
 
 Existing tests worth reusing instead of new CAD where they fit: the Maker's
 Muse tolerance gauge (gaps 0.15 to 0.5,
@@ -122,4 +131,10 @@ Prove with a coupon or slice before the full print when any of these holds:
   on this printer counts when the fit is critical);
 - the full print is long (more than a few hours) or uses expensive material;
 - the design pushes past a `typical` limit (overhang over 45 deg, bridge over
-  10 mm, wall under 2 lines).
+  10 mm, wall under 2 lines);
+- the part depends on a designed support, a CAD brim or raft, or a reduced
+  bed contact (C22, C23, C25), on a printer or filament they were not proven
+  on;
+- a tight fit is printed in another color: pigment changes flow and
+  expansion, so prove the fit per color
+  (https://www.youtube.com/watch?v=PbGnxQifEq0).

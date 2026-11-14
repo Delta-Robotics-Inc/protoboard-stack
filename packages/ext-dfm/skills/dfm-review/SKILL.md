@@ -64,7 +64,7 @@ on the part, and the method:
 | Method | Use | How |
 | --- | --- | --- |
 | `source` | The model is a script or a parametric document | Read the dimension from the source (a parameter, a sketch constraint) |
-| `step` | A STEP file of a project instance exists | `npx protoboard geometry bounds <instance>` for the envelope; `npx protoboard geometry faces <instance> --limit 200` for faces, radii and normals |
+| `step` | A STEP file of the part exists | A STEP measuring tool if one is available (envelope, faces, radii and normals); say which tool |
 | `mesh` | Only a mesh exists, or a mesh checker is installed | A mesh measurement tool if one is available (wall thickness, overhang area, bed contact); say which tool |
 | `inspection` | None of the above can reach the value | Look at the model or its views and estimate; say so, and treat the finding as weaker |
 

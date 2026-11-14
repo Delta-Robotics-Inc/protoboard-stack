@@ -234,16 +234,16 @@ describe("resolving a profile", () => {
 
 describe("the config folder", () => {
   it("resolves on win32 as board-style does: PROTOBOARD_CONFIG_DIR, else %APPDATA%\\protoboard", () => {
-    expect(configDir({ APPDATA: "C:\\Users\\u\\AppData\\Roaming" }, "win32")).toBe("C:\\Users\\u\\AppData\\Roaming\\protoboard");
+    expect(configDir({ APPDATA: "C:\\Home\\u\\Roaming" }, "win32")).toBe("C:\\Home\\u\\Roaming\\protoboard");
     expect(configDir({ PROTOBOARD_CONFIG_DIR: "D:\\cfg", APPDATA: "C:\\x" }, "win32")).toBe("D:\\cfg");
-    expect(configDir({ HOME: "C:\\Users\\u" }, "win32")).toBe("C:\\Users\\u\\.config\\protoboard");
-    expect(userLayerDir({ APPDATA: "C:\\Users\\u\\AppData\\Roaming" }, "win32")).toBe("C:\\Users\\u\\AppData\\Roaming\\protoboard\\dfm");
+    expect(configDir({ HOME: "C:\\Home\\u" }, "win32")).toBe("C:\\Home\\u\\.config\\protoboard");
+    expect(userLayerDir({ APPDATA: "C:\\Home\\u\\Roaming" }, "win32")).toBe("C:\\Home\\u\\Roaming\\protoboard\\dfm");
   });
 
   it("resolves on posix: PROTOBOARD_CONFIG_DIR, else $XDG_CONFIG_HOME, else ~/.config, then protoboard", () => {
     expect(configDir({ HOME: "/home/u" }, "linux")).toBe("/home/u/.config/protoboard");
     expect(configDir({ HOME: "/home/u", XDG_CONFIG_HOME: "/xdg" }, "linux")).toBe("/xdg/protoboard");
-    expect(configDir({ HOME: "/Users/u", APPDATA: "/ignored" }, "darwin")).toBe("/Users/u/.config/protoboard");
+    expect(configDir({ HOME: "/home/m", APPDATA: "/ignored" }, "darwin")).toBe("/home/m/.config/protoboard");
     expect(configDir({ PROTOBOARD_CONFIG_DIR: "/cfg", HOME: "/home/u" }, "linux")).toBe("/cfg");
     expect(userLayerDir({ HOME: "/home/u" }, "linux")).toBe("/home/u/.config/protoboard/dfm");
   });

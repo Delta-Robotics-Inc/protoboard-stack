@@ -275,7 +275,7 @@
       "formula": "round(2 * layer.height, 3)",
       "unit": "mm",
       "status": "unverified",
-      "source": "research lane 04 section A8 (one to two layers; the two-layer figure is UNVERIFIED)",
+      "source": "docs/specs/dfm-research/04-hardware-fits-calibration.md section A8 (one to two layers; the two-layer figure is UNVERIFIED)",
       "note": "Vertical gap between a top surface and the underside of the part above it in a print-in-place joint; pair it with 45 to 60 deg overhangs on the upper face."
     },
     "clearance.unknown.printer.side": {
@@ -502,6 +502,174 @@
       "status": "typical",
       "source": "https://www.hydraresearch3d.com/design-rules",
       "note": "Do not model threads smaller than M5 (#10); never in horizontal holes. Smaller threads: inserts, self-tapping screws or a tapped hole. Prefer M6 or larger, and go 1 to 2 sizes up or use an insert where strength matters: an M5 printed thread was often weaker than an M4 heat-set insert (MEASURED, PLA, https://www.youtube.com/watch?v=eNMAFTeowFs; printed threads only at M6 and up, https://www.youtube.com/watch?v=HgEEtk85rAY). Disputed: one source's test suggests a printed thread with its axis vertical is the worse case, which may contradict the horizontal-hole rule; the video does not make the axis unambiguous, so the rule stands until test coupon C20 decides."
+    },
+    "production.base.recess.depth": {
+      "formula": "layer.height",
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=SZwXREFoWKA, https://www.youtube.com/watch?v=4LTkVb6rP84 and https://www.youtube.com/watch?v=3AZWuVRUh2c",
+      "note": "PRACTITIONER, production runs only (parts that must release from the bed or be ejected automatically). Depth of a recess cut into the whole bottom face, leaving a rim, so the first layer prints as a ring; one layer deep. The recessed face shows raster lines one layer up. For a deeper pocket give it a self-supporting roof (a 45 deg cone satisfies overhang.max.angle). See skills/dfm-3d-printing/references/production-runs.md section 2."
+    },
+    "production.contact.ring.min": {
+      "value": 1,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=X8kqMaxwB4M",
+      "note": "PRACTITIONER, one video, PLA, production runs only: narrowest outer ring of bed contact left by a conical or pocketed underside. No other source; prove with coupon C25 before relying on it. The single-printer default is still a large flat face down."
+    },
+    "production.raft.gap": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=4LTkVb6rP84 and https://www.youtube.com/watch?v=7KVh19WpOcc",
+      "note": "PRACTITIONER, 0.4 mm nozzle, 0.2 mm layers: vertical gap between a raft modeled in CAD and the part (one layer of air); 0.1 fused in the source's test. Glossy PLA and PETG. A single gap, neither per side nor diametral. Fixed value; prove with coupon C23 on the production printer and filament."
+    },
+    "production.raft.gap.matte": {
+      "value": 0.15,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=4LTkVb6rP84",
+      "note": "PRACTITIONER, one video: raft gap for matte filament, which bonds to the raft less, or wherever a tighter hold is needed. Another video of the same channel gives 0.2 to 0.3 for loose batch release (reconstructed from auto-captions). Prove with coupon C23."
+    },
+    "production.raft.thickness": {
+      "value": 1,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=4LTkVb6rP84 and https://www.youtube.com/watch?v=ZpmiK0aY9VM",
+      "note": "PRACTITIONER: thickness of a raft modeled in CAD (solid; a thicker raft resists warp better). Round its outline or make it a circle."
+    },
+    "production.brim.thickness": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=4GxZXxNraY0 and https://www.youtube.com/watch?v=MCcFMDv_4eo",
+      "note": "PRACTITIONER: a brim or mouse ear modeled in CAD is one first layer thick, at most 0.3; much thicker (about 1 mm) and a print service treats it as part of the part. Agrees with the 1-layer mouse ears of FDM-BED-7. Not the breakaway fin foot of FDM-SUP-5, which is thicker."
+    },
+    "production.brim.break.chamfer": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=4GxZXxNraY0 and https://www.youtube.com/watch?v=3AZWuVRUh2c",
+      "note": "PRACTITIONER: 45 deg chamfer on the part's bottom edge where a modeled brim joins, so the brim attaches inboard of the outer surface, guides the trimming blade and leaves no lip. Equal to chamfer.bed.edge at the house machine."
+    },
+    "support.designed.gap": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=vnn4XeKQobs and https://www.youtube.com/watch?v=m3Cxw-j19bU",
+      "note": "PRACTITIONER, 0.4 mm nozzle: single gap between a support modeled in CAD and the part where the two are not joined by tines (a fin beside the part, a cup under a sphere). The same channel also uses 0.3 (https://www.youtube.com/watch?v=SWOnmWCi6bY) and 0.5 to 1 for a fin parallel to a tilted part (https://www.youtube.com/watch?v=8NKVNwVaZU0); 0.1 fuses. Sized for one nozzle: do not scale. Prove with coupon C22."
+    },
+    "support.designed.tine.height": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=3AZWuVRUh2c and https://www.youtube.com/watch?v=3VUQd_Tl5x0",
+      "note": "PRACTITIONER, 0.4 mm nozzle: thickness (Z) of the flat tines or sprues that tie a designed support fin to the part. Tines lie flat in the layer plane so each prints as one continuous extrusion through tine and part. Fixed value for a 0.4 mm nozzle; do not scale."
+    },
+    "support.designed.tine.width": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=vnn4XeKQobs, https://www.youtube.com/watch?v=3VUQd_Tl5x0 and https://www.youtube.com/watch?v=3AZWuVRUh2c",
+      "note": "PRACTITIONER, 0.4 mm nozzle: width of a flat tine, 0.5 to 1 mm (FDM-SUP-5). 0.5 leaves the smallest mark; 1 mm tines left visible nubs in one test but hold a flexible fin better. Fixed value; do not scale."
+    },
+    "support.designed.sprue.diameter": {
+      "value": 1,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=YL5lYEXbLDo, https://www.youtube.com/watch?v=3Acks3Wzjjo and https://www.youtube.com/watch?v=6DkCCOc5O1Y",
+      "note": "PRACTITIONER, 0.4 mm nozzle: diameter of a round sprue, thumbtack stem or support-comb finger (about two lines with a little room), horizontal where it reaches into the part. The same 1 mm is used for raft struts and corner pins (https://www.youtube.com/watch?v=7KVh19WpOcc). Sized for one nozzle: scaled down the slicer stops printing it."
+    },
+    "support.designed.point": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=B6r8m93MNGQ",
+      "note": "PRACTITIONER, one video: contact width at the tip of a pointed support tower under an undercut; the towers snap off or fall off when tumbled. Prove with coupon C22."
+    },
+    "edge.blunt.min": {
+      "formula": "line.width",
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=oz51t5p9gXo (number reconstructed from auto-captions) and https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135 (one line width is the thinnest printable wall)",
+      "note": "PRACTITIONER: end every modeled knife edge, blade or tip in a flat at least this wide; a true point makes the slicer thin the flow and the tip flakes, or overheats because its layers have no time to cool. The spoken value (0.2 to 0.4 mm, decimals lost in the auto-captions) is read as one line width, consistent with FDM-WALL-1; check it against the video or a coupon."
+    },
+    "landing.edge.width": {
+      "value": 2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=vnn4XeKQobs and https://www.youtube.com/watch?v=ip70-Tw6tBE",
+      "note": "PRACTITIONER, cautious option: width of the flat chamfer a part stands on when printed on an edge (a failed print without it is shown). The older video behind FDM-SUP-6 gives about 1 mm, which stays the minimum; use 2 mm for production runs, tall parts and moving-bed printers."
+    },
+    "landing.apex.width": {
+      "value": 6,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=reIXSlL6mKA",
+      "note": "PRACTITIONER, one video (spoken as 1/4 in): width of the flat strip cropped off the apex of a peaked part printed upside down so it can stand. Cautious against FDM-SUP-6 (about 1 mm); size it to the part's height and center of gravity and prove with a slice."
+    },
+    "text.sidewall.emboss.max": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=upf9ixYtDG4, https://www.youtube.com/watch?v=TH82TSjI67I and https://www.youtube.com/watch?v=aWz1mz4hhu8",
+      "note": "PRACTITIONER, cautious, adopted on vertical faces: raised text on a vertical wall at most 0.5 mm proud; 1 mm sagged at the letter bottoms. Caps text.emboss.height (0.6) on vertical faces only; Hydra's 0.9 (FDM-TXT-6) is the outer limit. Prove with coupon C26."
+    },
+    "text.sidewall.engrave.max": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=upf9ixYtDG4 and https://www.youtube.com/watch?v=TH82TSjI67I",
+      "note": "PRACTITIONER, cautious, adopted on vertical faces: engraved text on a vertical wall about 0.5 mm deep and no deeper (0.25 to 0.5 in one video; deeper made defects). Caps text.engrave.depth (0.8) on vertical faces only; top faces keep 0.8. One video of the same channel allows up to 1 mm (https://www.youtube.com/watch?v=aWz1mz4hhu8). Prove with coupon C26."
+    },
+    "wall.min.cautious": {
+      "value": 1,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=1n_R8shlGcs and https://www.youtube.com/watch?v=qpo4WsEeYJo; agrees with https://simplemachining.com/blogs/dfm-for-3d-printing-a-practical-design-guide (1.0 to 1.2)",
+      "note": "PRACTITIONER, cautious option for production runs at a 0.4 mm nozzle: every wall and standalone feature at least 1.0 mm in XY (two lines plus side squash). wall.structural (0.9) stays the floor for a single tuned printer. Fixed value; does not recompute with the nozzle."
+    },
+    "warp.relief.depth": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=iPZoDltS30A",
+      "note": "PRACTITIONER, one video, wording partly garbled in the auto-captions: depth of shallow relief slits cut up into the underside of a large flat base in a checkerboard (the first layer stays continuous), to break long shrink paths that lift corners. Check against the video or a coupon before use."
+    },
+    "warp.relief.pitch": {
+      "value": 25,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=iPZoDltS30A",
+      "note": "PRACTITIONER, one video (spoken as 1 in): spacing of the checkerboard relief slits under a large flat base; smaller cells were called safer. No measurement; prove on the production printer and material."
+    },
+    "shrinkline.groove.depth": {
+      "value": 1,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=d61u_lKFa-U",
+      "note": "PRACTITIONER, one print per variant: depth of a groove cut around the inside of a thick floor where it meets a thin wall (an offset of the interior outline), which nearly removed the shrink line on the outside wall; thicker walls did not. Texture on the outer wall hides it too (FDM-BRG-7)."
+    },
+    "microfeature.slot.width": {
+      "value": 0.2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=Lq-SoGgKOcQ, https://www.youtube.com/watch?v=ip70-Tw6tBE and https://www.youtube.com/watch?v=OcxfQeeKn-s",
+      "note": "PRACTITIONER, 0.4 mm nozzle: width of a slot, ring of holes or slit cut into a model so the slicer fills it with fused extra walls (FDM-STR-10, FDM-STR-13); 0.1 to 0.2 works, slicers may close gaps near 0.05, and a slot wide enough to print as two separate walls makes a weak sleeve. Fixed value; does not recompute with the nozzle."
+    },
+    "microfeature.hole.offset": {
+      "value": 2,
+      "unit": "mm",
+      "status": "typical",
+      "source": "https://www.youtube.com/watch?v=3BIvSiuQVWQ and https://www.youtube.com/watch?v=ip70-Tw6tBE",
+      "note": "PRACTITIONER: distance from a screw hole's wall to a ring of small holes or a slot cut around it, so the band between prints as solid walls about this thick; start the cuts 1 to 2 mm below the top face so nothing shows, and never cut a full ring slot, which isolates a loose cylinder."
+    },
+    "fitfeature.gripfin.interference.side.example": {
+      "value": 0.5,
+      "unit": "mm",
+      "status": "unverified",
+      "source": "https://www.youtube.com/watch?v=Bd7Yyn61XWQ",
+      "note": "PRACTITIONER, one example only, not a design value: PER SIDE interference of grip fins on a shaft (a 12 mm rod in fins with an 11 mm inner diameter, 1.0 diametral). Large; prove with coupon C24 before using anything near it. The slot behind the fins stays fitfeature.compliant.gap.min to .max."
     }
   }
 }

@@ -97,7 +97,7 @@ PLA +0.3 percent, PETG +0.4, ASA +0.6, PC +0.7, ABS +0.8, nylon +1.5, PP +2
 | PCTG | PETG rules; choose it for impact-loaded or clear parts. |
 | ABS | Round all footprint corners generously; brim or mouse ears; avoid long thin flat plates; keep walls under 6 loops and infill under 50 percent (Bambu warping advice, https://wiki.bambulab.com/en/filament/abs_asa_pc). Scale about +0.8 percent. Clearance +0.1 per side. Z at 0.5 unless the printer has an actively heated chamber. |
 | ASA | As ABS, plus: Z only 0.3 on an open printer, so reorient or thicken anything loaded across layers. Outdoors and UV: the material of choice. |
-| TPU 95A | Wall count and infill set softness; avoid bridges over about 20 mm and fine detail; dry it. Use as the flexing half of a two-material part. Not in the AMS (except "TPU for AMS"). |
+| TPU 95A | Wall count and infill set softness (by more than an order of magnitude in compression, section 9); avoid bridges over about 20 mm and fine detail; dry it. Use as the flexing half of a two-material part. Not in the AMS (except "TPU for AMS"). |
 | PA6-CF, PAHT-CF | Design to wet properties (PA6-CF stiffness to about a third and strength to about 56 percent of dry in humid air, MEASURED). Anneal parts under sustained load; through-bolts and metal washers; re-torque after conditioning. Ream holes after conditioning. Not for flexing. |
 | Unfilled nylon, PP | The FDM materials for living hinges and repeated snaps. Hinge 0.4 to 0.6 mm, hinge line a continuous strand in the layer plane. Both are hard to print (warp, adhesion, moisture). |
 | PC | Best creep resistance: the choice for clamped joints and inserts under sustained load when warm; in a PC blend self-tapping inserts held much more than heat-set inserts (MEASURED, https://www.youtube.com/watch?v=lYXTiJo_FQQ). Generous footprint radii, brim (Prusament PC Blend: 4 mm brim over 5 cm), avoid thick solid sections, low fan; stress-relief anneal soon after printing. |
@@ -211,3 +211,110 @@ always wins.
 
 Never drop a specified feature to suit a material; change the material or the
 process instead, and say so.
+
+## 9. Practitioner notes from a production print farm
+
+From one print farm's videos (PRACTITIONER, with CLAIMED-TEST where it showed
+a test; mostly single specimens). The record, and the claims this playbook
+does not adopt, are in `docs/specs/dfm-research/10-slant-3d-videos.md`
+section 6.
+
+### 9.1 TPU 95A stiffness by infill
+
+30 mm TPU 95A cubes, rectilinear infill, compressed to the load cell's limit
+(about 5 to 6 kN), walls not stated, one cube per density (CLAIMED-TEST,
+https://www.youtube.com/watch?v=3gxsLZITN2c):
+
+| Infill | Behavior |
+| --- | --- |
+| 10% | buckles at once, plateau about 40 to 60 N; some permanent set |
+| 20% | about 150 N before the walls buckle (about 3 times 10 percent) |
+| 30% | about 400 to 600 N before collapse |
+| 50% | levels at about 2,000 N; recovers fully |
+| 100% | barely deforms at about 6,000 N; recovers fully |
+
+So one grade prints soft or stiff by its internal structure: specify the shape
+and a target hardness, then tune the pattern with sample prints
+(https://www.youtube.com/watch?v=XtU0p-bdZMo,
+https://www.youtube.com/watch?v=pZLxi9OaFLg). A TPU impact enclosure used
+about 15 to 20 percent infill in the base and more in the shell
+(https://www.youtube.com/watch?v=3WvN8uVnSpU). TPU prints flat and cannot be
+ejected automatically, so its removal is manual and costs more (same video).
+
+### 9.2 PETG: overhangs against layer bonding
+
+PETG needs the part-cooling fan to print overhangs, and the fan weakens its
+bond to the next layer, so a fan-heavy PETG part turns brittle: design PETG
+parts with fewer overhangs than PLA parts. PETG also strings and blobs, is
+harder to eject, and its gloss varies with color, so agree the color and grade
+where appearance must match (https://www.youtube.com/watch?v=vE0806yUq7U).
+
+### 9.3 Pigment and color
+
+- **Light colors cost more in production.** White, yellow and light blue show
+  burnt residue that drops from the nozzle and show every defect and
+  fingerprint, so they scrap more; dark colors hide it
+  (https://www.youtube.com/watch?v=NaQ_Sa1BaqU,
+  https://www.youtube.com/watch?v=scv4am8kbqs,
+  https://www.youtube.com/watch?v=iiCsQIN_PyQ). Dark filament also gives text
+  more contrast (https://www.youtube.com/watch?v=upf9ixYtDG4).
+- **White and gray (titanium dioxide) flow like paste**, need tuned
+  retraction and prime, and skip at hole starts otherwise; the pigment is
+  abrasive and wears a brass nozzle over a production run so white parts get
+  rougher; carbon black is much finer and prints cleaner
+  (https://www.youtube.com/watch?v=22p4ThOfEO0,
+  https://www.youtube.com/watch?v=ZgrlGfftm0k,
+  https://www.youtube.com/watch?v=m20UPm0TOto). One green dye wore a nozzle
+  wide too (https://www.youtube.com/watch?v=ZgrlGfftm0k).
+- **Color changes fit.** Colorant changes flow and thermal expansion, so
+  settings or a fit tuned on one color can fail on another; the farm built one
+  profile robust across colors after about 100 iterations
+  (https://www.youtube.com/watch?v=PbGnxQifEq0). A color change alone flipped
+  a marginal thin overhang (https://www.youtube.com/watch?v=EoIlALcMJB8).
+  Prove tight fits per color ([test coupons](test-coupons.md) section 4).
+- **Lots vary.** Spool-to-spool color varies within one product and color;
+  for color-matched production use suppliers that check color with a
+  colorimeter, or control lots (https://www.youtube.com/watch?v=DiupjIdI3KQ).
+
+### 9.4 Filled filaments and nozzle wear
+
+Carbon-fiber filament wears a brass or plain steel nozzle out in about 500 g;
+use hardened steel or a gem-tipped nozzle
+(https://www.youtube.com/watch?v=0rdIIvhLghw). Fine splines and small teeth in
+carbon-fiber-filled prints are brittle and knock off
+(https://www.youtube.com/watch?v=kQ8FkVi-Kes). Both agree with section 3's
+PLA-CF row (stiffer, not stronger).
+
+### 9.5 Other practitioner material notes
+
+- Compression, one sample each: PLA strongest, PETG and ABS close, PA6 nylon
+  far lower (moisture state not stated), TPU lowest but recovers
+  ([FDM rules](fdm-rules.md) section 9.1); for blocky compressive parts PLA,
+  if heat allows (https://www.youtube.com/watch?v=5CFVcPYFEiE).
+- Impact, qualitative: PLA shattered, PETG and ABS broke into strandy shards
+  and held together longer, TPU held together best
+  (https://www.youtube.com/watch?v=rYjZvSz2O_M); ABS or nylon for striking
+  faces, with metal on a wear face (https://www.youtube.com/watch?v=qDcskdl16UM).
+  Consistent with section 7 (leave PLA for impact).
+- UV: PLA fades fast; ABS and PETG are fairly resistant; ASA, TPU and some
+  nylons are UV-rated (https://www.youtube.com/watch?v=nF5k_tmQ7k0). ASA stays
+  this playbook's outdoor choice; see the claims below.
+- ESD-safe and UL 94 flame-rated filaments exist for enclosures at higher cost
+  (https://www.youtube.com/watch?v=MiCRp2uV1MM,
+  https://www.youtube.com/watch?v=9ERY20MRJPo); check the rated thickness.
+- PLA grades range from a brittle low-cost grade to a tougher grade sold as
+  an ABS replacement (https://www.youtube.com/watch?v=GRlX27WgySQ; the grade
+  numbers spoken are unverified).
+
+### 9.6 Claims not adopted
+
+These practitioner claims are not adopted; the playbook's sourced position
+holds (reasons in `docs/specs/dfm-research/10-slant-3d-videos.md` section 6):
+printed parts food safe if well designed and lead from brass nozzles a
+non-issue (section 4, food-adjacent row); PETG, or PLA with a UV clear coat,
+as the default outdoor material (sections 4 and 7: ASA; PLA out for heat and
+creep); carbon-fiber nylon as strong as aluminum (section 3: chopped fiber is
+stiffer, not stronger); PETG surviving a 6 ft drop as an impact claim
+(section 5 item 4); PLA near hot liquids (section 7: leave PLA over about 45
+to 50 C); polypropylene absorbing water from the air (section 2: drying
+light).
