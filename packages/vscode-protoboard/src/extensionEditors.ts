@@ -455,6 +455,8 @@ export class ExtensionEditorProvider implements vscode.CustomTextEditorProvider,
     const provider = new ExtensionEditorProvider(host, context.extensionMode === vscode.ExtensionMode.Test);
     context.subscriptions.push(
       vscode.window.registerCustomEditorProvider(EXTENSION_EDITOR, provider, { webviewOptions: { retainContextWhenHidden: true }, supportsMultipleEditorsPerDocument: false }),
+      // the folder trusted: the extension starts (restricted.ts) in the same turn, then the tabs that waited try again
+      vscode.workspace.onDidGrantWorkspaceTrust(() => setTimeout(() => provider.retry(), 0)),
       vscode.commands.registerCommand(REOPEN_AS_TEXT, async (target?: unknown) => {
         const uri = typeof target === "string" ? vscode.Uri.parse(target, true) : target instanceof vscode.Uri ? target : provider.activeUri();
         if (!uri) return;

@@ -157,7 +157,6 @@ export function activate(context: vscode.ExtensionContext) {
     // the folder into a page with scripts, so it too waits for a trusted folder
     cad = CadEditorProvider.register(context);
     instance = new ProtoboardExtension(context);
-    extensionEditors?.retry();
   };
   if (vscode.workspace.isTrusted) begin();
   else activateRestricted(context, START_VIEWS, begin, { commands: helpCommands(), register: registerHelp });
