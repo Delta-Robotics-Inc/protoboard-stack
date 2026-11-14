@@ -61,6 +61,7 @@ import { lensTitle, moduleAtLine, modulesInFile, type SourceModule } from "./sou
 import { SettingsController, type SettingsLink } from "./settingsPage.js";
 import { StartController } from "./start.js";
 import { activateRestricted } from "./restricted.js";
+import { ExtensionEditorProvider, type ExtensionEditorsHost } from "./extensionEditors.js";
 
 let instance: ProtoboardExtension | undefined;
 
@@ -87,6 +88,8 @@ export async function openWeb(url: string): Promise<boolean> {
 }
 
 let cad: CadEditorProvider | undefined;
+/** Editors that Protoboard extensions provide (extensionEditors.ts): registered in every window, Restricted Mode too. */
+let extensionEditors: ExtensionEditorProvider | undefined;
 
 /** STEP and GLB in the CAD viewer tab (PB-906), beside the viewer like any opened file. */
 export const openCad = (file: vscode.Uri, viewColumn?: vscode.ViewColumn) => vscode.commands.executeCommand("vscode.openWith", file, CAD_VIEWER, { viewColumn, preview: true });
@@ -142,6 +145,8 @@ export function activate(context: vscode.ExtensionContext) {
   // (PB-931); what a project needs (its views gathered, the Inspector in front) starts when there is one
   // Restricted Mode (restricted.ts): nothing of Protoboard runs in a folder VS Code does not trust; its views say so,
   // and it starts here, with no reload, when the folder is trusted
+  // an extension's editor tab says why nothing runs in Restricted Mode, and opens when the folder is trusted
+  extensionEditors = ExtensionEditorProvider.register(context, () => instance?.extensionEditorsHost());
   const begin = () => {
     // the user's Protoboard folders (sign-ins, the stack) are readable by the user only, also when an earlier version
     // made them (PB-1048). Only in a trusted window: in Restricted Mode Protoboard changes nothing on the machine
@@ -152,12 +157,16 @@ export function activate(context: vscode.ExtensionContext) {
     // the folder into a page with scripts, so it too waits for a trusted folder
     cad = CadEditorProvider.register(context);
     instance = new ProtoboardExtension(context);
+    extensionEditors?.retry();
   };
   if (vscode.workspace.isTrusted) begin();
   else activateRestricted(context, START_VIEWS, begin, { commands: helpCommands(), register: registerHelp });
   // what the integration test reads; nothing else uses it
   return {
     projects: () => instance!.roots(),
+    // the tabs of extensions' editors, and a message posted to one's page (a test hook's query)
+    extensionEditors: () => extensionEditors!.snapshot(),
+    extensionEditorPost: (uri: string, message: unknown) => extensionEditors!.post(uri, message),
     about: () => aboutLine(String(context.extension.packageJSON.version)),
     checkResult: (root: string) => instance!.results.get(root),
     devEndpoint: (root: string) => instance!.sessions.get(root)?.endpoint,
@@ -879,6 +888,11 @@ class ProtoboardExtension {
     return answer;
   }
 
+  /** What the tabs of extensions' editors need (extensionEditors.ts): trust first, then the project's CLI. */
+  extensionEditorsHost(): ExtensionEditorsHost {
+    return { log: this.log, ensureTrust: (root) => this.trust.ensure(root), cli: (root) => this.trustedCli(root), env: () => this.library.cliEnv() };
+  }
+
   /** Throws when the project's code may not run, asking first when the folder was never answered. */
   private async requireTrust(root: string): Promise<void> {
     if (await this.trust.ensure(root)) return;
@@ -911,6 +925,7 @@ class ProtoboardExtension {
       now = was;
     }
     if (now && was !== true) await this.arrive(root, false);
+    if (now) extensionEditors?.retry();
     if (!now) {
       // nothing of it runs from now on: a dev server this window started for it stops
       const s = this.sessions.get(root);
