@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased
+
+- **The Atlas**: a tab at the project's top level that draws every module,
+  part and file of the project as a map, and how they connect. **Protoboard:
+  Open Atlas** opens it. Where its nodes sit is kept in
+  `.protoboard/display.json` automatically, with no Ctrl+S, and saving
+  never reloads the viewer. Open in its inspector opens a file of the
+  project in the editor that suits it. Nodes are hexagons in their kind's
+  color; the toolbar's **All links** adds the links beyond the core ones,
+  and **Appearance** sets each kind's color and shape (kept for you, never
+  in the project). **Animate** replays how the project grew: nodes arrive
+  one after another, in about 20 seconds for a few hundred, live in the
+  map's physics, and links fade in once both their ends are there.
+  Animations always play, even with Windows animation effects off, and
+  the toolbar sits centered at the bottom, as in the other views.
+- **The System Map**: a map of the Protoboard stack itself, the one this
+  extension runs: its packages, extensions, skills, operations, checks, CLI
+  commands, MCP tools, views, templates and docs, grouped by discipline,
+  with their versions and how they connect. **Protoboard: Open System Map**
+  opens it in a panel of its own; it needs no project and no sign-in, and
+  works in an empty window. A viewer tab's **System Map** tab shows the
+  same map. It is built once per session by the stack's own CLI;
+  **Rebuild** builds it again. Open in its inspector opens an item's file
+  in the stack. Where its nodes sit and how they look are kept for you,
+  never in a project.
+
 ## 0.3.0
 
 - **Get Started with Protoboard** opens after a first install: choose a

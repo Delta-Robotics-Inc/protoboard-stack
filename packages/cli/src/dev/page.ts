@@ -15,13 +15,20 @@
  *   viewer's host messages between its parent and the viewer (relay.js),
  *   and answers `openSource` with the file and line from the build's source
  *   index (`/__protoboard/source`, ./sources.ts);
+ * - the Atlas tab reads the project index from the server and keeps its
+ *   positions there (`createDevAtlasData`, ./atlas.ts), reloading after each
+ *   rebuild, and the System Map of the stack from the server
+ *   (`createDevSysmapData`, ./sysmap.ts);
  * - the views the project's extensions contribute become tabs (`views` in the
  *   state route); `?theme=` picks the theme (protoboard-dark, protoboard-light,
  *   vscode, …, or light, dark, system for Protoboard's; default: the viewer's
  *   last choice, else Protoboard dark).
  */
 
-/** Routes of the dev session, apart from the viewer handler's own. */
+import { ATLAS_ROUTES } from "./atlas.js";
+import { SYSMAP_ROUTES } from "./sysmap.js";
+
+/** Routes of the dev session, apart from the viewer handler's own (and the Atlas's, ./atlas.ts). */
 export const DEV_ROUTES = {
   page: "/",
   script: "/__protoboard/dev.js",
@@ -120,6 +127,8 @@ export function devPage(config: { name: string; token: string; session: string; 
 
 /** The page's script: mounts the viewer and connects it to the dev server. */
 export const DEV_SCRIPT = `import { createDevPartsData, mountWebViewer } from "${fromScript(DEV_ROUTES.viewerJs)}";
+import { createDevAtlasData } from "${fromScript(DEV_ROUTES.viewerJs)}";
+import { createDevSysmapData } from "${fromScript(DEV_ROUTES.viewerJs)}";
 import { createRelay } from "${fromScript(DEV_ROUTES.relay)}";
 
 const config = JSON.parse(document.getElementById("protoboard-dev").textContent);
@@ -218,6 +227,10 @@ const relay = createRelay({
 });
 
 const state = await (await fetch("${rel(DEV_ROUTES.state)}", { cache: "no-store" })).json();
+// the Atlas tab: the project index and its positions (writes carry the session token); it loads again after each rebuild
+const atlasData = createDevAtlasData({ base: here("${ATLAS_ROUTES.data.slice(1)}"), token: config.token, tokenHeader: "${TOKEN_HEADER}" });
+// the System Map of the stack this server runs from (read only: no token); a project rebuild does not change it
+const sysmapData = createDevSysmapData({ base: here("${SYSMAP_ROUTES.data.slice(1)}") });
 const themeChoice = new URLSearchParams(location.search).get("theme") ?? undefined;
 const viewer = mountWebViewer(document.getElementById("viewer"), {
   bundle: await fetchBundle(),
@@ -228,13 +241,15 @@ const viewer = mountWebViewer(document.getElementById("viewer"), {
   partStatus: state.partStatus,
   // the library and bom tabs ask the server (writes carry the session token)
   partsData: createDevPartsData({ base: here("${DEV_ROUTES.parts.slice(1)}"), token: config.token, tokenHeader: "${TOKEN_HEADER}" }),
+  atlasData,
+  sysmapData,
   diagnostics: state.diagnostics,
   layout: empty(),
   onLayoutChange: save,
   ...relay.callbacks,
 });
 relay.attach(viewer);
-window.protoboardDev = { viewer, relay, client, version: state.version, updates: 0 };
+window.protoboardDev = { viewer, relay, client, atlasData, sysmapData, version: state.version, updates: 0 };
 status(state.building ? "busy" : state.failed ? "error" : "ok", state.message);
 
 const events = new EventSource("${rel(DEV_ROUTES.events)}");
@@ -255,6 +270,8 @@ events.addEventListener("bundle", async (e) => {
     viewer.update({ bundle, diagnostics: msg.diagnostics, ...(reset ? { layout: empty() } : {}), ...(msg.partStatus ? { partStatus: msg.partStatus } : {}) });
     window.protoboardDev.version = msg.version;
     window.protoboardDev.updates++;
+    // a rebuild (a new index) or a display file changed on disk: the Atlas loads again; a diagram layout save changes neither
+    if (msg.reason !== "layout") atlasData.changed();
     status(msg.failed ? "error" : "ok", msg.message);
   } catch (err) {
     status("error", err.message);
@@ -276,6 +293,7 @@ events.onopen = async () => {
       viewer.update({ bundle: await fetchBundle(), diagnostics: now.diagnostics });
       window.protoboardDev.version = now.version;
       window.protoboardDev.updates++;
+      atlasData.changed();
     }
     status(now.building ? "busy" : now.failed ? "error" : "ok", now.message);
   } catch (err) {

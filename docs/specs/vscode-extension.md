@@ -259,6 +259,25 @@ viewer's BOM tab opens the BOM editor, a VS Code editor of its own, rather
 than drawing it in the viewer. The viewer has no Library tab (PB-1070): the
 library is the Library side bar's, with its full page and part pages.)
 
+**The Atlas tab.** The project's root has an **Atlas** tab (viewer-stack.md,
+"The Atlas view"): every module, part and file as a map. **Protoboard: Open
+Atlas** opens it as a viewer tab of its own (titled `<project> · Atlas`).
+The tab reads the project index from the dev server like the bundle; the
+hierarchy panel is hidden while it shows. Two things go through the
+extension, because the webview never holds the dev server's write token:
+
+- `atlasLayout` (positions after the map settles): the extension writes the
+  display file's `atlas` key at once (`saveAtlasLayout`). Unlike a diagram
+  layout, there is no dirty tab and no Ctrl+S, and nothing else in the file
+  changes.
+- `openFile` (the inspector's Open): a project-relative path, checked twice:
+  by the message parser (relative, forward slashes, no `..`, at most 1,024
+  characters) and by the extension (it must lie inside the project once
+  links are followed, and not be a name the index never lists, such as
+  `.env`). It then opens as Open Artifact opens a file: STEP and GLB in the
+  CAD viewer, text and data in VS Code, other types in the system's
+  application or the file manager.
+
 The viewer runs as before (`protoboard dev`), with a host message
 channel added to its embedding API (`mountViewer`):
 

@@ -188,14 +188,31 @@ export function parseLayoutRequest(body: unknown): { layout: ViewerLayout; snaps
   };
 }
 
+/** Stands in for one Atlas position while the file is written (a NUL never appears in a display file's own strings). */
+const XY_MARK = "\u0000pb-atlas-xy:";
+
 /**
- * The display file's text: two-space JSON. When the file on disk escapes
+ * The Atlas positions (`atlas.positions`, docs/specs/atlas.md) with each
+ * `[x, y]` pair replaced by a marker string, so the text has one line per
+ * node instead of four; `formatDisplay` puts the pairs back.
+ */
+function markAtlasPositions(display: DisplayFile): DisplayFile {
+  const atlas = display.atlas;
+  if (!record(atlas) || !record(atlas.positions)) return display;
+  const positions: Record<string, unknown> = {};
+  for (const [id, p] of Object.entries(atlas.positions)) positions[id] = Array.isArray(p) && p.length === 2 && finite(p[0]) && finite(p[1]) ? `${XY_MARK}${p[0]},${p[1]}` : p;
+  return { ...display, atlas: { ...atlas, positions } };
+}
+
+/**
+ * The display file's text: two-space JSON, with each Atlas position on one
+ * line (`"file:docs/render.png": [120, -48]`). When the file on disk escapes
  * non-ASCII characters (`…`, as Python's json module writes it) and
  * holds none literally, the new text escapes them too, so a layout save
  * does not rewrite lines nobody edited.
  */
 export function formatDisplay(display: DisplayFile, previous?: string): string {
-  const text = JSON.stringify(display, null, 2) + "\n";
+  const text = (JSON.stringify(markAtlasPositions(display), null, 2) + "\n").replace(/"\\u0000pb-atlas-xy:([^,"]+),([^"]+)"/g, "[$1, $2]");
   const escaped = previous !== undefined && /\\u(?:00[89a-fA-F][0-9a-fA-F]|0[1-9a-fA-F][0-9a-fA-F]{2}|[1-9a-fA-F][0-9a-fA-F]{3})/.test(previous) && !/[^\x00-\x7f]/.test(previous);
   return escaped ? text.replace(/[\u0080-￿]/g, (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, "0")}`) : text;
 }

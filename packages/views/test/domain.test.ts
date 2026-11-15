@@ -14,9 +14,9 @@ const root = def(bundle.root);
 const board = def("sample-imu-board");
 
 describe("built-in domain views", () => {
-  it("are working views now: schematic, PCB and pair, and the parts views' BOM and library", () => {
+  it("are working views now: schematic, PCB and pair, the parts views' BOM and library, the Atlas and the System Map", () => {
     const ready = BUILTIN_VIEWS.filter((v) => v.component).map((v) => v.id);
-    expect(ready).toEqual(["diagram", "3d", "schematic", "pcb", "bom", "pair", "library"]);
+    expect(ready).toEqual(["diagram", "3d", "schematic", "pcb", "bom", "pair", "library", "atlas", "sysmap"]);
   });
 
   it("offer the board drawings on the board that has them, by file name, never on a level above it", () => {

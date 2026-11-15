@@ -49,6 +49,8 @@ const DOCS = [
   "docs/reference/library-protocol.md",
   "docs/releases/stack-v0.1.md",
   "docs/releases/stack-v0.2.md",
+  "docs/releases/stack-v0.3.md",
+  "docs/specs/atlas.md",
   "docs/guides/local-registry.md",
 ];
 

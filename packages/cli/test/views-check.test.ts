@@ -63,7 +63,7 @@ describe("views check: the tabs each level gets", () => {
     const r = await viewsCheck({ cwd: project("listing", DRAWN), render: false });
     expect(r.rendered).toBe(false);
     expect(r.levels.map((l) => [l.path, l.module, l.tabs.map((t) => t.id)])).toEqual([
-      ["", "fixture-sys", ["diagram", "bom", "pair", "library"].filter((t) => t !== "pair")],
+      ["", "fixture-sys", ["diagram", "bom", "pair", "library", "atlas", "sysmap"].filter((t) => t !== "pair")],
       ["board", "fixture-board", ["diagram", "schematic", "pcb", "pair"]],
     ]);
     expect(formatViewsCheck(r)).toMatch(/not rendered: not rendered \(--no-render\)/);

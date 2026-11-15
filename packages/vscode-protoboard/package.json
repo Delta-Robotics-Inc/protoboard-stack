@@ -38,7 +38,8 @@
     "onStartupFinished",
     "workspaceContains:**/protoboard.config.ts",
     "onCustomEditor:protoboard.cadViewer",
-    "onWebviewPanel:protoboard.bomProject"
+    "onWebviewPanel:protoboard.bomProject",
+    "onWebviewPanel:protoboard.systemMap"
   ],
   "contributes": {
     "commands": [
@@ -47,6 +48,18 @@
         "title": "Open Viewer",
         "category": "Protoboard",
         "icon": "$(protoboard-logo)"
+      },
+      {
+        "command": "protoboard.openAtlas",
+        "title": "Open Atlas",
+        "category": "Protoboard",
+        "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "protoboard.openSystemMap",
+        "title": "Open System Map",
+        "category": "Protoboard",
+        "icon": "$(map)"
       },
       {
         "command": "protoboard.openModule",

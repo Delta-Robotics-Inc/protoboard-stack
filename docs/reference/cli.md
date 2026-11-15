@@ -22,7 +22,10 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `inspect [instance]` | System summary, or one instance's definition, origin, links, artifacts, diagnostics |
 | `artifacts [instance]` | Artifacts of the definitions in use (or of one instance), with the instances using them and the file each resolves to |
 | `check` | Resolve the project and run every available validator (exit 1 on errors) |
-| `build` | Write .protoboard/build/resolved.json (derived data only) |
+| `build` | Write .protoboard/build/resolved.json, the UHD bundle and the project index (atlas.json; derived data only). An index that cannot be written is reported and never changes the exit code |
+| `index census` | The project index (written by build): every asset file (CAD, models, board files, renders, photos, documents, data, firmware) and whether an artifact or an operation record links it (--kind <kind>, --status linked\|unlinked\|failed). Reads only the index: no project code runs. Refused (exit 3) when the index is missing or older than the project's files; run build again |
+| `index where <ref>` | Where a thing is: an instance path (arm_fl/motor), a definition id, a file path or a name, and every file, module and part one step from it (--kind <kind> filters) |
+| `index search <text>` | Search the index: exact ids, names and paths first, then names and paths holding every word, a kind ("renders"), then the lines of the project's text documents. Every index command pages its answer (--limit, --cursor) in a stable order |
 | `layout [level]` | The diagram's layout measured, level by level, as the viewer draws it: line crossings, overlapping cards, the longest row or column of cards (a strip), the aspect ratio and lines under cards, with what to fix. A level is an instance path ("" is the top; default: every level). --apply lays the level(s) out afresh, --tidy keeps the saved arrangement and fixes it; either writes .protoboard/display.json where the result reads better (--force: anyway). --pin <card> keeps a card where it is (repeatable; remembered in the file). --check: exit 1 when a level still has something to fix. check reports the levels of modules that need it as PB_DIAGRAM_LAYOUT (info) |
 | `views check` | The viewer's tabs for the root and every level with modules inside it (--module <instance path or module id> for one), each opened once in a headless browser: fails (exit 1) on a tab that throws, shows an empty state or draws nothing. The Library tab is skipped, with the reason, while no library can be used from here (signed out, sign-in refused, service out of reach). --out-dir <folder> keeps a PNG of every tab; --no-render only lists the tabs |
 | `dev` | Serve the UHD viewer on the project: rebuilds on every source change, saves diagram layout edits to .protoboard/display.json (--port, --host, --open, --no-watch) |
@@ -54,6 +57,7 @@ The [quickstart](../quickstart.md) walks through these commands in order;
 | `stack unpack [<extension folder \| .vsix>]` | Unpack the stack a Protoboard VS Code extension carries into ~/.protoboard/stack, as the extension does when it starts (its archives checked against their digests), then link the project to it when it fits. With no path: the installed extension of this CLI's version, else the newest installed (`protoboard stack` lists them). A copy of the same version from another build is replaced only with --replace |
 | `setup` | Set up the rest of this machine, with no sign-in: install the Protoboard extension (deltarobotics.vscode-protoboard) into VS Code, Cursor, Windsurf and VSCodium (those whose command is found; it asks about each, --yes does not), from the Marketplace or Open VSX through each editor's own command, or from --vsix <file> offline; then offer to put the protoboard command on your PATH and to connect your agents (agents setup). Never runs by itself |
 | `stack install` | Install the stack version package.json pins into ~/.protoboard/stack/<version> from a registry (needs npm; --registry <url>), then link the project to it; --from-vsix <extension folder \| .vsix> is `stack unpack` |
+| `map` | The System Map of the stack this CLI runs from: its packages, extensions, skills, operations, checks, external tools, CLI commands, MCP tools, views, templates and docs, by discipline, with versions, what changed in which release and how they link. Needs no project and writes nothing (--out <file> writes the map there). --island <id>, --type <type> or --item <id> (one item with all its links) asks one question; --root <dir> maps another stack; --check: exit 1 on problems |
 | `tools` | Tool runtimes the extensions declare, and whether they are installed here |
 | `tools install <cad\|circuit\|all>` | Create the project's runtime in .protoboard/tools/ (a Python venv or Node packages, exact pins from the extensions) and record it; probes, checks and operations then use it without environment setup (--python <interpreter> makes the venv; --clean starts over) |
 | `skills` | List installed skills |
@@ -90,6 +94,15 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 | `--no-browser` | login: do not open a browser, only print the link |
 | `--severity <level>` | check: lowest severity to print (error\|warning\|info, default warning) |
 | `--module <ref>` | run <capability>:<op>: instance path (board) or module id (watch-mainboard) |
+| `--kind <kind>` | index census, index where: only files of this kind (concept, render, photo, image, model, cad, board, doc, data, firmware, other; where also module and part) |
+| `--status <status>` | index census: only linked, unlinked or failed files |
+| `--limit <n>` | parts search: parts per page. index: items per page (default 20, at most 200) |
+| `--cursor <c>` | parts search, index: the next page, from the previous page's nextCursor |
+| `--island <id>` | map: the items of one discipline (project, research, parts, system, pcb, cad, firmware, docs, mfg, simulation, packaging, protocols, playbooks) |
+| `--type <type>` | map: the items of one type (package, extension, skill, capability, operation, check, tool, cli-command, mcp-tool, view, template, example, doc, …) |
+| `--item <id>` | map: one item (cli:map, skill:build-a-project) with its links, by kind |
+| `--root <dir>` | map: the stack to map (default: the one this CLI runs from) |
+| `--out <file>` | map: also write the map file there (default: nothing is written) |
 | `--port <n>` | dev: first port to try (default 5180; taken ports are skipped unless given) |
 | `--host <addr>` | dev: interface to bind (default 127.0.0.1) |
 | `--open` | dev: open the viewer in the default browser |
@@ -100,7 +113,7 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
 | `--clean` | tools install: delete the runtime's folder first |
 | `--version <v>` | release: the release version (default: the root module's version) |
 | `--allow-dirty` | release: release from uncommitted changes (recorded in the manifest) |
-| `--check` | release: run the preconditions only; write nothing. libraries: ask each library for its discovery document. layout: exit 1 when a level has a warning |
+| `--check` | release: run the preconditions only; write nothing. libraries: ask each library for its discovery document. layout: exit 1 when a level has a warning. map: exit 1 when the map lists problems |
 | `--apply` | layout: lay the level(s) out afresh and write the display file where it reads better |
 | `--tidy` | layout: start from the saved arrangement, fix what reads badly, and write it |
 | `--pin <card>` | layout: a card (node id on that level) that keeps its place (repeatable) |
@@ -174,7 +187,19 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     artifacts [instance]    Artifacts of the definitions in use (or of one instance), with the instances
                             using them and the file each resolves to
     check                   Resolve the project and run every available validator (exit 1 on errors)
-    build                   Write .protoboard/build/resolved.json (derived data only)
+    build                   Write .protoboard/build/resolved.json, the UHD bundle and the project index
+                            (atlas.json; derived data only). An index that cannot be written is reported and
+                            never changes the exit code
+    index census            The project index (written by build): every asset file (CAD, models, board files,
+                            renders, photos, documents, data, firmware) and whether an artifact or an
+                            operation record links it (--kind <kind>, --status linked|unlinked|failed).
+                            Reads only the index: no project code runs. Refused (exit 3) when the index is
+                            missing or older than the project's files; run build again
+    index where <ref>       Where a thing is: an instance path (arm_fl/motor), a definition id, a file path or a
+                            name, and every file, module and part one step from it (--kind <kind> filters)
+    index search <text>     Search the index: exact ids, names and paths first, then names and paths holding
+                            every word, a kind ("renders"), then the lines of the project's text documents.
+                            Every index command pages its answer (--limit, --cursor) in a stable order
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -281,6 +306,12 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     stack install           Install the stack version package.json pins into ~/.protoboard/stack/<version> from a
                             registry (needs npm; --registry <url>), then link the project to it;
                             --from-vsix <extension folder | .vsix> is `stack unpack`
+    map                     The System Map of the stack this CLI runs from: its packages, extensions, skills,
+                            operations, checks, external tools, CLI commands, MCP tools, views, templates and
+                            docs, by discipline, with versions, what changed in which release and how they
+                            link. Needs no project and writes nothing (--out <file> writes the map there).
+                            --island <id>, --type <type> or --item <id> (one item with all its links) asks
+                            one question; --root <dir> maps another stack; --check: exit 1 on problems
     tools                   Tool runtimes the extensions declare, and whether they are installed here
     tools install <cad|circuit|all>
                             Create the project's runtime in .protoboard/tools/ (a Python venv or Node
@@ -349,6 +380,18 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     --no-browser            login: do not open a browser, only print the link
     --severity <level>      check: lowest severity to print (error|warning|info, default warning)
     --module <ref>          run <capability>:<op>: instance path (board) or module id (watch-mainboard)
+    --kind <kind>           index census, index where: only files of this kind (concept, render, photo, image,
+                            model, cad, board, doc, data, firmware, other; where also module and part)
+    --status <status>       index census: only linked, unlinked or failed files
+    --limit <n>             parts search: parts per page. index: items per page (default 20, at most 200)
+    --cursor <c>            parts search, index: the next page, from the previous page's nextCursor
+    --island <id>           map: the items of one discipline (project, research, parts, system, pcb, cad,
+                            firmware, docs, mfg, simulation, packaging, protocols, playbooks)
+    --type <type>           map: the items of one type (package, extension, skill, capability, operation,
+                            check, tool, cli-command, mcp-tool, view, template, example, doc, …)
+    --item <id>             map: one item (cli:map, skill:build-a-project) with its links, by kind
+    --root <dir>            map: the stack to map (default: the one this CLI runs from)
+    --out <file>            map: also write the map file there (default: nothing is written)
     --port <n>              dev: first port to try (default 5180; taken ports are skipped unless given)
     --host <addr>           dev: interface to bind (default 127.0.0.1)
     --open                  dev: open the viewer in the default browser
@@ -365,7 +408,8 @@ Options prefixed with a command name (`dev:`, `evals:`) apply to that command on
     --version <v>           release: the release version (default: the root module's version)
     --allow-dirty           release: release from uncommitted changes (recorded in the manifest)
     --check                 release: run the preconditions only; write nothing. libraries: ask each
-                            library for its discovery document. layout: exit 1 when a level has a warning
+                            library for its discovery document. layout: exit 1 when a level has a warning.
+                            map: exit 1 when the map lists problems
     --apply                 layout: lay the level(s) out afresh and write the display file where it reads better
     --tidy                  layout: start from the saved arrangement, fix what reads badly, and write it
     --pin <card>            layout: a card (node id on that level) that keeps its place (repeatable)

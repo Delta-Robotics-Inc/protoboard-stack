@@ -41,7 +41,7 @@ quadcopter/
                                  # committed project, not committed itself (`releases/` is read too)
   .protoboard/
     display.json                 # viewer display hints and the saved diagram layout; commit
-    build/                       # derived build output (resolved.json, uhd-bundle.json); ignore
+    build/                       # derived build output (resolved.json, uhd-bundle.json, atlas.json); ignore
     tools/                       # tool runtimes from `protoboard tools install` and tools.json; ignore
     cache/                       # derived data; ignore
     local/                       # machine configuration and transient state; ignore

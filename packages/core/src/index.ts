@@ -217,6 +217,49 @@ export {
 } from "./python.js";
 export { BROWSER_PURPOSE, browserPaths, findBrowser, noBrowserMessage, type BrowserLookup, type FoundBrowser } from "./browser.js";
 export { uhdBundle, writeBundle } from "./bundle.js";
+// Atlas, the project index (docs/specs/atlas.md)
+export { buildAtlasIndex, writeAtlasIndex, enumerateProject, writeFileAtomic, nodeAtlasFs, type AtlasBuildOptions, type AtlasWriteResult, type AtlasFs, type AtlasStat, type Enumerated, type AtlasGitRunner } from "./atlas/build.js";
+export { readAtlasIndex, atlasFreshness, type AtlasFreshness, type AtlasRead } from "./atlas/fresh.js";
+export * from "./atlas/model.js";
+// The System Map, what the stack itself can do (docs/specs/system-map.md); its model is browser-safe ("./sysmap")
+export { buildSystemMap, writeSystemMap, serializeSystemMap, collectStack, nodeSysmapFs, type SysmapBuildOptions, type SysmapFs, type Collected as SysmapCollected } from "./sysmap/build.js";
+export { readSystemMap, sysmapFreshness, type SysmapFreshness, type SysmapRead } from "./sysmap/fresh.js";
+export { readHistory, historyFingerprint, type StackHistory, type SysmapGitRunner } from "./sysmap/history.js";
+// every name of the model but byCodeUnit, which the Atlas model above exports already (the same function)
+export {
+  SYSMAP_SCHEMA,
+  SYSMAP_FILE,
+  ITEM_TYPE_ORDER,
+  ITEM_TYPES,
+  LINK_KINDS,
+  DISCIPLINES,
+  DISCIPLINE_ORDER,
+  STAGE_DISCIPLINE_RULES,
+  DISCIPLINE_RULES,
+  stageDiscipline,
+  sysmapGraph,
+  itemId,
+  majorityDiscipline,
+  type ItemType,
+  type VersionSource,
+  type DisciplineSource,
+  type ItemStatus,
+  type ItemChange,
+  type SysmapItem,
+  type LinkKind,
+  type SysmapLink,
+  type DisciplineId,
+  type DisciplineDef,
+  type SysmapIsland,
+  type SysmapStage,
+  type SysmapRelease,
+  type ProblemReason,
+  type SysmapProblem,
+  type SysmapCounts,
+  type SysmapHistory,
+  type SystemMap,
+  type SysmapGraph,
+} from "./sysmap/model.js";
 export {
   asDeclared,
   attachDeclaredArtifacts,

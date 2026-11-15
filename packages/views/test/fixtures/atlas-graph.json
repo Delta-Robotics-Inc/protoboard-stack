@@ -1,0 +1,3082 @@
+{
+ "project": {
+  "name": "quadcopter-fixture",
+  "root": null
+ },
+ "counts": {
+  "nodes": 127,
+  "edges": 165,
+  "byKind": {
+   "part": 18,
+   "module": 14,
+   "board": 11,
+   "cad": 15,
+   "doc": 11,
+   "concept": 14,
+   "photo": 9,
+   "render": 14,
+   "model": 21
+  },
+  "census": {
+   "total": 95,
+   "linked": 80,
+   "unlinked": 15,
+   "failed": 0,
+   "excluded": 0
+  }
+ },
+ "nodes": [
+  {
+   "id": "def:2306-motor",
+   "kind": "part",
+   "label": "2306 motor",
+   "path": "parts/catalog/2306-motor/part.uhd.ts",
+   "folder": "parts/catalog/2306-motor",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "2306-motor",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "2306-motor"
+    ]
+   }
+  },
+  {
+   "id": "def:5045-prop",
+   "kind": "part",
+   "label": "5045 prop",
+   "path": "parts/catalog/5045-prop/part.uhd.ts",
+   "folder": "parts/catalog/5045-prop",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "5045-prop",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "5045-prop"
+    ]
+   }
+  },
+  {
+   "id": "def:6s-1300-pack",
+   "kind": "part",
+   "label": "6S 1300 pack",
+   "path": "parts/catalog/6s-1300-pack/part.uhd.ts",
+   "folder": "parts/catalog/6s-1300-pack",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "6s-1300-pack",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "6s-1300-pack"
+    ]
+   }
+  },
+  {
+   "id": "def:arm",
+   "kind": "module",
+   "label": "arm",
+   "path": "src/modules/arm.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 10,
+   "definition": {
+    "id": "arm",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "arm"
+    ]
+   }
+  },
+  {
+   "id": "def:battery",
+   "kind": "module",
+   "label": "battery",
+   "path": "src/modules/battery.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 9,
+   "definition": {
+    "id": "battery",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "battery"
+    ]
+   }
+  },
+  {
+   "id": "def:battery-strap",
+   "kind": "part",
+   "label": "battery strap",
+   "path": "parts/catalog/battery-strap/part.uhd.ts",
+   "folder": "parts/catalog/battery-strap",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "battery-strap",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "battery-strap"
+    ]
+   }
+  },
+  {
+   "id": "def:bottom-plate",
+   "kind": "module",
+   "label": "bottom-plate",
+   "path": "src/modules/bottom-plate.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 7,
+   "definition": {
+    "id": "bottom-plate",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "bottom-plate"
+    ]
+   }
+  },
+  {
+   "id": "def:buzzer",
+   "kind": "part",
+   "label": "buzzer",
+   "path": "parts/catalog/buzzer/part.uhd.ts",
+   "folder": "parts/catalog/buzzer",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "buzzer",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "buzzer"
+    ]
+   }
+  },
+  {
+   "id": "def:camera",
+   "kind": "module",
+   "label": "camera",
+   "path": "src/modules/camera.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 7,
+   "definition": {
+    "id": "camera",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "camera"
+    ]
+   }
+  },
+  {
+   "id": "def:capacitor-1000uf",
+   "kind": "part",
+   "label": "capacitor 1000uF",
+   "path": "parts/catalog/capacitor-1000uf/part.uhd.ts",
+   "folder": "parts/catalog/capacitor-1000uf",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "capacitor-1000uf",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "capacitor-1000uf"
+    ]
+   }
+  },
+  {
+   "id": "def:elrs-receiver",
+   "kind": "part",
+   "label": "ELRS receiver",
+   "path": "parts/catalog/elrs-receiver/part.uhd.ts",
+   "folder": "parts/catalog/elrs-receiver",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "elrs-receiver",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "elrs-receiver"
+    ]
+   }
+  },
+  {
+   "id": "def:esc-4in1",
+   "kind": "module",
+   "label": "esc-4in1",
+   "path": "src/modules/esc-4in1.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 15,
+   "definition": {
+    "id": "esc-4in1",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "def:flight-controller",
+   "kind": "module",
+   "label": "flight-controller",
+   "path": "src/modules/flight-controller.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 15,
+   "definition": {
+    "id": "flight-controller",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "def:fpv-camera",
+   "kind": "part",
+   "label": "FPV camera",
+   "path": "parts/catalog/fpv-camera/part.uhd.ts",
+   "folder": "parts/catalog/fpv-camera",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "fpv-camera",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "fpv-camera"
+    ]
+   }
+  },
+  {
+   "id": "def:frame",
+   "kind": "module",
+   "label": "frame",
+   "path": "src/modules/frame.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 19,
+   "definition": {
+    "id": "frame",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "def:gps",
+   "kind": "module",
+   "label": "gps",
+   "path": "src/modules/gps.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 10,
+   "definition": {
+    "id": "gps",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "def:gps-puck",
+   "kind": "part",
+   "label": "GPS puck",
+   "path": "parts/catalog/gps-puck/part.uhd.ts",
+   "folder": "parts/catalog/gps-puck",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "gps-puck",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "gps-puck"
+    ]
+   }
+  },
+  {
+   "id": "def:grommet-m3",
+   "kind": "part",
+   "label": "grommet M3",
+   "path": "parts/catalog/grommet-m3/part.uhd.ts",
+   "folder": "parts/catalog/grommet-m3",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "grommet-m3",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "grommet-m3"
+    ]
+   }
+  },
+  {
+   "id": "def:heat-shrink",
+   "kind": "part",
+   "label": "heat shrink",
+   "path": "parts/catalog/heat-shrink/part.uhd.ts",
+   "folder": "parts/catalog/heat-shrink",
+   "status": "ok",
+   "degree": 2,
+   "definition": {
+    "id": "heat-shrink",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "heat-shrink"
+    ]
+   }
+  },
+  {
+   "id": "def:m2-nyloc",
+   "kind": "part",
+   "label": "M2 nyloc",
+   "path": "parts/catalog/m2-nyloc/part.uhd.ts",
+   "folder": "parts/catalog/m2-nyloc",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "m2-nyloc",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "m2-nyloc"
+    ]
+   }
+  },
+  {
+   "id": "def:m3-standoff",
+   "kind": "part",
+   "label": "M3 standoff",
+   "path": "parts/catalog/m3-standoff/part.uhd.ts",
+   "folder": "parts/catalog/m3-standoff",
+   "status": "ok",
+   "degree": 2,
+   "definition": {
+    "id": "m3-standoff",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "m3-standoff"
+    ]
+   }
+  },
+  {
+   "id": "def:m3x8-screw",
+   "kind": "part",
+   "label": "M3x8 screw",
+   "path": "parts/catalog/m3x8-screw/part.uhd.ts",
+   "folder": "parts/catalog/m3x8-screw",
+   "status": "ok",
+   "degree": 3,
+   "definition": {
+    "id": "m3x8-screw",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "m3x8-screw"
+    ]
+   }
+  },
+  {
+   "id": "def:motor",
+   "kind": "module",
+   "label": "motor",
+   "path": "src/modules/motor.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 10,
+   "definition": {
+    "id": "motor",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "motor"
+    ]
+   }
+  },
+  {
+   "id": "def:propeller",
+   "kind": "module",
+   "label": "propeller",
+   "path": "src/modules/propeller.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 7,
+   "definition": {
+    "id": "propeller",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "propeller"
+    ]
+   }
+  },
+  {
+   "id": "def:quadcopter-5in",
+   "kind": "module",
+   "label": "quadcopter-5in",
+   "path": "src/quadcopter.uhd.ts",
+   "folder": "src",
+   "status": "ok",
+   "degree": 17,
+   "definition": {
+    "id": "quadcopter-5in",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     ""
+    ],
+    "root": true
+   }
+  },
+  {
+   "id": "def:receiver",
+   "kind": "module",
+   "label": "receiver",
+   "path": "src/modules/receiver.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 8,
+   "definition": {
+    "id": "receiver",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "receiver"
+    ]
+   }
+  },
+  {
+   "id": "def:silicone-wire-14awg",
+   "kind": "part",
+   "label": "silicone wire 14AWG",
+   "path": "parts/catalog/silicone-wire-14awg/part.uhd.ts",
+   "folder": "parts/catalog/silicone-wire-14awg",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "silicone-wire-14awg",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "silicone-wire-14awg"
+    ]
+   }
+  },
+  {
+   "id": "def:top-plate",
+   "kind": "module",
+   "label": "top-plate",
+   "path": "src/modules/top-plate.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 6,
+   "definition": {
+    "id": "top-plate",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "top-plate"
+    ]
+   }
+  },
+  {
+   "id": "def:tpu-arm-guard",
+   "kind": "part",
+   "label": "TPU arm guard",
+   "path": "parts/catalog/tpu-arm-guard/part.uhd.ts",
+   "folder": "parts/catalog/tpu-arm-guard",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "tpu-arm-guard",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "tpu-arm-guard"
+    ]
+   }
+  },
+  {
+   "id": "def:vtx",
+   "kind": "module",
+   "label": "vtx",
+   "path": "src/modules/vtx.uhd.ts",
+   "folder": "src/modules",
+   "status": "ok",
+   "degree": 12,
+   "definition": {
+    "id": "vtx",
+    "tier": "project-specific",
+    "moduleKind": "module",
+    "instances": [
+     "vtx"
+    ]
+   }
+  },
+  {
+   "id": "def:vtx-antenna",
+   "kind": "part",
+   "label": "VTX antenna",
+   "path": "parts/catalog/vtx-antenna/part.uhd.ts",
+   "folder": "parts/catalog/vtx-antenna",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "vtx-antenna",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "vtx-antenna"
+    ]
+   }
+  },
+  {
+   "id": "def:xt60-pair",
+   "kind": "part",
+   "label": "XT60 pair",
+   "path": "parts/catalog/xt60-pair/part.uhd.ts",
+   "folder": "parts/catalog/xt60-pair",
+   "status": "ok",
+   "degree": 1,
+   "definition": {
+    "id": "xt60-pair",
+    "tier": "catalog",
+    "moduleKind": "module",
+    "instances": [
+     "xt60-pair"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/esc-4in1.kicad_pcb",
+   "kind": "board",
+   "label": "esc-4in1.kicad_pcb",
+   "path": "boards/esc-4in1.kicad_pcb",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_pcb",
+    "size": 88054,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/esc-4in1.kicad_sch",
+   "kind": "board",
+   "label": "esc-4in1.kicad_sch",
+   "path": "boards/esc-4in1.kicad_sch",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_sch",
+    "size": 5244,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/flight-controller.kicad_pcb",
+   "kind": "board",
+   "label": "flight-controller.kicad_pcb",
+   "path": "boards/flight-controller.kicad_pcb",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_pcb",
+    "size": 12282,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/flight-controller.kicad_sch",
+   "kind": "board",
+   "label": "flight-controller.kicad_sch",
+   "path": "boards/flight-controller.kicad_sch",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_sch",
+    "size": 52854,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/gps.kicad_pcb",
+   "kind": "board",
+   "label": "gps.kicad_pcb",
+   "path": "boards/gps.kicad_pcb",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_pcb",
+    "size": 7129,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/gps.kicad_sch",
+   "kind": "board",
+   "label": "gps.kicad_sch",
+   "path": "boards/gps.kicad_sch",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_sch",
+    "size": 63832,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/receiver.kicad_pcb",
+   "kind": "board",
+   "label": "receiver.kicad_pcb",
+   "path": "boards/receiver.kicad_pcb",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_pcb",
+    "size": 52370,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "receiver"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/receiver.kicad_sch",
+   "kind": "board",
+   "label": "receiver.kicad_sch",
+   "path": "boards/receiver.kicad_sch",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_sch",
+    "size": 38143,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "receiver"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/spare-board.kicad_pcb",
+   "kind": "board",
+   "label": "spare-board.kicad_pcb",
+   "path": "boards/spare-board.kicad_pcb",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "kicad_pcb",
+    "size": 33415,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:boards/vtx.kicad_pcb",
+   "kind": "board",
+   "label": "vtx.kicad_pcb",
+   "path": "boards/vtx.kicad_pcb",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_pcb",
+    "size": 16892,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "vtx"
+    ]
+   }
+  },
+  {
+   "id": "file:boards/vtx.kicad_sch",
+   "kind": "board",
+   "label": "vtx.kicad_sch",
+   "path": "boards/vtx.kicad_sch",
+   "folder": "boards",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "kicad_sch",
+    "size": 26446,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "vtx"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/arm.step",
+   "kind": "cad",
+   "label": "arm.step",
+   "path": "cad/arm.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "step",
+    "size": 58761,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "arm"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/battery.step",
+   "kind": "cad",
+   "label": "battery.step",
+   "path": "cad/battery.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "step",
+    "size": 66904,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "battery"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/bottom-plate.step",
+   "kind": "cad",
+   "label": "bottom-plate.step",
+   "path": "cad/bottom-plate.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "step",
+    "size": 20235,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "bottom-plate"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/camera.step",
+   "kind": "cad",
+   "label": "camera.step",
+   "path": "cad/camera.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "step",
+    "size": 13863,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "camera"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/esc-4in1.step",
+   "kind": "cad",
+   "label": "esc-4in1.step",
+   "path": "cad/esc-4in1.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "step",
+    "size": 33533,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/flight-controller.step",
+   "kind": "cad",
+   "label": "flight-controller.step",
+   "path": "cad/flight-controller.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "step",
+    "size": 66954,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/frame-v2-old.step",
+   "kind": "cad",
+   "label": "frame-v2-old.step",
+   "path": "cad/frame-v2-old.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "step",
+    "size": 7200,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:cad/frame.step",
+   "kind": "cad",
+   "label": "frame.step",
+   "path": "cad/frame.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "step",
+    "size": 22629,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/gps.step",
+   "kind": "cad",
+   "label": "gps.step",
+   "path": "cad/gps.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "step",
+    "size": 56663,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/motor.step",
+   "kind": "cad",
+   "label": "motor.step",
+   "path": "cad/motor.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "step",
+    "size": 41991,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "motor"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/old-arm-v1.step",
+   "kind": "cad",
+   "label": "old-arm-v1.step",
+   "path": "cad/old-arm-v1.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "step",
+    "size": 65179,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:cad/propeller.step",
+   "kind": "cad",
+   "label": "propeller.step",
+   "path": "cad/propeller.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "step",
+    "size": 4201,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "propeller"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/receiver.step",
+   "kind": "cad",
+   "label": "receiver.step",
+   "path": "cad/receiver.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "step",
+    "size": 14916,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "receiver"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/top-plate.step",
+   "kind": "cad",
+   "label": "top-plate.step",
+   "path": "cad/top-plate.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "step",
+    "size": 65368,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "top-plate"
+    ]
+   }
+  },
+  {
+   "id": "file:cad/vtx.step",
+   "kind": "cad",
+   "label": "vtx.step",
+   "path": "cad/vtx.step",
+   "folder": "cad",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "step",
+    "size": 3867,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "vtx"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/assembly-guide.pdf",
+   "kind": "doc",
+   "label": "assembly-guide.pdf",
+   "path": "docs/assembly-guide.pdf",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "pdf",
+    "size": 82277,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/bom.md",
+   "kind": "doc",
+   "label": "bom.md",
+   "path": "docs/bom.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "md",
+    "size": 60937,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "quadcopter-5in"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/brief.md",
+   "kind": "doc",
+   "label": "brief.md",
+   "path": "docs/brief.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "md",
+    "size": 30560,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "quadcopter-5in"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/antenna-mount.png",
+   "kind": "concept",
+   "label": "antenna-mount.png",
+   "path": "docs/concepts/antenna-mount.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "png",
+    "size": 35767,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/concepts/arm-sketch-1.png",
+   "kind": "concept",
+   "label": "arm-sketch-1.png",
+   "path": "docs/concepts/arm-sketch-1.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 88794,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "arm"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/arm-sketch-2.png",
+   "kind": "concept",
+   "label": "arm-sketch-2.png",
+   "path": "docs/concepts/arm-sketch-2.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 50610,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "arm"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/battery-strap.png",
+   "kind": "concept",
+   "label": "battery-strap.png",
+   "path": "docs/concepts/battery-strap.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "png",
+    "size": 81623,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/concepts/canopy-idea.png",
+   "kind": "concept",
+   "label": "canopy-idea.png",
+   "path": "docs/concepts/canopy-idea.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 64275,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/color-study-1.png",
+   "kind": "concept",
+   "label": "color-study-1.png",
+   "path": "docs/concepts/color-study-1.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 59176,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/color-study-2.png",
+   "kind": "concept",
+   "label": "color-study-2.png",
+   "path": "docs/concepts/color-study-2.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 35352,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/frame-concept-a.png",
+   "kind": "concept",
+   "label": "frame-concept-a.png",
+   "path": "docs/concepts/frame-concept-a.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 72737,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/frame-concept-b.png",
+   "kind": "concept",
+   "label": "frame-concept-b.png",
+   "path": "docs/concepts/frame-concept-b.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 31763,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/frame-concept-c.png",
+   "kind": "concept",
+   "label": "frame-concept-c.png",
+   "path": "docs/concepts/frame-concept-c.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 29714,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/landing-gear-idea.png",
+   "kind": "concept",
+   "label": "landing-gear-idea.png",
+   "path": "docs/concepts/landing-gear-idea.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "png",
+    "size": 15699,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/concepts/stack-layout.png",
+   "kind": "concept",
+   "label": "stack-layout.png",
+   "path": "docs/concepts/stack-layout.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 76970,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/concepts/whiteboard-0412.png",
+   "kind": "concept",
+   "label": "whiteboard-0412.png",
+   "path": "docs/concepts/whiteboard-0412.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "png",
+    "size": 44698,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/concepts/wiring-sketch.png",
+   "kind": "concept",
+   "label": "wiring-sketch.png",
+   "path": "docs/concepts/wiring-sketch.png",
+   "folder": "docs/concepts",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "png",
+    "size": 4026,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/datasheet.pdf",
+   "kind": "doc",
+   "label": "datasheet.pdf",
+   "path": "docs/datasheet.pdf",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "pdf",
+    "size": 56054,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "quadcopter-5in"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/decisions.md",
+   "kind": "doc",
+   "label": "decisions.md",
+   "path": "docs/decisions.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "md",
+    "size": 22219,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "quadcopter-5in"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/esc-notes.txt",
+   "kind": "doc",
+   "label": "esc-notes.txt",
+   "path": "docs/esc-notes.txt",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "txt",
+    "size": 57500,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/harnesses-and-cad.md",
+   "kind": "doc",
+   "label": "harnesses-and-cad.md",
+   "path": "docs/harnesses-and-cad.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "md",
+    "size": 44073,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/old-readme.md",
+   "kind": "doc",
+   "label": "old-readme.md",
+   "path": "docs/old-readme.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "md",
+    "size": 70780,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/photos/bench-setup.jpg",
+   "kind": "photo",
+   "label": "bench-setup.jpg",
+   "path": "docs/photos/bench-setup.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "jpg",
+    "size": 55638,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "motor"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/photos/crash-damage.jpg",
+   "kind": "photo",
+   "label": "crash-damage.jpg",
+   "path": "docs/photos/crash-damage.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "jpg",
+    "size": 41947,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/photos/first-hover.jpg",
+   "kind": "photo",
+   "label": "first-hover.jpg",
+   "path": "docs/photos/first-hover.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "jpg",
+    "size": 83066,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "motor"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/photos/maiden-flight.jpg",
+   "kind": "photo",
+   "label": "maiden-flight.jpg",
+   "path": "docs/photos/maiden-flight.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "jpg",
+    "size": 10788,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/photos/screenshot-0412.png",
+   "kind": "photo",
+   "label": "screenshot-0412.png",
+   "path": "docs/photos/screenshot-0412.png",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "png",
+    "size": 40015,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/photos/solder-closeup.jpg",
+   "kind": "photo",
+   "label": "solder-closeup.jpg",
+   "path": "docs/photos/solder-closeup.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "jpg",
+    "size": 21538,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/photos/test-fit-1.jpg",
+   "kind": "photo",
+   "label": "test-fit-1.jpg",
+   "path": "docs/photos/test-fit-1.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "jpg",
+    "size": 87313,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/photos/test-fit-2.jpg",
+   "kind": "photo",
+   "label": "test-fit-2.jpg",
+   "path": "docs/photos/test-fit-2.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "jpg",
+    "size": 56349,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/photos/weigh-in.jpg",
+   "kind": "photo",
+   "label": "weigh-in.jpg",
+   "path": "docs/photos/weigh-in.jpg",
+   "folder": "docs/photos",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "jpg",
+    "size": 62516,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/power-budget.md",
+   "kind": "doc",
+   "label": "power-budget.md",
+   "path": "docs/power-budget.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "md",
+    "size": 48056,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "battery"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/arm-1.png",
+   "kind": "render",
+   "label": "arm-1.png",
+   "path": "docs/renders/arm-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 36933,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "arm"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/arm-2.png",
+   "kind": "render",
+   "label": "arm-2.png",
+   "path": "docs/renders/arm-2.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 12413,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "arm"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/bottom-plate-1.png",
+   "kind": "render",
+   "label": "bottom-plate-1.png",
+   "path": "docs/renders/bottom-plate-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 47650,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "bottom-plate"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/camera-1.png",
+   "kind": "render",
+   "label": "camera-1.png",
+   "path": "docs/renders/camera-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 26031,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "camera"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/camera-2.png",
+   "kind": "render",
+   "label": "camera-2.png",
+   "path": "docs/renders/camera-2.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 30155,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "camera"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/esc-4in1-1.png",
+   "kind": "render",
+   "label": "esc-4in1-1.png",
+   "path": "docs/renders/esc-4in1-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 70798,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/gps-1.png",
+   "kind": "render",
+   "label": "gps-1.png",
+   "path": "docs/renders/gps-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 3412,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/gps-2.png",
+   "kind": "render",
+   "label": "gps-2.png",
+   "path": "docs/renders/gps-2.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 24142,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/gps-3.png",
+   "kind": "render",
+   "label": "gps-3.png",
+   "path": "docs/renders/gps-3.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 34130,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/propeller-1.png",
+   "kind": "render",
+   "label": "propeller-1.png",
+   "path": "docs/renders/propeller-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 90533,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "propeller"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/receiver-1.png",
+   "kind": "render",
+   "label": "receiver-1.png",
+   "path": "docs/renders/receiver-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 56570,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "receiver"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/vtx-1.png",
+   "kind": "render",
+   "label": "vtx-1.png",
+   "path": "docs/renders/vtx-1.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 68572,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "vtx"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/vtx-2.png",
+   "kind": "render",
+   "label": "vtx-2.png",
+   "path": "docs/renders/vtx-2.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 85416,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "vtx"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/renders/vtx-3.png",
+   "kind": "render",
+   "label": "vtx-3.png",
+   "path": "docs/renders/vtx-3.png",
+   "folder": "docs/renders",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "png",
+    "size": 66293,
+    "kindFrom": "path",
+    "artifacts": [],
+    "owners": [
+     "vtx"
+    ]
+   }
+  },
+  {
+   "id": "file:docs/scratch-notes.md",
+   "kind": "doc",
+   "label": "scratch-notes.md",
+   "path": "docs/scratch-notes.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "md",
+    "size": 9834,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:docs/tuning-log.md",
+   "kind": "doc",
+   "label": "tuning-log.md",
+   "path": "docs/tuning-log.md",
+   "folder": "docs",
+   "status": "ok",
+   "degree": 1,
+   "file": {
+    "ext": "md",
+    "size": 50743,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "file:models/arm.glb",
+   "kind": "model",
+   "label": "arm.glb",
+   "path": "models/arm.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 4,
+   "file": {
+    "ext": "glb",
+    "size": 44099,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "arm"
+    ]
+   }
+  },
+  {
+   "id": "file:models/battery-lod1.glb",
+   "kind": "model",
+   "label": "battery-lod1.glb",
+   "path": "models/battery-lod1.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 49788,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "battery"
+    ]
+   }
+  },
+  {
+   "id": "file:models/battery.glb",
+   "kind": "model",
+   "label": "battery.glb",
+   "path": "models/battery.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 19222,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "battery"
+    ]
+   }
+  },
+  {
+   "id": "file:models/bottom-plate-lod1.glb",
+   "kind": "model",
+   "label": "bottom-plate-lod1.glb",
+   "path": "models/bottom-plate-lod1.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 33337,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "bottom-plate"
+    ]
+   }
+  },
+  {
+   "id": "file:models/bottom-plate.glb",
+   "kind": "model",
+   "label": "bottom-plate.glb",
+   "path": "models/bottom-plate.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "glb",
+    "size": 25344,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "bottom-plate"
+    ]
+   }
+  },
+  {
+   "id": "file:models/camera.glb",
+   "kind": "model",
+   "label": "camera.glb",
+   "path": "models/camera.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 4,
+   "file": {
+    "ext": "glb",
+    "size": 4627,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "camera"
+    ]
+   }
+  },
+  {
+   "id": "file:models/esc-4in1-lod1.glb",
+   "kind": "model",
+   "label": "esc-4in1-lod1.glb",
+   "path": "models/esc-4in1-lod1.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 66564,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:models/esc-4in1.glb",
+   "kind": "model",
+   "label": "esc-4in1.glb",
+   "path": "models/esc-4in1.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "glb",
+    "size": 73606,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "esc-4in1"
+    ]
+   }
+  },
+  {
+   "id": "file:models/flight-controller-lod1.glb",
+   "kind": "model",
+   "label": "flight-controller-lod1.glb",
+   "path": "models/flight-controller-lod1.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 28341,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "file:models/flight-controller.glb",
+   "kind": "model",
+   "label": "flight-controller.glb",
+   "path": "models/flight-controller.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 4237,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "flight-controller"
+    ]
+   }
+  },
+  {
+   "id": "file:models/frame.glb",
+   "kind": "model",
+   "label": "frame.glb",
+   "path": "models/frame.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 32619,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "frame"
+    ]
+   }
+  },
+  {
+   "id": "file:models/gps.glb",
+   "kind": "model",
+   "label": "gps.glb",
+   "path": "models/gps.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 5,
+   "file": {
+    "ext": "glb",
+    "size": 14425,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "gps"
+    ]
+   }
+  },
+  {
+   "id": "file:models/motor.glb",
+   "kind": "model",
+   "label": "motor.glb",
+   "path": "models/motor.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 69306,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "motor"
+    ]
+   }
+  },
+  {
+   "id": "file:models/propeller-lod1.glb",
+   "kind": "model",
+   "label": "propeller-lod1.glb",
+   "path": "models/propeller-lod1.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 53438,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "propeller"
+    ]
+   }
+  },
+  {
+   "id": "file:models/propeller.glb",
+   "kind": "model",
+   "label": "propeller.glb",
+   "path": "models/propeller.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "glb",
+    "size": 37053,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "propeller"
+    ]
+   }
+  },
+  {
+   "id": "file:models/receiver.glb",
+   "kind": "model",
+   "label": "receiver.glb",
+   "path": "models/receiver.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 3,
+   "file": {
+    "ext": "glb",
+    "size": 54402,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "receiver"
+    ]
+   }
+  },
+  {
+   "id": "file:models/test-export.glb",
+   "kind": "model",
+   "label": "test-export.glb",
+   "path": "models/test-export.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "glb",
+    "size": 17102,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:models/top-plate-lod1.glb",
+   "kind": "model",
+   "label": "top-plate-lod1.glb",
+   "path": "models/top-plate-lod1.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 65594,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "top-plate"
+    ]
+   }
+  },
+  {
+   "id": "file:models/top-plate.glb",
+   "kind": "model",
+   "label": "top-plate.glb",
+   "path": "models/top-plate.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 2,
+   "file": {
+    "ext": "glb",
+    "size": 8661,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "top-plate"
+    ]
+   }
+  },
+  {
+   "id": "file:models/untitled.glb",
+   "kind": "model",
+   "label": "untitled.glb",
+   "path": "models/untitled.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 0,
+   "file": {
+    "ext": "glb",
+    "size": 67131,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": []
+   }
+  },
+  {
+   "id": "file:models/vtx.glb",
+   "kind": "model",
+   "label": "vtx.glb",
+   "path": "models/vtx.glb",
+   "folder": "models",
+   "status": "ok",
+   "degree": 5,
+   "file": {
+    "ext": "glb",
+    "size": 78356,
+    "kindFrom": "extension",
+    "artifacts": [],
+    "owners": [
+     "vtx"
+    ]
+   }
+  }
+ ],
+ "edges": [
+  {
+   "from": "def:arm",
+   "to": "def:motor",
+   "type": "link"
+  },
+  {
+   "from": "def:arm",
+   "to": "def:tpu-arm-guard",
+   "type": "uses"
+  },
+  {
+   "from": "def:arm",
+   "to": "file:cad/arm.step",
+   "type": "has"
+  },
+  {
+   "from": "def:arm",
+   "to": "file:docs/concepts/arm-sketch-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:arm",
+   "to": "file:docs/concepts/arm-sketch-2.png",
+   "type": "has"
+  },
+  {
+   "from": "def:arm",
+   "to": "file:docs/renders/arm-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:arm",
+   "to": "file:docs/renders/arm-2.png",
+   "type": "has"
+  },
+  {
+   "from": "def:arm",
+   "to": "file:models/arm.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:battery",
+   "to": "def:6s-1300-pack",
+   "type": "uses"
+  },
+  {
+   "from": "def:battery",
+   "to": "def:battery-strap",
+   "type": "uses"
+  },
+  {
+   "from": "def:battery",
+   "to": "def:xt60-pair",
+   "type": "uses"
+  },
+  {
+   "from": "def:battery",
+   "to": "file:cad/battery.step",
+   "type": "has"
+  },
+  {
+   "from": "def:battery",
+   "to": "file:docs/power-budget.md",
+   "type": "has"
+  },
+  {
+   "from": "def:battery",
+   "to": "file:models/battery-lod1.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:battery",
+   "to": "file:models/battery.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:bottom-plate",
+   "to": "def:m3x8-screw",
+   "type": "uses"
+  },
+  {
+   "from": "def:bottom-plate",
+   "to": "file:cad/bottom-plate.step",
+   "type": "has"
+  },
+  {
+   "from": "def:bottom-plate",
+   "to": "file:docs/renders/bottom-plate-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:bottom-plate",
+   "to": "file:models/bottom-plate-lod1.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:bottom-plate",
+   "to": "file:models/bottom-plate.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:camera",
+   "to": "def:fpv-camera",
+   "type": "uses"
+  },
+  {
+   "from": "def:camera",
+   "to": "file:cad/camera.step",
+   "type": "has"
+  },
+  {
+   "from": "def:camera",
+   "to": "file:docs/renders/camera-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:camera",
+   "to": "file:docs/renders/camera-2.png",
+   "type": "has"
+  },
+  {
+   "from": "def:camera",
+   "to": "file:models/camera.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "def:battery",
+   "type": "harness"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "def:capacitor-1000uf",
+   "type": "uses"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "def:heat-shrink",
+   "type": "uses"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "def:motor",
+   "type": "harness"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "def:silicone-wire-14awg",
+   "type": "uses"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:boards/esc-4in1.kicad_pcb",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:boards/esc-4in1.kicad_sch",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:cad/esc-4in1.step",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:docs/concepts/wiring-sketch.png",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:docs/esc-notes.txt",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:docs/renders/esc-4in1-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:models/esc-4in1-lod1.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:esc-4in1",
+   "to": "file:models/esc-4in1.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "def:buzzer",
+   "type": "uses"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "def:esc-4in1",
+   "type": "harness"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "def:gps",
+   "type": "harness"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "def:grommet-m3",
+   "type": "uses"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "def:m3-standoff",
+   "type": "uses"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "def:receiver",
+   "type": "harness"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "def:vtx",
+   "type": "harness"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "file:boards/flight-controller.kicad_pcb",
+   "type": "has"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "file:boards/flight-controller.kicad_sch",
+   "type": "has"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "file:cad/flight-controller.step",
+   "type": "has"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "file:docs/photos/solder-closeup.jpg",
+   "type": "has"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "file:docs/tuning-log.md",
+   "type": "has"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "file:models/flight-controller-lod1.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:flight-controller",
+   "to": "file:models/flight-controller.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "def:arm",
+   "type": "link"
+  },
+  {
+   "from": "def:frame",
+   "to": "def:bottom-plate",
+   "type": "link"
+  },
+  {
+   "from": "def:frame",
+   "to": "def:m3-standoff",
+   "type": "uses"
+  },
+  {
+   "from": "def:frame",
+   "to": "def:m3x8-screw",
+   "type": "uses"
+  },
+  {
+   "from": "def:frame",
+   "to": "def:top-plate",
+   "type": "link"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:cad/frame.step",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/assembly-guide.pdf",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/concepts/canopy-idea.png",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/concepts/color-study-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/concepts/color-study-2.png",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/concepts/frame-concept-a.png",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/concepts/frame-concept-b.png",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/concepts/frame-concept-c.png",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/concepts/stack-layout.png",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/harnesses-and-cad.md",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/photos/test-fit-1.jpg",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:docs/photos/test-fit-2.jpg",
+   "type": "has"
+  },
+  {
+   "from": "def:frame",
+   "to": "file:models/frame.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:gps",
+   "to": "def:gps-puck",
+   "type": "uses"
+  },
+  {
+   "from": "def:gps",
+   "to": "file:boards/gps.kicad_pcb",
+   "type": "has"
+  },
+  {
+   "from": "def:gps",
+   "to": "file:boards/gps.kicad_sch",
+   "type": "has"
+  },
+  {
+   "from": "def:gps",
+   "to": "file:cad/gps.step",
+   "type": "has"
+  },
+  {
+   "from": "def:gps",
+   "to": "file:docs/renders/gps-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:gps",
+   "to": "file:docs/renders/gps-2.png",
+   "type": "has"
+  },
+  {
+   "from": "def:gps",
+   "to": "file:docs/renders/gps-3.png",
+   "type": "has"
+  },
+  {
+   "from": "def:gps",
+   "to": "file:models/gps.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:motor",
+   "to": "def:2306-motor",
+   "type": "uses"
+  },
+  {
+   "from": "def:motor",
+   "to": "def:m2-nyloc",
+   "type": "uses"
+  },
+  {
+   "from": "def:motor",
+   "to": "def:propeller",
+   "type": "link"
+  },
+  {
+   "from": "def:motor",
+   "to": "file:cad/motor.step",
+   "type": "has"
+  },
+  {
+   "from": "def:motor",
+   "to": "file:docs/photos/bench-setup.jpg",
+   "type": "has"
+  },
+  {
+   "from": "def:motor",
+   "to": "file:docs/photos/first-hover.jpg",
+   "type": "has"
+  },
+  {
+   "from": "def:motor",
+   "to": "file:models/motor.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:propeller",
+   "to": "def:5045-prop",
+   "type": "uses"
+  },
+  {
+   "from": "def:propeller",
+   "to": "file:cad/propeller.step",
+   "type": "has"
+  },
+  {
+   "from": "def:propeller",
+   "to": "file:docs/renders/propeller-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:propeller",
+   "to": "file:models/propeller-lod1.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:propeller",
+   "to": "file:models/propeller.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:arm",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:battery",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:bottom-plate",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:camera",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:esc-4in1",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:flight-controller",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:frame",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:gps",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:motor",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:propeller",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:receiver",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:top-plate",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "def:vtx",
+   "type": "contains"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "file:docs/bom.md",
+   "type": "has"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "file:docs/brief.md",
+   "type": "has"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "file:docs/datasheet.pdf",
+   "type": "has"
+  },
+  {
+   "from": "def:quadcopter-5in",
+   "to": "file:docs/decisions.md",
+   "type": "has"
+  },
+  {
+   "from": "def:receiver",
+   "to": "def:elrs-receiver",
+   "type": "uses"
+  },
+  {
+   "from": "def:receiver",
+   "to": "file:boards/receiver.kicad_pcb",
+   "type": "has"
+  },
+  {
+   "from": "def:receiver",
+   "to": "file:boards/receiver.kicad_sch",
+   "type": "has"
+  },
+  {
+   "from": "def:receiver",
+   "to": "file:cad/receiver.step",
+   "type": "has"
+  },
+  {
+   "from": "def:receiver",
+   "to": "file:docs/renders/receiver-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:receiver",
+   "to": "file:models/receiver.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:top-plate",
+   "to": "def:m3x8-screw",
+   "type": "uses"
+  },
+  {
+   "from": "def:top-plate",
+   "to": "file:cad/top-plate.step",
+   "type": "has"
+  },
+  {
+   "from": "def:top-plate",
+   "to": "file:models/top-plate-lod1.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:top-plate",
+   "to": "file:models/top-plate.glb",
+   "type": "has"
+  },
+  {
+   "from": "def:vtx",
+   "to": "def:camera",
+   "type": "harness"
+  },
+  {
+   "from": "def:vtx",
+   "to": "def:heat-shrink",
+   "type": "uses"
+  },
+  {
+   "from": "def:vtx",
+   "to": "def:vtx-antenna",
+   "type": "uses"
+  },
+  {
+   "from": "def:vtx",
+   "to": "file:boards/vtx.kicad_pcb",
+   "type": "has"
+  },
+  {
+   "from": "def:vtx",
+   "to": "file:boards/vtx.kicad_sch",
+   "type": "has"
+  },
+  {
+   "from": "def:vtx",
+   "to": "file:cad/vtx.step",
+   "type": "has"
+  },
+  {
+   "from": "def:vtx",
+   "to": "file:docs/renders/vtx-1.png",
+   "type": "has"
+  },
+  {
+   "from": "def:vtx",
+   "to": "file:docs/renders/vtx-2.png",
+   "type": "has"
+  },
+  {
+   "from": "def:vtx",
+   "to": "file:docs/renders/vtx-3.png",
+   "type": "has"
+  },
+  {
+   "from": "def:vtx",
+   "to": "file:models/vtx.glb",
+   "type": "has"
+  },
+  {
+   "from": "file:boards/esc-4in1.kicad_pcb",
+   "to": "file:boards/esc-4in1.kicad_sch",
+   "type": "made-from"
+  },
+  {
+   "from": "file:boards/flight-controller.kicad_pcb",
+   "to": "file:boards/flight-controller.kicad_sch",
+   "type": "made-from"
+  },
+  {
+   "from": "file:boards/gps.kicad_pcb",
+   "to": "file:boards/gps.kicad_sch",
+   "type": "made-from"
+  },
+  {
+   "from": "file:boards/receiver.kicad_pcb",
+   "to": "file:boards/receiver.kicad_sch",
+   "type": "made-from"
+  },
+  {
+   "from": "file:boards/vtx.kicad_pcb",
+   "to": "file:boards/vtx.kicad_sch",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/arm-1.png",
+   "to": "file:models/arm.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/arm-2.png",
+   "to": "file:models/arm.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/bottom-plate-1.png",
+   "to": "file:models/bottom-plate.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/camera-1.png",
+   "to": "file:models/camera.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/camera-2.png",
+   "to": "file:models/camera.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/esc-4in1-1.png",
+   "to": "file:models/esc-4in1.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/gps-1.png",
+   "to": "file:models/gps.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/gps-2.png",
+   "to": "file:models/gps.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/gps-3.png",
+   "to": "file:models/gps.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/propeller-1.png",
+   "to": "file:models/propeller.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/receiver-1.png",
+   "to": "file:models/receiver.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/vtx-1.png",
+   "to": "file:models/vtx.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/vtx-2.png",
+   "to": "file:models/vtx.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:docs/renders/vtx-3.png",
+   "to": "file:models/vtx.glb",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/arm.glb",
+   "to": "file:cad/arm.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/battery-lod1.glb",
+   "to": "file:cad/battery.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/battery.glb",
+   "to": "file:cad/battery.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/bottom-plate-lod1.glb",
+   "to": "file:cad/bottom-plate.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/bottom-plate.glb",
+   "to": "file:cad/bottom-plate.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/camera.glb",
+   "to": "file:cad/camera.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/esc-4in1-lod1.glb",
+   "to": "file:cad/esc-4in1.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/esc-4in1.glb",
+   "to": "file:cad/esc-4in1.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/flight-controller-lod1.glb",
+   "to": "file:cad/flight-controller.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/flight-controller.glb",
+   "to": "file:cad/flight-controller.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/frame.glb",
+   "to": "file:cad/frame.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/gps.glb",
+   "to": "file:cad/gps.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/motor.glb",
+   "to": "file:cad/motor.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/propeller-lod1.glb",
+   "to": "file:cad/propeller.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/propeller.glb",
+   "to": "file:cad/propeller.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/receiver.glb",
+   "to": "file:cad/receiver.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/top-plate-lod1.glb",
+   "to": "file:cad/top-plate.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/top-plate.glb",
+   "to": "file:cad/top-plate.step",
+   "type": "made-from"
+  },
+  {
+   "from": "file:models/vtx.glb",
+   "to": "file:cad/vtx.step",
+   "type": "made-from"
+  }
+ ]
+}
