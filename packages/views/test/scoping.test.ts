@@ -40,7 +40,7 @@ beforeAll(async () => {
 
 describe("view tabs on the reference projects", () => {
   it("smart-bottle: the system has no schematic or PCB; the cap board has both, and its own BOM", () => {
-    expect(tabs("smart-bottle", "")).toEqual(["diagram", "3d", "bom", "pair", "library"]);
+    expect(tabs("smart-bottle", "")).toEqual(["diagram", "3d", "bom", "pair", "library", "atlas", "sysmap"]);
     // the board lists no artifacts: the circuit provider's outputs are attached at load (PB-1030)
     expect(tabs("smart-bottle", "board")).toEqual(["diagram", "3d", "schematic", "pcb", "bom", "pair"]);
     // a part on the board, and the enclosure: the diagram and their model only
@@ -49,13 +49,13 @@ describe("view tabs on the reference projects", () => {
   });
 
   it("quadcopter: the system and the flight controller (a bought board, no drawings) have no schematic or PCB", () => {
-    expect(tabs("quadcopter-5in", "")).toEqual(["diagram", "3d", "bom", "pair", "library"]);
+    expect(tabs("quadcopter-5in", "")).toEqual(["diagram", "3d", "bom", "pair", "library", "atlas", "sysmap"]);
     expect(tabs("quadcopter-5in", "stack")).toEqual(["diagram", "3d", "pair"]);
     expect(tabs("quadcopter-5in", "stack/fc")).toEqual(["diagram", "3d"]);
   });
 
   it("wearable-watch: the drawings and the board's own BOM are on the main board only", () => {
-    expect(tabs("wearable-watch", "")).toEqual(["diagram", "3d", "bom", "pair", "library"]);
+    expect(tabs("wearable-watch", "")).toEqual(["diagram", "3d", "bom", "pair", "library", "atlas", "sysmap"]);
     expect(tabs("wearable-watch", "board")).toEqual(["diagram", "3d", "schematic", "pcb", "bom", "pair"]);
     expect(tabs("wearable-watch", "case")).toEqual(["diagram", "3d"]);
   });

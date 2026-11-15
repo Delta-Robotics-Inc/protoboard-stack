@@ -80,6 +80,7 @@ held under that and a test fails when it grows past it. It says:
 - that this is **not** the earlier Protoboard web app: no browser board, no
   board to open or connect, nothing to search the web for;
 - to call `project_status` first;
+- that `stack_map` says what the stack itself can do;
 - in an empty folder: create a project with `project_init`, which templates
   exist (read from the installed templates, not typed), then `npm install`;
 - in a project: read AGENTS.md, then the build-a-project skill, the UHD
@@ -95,7 +96,7 @@ it first.
 
 ### 2.3 Tools
 
-Thirteen tools. Each takes an optional `dir`.
+Seventeen tools. Each but `stack_map` takes an optional `dir`.
 
 | Tool | CLI command | Changes files | Network |
 | --- | --- | --- | --- |
@@ -103,7 +104,10 @@ Thirteen tools. Each takes an optional `dir`.
 | `project_init` | `init <dir> [--template] [--name]` | **yes**: creates the project folder | yes: a template's catalog parts |
 | `project_check` | `check` | no | no |
 | `project_inspect` | `inspect [instance]` | no | no |
-| `project_build` | `build` | **yes**: `.protoboard/build/` only (derived data) | no |
+| `project_build` | `build`: also writes the project index (`atlas`) | **yes**: `.protoboard/build/` only (derived data) | no |
+| `project_census` | `index census [--kind] [--status] [--limit] [--cursor]` | no | no |
+| `project_where` | `index where <ref> [--kind] [--limit] [--cursor]` | no | no |
+| `project_search` | `index search <text> [--limit] [--cursor]` | no | no |
 | `project_layout` | `layout [level] [--apply\|--tidy] [--pin]` | with `mode` apply or tidy: `.protoboard/display.json`, the levels that read clearly better and already have a saved layout | no |
 | `parts_search` | `parts search` | no | yes |
 | `parts_add` | `parts add` | **yes**: `parts/catalog`, `parts/origins.json` | yes; needs a sign-in |
@@ -112,6 +116,7 @@ Thirteen tools. Each takes an optional `dir`.
 | `skill_read` | `skills`, then the skill's file | no | no |
 | `bom` | `bom [--units] [--release]`: the design's bill, each line with its chosen offer and `offerCount`, without the list of every offer | no | no |
 | `release_check` | `release --check` | no | no |
+| `stack_map` | `map [--island] [--type] [--item]`: the System Map of the stack (docs/specs/system-map.md); with no input, its islands, counts, release tags and problems only | no | no |
 
 The annotations: no tool has `readOnlyHint`. Every one runs the
 Protoboard CLI in the project, which evaluates the project's own TypeScript
@@ -122,6 +127,31 @@ write add files; none deletes the user's work; `project_layout` replaces a level
 diagram layout only with one that reads clearly better, keeps pinned cards,
 and the file is in git), `openWorldHint` on the ones
 that reach a library.
+
+The three index tools (`project_census`, `project_where`, `project_search`,
+docs/specs/atlas.md) read only `.protoboard/build/atlas.json`, which
+`project_build` writes; the `index` commands evaluate none of the project's
+TypeScript, though the description still carries the sentence above, since
+the CLI that runs them may be the project's own. Their answers are pages
+(`limit` 1 to 100, default 20; `cursor` is the previous page's `nextCursor`)
+in a stable order. When the index is missing, unreadable, from another
+schema or older than the project's files, the CLI exits 3 with
+`{ "error", "code": "INDEX_MISSING" | "INDEX_INVALID" | "INDEX_SCHEMA" |
+"INDEX_STALE" }` and no partial answer; the tool returns that with
+`isError`, the freshness details when the CLI gave them, and
+`"action": "Call project_build (it writes the index), then call this tool
+again."`. A project whose own CLI predates the index answers with its help
+text: the tool says so and points at `project_inspect` and `protoboard
+upgrade`.
+
+`stack_map` runs `protoboard map` in the server's folder (the System Map,
+docs/specs/system-map.md): built from the stack's own files each time, with
+no project and no sign-in. With no input it returns the islands and their
+counts, the counts by type, the stages, the release tags and the problems,
+not the items and links; `island` and `type` list items, and `item` gives
+one item with every link in both directions, by kind. An unknown island,
+type or item is the CLI's usage error, which names the valid choices or
+the closest ids.
 
 `project_check` returns the diagnostics at or above a severity (default
 `warning`) with the counts of all of them, so a large project's information

@@ -92,7 +92,8 @@ serve` and `mountViewer` work as before.
   has a `.glb`) wrap the uhd-viewer's canvases (`uhd: true`: they share the
   shell's one viewer state). Planned: `schematic` (`schematic.svg`), `pcb`
   (`pcb-top.svg` or `pcb-bottom.svg`), `bom` (the root, or a module with
-  `bom.csv`), `pair` (a module with links), `library` (the root). Predicates
+  `bom.csv`), `pair` (a module with links), `library` (the root), `atlas`
+  (the root: the project index as a map, below). Predicates
   test standard-output file names (docs/specs/tool-integrations.md §8), never
   the tool that wrote them.
 - **Contributed views.** `registerContributedViews(registry, views, components)`
@@ -154,6 +155,43 @@ package, drawn the same in every shell. They take plain data
   cache, `parts list`, `bom`, and `parts add|update` with the session token).
 - **VS Code** draws them in native slots and editor tabs instead
   (vscode-extension.md § 2.5).
+
+### The Atlas view (`@protoboardai/views/atlas`)
+
+The `atlas` tab (order 70, the root only, Lucide icon `waypoints`) draws the
+project index (docs/specs/atlas.md) as a force-directed map: modules, parts
+and every file of the project, and how they connect. It hides the hierarchy
+panel in both shells, as the library and the BOM do on the web.
+
+- **Data.** A shell gives the view an `AtlasData` with `AtlasDataProvider`
+  (`views/src/atlas/data.ts`): `load()` (the graph, the positions kept, and
+  whether the index is stale), `saveLayout`, `subscribe` (called after each
+  rebuild) and, in VS Code, `openFile`. Without one the tab says it needs
+  the dev server or the extension.
+- **The dev server's routes** (`packages/cli/src/dev/atlas.ts`):
+  `GET /__protoboard/atlas` answers `{ graph, layout?, stale? }`: the view
+  projection of `.protoboard/build/atlas.json` (`atlasGraph`), the display
+  file's `atlas.positions`, and, when the index no longer describes the
+  project, `{ changed, reason, rebuilding }` (`reason`: `files`, or `stack`
+  and `enumerator`, which compare no files and leave `changed` at 0). Paths
+  and metadata only, never a file's contents. It is shared with VS Code
+  webview origins (CORS), like the bundle. Each dev build writes the index
+  (the build worker); a stale index found by this route is rebuilt on
+  request, at most once every 10 seconds, with no file watcher of its own.
+  `POST /__protoboard/atlas/layout` takes `{ positions }` with the same
+  protections as a diagram layout (the session token header, a same-site
+  origin, a JSON body of at most 4 MB) and at most 50,000 node ids.
+- **The save rule.** Positions are saved automatically after the map
+  settles, into the display file's `atlas` key only (display.md). The
+  bundle never carries that key (`displayForBundle`), so a save neither
+  rebuilds nor pushes a bundle to the open tabs.
+- **Web shell.** `createDevAtlasData` (`@protoboardai/web-viewer`); the dev
+  page calls its `changed()` on every bundle event except a diagram layout
+  save. The inspector's Open is absent; it offers Copy path.
+- **VS Code shell.** The tab reads `GET /__protoboard/atlas` from the dev
+  server itself; positions and Open go to the extension as `atlasLayout` and
+  `openFile` messages (protocol.ts), since the webview never holds the write
+  token (vscode-extension.md § 3).
 - **Card carousels.** Every list draws the one `PartCard`: the
   Library side bar (rows), the full-page library and the Project Parts page
   (tiles or rows). A card has two carousels and one size:

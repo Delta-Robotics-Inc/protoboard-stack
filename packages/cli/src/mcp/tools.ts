@@ -13,7 +13,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { z, type ZodRawShape } from "zod";
-import { LIBRARY_SORTS, findProjectRoot, packageRoot } from "@protoboardai/core";
+import { ATLAS_KIND_ORDER, DISCIPLINE_ORDER, ITEM_TYPE_ORDER, LIBRARY_SORTS, findProjectRoot, packageRoot } from "@protoboardai/core";
 
 /** Whether a project's packages are installed: the framework resolves from it (its own node_modules, or a workspace's further up). */
 const installedIn = (root: string) => !!packageRoot(root, "@protoboardai/core");
@@ -156,6 +156,90 @@ export function compactBom(data: unknown): unknown {
 
 const SEVERITY = ["error", "warning", "info"] as const;
 
+/** What an agent does when the project index cannot answer (missing, unreadable, another schema, older than the files). */
+export const INDEX_ACTION = "Call project_build (it writes the index), then call this tool again.";
+
+/** The kinds of file the index knows (docs/specs/atlas.md, "Kinds"), and the two kinds of definition. */
+const NODE_KINDS = [...ATLAS_KIND_ORDER] as [string, ...string[]];
+const FILE_KINDS = NODE_KINDS.filter((k) => k !== "module" && k !== "part") as [string, ...string[]];
+const INDEX_LIMIT = z.number().int().min(1).max(100).optional().describe("Items per page (default 20).");
+const INDEX_CURSOR = z.string().optional().describe("The previous page's nextCursor.");
+const INDEX_READS = "Reads only the project index (.protoboard/build/atlas.json, written by project_build), or refuses when it is missing or older than the project's files; then call project_build and try again. Pages its answer (`limit`, `cursor`) in a stable order.";
+
+/** Help text from a CLI that has no such command: what meow prints for an unknown one. */
+const OLDER_CLI = /\$ protoboard <command>/;
+
+/**
+ * Run a `protoboard index` query. A refusal of the index (code INDEX_*) says
+ * to build first; a project's own CLI from before the index answers with its
+ * help, which is said plainly.
+ */
+async function indexQuery(ctx: ToolContext, dir: string, args: string[]): Promise<ToolOutcome> {
+  const run = await ctx.cli(dir, args);
+  const r = readCliJson(run);
+  if (r.ok) return { data: r.data };
+  if (r.code?.startsWith("INDEX_")) {
+    let freshness: unknown;
+    try {
+      freshness = (JSON.parse(run.stdout) as { freshness?: unknown }).freshness;
+    } catch {
+      freshness = undefined;
+    }
+    return { data: { error: r.message, code: r.code, ...(freshness ? { freshness } : {}), action: INDEX_ACTION }, isError: true };
+  }
+  if (OLDER_CLI.test(`${run.stdout}\n${run.stderr}`) && ctx.cliFor(dir).from === "project") {
+    return {
+      data: {
+        error: `This project's own Protoboard (its CLI in node_modules) has no project index: the \`protoboard index\` commands are in this server's Protoboard (${ctx.version}) but not in the project's.`,
+        action: "Use project_inspect meanwhile. With the user's agreement, `protoboard upgrade` in the project moves it to a Protoboard that has the index.",
+      },
+      isError: true,
+    };
+  }
+  return failure(r.message, dir, r.code);
+}
+
+/**
+ * The System Map as stack_map answers with no question: the islands with
+ * their counts, the counts, the stages, the release tags and the problems;
+ * not the items, the links or the inputs (`island`, `type` and `item` ask for
+ * those).
+ */
+export function mapOverview(data: unknown): unknown {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return data;
+  const m = data as Record<string, unknown>;
+  return {
+    stack: m.stack,
+    layout: m.layout,
+    counts: m.counts,
+    islands: m.islands,
+    stages: m.stages,
+    releases: m.releases,
+    problems: m.problems,
+    next: "Ask one question: `island` (one discipline's items), `type` (one kind of item) or `item` (one item with every link, by kind).",
+  };
+}
+
+/**
+ * Run `protoboard map`. A project's own CLI from before the System Map
+ * answers with its help, which is said plainly.
+ */
+async function mapQuery(ctx: ToolContext, dir: string, args: string[], map: (data: unknown) => unknown): Promise<ToolOutcome> {
+  const run = await ctx.cli(dir, args, { timeoutMs: 300_000 });
+  const r = readCliJson(run);
+  if (r.ok) return { data: map(r.data) };
+  if (OLDER_CLI.test(`${run.stdout}\n${run.stderr}`) && ctx.cliFor(dir).from === "project") {
+    return {
+      data: {
+        error: `This folder's own Protoboard (its CLI in node_modules) has no System Map: \`protoboard map\` is in this server's Protoboard (${ctx.version}) but not in the project's.`,
+        action: "Use skills_list meanwhile. With the user's agreement, `protoboard upgrade` in the project moves it to a Protoboard that has the map.",
+      },
+      isError: true,
+    };
+  }
+  return { data: { error: r.message }, isError: true };
+}
+
 export function cliTools(templates: string[]): ToolSpec[] {
   const specs: ToolSpec[] = [
     tool({
@@ -262,10 +346,61 @@ export function cliTools(templates: string[]): ToolSpec[] {
       name: "project_build",
       title: "Build the project",
       description:
-        "Writes the resolved project and the UHD bundle the viewer reads (`protoboard build`). CHANGES FILES: only derived data under .protoboard/build/ in the project, which is rebuilt from the sources every time and is not committed. Returns the files written and the diagnostic counts. Publishes nothing.",
+        "Writes the resolved project, the UHD bundle the viewer reads and the project index that project_census, project_where and project_search read (`protoboard build`). CHANGES FILES: only derived data under .protoboard/build/ in the project, which is rebuilt from the sources every time and is not committed. Returns the files written, the index's counts (`atlas`; an index that cannot be written is reported there and does not fail the build) and the diagnostic counts. Publishes nothing.",
       input: { dir: DIR },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
       handler: async ({ dir }, ctx) => command(ctx, await ctx.dir(dir), cliArgs(["build"])),
+    }),
+    tool({
+      name: "project_census",
+      title: "Census of the project's files",
+      description: `Every asset file in the project (\`protoboard index census\`): CAD, 3D models, board files, renders, photos, concept images, documents, data and firmware, each with its kind, size and whether something links it (an artifact of a module or part, a folder artifact, an operation record) or nothing does (\`unlinked\`), with the counts by kind. Filter by \`kind\` and \`status\`. Use it to find renders, photos or documents nothing points at. ${INDEX_READS}`,
+      input: {
+        dir: DIR,
+        kind: z.enum(FILE_KINDS).optional().describe("Only files of this kind."),
+        status: z.enum(["linked", "unlinked", "failed"]).optional().describe("Only files linked by something, linked by nothing, or that could not be read."),
+        limit: INDEX_LIMIT,
+        cursor: INDEX_CURSOR,
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async ({ dir: given, kind, status, limit, cursor }, ctx) => {
+        const dir = await ctx.dir(given);
+        return indexQuery(ctx, dir, cliArgs(["index", "census"], { kind, status, limit, cursor }));
+      },
+    }),
+    tool({
+      name: "project_where",
+      title: "Where a thing is in the project",
+      description: `Where a module, part or file is and what is one step from it (\`protoboard index where\`): for an instance path (arm_fl/motor), a definition id, a file path or a name, its definition and the instances using it, then every related node by relation: the files it has (with artifact ids), what they were made from, the modules and parts it contains or uses, what contains or owns it, and the definitions it is linked or harnessed to. \`kind\` keeps only related nodes of that kind. An unknown \`ref\` is an error that lists the closest names. ${INDEX_READS}`,
+      input: {
+        dir: DIR,
+        ref: z.string().min(1).describe("An instance path (arm_fl/motor), a definition id, a project-relative file path or an exact name."),
+        kind: z.enum(NODE_KINDS).optional().describe("Only related nodes of this kind."),
+        limit: INDEX_LIMIT,
+        cursor: INDEX_CURSOR,
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async ({ dir: given, ref, kind, limit, cursor }, ctx) => {
+        const dir = await ctx.dir(given);
+        return indexQuery(ctx, dir, cliArgs(["index", "where"], { kind, limit, cursor }, [ref]));
+      },
+    }),
+    tool({
+      name: "project_search",
+      title: "Search the project",
+      description: `Searches the project index by words (\`protoboard index search\`), best matches first: an exact id, name or path; names, then paths, holding every word; every node of a kind the text names ("renders", "cad"); then the lines of the project's Markdown and text documents that hold every word, as path and line number with the line. PDFs and HTML are not searched. ${INDEX_READS}`,
+      input: {
+        dir: DIR,
+        text: z.string().min(1).describe('Words to search for: a name, part of a path, a kind ("photos") or words in the documents.'),
+        limit: INDEX_LIMIT,
+        cursor: INDEX_CURSOR,
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      handler: async ({ dir: given, text, limit, cursor }, ctx) => {
+        const dir = await ctx.dir(given);
+        // the words are the query, whatever they look like: "--help" is a search
+        return indexQuery(ctx, dir, cliArgs(["index", "search"], { limit, cursor }, [text]));
+      },
     }),
     tool({
       name: "project_layout",
@@ -363,6 +498,26 @@ export function cliTools(templates: string[]): ToolSpec[] {
         if (!skill.file) return { data: { error: `the skill "${id}" is declared by ${skill.extension} but its file was not found; \`protoboard doctor\` in the project says why (\`protoboard stack link\` links missing packages)` }, isError: true };
         // only a file the CLI itself named is read
         return { data: `# Skill ${skill.id} (${skill.extension}): ${skill.file}\n\n${readFileSync(skill.file, "utf8")}` };
+      },
+    }),
+    tool({
+      name: "stack_map",
+      title: "What the Protoboard stack can do",
+      description:
+        "The System Map (`protoboard map`): what the Protoboard stack on this machine can do. Its packages, extensions, skills (SOPs), capabilities and their operations, operations, checks, external tools, CLI commands, MCP tools, views, templates, example projects and docs, grouped by discipline (project, research, parts, system, pcb, cad, firmware, docs, mfg; an empty island says so), each with its version, whether it is released or new since the last release, and the last release it changed in and why. " +
+        "With no input: the islands and their counts, the counts by type, the build-a-project stages, the release tags and the map's problems. `island` or `type` lists those items (id, name, version, status, purpose, source); `item` (an id such as skill:build-a-project, cli:check or mcp:project_check) gives one item with every link in both directions, by kind (ships, runs, wraps, calls, cites, ...), each neighbor with its version and status. " +
+        "Use it to find which skill, operation or command does a job, and which pieces work together, before reading their files. Built from the stack's own files each time (a few seconds); needs no project and no sign-in. Reads only.",
+      input: {
+        island: z.enum(DISCIPLINE_ORDER as unknown as [string, ...string[]]).optional().describe("One discipline: its items."),
+        type: z.enum(ITEM_TYPE_ORDER as unknown as [string, ...string[]]).optional().describe("One item type: its items (with island: both)."),
+        item: z.string().min(1).optional().describe("One item's id (skill:build-a-project, cli:check, ext:@protoboardai/ext-parts): it and its links. Not with island or type."),
+      },
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+      async handler({ island, type, item }, ctx) {
+        if (item && (island || type)) return { data: { error: "`item` answers one item with all its links: give it alone, or `island` and `type` without it" }, isError: true };
+        const dir = await ctx.dir();
+        const asked = !!(island || type || item);
+        return mapQuery(ctx, dir, cliArgs(["map"], { island, type, item }), asked ? (d) => d : mapOverview);
       },
     }),
     tool({

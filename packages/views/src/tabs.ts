@@ -93,6 +93,26 @@ export const BUILTIN_TABS: readonly TabRule[] = [
     description: "The project's parts and the libraries they come from.",
     applies: (module, bundle, at) => (at ? at.path === "" : module.id === bundle.root),
   },
+  {
+    id: "atlas",
+    title: "Atlas",
+    icon: "waypoints",
+    order: 70,
+    source: "builtin",
+    description: "Every artifact of the project and how it connects, drawn as a map.",
+    // the whole project's map: at the root only
+    applies: (module, bundle, at) => (at ? at.path === "" : module.id === bundle.root),
+  },
+  {
+    id: "sysmap",
+    title: "System Map",
+    icon: "map",
+    order: 75,
+    source: "builtin",
+    description: "What the Protoboard stack can do: its packages, skills, operations, tools and commands by discipline, with versions and links.",
+    // the stack's map, not a level's: at the root only, beside the Atlas
+    applies: (module, bundle, at) => (at ? at.path === "" : module.id === bundle.root),
+  },
 ];
 
 const byOrder = (a: TabRule, b: TabRule) => (a.order ?? 100) - (b.order ?? 100) || a.id.localeCompare(b.id);

@@ -3,7 +3,9 @@
  * validator that can run), write the UHD bundle atomically, and print one JSON
  * line describing the result. Next to the bundle it writes where each
  * definition and instance is declared (`sources.json`, ./sources.ts), for
- * the viewer's openSource. A fresh process per build means every project
+ * the viewer's openSource, and the project index (`atlas.json`, the Atlas
+ * view's data; docs/specs/atlas.md), whose failure never fails the build.
+ * A fresh process per build means every project
  * source is evaluated again; the dev server's own module cache never holds a
  * stale definition.
  *
@@ -11,7 +13,7 @@
  */
 import { mkdirSync, renameSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { definitionTrust, loadProject, resolveViews, stableStringify, uhdBundle, type PartTrust, type ResolvedView } from "@protoboardai/core";
+import { definitionTrust, loadProject, resolveViews, stableStringify, uhdBundle, writeAtlasIndex, type PartTrust, type ResolvedView } from "@protoboardai/core";
 import { SOURCES_FILE, sourceIndex } from "./sources.js";
 
 export interface BuildReport {
@@ -27,6 +29,8 @@ export interface BuildReport {
   views?: ResolvedView[];
   /** Every definition's part status by id (PB-932): the viewer's shells mark the modules with it. */
   partStatus?: Record<string, { trust: PartTrust; basis: string }>;
+  /** The project index next to the bundle (the Atlas view's data): its node count and problems, or why it was not written. */
+  atlas?: { nodes: number; problems: number } | { error: string };
 }
 
 async function main() {
@@ -51,9 +55,17 @@ async function main() {
     };
     write(join(dirname(bundleFile), SOURCES_FILE), JSON.stringify(sourceIndex(p)));
     write(bundleFile, data);
+    // the project index: a failure is reported, and the bundle is served all the same
+    let atlas: BuildReport["atlas"];
+    try {
+      const a = await writeAtlasIndex(p, { outDir: dirname(bundleFile) });
+      atlas = { nodes: a.counts.nodes, problems: a.problems };
+    } catch (e) {
+      atlas = { error: (e as Error).message.split("\n")[0] };
+    }
     const n = (s: string) => p.diagnostics.filter((d) => d.severity === s).length;
     const { views } = resolveViews(p.extensions);
-    report({ ok: true, bytes: data.length, counts: { error: n("error"), warning: n("warning"), info: n("info") }, watch, ...(views.length ? { views } : {}), partStatus: definitionTrust(p) });
+    report({ ok: true, bytes: data.length, counts: { error: n("error"), warning: n("warning"), info: n("info") }, watch, ...(views.length ? { views } : {}), partStatus: definitionTrust(p), atlas });
   } catch (e) {
     report({ ok: false, error: (e as Error).message.split("\n")[0] });
     process.exitCode = 1;

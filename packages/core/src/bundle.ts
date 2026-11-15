@@ -12,6 +12,7 @@ import { FRAMEWORK_VERSION } from "./extensions.js";
 import { artifactBaseDir, importTs } from "./load.js";
 import { attachedArtifacts, withArtifacts } from "./capabilities.js";
 import type { Project } from "./project.js";
+import { displayForBundle } from "./atlas/model.js";
 
 interface ProjectScenario {
   id: string;
@@ -64,7 +65,8 @@ export async function uhdBundle(p: Project): Promise<UhdBundle> {
     artifactBases,
     ...(scenarios.length ? { scenarios } : {}),
     diagnostics: p.diagnostics.map((d) => ({ code: d.code, severity: d.severity, message: d.message, entity: d.entity, ...(d.source ? { source: d.source } : {}), validator: d.validator })),
-    ...(display ? { display } : {}),
+    // the Atlas layout stays out of the bundle, so saving it never changes the bundle (docs/specs/atlas.md)
+    ...(display ? { display: displayForBundle(display) } : {}),
     meta: { name: p.name, producer: "@protoboardai/core", producerVersion: FRAMEWORK_VERSION },
   };
 }

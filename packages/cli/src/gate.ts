@@ -63,6 +63,10 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   check: LOCAL,
   layout: LOCAL,
   build: LOCAL,
+  // the project index's queries read .protoboard/build/atlas.json only
+  index: LOCAL,
+  // the System Map reads the stack this CLI runs from: no project, no account
+  map: LOCAL,
   dev: LOCAL,
   bom: LOCAL,
   // by subcommand: commandGate below

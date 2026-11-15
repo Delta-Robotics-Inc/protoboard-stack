@@ -79,6 +79,8 @@ import {
   loadProject,
   writeBuild,
   writeBundle,
+  writeAtlasIndex,
+  type AtlasWriteResult,
   type Project,
   type ProjectDiagnostic,
   claudeCodeHost,
@@ -191,7 +193,19 @@ const cli = meow(
     artifacts [instance]    Artifacts of the definitions in use (or of one instance), with the instances
                             using them and the file each resolves to
     check                   Resolve the project and run every available validator (exit 1 on errors)
-    build                   Write .protoboard/build/resolved.json (derived data only)
+    build                   Write .protoboard/build/resolved.json, the UHD bundle and the project index
+                            (atlas.json; derived data only). An index that cannot be written is reported and
+                            never changes the exit code
+    index census            The project index (written by build): every asset file (CAD, models, board files,
+                            renders, photos, documents, data, firmware) and whether an artifact or an
+                            operation record links it (--kind <kind>, --status linked|unlinked|failed).
+                            Reads only the index: no project code runs. Refused (exit 3) when the index is
+                            missing or older than the project's files; run build again
+    index where <ref>       Where a thing is: an instance path (arm_fl/motor), a definition id, a file path or a
+                            name, and every file, module and part one step from it (--kind <kind> filters)
+    index search <text>     Search the index: exact ids, names and paths first, then names and paths holding
+                            every word, a kind ("renders"), then the lines of the project's text documents.
+                            Every index command pages its answer (--limit, --cursor) in a stable order
     layout [level]          The diagram's layout measured, level by level, as the viewer draws it: line crossings,
                             overlapping cards, the longest row or column of cards (a strip), the aspect ratio and
                             lines under cards, with what to fix. A level is an instance path ("" is the top;
@@ -298,6 +312,12 @@ const cli = meow(
     stack install           Install the stack version package.json pins into ~/.protoboard/stack/<version> from a
                             registry (needs npm; --registry <url>), then link the project to it;
                             --from-vsix <extension folder | .vsix> is \`stack unpack\`
+    map                     The System Map of the stack this CLI runs from: its packages, extensions, skills,
+                            operations, checks, external tools, CLI commands, MCP tools, views, templates and
+                            docs, by discipline, with versions, what changed in which release and how they
+                            link. Needs no project and writes nothing (--out <file> writes the map there).
+                            --island <id>, --type <type> or --item <id> (one item with all its links) asks
+                            one question; --root <dir> maps another stack; --check: exit 1 on problems
     tools                   Tool runtimes the extensions declare, and whether they are installed here
     tools install <cad|circuit|all>
                             Create the project's runtime in .protoboard/tools/ (a Python venv or Node
@@ -366,6 +386,18 @@ const cli = meow(
     --no-browser            login: do not open a browser, only print the link
     --severity <level>      check: lowest severity to print (error|warning|info, default warning)
     --module <ref>          run <capability>:<op>: instance path (board) or module id (watch-mainboard)
+    --kind <kind>           index census, index where: only files of this kind (concept, render, photo, image,
+                            model, cad, board, doc, data, firmware, other; where also module and part)
+    --status <status>       index census: only linked, unlinked or failed files
+    --limit <n>             parts search: parts per page. index: items per page (default 20, at most 200)
+    --cursor <c>            parts search, index: the next page, from the previous page's nextCursor
+    --island <id>           map: the items of one discipline (project, research, parts, system, pcb, cad,
+                            firmware, docs, mfg, simulation, packaging, protocols, playbooks)
+    --type <type>           map: the items of one type (package, extension, skill, capability, operation,
+                            check, tool, cli-command, mcp-tool, view, template, example, doc, …)
+    --item <id>             map: one item (cli:map, skill:build-a-project) with its links, by kind
+    --root <dir>            map: the stack to map (default: the one this CLI runs from)
+    --out <file>            map: also write the map file there (default: nothing is written)
     --port <n>              dev: first port to try (default 5180; taken ports are skipped unless given)
     --host <addr>           dev: interface to bind (default 127.0.0.1)
     --open                  dev: open the viewer in the default browser
@@ -382,7 +414,8 @@ const cli = meow(
     --version <v>           release: the release version (default: the root module's version)
     --allow-dirty           release: release from uncommitted changes (recorded in the manifest)
     --check                 release: run the preconditions only; write nothing. libraries: ask each
-                            library for its discovery document. layout: exit 1 when a level has a warning
+                            library for its discovery document. layout: exit 1 when a level has a warning.
+                            map: exit 1 when the map lists problems
     --apply                 layout: lay the level(s) out afresh and write the display file where it reads better
     --tidy                  layout: start from the saved arrangement, fix what reads badly, and write it
     --pin <card>            layout: a card (node id on that level) that keeps its place (repeatable)
@@ -446,6 +479,13 @@ const cli = meow(
       tag: { type: "string" },
       limit: { type: "number" },
       cursor: { type: "string" },
+      kind: { type: "string" },
+      status: { type: "string" },
+      island: { type: "string" },
+      type: { type: "string" },
+      item: { type: "string" },
+      root: { type: "string" },
+      out: { type: "string" },
       sort: { type: "string" },
       mpn: { type: "string" },
       days: { type: "number" },
@@ -727,7 +767,8 @@ async function main() {
   // The account's own commands and `setup` do not: a sign-in is the user's, and its service is read without loading
   // the project (projectService), so asking who is signed in never changes a project (first builds review, item 23)
   // `upgrade` changes the ranges first and links after, so it does not link to a copy the old ranges choose
-  const linked = command && !["init", "stack", "login", "logout", "whoami", "account", "setup", "upgrade"].includes(command) ? linkIfCarried() : undefined;
+  // `map` reads the stack, never the project: it links nothing either
+  const linked = command && !["init", "stack", "login", "logout", "whoami", "account", "setup", "upgrade", "map"].includes(command) ? linkIfCarried() : undefined;
   // PB-1024: the CLI and the stack the project links to are different versions (`stack` says it in its own report)
   if (command && !["stack", "setup", "login", "logout", "whoami", "account", "upgrade"].includes(command)) {
     const root = findProjectRoot(cwd);
@@ -959,8 +1000,32 @@ async function main() {
       const p = await loadProject(cwd);
       const r = writeBuild(p);
       const b = await writeBundle(p);
-      out({ ...r, bundle: b }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)\n${summaryLine(p)}`);
+      // the project index (docs/specs/atlas.md): written after the bundle, and never a reason for the build to fail
+      const a: AtlasWriteResult | { error: string } = await writeAtlasIndex(p).then(
+        (x) => x,
+        (e: unknown) => ({ error: e instanceof Error ? e.message : String(e) }),
+      );
+      const atlasLine =
+        "error" in a
+          ? `project index not written: ${a.error.split("\n")[0]} (the build stands; \`protoboard index\` refuses until an index is written)`
+          : `wrote ${a.file} (project index: ${a.counts.census.total} asset files, ${a.counts.census.linked} linked, ${a.counts.census.unlinked} unlinked${a.counts.census.failed ? `, ${a.counts.census.failed} failed` : ""}; ${a.counts.nodes} nodes${a.problems ? `; ${a.problems} problem(s), listed in the file` : ""})`;
+      out({ ...r, bundle: b, atlas: a }, () => `wrote ${r.file} (${r.bytes} bytes, ${r.digest.slice(0, 23)}…)\nwrote ${b.file} (UHD bundle for viewers, ${b.bytes} bytes)\n${atlasLine}\n${summaryLine(p)}`);
+      // the build's own result: indexing never changes it
       process.exitCode = errorCount(p) ? 1 : 0;
+      return;
+    }
+    case "index": {
+      // read-only queries over the project index (atlas.ts): no project code runs; an unusable index is exit 3
+      const { indexCommand } = await import("./atlas.js");
+      await indexCommand(args, { json, cwd, out, flags: { kind: cli.flags.kind, status: cli.flags.status, limit: cli.flags.limit, cursor: cli.flags.cursor } });
+      return;
+    }
+    case "map": {
+      // the System Map of the stack this CLI runs from (sysmap.ts, docs/specs/system-map.md): no project, no sign-in;
+      // it reads the stack's files and git history and writes only the file --out names
+      const { mapCommand } = await import("./sysmap.js");
+      const r = await mapCommand(args, { json, cwd, out, flags: { root: cli.flags.root, out: cli.flags.out, island: cli.flags.island, type: cli.flags.type, item: cli.flags.item, check: cli.flags.check } });
+      process.exitCode = process.exitCode || r.code;
       return;
     }
     case "dev": {

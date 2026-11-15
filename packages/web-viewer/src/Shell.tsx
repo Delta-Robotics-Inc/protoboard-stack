@@ -26,7 +26,7 @@ import {
   type UhdViewerOptions,
 } from "@deltarobotics/uhd-viewer/components";
 import type { ResolvedView } from "@protoboardai/core";
-import { PartStatusStyles, PartsDataProvider, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, themeAdapterFor, themeChoiceOf, type HostAdapter, type PartTrust, type PartsData, type ViewDefinition } from "@protoboardai/views";
+import { AtlasDataProvider, PartStatusStyles, PartsDataProvider, PlannedView, SysmapDataProvider, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, themeAdapterFor, themeChoiceOf, type AtlasData, type HostAdapter, type PartTrust, type PartsData, type SysmapData, type ViewDefinition } from "@protoboardai/views";
 import { Logo, markSvg } from "./Logo.js";
 
 export interface WebViewerOptions extends UhdViewerOptions {
@@ -40,6 +40,10 @@ export interface WebViewerOptions extends UhdViewerOptions {
   pairRequests?: EventTarget;
   /** The library and BOM tabs' data (`createDevPartsData` for `protoboard dev`); without it they say it is missing. */
   partsData?: PartsData;
+  /** The Atlas tab's data (`createDevAtlasData` for `protoboard dev`); without it the tab says it needs the dev server. */
+  atlasData?: AtlasData;
+  /** The System Map tab's data (`createDevSysmapData` for `protoboard dev`: the stack the server runs from); without it the tab says it has no map. */
+  sysmapData?: SysmapData;
   /**
    * Every definition's part status by id (PB-932; the dev server's state):
    * the dot on a module in the diagram takes its colour (gray local, yellow
@@ -68,8 +72,8 @@ function keepHierarchy(state: HierarchyPanelState) {
   }
 }
 
-/** Views with no module tree to follow: the library and the BOM are the project's, not a level's. */
-const NO_HIERARCHY = new Set(["library", "bom"]);
+/** Views with no module tree to follow: the library, the BOM and the Atlas are the project's, not a level's; the System Map is the stack's. */
+const NO_HIERARCHY = new Set(["library", "bom", "atlas", "sysmap"]);
 
 function storedTheme(): string | null {
   try {
@@ -105,9 +109,13 @@ export function WebShell(props: WebViewerOptions) {
       <DocumentTheme />
       <PartStatusStyles />
       <PartsDataProvider data={props.partsData ?? null}>
-        <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
-          <Shell views={props.views} registry={props.registry} pairRequests={props.pairRequests} theme={choice} onTheme={props.themeChoice ? undefined : setChoice} />
-        </UhdViewer>
+        <AtlasDataProvider data={props.atlasData ?? null}>
+          <SysmapDataProvider data={props.sysmapData ?? null}>
+            <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
+              <Shell views={props.views} registry={props.registry} pairRequests={props.pairRequests} theme={choice} onTheme={props.themeChoice ? undefined : setChoice} />
+            </UhdViewer>
+          </SysmapDataProvider>
+        </AtlasDataProvider>
       </PartsDataProvider>
     </ThemeProvider>
   );

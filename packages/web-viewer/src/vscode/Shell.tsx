@@ -45,7 +45,7 @@ import {
   type UhdViewerOptions,
 } from "@deltarobotics/uhd-viewer/components";
 import type { ResolvedView } from "@protoboardai/core";
-import { MissingPartsHint, PartStatusStyles, PlannedView, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, type HostAdapter, type PartTrust, type ViewDefinition } from "@protoboardai/views";
+import { AtlasDataProvider, MissingPartsHint, PartStatusStyles, PlannedView, SysmapDataProvider, ViewIcon, ViewRegistry, createViewRegistry, nodeMarks, registerContributedViews, type AtlasData, type HostAdapter, type PartTrust, type SysmapData, type ViewDefinition } from "@protoboardai/views";
 import { isProtoboardColourTheme, vscodeViewThemeAdapter } from "@protoboardai/views/theme";
 import { Logo } from "../Logo.js";
 import { LoadingScreen } from "./Loading.js";
@@ -90,6 +90,10 @@ export interface VsCodeViewerOptions extends UhdViewerOptions {
   registry?: ViewRegistry;
   /** Every definition's part status by id (PB-932; the dev server's state): the dot on a module in the diagram. */
   partStatus?: Record<string, { trust: PartTrust; basis?: string; blank?: boolean }>;
+  /** The Atlas tab's data: the index from the dev server; positions and Open through the extension (./index.ts). */
+  atlasData?: AtlasData;
+  /** The System Map tab's data: the map of the stack the extension runs, asked of the extension (./sysmapData.ts). */
+  sysmapData?: SysmapData;
 }
 
 /** The colour theme VS Code applies is a Protoboard one (the extension's Protoboard Dark or Light). */
@@ -112,10 +116,14 @@ export function VsCodeShell(props: VsCodeViewerOptions) {
     <ThemeProvider adapter={adapter} className="pb-vscode">
       <PartStatusStyles />
       {props.bundle || props.bundleUrl ? (
-        <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
-          <Shell bridge={props.bridge} views={props.views} registry={props.registry} />
-          {status && <StatusCard status={status} bridge={props.bridge} over />}
-        </UhdViewer>
+        <AtlasDataProvider data={props.atlasData ?? null}>
+          <SysmapDataProvider data={props.sysmapData ?? null}>
+            <UhdViewer {...props} nodeMarks={props.nodeMarks ?? marks}>
+              <Shell bridge={props.bridge} views={props.views} registry={props.registry} />
+              {status && <StatusCard status={status} bridge={props.bridge} over />}
+            </UhdViewer>
+          </SysmapDataProvider>
+        </AtlasDataProvider>
       ) : (
         <Waiting status={status ?? { message: "Loading the project…", busy: true }} bridge={props.bridge} />
       )}
@@ -231,6 +239,9 @@ const NATIVE_VIEWS = new Set(["bom"]);
  * header tab is for what this tab shows.
  */
 const NOT_IN_VSCODE = new Set(["library"]);
+
+/** Views with no module tree to follow (the Atlas is the whole project's, the System Map the stack's): no hierarchy panel beside them. */
+const NO_HIERARCHY = new Set(["atlas", "sysmap"]);
 
 /** What the floating header and the toolbar cover (the viewer's floating cards sit inside it). */
 const INSETS = { "--uhd-inset-top": "44px", "--uhd-inset-left": "0px", "--uhd-inset-right": "0px" } as CSSProperties;
@@ -363,7 +374,7 @@ function Shell({ bridge, views, registry: given }: { bridge: ShellBridge; views?
         <SourcePath bridge={bridge} path={on.path} />
       </Header>
       {/* a floating card with its own fold button; folded, an icon-only button at its corner opens it again (PB-1070) */}
-      <ViewerHierarchy state={bridge.hierarchyState} onStateChange={bridge.onHierarchyState} command={hierarchyCommand} rowAttributes={rowAttributes} ownMenu={false} />
+      {!NO_HIERARCHY.has(active?.id ?? "") && <ViewerHierarchy state={bridge.hierarchyState} onStateChange={bridge.onHierarchyState} command={hierarchyCommand} rowAttributes={rowAttributes} ownMenu={false} />}
       <div className="workspace" role="tabpanel" aria-label={active?.title}>
         {active?.id === "diagram" ? (
           <>

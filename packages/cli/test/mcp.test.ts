@@ -29,7 +29,7 @@ const TMP = join(HERE, ".tmp-mcp");
 const EMPTY = mkdtempSync(join(tmpdir(), "pb-mcp-empty-"));
 const HOME = mkdtempSync(join(tmpdir(), "pb-mcp-home-"));
 
-const TOOLS = ["project_status", "project_init", "project_check", "project_inspect", "project_build", "project_layout", "parts_search", "parts_add", "parts_list", "skills_list", "skill_read", "bom", "release_check"];
+const TOOLS = ["project_status", "project_init", "project_check", "project_inspect", "project_build", "project_census", "project_where", "project_search", "project_layout", "parts_search", "parts_add", "parts_list", "skills_list", "skill_read", "stack_map", "bom", "release_check"];
 const WRITES = ["project_init", "project_build", "project_layout", "parts_add"];
 
 const PART: UhdModuleDef = {
@@ -230,6 +230,9 @@ describe("in an empty folder", () => {
       ["project_check", {}],
       ["project_inspect", {}],
       ["project_build", {}],
+      ["project_census", {}],
+      ["project_where", { ref: "board" }],
+      ["project_search", { text: "motor" }],
       ["project_layout", {}],
       ["parts_search", { query: "regulator" }],
       ["parts_add", { parts: ["test-mcp-regulator"] }],
@@ -401,7 +404,32 @@ describe("in a scratch project (the tools that write)", () => {
     expect(data.file).toMatch(/\.protoboard\/build\/resolved\.json$/);
     expect(existsSync(join(dir, ".protoboard/build/resolved.json"))).toBe(true);
     expect(data.bundle.file).toMatch(/\.protoboard\/build\//);
+    // and the project index the query tools read
+    expect(data.atlas.file).toMatch(/atlas\.json$/);
+    expect(existsSync(join(dir, ".protoboard/build/atlas.json"))).toBe(true);
   }, 120_000);
+
+  it("project_census, project_where and project_search answer from the index, and refuse a stale one with what to do", async () => {
+    const census = await call(client, "project_census", { dir: "scratch" });
+    expect(census.isError).toBe(false);
+    expect(census.data).toMatchObject({ schema: "protoboard.atlas-query/v0", query: { command: "census" } });
+    const where = await call(client, "project_where", { dir: "scratch", ref: "sys" });
+    expect(where.data).toMatchObject({ matchedBy: "definition", node: { id: "def:sys" } });
+    const unknown = await call(client, "project_where", { dir: "scratch", ref: "no-such-thing" });
+    expect(unknown.isError).toBe(true);
+    expect(unknown.data.error).toMatch(/nothing in the project index is called "no-such-thing"/);
+    const search = await call(client, "project_search", { dir: "scratch", text: "System" });
+    expect(search.data.items[0]).toMatchObject({ match: "exact", node: "def:sys" });
+    // a file written after the build: the index is older than the project, and the agent is told to build
+    writeFileSync(join(dir, "notes.md"), "# Notes\n");
+    const stale = await call(client, "project_census", { dir: "scratch" });
+    expect(stale.isError).toBe(true);
+    expect(stale.data).toMatchObject({ code: "INDEX_STALE", action: "Call project_build (it writes the index), then call this tool again." });
+    expect(stale.data.error).toMatch(/notes\.md \(added\)/);
+    expect(stale.data.items).toBeUndefined();
+    expect((await call(client, "project_build", { dir: "scratch" })).isError).toBe(false);
+    expect((await call(client, "project_census", { dir: "scratch" })).data.items).toContainEqual(expect.objectContaining({ path: "notes.md", kind: "doc", status: "unlinked" }));
+  }, 180_000);
 });
 
 describe("what an agent gives is a value, never an option of the CLI", () => {
@@ -435,6 +463,9 @@ describe("what an agent gives is a value, never an option of the CLI", () => {
     expect(await args("bom", { release: "0.1.0" })).toEqual(["bom", "--release=0.1.0", "--format=json", "--"]);
     expect(await args("release_check", { version: "0.2.0-rc.1" })).toEqual(["release", "--check", "--version=0.2.0-rc.1", "--format=json", "--"]);
     expect(await args("parts_list", { checkUpdates: true })).toEqual(["parts", "list", "--check", "--format=json", "--"]);
+    expect(await args("project_census", { kind: "render", status: "unlinked", limit: 5 })).toEqual(["index", "census", "--kind=render", "--status=unlinked", "--limit=5", "--format=json", "--"]);
+    expect(await args("project_where", { ref: "--help", kind: "cad" })).toEqual(["index", "where", "--kind=cad", "--format=json", "--", "--help"]);
+    expect(await args("project_search", { text: "--url http://127.0.0.1:9/x render", cursor: "20.0123456789ab" })).toEqual(["index", "search", "--cursor=20.0123456789ab", "--format=json", "--", "--url http://127.0.0.1:9/x render"]);
 
     // an option's value that would be read as another option never reaches the CLI
     const refused: [string, Record<string, unknown>][] = [
@@ -442,6 +473,7 @@ describe("what an agent gives is a value, never an option of the CLI", () => {
       ["bom", { release: "--url=http://127.0.0.1:9/x" }],
       ["parts_add", { parts: ["a-part"], library: "--url" }],
       ...["taxonomy", "domain", "protocol", "tag", "cursor", "library"].map((k): [string, Record<string, unknown>] => ["parts_search", { query: "x", [k]: "--url" }]),
+      ["project_search", { text: "x", cursor: "--url" }],
     ];
     for (const [name, a] of refused) {
       const r = await call(client, name, { dir: "echo-cli", ...a });

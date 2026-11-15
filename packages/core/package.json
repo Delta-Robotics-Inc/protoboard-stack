@@ -14,6 +14,8 @@
     ".": "./src/index.ts",
     "./library-client": "./src/library-client.ts",
     "./views": "./src/view-ids.ts",
+    "./atlas": "./src/atlas/model.ts",
+    "./sysmap": "./src/sysmap/model.ts",
     "./cdp": "./src/cdp.ts",
     "./browser": "./src/browser.ts",
     "./account": "./src/account.ts",

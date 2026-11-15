@@ -43,8 +43,10 @@ import type { ViewerCommand as HostToViewer } from "../../web-viewer/src/vscode/
 import { boardSection, groupCard, interfaceCard, libraryPartCard, linkCard, linkHarnessDefs, moduleCard, partCard, type DetailFiles, type InspectorCard } from "./inspector.js";
 import { detailFiles, interfaceArtifacts, resourceRoots, smallModel } from "./inspectorFiles.js";
 import { InspectorViewProvider, type InspectorAction, type InspectorContent } from "./inspectorView.js";
-import { displayFile, saveLayout } from "./display.js";
+import { displayFile, saveAtlasLayout, saveLayout } from "./display.js";
 import { ViewerEditors, type ViewerEditor } from "./viewerEditor.js";
+import { SysmapCache, findStackRoot } from "./systemMap.js";
+import { SystemMapController } from "./systemMapPanel.js";
 import { VIEWER_TYPE, type ViewerTarget } from "./viewerPage.js";
 import type { LayoutSnapshot, ViewerEvent, ViewerLayout } from "../../web-viewer/src/vscode/protocol.js";
 import { hierarchyRowArg } from "../../web-viewer/src/vscode/protocol.js";
@@ -341,6 +343,11 @@ class ProtoboardExtension {
   readonly explorer = new ExplorerProvider();
   readonly drc: DrcViewProvider;
   readonly viewers: ViewerEditors;
+  /**
+   * The System Map (systemMap.ts, systemMapPanel.ts): the map of the stack this extension runs, built once per
+   * session by that stack's own CLI; its panel, and the System Map tab of every viewer tab.
+   */
+  readonly systemMap: SystemMapController;
   readonly inspector: InspectorViewProvider;
   readonly library: LibraryController;
   private readonly cloud: CloudViewProvider;
@@ -410,6 +417,23 @@ class ProtoboardExtension {
     const builds = vscode.workspace.createFileSystemWatcher(`**/${RESOLVED_FILE.split("\\").join("/")}`);
     // what the Cloud view's cost and package come from: releases, vendored offers, sourcing evidence
     const costs = vscode.workspace.createFileSystemWatcher("**/{release/*/manifest.json,release/*/system/ordering-list.csv,parts/offers.json,parts/bom.json,parts/fx-rates.json,parts/evidence/*/sourcing.json}");
+    // the System Map is the extension's own stack (the repository of a development build, else the carried copy),
+    // mapped by that stack's CLI: never a project's code, so it needs no project, no project trust and no sign-in
+    this.systemMap = new SystemMapController(context.extensionUri, {
+      cache: new SysmapCache({
+        locate: () => findStackRoot({ extensionPath: context.extensionPath, home: this.home, ...(this.carried ? { carried: this.carried } : {}) }),
+        prepare: () => this.prepareStack(),
+        run: (script, args, cwd) => {
+          // the user's own nodePath (a window with no folder has no other), as the carried CLI runs everywhere else
+          const runtime = this.runtime(vscode.workspace.getConfiguration("protoboard").get<string>("nodePath"));
+          const cli: CliCommand = { command: runtime.command, args: [script], from: "carried", ...(runtime.env ? { env: runtime.env } : {}) };
+          return runCli(cli, args, { cwd, onStderr: (l) => this.log.info(`[map] ${l}`) });
+        },
+        log: (line) => this.log.info(line),
+      }),
+      log: this.log,
+      notify: (message, severity) => this.notify(message, severity),
+    });
     this.viewers = new ViewerEditors(context.extensionUri, {
       log: this.log,
       ensureDev: (root) => this.ensureDev(root),
@@ -422,6 +446,9 @@ class ProtoboardExtension {
       focused: (editor) => this.viewerFocused(editor),
       stateChanged: (editor) => this.viewerStateChanged(editor),
       save: (target, layout, snapshot) => this.saveViewerLayout(target, layout, snapshot),
+      saveAtlas: (root, positions) => this.saveAtlasPositions(root, positions),
+      openFile: (_root, file) => this.openFile(file),
+      sysmap: (m, reply, who) => this.systemMap.answer(m, reply, who),
       notify: (message, severity) => this.notify(message, severity),
       closed: (root) => this.viewerClosed(root),
       sourceOf: (root, path) => (this.data.get(root) ? moduleSource(this.data.get(root)!.index, path, (f) => readText(root, f)) : undefined),
@@ -572,6 +599,11 @@ class ProtoboardExtension {
         { webviewOptions: { retainContextWhenHidden: true } },
       ),
       cmd("protoboard.openViewer", (arg?: OpenViewerArg) => this.openViewOf(arg)),
+      // the Atlas (docs/specs/atlas.md): every file of the project and how it connects, as a viewer tab at the top level
+      cmd("protoboard.openAtlas", (root?: string) => this.openViewer({ root: typeof root === "string" ? root : undefined, path: "", view: "atlas" })),
+      // the System Map (docs/specs/system-map.md): the stack this extension runs, in one panel; no project needed
+      cmd("protoboard.openSystemMap", () => this.systemMap.open()),
+      this.systemMap,
       cmd("protoboard.openModule", (n?: NodeArg) => this.openNodeAsTab(n)),
       // the former id of New Project (Create Project…), kept for what still calls it: one command, one implementation
       cmd("protoboard.init", (arg?: NewProjectArgs) => this.newProject(arg)),
@@ -2995,23 +3027,31 @@ class ProtoboardExtension {
     if (f) await this.locate(f);
   }
 
+  /** The display file the project's dev server reports (project-relative), when one runs and answers. */
+  private async reportedDisplay(root: string): Promise<string | undefined> {
+    const s = this.sessions.get(root);
+    if (!s?.endpoint) return undefined;
+    try {
+      const state = (await (await fetch(new URL(STATE_ROUTE, s.endpoint.url), { cache: "no-store" })).json()) as { display?: unknown };
+      return typeof state.display === "string" ? state.display : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
   /** Save a tab's layout edits into the project's display file (the dev server reports which file that is). */
   private async saveViewerLayout(target: ViewerTarget, layout: ViewerLayout, snapshot?: LayoutSnapshot) {
-    const s = this.sessions.get(target.root);
-    let reported: string | undefined;
-    if (s?.endpoint) {
-      try {
-        const state = (await (await fetch(new URL(STATE_ROUTE, s.endpoint.url), { cache: "no-store" })).json()) as { display?: unknown };
-        if (typeof state.display === "string") reported = state.display;
-      } catch {
-        reported = undefined;
-      }
-    }
-    const result = saveLayout(target.root, displayFile(target.root, reported), layout, snapshot);
+    const result = saveLayout(target.root, displayFile(target.root, await this.reportedDisplay(target.root)), layout, snapshot);
     for (const k of result.skipped) this.log.warn(`layout of ${k.level || "the top level"} not saved: ${k.reason}`);
     if (result.levels.length) this.log.info(`layout saved: ${result.levels.map((l) => (l === "" ? "top level" : `level ${l}`)).join(", ")} → ${result.file}`);
     if (result.skipped.length) void vscode.window.showWarningMessage(`Protoboard: part of the layout was not saved: ${result.skipped[0].reason}`, "Show Log").then((a) => a && this.log.show());
     else vscode.window.setStatusBarMessage(`$(check) Layout saved to ${result.file}`, 3000);
+  }
+
+  /** Keep an Atlas tab's positions in the project's display file (`atlas.positions`): at once, no Ctrl+S; nothing else in the file changes. */
+  private async saveAtlasPositions(root: string, positions: Record<string, [number, number]>) {
+    const result = saveAtlasLayout(root, displayFile(root, await this.reportedDisplay(root)), positions);
+    if (result.changed) this.log.info(`Atlas layout saved: ${result.nodes} position${result.nodes === 1 ? "" : "s"} → ${result.file}`);
   }
 
   private notify(message: string, severity?: "info" | "warning" | "error") {

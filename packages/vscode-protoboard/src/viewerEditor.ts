@@ -10,13 +10,23 @@
  * exit keeps unsaved edits in a backup. Everything else a tab does (its
  * selection, open source, open artifact, open a module as a new tab) goes to
  * the extension through `ViewerHost`.
+ *
+ * The Atlas tab is the exception to the save model: its positions are kept
+ * at once (`saveAtlas`, the display file's `atlas` key) and never make the
+ * tab dirty. A file it opens is checked here first: a path that does not lie
+ * inside the project, once links are followed, is refused.
+ *
+ * The System Map tab asks the extension for its map (`sysmap`), the map of
+ * the stack the extension runs, and opens its files (`sysmapOpen`) through
+ * the same host as the System Map panel (systemMapPanel.ts).
  */
 import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type SourceAction, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection } from "../../web-viewer/src/vscode/protocol.js";
+import { emptyLayout, hasEdits, parseFromWebview, type DevEndpoint, type FromWebview, type LayoutSnapshot, type ModuleSource, type SourceAction, type SysmapReply, type ToWebview, type ViewerEvent, type ViewerLayout, type ViewerSelection } from "../../web-viewer/src/vscode/protocol.js";
 import { nonce } from "./html.js";
+import { isProjectFile, projectFileOf } from "./display.js";
 import { devOrigins, distinctTitles, originCovered, parseBackup, parseViewerUri, viewerPageHtml, viewerTitle, viewerUri, SOURCE_COMMANDS, VIEWER_SCHEME, VIEWER_TYPE, type ViewerBackup, type ViewerTarget } from "./viewerPage.js";
 
 /** What the extension does for the tabs. */
@@ -35,6 +45,16 @@ export interface ViewerHost {
   stateChanged(editor: ViewerEditor): void;
   /** Save a tab's layout edits to the project's display file. */
   save(target: ViewerTarget, layout: ViewerLayout, snapshot?: LayoutSnapshot): Promise<void>;
+  /** Keep an Atlas tab's positions in the project's display file (`atlas.positions`), at once: no dirty tab, no Ctrl+S. */
+  saveAtlas?(root: string, positions: Record<string, [number, number]>): Promise<void>;
+  /** Open a file of the project (already checked to lie inside it) in the editor that suits it: text in VS Code, STEP and GLB in the CAD viewer. */
+  openFile?(root: string, file: string): Promise<void>;
+  /**
+   * The System Map tab's messages (systemMapPanel.ts `answer`): `sysmap` is
+   * answered through `reply` with the map of the stack the extension runs (not
+   * the tab's project's), `sysmapOpen` opens a stack file once it is checked.
+   */
+  sysmap?(m: Extract<FromWebview, { type: "sysmap" } | { type: "sysmapOpen" }>, reply: (r: SysmapReply) => void, who: string): void;
   /** A tab closed (the project's last one, perhaps). */
   closed(root: string): void;
   /** A tab's Retry: look for the server again, start one if there is none, and tell the tabs. */
@@ -464,6 +484,34 @@ export class ViewerEditors implements vscode.CustomEditorProvider<ViewerDocument
         return;
       case "hierarchy":
         editor.hierarchyReported(m);
+        return;
+      case "atlasLayout":
+        if (!this.host.saveAtlas) return;
+        void this.host.saveAtlas(editor.root, m.positions).catch((e: Error) => {
+          this.host.log.warn(`${this.name(editor)}: the Atlas layout was not saved: ${e.message}`);
+          this.host.notify(`The Atlas layout was not saved: ${e.message}`, "warning");
+        });
+        return;
+      case "openFile": {
+        // the page names a path; only a file of this project opens (links followed), never one outside it
+        const file = projectFileOf(editor.root, m.path);
+        if (!file) {
+          this.host.log.warn(`${this.name(editor)}: refused to open ${JSON.stringify(m.path)}: not a file of this project`);
+          this.host.notify(`${m.path} is not a file of this project.`, "error");
+          return;
+        }
+        if (!isProjectFile(file)) {
+          this.host.notify(`${m.path} is not there any more (moved or deleted since the project was indexed).`, "warning");
+          return;
+        }
+        void this.host.openFile?.(editor.root, file).catch((e: Error) => this.host.notify(e.message, "error"));
+        return;
+      }
+      case "sysmap":
+      case "sysmapOpen":
+        // the System Map tab shows the extension's stack (whatever project the tab is on): the extension answers
+        if (this.host.sysmap) return this.host.sysmap(m, (r) => editor.post(r), this.name(editor));
+        if (m.type === "sysmap") editor.post({ type: "sysmap", error: "This window has no System Map." });
         return;
     }
   }

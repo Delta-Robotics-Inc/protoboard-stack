@@ -14,6 +14,8 @@ import { WebShell, type WebViewerOptions } from "./Shell.js";
 
 export { WebShell, type WebViewerOptions };
 export { createDevPartsData, type DevPartsOptions } from "./partsData.js";
+export { createDevAtlasData, type DevAtlasOptions } from "./atlasData.js";
+export { createDevSysmapData, type DevSysmapOptions } from "./sysmapData.js";
 export type { ViewerHandle };
 
 export function mountWebViewer(element: HTMLElement, options: WebViewerOptions): ViewerHandle {

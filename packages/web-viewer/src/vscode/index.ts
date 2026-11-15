@@ -8,6 +8,13 @@
  *   the extension says where it is (`dev`) and when it moves.
  * - The viewer's events, the tab's state, layout edits and requests for new
  *   tabs go to the extension (protocol.ts); its host messages come back.
+ * - The Atlas tab reads the project index from the dev server too (CORS, no
+ *   token); its positions and the files it opens go to the extension, which
+ *   writes the display file and checks every path.
+ * - The System Map tab's map comes from the extension (`sysmap`, the stack
+ *   the extension runs), not from the dev server; so does the System Map
+ *   panel's, a page of this same script in `mode: "sysmap"`
+ *   (./systemMapPage.tsx: the map alone, no project).
  * - Keys the viewer does not use reach VS Code: the webview forwards every
  *   key press to the workbench, and nothing here stops one.
  */
@@ -18,11 +25,17 @@ import type { UhdBundle } from "@deltarobotics/uhd";
 import type { ResolvedView } from "@protoboardai/core";
 import { VsCodeShell, type ShellBridge, type VsCodeViewerOptions } from "./Shell.js";
 import { DevLink, type EventSourceLike, type ViewerStatus } from "./devLink.js";
+import { createTabAtlasData } from "./atlasData.js";
+import { createVsCodeSysmapData } from "./sysmapData.js";
+import { mountVsCodeSystemMap, themeReport } from "./systemMapPage.js";
 import { emptyLayout, hasEdits, type FromWebview, type HierarchyAction, type HierarchyRowReport, type LayoutSnapshot, type ModuleSource, type ToWebview, type ViewerLayout, type ViewerViewport, type WebviewConfig } from "./protocol.js";
 
 export { VsCodeShell, vscodeShellThemeAdapter, isProtoboardTheme } from "./Shell.js";
 export * from "./protocol.js";
 export * from "./devLink.js";
+export { createTabAtlasData } from "./atlasData.js";
+export { createVsCodeSysmapData, type VsCodeSysmapData } from "./sysmapData.js";
+export { mountVsCodeSystemMap } from "./systemMapPage.js";
 
 interface VsCodeApi {
   postMessage(message: unknown): void;
@@ -121,11 +134,18 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   const waiting: ToWebview[] = [];
   let views: ResolvedView[] = [];
   let partStatus: VsCodeViewerOptions["partStatus"];
+  // the dev server the tab reads from now: the Atlas loads its index there
+  let devBase: string | undefined;
+  const atlasData = createTabAtlasData(() => devBase, post);
+  // the System Map tab: the stack the extension runs (asked of the extension, whatever the dev server is)
+  const sysmapData = createVsCodeSysmapData(post);
 
   const options = (): Omit<VsCodeViewerOptions, "bundle" | "bundleUrl"> => ({
     bridge,
     views,
     ...(partStatus ? { partStatus } : {}),
+    atlasData,
+    sysmapData,
     layout,
     onLayoutChange: (next) => {
       layout = next;
@@ -158,6 +178,7 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
     log,
     onStatus: setStatus,
     onLoad: ({ base, state, bundle }) => {
+      devBase = base;
       views = Array.isArray(state.views) ? (state.views as ResolvedView[]) : [];
       partStatus = state.partStatus && typeof state.partStatus === "object" ? (state.partStatus as VsCodeViewerOptions["partStatus"]) : undefined;
       viewer!.update({ ...options(), bundle: rebase(bundle as UhdBundle, base), bundleUrl: new URL("uhd-bundle.json", base).href, diagnostics: state.diagnostics } as Partial<VsCodeViewerOptions>);
@@ -167,6 +188,8 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
         if (config.view === "3d") viewer!.setView("3d");
         for (const m of waiting.splice(0)) receive(m);
       }
+      // a server found again (a restart, a move): the Atlas reads from it
+      atlasData.changed();
     },
     onBundle: ({ base, bundle, event }) => {
       // the display file changed (our save, a checkout, an edit by hand): edits it now holds go
@@ -179,6 +202,9 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       // a rebuild says the parts' status again (a part added, an update taken)
       if (event.partStatus && typeof event.partStatus === "object") partStatus = event.partStatus as VsCodeViewerOptions["partStatus"];
       viewer!.update({ bundle: rebase(bundle as UhdBundle, base), diagnostics: event.diagnostics, ...(reset ? { layout } : {}), ...(partStatus ? { partStatus } : {}) } as Partial<VsCodeViewerOptions>);
+      devBase = base;
+      // a rebuild (a new index) or a display file changed on disk: the Atlas loads again; a diagram layout save changes neither
+      if (event.reason !== "layout") atlasData.changed();
     },
   });
   // the extension answers `ready` with where the dev server is; a page that hears nothing asks again, then says so
@@ -231,16 +257,12 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
       case "reportHierarchy":
         post({ type: "hierarchy", ...hierarchyReport() });
         return;
-      case "reportTheme": {
-        const style = document.documentElement.style;
-        const vars: Record<string, string> = {};
-        for (let i = 0; i < style.length; i++) {
-          const k = style[i];
-          if (k.startsWith("--vscode-")) vars[k] = style.getPropertyValue(k).trim();
-        }
-        post({ type: "theme", vars, classes: [...document.body.classList], themeId: document.body.dataset.vscodeThemeId });
+      case "reportTheme":
+        post(themeReport());
         return;
-      }
+      case "sysmap":
+        sysmapData.receive(m);
+        return;
     }
   }
 
@@ -253,11 +275,12 @@ export function mountVsCodeViewer(element: HTMLElement, config: WebviewConfig, v
   if (config.dev) link.set(config.dev);
   post({ type: "ready" });
   ask(0);
-  return { get viewer() { return viewer; }, receive, link };
+  return { get viewer() { return viewer; }, receive, link, atlasData, sysmapData };
 }
 
-// the page: config in a JSON script, the shell in #viewer
+// the page: config in a JSON script, the shell in #viewer (or, for the System Map panel, the map alone)
 if (typeof document !== "undefined" && document.getElementById("protoboard-viewer-config")) {
   const config = JSON.parse(document.getElementById("protoboard-viewer-config")!.textContent!) as WebviewConfig;
-  (window as unknown as { protoboardViewer: unknown }).protoboardViewer = mountVsCodeViewer(document.getElementById("viewer")!, config);
+  const element = document.getElementById("viewer")!;
+  (window as unknown as { protoboardViewer: unknown }).protoboardViewer = config.mode === "sysmap" ? mountVsCodeSystemMap(element, acquireVsCodeApi()) : mountVsCodeViewer(element, config);
 }

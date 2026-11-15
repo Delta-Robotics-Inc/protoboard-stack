@@ -9,7 +9,9 @@
  * The page loads the VS Code shell the extension ships
  * (dist/webview/protoboard-viewer.js, built from @protoboardai/web-viewer's
  * src/vscode) and reads the project from its `protoboard dev` server; it
- * frames nothing. No VS Code API here.
+ * frames nothing. The System Map panel (systemMapPanel.ts) is this same page
+ * with `mode: "sysmap"` in its config and no dev server origins. No VS Code
+ * API here.
  */
 import { escapeHtml } from "./html.js";
 import { parseParams, type SourceAction, type ViewerLayout, type WebviewConfig } from "../../web-viewer/src/vscode/protocol.js";
@@ -60,7 +62,7 @@ export function parseViewerUri(u: { scheme: string; query: string }): ViewerTarg
   return { root, path, view, ...(params ? { params } : {}) };
 }
 
-const VIEW_TITLES: Record<string, string> = { diagram: "Diagram", "3d": "3D", schematic: "Schematic", pcb: "PCB", bom: "BOM", pair: "Pair", library: "Library" };
+const VIEW_TITLES: Record<string, string> = { diagram: "Diagram", "3d": "3D", schematic: "Schematic", pcb: "PCB", bom: "BOM", pair: "Pair", library: "Library", atlas: "Atlas", sysmap: "System Map" };
 
 /** The tab's title: the module's name, and the view when it is not the diagram (`Bottle cap · 3D`). */
 export function viewerTitle(label: string, view: string, viewTitle?: string): string {

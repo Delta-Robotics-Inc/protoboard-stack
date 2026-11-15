@@ -17,16 +17,25 @@
  * - Writes layout edits from the viewer (`onLayoutChange`) to the display
  *   file under `diagram.layouts`, and pushes a display file changed on disk
  *   (by hand, by git) to the viewer.
+ * - Serves the Atlas view's data (./atlas.ts): the project index each build
+ *   writes, the positions the display file keeps under `atlas`, and whether
+ *   files changed since; a stale index is rebuilt on request (at most every
+ *   10 s), with no watcher of its own. Saving positions writes only the
+ *   display file's `atlas` key, which the bundle never carries: nothing is
+ *   rebuilt or pushed.
+ * - Serves the System Map of the stack this CLI runs from (./sysmap.ts), the
+ *   Atlas view's second data source: built in memory on the first request,
+ *   never written, its freshness checked at most every 10 s.
  * - Relays the viewer's host messages when the page is framed (relay.js;
  *   parent origins: `hostOrigins`), and answers where a definition or an
  *   instance is written (`/__protoboard/source`) from the build's source
  *   index, for the viewer's openSource.
  * - Lets a host's own page read the session: a GET from an allowed host
  *   origin (`hostOrigins`, default VS Code webviews) of the bundle, its
- *   artifacts, the state or the events gets CORS headers, so the VS Code
- *   extension's viewer tabs load them without framing the page. Nothing
- *   else is opened: not the page (it carries the write token), not the
- *   source lookup, not writes.
+ *   artifacts, the state, the events, the Atlas data or the System Map gets CORS headers,
+ *   so the VS Code extension's viewer tabs load them without framing the
+ *   page. Nothing else is opened: not the page (it carries the write
+ *   token), not the source lookup, not writes.
  *
  * - Records itself in `.protoboard/local/dev.json` (URL, session, pid) while
  *   it runs, so an editor can attach to it instead of starting another; the
@@ -39,13 +48,16 @@
  */
 import { spawn, type ChildProcess } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, watch, writeFileSync, type FSWatcher } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, statSync, watch, writeFileSync, type FSWatcher } from "node:fs";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import type { AddressInfo } from "node:net";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { stableStringify } from "@protoboardai/core";
+import { atlasFreshness, atlasGraph, buildSystemMap, displayForBundle, readAtlasIndex, stableStringify, sysmapFreshness, sysmapGraph, writeFileAtomic } from "@protoboardai/core";
+import { ATLAS_REBUILD_MS, ATLAS_ROUTES, applyAtlasLayout, atlasImageOf, atlasLayoutOf, parseAtlasLayoutRequest } from "./atlas.js";
+import { SYSMAP_ROUTES, sysmapAnswer, sysmapSource } from "./sysmap.js";
+import { thisStack } from "../sysmap.js";
 import type { BuildReport } from "./build-worker.js";
 import { applyViewerLayout, formatDisplay, parseLayoutRequest, type DisplayFile } from "./layout.js";
 import { DEV_ROUTES, DEV_SCRIPT, FAVICON_SVG, TOKEN_HEADER, devPage } from "./page.js";
@@ -103,7 +115,7 @@ export interface DevDiagnostic {
 /** One structured log line. */
 export interface DevLogEvent {
   level: "info" | "warn" | "error";
-  event: "listening" | "build" | "build-failed" | "display" | "layout" | "layout-refused" | "watch" | "error" | "stopped";
+  event: "listening" | "build" | "build-failed" | "display" | "layout" | "layout-refused" | "atlas" | "watch" | "error" | "stopped";
   message: string;
   [key: string]: unknown;
 }
@@ -142,6 +154,8 @@ export interface DevOptions {
    * `protoboard views check` serves the project for itself only and leaves a person's session alone.
    */
   record?: boolean;
+  /** The stack the System Map route maps (default: the one this CLI runs from, as `protoboard map` finds it). */
+  stackRoot?: string;
 }
 
 export interface DevServer {
@@ -352,20 +366,33 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       return true;
     }
     devDiagnostics = devDiagnostics.filter((d) => d.code !== "PB_DEV_DISPLAY_INVALID");
+    // as the build embeds it: without the Atlas layout, so saving Atlas positions changes nothing here
+    const shown = display !== null && typeof display === "object" && !Array.isArray(display) ? displayForBundle(display as Record<string, unknown>) : display;
     const bundle = JSON.parse(readFileSync(bundleFile, "utf8")) as Record<string, unknown>;
-    if (stableStringify(bundle.display ?? null) === stableStringify(display ?? null)) return false;
-    if (display === undefined) delete bundle.display;
-    else bundle.display = display;
+    if (stableStringify(bundle.display ?? null) === stableStringify(shown ?? null)) return false;
+    if (shown === undefined) delete bundle.display;
+    else bundle.display = shown;
     writeAtomic(bundleFile, stableStringify(bundle));
     return true;
   };
 
+  // ---- the Atlas: rebuilds asked for by its read route (a stale index), at most one every ATLAS_REBUILD_MS
+  let atlasRebuildAt = -Infinity;
+  /** Rebuilds the read route started since the index was last found fresh (or another build ran). */
+  let atlasTries = 0;
+  /** A rebuild the read route asked for, waiting for its turn (the interval) or running. */
+  let atlasPending: NodeJS.Timeout | Promise<unknown> | undefined;
+  /** Rebuilds in a row that left the index stale (a file that keeps changing): past this, the view says to build by hand. */
+  const ATLAS_TRIES = 3;
+
   const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
   const summary = (r: BuildReport) => (r.ok ? `built in ${(r.ms / 1000).toFixed(1)}s: ${plural(r.counts!.error, "error")} · ${plural(r.counts!.warning, "warning")}` : `build failed: ${r.error}`);
 
-  const build = (triggers: string[]) =>
+  const build = (triggers: string[], atlasOnly = false) =>
     enqueue(async () => {
       building = true;
+      // a build anyone else asked for (a change, a manual rebuild) may well leave the index fresh: try again after it
+      if (!atlasOnly) atlasTries = 0;
       broadcast("status", { state: "busy", message: triggers.length ? `rebuilding (${triggers.slice(0, 3).join(", ")}${triggers.length > 3 ? ", …" : ""})` : "building" });
       const r = await runWorker();
       building = false;
@@ -376,6 +403,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
         lastViews = r.views ?? [];
         lastPartStatus = r.partStatus ?? {};
         devDiagnostics = devDiagnostics.filter((d) => d.code !== "PB_DEV_BUILD_FAILED");
+        if (r.atlas && "error" in r.atlas) log({ level: "warn", event: "atlas", message: `the project index was not written: ${r.atlas.error}` });
         syncDisplay(); // a layout saved while the build ran
         log({ level: "info", event: "build", message: summary(r), ms: r.ms, counts: r.counts, trigger: triggers, version: version + 1 });
         rewatch();
@@ -461,30 +489,40 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     }
   }
 
-  // ---- layout edits from the viewer
-  const saveLayout = async (req: IncomingMessage, res: ServerResponse) => {
-    const json = (status: number, body: unknown) => {
+  // ---- writes from the page: the session token, the page's own origin, and a JSON body of at most MAX_BODY
+  type Reply = (status: number, body: unknown) => void;
+  const replyTo =
+    (res: ServerResponse): Reply =>
+    (status, body) => {
       res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
       res.end(JSON.stringify(body));
     };
+  /** A write's body, once its checks pass; undefined when the write was refused (and answered). */
+  const writeBody = async (req: IncomingMessage, json: Reply): Promise<{ body: unknown } | undefined> => {
     const origin = req.headers.origin;
-    if (req.headers[TOKEN_HEADER] !== token) return json(403, { error: "missing or wrong session token" });
-    if (origin && !sameSite(origin, req)) return json(403, { error: `origin ${origin} not allowed` });
-    if (!/^application\/json\b/.test(req.headers["content-type"] ?? "")) return json(415, { error: "expected application/json" });
+    if (req.headers[TOKEN_HEADER] !== token) return void json(403, { error: "missing or wrong session token" });
+    if (origin && !sameSite(origin, req)) return void json(403, { error: `origin ${origin} not allowed` });
+    if (!/^application\/json\b/.test(req.headers["content-type"] ?? "")) return void json(415, { error: "expected application/json" });
     let size = 0;
     const chunks: Buffer[] = [];
     for await (const c of req) {
       size += (c as Buffer).length;
-      if (size > MAX_BODY) return json(413, { error: "layout too large" });
+      if (size > MAX_BODY) return void json(413, { error: "layout too large" });
       chunks.push(c as Buffer);
     }
-    let body: unknown;
     try {
-      body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      return { body: JSON.parse(Buffer.concat(chunks).toString("utf8")) };
     } catch {
-      return json(400, { error: "body is not JSON" });
+      return void json(400, { error: "body is not JSON" });
     }
-    const parsed = parseLayoutRequest(body);
+  };
+
+  // ---- layout edits from the viewer
+  const saveLayout = async (req: IncomingMessage, res: ServerResponse) => {
+    const json = replyTo(res);
+    const got = await writeBody(req, json);
+    if (!got) return;
+    const parsed = parseLayoutRequest(got.body);
     if ("error" in parsed) {
       log({ level: "warn", event: "layout-refused", message: parsed.error });
       return json(400, parsed);
@@ -514,6 +552,143 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       }));
     } else if (merged.skipped.length) log({ level: "warn", event: "layout", message: merged.skipped.map((s) => s.reason).join("; "), skipped: merged.skipped });
     return json(200, { file: displayRel(), levels: merged.levels, skipped: merged.skipped });
+  };
+
+  // ---- the Atlas (./atlas.ts)
+  /**
+   * Rebuild for a stale or missing index, at most once every ATLAS_REBUILD_MS
+   * (a request inside the interval waits for its end). Whether a rebuild is
+   * under way or coming; false when asking again would not help: the last
+   * rebuilds left the index stale, or the index could not be written.
+   */
+  const rebuildAtlas = (why: string): boolean => {
+    if (closed) return false;
+    if (atlasPending || building) return true;
+    if (atlasTries >= ATLAS_TRIES || (lastBuild?.atlas && "error" in lastBuild.atlas)) return false;
+    const start = () => {
+      if (closed) return void (atlasPending = undefined);
+      atlasRebuildAt = Date.now();
+      atlasTries++;
+      log({ level: "info", event: "atlas", message: `${why}: rebuilding` });
+      const run = build(["project index"], true);
+      atlasPending = run;
+      background(run.finally(() => atlasPending === run && (atlasPending = undefined)));
+    };
+    const wait = atlasRebuildAt + ATLAS_REBUILD_MS - Date.now();
+    if (wait > 0) {
+      const t = setTimeout(start, wait);
+      t.unref();
+      atlasPending = t;
+    } else start();
+    return true;
+  };
+  /** The Atlas view's data: the index's graph, the positions kept, and whether the index is stale. Paths and metadata only. */
+  const atlasData = async (res: ServerResponse) => {
+    const read = readAtlasIndex(root);
+    if ("error" in read) {
+      const failed = lastBuild?.atlas && "error" in lastBuild.atlas ? lastBuild.atlas.error : undefined;
+      const rebuilding = rebuildAtlas(read.error === "INDEX_MISSING" ? "there is no project index yet" : "the project index cannot be read");
+      return json(res, 503, { error: failed ? `the project index was not written: ${failed}` : rebuilding ? "the project index is being built" : read.message, code: read.error, rebuilding });
+    }
+    const freshness = await atlasFreshness(root, read.index);
+    if (freshness.fresh) atlasTries = 0;
+    let layout: ReturnType<typeof atlasLayoutOf>;
+    try {
+      const file = displayFile();
+      if (existsSync(file)) layout = atlasLayoutOf(JSON.parse(readFileSync(file, "utf8")));
+    } catch {
+      // a display file that is not JSON keeps no positions (the dev diagnostics say so)
+    }
+    const changed = freshness.added.length + freshness.removed.length + freshness.changed.length;
+    // another stack version, an index without creation times or another file listing compares no files: `reason` says so (`changed` is 0 then)
+    const why =
+      freshness.reason === "stack"
+        ? "the project index was built by another version of Protoboard"
+        : freshness.reason === "history"
+          ? "the project index was built before creation times were recorded"
+          : freshness.reason === "enumerator"
+            ? "the project index listed the files another way (with or without git)"
+            : "files changed since the project index was built";
+    const stale = freshness.fresh ? undefined : { changed, reason: freshness.reason ?? "files", rebuilding: rebuildAtlas(why) };
+    return json(res, 200, { graph: atlasGraph(read.index), ...(layout ? { layout } : {}), ...(stale ? { stale } : {}) });
+  };
+  /**
+   * An image of the project for the Atlas inspector's preview: only one the
+   * index's census lists (never a sensitive name, never outside the project),
+   * of a type a browser draws, read only when its real path is still inside
+   * the project. Sent like an artifact: no sniffing, a sandboxing policy.
+   */
+  const atlasImage = async (url: URL, res: ServerResponse) => {
+    const read = readAtlasIndex(root);
+    if ("error" in read) return json(res, 503, { error: read.message, code: read.error });
+    const path = url.searchParams.get("path") ?? "";
+    const ok = atlasImageOf(read.index.census, path);
+    if ("error" in ok) return json(res, ok.status, { error: `${path}: ${ok.error}` });
+    let real: string;
+    let rootReal: string;
+    try {
+      real = realpathSync(join(root, path));
+      rootReal = realpathSync(root);
+    } catch {
+      return json(res, 404, { error: `${path}: not found` });
+    }
+    const rel = relative(rootReal, real);
+    if (rel.startsWith("..") || isAbsolute(rel)) return json(res, 403, { error: `${path}: outside the project` });
+    res.writeHead(200, {
+      "content-type": ok.type,
+      "cache-control": "no-cache",
+      "x-content-type-options": "nosniff",
+      "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+    });
+    res.end(readFileSync(real));
+  };
+  /** Keep the Atlas view's positions: only the display file's `atlas` key; nothing is rebuilt or pushed (the bundle never carries it). */
+  const saveAtlas = async (req: IncomingMessage, res: ServerResponse) => {
+    const json = replyTo(res);
+    const got = await writeBody(req, json);
+    if (!got) return;
+    const parsed = parseAtlasLayoutRequest(got.body);
+    if ("error" in parsed) {
+      log({ level: "warn", event: "layout-refused", message: `Atlas layout: ${parsed.error}` });
+      return json(400, parsed);
+    }
+    const file = displayFile();
+    let current: DisplayFile = {};
+    let previous: string | undefined;
+    try {
+      if (existsSync(file)) current = JSON.parse((previous = readFileSync(file, "utf8"))) as DisplayFile;
+    } catch (e) {
+      return json(409, { error: `${displayRel()} is not valid JSON (${(e as Error).message}); fix it before saving a layout` });
+    }
+    const merged = applyAtlasLayout(current, parsed.positions);
+    const nodes = Object.keys(parsed.positions).length;
+    if (merged.changed) {
+      const data = formatDisplay(merged.display, previous);
+      // the watcher sees our own write: it is not news
+      ownDisplay = digest(data);
+      mkdirSync(dirname(file), { recursive: true });
+      writeFileAtomic(file, data);
+      log({ level: "info", event: "atlas", message: `saved ${plural(nodes, "Atlas position")} to ${displayRel()}`, nodes });
+    }
+    return json(200, { file: displayRel().split(sep).join("/"), changed: merged.changed, nodes });
+  };
+
+  // ---- the System Map (./sysmap.ts): the stack this CLI runs from, built in memory on the first request, never written
+  const stackRoot = (): string => {
+    if (options.stackRoot) return options.stackRoot;
+    const found = thisStack();
+    if (!found) throw new Error("this protoboard runs neither from the stack's repository nor from an installed stack copy");
+    return found.root;
+  };
+  const sysmap = sysmapSource({
+    build: () => buildSystemMap(stackRoot()),
+    fresh: async (map) => (await sysmapFreshness(stackRoot(), map)).fresh,
+    graph: sysmapGraph,
+  });
+  const sysmapData = async (res: ServerResponse) => {
+    const a = await sysmapAnswer(sysmap);
+    if (a.status !== 200) log({ level: "warn", event: "error", message: "error" in a.body ? a.body.error : "the System Map could not be built" });
+    return json(res, a.status, a.body);
   };
 
   // ---- requests
@@ -605,6 +780,16 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
         res.end(e.message);
       });
     }
+    if (path === ATLAS_ROUTES.layout) {
+      if (req.method !== "POST") {
+        res.writeHead(405, { allow: "POST" });
+        return res.end("method not allowed");
+      }
+      return saveAtlas(req, res).catch((e: Error) => {
+        if (!res.headersSent) res.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
+        res.end(e.message);
+      });
+    }
     if (req.method !== "GET" && req.method !== "HEAD") {
       res.writeHead(405, { allow: "GET, HEAD" });
       return res.end("method not allowed");
@@ -613,12 +798,31 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
     // the state and the events from its origin; writes stay with the dev page (token, same site)
     // only the routes the tab reads: never the page (it carries the write token) or the source lookup
     const origin = req.headers.origin;
-    const shared = path === "/uhd-bundle.json" || path.startsWith("/artifacts/") || path === DEV_ROUTES.state || path === DEV_ROUTES.events;
+    const shared =
+      path === "/uhd-bundle.json" || path.startsWith("/artifacts/") || path === DEV_ROUTES.state || path === DEV_ROUTES.events || path === ATLAS_ROUTES.data || path === ATLAS_ROUTES.image || path === SYSMAP_ROUTES.data;
     if (shared && origin && readOrigins.length && originAllowed(origin, readOrigins)) {
       res.setHeader("access-control-allow-origin", origin);
       res.setHeader("vary", "Origin");
     }
     if (path === DEV_ROUTES.source) return source(new URL(req.url ?? "/", "http://x"), res);
+    if (path === ATLAS_ROUTES.image) {
+      return atlasImage(new URL(req.url ?? "/", "http://x"), res).catch((e: Error) => {
+        if (!res.headersSent) return json(res, 500, { error: e.message });
+        res.end();
+      });
+    }
+    if (path === ATLAS_ROUTES.data) {
+      return atlasData(res).catch((e: Error) => {
+        if (!res.headersSent) return json(res, 500, { error: e.message });
+        res.end();
+      });
+    }
+    if (path === SYSMAP_ROUTES.data) {
+      return sysmapData(res).catch((e: Error) => {
+        if (!res.headersSent) return json(res, 500, { error: e.message });
+        res.end();
+      });
+    }
     const route = routes[path];
     if (route) return route(res);
     // the bundle and its artifacts: the viewer's handler (only referenced files, inside their base)
@@ -672,6 +876,7 @@ export async function startDev(options: DevOptions): Promise<DevServer> {
       closed = true;
       clearTimeout(timer);
       clearInterval(heartbeat);
+      if (atlasPending && !(atlasPending instanceof Promise)) clearTimeout(atlasPending);
       for (const w of watchers.values()) w.close();
       child?.kill();
       for (const res of clients) res.end();

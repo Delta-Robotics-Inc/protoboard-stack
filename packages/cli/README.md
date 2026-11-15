@@ -40,14 +40,27 @@ any MCP client) with `protoboard agents setup`, then ask it what to build.
 | --- | --- |
 | `protoboard init <dir>` | Create a project, from a template or empty |
 | `protoboard check` | Run the design checks |
-| `protoboard build` | Check and build the project's outputs |
+| `protoboard build` | Check and build the project's outputs, including the project index |
+| `protoboard index census` | List every asset file (CAD, models, renders, photos, documents) and what links it |
+| `protoboard index where <ref>` | Show where a module, part or file is, and what is one step from it |
+| `protoboard index search <text>` | Search the project index: names, paths, kinds and the text of documents |
 | `protoboard dev` | Serve the live diagram and 3D view |
 | `protoboard parts search <query>` | Search the parts library (needs an account) |
 | `protoboard release` | Make the manufacturing package |
 | `protoboard upgrade` | Move a project to this version of Protoboard |
 | `protoboard agents setup` | Connect your agents to Protoboard (MCP) |
 | `protoboard doctor` | Show what is installed and what is missing |
+| `protoboard map` | Show what the Protoboard stack can do: its extensions, skills, operations, commands and tools by discipline, with versions |
 | `protoboard login` | Sign in to the parts library |
+
+The `index` commands read only the index that `protoboard build` writes, and
+run none of the project's code. When the project's files have changed since
+the last build they refuse with exit code 3 and say which files changed: run
+`protoboard build` again.
+
+`protoboard map` needs no project and writes nothing unless `--out <file>`
+names a file. `--island <id>`, `--type <type>` and `--item <id>` (one item
+with all its links) answer one question; `--format json` gives the whole map.
 
 `protoboard --help` lists everything.
 

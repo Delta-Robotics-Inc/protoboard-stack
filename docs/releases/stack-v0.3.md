@@ -5,6 +5,56 @@ install, an example drone you can open without an account, and a sign-in that
 is one link. The [0.2 release notes](stack-v0.2.md) describe the line before
 it.
 
+## Unreleased
+
+The project index, its commands and agent tools, and the Atlas tab.
+
+### The project index
+
+- **Every build indexes the project.** `protoboard build` also writes
+  `.protoboard/build/atlas.json`: every module and part, every file an
+  artifact names, and a census of the project's asset files (CAD, 3D models,
+  board files, renders, photos, concept images, documents, data and
+  firmware). A file is linked when an artifact, a folder artifact or an
+  operation record points to it, and unlinked when nothing does. The index
+  holds paths, sizes and hashes, never a file's contents, and never lists
+  sensitive names such as `.env` files and keys. It is derived data: it is
+  not committed, and an index that can't be written never fails the build.
+- **Ask it from a terminal.** `protoboard index census` lists the asset files
+  with their kind and status (`--kind`, `--status unlinked`).
+  `protoboard index where <ref>` says where a module, part or file is and
+  what is one step from it. `protoboard index search <text>` finds names,
+  paths, kinds, and lines in the project's Markdown and text documents.
+  Answers come a page at a time (`--limit`, `--cursor`), and
+  `--format json` gives them to scripts. The commands read only the index
+  and run none of the project's code. An index older than the project's
+  files is refused with exit code 3: run `protoboard build`.
+
+### For agents
+
+- **Three new tools on the MCP server:** `project_census`, `project_where`
+  and `project_search` answer from the index, so an agent finds a file, or
+  what links to it, before opening anything. When the index is missing or
+  stale they refuse and say to call `project_build`, which now writes it.
+
+### The Atlas tab
+
+- **The whole project as a force-directed graph.** The **Atlas** tab, in
+  `protoboard dev` and in VS Code (**Protoboard: Open Atlas**), draws every
+  module, part and file and how they connect. Pull them together by links,
+  by kind or by folder; search by name, path or kind; select a node for its
+  inspector, or double-click it to fly to its neighbors.
+- **Unlinked files stand out.** They are drawn dashed at the edge of the
+  graph, and a chip counts them: the same files
+  `protoboard index census --status unlinked` lists.
+- **Positions are kept.** Where the nodes settle is saved in
+  `.protoboard/display.json` under `atlas`, at once and with no Ctrl+S; the
+  UHD bundle never carries it, so a save neither rebuilds nor reloads
+  anything.
+- **A stale index says so.** When files changed since the last build, or
+  another version built the index, the tab says which, and `protoboard dev`
+  rebuilds it.
+
 ## 0.3.0
 
 Get Started, the drone example, sign in by link, and Windows fixes.

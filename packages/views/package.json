@@ -22,6 +22,8 @@
     "./part-status": "./src/parts/part-status.ts",
     "./inspector": "./src/inspector/index.ts",
     "./inspector-model": "./src/inspector/model.ts",
+    "./atlas": "./src/atlas/index.ts",
+    "./sysmap": "./src/sysmap/index.ts",
     "./package.json": "./package.json"
   },
   "files": [

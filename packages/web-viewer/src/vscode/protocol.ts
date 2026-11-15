@@ -3,10 +3,19 @@
  * VS Code shell, ./Shell.tsx). One viewer editor tab is one webview showing
  * one module of a project; the bundle and live rebuilds come from the
  * project's `protoboard dev` server, everything else (selection, sources,
- * artifacts, new tabs, layout saving) goes through the extension.
+ * artifacts, new tabs, layout saving, the Atlas's positions and the files it
+ * opens) goes through the extension: the webview never holds the dev
+ * server's write token.
+ *
+ * The System Map (docs/specs/system-map.md) is the one thing a page reads
+ * from the extension instead of the dev server: it is the map of the stack
+ * the extension runs, whatever project is open. A viewer tab's System Map
+ * tab and the extension's System Map panel (`mode: "sysmap"`, a page with no
+ * project) ask for it (`sysmap`) and open its files (`sysmapOpen`) the same way.
  *
  * No React and no VS Code API here: the extension imports this file too.
  */
+import type { SysmapGraph } from "@protoboardai/core/sysmap";
 
 /** The viewer's own host messages, as the extension sends them (uhd-viewer's protocol). */
 export type ViewerCommand =
@@ -46,6 +55,12 @@ export interface LayoutSnapshot {
 
 /** What the page starts with (a JSON script in the page). */
 export interface WebviewConfig {
+  /**
+   * `viewer` (the default): a viewer tab, the VS Code shell on a project.
+   * `sysmap`: the extension's System Map panel, the System Map alone (no
+   * project, no bundle, no dev server); `path` and `view` are not read.
+   */
+  mode?: "viewer" | "sysmap";
   /** The module the tab shows: its instance path ("" is the root system). */
   path: string;
   /** The view the tab opens on (`diagram`, `3d`, or a registry view id). */
@@ -103,7 +118,12 @@ export type ToWebview =
    */
   | { type: "hierarchy"; command: HierarchyAction; path?: string }
   /** Test hook: report the hierarchy panel's rows. */
-  | { type: "reportHierarchy" };
+  | { type: "reportHierarchy" }
+  /** The answer to the page's `sysmap`: the System Map of the stack the extension runs, or why there is none. */
+  | SysmapReply;
+
+/** The extension's System Map answer (`sysmapGraph(map)`), or what failed. */
+export type SysmapReply = { type: "sysmap"; graph: SysmapGraph } | { type: "sysmap"; error: string };
 
 export type HierarchyAction = "reveal" | "filter" | "open" | "close" | "toggle";
 
@@ -172,7 +192,15 @@ export type FromWebview =
   | { type: "source"; action: SourceAction }
   | { type: "theme"; vars: Record<string, string>; classes: string[]; themeId?: string }
   /** The hierarchy panel's rows (`reportHierarchy`), whether it is open, and the tab's width in CSS pixels. */
-  | { type: "hierarchy"; open: boolean; rows: HierarchyRowReport[]; width?: number };
+  | { type: "hierarchy"; open: boolean; rows: HierarchyRowReport[]; width?: number }
+  /** The Atlas view's positions after a settle (node id to [x, y]): the extension keeps them in the display file's `atlas` key, at once (no Ctrl+S). */
+  | { type: "atlasLayout"; positions: Record<string, [number, number]> }
+  /** The Atlas inspector's Open: a project file by its project-relative path (forward slashes); the extension checks it lies inside the project. */
+  | { type: "openFile"; path: string }
+  /** The System Map, please (`refresh`: the panel's Rebuild, build it again first). The extension answers `sysmap` with the graph or an error. */
+  | { type: "sysmap"; refresh?: true }
+  /** The System Map inspector's Open: a stack file by its stack-relative path (an item's `source` without its `#entry`); the extension checks it lies inside the stack. */
+  | { type: "sysmapOpen"; path: string };
 
 export type SourceAction = "open" | "reveal" | "copy" | "copyRelative";
 const SOURCE_ACTIONS: readonly SourceAction[] = ["open", "reveal", "copy", "copyRelative"];
@@ -257,6 +285,51 @@ function parseEvent(v: unknown): ViewerEvent | undefined {
   }
 }
 
+/** What an Atlas layout may hold (as the dev server's layout route, packages/cli/src/dev/atlas.ts). */
+export const ATLAS_LAYOUT_LIMITS = { ids: 50_000, idLength: 512, coordinate: 1e9 } as const;
+const ATLAS_NODE_ID = /^[a-z][a-z0-9-]*:/;
+const coordinate = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v) && Math.abs(v) <= ATLAS_LAYOUT_LIMITS.coordinate;
+
+/** Atlas positions: at most 50 000 node ids (`def:…`, `file:…`), each at most 512 characters, with two finite numbers each; anything else is undefined. */
+export function parseAtlasPositions(v: unknown): Record<string, [number, number]> | undefined {
+  if (!obj(v)) return undefined;
+  const entries = Object.entries(v);
+  if (entries.length > ATLAS_LAYOUT_LIMITS.ids) return undefined;
+  const out: Record<string, [number, number]> = {};
+  for (const [id, p] of entries) {
+    if (id.length > ATLAS_LAYOUT_LIMITS.idLength || !ATLAS_NODE_ID.test(id)) return undefined;
+    if (!Array.isArray(p) || p.length !== 2 || !coordinate(p[0]) || !coordinate(p[1])) return undefined;
+    out[id] = [p[0], p[1]];
+  }
+  return out;
+}
+
+/**
+ * A project file's path as the Atlas names it: relative, forward slashes, at
+ * most 1024 characters, no empty, `.` or `..` segment, no drive, colon,
+ * backslash or control character. Anything else is undefined. (Whether it
+ * lies inside the project once links are followed is the extension's check.)
+ */
+export function parseProjectPath(v: unknown): string | undefined {
+  if (!str(v) || !v.length || v.length > 1024) return undefined;
+  if (/[\\:]/.test(v) || [...v].some((c) => c.charCodeAt(0) < 0x20 || c.charCodeAt(0) === 0x7f) || v.startsWith("/")) return undefined;
+  return v.split("/").every((seg) => seg !== "" && seg !== "." && seg !== "..") ? v : undefined;
+}
+
+/**
+ * A stack file's path as the System Map names it (an item's `source`): the
+ * `#entry` it may end with is dropped, and what is left is checked as
+ * `parseProjectPath` checks a project's (relative, forward slashes, at most
+ * 1024 characters, no `.` or `..` segment, no drive, colon or backslash).
+ * Anything else is undefined. (Whether it lies inside the stack once links
+ * are followed is the extension's check.)
+ */
+export function parseStackPath(v: unknown): string | undefined {
+  if (!str(v) || v.length > 2048) return undefined;
+  const hash = v.indexOf("#");
+  return parseProjectPath(hash < 0 ? v : v.slice(0, hash));
+}
+
 /** A message from the webview, checked field by field; anything else is undefined. */
 export function parseFromWebview(data: unknown): FromWebview | undefined {
   if (!obj(data)) return undefined;
@@ -310,6 +383,20 @@ export function parseFromWebview(data: unknown): FromWebview | undefined {
         .slice(0, 5000)
         .map((r) => ({ path: r.path as string, label: r.label as string, ...(str(r.kind) ? { kind: r.kind } : {}), ...(r.selected === true ? { selected: true } : {}), ...(r.current === true ? { current: true } : {}) }));
       return { type: "hierarchy", open: data.open, rows, ...(typeof data.width === "number" && Number.isFinite(data.width) ? { width: data.width } : {}) };
+    }
+    case "atlasLayout": {
+      const positions = parseAtlasPositions(data.positions);
+      return positions && { type: "atlasLayout", positions };
+    }
+    case "openFile": {
+      const path = parseProjectPath(data.path);
+      return path === undefined ? undefined : { type: "openFile", path };
+    }
+    case "sysmap":
+      return data.refresh === true ? { type: "sysmap", refresh: true } : { type: "sysmap" };
+    case "sysmapOpen": {
+      const path = parseStackPath(data.path);
+      return path === undefined ? undefined : { type: "sysmapOpen", path };
     }
     default:
       return undefined;

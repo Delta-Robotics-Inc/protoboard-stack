@@ -1,7 +1,8 @@
 # display.json: the diagram's layout and the 3D placements
 
 `.protoboard/display.json` holds how a project is shown: where the
-diagram's nodes sit, and where the 3D view puts modules that no mate places.
+diagram's nodes sit, where the 3D view puts modules that no mate places,
+and where the Atlas draws the project's files.
 It is presentation, never topology: nothing in it changes what the model
 says, what `protoboard check` finds about the design, or what a release
 contains. It is the one file under `.protoboard/` that is not generated:
@@ -166,6 +167,39 @@ script's transforms, the datasheet's mounting dimensions), and cite them in
 | `view.up` | The direction drawn up (default `[0, 0, 1]`): the camera's up, the orbit axis and the ground grid follow it. A model built display-down says `[0, 0, -1]` and opens display-up without changing the model. |
 | `view.camera` | The opening camera: `azimuth` and `elevation` (degrees, about `up`), `distance` (mm) and `target` (`[x, y, z]`, mm, root coordinates). Without a distance the model is fitted. |
 
+## `atlas`: where the Atlas draws the project
+
+The Atlas tab (docs/specs/atlas.md) draws every module, part and file of
+the project as a map. Where its nodes sit is kept here, so the map opens the
+way it was left:
+
+```json
+"atlas": {
+  "positions": {
+    "def:quadcopter": [0, 0],
+    "file:docs/images/render-front.png": [412, -96]
+  }
+}
+```
+
+| Key | What it is |
+| --- | --- |
+| `positions` | Each node's place, `[x, y]` in whole graph units, keyed by the node's id in the project index (`def:<definition>`, `file:<project-relative path>`, `dir:<folder>/`, `url:<definition>#<artifact>`). Written one node per line, sorted. |
+
+- **Who writes it.** The Atlas view, once the map settles after an
+  arrangement, a drag or Tidy: through `protoboard dev` (the page's session
+  token, as for a diagram layout) or the VS Code extension. The save is
+  automatic; there is no Ctrl+S for the Atlas, and it never marks a tab as
+  having unsaved changes. Only this key is rewritten; the rest of the file
+  stays as it was.
+- **Not in the bundle.** The UHD bundle embeds display.json without the
+  `atlas` key, so saving positions never rebuilds the project or reloads an
+  open viewer.
+- **Stale entries are harmless.** A position for a file that was renamed or
+  deleted is ignored; a node with no position is placed by the map. When
+  every node has a position, the map opens without moving.
+- Pull-by and the camera are per tab and are not kept here.
+
 ## See also
 
 - Every project's `AGENTS.md` (the shared text in
@@ -173,3 +207,4 @@ script's transforms, the datasheet's mounting dimensions), and cite them in
   3D placements, as an agent is told them.
 - [Configuration](configuration.md): where the file sits among the project's
   files.
+- [Atlas](../specs/atlas.md): the project index the Atlas draws.

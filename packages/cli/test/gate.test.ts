@@ -10,8 +10,8 @@ import { COMMAND_GATES, commandGate } from "../src/gate.js";
 const INDEX = readFileSync(fileURLToPath(new URL("../src/index.ts", import.meta.url)), "utf8");
 
 describe("the gate table", () => {
-  it("local work is local: init, model, check, build, dev, layout, views, circuits (run), release, the account and setup commands", () => {
-    for (const c of ["init", "inspect", "artifacts", "check", "build", "dev", "layout", "views", "run", "release", "bom", "operations", "capabilities", "tools", "extensions", "skills", "evals", "stack", "setup", "agents", "mcp", "doctor", "login", "logout", "whoami"]) {
+  it("local work is local: init, model, check, build, the project index, dev, layout, views, circuits (run), release, the account and setup commands", () => {
+    for (const c of ["init", "inspect", "artifacts", "check", "build", "index", "map", "dev", "layout", "views", "run", "release", "bom", "operations", "capabilities", "tools", "extensions", "skills", "evals", "stack", "setup", "agents", "mcp", "doctor", "login", "logout", "whoami"]) {
       expect(commandGate(c).gate, c).toBe("local");
     }
     expect(commandGate("parts", "list").gate).toBe("local");

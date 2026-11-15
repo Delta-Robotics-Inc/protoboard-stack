@@ -19,6 +19,8 @@ the project's own `protoboard` CLI and lives in VS Code's own places:
 | Command | What it does |
 | --- | --- |
 | **Protoboard: Open Viewer** | Opens the project's viewer tab at the top-level system (or reveals it), attaching to the project's running `protoboard dev` or starting one. |
+| **Protoboard: Open Atlas** | Opens the project's Atlas (every module, part and file as a map) as a viewer tab at the top level. Node positions are kept in `.protoboard/display.json` (`atlas`) automatically, without Ctrl+S; the inspector's Open opens a file only when it lies inside the project. Animate replays how the project grew (creation times from git, else the file system): nodes arrive one after another, live in the layout's physics, at about 20 s for a few hundred nodes. Animations always play, even with Windows animation effects off (the webview then reports reduced motion, which the Atlas does not follow), and there is no switch for them. |
+| **Protoboard: Open System Map** | Opens (or brings to the front) one **System Map** panel: the Protoboard stack this extension runs (its packages, extensions, skills, operations, checks, CLI commands, MCP tools, views, templates and docs, by discipline, with versions and links), not the open project. It needs no project and no sign-in, and works in an empty window; a viewer tab's System Map tab shows the same map. See **The System Map** below. |
 | **Protoboard: Check** | Runs `protoboard build --format json` (every validator, as `protoboard check` runs them, plus `.protoboard/build/resolved.json` and the UHD bundle) and updates the Problems panel, the DRC view and the Inspector from that one run. |
 | **Protoboard: Open Artifact** | Picks a part, then one of its artifacts: STEP and GLB open in the **Protoboard CAD Viewer** tab, PDF and other CAD or fabrication files in the system's application, sources and data (`.py`, `.kcl`, `.json`, `.csv`, images) in VS Code, links in the browser. |
 | **Protoboard: Stop Dev Server** | Stops a dev server the extension started. For one started elsewhere it offers to send it SIGTERM. |
@@ -517,6 +519,53 @@ Its faces are the theme's (Kode Mono only under a Protoboard colour theme;
 the font files are bundled with the webview's stylesheet, SIL Open Font
 License, `media/fonts/OFL.txt`); colours are VS Code's theme tokens, so light
 and dark themes both work.
+
+## The System Map
+
+The System Map (`docs/specs/system-map.md`) is the map of the stack the
+extension runs, whatever project is open: the **System Map** panel
+(**Protoboard: Open System Map**) and the System Map tab of every viewer tab
+show the same one. It comes from the extension, not from a project's dev
+server (`src/systemMap.ts`, `src/systemMapPanel.ts`).
+
+- **Which stack.** A development build is one whose extension folder lies
+  inside the stack's repository: walking up from the extension's folder, the
+  first folder whose `package.json` has `workspaces` and which holds
+  `packages/cli/bin/protoboard.mjs`. That repository is mapped, with its own
+  CLI. Any other build maps the stack it carries, in its unpacked copy
+  `~/.protoboard/stack/<version>` (unpacked first if it is not yet, as for a
+  project). A build that carries no stack and does not run from the
+  repository says so. A project's own CLI or packages are never used.
+- **How it is built.** Once per session, by that stack's CLI:
+  `protoboard map --root <stack> --format json`, run with the Node.js the
+  extension chooses (`protoboard.nodePath`, user setting), in the stack's
+  folder. The extension keeps the view's part of it (items, links, islands,
+  stages, release tags, problems); every page that asks gets it, and pages
+  that ask while it is being built share that one build. The log has one
+  line per build: which folder, how long, how many items, links and
+  problems.
+- **Rebuild** (the view's button) builds it again; a Rebuild that fails says
+  why and keeps the map built before.
+- **Open** in the inspector opens the item's source file (its `source`,
+  without the `#entry` it names) beside the page, only when it lies inside
+  the stack folder once links are followed, is there, and does not have a
+  sensitive name (`.env*`, keys, credentials); anything else is refused with
+  a message.
+- **Where things are kept.** Nothing is written to a project or to the
+  stack. Node positions and the view's appearance stay in the webview's
+  local storage (`protoboard.sysmap:*`), per machine.
+- **Trust.** Building the map runs the extension's own stack, never a
+  workspace's code, so it asks no project trust and works in an empty
+  window. In Restricted Mode it is off like the rest of Protoboard (the
+  command says that Protoboard is off and offers to trust the folder): there
+  Protoboard starts no process and unpacks nothing.
+
+The panel is the viewer tabs' page and script (`dist/webview/protoboard-viewer.js`)
+with `mode: "sysmap"` in its config and no dev server origins in its policy:
+the map alone, full window. Its messages are the System Map tab's: `sysmap`
+(`refresh` for Rebuild), answered with `sysmap` `{graph}` or `{error}`, and
+`sysmapOpen` `{path}` (stack-relative; checked by the page's protocol and
+again by the extension). VS Code restores the panel after a reload.
 
 ## Viewer host messages
 

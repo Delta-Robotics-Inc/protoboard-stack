@@ -5,7 +5,9 @@
  * uhd-viewer's, sharing one viewer state in a shell), the board drawings
  * (schematic and PCB, PB-898), the pair comparator (PB-905), and the parts
  * views' BOM and library (parts/views.tsx, PB-912, with data from the
- * shell's PartsDataProvider). A planned view has its tab and placeholder
+ * shell's PartsDataProvider), and the Atlas (atlas/AtlasView.tsx, with data
+ * from the shell's AtlasDataProvider) and the System Map (sysmap/, with data
+ * from the shell's SysmapDataProvider). A planned view has its tab and placeholder
  * until its track replaces the registration with the working component.
  */
 import { DiagramCanvas, EmptyState, Scene3D } from "@deltarobotics/uhd-viewer/components";
@@ -14,6 +16,8 @@ import { BUILTIN_TABS } from "./tabs.js";
 import { PcbView, SchematicView } from "./drawing/BoardDrawingView.js";
 import { PairView } from "./pair/PairView.js";
 import { BomView, LibraryView } from "./parts/views.js";
+import { AtlasView } from "./atlas/AtlasView.js";
+import { SystemMapView } from "./sysmap/SystemMapView.js";
 import { Button } from "./parts/ui.js";
 import { ViewRegistry } from "./registry.js";
 import type { HostAdapter, ViewDefinition, ViewProps } from "./types.js";
@@ -77,6 +81,8 @@ const COMPONENTS: Record<string, ViewDefinition["component"]> = {
   bom: BomView,
   pair: PairView,
   library: LibraryView,
+  atlas: AtlasView,
+  sysmap: SystemMapView,
 };
 
 export const BUILTIN_VIEWS: readonly ViewDefinition[] = BUILTIN_TABS.map((t) => ({ ...t, component: COMPONENTS[t.id] }));
