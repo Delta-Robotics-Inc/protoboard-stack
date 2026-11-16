@@ -5,6 +5,28 @@ install, an example drone you can open without an account, and a sign-in that
 is one link. The [0.2 release notes](stack-v0.2.md) describe the line before
 it.
 
+## Unreleased
+
+Editors from extensions.
+
+### Editors from extensions
+
+- **A file an extension claims opens in that extension's editor.** An
+  extension declares the files its editor opens, a prebuilt page and an
+  optional host entry (`contributes.editors`,
+  [the viewer stack spec](../specs/viewer-stack.md)). In VS Code, a file
+  that one of the project's enabled extensions claims (`*.canvas` today)
+  opens in a Protoboard tab that loads the page; the extension's own code
+  runs in a process of its own, only in a project you trusted.
+- **`protoboard editors [--file <path>]`** lists the editors the project's
+  extensions contribute and says which one opens a file.
+- **A tab that can't open its editor says why**, with **Open as Text**: in
+  Restricted Mode, in a project whose code you didn't trust, for a file no
+  enabled extension claims, or for a page that wasn't built. A file outside
+  every Protoboard project opens as text.
+- **An editor can ask you for files** in VS Code's open dialog (`file.pick`);
+  it gets only the paths of the files you pick.
+
 ## 0.3.0
 
 Get Started, the drone example, sign in by link, and Windows fixes.

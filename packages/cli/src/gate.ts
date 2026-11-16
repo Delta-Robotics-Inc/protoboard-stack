@@ -83,6 +83,7 @@ export const COMMAND_GATES: Readonly<Record<string, GateEntry>> = {
   operations: LOCAL,
   evals: LOCAL,
   views: LOCAL,
+  editors: LOCAL,
   stack: LOCAL,
   agents: LOCAL,
   setup: LOCAL,

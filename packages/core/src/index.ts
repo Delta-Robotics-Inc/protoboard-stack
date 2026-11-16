@@ -136,6 +136,7 @@ export {
   type ResolvedView,
   type ViewAppliesTo,
   type ViewDecl,
+  type EditorDecl,
   type CapabilityId,
   type CapabilityOperation,
   type CapabilityOperationDecl,
@@ -150,6 +151,7 @@ export {
   type ToolDecl,
   type ToolStatus,
 } from "./extensions.js";
+export { claims, editorFor, filePatternRegExp, loadEditorHost, loadProjectExtensions, relativeInside, resolveEditors, type ResolvedEditor } from "./editors.js";
 export {
   findOperation,
   invokeOperation,

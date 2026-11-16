@@ -38,6 +38,7 @@
     "onStartupFinished",
     "workspaceContains:**/protoboard.config.ts",
     "onCustomEditor:protoboard.cadViewer",
+    "onCustomEditor:protoboard.extensionEditor",
     "onWebviewPanel:protoboard.bomProject"
   ],
   "contributes": {
@@ -1148,6 +1149,16 @@
         "selector": [
           {
             "filenamePattern": "*.{step,stp,STEP,STP,glb,GLB}"
+          }
+        ],
+        "priority": "default"
+      },
+      {
+        "viewType": "protoboard.extensionEditor",
+        "displayName": "Protoboard Extension Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.canvas"
           }
         ],
         "priority": "default"

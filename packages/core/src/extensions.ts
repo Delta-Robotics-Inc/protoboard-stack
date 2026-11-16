@@ -182,9 +182,31 @@ export interface ViewDecl {
   order?: number;
 }
 
+/**
+ * An editor an extension contributes (`contributes.editors`, docs/specs/viewer-stack.md):
+ * the shells open the files it claims in it. Its page is a prebuilt bundle
+ * the shell loads into a webview; what the page needs of the extension's own
+ * code runs in a host process the shell starts (`host`), never in the
+ * shell. The messages are `@protoboardai/core/editor-protocol`.
+ */
+export interface EditorDecl {
+  /** Unique in the extension; lowercase words with dashes (the view id rule). */
+  id: string;
+  title: string;
+  /** A Lucide icon name (kebab-case). */
+  icon: string;
+  /** The files it opens: patterns like `*.canvas` (matched against the file's name) or `boards/*.canvas` (with a slash: against its project-relative path). */
+  files: string[];
+  /** The page: one script (loaded as a module) and one stylesheet, inside the package; files the stylesheet names sit beside it. */
+  webview: { script: string; style?: string };
+  /** `./host/editor-host.ts#createEditorHost`: the module and export (default when no name) of its host process. */
+  host?: string;
+}
+
 /** What an extension adds to the shells (beyond operations and checks). */
 export interface ContributesDecl {
   views?: ViewDecl[];
+  editors?: EditorDecl[];
 }
 
 export interface ExtensionManifest {
@@ -251,7 +273,7 @@ export interface ExtensionRequest {
   implicit?: boolean;
 }
 
-export function loadExtensions(p: Project, providers: ExtensionRequest[] = []): { extensions: LoadedExtension[]; diagnostics: ProjectDiagnostic[] } {
+export function loadExtensions(p: Pick<Project, "root" | "config">, providers: ExtensionRequest[] = []): { extensions: LoadedExtension[]; diagnostics: ProjectDiagnostic[] } {
   const extensions: LoadedExtension[] = [];
   const diagnostics: ProjectDiagnostic[] = [];
   let source: SourceLocation = { file: "protoboard.config.ts" };
@@ -406,7 +428,8 @@ export function validateContributes(m: ExtensionManifest): string[] {
   if (c === undefined) return [];
   if (!c || typeof c !== "object" || Array.isArray(c)) return ["contributes must be an object"];
   const problems: string[] = [];
-  for (const k of Object.keys(c)) if (k !== "views") problems.push(`contributes has unknown section ${k}`);
+  for (const k of Object.keys(c)) if (k !== "views" && k !== "editors") problems.push(`contributes has unknown section ${k}`);
+  problems.push(...validateEditors((c as ContributesDecl).editors as unknown));
   const views = (c as ContributesDecl).views as unknown;
   if (views === undefined) return problems;
   if (!Array.isArray(views)) return [...problems, "contributes.views must be an array"];
@@ -438,6 +461,50 @@ export function validateContributes(m: ExtensionManifest): string[] {
     const strings = (x: unknown) => Array.isArray(x) && x.length > 0 && x.every((s) => typeof s === "string" && s.length > 0);
     if (ap.files !== undefined && (!strings(ap.files) || !ap.files.every((f) => FILE_NAME.test(f)))) problems.push(`${at}: appliesTo.files must be file names (no folders), like "schematic.svg"`);
     if (ap.categories !== undefined && !strings(ap.categories)) problems.push(`${at}: appliesTo.categories must be taxonomy category ids`);
+  }
+  return problems;
+}
+
+/** A file inside the extension's package: `./` and a path with no `..`, backslash or `#`. */
+const PACKAGE_FILE = /^\.\/[^\\#]+$/;
+const insidePackage = (p: unknown): p is string => typeof p === "string" && PACKAGE_FILE.test(p) && !p.split("/").includes("..");
+/** A file pattern: no backslash, colon or `..`, not absolute. */
+const FILE_PATTERN = /^[^\\:/][^\\:]*$/;
+
+/** Problems with a manifest's `contributes.editors` (empty when valid or absent). */
+function validateEditors(editors: unknown): string[] {
+  if (editors === undefined) return [];
+  if (!Array.isArray(editors)) return ["contributes.editors must be an array"];
+  const problems: string[] = [];
+  const seen = new Set<string>();
+  const known = ["id", "title", "icon", "files", "webview", "host"];
+  for (const e of editors as Partial<EditorDecl>[]) {
+    if (!e || typeof e !== "object" || !isViewId(e.id)) {
+      problems.push(`every editor needs an id like "canvas" (lowercase, dashes)`);
+      continue;
+    }
+    const at = `editor ${e.id}`;
+    if (seen.has(e.id)) problems.push(`duplicate ${at}`);
+    seen.add(e.id);
+    for (const k of Object.keys(e)) if (!known.includes(k)) problems.push(`${at} has unknown key ${k} (known: ${known.join(", ")})`);
+    if (typeof e.title !== "string" || !e.title.trim()) problems.push(`${at} needs a title`);
+    if (typeof e.icon !== "string" || !ICON.test(e.icon)) problems.push(`${at} needs an icon: a Lucide icon name in kebab-case`);
+    const files = e.files as unknown;
+    if (!Array.isArray(files) || !files.length || !files.every((f) => typeof f === "string" && FILE_PATTERN.test(f) && !f.split("/").includes(".."))) {
+      problems.push(`${at}: files must be file patterns like "*.canvas" (a name, or a project-relative path with no "..")`);
+    }
+    const w = e.webview as unknown;
+    if (!w || typeof w !== "object" || Array.isArray(w)) problems.push(`${at} needs a webview: { "script": "./dist/editor.js", "style": "./dist/editor.css" }`);
+    else {
+      const { script, style, ...rest } = w as { script?: unknown; style?: unknown };
+      for (const k of Object.keys(rest)) problems.push(`${at}: webview has unknown key ${k} (known: script, style)`);
+      if (!insidePackage(script)) problems.push(`${at}: webview.script must be a file inside the package, like "./dist/editor.js"`);
+      if (style !== undefined && !insidePackage(style)) problems.push(`${at}: webview.style must be a file inside the package, like "./dist/editor.css"`);
+    }
+    if (e.host !== undefined) {
+      const [file, name, more] = typeof e.host === "string" ? e.host.split("#") : [];
+      if (more !== undefined || !insidePackage(file) || (name !== undefined && !/^\w+$/.test(name))) problems.push(`${at}: host must be a module inside the package, like "./host/editor-host.ts#createEditorHost"`);
+    }
   }
   return problems;
 }

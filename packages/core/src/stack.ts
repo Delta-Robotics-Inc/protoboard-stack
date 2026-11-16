@@ -525,6 +525,7 @@ export const VALUE_OPTIONS: readonly string[] = [
   "--domain",
   "--editor",
   "--extension",
+  "--file",
   "--format",
   "--from",
   "--from-vsix",

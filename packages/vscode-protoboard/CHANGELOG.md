@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- **Editors from extensions**: a file that one of the project's enabled
+  extensions claims (`*.canvas` today) opens in that extension's editor,
+  in a tab of the Protoboard extension; its code runs in a process of its
+  own, only in a project you trusted. A file no enabled extension claims
+  shows why, with **Open as Text**.
+- An extension's editor can ask you for files in VS Code's open dialog
+  (`file.pick`); it gets only the paths of the files you pick.
+
 ## 0.3.0
 
 - **Get Started with Protoboard** opens after a first install: choose a
