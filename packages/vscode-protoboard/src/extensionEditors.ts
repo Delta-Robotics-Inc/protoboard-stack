@@ -13,8 +13,8 @@
  * of the extension's own code runs in a host process the tab starts
  * (`protoboard editors host`), never in VS Code's extension host: the page's
  * messages go to it and its messages come back, and both may call the
- * services this file offers (the text document, files, the clipboard,
- * webview URIs, the theme). The messages are @protoboardai/core's
+ * services this file offers (the text document, files, the open dialog, the
+ * clipboard, webview URIs, the theme). The messages are @protoboardai/core's
  * editor-protocol. The process ends when the tab closes.
  *
  * Nothing runs in Restricted Mode, in a project whose code was not trusted,
@@ -37,6 +37,7 @@ import {
   type EditorServiceName,
   type EditorTheme,
   type FromHost,
+  type ServiceResult,
   type ToHost,
   type ToWebviewEnvelope,
 } from "@protoboardai/core/editor-protocol";
@@ -100,6 +101,39 @@ export interface ExtensionEditorSnapshot {
 }
 
 const GRACE_MS = 3000;
+
+/** The service a call names: a name this shell does not offer is refused with `no service <name>` (an editor detects an older shell by it). */
+export function serviceName(name: unknown): EditorServiceName {
+  if (!isEditorService(name)) throw new Error(`no service ${String(name)}`);
+  return name;
+}
+
+/**
+ * `file.pick`: VS Code's open dialog, files only, in `folder` (the edited
+ * file's). The paths may be outside the project: the person chose them, and
+ * only paths come back. Anything that is not a `file:` URI is dropped. A
+ * filter's extensions lose a leading dot, and a filter left with none is
+ * dropped (the dialog would offer it and show no file).
+ */
+export async function pickFiles(raw: Record<string, unknown>, folder: string): Promise<ServiceResult<"file.pick">> {
+  const filters: Record<string, string[]> = {};
+  if (raw.filters && typeof raw.filters === "object" && !Array.isArray(raw.filters)) {
+    for (const [label, exts] of Object.entries(raw.filters as Record<string, unknown>)) {
+      if (!Array.isArray(exts)) continue;
+      const list = exts.filter((x): x is string => typeof x === "string").map((x) => x.trim().replace(/^\./, "")).filter(Boolean);
+      if (list.length) filters[label] = list;
+    }
+  }
+  const picked = await vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: raw.multiple === true,
+    defaultUri: vscode.Uri.file(folder),
+    ...(typeof raw.title === "string" ? { title: raw.title } : {}),
+    ...(Object.keys(filters).length ? { filters } : {}),
+  });
+  return { paths: (picked ?? []).filter((u) => u.scheme === "file").map((u) => u.fsPath) };
+}
 
 class EditorTab {
   state: ExtensionEditorSnapshot["state"] = "loading";
@@ -339,11 +373,11 @@ class EditorTab {
 
   /** The services the page and the host may call (EditorServices). */
   private async service(name: unknown, raw: unknown): Promise<unknown> {
-    if (!isEditorService(name)) throw new Error(`no service ${String(name)}`);
+    const service = serviceName(name);
     const args = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
     const doc = this.document;
     const path = (p: unknown, packageToo = false) => guardedPath(this.root, p, packageToo ? this.claim?.packageRoot : undefined);
-    switch (name as EditorServiceName) {
+    switch (service) {
       case "document.applyEdit": {
         if (typeof args.text !== "string") throw new Error("document.applyEdit needs text");
         const edit = new vscode.WorkspaceEdit();
@@ -361,7 +395,7 @@ class EditorTab {
       case "document.redo":
         // VS Code's undo acts on the active editor: this tab
         if (!this.panel.active) this.panel.reveal(undefined, false);
-        await vscode.commands.executeCommand(name === "document.undo" ? "undo" : "redo");
+        await vscode.commands.executeCommand(service === "document.undo" ? "undo" : "redo");
         return null;
       case "file.open": {
         const uri = vscode.Uri.file(path(args.path));
@@ -373,6 +407,9 @@ class EditorTab {
       case "file.reveal":
         await vscode.commands.executeCommand(args.where === "os" ? "revealFileInOS" : "revealInExplorer", vscode.Uri.file(path(args.path)));
         return null;
+      case "file.pick":
+        // not guarded: the person picks, and only paths come back; the webview's roots stay as they are
+        return pickFiles(args, dirname(doc.uri.fsPath));
       case "clipboard.write":
         await vscode.env.clipboard.writeText(String(args.text ?? ""));
         return null;

@@ -3,14 +3,32 @@
  * extensionEditorPage.ts): the page loads only the extension's bundle, under
  * a nonce policy with no network; the fallback page runs no script and calls
  * only its few commands; paths the page or the host give stay inside the
- * project (and the package, for webview URIs); the manifest declares the
- * selector and the activation event.
+ * project (and the package, for webview URIs); file.pick returns the paths
+ * of the files picked in VS Code's open dialog, which may be outside the
+ * project; a service the shell does not offer is refused by name; the
+ * manifest declares the selector and the activation event.
  */
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { EXTENSION_EDITOR, FALLBACK_COMMANDS, REOPEN_AS_TEXT, editorCsp, editorHtml, fallbackHtml, fallbacks, guardedPath } from "../src/extensionEditorPage.js";
+
+type FakeUri = { scheme: string; fsPath: string };
+const dialogs: Record<string, unknown>[] = [];
+let picked: FakeUri[] | undefined;
+
+vi.mock("vscode", () => ({
+  Uri: { file: (fsPath: string): FakeUri => ({ scheme: "file", fsPath }) },
+  window: {
+    showOpenDialog: (options: Record<string, unknown>) => {
+      dialogs.push(options);
+      return Promise.resolve(picked);
+    },
+  },
+}));
+
+const { pickFiles, serviceName } = await import("../src/extensionEditors.js");
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 
@@ -57,6 +75,45 @@ describe("an extension editor's page", () => {
     expect(() => guardedPath(root, "")).toThrow(/no path/);
     expect(() => guardedPath(root, resolve("/other/ext/x.js"), pkg)).toThrow();
     expect(guardedPath(root, join(pkg, "dist", "e.js"), pkg)).toBe(join(pkg, "dist", "e.js"));
+  });
+
+  it("picks files in VS Code's open dialog, in the edited file's folder: several, none when canceled, files only", async () => {
+    const folder = resolve("/work/proj/plans");
+    const a = resolve("/work/proj/items/a.png");
+    const outside = resolve("/elsewhere/photos/b.jpg");
+    dialogs.length = 0;
+    picked = [
+      { scheme: "file", fsPath: a },
+      { scheme: "file", fsPath: outside },
+    ];
+    // the person chose them: a file outside the project comes back too, as its path
+    expect(await pickFiles({ multiple: true, title: "Add images", filters: { Images: ["png", "jpg"] } }, folder)).toEqual({ paths: [a, outside] });
+    expect(dialogs[0]).toEqual({ canSelectFiles: true, canSelectFolders: false, canSelectMany: true, defaultUri: { scheme: "file", fsPath: folder }, title: "Add images", filters: { Images: ["png", "jpg"] } });
+
+    picked = undefined;
+    expect(await pickFiles({}, folder)).toEqual({ paths: [] });
+    expect(dialogs[1]).toEqual({ canSelectFiles: true, canSelectFolders: false, canSelectMany: false, defaultUri: { scheme: "file", fsPath: folder } });
+
+    picked = [
+      { scheme: "vscode-remote", fsPath: "/remote/c.png" },
+      { scheme: "file", fsPath: a },
+      { scheme: "untitled", fsPath: "Untitled-1" },
+    ];
+    expect(await pickFiles({ multiple: true }, folder)).toEqual({ paths: [a] });
+
+    // a leading dot is dropped, and a filter with no extension left is not offered
+    picked = undefined;
+    await pickFiles({ filters: { Images: [".png", "jpg", ""], Nothing: [], Bad: "png" } }, folder);
+    expect(dialogs[3]).toMatchObject({ filters: { Images: ["png", "jpg"] } });
+    await pickFiles({ filters: { Nothing: [] } }, folder);
+    expect(dialogs[4]).not.toHaveProperty("filters");
+  });
+
+  it("refuses a service it does not offer by name, so an editor can tell an older shell", () => {
+    expect(serviceName("file.pick")).toBe("file.pick");
+    expect(serviceName("document.applyEdit")).toBe("document.applyEdit");
+    expect(() => serviceName("file.frobnicate")).toThrow(/^no service file\.frobnicate$/);
+    expect(() => serviceName(undefined)).toThrow(/^no service undefined$/);
   });
 
   it("is declared in the manifest for *.canvas, and activates the extension", () => {

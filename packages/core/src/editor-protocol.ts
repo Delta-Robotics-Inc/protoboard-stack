@@ -10,8 +10,9 @@
  *   webview  <-- postMessage -->  shell  <-- stdio, one JSON object per line -->  host process
  *
  * The shell owns the text document and the window: it reads and edits the
- * document, opens and reveals files, writes the clipboard, maps a file to a
- * URI the webview can load, and says when the theme changes. Those are the
+ * document, opens and reveals files, asks the person for files in the
+ * system's open dialog, writes the clipboard, maps a file to a URI the
+ * webview can load, and says when the theme changes. Those are the
  * services (`EditorServices`), offered to the webview and to the host alike.
  * Everything else an editor needs (previews, captures, its own file formats)
  * is the extension's own code, which runs in the host process: started by the
@@ -90,6 +91,14 @@ export type OpenMode = "default" | "beside" | "preview" | "external";
  * The services the shell offers, by name: their arguments and results. Paths
  * are project-relative (forward slashes) or absolute; a path outside the
  * project is refused, except `webview.uri` of a file in the extension's package.
+ * `file.pick` is the one service whose result may name files outside the
+ * project: the person chose them in the operating system's own dialog, and
+ * only their paths come back, never their contents. Picking a file does not
+ * widen what the webview may load (`webview.uri` stays inside the project and
+ * the package).
+ *
+ * A name the shell does not offer is answered with the error
+ * `no service <name>`: an editor detects an older shell by it.
  */
 export interface EditorServices {
   /** Replace the document's whole text as one undoable edit, labeled for the undo stack. */
@@ -101,6 +110,15 @@ export interface EditorServices {
   "file.open": { args: { path: string; mode?: OpenMode }; result: null };
   /** Show a file in the shell's file tree or in the system's file manager. */
   "file.reveal": { args: { path: string; where: "explorer" | "os" }; result: null };
+  /**
+   * Ask the person for files in the system's open dialog (files only, never
+   * folders; it opens in the folder of the edited file). `filters` maps a label
+   * to file extensions without the dot (`{ Images: ["png", "jpg"] }`). The
+   * result is the absolute paths of the files picked, in the system's form,
+   * and an empty array when the person cancels. The paths may be outside the
+   * project (see above).
+   */
+  "file.pick": { args: { multiple?: boolean; title?: string; filters?: Record<string, string[]> }; result: { paths: string[] } };
   "clipboard.write": { args: { text: string }; result: null };
   /** Open an http(s) address in the system's browser; any other scheme is refused. */
   "external.open": { args: { url: string }; result: { opened: boolean } };
@@ -122,6 +140,7 @@ export const EDITOR_SERVICES: readonly EditorServiceName[] = [
   "document.redo",
   "file.open",
   "file.reveal",
+  "file.pick",
   "clipboard.write",
   "external.open",
   "webview.uri",

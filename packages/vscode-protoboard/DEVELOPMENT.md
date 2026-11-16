@@ -988,8 +988,10 @@ registry, run `npm install`), and `protoboard check` reports the same as
   into VS Code's extension host), and its messages come back; both may call
   the tab's services (`@protoboardai/core/editor-protocol`: apply an edit to
   the text document as one undo step, save, undo, redo, open or reveal a
-  file, the clipboard, open an http(s) address, a webview URI, a notice or a
-  question) and are told of document changes (with why: applied, undo,
+  file, pick files in VS Code's open dialog (`file.pick`: only the paths
+  come back, and they may be outside the project), the clipboard, open an
+  http(s) address, a webview URI, a notice or a question; a name the shell
+  does not offer is refused as `no service <name>`) and are told of document changes (with why: applied, undo,
   redo, change), saves and theme changes. Closing the tab sends the host
   `dispose` and ends the process (its whole tree on Windows) after 3 s. In
   Restricted Mode, in a project whose code was not trusted, for a file no

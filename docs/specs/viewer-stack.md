@@ -315,9 +315,18 @@ page (webview)  <-- postMessage -->  shell  <-- stdio, one JSON object per line 
   text, one undo step, labeled), `document.save`, `document.undo`,
   `document.redo`, `file.open` (default, beside, preview, or the system's
   application), `file.reveal` (the file tree or the system's file manager),
-  `clipboard.write`, `external.open` (http and https only), `webview.uri`,
-  `ui.notify` and `ui.confirm`. A path outside the project is refused, except
-  a `webview.uri` of a file in the extension's package.
+  `file.pick` (the system's open dialog, files only: `{ multiple?, title?,
+  filters? }`, filters mapping a label to extensions without the dot, and
+  `{ paths }`, absolute, empty when the person cancels), `clipboard.write`,
+  `external.open` (http and https only), `webview.uri`, `ui.notify` and
+  `ui.confirm`. A path outside the project is refused, except a `webview.uri`
+  of a file in the extension's package. `file.pick` is the exception the
+  other way: its paths may be outside the project, since the person chose
+  them in the operating system's own dialog, and it returns only paths,
+  never contents. Picking does not widen what the page may load:
+  `webview.uri` and the webview's local roots stay the project and the
+  package. A service the shell does not offer is answered with the error
+  `no service <name>`, so an editor can tell an older shell.
 - The host process gets `init` first (the editor, the extension, the project,
   the file, the theme, the URI prefixes the page loads the project's and the
   package's files with, and the document), then the page's messages

@@ -144,5 +144,6 @@ describe("the editor protocol's helpers", () => {
     expect(isEnvelope({ type: "ready" })).toBe(false);
     expect([1, 2, 3, 4].map(themeKind)).toEqual(["light", "dark", "high-contrast", "high-contrast-light"]);
     expect(EDITOR_SERVICES).toContain("document.applyEdit");
+    expect(EDITOR_SERVICES).toContain("file.pick");
   });
 });
